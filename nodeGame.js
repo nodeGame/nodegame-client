@@ -2,9 +2,108 @@
  * nodeGame
  */
 
-(function (exports) {
+(function (exports, io) {
 	
 	var node = exports;
+
+	// if node
+	
+	if ('object' === typeof module && 'function' === typeof require) {
+	
+		/**
+	     * Expose Socket.io-client
+	     *
+	     * @api public
+	     */
+	
+	    node.io = require('socket.io-client');
+		
+		/**
+	     * Expose EventEmitter
+	     *
+	     * @api public
+	     */
+	
+	    node.EventEmitter = require('./EventEmitter').EventEmitter;
+		
+	    /**
+	     * Expose Utils
+	     *
+	     * @api public
+	     */
+	
+	    node.Utils = require('./Utils').Utils;
+	
+	    /**
+	     * Expose GameState.
+	     *
+	     * @api public
+	     */
+	
+	    node.GameState = require('./GameState').GameState;
+	
+	    /**
+	     * Expose PlayerList.
+	     *
+	     * @api public
+	     */
+	
+	    node.PlayerList = require('./PlayerList').PlayerList;
+	    
+	    /**
+	     * Expose Player.
+	     *
+	     * @api public
+	     */
+	
+	    node.Player = require('./PlayerList').Player;
+	
+	    
+	    /**
+	     * Expose GameMsg
+	     *
+	     * @api public
+	     */
+	
+	     node.GameMsg = require('./GameMsg').GameMsg;
+	
+	    /**
+	     * Expose GameLoop
+	     *
+	     * @api public
+	     */
+	
+	    node.GameLoop = require('./GameLoop').GameLoop;
+	
+	    
+	    /**
+	     * Expose GameMsgGenerator
+	     *
+	     * @api public
+	     */
+	
+	    node.GameMsgGenerator = require('./GameMsgGenerator').GameMsgGenerator;
+	    
+	    /**
+	     * Expose GameSocketClient
+	     *
+	     * @api public
+	     */
+	
+	    node.GameSocketClient = require('./GameSocketClient').GameSocketClient;
+	    
+	    /**
+	     * Expose Game
+	     *
+	     * @api public
+	     */
+	
+	    node.Game = require('./Game').Game;
+	
+	  }
+	  // end node
+		
+	
 	var EventEmitter = node.EventEmitter;
 	var GameSocketClient = node.GameSocketClient;
 	var GameState = node.GameState;
@@ -19,46 +118,6 @@
 	
 	nodeGame.prototype.__proto__ = EventEmitter.prototype;
 	nodeGame.prototype.constructor = nodeGame;
-	
-	// Exposing classes
-	
-//	exports.nodeGame.prototype.create = {};
-//	
-//	nodeGame.prototype.create.GameLoop = function (loop) {
-//		return new GameLoop(loop);
-//	};
-//	
-//	nodeGame.prototype.create.GameMsgGenerator = function (session, sender, state) {
-//		return new GameMsgGenerator(session, sender, state);
-//	};
-//	
-//	nodeGame.prototype.create.GameMsg = function(gm) {
-//		
-//		return new GameMsg({ 
-//							session: gm.session, 
-//							state: gm.state, 
-//							action: gm.action, 
-//							target: gm.target,
-//							from: gm.from,
-//							to: gm.to, 
-//							text: gm.text, 
-//							data: gm.data,
-//							priority: gm.priority, 
-//							reliable: gm.reliable
-//		});
-//	};
-//	
-//	nodeGame.prototype.create.GameState = function(gs){
-//		return new GameState({
-//								state: gs.state,
-//								step: gs.step,
-//								round: gs.round
-//		});
-//	};
-//	
-//	nodeGame.prototype.create.PlayerList = function(list){
-//		return new PlayerList(list);
-//	};
 	
 	// Exposing Costants
 	

@@ -1,6 +1,5 @@
-(function (exports) {
+(function (exports, node) {
 	
-	var node = exports;
 	var GameMsg = node.GameMsg;
 	var GameState = node.GameState;
 	var Player = node.Player;
@@ -199,4 +198,7 @@
 		return newgm;
 	}; 
 
-})('undefined' != typeof node ? node : module.exports);
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);

@@ -1,6 +1,5 @@
-(function (exports) {
+(function (exports, node) {
 	
-	var node = exports;
 	var GameState = node.GameState;
 	var Utils = node.Utils;
 	
@@ -296,4 +295,7 @@
 		return out;
 	};
 
-})('undefined' != typeof node ? node : module.exports);
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);

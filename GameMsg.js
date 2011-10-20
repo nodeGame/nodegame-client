@@ -1,7 +1,7 @@
-(function (exports) {
+(function (exports, node) {
 
-	var GameState = exports.GameState;
-	var Utils = exports.Utils;
+	var GameState = node.GameState;
+	var Utils = node.Utils;
 	
 	/**
 	 * Exposing constructor
@@ -178,4 +178,7 @@
 		return this.action + '.' + this.target;
 	}; 
 
-})('undefined' != typeof node ? node : module.exports);
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);

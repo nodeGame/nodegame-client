@@ -1,6 +1,5 @@
-(function (exports) {
+(function (exports, node) {
 	
-	var node = exports;
 	var GameState = node.GameState;
 	var GameMsg = node.GameMsg;
 	var PlayerList = node.PlayerList;
@@ -225,4 +224,7 @@
 	//	};
 	}; 
 
-})('undefined' != typeof node ? node : module.exports);
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);

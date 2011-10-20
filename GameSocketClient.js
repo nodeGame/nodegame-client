@@ -1,6 +1,5 @@
-(function (exports, io) {
+(function (exports, node, io) {
 		
-	var node = exports;
 	var GameMsg = node.GameMsg;
 	var GameState = node.GameState;
 	var Player = node.Player;
@@ -51,7 +50,7 @@
 			//console.log(msg);
 			//debugger;
 			var gameMsg = GameMsg.clone(JSON.parse(msg));
-			console.log('R: ' + gameMsg);
+			console.log('R: ' + gameMsg);			
 			node.fire('LOG', 'R: ' + gameMsg.toSMS());
 			return gameMsg;
 		}
@@ -163,5 +162,7 @@
 	};
 
 })(
-		'undefined' != typeof node ? node : module.exports,
-		'undefined' != typeof io ? io : module.parent.exports);
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+  , 'undefined' != typeof io ? io : module.parent.exports.io
+);
