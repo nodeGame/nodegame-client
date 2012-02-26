@@ -1,7 +1,7 @@
 {
     "name": "nodegame-client"
   , "description": "nodeGame client for the browser and node.js"
-  , "version": "0.1.0"
+  , "version": "0.1.1"
   , "main" : "nodeGame.js"
   , "homepage": "http://www.nodegame.org"
   , "keywords": ["game", "multiplayers", "experiments", "socket.io", "node", "websockets"]
@@ -11,7 +11,7 @@
     ]
   , "repository": {
         "type": "git"
-      , "url": "https://github.com/Shakty/nodegame.git"
+      , "url": "https://github.com/nodeGame/nodegame-client.git"
     }
   , "dependencies": {
       "socket.io-client": "0.8.7",
