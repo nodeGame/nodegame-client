@@ -1,7 +1,7 @@
 {
     "name": "nodegame-client"
   , "description": "nodeGame client for the browser and node.js"
-  , "version": "0.1.1"
+  , "version": "0.1.2"
   , "main" : "nodeGame.js"
   , "homepage": "http://www.nodegame.org"
   , "keywords": ["game", "multiplayers", "experiments", "socket.io", "node", "websockets"]
@@ -15,9 +15,9 @@
     }
   , "dependencies": {
       "socket.io-client": "0.8.7",
-      "JSUS": ">= 0.1.0",
+      "JSUS": ">= 0.2.1",
       "ya-csv": "0.1.8",
-      "NDDB": ">= 0.1.0"
+      "NDDB": ">= 0.1.6"
     }
   , "licenses": [
     { "type": "MIT" }

@@ -238,7 +238,7 @@
 	 */
 	GameLoop.prototype.indexOf = function (state) {
 		if (!state) return -1;
-		return this.diff(state, new GameState())
+		return this.diff(state, new GameState());
 	};
 	
 	/**
@@ -254,10 +254,10 @@
 		
 		var idx = 0;
 		while (state2) {
-			if (GameState.compare(state1, state) === 0){
+			if (GameState.compare(state1, state2) === 0){
 				return idx;
 			}
-			state2 = this.next(search);
+			state2 = this.next(state2);
 			idx++;
 		}
 		return -1;
