@@ -6,7 +6,7 @@
 	
 	var node = exports;
 
-	node.version = '0.7.4.0';
+	node.version = '0.7.4.1';
 	
 	node.verbosity = 0;
 	
@@ -238,7 +238,7 @@
 	
 	// TODO: create conf objects
 	node.play = function (conf, game) {	
-		if ('undefined' !== typeof conf.verbosity) node.verbosity = conf.verbosity;
+		node._analyzeConf(conf);
 		
 		node.gsc = that.gsc = new GameSocketClient(conf);
 		
@@ -255,7 +255,8 @@
 	};	
 	
 	node.observe = function (conf, game) {
-		if ('undefined' !== typeof conf.verbosity) node.verbosity = conf.verbosity;
+		node._analyzeConf(conf);
+		
 		var game = game || {loops: {1: {state: function(){}}}};
 		node.gsc = that.gsc = new GameSocketClient(conf);
 		
@@ -419,8 +420,40 @@
 		node.goto(new GameState({state: 1, step: 1, round: 1}));
 	}
 	
-	node.goto = function(state) {
+	node.goto = function (state) {
 		node.game.updateState(state);
+	};
+	
+	/**
+	 * Parses the a node configuration object and add
+	 * default and missing values.
+	 * 
+	 */
+	node._analyzeConf = function (conf) {
+		if (!conf) {
+			node.log('Invalid configuration object found.', 'ERR');
+			return false;
+		}
+		
+		// URL
+		if (!conf.host && conf.url) {
+			// Try to determine the server url
+			var serverUrlArray = conf.url.split('/');
+			if (JSUS.in_array(serverUrlArray[0], ['http:', 'https:'])) {
+				conf.host = serverUrlArray[0] + '//' + serverUrlArray[2];
+			}
+			else {
+				conf.host = serverUrlArray[0];
+			}
+		}
+		
+		// VERBOSITY
+		if ('undefined' !== typeof conf.verbosity) {
+			node.verbosity = conf.verbosity;
+		}
+		
+		this.conf = conf;
+		return conf;
 	};
 	
 	// if node
