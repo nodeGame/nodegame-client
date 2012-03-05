@@ -1,10 +1,5 @@
 (function (exports, node) {
 	
-	/*
-	 * Holds information about the list of players.
-	 *
-	 */
-	
 	var JSUS = node.Utils;
 	var NDDB = node.NDDB;
 		
@@ -15,6 +10,22 @@
 	 */
 	exports.PlayerList = PlayerList;
 
+	
+	/**
+	 * Transforms an array of array (of players) into an
+	 * array of PlayerList instances and returns it.
+	 * 
+	 * The original array is modified.
+	 * 
+	 */
+	PlayerList.array2Groups = function (array) {
+		if (!array) return;
+		for (var i = 0; i < array.length; i++) {
+			array[i] = new PlayerList({}, array[i]);
+		};
+		return array;
+	};
+	
 	/**
 	 * PlayerList interface
 	 *
@@ -104,7 +115,7 @@
 	PlayerList.prototype.updatePlayer = function (player) {
 		
 		if (this.exist(id)) {
-			this.pl[id] = player;
+			this.db[id] = player;
 		
 			return true;
 		}
@@ -125,7 +136,7 @@
 			return false;
 		}
 		
-		//node.log(this.pl);
+		//node.log(this.db);
 		
 		this.select('id', '=', id).first().state = state;	
 	
@@ -227,6 +238,18 @@
 		return out;
 	};
 	
+	PlayerList.prototype.getNGroups = function (N) {
+		if (!N) return;
+		var groups = JSUS.getNGroups(this.db, N);
+		return PlayerList.array2Groups(groups);
+	};	
+	
+	PlayerList.prototype.getGroupsSizeN = function (N) {
+		if (!N) return;
+		var groups = JSUS.getGroupsSizeN(this.db, N);
+		return PlayerList.array2Groups(groups);
+	};	
+	
 	//Player
 	
 	/**
@@ -285,9 +308,9 @@
 //	
 //		var result = Array();
 //		
-//		for (var key in this.pl) {
-//		    if (this.pl.hasOwnProperty(key)) {
-//		    	result.push(this.pl[key]);
+//		for (var key in this.db) {
+//		    if (this.db.hasOwnProperty(key)) {
+//		    	result.push(this.db[key]);
 //		    }
 //		}
 //		return result;
