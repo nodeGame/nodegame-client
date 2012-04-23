@@ -18,6 +18,8 @@
 	    	if (l1.priority < l2.priority) return -1;
 	    	return 0;
 	    };
+	    this._listeners.d('state', node.GameBit.compareState);
+	    
 	};
 	
 	EventEmitter.prototype = {
@@ -58,6 +60,7 @@
 	    	
 	    	// Debug
 	        //console.log('Fired ' + event);
+	    	
 	    	
 	        this._listeners.forEach(function(l) {
 	        	if (l.event === event) {
