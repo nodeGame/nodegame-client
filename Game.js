@@ -227,6 +227,7 @@
 			
 			node.on('GAME_LOADED', function() {
 				if (that.isGameReady()) {
+					node.emit('BEFORE_LOADING');
 					node.emit('LOADED');
 				}
 			});

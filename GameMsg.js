@@ -41,6 +41,8 @@
 //	
 	
 	function GameMsg (gm) {
+		gm = gm || {};
+		
 		this.id = Math.floor(Math.random()*1000000);
 		
 		this.session = gm.session;

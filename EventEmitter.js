@@ -120,10 +120,12 @@
 	    
 	    // Debug
 	    printAllListeners: function() {
-	    	node.log('PRINTING ALL LISTENERS');
-	    	this._listeners.forEach(function(l){
-	    		console.log(i);
+	    	node.log('Printing all listeners: ');
+	    	var that = this;
+	    	this._listeners.forEach(function (l) {
+	    		node.log(l.event + ' = ' + l.listener.toString());
 	    	});
+	    	node.log(this._listeners.size() + ' listeners found.')
 	    }
 	};
 	
