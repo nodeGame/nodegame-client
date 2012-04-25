@@ -211,9 +211,6 @@
 	 */
 	var that = node.node = new nodeGame();
 	
-	// TODO: Check: is this the best place do it?
-    node.node._listeners.set('state', GameState.compare);
-	
 	node.state = function() {
 		return (that.game) ? node.node.game.gameState : false;
 	};

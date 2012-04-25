@@ -68,8 +68,8 @@
 	        };
 	        
 	        var l = new Listener(l);
-	        console.log('I am inserting a new listener');
-	        console.log(l);
+	        //console.log('I am inserting a new listener');
+	        //console.log(l);
 	        
 			this._listeners.insert(l);
 	    },
