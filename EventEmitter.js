@@ -8,7 +8,6 @@
     */
 	exports.EventEmitter = EventEmitter;
 	
-	
 	//var parser = exports.parser = {};
 		 
 	function EventEmitter() {
@@ -18,16 +17,49 @@
 	    	if (l1.priority < l2.priority) return -1;
 	    	return 0;
 	    };
-	    this._listeners.d('state', node.GameBit.compareState);
-	    
+	    //this._listeners.d('state', node.GameBit.compareState);
+	    this._listeners.d('state', EMcompareState);
+	    //console.log(EMcompareState.toString());
+	};
+	
+	function EMcompareState(gb1, gb2) {
+		
+		if (!gb1 && !gb2) return false;
+		if (!gb1) return 1;
+		if (!gb2) return -1;
+		
+		var gs1 = gb1.state;
+		var gs2 = gb2.state;
+		
+		// TODO: check: it is correct to return FALSE, if both
+		// states are undefined?
+		if ('undefined' === typeof gs1 && 'undefined' === typeof gs2) return false;
+		if ('undefined' === typeof gs1) return 1;
+		if ('undefined' === typeof gs2) return -1;
+		
+		if ('undefined' === typeof gs1.state && 'undefined' === typeof gs2.state) return false;
+		if ('undefined' === typeof gs1.state) return 1;
+		if ('undefined' === typeof gs2.state) return -1;
+		
+		
+		var result = gs1.state - gs2.state;
+		
+		if (result === 0 && 'undefined' !== typeof gs1.round) {
+			result = gs1.round - gs2.round;
+		
+			if (result === 0 && 'undefined' !== typeof gs1.step) {
+				result = gs1.step - gs2.step;
+			}
+		}
+		
+		
+		return result;
 	};
 	
 	EventEmitter.prototype = {
 	
 	    constructor: EventEmitter,
 		
-	    
-	    
 	    addListener: function (type, listener) {
 		
 			// if type is an object we assume a Listener obj was passed
@@ -35,7 +67,11 @@
 	        					  	 					 event: type
 	        };
 	        
-			this._listeners.insert(new Listener(l));
+	        var l = new Listener(l);
+	        console.log('I am inserting a new listener');
+	        console.log(l);
+	        
+			this._listeners.insert(l);
 	    },
 	    
 	    addLocalListener: function (type, listener) {
@@ -60,7 +96,6 @@
 	    	
 	    	// Debug
 	        //console.log('Fired ' + event);
-	    	
 	    	
 	        this._listeners.forEach(function(l) {
 	        	if (l.event === event) {
@@ -101,7 +136,7 @@
 	    },
 	
 	    removeListener: function(event, listener) {
-			if ('undefined' === typeof type) return;
+			if ('undefined' === typeof event) return;
 		
 			var listeners = this._listeners.select('event', '=', event);
 			if (listeners.size() === 0) return false;
@@ -115,7 +150,19 @@
 		},
 	    
 	    clearLocalListeners: function() {
-	    	this._listeners.select('state', '=', node.state()).clear(true);
+			console.log('SIZE: ' + this._listeners.size());		
+			console.log('TO DELETE: ' + this._listeners.select('state', '=', node.game.previous()).count());
+			this._listeners.select('state', '=', node.game.previous()).delete(true);
+			console.log('COUNT AFTER DELETE: ' + this._listeners.count());	
+			console.log(this._listeners.fetchValues());
+			
+	    },
+	    
+	    clearState: function(state) {
+	    	if ('undefined' === typeof state) return;
+			console.log('TO DELETE: ' + this._listeners.select('state', '=', state).count());
+	    	this._listeners.select('state', '=', state).delete(true);
+	    	return true;
 	    },
 	    
 	    // Debug
