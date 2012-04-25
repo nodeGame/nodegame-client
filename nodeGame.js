@@ -144,12 +144,20 @@
 	
 	    
 	    /**
-	     * Expose GameStorage
+	     * Expose GameDB
 	     *
 	     * @api public
 	     */
 	
 	    node.GameDB = require('./GameDB').GameDB;
+	    
+	    /**
+	     * Expose GameBit
+	     *
+	     * @api public
+	     */
+	
+	    node.GameBit = require('./GameDB').GameBit;
 	    
 	    /**
 	     * Expose Game
