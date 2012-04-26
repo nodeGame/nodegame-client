@@ -324,14 +324,14 @@
 			
 			if (func) {
 
-				console.log('HOW MANY LISTENERS???');
+				//console.log('HOW MANY LISTENERS???');
+				//console.log(node.node._listeners.count());
 				
-				console.log(node.node._listeners.count());
 				// Local Listeners from previous state are erased 
 				// before proceeding to next one
 				node.node.clearState(this.gameState);
 				
-				console.log(node.node._listeners.count());
+				//console.log(node.node._listeners.count());
 				
 				gameState.is = GameState.iss.LOADING;
 				this.gameState = gameState;
