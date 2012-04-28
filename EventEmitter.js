@@ -1,5 +1,7 @@
 (function (exports) {
 	
+	// TODO: integrate with node.log
+	
    /**
     * Expose constructor.
     */

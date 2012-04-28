@@ -274,8 +274,8 @@
 			node.get('LOOP', function(game) {
 				
 				//alert(game);
-				console.log('ONLY ONE');
-				console.log(game);
+				//console.log('ONLY ONE');
+				//console.log(game);
 	//			var game = game.observer = true;
 	//			node.game = that.game = game;
 	//			
