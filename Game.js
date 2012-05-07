@@ -307,8 +307,49 @@
 		}
 	};
 	
-	
 	Game.prototype.step = function(state) {
+		
+		var gameState = state || this.next();
+		if (gameState) {
+			
+			var func = this.gameLoop.getFunction(gameState);
+			
+			// Experimental: node.window should load the func as well
+//			if (node.window) {
+//				var frame = this.gameLoop.getAllParams(gameState).frame;
+//				node.window.loadFrame(frame);
+//			}
+			
+			
+			
+			if (func) {
+
+				//console.log('HOW MANY LISTENERS???');
+				//console.log(node.node._listeners.count());
+				
+				// Local Listeners from previous state are erased 
+				// before proceeding to next one
+				node.node.clearState(this.gameState);
+				
+				//console.log(node.node._listeners.count());
+				
+				gameState.is = GameState.iss.LOADING;
+				this.gameState = gameState;
+			
+				// This could speed up the loading in other client,
+				// but now causes problems of multiple update
+				this.publishState();
+				
+				
+				return func.call(node.game);
+			}
+		}
+		
+		return false;
+		
+	};
+	
+	Game.prototype.step_old = function(state) {
 		
 		var gameState = state || this.next();
 		if (gameState) {

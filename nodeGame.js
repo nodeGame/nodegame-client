@@ -6,7 +6,7 @@
 	
 	var node = exports;
 
-	node.version = '0.7.4.1';
+	node.version = '0.7.5';
 	
 	node.verbosity = 0;
 	
@@ -144,12 +144,20 @@
 	
 	    
 	    /**
-	     * Expose GameStorage
+	     * Expose GameDB
 	     *
 	     * @api public
 	     */
 	
 	    node.GameDB = require('./GameDB').GameDB;
+	    
+	    /**
+	     * Expose GameBit
+	     *
+	     * @api public
+	     */
+	
+	    node.GameBit = require('./GameDB').GameBit;
 	    
 	    /**
 	     * Expose Game
@@ -202,9 +210,6 @@
 	 * Creating an object
 	 */
 	var that = node.node = new nodeGame();
-	
-	// TODO: Check: is this the best place do it?
-    node.node._listeners.set('state', GameState.compare);
 	
 	node.state = function() {
 		return (that.game) ? node.node.game.gameState : false;
@@ -269,8 +274,8 @@
 			node.get('LOOP', function(game) {
 				
 				//alert(game);
-				console.log('ONLY ONE');
-				console.log(game);
+				//console.log('ONLY ONE');
+				//console.log(game);
 	//			var game = game.observer = true;
 	//			node.game = that.game = game;
 	//			
