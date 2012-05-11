@@ -44,6 +44,15 @@
 		}
 		
 		this.nStates = this.limits.length;
+		
+		Object.defineProperty(this, 'length', {
+        	set: function(){},
+        	get: function(){
+        		return that.steps2Go(new GameState());
+        	},
+        	configurable: true
+    	});
+		
 	}
 	
 	
@@ -71,8 +80,10 @@
 	};
 			
 	GameLoop.prototype.next = function (gameState) {
-
-		node.log('NEXT OF THIS ' + gameState, 'DEBUG');
+		gameState = gameState || node.state();
+		
+		
+		//node.log('NEXT OF THIS ' + gameState, 'DEBUG');
 		//node.log(this.limits);
 		
 		// Game has not started yet, do it!
@@ -133,6 +144,7 @@
 	};
 	
 	GameLoop.prototype.previous = function (gameState) {
+		gameState = gameState || node.state();
 		
 		if (!this.exist(gameState)) {
 			node.log('No previous state of non-existing state: ' + gameState, 'WARN');
@@ -173,16 +185,19 @@
 	};
 	
 	GameLoop.prototype.getName = function (gameState) {
+		gameState = gameState || node.state();
 		if (!this.exist(gameState)) return false;
 		return this.loop[gameState.state]['state'][gameState.step]['name'];
 	};
 	
 	GameLoop.prototype.getAllParams = function (gameState) {
+		gameState = gameState || node.state();
 		if (!this.exist(gameState)) return false;
 		return this.loop[gameState.state]['state'][gameState.step];
 	};
 	
 	GameLoop.prototype.getFunction = function (gameState) {
+		gameState = gameState || node.state();
 		if (!this.exist(gameState)) return false;
 		return this.loop[gameState.state]['state'][gameState.step]['state'];
 	};
@@ -208,15 +223,19 @@
 	};
 	
 	/**
-	 * Compute the total number of steps to go.
+	 * Compute the total number steps left before the end of the game.
+	 * 
 	 */
-	GameLoop.prototype.length = function (state) {
-		var state = state || new GameState();
+	GameLoop.prototype.steps2Go = function (gameState) {
+		// TODO: check
+		// was
+		//var state = state || new GameState();
+		// changed to 
+		gameState = gameState || node.state();
 		var count = 0;
-		while (state) { 
-			//console.log(glCopy);
+		while (gameState) { 
 			count++;
-			var state = this.next(state);
+			var gameState = this.next(gameState);
 		}
 		return count;
 	};

@@ -324,6 +324,7 @@
 			
 			if (func) {
 
+				// For NDDB EventEmitter
 				//console.log('HOW MANY LISTENERS???');
 				//console.log(node.node._listeners.count());
 				
@@ -331,6 +332,7 @@
 				// before proceeding to next one
 				node.node.clearState(this.gameState);
 				
+				// For NDDB EventEmitter
 				//console.log(node.node._listeners.count());
 				
 				gameState.is = GameState.iss.LOADING;
