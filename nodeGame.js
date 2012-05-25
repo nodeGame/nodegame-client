@@ -11,7 +11,8 @@
 	node.verbosity = 0;
 	
 	node.verbosity_levels = {
-			ALWAYS: -(Number.MIN_VALUE+1), // Actually, it is not really always...
+			ALWAYS: -(Number.MIN_VALUE+1), // Actually, it is not really
+											// always...
 			ERR: -1,
 			WARN: 0,
 			INFO: 1,
@@ -43,132 +44,133 @@
 	if ('object' === typeof module && 'function' === typeof require) {
 	
 	    /**
-	     * Expose JSU
-	     *
-	     * @api public
-	     */
+		 * Expose JSU
+		 * 
+		 * @api public
+		 */
 	
 	    node.JSUS = require('JSUS').JSUS;
 		
 		/**
-	     * Expose NDDB
-	     *
-	     * @api public
-	     */
+		 * Expose NDDB
+		 * 
+		 * @api public
+		 */
 	  	
 	    node.NDDB = require('NDDB').NDDB;
 		
 		/**
-	     * Expose Socket.io-client
-	     *
-	     * @api public
-	     */
+		 * Expose Socket.io-client
+		 * 
+		 * @api public
+		 */
 	
 	    node.io = require('socket.io-client');
 		
 		/**
-	     * Expose EventEmitter
-	     *
-	     * @api public
-	     */
+		 * Expose EventEmitter
+		 * 
+		 * @api public
+		 */
 	
 	    node.EventEmitter = require('./EventEmitter').EventEmitter;
 	    
 
 		
 	    /**
-	     * Expose Utils
-	     *
-	     * @api public
-	     */
+		 * Expose Utils
+		 * 
+		 * @api public
+		 */
 	
 	    node.utils = node.Utils = require('./Utils').Utils;
 	    
 	    /**
-	     * Expose GameState.
-	     *
-	     * @api public
-	     */
+		 * Expose GameState.
+		 * 
+		 * @api public
+		 */
 	
 	    node.GameState = require('./GameState').GameState;
 	
 	    /**
-	     * Expose PlayerList.
-	     *
-	     * @api public
-	     */
+		 * Expose PlayerList.
+		 * 
+		 * @api public
+		 */
 	
 	    node.PlayerList = require('./PlayerList').PlayerList;
 	    
 	    /**
-	     * Expose Player.
-	     *
-	     * @api public
-	     */
+		 * Expose Player.
+		 * 
+		 * @api public
+		 */
 	
 	    node.Player = require('./PlayerList').Player;
 	
 	    
 	    /**
-	     * Expose GameMsg
-	     *
-	     * @api public
-	     */
+		 * Expose GameMsg
+		 * 
+		 * @api public
+		 */
 	
 	     node.GameMsg = require('./GameMsg').GameMsg;
 	
 	    /**
-	     * Expose GameLoop
-	     *
-	     * @api public
-	     */
+		 * Expose GameLoop
+		 * 
+		 * @api public
+		 */
 	
 	    node.GameLoop = require('./GameLoop').GameLoop;
 	
 	    
 	    /**
-	     * Expose GameMsgGenerator
-	     *
-	     * @api public
-	     */
+		 * Expose GameMsgGenerator
+		 * 
+		 * @api public
+		 */
 	
 	    node.GameMsgGenerator = require('./GameMsgGenerator').GameMsgGenerator;
 	    
 	    /**
-	     * Expose GameSocketClient
-	     *
-	     * @api public
-	     */
+		 * Expose GameSocketClient
+		 * 
+		 * @api public
+		 */
 	
 	    node.GameSocketClient = require('./GameSocketClient').GameSocketClient;
 	
 	    
 	    /**
-	     * Expose GameDB
-	     *
-	     * @api public
-	     */
+		 * Expose GameDB
+		 * 
+		 * @api public
+		 */
 	
 	    node.GameDB = require('./GameDB').GameDB;
 	    
 	    /**
-	     * Expose GameBit
-	     *
-	     * @api public
-	     */
+		 * Expose GameBit
+		 * 
+		 * @api public
+		 */
 	
 	    node.GameBit = require('./GameDB').GameBit;
 	    
 	    /**
-	     * Expose Game
-	     *
-	     * @api public
-	     */
+		 * Expose Game
+		 * 
+		 * @api public
+		 */
 	
 	    node.Game = require('./Game').Game;
 	    
 	    
-	    // TODO: add a method to scan the addons directory. Based on configuration
+	    // TODO: add a method to scan the addons directory. Based on
+		// configuration
 	    node.GameTimer = require('./addons/GameTimer').GameTimer;
 
 	  }
@@ -187,7 +189,7 @@
 	exports.nodeGame = nodeGame;
 	
 	/**
-	 *  Exposing constants
+	 * Exposing constants
 	 */	
 	exports.actions = GameMsg.actions;
 	exports.IN = GameMsg.IN;
@@ -217,16 +219,16 @@
 	
 	node.on = function (event, listener) {
 		var state = this.state();
-		//node.log(state);
+		// node.log(state);
 		
 		// It is in the init function;
 		if (!state || (GameState.compare(state, new GameState(), true) === 0 )) {
 			that.addListener(event, listener);
-			//node.log('global');
+			// node.log('global');
 		}
 		else {
 			that.addLocalListener(event, listener);
-			//node.log('local');
+			// node.log('local');
 		}
 	};
 	
@@ -250,7 +252,7 @@
 		node.game = that.game = new Game(game, that.gsc);
 		node.emit('NODEGAME_GAME_CREATED');
 		
-		//node.memory = that.game.memory;
+		// node.memory = that.game.memory;
 		// INIT the game
 		that.game.init.call(that.game);
 		that.gsc.setGame(that.game);
@@ -273,31 +275,31 @@
 			// Retrieve the game and set is as observer
 			node.get('LOOP', function(game) {
 				
-				//alert(game);
-				//console.log('ONLY ONE');
-				//console.log(game);
-	//			var game = game.observer = true;
-	//			node.game = that.game = game;
+				// alert(game);
+				// console.log('ONLY ONE');
+				// console.log(game);
+	// var game = game.observer = true;
+	// node.game = that.game = game;
 	//			
-	//			that.game.init();
+	// that.game.init();
 	//			
-	//			that.gsc.setGame(that.game);
+	// that.gsc.setGame(that.game);
 	//			
-	//			node.log('nodeGame: game loaded...');
-	//			node.log('nodeGame: ready.');
+	// node.log('nodeGame: game loaded...');
+	// node.log('nodeGame: ready.');
 			});
 		});
 		
 		
-//		node.onDATA('GAME', function(data){
-//			alert(data);
-//			console.log(data);
-//		});
+// node.onDATA('GAME', function(data){
+// alert(data);
+// console.log(data);
+// });
 		
-//		node.on('DATA', function(msg){
-//			console.log('--------->Eh!')
-//			console.log(msg);
-//		});
+// node.on('DATA', function(msg){
+// console.log('--------->Eh!')
+// console.log(msg);
+// });
 	};	
 	
 	node.fire = node.emit = function (event, p1, p2, p3) {	
@@ -310,6 +312,7 @@
 	
 	/**
 	 * Set the pair (key,value) into the server
+	 * 
 	 * @value can be an object literal.
 	 * 
 	 * 
@@ -328,7 +331,7 @@
 				func.call(node.game, msg.data);
 				that.removeListener('in.say.DATA',listener);
 			}
-			//that.printAllListeners();
+			// that.printAllListeners();
 		};
 		
 		node.on('in.say.DATA', listener);
@@ -339,20 +342,20 @@
 	// Conventions:
 	//
 	// - Direction:
-	// 		'in' for all
+	// 'in' for all
 	//
 	// - Target:
-	// 		DATA and TXT are 'say' as default
-	// 		STATE and PLIST are 'set' as default
+	// DATA and TXT are 'say' as default
+	// STATE and PLIST are 'set' as default
 	
 	
 	// Sending
 		
 	
-//	this.setSTATE = function(action,state,to){	
-//		var stateEvent = GameMsg.OUT + action + '.STATE'; 
-//		fire(stateEvent,action,state,to);
-//	};
+// this.setSTATE = function(action,state,to){
+// var stateEvent = GameMsg.OUT + action + '.STATE';
+// fire(stateEvent,action,state,to);
+// };
 	
 	// Receiving
 	
@@ -430,8 +433,8 @@
 	};
 	
 	/**
-	 * Parses the a node configuration object and add
-	 * default and missing values.
+	 * Parses the a node configuration object and add default and missing
+	 * values.
 	 * 
 	 */
 	node._analyzeConf = function (conf) {
@@ -441,15 +444,28 @@
 		}
 		
 		// URL
-		if (!conf.host && conf.url) {
-			// Try to determine the server url
-			var serverUrlArray = conf.url.split('/');
-			if (JSUS.in_array(serverUrlArray[0], ['http:', 'https:'])) {
-				conf.host = serverUrlArray[0] + '//' + serverUrlArray[2];
+		if (!conf.host) {
+			if ('undefined' !== typeof window) {
+				if ('undefined' !== typeof window.location) {
+					var host = window.location.href;
+				}
 			}
 			else {
-				conf.host = serverUrlArray[0];
+				var host = conf.url;
 			}
+			if (host) {
+				var tokens = host.split('/').slice(0,-2);
+				// url was not of the form '/channel'
+				if (tokens.length > 1) {
+					conf.host = tokens.join('/');
+				}
+			}
+		}
+		
+		
+		// Add a trailing slash if missing
+		if (conf.host.lastIndexOf('/') !== host.length) {
+			conf.host = conf.host + '/';
 		}
 		
 		// VERBOSITY
@@ -465,8 +481,8 @@
 	if ('object' === typeof module && 'function' === typeof require) {
 		
 		 /**
-	     * Enable file system operations
-	     */
+			 * Enable file system operations
+			 */
 	
 	    node.csv = {};
 	    node.fs = {};
@@ -477,8 +493,8 @@
 	    
 	    
 	    /**
-	     * Takes an obj and write it down to a csv file;
-	     */
+		 * Takes an obj and write it down to a csv file;
+		 */
 	    node.fs.writeCsv = function (path, obj) {
 	    	var writer = csv.createCsvStreamWriter(fs.createWriteStream( path, {'flags': 'a'}));
 	    	var i;
