@@ -1,7 +1,13 @@
 (function (exports, node) {
 	
+
+	
 	var JSUS = node.JSUS;
 	var NDDB = node.NDDB;
+
+	console.log(node);
+	console.log('--------------------');
+
 		
 	var GameState = node.GameState;
 	
@@ -10,6 +16,7 @@
 	 */
 	exports.PlayerList = PlayerList;
 	
+	// Inheriting from NDDB	
 	PlayerList.prototype = JSUS.clone(NDDB.prototype);
 	PlayerList.prototype.constructor = PlayerList;
 
@@ -38,8 +45,6 @@
 	function PlayerList (options, db) {
 	  options = options || {};
 	  if (!options.log) options.log = node.log;
-	  // Inheriting from NDDB	
-	  //JSUS.extend(node.NDDB, this);
 	  NDDB.call(this, options, db);
 	  this.countid = 0;
 	  

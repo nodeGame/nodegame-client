@@ -5,7 +5,7 @@
 	var GameDB = node.GameDB;
 	var PlayerList = node.PlayerList;
 	var GameLoop = node.GameLoop;
-	var Utils = node.Utils;
+	var JSUS = node.JSUS;
 	
 	/*
 	 * Game

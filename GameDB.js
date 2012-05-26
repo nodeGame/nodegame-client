@@ -21,7 +21,7 @@
 	 * 
 	 */
 	
-	var JSUS = node.Utils;
+	var JSUS = node.JSUS;
 	var NDDB = node.NDDB;
 		
 	var GameState = node.GameState;

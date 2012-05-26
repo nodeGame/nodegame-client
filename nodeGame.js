@@ -3,70 +3,13 @@
  */
 
 (function (exports) {
-	
-	var node = exports;
-
-	node.version = '0.7.5';
-	
-	node.verbosity = 0;
-	
-	node.verbosity_levels = {
-			ALWAYS: -(Number.MIN_VALUE+1), // Actually, it is not really
-											// always...
-			ERR: -1,
-			WARN: 0,
-			INFO: 1,
-			DEBUG: 3
-	};
-	
-	node.log = function (txt, level) {
-		var level = level || 0;
-		if ('string' === typeof level) {
-			var level = node.verbosity_levels[level];
-		}
-		if (node.verbosity > level) {
-			console.log(txt);
-		}
-	};
-	
-	// Memory related operations
-	// Will be initialized later
-	node.memory = {};
-	
-	// It will be overwritten later
-	node.game = {};
-	
-	// Load the auxiliary library if available in the browser
-	if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
-	if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
-	if ('undefined' !== typeof store) node.store = store;
     
+	
 	// if node
 	if ('object' === typeof module && 'function' === typeof require) {
-	
-	    /**
-		 * Expose JSU
-		 * 
-		 * @api public
-		 */
-	
-	    node.JSUS = require('JSUS').JSUS;
-		
-		/**
-		 * Expose NDDB
-		 * 
-		 * @api public
-		 */
-	  	
-	    node.NDDB = require('NDDB').NDDB;
-		
-		/**
-		 * Expose Socket.io-client
-		 * 
-		 * @api public
-		 */
-	
-	    node.io = require('socket.io-client');
+
+		// Initialize node
+	    var node = exports.node = require('./nodeGame.init').node;	    
 		
 		/**
 		 * Expose EventEmitter
@@ -75,16 +18,7 @@
 		 */
 	
 	    node.EventEmitter = require('./EventEmitter').EventEmitter;
-	    
 
-		
-	    /**
-		 * Expose Utils
-		 * 
-		 * @api public
-		 */
-	
-	    node.utils = node.Utils = require('./Utils').Utils;
 	    
 	    /**
 		 * Expose GameState.
@@ -208,6 +142,7 @@
 		EventEmitter.call(this);
 		this.gsc = null;
 		this.game = null;
+		this.player = null;
 	};
 		
 	/**

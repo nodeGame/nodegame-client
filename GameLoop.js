@@ -1,7 +1,7 @@
 (function (exports, node) {
 	
 	var GameState = node.GameState;
-	var Utils = node.Utils;
+	var JSUS = node.JSUS;
 	
 	/*
 	 * GameLoop
@@ -30,12 +30,12 @@
 				// So such function must be incapsulated in a obj here.
 				var loop = this.loop[key].state;
 				if ('function' === typeof loop) {
-					var o = Utils.clone(this.loop[key]);
+					var o = JSUS.clone(this.loop[key]);
 					//var steps = 1;
 					this.loop[key].state = {1: o};
 				}
 				
-				var steps = Utils.getListSize(this.loop[key].state)
+				var steps = JSUS.getListSize(this.loop[key].state)
 				
 				
 				var round = this.loop[key].rounds || 1;

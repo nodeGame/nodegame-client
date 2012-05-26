@@ -1,7 +1,7 @@
 (function (exports, node) {
 
 	var GameState = node.GameState;
-	var Utils = node.Utils;
+	var JSUS = node.JSUS;
 	
 	/**
 	 * Exposing constructor
@@ -36,9 +36,6 @@
 	 * Exporting constants
 	 * 
 	 */
-//	exports.actions = GameMsg.actions;
-//	exports.targets = GameMsg.targets;
-//	
 	
 	function GameMsg (gm) {
 		gm = gm || {};
@@ -56,7 +53,7 @@
 		this.priority = gm.priority;
 		this.reliable = gm.reliable;
 		
-		this.created = Utils.getDate();
+		this.created = JSUS.getDate();
 		this.forward = 0; // is this msg just a forward?	
 	};
 	
