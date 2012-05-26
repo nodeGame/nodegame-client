@@ -3,13 +3,70 @@
  */
 
 (function (exports) {
-    
 	
+	var node = exports;
+
+	node.version = '0.7.5';
+	
+	node.verbosity = 0;
+	
+	node.verbosity_levels = {
+			ALWAYS: -(Number.MIN_VALUE+1), // Actually, it is not really
+											// always...
+			ERR: -1,
+			WARN: 0,
+			INFO: 1,
+			DEBUG: 3
+	};
+	
+	node.log = function (txt, level) {
+		var level = level || 0;
+		if ('string' === typeof level) {
+			var level = node.verbosity_levels[level];
+		}
+		if (node.verbosity > level) {
+			console.log(txt);
+		}
+	};
+	
+	// Memory related operations
+	// Will be initialized later
+	node.memory = {};
+	
+	// It will be overwritten later
+	node.game = {};
+	
+	// Load the auxiliary library if available in the browser
+	if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
+	if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
+	if ('undefined' !== typeof NDDB) node.store = store; 
+    
 	// if node
 	if ('object' === typeof module && 'function' === typeof require) {
-
-		// Initialize node
-	    var node = exports.node = require('./nodeGame.init').node;	    
+	
+	    /**
+		 * Expose JSU
+		 * 
+		 * @api public
+		 */
+	
+	    node.JSUS = require('JSUS').JSUS;
+		
+		/**
+		 * Expose NDDB
+		 * 
+		 * @api public
+		 */
+	  	
+	    node.NDDB = require('NDDB').NDDB;
+		
+		/**
+		 * Expose Socket.io-client
+		 * 
+		 * @api public
+		 */
+	
+	    node.io = require('socket.io-client');
 		
 		/**
 		 * Expose EventEmitter
@@ -18,7 +75,6 @@
 		 */
 	
 	    node.EventEmitter = require('./EventEmitter').EventEmitter;
-
 	    
 	    /**
 		 * Expose GameState.
@@ -142,7 +198,6 @@
 		EventEmitter.call(this);
 		this.gsc = null;
 		this.game = null;
-		this.player = null;
 	};
 		
 	/**
@@ -369,6 +424,28 @@
 		node.game.updateState(state);
 	};
 	
+	node.createPlayer = function(pl) {
+			
+		var old_player = null;
+		if ('undefined' !== typeof node.store) {
+			old_player = node.store('player');
+			console.log('OLD PL');
+			console.log(old_player);
+		}
+		pl = old_player || pl || {};
+		var player = new Player(pl);
+		
+		if ('undefined' !== typeof node.store) {
+			old_player = node.store('player', player);
+		}
+		
+		
+		Object.defineProperty(node, 'player', {
+	    	value: player,
+	    	enumerable: true,
+		});
+	};
+	
 	/**
 	 * Parses the a node configuration object and add default and missing
 	 * values. Stores the final configuration in node.conf.
@@ -413,28 +490,6 @@
 		this.conf = conf;
 		return conf;
 	};
-	
-	node.createPlayer = function(pl) {
-		
-		var old_player = null;
-		if ('undefined' !== typeof node.store) {
-			old_player = node.store('player');
-			console.log('OLD PL');
-			console.log(old_player);
-		}
-		pl = old_player || pl || {};
-		var player = new Player(pl);
-		
-		if ('undefined' !== typeof node.store) {
-			old_player = node.store('player', player);
-		}
-		
-		
-		Object.defineProperty(node, 'player', {
-	    	value: player,
-	    	enumerable: true,
-		});
-	}
 	
 	// if node
 	if ('object' === typeof module && 'function' === typeof require) {

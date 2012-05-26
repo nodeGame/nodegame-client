@@ -1,13 +1,7 @@
 (function (exports, node) {
-	
 
-	
 	var JSUS = node.JSUS;
 	var NDDB = node.NDDB;
-
-	console.log(node);
-	console.log('--------------------');
-
 		
 	var GameState = node.GameState;
 	

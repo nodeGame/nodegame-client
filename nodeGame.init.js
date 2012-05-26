@@ -1,4 +1,6 @@
-(function (node) {
+(function (exports) {
+	
+	var node = exports;
 	
 	node.version = '0.7.5';
 	
@@ -44,4 +46,4 @@
 	
 	
 
-})('object' === typeof module ? module.exports.node = {} : (window.node = window.nodeGame = {}));
+})('object' === typeof module ? module.exports : (window.node = window.nodeGame = {}));

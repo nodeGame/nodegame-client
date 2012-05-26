@@ -137,5 +137,5 @@
 	        
 	    }
 	};
-
+//})('undefined' != typeof node ? node : module.exports);
 })('object' === typeof module ? module.exports : (window.node = {}));
