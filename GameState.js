@@ -41,10 +41,10 @@
 	}
 	
 	GameState.prototype.toString = function () {
-		var out = '(' + this.round + ') ' + this.state + '.' + this.step + '_' + this.is;
+		var out = this.state + '.' + this.step + '_' + this.is + '(' + this.round + ')';
 		
 		if (this.paused) {
-			out += ' (P)';
+			out += ' [P]';
 		}
 		return out;
 	};
