@@ -1,6 +1,6 @@
 (function (exports, node) {
 	
-	var JSUS = node.Utils;
+	var JSUS = node.JSUS;
 	var NDDB = node.NDDB;
 		
 	var GameState = node.GameState;
@@ -9,6 +9,9 @@
 	 * Expose constructors
 	 */
 	exports.PlayerList = PlayerList;
+	
+	PlayerList.prototype = JSUS.clone(NDDB.prototype);
+	PlayerList.prototype.constructor = PlayerList;
 
 	
 	/**
@@ -36,11 +39,12 @@
 	  options = options || {};
 	  if (!options.log) options.log = node.log;
 	  // Inheriting from NDDB	
-	  JSUS.extend(node.NDDB, this);
-	  node.NDDB.call(this, options, db);
+	  //JSUS.extend(node.NDDB, this);
+	  NDDB.call(this, options, db);
 	  this.countid = 0;
 	  
 	  this.globalCompare = function (pl1, pl2) {
+		  
 		  if (pl1.id === pl2.id) {
 			return 0;
 		  }
@@ -98,9 +102,10 @@
 		
 		if (p.count() > 0) {
 			if (p.count() > 1) {
-				node.log('More than one player found with id: ' + id, 'ERR');
+				node.log('More than one player found with id: ' + id, 'WARN');
+				return p.fetch();
 			}
-			return p.fetch();
+			return p.first();
 		}
 		
 		node.log('Attempt to access a non-existing player from the the player list. id: ' + id, 'ERR');
