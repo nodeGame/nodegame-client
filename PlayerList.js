@@ -112,7 +112,8 @@
 		
 		var p = this.get(id);
 		
-		if (p) {
+		// can be either a Player object or an array of Players
+		if ('object' === typeof p) {
 			this.remove(id);
 			return p;
 		}
