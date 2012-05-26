@@ -33,7 +33,7 @@
 	 */
 	
 	function PlayerList (options, db) {
-	  var options = options || {};
+	  options = options || {};
 	  if (!options.log) options.log = node.log;
 	  // Inheriting from NDDB	
 	  JSUS.extend(node.NDDB, this);
@@ -97,7 +97,24 @@
 		var p = this.select('id', '=', id);
 		
 		if (p.count() > 0) {
-			return p.first();
+			if (p.count() > 1) {
+				node.log('More than one player found with id: ' + id, 'ERR');
+			}
+			return p.fetch();
+		}
+		
+		node.log('Attempt to access a non-existing player from the the player list. id: ' + id, 'ERR');
+		return false;
+	};
+	
+	PlayerList.prototype.pop = function (id) {	
+		if (!id) return false;
+		
+		var p = this.get(id);
+		
+		if (p) {
+			this.remove(id);
+			return p;
 		}
 		
 		node.log('Attempt to access a non-existing player from the the player list. id: ' + id, 'ERR');
@@ -250,6 +267,11 @@
 		return PlayerList.array2Groups(groups);
 	};	
 	
+	PlayerList.prototype.getRandom = function () {	
+		this.shuffle();
+		return this.first();
+	};
+	
 	//Player
 	
 	/**
@@ -258,26 +280,36 @@
 	
 	exports.Player = Player;
 	
-	// TODO make them private
 	function Player (pl) {
-		var pl = pl || {};
+		pl = pl || {};
 		
-		this.id = pl.id;
-		this.count = pl.count;
+		// private variables
+		var id = pl.id;	
+		var count = pl.count;
+		
+		// This can change in mobile networks
+		this.ip = pl.ip;
+		
 		this.name = pl.name;
 		this.state = pl.state || new GameState();
-		this.ip = pl.ip;
+		
+		
+		Object.defineProperty(this, 'id', {
+			value: id,
+	    	enumerable: true,
+		});
+		
+		Object.defineProperty(this, 'count', {
+	    	value: count,
+	    	enumerable: true,
+		});
 	}
-	
+
 	Player.prototype.toString = function() {
 		var out = this.name + ' (' + this.id + ') ' + new GameState(this.state);
 		return out;
 	};
 
-	PlayerList.prototype.getRandom = function () {	
-		this.shuffle();
-		return this.first();
-	};
 	
 	// TODO: implement pl.pop, maybe in NDDB
 //	PlayerList.prototype.pop = function (id) {	
