@@ -434,7 +434,7 @@
 	
 	/**
 	 * Parses the a node configuration object and add default and missing
-	 * values.
+	 * values. Stores the final configuration in node.conf.
 	 * 
 	 */
 	node._analyzeConf = function (conf) {
