@@ -424,10 +424,6 @@
 		node.game.updateState(state);
 	};
 	
-	node.retrievePlayer = function() {
-		if ('undefined' === typeof node.store) return false;
-		return node.store('player');
-	};
 	
 	node.createPlayer = function (pl) {
 		var player = new Player(pl);
@@ -445,6 +441,40 @@
 //		catch(e){};
 		
 	};
+	
+	/**
+	 * Saves the current session or fetches the
+	 * session with id 'sid'.
+	 * 
+	 */
+	node.session = function(sid) {
+		if ('undefined' == typeof node.store){
+			return false;
+		}
+		
+		var prefix = 'nodegame_';
+		
+		// Save the current session
+		if (!sid) {
+			sid = node.gsc.gmg.session;
+			
+			var sessionObj = {
+				session: sid,
+				player: node.player,
+				memory: node.game.memory,
+				state: node.game.gameState,
+				game: node.game.name,
+			};
+			
+			node.store(prefix + sid, sessionObj);
+			node.log('Session saved with id ' + sid);
+			return true;
+		}
+		
+		sid = prefix + sid;
+		return node.store(sid);
+	};
+	
 	
 	/**
 	 * Parses the a node configuration object and add default and missing

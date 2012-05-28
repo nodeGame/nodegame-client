@@ -13,23 +13,24 @@
 	GameMsg.actions = {};
 	GameMsg.targets = {};
 	
-	GameMsg.actions.SET 	= 'set'; 	// Changes properties of the receiver
-	GameMsg.actions.GET 	= 'get'; 	// Ask a properties of the receiver
-	GameMsg.actions.SAY		= 'say'; 	// Announce properties of the sender
+	GameMsg.actions.SET 		= 'set'; 	// Changes properties of the receiver
+	GameMsg.actions.GET 		= 'get'; 	// Ask a properties of the receiver
+	GameMsg.actions.SAY			= 'say'; 	// Announce properties of the sender
 	
-	GameMsg.targets.HI		= 'HI';		// Introduction
-	GameMsg.targets.STATE	= 'STATE';	// STATE
-	GameMsg.targets.PLIST 	= 'PLIST';	// PLIST
-	GameMsg.targets.TXT 	= 'TXT';	// Text msg
-	GameMsg.targets.DATA	= 'DATA';	// Contains a data-structure in the data field
+	GameMsg.targets.HI			= 'HI';		// Introduction
+	GameMsg.targets.HI_AGAIN	= 'HI_AGAIN';
+	GameMsg.targets.STATE		= 'STATE';	// STATE
+	GameMsg.targets.PLIST 		= 'PLIST';	// PLIST
+	GameMsg.targets.TXT 		= 'TXT';	// Text msg
+	GameMsg.targets.DATA		= 'DATA';	// Contains a data-structure in the data field
 	
-	GameMsg.targets.ACK		= 'ACK';	// A reliable msg was received correctly
+	GameMsg.targets.ACK			= 'ACK';	// A reliable msg was received correctly
 	
-	GameMsg.targets.WARN 	= 'WARN';	// To do.
-	GameMsg.targets.ERR		= 'ERR';	// To do.
+	GameMsg.targets.WARN 		= 'WARN';	// To do.
+	GameMsg.targets.ERR			= 'ERR';	// To do.
 	
-	GameMsg.IN				= 'in.';	// Prefix for incoming msgs
-	GameMsg.OUT				= 'out.';	// Prefix for outgoing msgs
+	GameMsg.IN					= 'in.';	// Prefix for incoming msgs
+	GameMsg.OUT					= 'out.';	// Prefix for outgoing msgs
 			
 	
 	/**

@@ -94,20 +94,39 @@
 		    	
 		    	if (msg) { // Parsing successful
 					if (msg.target === 'HI') {
-						
-						var player = that.player = node.retrievePlayer(); 
-						if (!player) {
-							that.player = new Player({id:msg.data,name:that.name});
-							node.createPlayer({id:msg.data,name:that.name});
-						}
-						
+
 						that.servername = msg.from;
+						
+						// Check if the player is reconnecting
+						var session = node.session(msg.session);
+						
+						// TODO: check if session is still valid
+						var validSession = (session) ? true : false;
+						
+						that.player = (validSession) ? session.player 
+													 : new Player({id:msg.data,name:that.name});
+						
+						node.createPlayer(that.player);
 						
 						// Get Ready to play
 						that.attachMsgListeners(socket, msg.session);
 						
-						// Send own name to SERVER
-						that.sendHI(that.player, 'ALL');
+						// Notify that whether we are reconnecting 
+						if (validSession) {
+							var msg = that.gmg.create({
+								action: GameMsg.actions.SAY,
+								target: 'HI_AGAIN',
+								data: that.player,
+							});
+							console.log('HI_AGAIN MSG!!');
+							console.log(msg);
+							that.send(msg);
+						}
+						else {	
+							// Send own name to SERVER
+							that.sendHI(that.player, 'ALL');
+						}
+						
 						// Ready to play
 						node.emit('out.say.HI');
 				   	 } 
@@ -117,7 +136,9 @@
 		});
 		
 	    socket.on('disconnect', function() {
-	    	// TODO: this generates an error: attempt to run compile-and-go script on a cleared scope
+	    	console.log('SAVING>...')
+	    	// Save the current state of the game
+	    	node.session();
 	    	node.log('closed');
 	    });
 	};
