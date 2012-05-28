@@ -3,6 +3,7 @@
 	var GameMsg = node.GameMsg;
 	var GameState = node.GameState;
 	var Player = node.Player;
+	var JSUS = node.JSUS;
 	
 	/*
 	 * GameMsgGenerator
@@ -22,7 +23,30 @@
 		this.session = session;
 		this.sender = sender;
 		this.state = state;
-	};	
+	}
+	
+	
+	// General
+	GameMsgGenerator.prototype.create = function(msg) {
+	
+	  // SAY, DATA, reliable, to SERVER
+	  var base = {
+			session: this.session, 
+			state: this.state,
+			action: GameMsg.actions.SAY,
+			target: GameMsg.targets.DATA,
+			from: this.sender,
+			to: 'SERVER',
+			text: null,
+			data: null,
+			priority: null,
+			reliable: 1,
+	  };
+	
+	  msg = JSUS.merge(base, msg);
+	  return new GameMsg(msg);
+	
+	};
 	
 	// HI
 	

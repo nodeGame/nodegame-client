@@ -2,7 +2,7 @@
 
 	var JSUS = node.JSUS;
 	var NDDB = node.NDDB;
-		
+	
 	var GameState = node.GameState;
 	
 	/**
@@ -122,7 +122,6 @@
 			return p;
 		}
 		
-		node.log('Attempt to access a non-existing player from the the player list. id: ' + id, 'ERR');
 		return false;
 	};
 	

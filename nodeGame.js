@@ -39,7 +39,7 @@
 	// Load the auxiliary library if available in the browser
 	if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
 	if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
-	if ('undefined' !== typeof NDDB) node.store = store; 
+	if ('undefined' !== typeof store) node.store = store; 
     
 	// if node
 	if ('object' === typeof module && 'function' === typeof require) {
@@ -424,26 +424,26 @@
 		node.game.updateState(state);
 	};
 	
-	node.createPlayer = function(pl) {
-			
-		var old_player = null;
-		if ('undefined' !== typeof node.store) {
-			old_player = node.store('player');
-			console.log('OLD PL');
-			console.log(old_player);
-		}
-		pl = old_player || pl || {};
+	node.retrievePlayer = function() {
+		if ('undefined' === typeof node.store) return false;
+		return node.store('player');
+	};
+	
+	node.createPlayer = function (pl) {
 		var player = new Player(pl);
 		
 		if ('undefined' !== typeof node.store) {
-			old_player = node.store('player', player);
+			node.store('player', player);
 		}
 		
+		//try {
+			Object.defineProperty(node, 'player', {
+		    	value: player,
+		    	enumerable: true,
+			});
+//		}
+//		catch(e){};
 		
-		Object.defineProperty(node, 'player', {
-	    	value: player,
-	    	enumerable: true,
-		});
 	};
 	
 	/**

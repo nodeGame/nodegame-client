@@ -94,8 +94,12 @@
 		    	
 		    	if (msg) { // Parsing successful
 					if (msg.target === 'HI') {
-						that.player = new Player({id:msg.data,name:that.name});
-						node.createPlayer({id:msg.data,name:that.name});
+						
+						var player = that.player = node.retrievePlayer(); 
+						if (!player) {
+							that.player = new Player({id:msg.data,name:that.name});
+							node.createPlayer({id:msg.data,name:that.name});
+						}
 						
 						that.servername = msg.from;
 						
