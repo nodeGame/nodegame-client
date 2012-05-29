@@ -80,7 +80,7 @@
 	};
 			
 	GameLoop.prototype.next = function (gameState) {
-		gameState = gameState || node.state();
+		gameState = gameState || node.state;
 		
 		
 		//node.log('NEXT OF THIS ' + gameState, 'DEBUG');
@@ -144,7 +144,7 @@
 	};
 	
 	GameLoop.prototype.previous = function (gameState) {
-		gameState = gameState || node.state();
+		gameState = gameState || node.state;
 		
 		if (!this.exist(gameState)) {
 			node.log('No previous state of non-existing state: ' + gameState, 'WARN');
@@ -185,19 +185,19 @@
 	};
 	
 	GameLoop.prototype.getName = function (gameState) {
-		gameState = gameState || node.state();
+		gameState = gameState || node.state;
 		if (!this.exist(gameState)) return false;
 		return this.loop[gameState.state]['state'][gameState.step]['name'];
 	};
 	
 	GameLoop.prototype.getAllParams = function (gameState) {
-		gameState = gameState || node.state();
+		gameState = gameState || node.state;
 		if (!this.exist(gameState)) return false;
 		return this.loop[gameState.state]['state'][gameState.step];
 	};
 	
 	GameLoop.prototype.getFunction = function (gameState) {
-		gameState = gameState || node.state();
+		gameState = gameState || node.state;
 		if (!this.exist(gameState)) return false;
 		return this.loop[gameState.state]['state'][gameState.step]['state'];
 	};
@@ -231,7 +231,7 @@
 		// was
 		//var state = state || new GameState();
 		// changed to 
-		gameState = gameState || node.state();
+		gameState = gameState || node.state;
 		var count = 0;
 		while (gameState) { 
 			count++;

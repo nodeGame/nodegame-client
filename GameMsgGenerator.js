@@ -8,21 +8,24 @@
 	/*
 	 * GameMsgGenerator
 	 * 
-	 * 
 	 * All message are reliable, but TXT messages.
 	 * 
 	 */
 	
 	/**
 	 * Expose constructor
+	 * 
+	 * TODO: make a static class
 	 */
 	
 	exports.GameMsgGenerator = GameMsgGenerator; 
 	
-	function GameMsgGenerator (session, sender, state) {	
-		this.session = session;
-		this.sender = sender;
-		this.state = state;
+	function GameMsgGenerator () {
+		
+//		Object.defineProperty(this, 'session', {
+//	    	value: session,
+//	    	enumerable: true,
+//		});
 	}
 	
 	
@@ -31,11 +34,11 @@
 	
 	  // SAY, DATA, reliable, to SERVER
 	  var base = {
-			session: this.session, 
-			state: this.state,
+			session: node.gsc.session, 
+			state: node.state,
 			action: GameMsg.actions.SAY,
 			target: GameMsg.targets.DATA,
-			from: this.sender,
+			from: node.player.id,
 			to: 'SERVER',
 			text: null,
 			data: null,
@@ -56,11 +59,11 @@
 	  var rel = reliable || 1;
 	  
 	  return new GameMsg( {
-	            			session: this.session,
-	            			state: this.state,
+	            			session: node.gsc.session,
+	            			state: node.state,
 	            			action: GameMsg.actions.SAY,
 	            			target: GameMsg.targets.HI,
-	            			from: this.sender,
+	            			from: node.player.id,
 	            			to: to,
 	            			text: new Player(player) + ' ready.',
 	            			data: player,
@@ -91,11 +94,11 @@
 		
 		
 		return new GameMsg({
-							session: this.session,
-							state: this.state,
+							session: node.gsc.session,
+							state: node.state,
 							action: action,
 							target: GameMsg.targets.STATE,
-							from: this.sender,
+							from: node.player.id,
 							to: to,
 							text: 'New State: ' + GameState.stringify(state),
 							data: state,
@@ -126,11 +129,11 @@
 		var rel = reliable || 1;
 		
 		return new GameMsg({
-							session: this.session, 
-							state: this.state,
+							session: node.gsc.session, 
+							state: node.state,
 							action: action,
 							target: GameMsg.targets.PLIST,
-							from: this.sender,
+							from: node.player.id,
 							to: to,
 							text: 'List of Players: ' + plist.size(),
 							data: plist.pl,
@@ -149,11 +152,11 @@
 		var rel = reliable || 0;
 		
 		return new GameMsg({
-							session: this.session,
-							state: this.state,
+							session: node.gsc.session,
+							state: node.state,
 							action: GameMsg.actions.SAY,
 							target: GameMsg.targets.TXT,
-							from: this.sender,
+							from: node.player.id,
 							to: to,
 							text: text,
 							data: null,
@@ -186,11 +189,11 @@
 		var text = text || 'data msg';
 		
 		return new GameMsg({
-							session: this.session, 
-							state: this.state,
+							session: node.gsc.session, 
+							state: node.state,
 							action: action,
 							target: GameMsg.targets.DATA,
-							from: this.sender,
+							from: node.player.id,
 							to: to,
 							text: text,
 							data: data,
@@ -207,11 +210,11 @@
 		var rel = reliable || 0;
 		
 		var newgm = new GameMsg({
-								session: this.session, 
-								state: this.state,
+								session: node.gsc.session, 
+								state: node.state,
 								action: GameMsg.actions.SAY,
 								target: GameMsg.targets.ACK,
-								from: this.sender,
+								from: node.player.id,
 								to: to,
 								text: 'Msg ' + gm.id + ' correctly received',
 								data: gm.id,

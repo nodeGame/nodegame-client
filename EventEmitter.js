@@ -1,11 +1,9 @@
-(function (exports) {
-	
-	// TODO: integrate with node.log
-	
+(function (node) {
+		
    /**
-    * Expose constructor.
+    * Expose constructor and 
     */
-	exports.EventEmitter = EventEmitter;
+	node.EventEmitter = EventEmitter;
 	
 	//var parser = exports.parser = {};
 		 
@@ -137,5 +135,7 @@
 	        
 	    }
 	};
+	 
+	
 //})('undefined' != typeof node ? node : module.exports);
 })('object' === typeof module ? module.exports : (window.node = {}));

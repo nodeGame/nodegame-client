@@ -2,10 +2,12 @@
  * nodeGame
  */
 
-(function (exports) {
+(function (node) {
 	
-	var node = exports;
-
+	
+	// Init
+	///////////////////////////////////////////////////////////////////////
+	
 	node.version = '0.7.5';
 	
 	node.verbosity = 0;
@@ -19,13 +21,17 @@
 			DEBUG: 3
 	};
 	
-	node.log = function (txt, level) {
-		var level = level || 0;
+	node.log = function (txt, level, prefix) {
+		if ('undefined' === typeof txt) return false;
+		
+		var level 	= level || 0;
+		var prefix 	= ('undefined' === typeof prefix) 	? 'nodeGame'
+														: prefix;
 		if ('string' === typeof level) {
 			var level = node.verbosity_levels[level];
 		}
 		if (node.verbosity > level) {
-			console.log(txt);
+			console.log(prefix + ': ' + txt);
 		}
 	};
 	
@@ -35,11 +41,18 @@
 	
 	// It will be overwritten later
 	node.game = {};
+	node.gsc = {};
+	node.session = {};
+	node.player = {};
 	
 	// Load the auxiliary library if available in the browser
 	if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
 	if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
-	if ('undefined' !== typeof store) node.store = store; 
+	if ('undefined' !== typeof store) node.store = store;
+	
+	
+	/////////////////////////////////////////////////////////////////////
+	
     
 	// if node
 	if ('object' === typeof module && 'function' === typeof require) {
@@ -163,6 +176,16 @@
 	    // TODO: add a method to scan the addons directory. Based on
 		// configuration
 	    node.GameTimer = require('./addons/GameTimer').GameTimer;
+	    
+	    
+	    /**
+		 * Expose GameSession
+		 * 
+		 * @api public
+		 */
+	
+	    require('./GameSession').GameSession;
+	    
 
 	  }
 	  // end node
@@ -173,53 +196,56 @@
 	var GameMsg = node.GameMsg;
 	var Game = node.Game;
 	var Player = node.Player;
+	var GameSession = node.GameSession;
 	
-	/**
-	 * Expose constructor
-	 * 
-	 */
-	exports.nodeGame = nodeGame;
 	
 	/**
 	 * Exposing constants
 	 */	
-	exports.actions = GameMsg.actions;
-	exports.IN = GameMsg.IN;
-	exports.OUT = GameMsg.OUT;
-	exports.targets = GameMsg.targets;		
-	exports.states = GameState.iss;
+	node.actions = GameMsg.actions;
+	node.IN = GameMsg.IN;
+	node.OUT = GameMsg.OUT;
+	node.targets = GameMsg.targets;		
+	node.states = GameState.iss;
 	
 	
 	// Constructor
-	nodeGame.prototype.__proto__ = EventEmitter.prototype;
-	nodeGame.prototype.constructor = nodeGame;
+//	nodeGame.prototype.__proto__ = EventEmitter.prototype;
+//	nodeGame.prototype.constructor = nodeGame;
+//	
+//	function nodeGame() {
+//		EventEmitter.call(this);
+//	};
+//	
 	
-	function nodeGame() {
-		EventEmitter.call(this);
-		this.gsc = null;
-		this.game = null;
-	};
-		
-	/**
-	 * Creating an object
-	 */
-	var that = node.node = new nodeGame();
+	// Creating EventEmitter
+	///////////////////////////////////////////
 	
-	node.state = function() {
-		return (that.game) ? node.node.game.gameState : false;
-	};
+	var ee = node._ee = new EventEmitter();
+
+	
+	node.gsc 		= new GameSocketClient();
+	//node.session	= new GameSession();
+	node.game 		= null;
+	node.player 	= null;
+	
+	Object.defineProperty(node, 'state', {
+    	get: function(){
+    		return (node.game) ? node.game.gameState : false;
+    	},
+    	configurable: false,
+    	enumerable: true,
+	});
+	
 	
 	node.on = function (event, listener) {
-		var state = this.state();
-		// node.log(state);
-		
 		// It is in the init function;
-		if (!state || (GameState.compare(state, new GameState(), true) === 0 )) {
-			that.addListener(event, listener);
+		if (!node.state || (GameState.compare(node.state, new GameState(), true) === 0 )) {
+			ee.addListener(event, listener);
 			// node.log('global');
 		}
 		else {
-			that.addLocalListener(event, listener);
+			ee.addLocalListener(event, listener);
 			// node.log('local');
 		}
 	};
@@ -227,60 +253,60 @@
 	node.once = function (event, listener) {
 		node.on(event, listener);
 		node.on(event, function(event, listener) {
-			that.removeListener(event, listener);
+			ee.removeListener(event, listener);
 		});
 	};
 	
 	node.removeListener = function (event, func) {
-		return that.removeListener(event, func);
+		return ee.removeListener(event, func);
 	};
 	
 	// TODO: create conf objects
 	node.play = function (conf, game) {	
 		node._analyzeConf(conf);
 		
-		node.gsc = that.gsc = new GameSocketClient(conf);
+		//node.gsc.connect(conf);
 		
-		node.game = that.game = new Game(game, that.gsc);
+		node.game = new Game(game);
 		node.emit('NODEGAME_GAME_CREATED');
 		
-		// node.memory = that.game.memory;
-		// INIT the game
-		that.game.init.call(that.game);
-		that.gsc.setGame(that.game);
 		
-		node.log('nodeGame: game loaded...');
-		node.log('nodeGame: ready.');
+		// INIT the game
+		node.game.init.call(node.game);
+		node.gsc.connect(conf); // was node.gsc.setGame(node.game);
+		
+		node.log('game loaded...');
+		node.log('ready.');
 	};	
 	
-	node.observe = function (conf, game) {
-		node._analyzeConf(conf);
-		
-		var game = game || {loops: {1: {state: function(){}}}};
-		node.gsc = that.gsc = new GameSocketClient(conf);
-		
-		node.game = that.game = new Game(game, that.gsc);
-		node.gsc.setGame(that.game);
-		
-		node.on('NODEGAME_READY', function(){
-			
-			// Retrieve the game and set is as observer
-			node.get('LOOP', function(game) {
-				
-				// alert(game);
-				// console.log('ONLY ONE');
-				// console.log(game);
-	// var game = game.observer = true;
-	// node.game = that.game = game;
-	//			
-	// that.game.init();
-	//			
-	// that.gsc.setGame(that.game);
-	//			
-	// node.log('nodeGame: game loaded...');
-	// node.log('nodeGame: ready.');
-			});
-		});
+//	node.observe = function (conf, game) {
+//		node._analyzeConf(conf);
+//		
+//		var game = game || {loops: {1: {state: function(){}}}};
+//		node.gsc = that.gsc = new GameSocketClient(conf);
+//		
+//		node.game = that.game = new Game(game, that.gsc);
+//		node.gsc.setGame(that.game);
+//		
+//		node.on('NODEGAME_READY', function(){
+//			
+//			// Retrieve the game and set is as observer
+//			node.get('LOOP', function(game) {
+//				
+//				// alert(game);
+//				// console.log('ONLY ONE');
+//				// console.log(game);
+//	// var game = game.observer = true;
+//	// node.game = that.game = game;
+//	//			
+//	// that.game.init();
+//	//			
+//	// that.gsc.setGame(that.game);
+//	//			
+//	// node.log('nodeGame: game loaded...');
+//	// node.log('nodeGame: ready.');
+//			});
+//		});
 		
 		
 // node.onDATA('GAME', function(data){
@@ -292,14 +318,14 @@
 // console.log('--------->Eh!')
 // console.log(msg);
 // });
-	};	
+//	};	
 	
-	node.fire = node.emit = function (event, p1, p2, p3) {	
-		that.emit(event, p1, p2, p3);
+	node.emit = function (event, p1, p2, p3) {	
+		ee.emit(event, p1, p2, p3);
 	};	
 	
 	node.say = function (data, what, whom) {
-		that.emit('out.say.DATA', data, whom, what);
+		ee.emit('out.say.DATA', data, whom, what);
 	};
 	
 	/**
@@ -311,19 +337,19 @@
 	 */
 	node.set = function (key, value) {
 		// TODO: parameter to say who will get the msg
-		that.emit('out.set.DATA', value, null, key);
+		ee.emit('out.set.DATA', value, null, key);
 	};
 	
 	
 	node.get = function (key, func) {
-		that.emit('out.get.DATA', key);
+		ee.emit('out.get.DATA', key);
 		
 		var listener = function(msg) {
 			if (msg.text === key) {
 				func.call(node.game, msg.data);
-				that.removeListener('in.say.DATA',listener);
+				ee.removeListener('in.say.DATA',listener);
 			}
-			// that.printAllListeners();
+			// ee.printAllListeners();
 		};
 		
 		node.on('in.say.DATA', listener);
@@ -355,19 +381,19 @@
 	
 	node.onTXT = function(func) {
 		node.on("in.say.TXT", function(msg) {
-			func.call(that.game,msg);
+			func.call(node.game,msg);
 		});
 	};
 	
 	node.onDATA = function(text, func) {
 		node.on('in.say.DATA', function(msg) {
 			if (text && msg.text === text) {
-				func.call(that.game,msg);
+				func.call(node.game,msg);
 			}
 		});
 		
 		node.on('in.set.DATA', function(msg) {
-			func.call(that.game,msg);
+			func.call(node.game,msg);
 		});
 	};
 	
@@ -375,17 +401,17 @@
 	
 	node.onSTATE = function(func) {
 		node.on("in.set.STATE", function(msg) {
-			func.call(that.game, msg);
+			func.call(node.game, msg);
 		});
 	};
 	
 	node.onPLIST = function(func) {
 		node.on("in.set.PLIST", function(msg) {
-			func.call(that.game, msg);
+			func.call(node.game, msg);
 		});
 		
 		node.on("in.say.PLIST", function(msg) {
-			func.call(that.game, msg);
+			func.call(node.game, msg);
 		});
 	};
 	
@@ -423,58 +449,6 @@
 	node.goto = function (state) {
 		node.game.updateState(state);
 	};
-	
-	
-	node.createPlayer = function (pl) {
-		var player = new Player(pl);
-		
-		if ('undefined' !== typeof node.store) {
-			node.store('player', player);
-		}
-		
-		//try {
-			Object.defineProperty(node, 'player', {
-		    	value: player,
-		    	enumerable: true,
-			});
-//		}
-//		catch(e){};
-		
-	};
-	
-	/**
-	 * Saves the current session or fetches the
-	 * session with id 'sid'.
-	 * 
-	 */
-	node.session = function(sid) {
-		if ('undefined' == typeof node.store){
-			return false;
-		}
-		
-		var prefix = 'nodegame_';
-		
-		// Save the current session
-		if (!sid) {
-			sid = node.gsc.gmg.session;
-			
-			var sessionObj = {
-				session: sid,
-				player: node.player,
-				memory: node.game.memory,
-				state: node.game.gameState,
-				game: node.game.name,
-			};
-			
-			node.store(prefix + sid, sessionObj);
-			node.log('Session saved with id ' + sid);
-			return true;
-		}
-		
-		sid = prefix + sid;
-		return node.store(sid);
-	};
-	
 	
 	/**
 	 * Parses the a node configuration object and add default and missing
@@ -554,6 +528,6 @@
 	}
 	// end node
 	
-	node.log('nodeGame ' + node.version + ' loaded', 'ALWAYS');
+	node.log(node.version + ' loaded', 'ALWAYS');
 	
 })('undefined' != typeof node ? node : module.exports);
