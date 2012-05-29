@@ -4,191 +4,8 @@
 
 (function (node) {
 	
-	
-	// Init
-	///////////////////////////////////////////////////////////////////////
-	
-	node.version = '0.7.5';
-	
-	node.verbosity = 0;
-	
-	node.verbosity_levels = {
-			ALWAYS: -(Number.MIN_VALUE+1), // Actually, it is not really
-											// always...
-			ERR: -1,
-			WARN: 0,
-			INFO: 1,
-			DEBUG: 3
-	};
-	
-	node.log = function (txt, level, prefix) {
-		if ('undefined' === typeof txt) return false;
-		
-		var level 	= level || 0;
-		var prefix 	= ('undefined' === typeof prefix) 	? 'nodeGame'
-														: prefix;
-		if ('string' === typeof level) {
-			var level = node.verbosity_levels[level];
-		}
-		if (node.verbosity > level) {
-			console.log(prefix + ': ' + txt);
-		}
-	};
-	
-	// Memory related operations
-	// Will be initialized later
-	node.memory = {};
-	
-	// It will be overwritten later
-	node.game = {};
-	node.gsc = {};
-	node.session = {};
-	node.player = {};
-	
-	// Load the auxiliary library if available in the browser
-	if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
-	if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
-	if ('undefined' !== typeof store) node.store = store;
-	
-	
-	/////////////////////////////////////////////////////////////////////
-	
-    
-	// if node
-	if ('object' === typeof module && 'function' === typeof require) {
-	
-	    /**
-		 * Expose JSU
-		 * 
-		 * @api public
-		 */
-	
-	    node.JSUS = require('JSUS').JSUS;
-		
-		/**
-		 * Expose NDDB
-		 * 
-		 * @api public
-		 */
-	  	
-	    node.NDDB = require('NDDB').NDDB;
-		
-		/**
-		 * Expose Socket.io-client
-		 * 
-		 * @api public
-		 */
-	
-	    node.io = require('socket.io-client');
-		
-		/**
-		 * Expose EventEmitter
-		 * 
-		 * @api public
-		 */
-	
-	    node.EventEmitter = require('./EventEmitter').EventEmitter;
-	    
-	    /**
-		 * Expose GameState.
-		 * 
-		 * @api public
-		 */
-	
-	    node.GameState = require('./GameState').GameState;
-	
-	    /**
-		 * Expose PlayerList.
-		 * 
-		 * @api public
-		 */
-	
-	    node.PlayerList = require('./PlayerList').PlayerList;
-	    
-	    /**
-		 * Expose Player.
-		 * 
-		 * @api public
-		 */
-	
-	    node.Player = require('./PlayerList').Player;
-	
-	    
-	    /**
-		 * Expose GameMsg
-		 * 
-		 * @api public
-		 */
-	
-	     node.GameMsg = require('./GameMsg').GameMsg;
-	
-	    /**
-		 * Expose GameLoop
-		 * 
-		 * @api public
-		 */
-	
-	    node.GameLoop = require('./GameLoop').GameLoop;
-	
-	    
-	    /**
-		 * Expose GameMsgGenerator
-		 * 
-		 * @api public
-		 */
-	
-	    node.GameMsgGenerator = require('./GameMsgGenerator').GameMsgGenerator;
-	    
-	    /**
-		 * Expose GameSocketClient
-		 * 
-		 * @api public
-		 */
-	
-	    node.GameSocketClient = require('./GameSocketClient').GameSocketClient;
-	
-	    
-	    /**
-		 * Expose GameDB
-		 * 
-		 * @api public
-		 */
-	
-	    node.GameDB = require('./GameDB').GameDB;
-	    
-	    /**
-		 * Expose GameBit
-		 * 
-		 * @api public
-		 */
-	
-	    node.GameBit = require('./GameDB').GameBit;
-	    
-	    /**
-		 * Expose Game
-		 * 
-		 * @api public
-		 */
-	
-	    node.Game = require('./Game').Game;
-	    
-	    
-	    // TODO: add a method to scan the addons directory. Based on
-		// configuration
-	    node.GameTimer = require('./addons/GameTimer').GameTimer;
-	    
-	    
-	    /**
-		 * Expose GameSession
-		 * 
-		 * @api public
-		 */
-	
-	    require('./GameSession').GameSession;
-	    
-
-	  }
-	  // end node
+	// Declaring variables
+	////////////////////////////////////////////
 		
 	var EventEmitter = node.EventEmitter;
 	var GameSocketClient = node.GameSocketClient;
@@ -199,33 +16,25 @@
 	var GameSession = node.GameSession;
 	
 	
-	/**
-	 * Exposing constants
-	 */	
-	node.actions = GameMsg.actions;
-	node.IN = GameMsg.IN;
-	node.OUT = GameMsg.OUT;
-	node.targets = GameMsg.targets;		
-	node.states = GameState.iss;
+	// Adding constants directly to node
+	//////////////////////////////////////////
 	
-	
-	// Constructor
-//	nodeGame.prototype.__proto__ = EventEmitter.prototype;
-//	nodeGame.prototype.constructor = nodeGame;
-//	
-//	function nodeGame() {
-//		EventEmitter.call(this);
-//	};
-//	
+	node.actions 	= GameMsg.actions;
+	node.IN 		= GameMsg.IN;
+	node.OUT 		= GameMsg.OUT;
+	node.targets 	= GameMsg.targets;		
+	node.states 	= GameState.iss;
 	
 	// Creating EventEmitter
 	///////////////////////////////////////////
 	
 	var ee = node._ee = new EventEmitter();
 
+
+	// Creating objects
+	///////////////////////////////////////////
 	
 	node.gsc 		= new GameSocketClient();
-	//node.session	= new GameSession();
 	node.game 		= null;
 	node.player 	= null;
 	
@@ -236,6 +45,54 @@
     	configurable: false,
     	enumerable: true,
 	});
+	
+	// Adding methods
+	///////////////////////////////////////////
+	
+	/**
+	 * Parses the a node configuration object and add default and missing
+	 * values. Stores the final configuration in node.conf.
+	 * 
+	 */
+	node._analyzeConf = function (conf) {
+		if (!conf) {
+			node.log('Invalid configuration object found.', 'ERR');
+			return false;
+		}
+		
+		// URL
+		if (!conf.host) {
+			if ('undefined' !== typeof window) {
+				if ('undefined' !== typeof window.location) {
+					var host = window.location.href;
+				}
+			}
+			else {
+				var host = conf.url;
+			}
+			if (host) {
+				var tokens = host.split('/').slice(0,-2);
+				// url was not of the form '/channel'
+				if (tokens.length > 1) {
+					conf.host = tokens.join('/');
+				}
+			}
+		}
+		
+		
+		// Add a trailing slash if missing
+		if (conf.host.lastIndexOf('/') !== host.length) {
+			conf.host = conf.host + '/';
+		}
+		
+		// VERBOSITY
+		if ('undefined' !== typeof conf.verbosity) {
+			node.verbosity = conf.verbosity;
+		}
+		
+		this.conf = conf;
+		return conf;
+	};
 	
 	
 	node.on = function (event, listener) {
@@ -355,6 +212,15 @@
 		node.on('in.say.DATA', listener);
 	};
 	
+	node.replay = function (reset) {
+		if (reset) node.game.memory.clear(true);
+		node.goto(new GameState({state: 1, step: 1, round: 1}));
+	}
+	
+	node.goto = function (state) {
+		node.game.updateState(state);
+	};
+	
 	// *Aliases*
 	//
 	// Conventions:
@@ -423,6 +289,7 @@
 		node.emit('out.say.TXT', text, to);
 	};	
 	
+	
 	node.random = {};
 	
 	// Generates event at RANDOM timing in milliseconds
@@ -440,94 +307,7 @@
 			func.call();
 		}, Math.random()*timing, func);
 	}
-	
-	node.replay = function (reset) {
-		if (reset) node.game.memory.clear(true);
-		node.goto(new GameState({state: 1, step: 1, round: 1}));
-	}
-	
-	node.goto = function (state) {
-		node.game.updateState(state);
-	};
-	
-	/**
-	 * Parses the a node configuration object and add default and missing
-	 * values. Stores the final configuration in node.conf.
-	 * 
-	 */
-	node._analyzeConf = function (conf) {
-		if (!conf) {
-			node.log('Invalid configuration object found.', 'ERR');
-			return false;
-		}
 		
-		// URL
-		if (!conf.host) {
-			if ('undefined' !== typeof window) {
-				if ('undefined' !== typeof window.location) {
-					var host = window.location.href;
-				}
-			}
-			else {
-				var host = conf.url;
-			}
-			if (host) {
-				var tokens = host.split('/').slice(0,-2);
-				// url was not of the form '/channel'
-				if (tokens.length > 1) {
-					conf.host = tokens.join('/');
-				}
-			}
-		}
-		
-		
-		// Add a trailing slash if missing
-		if (conf.host.lastIndexOf('/') !== host.length) {
-			conf.host = conf.host + '/';
-		}
-		
-		// VERBOSITY
-		if ('undefined' !== typeof conf.verbosity) {
-			node.verbosity = conf.verbosity;
-		}
-		
-		this.conf = conf;
-		return conf;
-	};
-	
-	// if node
-	if ('object' === typeof module && 'function' === typeof require) {
-		
-		 /**
-			 * Enable file system operations
-			 */
-	
-	    node.csv = {};
-	    node.fs = {};
-	    
-	    var fs = require('fs');
-	    var path = require('path');
-	    var csv = require('ya-csv');
-	    
-	    
-	    /**
-		 * Takes an obj and write it down to a csv file;
-		 */
-	    node.fs.writeCsv = function (path, obj) {
-	    	var writer = csv.createCsvStreamWriter(fs.createWriteStream( path, {'flags': 'a'}));
-	    	var i;
-	        for (i=0;i<obj.length;i++) {
-	    		writer.writeRecord(obj[i]);
-	    	}
-	    };
-	    
-	    node.memory.dump = function (path) {
-			node.fs.writeCsv(path, node.game.memory.split().fetchValues());
-	    }
-	  
-	}
-	// end node
-	
 	node.log(node.version + ' loaded', 'ALWAYS');
 	
-})('undefined' != typeof node ? node : module.exports);
+})('undefined' != typeof node ? node : module.parent.exports);

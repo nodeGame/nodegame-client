@@ -2,7 +2,7 @@
     "name": "nodegame-client"
   , "description": "nodeGame client for the browser and node.js"
   , "version": "0.1.14"
-  , "main" : "nodeGame.js"
+  , "main" : "index.js"
   , "homepage": "http://www.nodegame.org"
   , "keywords": ["game", "multiplayers", "experiments", "socket.io", "node", "websockets"]
   , "author": "Stefano Balietti <futur.dorko@gmail.com>"
