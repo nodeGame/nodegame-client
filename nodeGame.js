@@ -35,16 +35,18 @@
 	///////////////////////////////////////////
 	
 	node.gsc 		= new GameSocketClient();
+	node.state		= new GameState();
+	
 	node.game 		= null;
 	node.player 	= null;
 	
-	Object.defineProperty(node, 'state', {
-    	get: function(){
-    		return (node.game) ? node.game.gameState : false;
-    	},
-    	configurable: false,
-    	enumerable: true,
-	});
+//	Object.defineProperty(node, 'state', {
+//    	get: function(){
+//    		return (node.game) ? node.game.gameState : false;
+//    	},
+//    	configurable: false,
+//    	enumerable: true,
+//	});
 	
 	// Adding methods
 	///////////////////////////////////////////
