@@ -56,18 +56,27 @@
 	}
 	
 	
-//	node.session.restore = function (sid) {
-//		var sessionObj = node.session(sid);
+//	node.session.restore = function (sessionObj, sid) {
 //		
 //		if (!sessionObj) return false;
 //		if (!sessionObj.player) return false;
 //		if (!sessionObj.state) return false;
 //		
-//		node.player			= sessionObj
+//		sid = sid || sessionObj.player.sid;
+//		if (!sid) return false;
+//		
+//		var player = {
+//				id: 	sessionObj.player.id,
+//				sid: 	sid,
+//				name:	node.gsc.name,
+//		};
+//	
+//		that.createPlayer(player);
 //		
 //		node.gsc.session 	= sessionObj.id;
 //		node.game.memory 	= sessionObj.memory;
-//		node.game.state		= sessionObj.state;
+//		
+//		node.goto(session.state);	
 //		
 //		return true;
 //		
