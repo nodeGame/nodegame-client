@@ -1,18 +1,21 @@
 var util = require('util'),
 	should = require('should');
 
-var node = module.exports.node = require('../nodeGame.js').nodeGame;
+
+
+var node = module.exports.node = require('./../index.js');
 
 //console.log(node);
 
-var PlayerList = require('../PlayerList').PlayerList;
-var Player = require('../PlayerList').Player;
+var PlayerList = node.PlayerList;
+var Player = node.Player;
 
 
 
 var test_player = null,
 	player = new Player ({
 					id: 1,
+					sid: 1,
 					count: 1,
 					name: 'Ste',
 					state: {round: 1},
@@ -40,7 +43,7 @@ describe('PlayerList', function() {
 			pl.add(player);
 		});
 		it('should result in a player list of length 1', function() {
-			pl.count().should.equal(1);
+			pl.length.should.equal(1);
 		});
 		
 	});

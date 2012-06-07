@@ -166,7 +166,7 @@
     
     node.memory.dump = function (path) {
 		node.fs.writeCsv(path, node.game.memory.split().fetchValues());
-    }
+    };
 	
 	
 })('undefined' != typeof node ? node : module.parent.exports);
