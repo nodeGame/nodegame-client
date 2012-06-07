@@ -34,11 +34,9 @@
 	// Creating objects
 	///////////////////////////////////////////
 	
-	node.msg		= node.GameMsgGenerator;
-	
+	node.msg		= node.GameMsgGenerator;	
 	node.gsc 		= new GameSocketClient();
-//	node.state		= new GameState();
-	
+
 	node.game 		= null;
 	node.player 	= null;
 	

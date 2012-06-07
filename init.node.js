@@ -118,9 +118,18 @@
     node.Game = require('./lib/Game').Game;
     
     
+    // ADDONS
+    
     // TODO: add a method to scan the addons directory. Based on
 	// configuration
     node.GameTimer = require('./addons/GameTimer').GameTimer;
+    
+    /**
+	 * Expose TriggerManager
+	 * 
+	 * @api public
+	 */
+    node.TriggerManager = require('./addons/TriggerManager').TriggerManager;
     
     
     /**
@@ -128,7 +137,6 @@
 	 * 
 	 * @api public
 	 */
-    // TODO: do we need it?
     require('./addons/GameSession').GameSession;
     
     
