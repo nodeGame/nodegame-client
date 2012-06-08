@@ -175,15 +175,12 @@
     	var hash, index, ipath;
     	for (hash in node.game.memory.__H) {
     		if (node.game.memory.__H.hasOwnProperty(hash)){
-        		console.log(hash);
     			if ('undefined' !== typeof node.game.memory[hash]) {
     				for (index in node.game.memory[hash]) {
-    					console.log(index);
     					if (node.game.memory[hash].hasOwnProperty(index)) {
     						ipath = dir + hash + '_' + index + '.csv';
-    						console.log('Dumping ' + ipath);
-    						var o = node.game.memory[hash][index].split().fetchValues()
-    	    				node.fs.writeCsv(ipath, o);
+    						node.log('Writing ' + ipath);
+    	    				node.fs.writeCsv(ipath, node.game.memory[hash][index].split().fetchValues());
     					}
     				}
     				
@@ -193,5 +190,8 @@
 		
     };
     
+//    node.PlayerList.prototype.dump = function() {
+//    	
+//    };
 	
 })('undefined' != typeof node ? node : module.parent.exports);
