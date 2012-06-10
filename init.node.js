@@ -190,8 +190,9 @@
 		
     };
     
-//    node.PlayerList.prototype.dump = function() {
-//    	
-//    };
+    node.dumpPL = function(path) {
+    	path = path || './pl.csv';
+    	node.fs.writeCsv(path, node.game.pl.split().fetchValues());
+    };
 	
 })('undefined' != typeof node ? node : module.parent.exports);
