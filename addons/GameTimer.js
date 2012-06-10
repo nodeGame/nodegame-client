@@ -56,7 +56,7 @@
 	GameTimer.prototype.fire = function (h) {
 		if (!h && !h.hook) return;
 		var hook = h.hook || h;
-		if (hook instanceof Function) {
+		if ('function' === typeof hook) {
 			var ctx = h.ctx || node.game;
 			hook.call(ctx);
 		}
