@@ -28,7 +28,7 @@
 	// Creating EventEmitter
 	///////////////////////////////////////////
 	
-	var ee = node._ee = new EventEmitter();
+	var ee = node.events = node._ee = new EventEmitter();
 
 
 	// Creating objects
@@ -41,7 +41,7 @@
 	node.player 	= null;
 	
 	Object.defineProperty(node, 'state', {
-    	get: function(){
+    	get: function() {
     		return (node.game) ? node.game.gameState : false;
     	},
     	configurable: false,
