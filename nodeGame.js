@@ -28,27 +28,25 @@
 	// Creating EventEmitter
 	///////////////////////////////////////////
 	
-	var ee = node._ee = new EventEmitter();
+	var ee = node.events = node._ee = new EventEmitter();
 
 
 	// Creating objects
 	///////////////////////////////////////////
 	
-	node.msg		= node.GameMsgGenerator;
-	
+	node.msg		= node.GameMsgGenerator;	
 	node.gsc 		= new GameSocketClient();
-	node.state		= new GameState();
-	
+
 	node.game 		= null;
 	node.player 	= null;
 	
-//	Object.defineProperty(node, 'state', {
-//    	get: function(){
-//    		return (node.game) ? node.game.gameState : false;
-//    	},
-//    	configurable: false,
-//    	enumerable: true,
-//	});
+	Object.defineProperty(node, 'state', {
+    	get: function() {
+    		return (node.game) ? node.game.gameState : false;
+    	},
+    	configurable: false,
+    	enumerable: true,
+	});
 	
 	// Adding methods
 	///////////////////////////////////////////

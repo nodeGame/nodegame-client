@@ -17,13 +17,22 @@
 				
 		// Returns the current session
 		if (!sid) {
-			return {
-				id: 	node.gsc.session,
-				player: node.player,
-				memory: node.game.memory,
-				state: 	node.game.gameState,
-				game: 	node.game.name,
+			var session = {
+					id: 	node.gsc.session,
+					player: node.player,
+					memory: node.game.memory,
+					state: 	node.game.gameState,
+					game: 	node.game.name,
+					history: undefined,
 			};
+			
+			// If we saved the emitted events, add them to the
+			// session object
+			if (node.events.history || node.events.history.length) {
+				session.history = node.events.history.fetch();
+			}
+			
+			return session;
 		}
 		
 		if (!node.session.enabled) {

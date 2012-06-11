@@ -118,9 +118,18 @@
     node.Game = require('./lib/Game').Game;
     
     
+    // ADDONS
+    
     // TODO: add a method to scan the addons directory. Based on
 	// configuration
     node.GameTimer = require('./addons/GameTimer').GameTimer;
+    
+    /**
+	 * Expose TriggerManager
+	 * 
+	 * @api public
+	 */
+    node.TriggerManager = require('./addons/TriggerManager').TriggerManager;
     
     
     /**
@@ -128,7 +137,6 @@
 	 * 
 	 * @api public
 	 */
-    // TODO: do we need it?
     require('./addons/GameSession').GameSession;
     
     
@@ -158,7 +166,33 @@
     
     node.memory.dump = function (path) {
 		node.fs.writeCsv(path, node.game.memory.split().fetchValues());
-    }
-	
+    };
+    
+    node.memory.dumpAllIndexes = function (dir) {
+    	if (JSUS.isEmpty(node.game.memory.__H)) return;
+    	
+    	dir = dir || './';
+    	var hash, index, ipath;
+    	for (hash in node.game.memory.__H) {
+    		if (node.game.memory.__H.hasOwnProperty(hash)){
+    			if ('undefined' !== typeof node.game.memory[hash]) {
+    				for (index in node.game.memory[hash]) {
+    					if (node.game.memory[hash].hasOwnProperty(index)) {
+    						ipath = dir + hash + '_' + index + '.csv';
+    						node.log('Writing ' + ipath);
+    	    				node.fs.writeCsv(ipath, node.game.memory[hash][index].split().fetchValues());
+    					}
+    				}
+    				
+    			}
+    		}
+    	}
+		
+    };
+    
+    node.dumpPL = function(path) {
+    	path = path || './pl.csv';
+    	node.fs.writeCsv(path, node.game.pl.split().fetchValues());
+    };
 	
 })('undefined' != typeof node ? node : module.parent.exports);
