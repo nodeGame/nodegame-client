@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GameState.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../', thisFile = 'lib/GameState.js';
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>GameState.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+  
+  <span class="kd">var</span> <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><ul>
+<li>GameState
+<ul><li>
+<ul><li>Representation of a state of the game
+*</li></ul></li></ul></li>
+</ul>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><ul>
+<li>Expose constructor</li>
+</ul>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  
+  <span class="nx">exports</span><span class="p">.</span><span class="nx">GameState</span> <span class="o">=</span> <span class="nx">GameState</span><span class="p">;</span>
+  
+  <span class="nx">GameState</span><span class="p">.</span><span class="nx">iss</span> <span class="o">=</span> <span class="p">{};</span>
+
+  <span class="nx">GameState</span><span class="p">.</span><span class="nx">iss</span><span class="p">.</span><span class="nx">UNKNOWN</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>    <span class="c1">// Game has not been initialized</span>
+  <span class="nx">GameState</span><span class="p">.</span><span class="nx">iss</span><span class="p">.</span><span class="nx">LOADING</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>   <span class="c1">// The game is loading</span>
+  <span class="nx">GameState</span><span class="p">.</span><span class="nx">iss</span><span class="p">.</span><span class="nx">LOADED</span>  <span class="o">=</span> <span class="mi">25</span><span class="p">;</span>   <span class="c1">// Game is loaded, but the GameWindow could still require some time</span>
+  <span class="nx">GameState</span><span class="p">.</span><span class="nx">iss</span><span class="p">.</span><span class="nx">PLAYING</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>   <span class="c1">// Everything is ready</span>
+  <span class="nx">GameState</span><span class="p">.</span><span class="nx">iss</span><span class="p">.</span><span class="nx">DONE</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>   <span class="c1">// The player completed the game state</span>
+  
+  <span class="kd">function</span> <span class="nx">GameState</span> <span class="p">(</span><span class="nx">gs</span><span class="p">)</span> <span class="p">{</span>
+    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>TODO: The check for gs is done many times. Change it.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">gs</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span>  <span class="nx">gs</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span>   <span class="nx">gs</span><span class="p">.</span><span class="nx">step</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">round</span> <span class="o">=</span>  <span class="nx">gs</span><span class="p">.</span><span class="nx">round</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">is</span> <span class="o">=</span>     <span class="p">(</span><span class="nx">gs</span><span class="p">.</span><span class="nx">is</span><span class="p">)</span> <span class="o">?</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">is</span> <span class="o">:</span> <span class="nx">GameState</span><span class="p">.</span><span class="nx">iss</span><span class="p">.</span><span class="nx">UNKNOWN</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span>   <span class="p">(</span><span class="nx">gs</span><span class="p">.</span><span class="nx">paused</span><span class="p">)</span> <span class="o">?</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">paused</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span>  <span class="mi">0</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span>   <span class="mi">0</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">round</span> <span class="o">=</span>  <span class="mi">0</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">is</span> <span class="o">=</span>     <span class="nx">GameState</span><span class="p">.</span><span class="nx">iss</span><span class="p">.</span><span class="nx">UNKNOWN</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span>   <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  
+  <span class="nx">GameState</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">is</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">round</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">;</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">paused</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">out</span> <span class="o">+=</span> <span class="s1">&#39; [P]&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
+  <span class="p">};</span>
+  
+  <span class="nx">GameState</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toHash</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">GameState</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">str</span><span class="p">);</span>
+  <span class="p">};</span>
+  
+  <span class="nx">GameState</span><span class="p">.</span><span class="nx">toHash</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gs</span><span class="p">,</span> <span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gs</span> <span class="o">||</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gs</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">str</span> <span class="o">||</span> <span class="o">!</span><span class="nx">str</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+    
+    <span class="kd">var</span> <span class="nx">hash</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+      <span class="nx">symbols</span> <span class="o">=</span> <span class="s1">&#39;Ssrip&#39;</span><span class="p">,</span>
+      <span class="nx">properties</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="s1">&#39;round&#39;</span><span class="p">,</span> <span class="s1">&#39;is&#39;</span><span class="p">,</span> <span class="s1">&#39;paused&#39;</span><span class="p">];</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">idx</span> <span class="o">=</span> <span class="nx">symbols</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">str</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span> 
+      <span class="nx">hash</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">str</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">:</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">gs</span><span class="p">[</span><span class="nx">properties</span><span class="p">[</span><span class="nx">idx</span><span class="p">]]);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">hash</span><span class="p">;</span>
+  <span class="p">};</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>Compares two GameStates. 
+If they are equal returns 0,
+If gm1 is more ahead returns 1, vicersa -1;
+If strict is set, also the is property is compared</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">GameState</span><span class="p">.</span><span class="nx">compare</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gs1</span><span class="p">,</span> <span class="nx">gs2</span><span class="p">,</span> <span class="nx">strict</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">strict</span> <span class="o">=</span> <span class="nx">strict</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code><span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;COMPARAING GSs&#39;</span><span class="p">,</span><span class="s">&#39;DEBUG&#39;</span><span class="p">)</span>
+<span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">gs1</span><span class="p">,</span><span class="s">&#39;DEBUG&#39;</span><span class="p">);</span>
+<span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">gs2</span><span class="p">,</span><span class="s">&#39;DEBUG&#39;</span><span class="p">);</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">state</span> <span class="o">-</span> <span class="nx">gs2</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="nx">result</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">result</span> <span class="o">=</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">round</span> <span class="o">-</span> <span class="nx">gs2</span><span class="p">.</span><span class="nx">round</span><span class="p">;</span>
+      
+      <span class="k">if</span> <span class="p">(</span><span class="nx">result</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">step</span> <span class="o">-</span> <span class="nx">gs2</span><span class="p">.</span><span class="nx">step</span><span class="p">;</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="nx">strict</span> <span class="o">&amp;&amp;</span> <span class="nx">result</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">is</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">result</span> <span class="o">=</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">is</span> <span class="o">-</span> <span class="nx">gs2</span><span class="p">.</span><span class="nx">is</span><span class="p">;</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code><span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;EQUAL? &#39;</span> <span class="o">+</span> <span class="n">result</span><span class="p">);</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+  <span class="p">};</span>
+  
+  <span class="nx">GameState</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gs</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">round</span> <span class="o">+</span> <span class="s1">&#39;) &#39;</span> <span class="o">+</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">state</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">step</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">is</span><span class="p">;</span>
+  <span class="p">};</span> 
+
+<span class="p">})(</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
+  <span class="p">,</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>
