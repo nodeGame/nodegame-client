@@ -5,3 +5,5 @@ npm-debug.log
 *~
 _*
 node_modules
+
+*.geany
