@@ -184,23 +184,28 @@ var fs = require('fs'),
  * 	@see [node fs api](http://nodejs.org/api/fs.html#fs_fs_createwritestream_path_options)
  */
 node.fs.writeCsv = function (path, obj, options) {
-	options = options || {};
-	options.flags = options.flags || {'a'}
+	if (!path || !obj) {
+		node.log('Empty path or object. Aborting.', 'ERR', 'node.fs.writeCsv: ');
+		return false;
+	}
 	
-	var writer = csv.createCsvStreamWriter(fs.createWriteStream( path, options));
+	options = options || {};
+	options.flags = options.flags || 'a';
+	
+	var writer = csv.createCsvStreamWriter(fs.createWriteStream(path, options));
 	
 	// <!-- Add headers, if requested, and if found -->
 	options.writeHeaders = options.writeHeaders || true;
 	if (options.writeHeaders) {
 		var headers = [];
-		if (node.JSUSisArray(options.headers)) {
+		if (node.JSUS.isArray(options.headers)) {
 			headers = options.headers;
 		}
-		else if (node.JSUSisArray(obj)) {
-			headers = node.JSUSkeys(obj[0]);
+		else if (node.JSUS.isArray(obj) && obj.length) {
+			headers = node.JSUS.keys(obj[0]);
 		}
 		
-		if (headers.length) {
+		if (headers && headers.length) {
 			writer.writeRecord(headers);
 		}
 		else {
