@@ -245,7 +245,7 @@ node.memory.dump = function (path, options) {
  * Serialezes as csv file each of the hashed indexes of the memory object
  * 
  * Each file is named after the name of the hashed property 
- * and the index. E.g. `state_3.1.1.csv`, or player_18432986411.csv`, etc.
+ * and the index. E.g. state_3.1.1.csv, or player_18432986411.csv`, etc.
  * 
  * @param {string} dir The path to the folder in which all files will be saved
  * @param {options} options Optional. Configuration options
