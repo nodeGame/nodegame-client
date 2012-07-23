@@ -170,7 +170,7 @@ var fs = require('fs'),
  * 
  * It accepts a configuration object as third paramter. Available options:
  *  
- *  	{ 	header: ['A', 'B', 'C'],// specify the headers directly
+ *  	{ 	headers: ['A', 'B', 'C'],// specify the headers directly
  *  		writeHeaders: false, 	// default true,
  *  		flags: 'w', 			// default, 'a'
  *  		encoding: 'utf-8', 		// default null
@@ -194,14 +194,17 @@ node.fs.writeCsv = function (path, obj, options) {
 	
 	var writer = csv.createCsvStreamWriter(fs.createWriteStream(path, options));
 	
-	// <!-- Add headers, if requested, and if found -->
-	options.writeHeaders = options.writeHeaders || true;
+	// <!-- Add headers, if not otherwise requested, and if found -->
+	if ('undefined' === typeof options.writeHeaders) {
+		options.writeHeaders = true;
+	}
+	
 	if (options.writeHeaders) {
 		var headers = [];
 		if (node.JSUS.isArray(options.headers)) {
 			headers = options.headers;
 		}
-		else if (node.JSUS.isArray(obj) && obj.length) {
+		else {
 			headers = node.JSUS.keys(obj[0]);
 		}
 		
@@ -234,6 +237,9 @@ node.fs.writeCsv = function (path, obj, options) {
  * 
  * Serializes as a csv file all the entries of the memory object
  * 
+ * By defaults, no headers are added. If requested, headers can 
+ * be specified in the `options` parameter.
+ * 
  * @param {string} path The path to the csv file
  * @param {options} options Optional. Configuration options
  *
@@ -241,6 +247,12 @@ node.fs.writeCsv = function (path, obj, options) {
  * 
  */
 node.memory.dump = function (path, options) {
+	if ('undefined' === typeof path) {
+		node.log('Missing path parameter', 'ERR', 'node.memory.dump: ');
+		return;
+	}
+	options = options || {};
+	if (!options.headers && !options.writeHeaders) options.writeHeaders = false;
 	node.fs.writeCsv(path, node.game.memory.split().fetchValues(), options);
 };
 
@@ -259,8 +271,12 @@ node.memory.dump = function (path, options) {
  */
 node.memory.dumpAllIndexes = function (dir, options) {
 	if (JSUS.isEmpty(node.game.memory.__H)) return;
+	if ('undefined' === typeof dir) {
+		node.log('Missing dir parameter', 'ERR', 'node.memory.dumpAllIndexes: ');
+		return;
+	}
 	
-	dir = dir || './';
+	if (dir[dir.length] !== '/') dir = dir + '/';
 	var hash, index, ipath;
 	for (hash in node.game.memory.__H) {
 		if (node.game.memory.__H.hasOwnProperty(hash)){
@@ -290,7 +306,14 @@ node.memory.dumpAllIndexes = function (dir, options) {
  * 	@see node.fs.writeCsv
  */
 node.PlayerList.prototype.dump = function (path, options) {
-	path = path || './pl.csv';
+	if ('undefined' === typeof path) {
+		node.log('Missing path parameter', 'ERR', 'PlayerList.dump: ');
+		return;
+	}
+	options = options || {};
+	if (!options.headers) {
+		options.headers = node.JSUS.keys(this.first());
+	}
 	node.fs.writeCsv(path, this.split().fetchValues(), options);
 };
 	
