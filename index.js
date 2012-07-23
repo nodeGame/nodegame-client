@@ -31,7 +31,7 @@ node.verbosity_levels = {
 		ERR: -1,
 		WARN: 0,
 		INFO: 1,
-		DEBUG: 3
+		DEBUG: 100
 };
 
 /**
