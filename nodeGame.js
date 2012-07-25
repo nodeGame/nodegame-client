@@ -1,7 +1,14 @@
-/*!
- * nodeGame
+/**
+ * # nodeGame
+ * 
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed 
+ * 
+ * ### nodeGame: Web Experiments in the Browser
+ * 
+ * *nodeGame* is a free, open source, event-driven javascript framework for on line, 
+ * multiplayer games in the browser.
  */
-
 (function (node) {
 	
 	// Declaring variables

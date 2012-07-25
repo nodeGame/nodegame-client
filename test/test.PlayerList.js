@@ -20,7 +20,32 @@ var test_player = null,
 					name: 'Ste',
 					state: {round: 1},
 					ip:	'1.2.3.4',
-});
+	}),
+	player2 = new Player ({
+		id: 2,
+		sid: 2,
+		count: 2,
+		name: 'Ste2',
+		state: {round: 1},
+		ip:	'1.2.3.5',
+	}),
+	player3 = new Player ({
+		id: 3,
+		sid: 3,
+		count: 3,
+		name: 'Ste3',
+		state: {round: 1},
+		ip:	'1.2.3.6',
+	}),
+	player4 = new Player ({
+		id: 4,
+		sid: 4,
+		count: 4,
+		name: 'Ste4',
+		state: {round: 1},
+		ip:	'1.2.3.7',
+	});
+	
 
 var pl = new PlayerList();
 
@@ -70,6 +95,29 @@ describe('PlayerList', function() {
 		it('should remove the player we have inserted before', function() {
 			pl.length.should.equal(0);
 		});
-		
 	});
+	
+	describe('#getRandom()', function() {
+		before(function(){
+			pl.add(player);
+			pl.add(player2);
+			pl.add(player3);
+			pl.add(player4);
+		});
+		
+		it('should return one random player', function() {
+			var r = pl.getRandom();
+			r.name.should.exist;
+			r.should.be.a('object');
+			[player,player2,player3,player4].should.include(r);
+			
+		});
+		
+		it('should return two random players', function() {
+			var set = pl.getRandom(2);
+			set.length.should.equal(2);
+		});
+	});
+	
+	
 });

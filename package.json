@@ -20,6 +20,7 @@
       "NDDB": ">= 0.1.6"
     }
   , "devDependencies": {
+		"docker": "0.1.2",
     "mocha": ">= 0.3.0",
     "should": ">= 0.5.1"
   }
