@@ -276,7 +276,7 @@ node.memory.dumpAllIndexes = function (dir, options) {
 		return;
 	}
 	
-	if (dir[dir.length] !== '/') dir = dir + '/';
+	if (dir[dir.length-1] !== '/') dir = dir + '/';
 	var hash, index, ipath;
 	for (hash in node.game.memory.__H) {
 		if (node.game.memory.__H.hasOwnProperty(hash)){
@@ -284,7 +284,7 @@ node.memory.dumpAllIndexes = function (dir, options) {
 				for (index in node.game.memory[hash]) {
 					if (node.game.memory[hash].hasOwnProperty(index)) {
 						ipath = dir + hash + '_' + index + '.csv';
-						node.log('Writing ' + ipath);
+						node.log('Writing ' + ipath, 'DEBUG', 'node.memory.dumpAllIndexes: ');
 	    				node.fs.writeCsv(ipath, node.game.memory[hash][index].split().fetchValues(), options);
 					}
 				}

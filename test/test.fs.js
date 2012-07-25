@@ -108,6 +108,17 @@ var deleteIfExist = function(file) {
 	}
 };
 
+var deleteCsvDir = function(dir) {
+	if (dir[dir.length] !== '/') dir = dir + '/';
+	fs.readdir(dir, function(err, files) {
+	    files.filter(function(file) { return file.substr(-4) == '.csv'; })
+	         .forEach(function(file) { deleteIfExist(dir + file) });
+	    
+	    deleteIfExist('./tmp')
+	});
+
+}
+
 var checkCsvFile = function (check) {
 	check = check || {};
 	var file = check.filename || filename;
@@ -233,7 +244,7 @@ describe('FS operations', function() {
 			node.memory.dumpAllIndexes('./tmp');
 		});
 		after(function() {
-			deleteIfExist('./tmp');
+			deleteCsvDir('./tmp/');
 		});
 		it('should create csv files for index \'painter\'', function() {
 //			for (var i=0; i< items.length) {
