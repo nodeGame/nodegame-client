@@ -1,18 +1,45 @@
+/**
+ * # GameSession
+ * 
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed 
+ * 
+ * Addon to save and load the nodeGame session in the browser
+ * 
+ *  @see node.store
+ *  
+ * ---
+ * 
+ */
+
 (function (node) {
 	
+	// ## Global scope
 	
-	/**
-	 * GameSession
-	 * 
-	 */
-	
-	var JSUS = node.JSUS;
-	var NDDB = node.NDDB;
-	var store = node.store;
-	
-	var prefix = 'nodegame_';
-	
+	var JSUS = node.JSUS,
+		NDDB = node.NDDB,
+		store = node.store;
 
+	var prefix = 'nodegame_';
+
+/**
+ * ## node.session
+ *
+ * Loads a nodeGame session
+ *
+ * If no parameter is passed it will return the current session.
+ * Else, it will try to load a session with the given id. 
+ *
+ * This method interact with the `node.store` object that provides
+ * lower level capabilities to write to a persistent support (e.g. 
+ * the browser localStorate).
+ * 
+ * @param {number} sid Optional. The session id to load
+ * @return {object} The session object
+ * 
+ *  @see node.store
+ * 
+ */
 	node.session = function (sid) {
 				
 		// Returns the current session
@@ -42,7 +69,13 @@
 		// Tries to return a stored session
 		return node.store(prefix + sid);
 	};
-	
+
+/**
+ * ## node.session.enabled
+ * 
+ * TRUE, if the session can be saved to a persistent support
+ * 
+ */	
 	Object.defineProperty(node.session, 'enabled', {
     	get: function(){
     		return (node.store) ? node.store.persistent : false;
@@ -50,7 +83,14 @@
     	configurable: false,
     	enumerable: true,
 	});
-	
+
+/**
+ * ## node.session.store
+ * 
+ * Stores the current session to a persistent medium
+ * 
+ * @return {boolean} TRUE, if session saving was successful
+ */	
 	node.session.store = function() {
 		if (!node.session.enabled) {
 			node.log('Could not save the session');
@@ -64,7 +104,7 @@
 		return true;
 	}
 	
-	
+// <!--	
 //	node.session.restore = function (sessionObj, sid) {
 //		
 //		if (!sessionObj) return false;
@@ -90,6 +130,7 @@
 //		return true;
 //		
 //	};
+// -->
 
-	
+// ## Closure	
 })('undefined' != typeof node ? node : module.parent.exports);
