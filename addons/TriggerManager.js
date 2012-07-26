@@ -203,9 +203,13 @@ TriggerManager.prototype.addTrigger = function (trigger, pos) {
 /**
  * ### TriggerManager.removeTrigger
  * 
+ * Removes a trigger from the trigger array
  * 
+ * @param {function} trigger The function to remove
+ * @return {boolean} TRUE, if removal is successful
  */	  
 TriggerManager.prototype.removeTrigger = function (trigger) {
+	if (!trigger) return false;
 	for (var i=0; i< triggersArray.length; i++) {
 		if (triggersArray[i] == trigger) {
 			return triggersArray.splice(i,1);
@@ -222,13 +226,35 @@ TriggerManager.prototype.removeTrigger = function (trigger) {
  * Triggers are fired according to a LIFO queue, i.e. new trigger
  * functions are fired first.
  * 
- * Depending on the value of `TriggerManager.return`, the target o
+ * Depending on the value of `TriggerManager.return`, some trigger
+ * functions may not be called. In fact a value is returned 
  * 
- * 	- 'first': the first trigger which matches the object
- * 	- 'last': the last trigger, after all have been executed
+ * 	- 'first': after the first trigger returns a truthy value
+ * 	- 'last': after all triggers have been executed
  * 
- * If `TriggerManager.first` 
+ * If no trigger is registered the target object is returned unchanged
+ * 
+ * @param {object} o The target object
+ * @return {object} The target object after the triggers have been fired
+ * 
  */	
+TriggerManager.prototype.pullTriggers = function (o) {
+	if ('undefined' === typeof o) return;
+	if (!this.length) return o;
+	
+	for (var i = triggersArray.length; i > 0; i--) {
+		var out = triggersArray[(i-1)].call(this, o);
+		if ('undefined' === typeof out) {
+			if (this.return === TriggerManager.first) {
+				return out;
+			}
+		}
+	}
+	// Safety return
+	return ('undefined' !== typeof out) ? out : o;
+};
+
+// <!-- old pullTriggers
 TriggerManager.prototype.pullTriggers = function (o) {
 	if (!o) return;
 	
@@ -242,7 +268,9 @@ TriggerManager.prototype.pullTriggers = function (o) {
 	}
 	// Safety return
 	return o;
-};
+}; 
+//-->
+
 
 /**
  * ### TriggerManager.size
