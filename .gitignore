@@ -7,4 +7,8 @@ _*
 node_modules
 
 *.geany
+<<<<<<< HEAD
+
+=======
+>>>>>>> a7cb5fc7d27534da3828fb857cdc879308169ca4
 docs/
