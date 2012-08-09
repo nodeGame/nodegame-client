@@ -235,7 +235,7 @@ function build(options) {
 	    smooshed.build(); 
 	        
     	if (options.analyse) {
-    		smooshed.run() // runs jshint on full build
+    		smooshed.run(); // runs jshint on full build
     		smooshed.analyze(); // analyzes everything
     	}
 

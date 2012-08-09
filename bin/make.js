@@ -11,6 +11,7 @@
 
 var program = require('commander'),
     smoosh = require('smoosh'),
+    fs = require('fs'),
     os = require('os')
     util = require('util'),
     exec = require('child_process').exec,
@@ -23,8 +24,47 @@ module.exports.program = program;
 var build = require('./build.js').build;
 
 
+var buildDir =  __dirname + '/../build/';
+
+var deleteIfExist = function(file) {
+	file = file || filename;
+	if (path.existsSync(file)) {
+		var stats = fs.lstatSync(file);
+		if (stats.isDirectory()) {
+			fs.rmdir(file, function (err) {
+				if (err) throw err;  
+			});
+		}
+		else {
+			fs.unlink(file, function (err) {
+				if (err) throw err;  
+			});
+		}
+		
+	}
+};
+
+var cleanBuildDir = function(dir, ext) {
+	ext = ext || '.js';
+	dir = dir || buildDir;
+	if (dir[dir.length] !== '/') dir = dir + '/';
+	fs.readdir(dir, function(err, files) {
+	    files.filter(function(file) { return path.extname(file) ===  ext; })
+	         .forEach(function(file) { deleteIfExist(dir + file); });
+	    
+	    console.log('Build directory cleaned');
+	});
+}
+
 program
   .version(version);
+
+program  
+	.command('clean')
+	.description('Removes all files from build folder')
+	.action(function(){
+		cleanBuildDir();
+});
 
 program  
 	.command('build [options]')
