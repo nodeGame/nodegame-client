@@ -1,5 +1,8 @@
+multibuild:
+	@./bin/make.js multibuild
+
 build:	
-	@./bin/nodegame-client
+	@./bin/make.js build
 
 doc:
 	@./node_modules/.bin/docker index.js init.node.js nodeGame.js lib/ addons/ -o docs/
@@ -7,4 +10,4 @@ doc:
 test:
 	@./node_modules/.bin/mocha
 
-.PHONY: test
+.PHONY: test build

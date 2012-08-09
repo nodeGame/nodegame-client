@@ -18,7 +18,10 @@ var program = require('commander'),
     pkg = require('../package.json'),
     version = pkg.version;
 
+module.exports.program = program;
+
 var build = require('./build.js').build;
+
 
 program
   .version(version);
@@ -32,9 +35,10 @@ program
 	.option('-W, --window', 'with nodeGame-window')
 	.option('-w, --widgets', 'with nodeGame-widgets')
 	.option('-d, --addons', 'with nodeGame-client addons')
-	.option('-s, --shelf', 'with Shelf.JS')
+	.option('-s, --shelf', 'with Shelf.js')
 	.option('-e, --es5', 'with support for old browsers')
 	.option('-a, --all', 'full build of nodeGame-client')
+	.option('-C, --clean', 'clean build directory')
 	.option('-A, --analyse', 'analyse build')
 	.option('-o, --output <file>', 'output file (without .js)')
 	.action(function(env, options){
@@ -45,7 +49,7 @@ program
 	.command('multibuild')
 	.description('Creates pre-defined nodeGame builds')
 	.action(function(){
-		console.log('Multi-build for NDDB v.' + version);
+		console.log('Multi-build for nodegame-client v.' + version);
 		build({
 			all: true,
 			output: "nodegame-client-full",

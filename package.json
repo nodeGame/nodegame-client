@@ -27,6 +27,7 @@
     "should": ">= 0.5.1"
   }
   , "optionalDependencies": {
+      "JSON": "1.0.0",
       "shelf.js": ">= 0.2.1",
       "es5-shim": "1.2.10",
       "nodegame-window": ">= 0.2.11",

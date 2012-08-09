@@ -305,16 +305,16 @@ node.memory.dumpAllIndexes = function (dir, options) {
  *
  * 	@see node.fs.writeCsv
  */
-node.PlayerList.prototype.dump = function (path, options) {
-	if ('undefined' === typeof path) {
-		node.log('Missing path parameter', 'ERR', 'PlayerList.dump: ');
-		return;
-	}
-	options = options || {};
-	if (!options.headers) {
-		options.headers = node.JSUS.keys(this.first());
-	}
-	node.fs.writeCsv(path, this.split().fetchValues(), options);
-};
-	
+//node.PlayerList.prototype.dump = function (path, options) {
+//	if ('undefined' === typeof path) {
+//		node.log('Missing path parameter', 'ERR', 'PlayerList.dump: ');
+//		return;
+//	}
+//	options = options || {};
+//	if (!options.headers) {
+//		options.headers = node.JSUS.keys(this.first());
+//	}
+//	node.fs.writeCsv(path, this.split().fetchValues(), options);
+//};
+//	
 })('undefined' != typeof node ? node : module.parent.exports);
