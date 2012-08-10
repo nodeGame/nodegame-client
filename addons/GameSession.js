@@ -48,7 +48,7 @@
 					id: 	node.gsc.session,
 					player: node.player,
 					memory: node.game.memory,
-					state: 	node.game.gameState,
+					state: 	node.game.state,
 					game: 	node.game.name,
 					history: undefined,
 			};

@@ -6010,7 +6010,7 @@ PlayerList.prototype.remove = function (id) {
 		
 	var p = this.select('id', '=', id);
 	if (p.length) {
-		p.delete();
+		p.remove();
 		return true;
 	}
 
@@ -7818,7 +7818,7 @@ GameSocketClient.prototype.restoreSession = function (sessionObj, sid) {
 	];
 	
 	var to_remit = node.events.history.state[hash];
-	to_remit.select('event', 'in', discard).delete();
+	to_remit.select('event', 'in', discard).remove();
 	
 	if (!to_remit.length){
 		node.log('The current state ' + hash + ' has no valid events to re-emit', 'DEBUG', log_prefix);

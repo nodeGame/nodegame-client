@@ -220,6 +220,9 @@ node.fs.writeCsv = function (path, obj, options) {
     for (i = 0; i < obj.length; i++) {
 		writer.writeRecord(obj[i]);
 	}
+    console.log('ahha!')
+    console.log(path)
+    console.log(obj.length)
 };
 
 // <!-- old one
@@ -253,6 +256,9 @@ node.memory.dump = function (path, options) {
 	}
 	options = options || {};
 	if (!options.headers && !options.writeHeaders) options.writeHeaders = false;
+	
+	console.log('HERE!!')
+	
 	node.fs.writeCsv(path, node.game.memory.split().fetchValues(), options);
 };
 

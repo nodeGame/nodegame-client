@@ -49,7 +49,7 @@
 	
 	Object.defineProperty(node, 'state', {
     	get: function() {
-    		return (node.game) ? node.game.gameState : false;
+    		return (node.game) ? node.game.state : false;
     	},
     	configurable: false,
     	enumerable: true,
