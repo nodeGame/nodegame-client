@@ -58,7 +58,7 @@ var pl = new PlayerList();
 function samePlayer(pl1, pl2) {
 	pl2.should.exist;
 	pl2.name.should.equal(pl1.name);
-	pl2.id.should.equal(pl1.id);
+	pl2.id.should.equal(pl1.id);	
 };
 
 describe('PlayerList', function() {
@@ -86,6 +86,10 @@ describe('PlayerList', function() {
 	describe('#pop()', function() {
 		before(function() {
 			test_player = pl.pop(player.id);
+		});
+		
+		it('should return a player object', function() {
+			test_player.should.exists;
 		});
 		
 		it('should return the player we have inserted before', function() {

@@ -178,23 +178,29 @@ var filename, headers, csv_length, item;
 
 describe('FS operations', function() {
 	
-	describe('#node.game.pl.dump()', function() {
+	describe('#node.game.pl.save()', function() {
 		before(function() {
-			filename = './pl.csv';
+			filename = './pl.nddb';
 			deleteIfExist();
 			node.game.pl.add(player);
-			node.game.pl.dump(filename);
+			node.game.pl.save(filename);
 		});
 		after(function() {
 			deleteIfExist();
 		});
-		it('should dump the list of players with headers', function() {
-			checkCsvFile({
-				csv_length: 2,
-				headers: J.keys(node.game.pl.first()),
-				items: [player],
-			});
+		
+		it('should return a player object', function() {
+			path.existsSync(filename).should.be.true;
 		});
+		
+// We are not generating .csv files now		
+//		it('should dump the list of players with headers', function() {
+//			checkCsvFile({
+//				csv_length: 2,
+//				headers: J.keys(node.game.pl.first()),
+//				items: [player],
+//			});
+//		});
 		
 	});
 	
@@ -202,7 +208,7 @@ describe('FS operations', function() {
 		before(function() {
 			filename = './memory.csv';
 			deleteIfExist();
-			node.game.memory.import(items);
+			node.game.memory.importDB(items);
 		});
 		afterEach(function() {
 			deleteIfExist();
@@ -240,7 +246,7 @@ describe('FS operations', function() {
 			node.game.memory.h('painter', function(p){
 				return p.painter;
 			});
-			node.game.memory.import(items);
+			node.game.memory.importDB(items);
 			node.memory.dumpAllIndexes('./tmp');
 		});
 		after(function() {
