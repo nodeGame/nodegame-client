@@ -17,7 +17,7 @@
  * would style it. All these operations needs to be done sequentially, and
  * the TriggerManager takes care of handling this process.
  * 
- * If `TriggerManager.return` is set equal to `TriggerManager.first`, 
+ * If `TriggerManager.returnAt` is set equal to `TriggerManager.first`, 
  * the first trigger function returning a truthy value will stop the process
  * and the target object will be immediately returned. In these settings,
  * if a trigger function returns `undefined`, the target is passed to the next
@@ -73,12 +73,12 @@ function TriggerManager (options) {
 	this.options = options || {};
 
 /**
- * ### TriggerManager.return
+ * ### TriggerManager.returnAt
  * 
  * Controls the behavior of TriggerManager.pullTriggers
  * 
  */	
-	this.return = TriggerManager.first; // options are first, last 
+	this.returnAt = TriggerManager.first; // options are first, last 
 
 
 /**
@@ -122,8 +122,8 @@ function TriggerManager (options) {
  */
 TriggerManager.prototype.init = function (options) {
 	this.options = options || this.options;
-	if (this.options.return === TriggerManager.first || this.options.return === TriggerManager.last) {
-		this.return = this.options.return;
+	if (this.options.returnAt === TriggerManager.first || this.options.returnAt === TriggerManager.last) {
+		this.returnAt = this.options.returnAt;
 	}
 	this.resetTriggers();
 };
@@ -226,7 +226,7 @@ TriggerManager.prototype.removeTrigger = function (trigger) {
  * Triggers are fired according to a LIFO queue, i.e. new trigger
  * functions are fired first.
  * 
- * Depending on the value of `TriggerManager.return`, some trigger
+ * Depending on the value of `TriggerManager.returnAt`, some trigger
  * functions may not be called. In fact a value is returned 
  * 
  * 	- 'first': after the first trigger returns a truthy value
@@ -245,7 +245,7 @@ TriggerManager.prototype.pullTriggers = function (o) {
 	for (var i = triggersArray.length; i > 0; i--) {
 		var out = triggersArray[(i-1)].call(this, o);
 		if ('undefined' === typeof out) {
-			if (this.return === TriggerManager.first) {
+			if (this.returnAt === TriggerManager.first) {
 				return out;
 			}
 		}
@@ -261,7 +261,7 @@ TriggerManager.prototype.pullTriggers = function (o) {
 	for (var i = triggersArray.length; i > 0; i--) {
 		var out = triggersArray[(i-1)].call(this, o);
 		if (out) {
-			if (this.return === TriggerManager.first) {
+			if (this.returnAt === TriggerManager.first) {
 				return out;
 			}
 		}
