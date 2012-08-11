@@ -152,7 +152,6 @@ TriggerManager.prototype.init = function (options) {
  */
 TriggerManager.prototype.initTriggers = function (triggers) {
 	if (!triggers) return;
-	
 	if (!(triggers instanceof Array)) {
 		triggers = [triggers];
 	}
@@ -259,7 +258,7 @@ TriggerManager.prototype.pullTriggers = function (o) {
 	
 	for (var i = triggersArray.length; i > 0; i--) {
 		var out = triggersArray[(i-1)].call(this, o);
-		if ('undefined' === typeof out) {
+		if ('undefined' !== typeof out) {
 			if (this.returnAt === TriggerManager.first) {
 				return out;
 			}
@@ -270,20 +269,20 @@ TriggerManager.prototype.pullTriggers = function (o) {
 };
 
 // <!-- old pullTriggers
-TriggerManager.prototype.pullTriggers = function (o) {
-	if (!o) return;
-	
-	for (var i = triggersArray.length; i > 0; i--) {
-		var out = triggersArray[(i-1)].call(this, o);
-		if (out) {
-			if (this.returnAt === TriggerManager.first) {
-				return out;
-			}
-		}
-	}
-	// Safety return
-	return o;
-}; 
+//TriggerManager.prototype.pullTriggers = function (o) {
+//	if (!o) return;
+//	
+//	for (var i = triggersArray.length; i > 0; i--) {
+//		var out = triggersArray[(i-1)].call(this, o);
+//		if (out) {
+//			if (this.returnAt === TriggerManager.first) {
+//				return out;
+//			}
+//		}
+//	}
+//	// Safety return
+//	return o;
+//}; 
 //-->
 
 
