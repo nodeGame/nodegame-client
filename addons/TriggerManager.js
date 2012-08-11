@@ -77,9 +77,24 @@ function TriggerManager (options) {
  * 
  * Controls the behavior of TriggerManager.pullTriggers
  * 
+ * By default it is equal to `TriggerManager.first`
  */	
-	this.returnAt = TriggerManager.first; // options are first, last 
-
+	var returnAt = TriggerManager.first;
+	Object.defineProperty(this, 'returnAt', {
+		set: function(at){
+			if (!at || (at !== TriggerManager.first && at !== TriggerManager.last)) {
+				node.log('Invalid returnAt type: ' + at);
+				return false;
+			}
+			returnAt = at;
+			return at;
+		},
+		get: function(){
+			return returnAt;
+		},
+		configurable: true,
+		enumerable: true,
+	});
 
 /**
  * ### TriggerManager.length
@@ -111,7 +126,7 @@ function TriggerManager (options) {
  * The configuration object is of the type
  * 
  * 	var options = {
- * 		return: 'first', // or 'last'
+ * 		returnAt: 'first', // or 'last'
  * 		triggers: [ myFunc,
  * 					myFunc2 
  * 		],
