@@ -109,6 +109,7 @@ function build(options) {
 		rootDir + "node_modules/nodegame-widgets/VisualTimer.js",
 		rootDir + "node_modules/nodegame-widgets/WaitScreen.js",
 		rootDir + "node_modules/nodegame-widgets/Wall.js",
+		rootDir + "node_modules/nodegame-widgets/MoneyTalks.js",
 	];
 
 	var ng_es5 = [

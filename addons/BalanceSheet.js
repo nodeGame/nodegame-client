@@ -176,13 +176,13 @@ BalanceSheet.prototype.clear = function (clear) {
 // # Sheet
 
 //Inheriting from NDDB	
-Sheet.prototype = JSUS.clone(GameDB.prototype);
+Sheet.prototype = JSUS.clone(NDDB.prototype);
 Sheet.prototype.constructor = Sheet;
 
 function Sheet(options, db, parent) {
 	options = options || {};
 	if (!options.log) options.log = node.log;
-	GameDB.call(this, options, db, parent);
+	NDDB.call(this, options, db, parent);
 	
 	this.name;
 	this.pl;
