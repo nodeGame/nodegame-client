@@ -29,6 +29,7 @@ function func3(e) {
 var triggers = [func1, func2, func3];
 
 var tm;
+var tm2;
 
 describe('TriggerManager', function() {
 	
@@ -58,7 +59,25 @@ describe('TriggerManager', function() {
 			it('should have property length = ' + triggers.length, function() {
 				tm.length.should.equal(triggers.length);
 			});
-			it('should have property returnAt = first', function() {
+			it('should have property returnAt = last', function() {
+				tm.returnAt.should.equal(TriggerManager.last);
+			});
+			it('should have property triggers of type Array', function() {
+				tm.triggers.should.exist;
+				tm.triggers.should.be.an.instanceOf(Array)
+			});
+		});
+	});
+	
+	describe('#second instance should not clash with the first. ', function() {
+		describe('A newly created instance ', function() {
+			before(function(){
+				tm2 = new TriggerManager();
+			});
+			it('should have property length = ' + triggers.length, function() {
+				tm.length.should.equal(triggers.length);
+			});
+			it('should have property returnAt = last', function() {
 				tm.returnAt.should.equal(TriggerManager.last);
 			});
 			it('should have property triggers of type Array', function() {

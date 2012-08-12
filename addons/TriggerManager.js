@@ -39,7 +39,7 @@ exports.TriggerManager = TriggerManager;
 TriggerManager.first = 'first';
 TriggerManager.last = 'last';
 
-var triggersArray;
+
 
 /**
  * ## TriggerManager constructor
@@ -48,7 +48,8 @@ var triggersArray;
  * 
  */
 function TriggerManager (options) {
-// ## Private properties
+// ## Public properties
+	
 	
 /**
  * ### TriggerManager.triggers
@@ -56,11 +57,7 @@ function TriggerManager (options) {
  * Array of trigger functions 
  * 
  */
-	triggersArray = [];
-	Object.defineProperty(this, 'triggers', {
-		value: triggersArray,
-		enumerable: true,
-	});
+this.triggers = [];
 	
 // ## Public properties
 
@@ -105,7 +102,7 @@ function TriggerManager (options) {
 	Object.defineProperty(this, 'length', {
 		set: function(){},
 		get: function(){
-			return triggersArray.length;
+			return this.triggers.length;
 		},
 		configurable: true
 	});
@@ -156,7 +153,7 @@ TriggerManager.prototype.initTriggers = function (triggers) {
 		triggers = [triggers];
 	}
 	for (var i=0; i< triggers.length; i++) {
-		triggersArray.push(triggers[i]);
+		this.triggers.push(triggers[i]);
 	}
   };
 	
@@ -170,7 +167,7 @@ TriggerManager.prototype.initTriggers = function (triggers) {
  * 
  */
 TriggerManager.prototype.resetTriggers = function () {
-	triggersArray = [];
+	this.triggers = [];
 	this.initTriggers(this.options.triggers);
 };
 
@@ -189,7 +186,7 @@ TriggerManager.prototype.clear = function (clear) {
 		node.log('Do you really want to clear the current TriggerManager obj? Please use clear(true)', 'WARN');
 		return false;
 	}
-	triggersArray = [];
+	this.triggers = [];
 	return clear;
 };
 	
@@ -206,10 +203,10 @@ TriggerManager.prototype.addTrigger = function (trigger, pos) {
 	if (!trigger) return false;
 	if (!('function' === typeof trigger)) return false;
 	if (!pos) {
-		triggersArray.push(trigger);
+		this.triggers.push(trigger);
 	}
 	else {
-		triggersArray.splice(pos, 0, trigger);
+		this.triggers.splice(pos, 0, trigger);
 	}
 	return true;
 };
@@ -224,9 +221,9 @@ TriggerManager.prototype.addTrigger = function (trigger, pos) {
  */	  
 TriggerManager.prototype.removeTrigger = function (trigger) {
 	if (!trigger) return false;
-	for (var i=0; i< triggersArray.length; i++) {
-		if (triggersArray[i] == trigger) {
-			return triggersArray.splice(i,1);
+	for (var i=0; i< this.triggers.length; i++) {
+		if (this.triggers[i] == trigger) {
+			return this.triggers.splice(i,1);
 		}
 	}  
 	return false;
@@ -256,8 +253,8 @@ TriggerManager.prototype.pullTriggers = function (o) {
 	if ('undefined' === typeof o) return;
 	if (!this.length) return o;
 	
-	for (var i = triggersArray.length; i > 0; i--) {
-		var out = triggersArray[(i-1)].call(this, o);
+	for (var i = this.triggers.length; i > 0; i--) {
+		var out = this.triggers[(i-1)].call(this, o);
 		if ('undefined' !== typeof out) {
 			if (this.returnAt === TriggerManager.first) {
 				return out;
@@ -296,7 +293,7 @@ TriggerManager.prototype.pullTriggers = function (o) {
  * @deprecated
  */
 TriggerManager.prototype.size = function () {
-	return triggersArray.length;
+	return this.triggers.length;
 };
 	
 
