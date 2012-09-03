@@ -1,18 +1,17 @@
 /**
  * # nodeGame
  * 
- * Copyright(c) 2012 Stefano Balietti
- * MIT Licensed 
+ * Copyright(c) 2012 Stefano Balietti MIT Licensed
  * 
  * ### nodeGame: Web Experiments in the Browser
  * 
- * *nodeGame* is a free, open source, event-driven javascript framework for on line, 
- * multiplayer games in the browser.
+ * *nodeGame* is a free, open source, event-driven javascript framework for on
+ * line, multiplayer games in the browser.
  */
 (function (node) {
 	
 	// Declaring variables
-	////////////////////////////////////////////
+	// //////////////////////////////////////////
 		
 	var EventEmitter = node.EventEmitter;
 	var GameSocketClient = node.GameSocketClient;
@@ -24,7 +23,7 @@
 	
 	
 	// Adding constants directly to node
-	//////////////////////////////////////////
+	// ////////////////////////////////////////
 	
 	node.actions 	= GameMsg.actions;
 	node.IN 		= GameMsg.IN;
@@ -33,13 +32,13 @@
 	node.states 	= GameState.iss;
 	
 	// Creating EventEmitter
-	///////////////////////////////////////////
+	// /////////////////////////////////////////
 	
 	var ee = node.events = node._ee = new EventEmitter();
 
 
 	// Creating objects
-	///////////////////////////////////////////
+	// /////////////////////////////////////////
 	
 	node.msg		= node.GameMsgGenerator;	
 	node.gsc 		= new GameSocketClient();
@@ -63,7 +62,7 @@
 	};
 	
 	// Adding methods
-	///////////////////////////////////////////
+	// /////////////////////////////////////////
 	
 	/**
 	 * Parses the a node configuration object and add default and missing
@@ -97,7 +96,7 @@
 		
 		
 		// Add a trailing slash if missing
-		if (conf.host.lastIndexOf('/') !== host.length) {
+		if (conf.host && conf.host.lastIndexOf('/') !== host.length) {
 			conf.host = conf.host + '/';
 		}
 		
@@ -105,6 +104,7 @@
 		if ('undefined' !== typeof conf.verbosity) {
 			node.verbosity = conf.verbosity;
 		}
+		
 		
 		// Environments
 		if ('undefined' !== typeof conf.env) {
@@ -147,7 +147,7 @@
 	node.play = function (conf, game) {	
 		node._analyzeConf(conf);
 		
-		//node.gsc.connect(conf);
+		// node.gsc.connect(conf);
 		
 		node.game = new Game(game);
 		node.emit('NODEGAME_GAME_CREATED');
@@ -161,34 +161,34 @@
 		node.log('ready.');
 	};	
 	
-//	node.observe = function (conf, game) {
-//		node._analyzeConf(conf);
+// node.observe = function (conf, game) {
+// node._analyzeConf(conf);
 //		
-//		var game = game || {loops: {1: {state: function(){}}}};
-//		node.gsc = that.gsc = new GameSocketClient(conf);
+// var game = game || {loops: {1: {state: function(){}}}};
+// node.gsc = that.gsc = new GameSocketClient(conf);
 //		
-//		node.game = that.game = new Game(game, that.gsc);
-//		node.gsc.setGame(that.game);
+// node.game = that.game = new Game(game, that.gsc);
+// node.gsc.setGame(that.game);
 //		
-//		node.on('NODEGAME_READY', function(){
+// node.on('NODEGAME_READY', function(){
 //			
-//			// Retrieve the game and set is as observer
-//			node.get('LOOP', function(game) {
+// // Retrieve the game and set is as observer
+// node.get('LOOP', function(game) {
 //				
-//				// alert(game);
-//				// console.log('ONLY ONE');
-//				// console.log(game);
-//	// var game = game.observer = true;
-//	// node.game = that.game = game;
-//	//			
-//	// that.game.init();
-//	//			
-//	// that.gsc.setGame(that.game);
-//	//			
-//	// node.log('nodeGame: game loaded...');
-//	// node.log('nodeGame: ready.');
-//			});
-//		});
+// // alert(game);
+// // console.log('ONLY ONE');
+// // console.log(game);
+// // var game = game.observer = true;
+// // node.game = that.game = game;
+// //
+// // that.game.init();
+// //
+// // that.gsc.setGame(that.game);
+// //
+// // node.log('nodeGame: game loaded...');
+// // node.log('nodeGame: ready.');
+// });
+// });
 		
 		
 // node.onDATA('GAME', function(data){
@@ -200,7 +200,7 @@
 // console.log('--------->Eh!')
 // console.log(msg);
 // });
-//	};	
+// };
 	
 	node.emit = function (event, p1, p2, p3) {	
 		ee.emit(event, p1, p2, p3);
