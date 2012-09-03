@@ -285,7 +285,7 @@ node.memory.dumpAllIndexes = function (dir, options) {
 				for (index in node.game.memory[hash]) {
 					if (node.game.memory[hash].hasOwnProperty(index)) {
 						ipath = dir + hash + '_' + index + '.csv';
-						node.log('Writing ' + ipath, 'DEBUG', 'node.memory.dumpAllIndexes: ');
+						//node.log('Writing ' + ipath, 'DEBUG', 'node.memory.dumpAllIndexes: ');
 	    				node.fs.writeCsv(ipath, node.game.memory[hash][index].split().fetchValues(), options);
 					}
 				}
