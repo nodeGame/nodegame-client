@@ -55,6 +55,13 @@
     	enumerable: true,
 	});
 	
+	node.env = function (env, func, ctx, params) {
+		if (!env || !func || !node.env[env]) return;
+		ctx = ctx || node;
+		params = params || [];
+		func.apply(ctx, params);
+	};
+	
 	// Adding methods
 	///////////////////////////////////////////
 	
@@ -97,6 +104,15 @@
 		// VERBOSITY
 		if ('undefined' !== typeof conf.verbosity) {
 			node.verbosity = conf.verbosity;
+		}
+		
+		// Environments
+		if ('undefined' !== typeof conf.env) {
+			for (var i in conf.env) {
+				if (conf.env.hasOwnProperty(i)) {
+					node.env[i] = conf.env[i];
+				}
+			}
 		}
 		
 		this.conf = conf;
@@ -315,7 +331,7 @@
 		setTimeout(function(func) {
 			func.call();
 		}, Math.random()*timing, func);
-	}
+	};
 		
 	node.log(node.version + ' loaded', 'ALWAYS');
 	
