@@ -13,7 +13,9 @@ module.exports.build = build;
 
 var smoosh = require('smoosh'),
     path = require('path'),
-    pkg = require('../package.json'),
+    J = require('JSUS').JSUS;
+
+var pkg = require('../package.json'),
     version = pkg.version;
 
 
@@ -35,7 +37,7 @@ function build(options) {
 
 	var re = new RegExp('node_modules.+');
 
-	var rootDir = __dirname + '/../';
+	var rootDir = path.resolve(__dirname, '..') + '/';
 	var distDir =  rootDir + 'build/';
 
 	// nodegame-client
@@ -52,7 +54,7 @@ function build(options) {
 	 	rootDir + "lib/GameDB.js",
 	 	rootDir + "lib/Game.js", 
 	 // nodeGame
-	  rootDir + "nodeGame.js",
+	 	rootDir + "nodeGame.js",
 	];
 
 	// ng-addons
@@ -64,61 +66,73 @@ function build(options) {
 	];
 
 	// jsus
+	var JSUSdir = J.resolveModuleDir('JSUS');
+	
 	var ng_jsus = [
-		rootDir + "node_modules/JSUS/jsus.js",
-		rootDir + "node_modules/JSUS/lib/array.js",
-		rootDir + "node_modules/JSUS/lib/dom.js",
-		rootDir + "node_modules/JSUS/lib/eval.js",
-		rootDir + "node_modules/JSUS/lib/obj.js",
-		rootDir + "node_modules/JSUS/lib/random.js",
-		rootDir + "node_modules/JSUS/lib/time.js",
-		rootDir + "node_modules/JSUS/lib/parse.js",
+		JSUSdir + "jsus.js",
+		JSUSdir + "lib/array.js",
+		JSUSdir + "lib/dom.js",
+		JSUSdir + "lib/eval.js",
+		JSUSdir + "lib/obj.js",
+		JSUSdir + "lib/random.js",
+		JSUSdir + "lib/time.js",
+		JSUSdir + "lib/parse.js",
 	];
 
 	// nddb
+	var NDDBdir = J.resolveModuleDir('NDDB');
 	var ng_nddb = [
-		rootDir + "node_modules/NDDB/nddb.js",           
+		NDDBdir + "nddb.js",           
 	];
 
 	// nodegame-window
+	var ngWdir = J.resolveModuleDir('nodegame-window');
+	
 	var ng_window = [
-		rootDir + "node_modules/nodegame-window/GameWindow.js",
-		rootDir + "node_modules/nodegame-window/Canvas.js",
-		rootDir + "node_modules/nodegame-window/HTMLRenderer.js",
-		rootDir + "node_modules/nodegame-window/List.js",
-		rootDir + "node_modules/nodegame-window/Table.js",
+		ngWdir + "GameWindow.js",
+		ngWdir + "Canvas.js",
+		ngWdir + "HTMLRenderer.js",
+		ngWdir + "List.js",
+		ngWdir + "Table.js",
 	]; 
 		
-	 // nodegame-widgets
+	// nodegame-widgets
+	var ngWdgdir = J.resolveModuleDir('nodegame-widgets');
+	
 	var ng_widgets = [
-		rootDir + "node_modules/nodegame-widgets/ChernoffFaces.js",
-		rootDir + "node_modules/nodegame-widgets/Controls.js",
-		rootDir + "node_modules/nodegame-widgets/DataBar.js",
-		rootDir + "node_modules/nodegame-widgets/DynamicTable.js",
-		rootDir + "node_modules/nodegame-widgets/EventButton.js",
-		rootDir + "node_modules/nodegame-widgets/GameBoard.js",
-		rootDir + "node_modules/nodegame-widgets/GameSummary.js",
-		rootDir + "node_modules/nodegame-widgets/GameTable.js",
-		rootDir + "node_modules/nodegame-widgets/MsgBar.js",
-		rootDir + "node_modules/nodegame-widgets/NDDBBrowser.js",
-		rootDir + "node_modules/nodegame-widgets/NextPreviousState.js",
-		rootDir + "node_modules/nodegame-widgets/ServerInfoDisplay.js",
-		rootDir + "node_modules/nodegame-widgets/StateBar.js",
-		rootDir + "node_modules/nodegame-widgets/StateDisplay.js",
-		rootDir + "node_modules/nodegame-widgets/VisualState.js",
-		rootDir + "node_modules/nodegame-widgets/VisualTimer.js",
-		rootDir + "node_modules/nodegame-widgets/WaitScreen.js",
-		rootDir + "node_modules/nodegame-widgets/Wall.js",
-		rootDir + "node_modules/nodegame-widgets/MoneyTalks.js",
+		ngWdgdir + "ChernoffFaces.js",
+		ngWdgdir + "Controls.js",
+		ngWdgdir + "DataBar.js",
+		ngWdgdir + "DynamicTable.js",
+		ngWdgdir + "EventButton.js",
+		ngWdgdir + "GameBoard.js",
+		ngWdgdir + "GameSummary.js",
+		ngWdgdir + "GameTable.js",
+		ngWdgdir + "MsgBar.js",
+		ngWdgdir + "NDDBBrowser.js",
+		ngWdgdir + "NextPreviousState.js",
+		ngWdgdir + "ServerInfoDisplay.js",
+		ngWdgdir + "StateBar.js",
+		ngWdgdir + "StateDisplay.js",
+		ngWdgdir + "VisualState.js",
+		ngWdgdir + "VisualTimer.js",
+		ngWdgdir + "WaitScreen.js",
+		ngWdgdir + "Wall.js",
+		ngWdgdir + "MoneyTalks.js",
+	];
+	
+	// es5-shim
+	
+	// es5-shim
+	var es5Dir = J.resolveModuleDir('es5-shim');
+	var nddb_es5 = [
+	  es5Dir + "es5-shim.js",       
 	];
 
-	var ng_es5 = [
-	          	  rootDir + "node_modules/es5-shim/es5-shim.js",       
-	          	  ];
-
 	//shelf.js
-	var ng_shelf = [
-	  rootDir + "node_modules/shelf.js/build/shelf.js",
+	var shelfDir = J.resolveModuleDir('shelf.js');
+	var nddb_shelf = [
+	  shelfDir + "/build/shelf.js",
 	];
 	
 	// CREATING build array
@@ -126,7 +140,7 @@ function build(options) {
 
 	// 0. ES5-shim
 	if (options.es5 || options.all) {
-		if (!path.existsSync(rootDir + "node_modules/es5-shim/")) {
+		if (!path.existsSync(es5Dir)) {
 			console.log('  - ERR: es5-shim not found!');
 		}
 		else {
@@ -138,16 +152,16 @@ function build(options) {
 	
 	// 0. Shelf.js
 	if (options.shelf || options.all) {
-		if (!path.existsSync(rootDir + "node_modules/shelf.js/")) {
+		if (!path.existsSync(shelfDir)) {
 			console.log('  - ERR: shelf.js not found!');
 		}
 		else {
-			var shelfjs_build = rootDir + 'node_modules/shelf.js/build/shelf.js';
-			var shelfjs_make = rootDir + 'node_modules/shelf.js/bin/build.js';
+			var shelfjs = shelfDir + 'build/shelf.js';
 			// Build custom shelf.js if not existing
-			if (!path.existsSync(shelfjs_build)) {
-				console.log('building custom Shelf.js')
-				var buildShelf = require(shelfjs_make);
+			if (!path.existsSync(shelfjs)) {
+				var shelfjs_build = shelfDir + 'bin/build.js';
+				console.log("\n  - building custom shelf.js")
+				var buildShelf = require(shelfjs_build);
 				buildShelf.build({cycle: true});
 			}
 			
@@ -181,7 +195,7 @@ function build(options) {
 
 	// 5. nodegame-window
 	if (options.window || options.all) {
-		if (!path.existsSync(rootDir + "node_modules/nodegame-window/")) {
+		if (!path.existsSync(ngWdir)) {
 			console.log('  - ERR: nodegame-window not found!');
 		}
 		else {
@@ -193,7 +207,7 @@ function build(options) {
 
 	//5. nodegame-widgets
 	if (options.widgets || options.all) {
-		if (!path.existsSync(rootDir + "node_modules/nodegame-widgets/")) {
+		if (!path.existsSync(ngWdgdir)) {
 			console.log('  - ERR: nodegame-widgets not found!');
 		}
 		else {

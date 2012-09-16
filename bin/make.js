@@ -16,7 +16,9 @@ var program = require('commander'),
     util = require('util'),
     exec = require('child_process').exec,
     path = require('path'),
-    pkg = require('../package.json'),
+    J = require('JSUS').JSUS;
+
+var pkg = require('../package.json'),
     version = pkg.version;
 
 module.exports.program = program;
@@ -24,37 +26,8 @@ module.exports.program = program;
 var build = require('./build.js').build;
 
 
-var buildDir =  __dirname + '/../build/';
-
-var deleteIfExist = function(file) {
-	file = file || filename;
-	if (path.existsSync(file)) {
-		var stats = fs.lstatSync(file);
-		if (stats.isDirectory()) {
-			fs.rmdir(file, function (err) {
-				if (err) throw err;  
-			});
-		}
-		else {
-			fs.unlink(file, function (err) {
-				if (err) throw err;  
-			});
-		}
-		
-	}
-};
-
-var cleanBuildDir = function(dir, ext) {
-	ext = ext || '.js';
-	dir = dir || buildDir;
-	if (dir[dir.length] !== '/') dir = dir + '/';
-	fs.readdir(dir, function(err, files) {
-	    files.filter(function(file) { return path.extname(file) ===  ext; })
-	         .forEach(function(file) { deleteIfExist(dir + file); });
-	    
-	    console.log('Build directory cleaned');
-	});
-}
+var rootDir = path.resolve(__dirname, '..') + '/';
+var buildDir = rootDir + 'build/';
 
 program
   .version(version);
@@ -63,7 +36,7 @@ program
 	.command('clean')
 	.description('Removes all files from build folder')
 	.action(function(){
-		cleanBuildDir();
+		cleanDir(buildDir);
 });
 
 program  
@@ -110,8 +83,8 @@ program
 	.action(function(){
 		console.log('Building documentation for nodegame-client v.' + version);
 		// http://nodejs.org/api.html#_child_processes
-		var root =  __dirname + '/../';
-		var command = root + 'node_modules/.bin/docker -i ' + root + ' index.js init.node.js nodeGame.js lib/ addons/ -o ' + root + 'docs/';
+		var dockerDir = J.resolveModuleDir('docker');
+		var command = dockerDir + 'docker -i ' + rootDir + ' index.js init.node.js nodeGame.js lib/ addons/ -o ' + rootDir + 'docs/';
 		var child = exec(command, function (error, stdout, stderr) {
 			util.print(stdout);
 			util.print(stderr);
