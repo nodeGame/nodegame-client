@@ -125,13 +125,13 @@ function build(options) {
 	
 	// es5-shim
 	var es5Dir = J.resolveModuleDir('es5-shim');
-	var nddb_es5 = [
+	var ng_es5 = [
 	  es5Dir + "es5-shim.js",       
 	];
 
 	//shelf.js
 	var shelfDir = J.resolveModuleDir('shelf.js');
-	var nddb_shelf = [
+	var ng_shelf = [
 	  shelfDir + "/build/shelf.js",
 	];
 	
