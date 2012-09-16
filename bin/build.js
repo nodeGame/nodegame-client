@@ -80,13 +80,13 @@ function build(options) {
 	];
 
 	// nddb
-	var NDDBdir = J.resolveModuleDir('NDDB');
+	var NDDBdir = J.resolveModuleDir('NDDB', __dirname);
 	var ng_nddb = [
 		NDDBdir + "nddb.js",           
 	];
 
 	// nodegame-window
-	var ngWdir = J.resolveModuleDir('nodegame-window');
+	var ngWdir = J.resolveModuleDir('nodegame-window', __dirname);
 	
 	var ng_window = [
 		ngWdir + "GameWindow.js",
@@ -97,7 +97,7 @@ function build(options) {
 	]; 
 		
 	// nodegame-widgets
-	var ngWdgdir = J.resolveModuleDir('nodegame-widgets');
+	var ngWdgdir = J.resolveModuleDir('nodegame-widgets', __dirname);
 	
 	var ng_widgets = [
 		ngWdgdir + "ChernoffFaces.js",
@@ -124,13 +124,13 @@ function build(options) {
 	// es5-shim
 	
 	// es5-shim
-	var es5Dir = J.resolveModuleDir('es5-shim');
+	var es5Dir = J.resolveModuleDir('es5-shim',__dirname);
 	var ng_es5 = [
 	  es5Dir + "es5-shim.js",       
 	];
 
 	//shelf.js
-	var shelfDir = J.resolveModuleDir('shelf.js');
+	var shelfDir = J.resolveModuleDir('shelf.js', __dirname);
 	var ng_shelf = [
 	  shelfDir + "/build/shelf.js",
 	];
