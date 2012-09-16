@@ -1194,7 +1194,7 @@ if (typeof JSON.retrocycle !== 'function') {
  * 
  */
 (function(exports){
-
+	
 var version = '0.3';
 
 var store = exports.store = function (key, value, options, type) {
