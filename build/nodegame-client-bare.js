@@ -837,6 +837,9 @@ PlayerList.prototype.add = function (player) {
  * 
  * Removes a player from the database based on its id
  * 
+ * If no id is passed, removes all currently selected 
+ * players
+ * 
  * Notice: this operation cannot be undone
  * 
  * @param {number} id The id of the player to remove
@@ -846,7 +849,10 @@ PlayerList.prototype.add = function (player) {
  * 
  */
 PlayerList.prototype.remove = function (id) {
-	if (!id) return false;
+	if (!id) {
+		// fallback on NDDB.remove
+		return NDDB.prototype.remove.call(this);
+	}
 		
 	var p = this.select('id', '=', id);
 	if (p.length) {
@@ -1706,7 +1712,7 @@ function GameLoop (loop) {
 	Object.defineProperty(this, 'length', {
     	set: function(){},
     	get: function(){
-    		return that.steps2Go(new GameState());
+    		return this.steps2Go(new GameState());
     	},
     	configurable: true
 	});	
@@ -1723,6 +1729,7 @@ function GameLoop (loop) {
  */
 GameLoop.prototype.exist = function (gameState) {
 	if (!gameState) return false;
+	gameState = new GameState(gameState);
 	
 	if (typeof(this.loop[gameState.state]) === 'undefined') {
 		node.log('Unexisting state: ' + gameState.state, 'WARN');
@@ -1755,7 +1762,7 @@ GameLoop.prototype.exist = function (gameState) {
  * 
  */
 GameLoop.prototype.next = function (gameState) {
-	gameState = gameState || node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.state;
 	
 	// Game has not started yet, do it!
 	if (gameState.state === 0) {
@@ -1816,7 +1823,7 @@ GameLoop.prototype.next = function (gameState) {
  * @return {GameState|boolean} The previous game-state, or FALSE if it does not exist
  */
 GameLoop.prototype.previous = function (gameState) {
-	gameState = gameState || node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.state;
 	
 	if (!this.exist(gameState)) {
 		node.log('No previous state of non-existing state: ' + gameState, 'WARN');
@@ -1865,7 +1872,7 @@ GameLoop.prototype.previous = function (gameState) {
  * @return {string|boolean} The name of the game-state, or FALSE if state does not exists
  */
 GameLoop.prototype.getName = function (gameState) {
-	gameState = gameState || node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.state;
 	if (!this.exist(gameState)) return false;
 	return this.loop[gameState.state]['state'][gameState.step]['name'];
 };
@@ -1879,7 +1886,7 @@ GameLoop.prototype.getName = function (gameState) {
  * @return {object|boolean} The function of the game-state, or FALSE if state does not exists
  */
 GameLoop.prototype.getFunction = function (gameState) {
-	gameState = gameState || node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.state;
 	if (!this.exist(gameState)) return false;
 	return this.loop[gameState.state]['state'][gameState.step]['state'];
 };
@@ -1893,7 +1900,7 @@ GameLoop.prototype.getFunction = function (gameState) {
  * @return {object|boolean} The state object, or FALSE if state does not exists
  */
 GameLoop.prototype.getAllParams = function (gameState) {
-	gameState = gameState || node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.state;
 	if (!this.exist(gameState)) return false;
 	return this.loop[gameState.state]['state'][gameState.step];
 };
@@ -1908,11 +1915,11 @@ GameLoop.prototype.getAllParams = function (gameState) {
  * 
  * @param {GameState} gameState The reference game-state
  * @param {number} N The number of steps to jump
- * @return {GameState|boolean} The previous game-state, or FALSE if it does not exist
+ * @return {GameState|boolean} The "jumped-to" game-state, or FALSE if it does not exist
  */
 GameLoop.prototype.jumpTo = function (gameState, N) {
 	if (!this.exist(gameState)) return false;
-	if (N || N === 0) return gameState;
+	if (!N) return gameState;
 	
 	var func = (N > 0) ? this.next : this.previous;
 	
@@ -1935,7 +1942,7 @@ GameLoop.prototype.jumpTo = function (gameState, N) {
  * @return {number} The total number of steps left
  */
 GameLoop.prototype.steps2Go = function (gameState) {
-	gameState = gameState || node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.state;
 	var count = 0;
 	while (gameState) { 
 		count++;
@@ -1991,11 +1998,16 @@ GameLoop.prototype.indexOf = function (state) {
  */
 GameLoop.prototype.diff = function (state1, state2) {
 	if (!state1) return false;
+	state1 = new GameState(state1) ;
 	
 	if (!state2) {
 		if (!node.state) return false;
 		state2 = node.state
 	}
+	else {
+		state2 = new GameState(state2) ;
+	}
+	
 	
 	var idx = 0;
 	while (state2) {
@@ -2544,7 +2556,7 @@ function GameSocketClient (options) {
  * 		id: 	node.gsc.session,
  * 		player: node.player,
  * 		memory: node.game.memory,
- * 		state: 	node.game.gameState,
+ * 		state: 	node.game.state,
  * 		game: 	node.game.name,
  * 		history: undefined,
  * 	};	
@@ -3118,7 +3130,7 @@ function GameDB (options, db, parent) {
  * @param {string} key An alphanumeric id for the entry
  * @param {mixed} value Optional. The value to store
  * @param {Player} player Optional. The player associated to the entry. Defaults, node.player
- * @param {GameState} player Optional. The state associated to the entry. Defaults, node.game.gameState
+ * @param {GameState} player Optional. The state associated to the entry. Defaults, node.game.state
  * 
  * @return {boolean} TRUE, if insertion was successful
  * 
@@ -3127,7 +3139,7 @@ function GameDB (options, db, parent) {
 GameDB.prototype.add = function (key, value, player, state) {
 	if (!key) return false;
 	
-	state = state || node.game.gameState;
+	state = state || node.game.state;
 	player = player || node.player;
 
 	this.insert(new GameBit({
@@ -3444,7 +3456,7 @@ function Game (settings) {
 	Object.defineProperty(this, 'ready', {
 		set: function(){},
 		get: function(){
-			if (this.gameState.is < GameState.iss.LOADED) return false;
+			if (this.state.is < GameState.iss.LOADED) return false;
 			
 			// Check if there is a gameWindow obj and whether it is loading
 			if (node.window) {	
@@ -3520,7 +3532,7 @@ function Game (settings) {
 	this.memory = new GameDB();
 	
 	this.player = null;	
-	this.state = this.gameState = new GameState();
+	this.state = new GameState();
 	
 	
 	var that = this,
@@ -3581,17 +3593,17 @@ function Game (settings) {
  *  @see Game.pl 
  */
 	node.on( IN + say + 'STATE', function (msg) {
-		console.log('updateState: ' + msg.from + ' -- ' + new GameState(msg.data), 'DEBUG');
-		console.log(that.pl.length)
+//		console.log('updateState: ' + msg.from + ' -- ' + new GameState(msg.data), 'DEBUG');
+//		console.log(that.pl.length)
 		
-		console.log(node.gsc.serverid + 'AAAAAA');
+		//console.log(node.gsc.serverid + 'AAAAAA');
 		if (node.gsc.serverid && msg.from === node.gsc.serverid) {
-			console.log(node.gsc.serverid + ' ---><--- ' + msg.from);
-			console.log('NOT EXISTS');
+//			console.log(node.gsc.serverid + ' ---><--- ' + msg.from);
+//			console.log('NOT EXISTS');
 		}
 		
 		if (that.pl.exist(msg.from)) {
-			console.log('EXIST')
+			//console.log('EXIST')
 			
 			that.pl.updatePlayerState(msg.from, msg.data);
 			node.emit('UPDATED_PLIST');
@@ -3600,7 +3612,7 @@ function Game (settings) {
 		// <!-- Assume this is the server for now
 		// TODO: assign a string-id to the server -->
 		else {
-			console.log('NOT EXISTS')
+			//console.log('NOT EXISTS')
 			that.updateState(msg.data);
 		}
 	});
@@ -3639,8 +3651,8 @@ var outgoingListeners = function() {
 		}
 		else {
 			// The game is ready to step when necessary;
-			that.gameState.is = GameState.iss.LOADED;
-			node.gsc.sendSTATE(GameMsg.actions.SAY, that.gameState);
+			that.state.is = GameState.iss.LOADED;
+			node.gsc.sendSTATE(GameMsg.actions.SAY, that.state);
 		}
 	});
 
@@ -3764,11 +3776,11 @@ var internalListeners = function() {
 		
 		// Execute done handler before updatating state
 		var ok = true;
-		var done = that.gameLoop.getAllParams(that.gameState).done;
+		var done = that.gameLoop.getAllParams(that.state).done;
 		
 		if (done) ok = done.call(that, p1, p2, p3);
 		if (!ok) return;
-		that.gameState.is = GameState.iss.DONE;
+		that.state.is = GameState.iss.DONE;
 		
 		// Call all the functions that want to do 
 		// something before changing state
@@ -3789,7 +3801,7 @@ var internalListeners = function() {
  * 
  */
 	node.on('PAUSE', function(msg) {
-		that.gameState.paused = true;
+		that.state.paused = true;
 		that.publishState();
 	});
 
@@ -3824,7 +3836,7 @@ var internalListeners = function() {
  */
 	node.on('LOADED', function() {
 		node.emit('BEFORE_LOADING');
-		that.gameState.is =  GameState.iss.PLAYING;
+		that.state.is =  GameState.iss.PLAYING;
 		//TODO: the number of messages to emit to inform other players
 		// about its own state should be controlled. Observer is 0 
 		//that.publishState();
@@ -3845,7 +3857,7 @@ var internalListeners = function() {
  * @TODO: check with Game.ready
  */
 Game.prototype.pause = function () {
-	this.gameState.paused = true;
+	this.state.paused = true;
 };
 
 /**
@@ -3856,7 +3868,7 @@ Game.prototype.pause = function () {
  * @TODO: check with Game.ready
  */
 Game.prototype.resume = function () {
-	this.gameState.paused = false;
+	this.state.paused = false;
 };
 
 /**
@@ -3874,8 +3886,8 @@ Game.prototype.resume = function () {
  * 	@see Game.gameLoop
  */
 Game.prototype.next = function (N) {
-	if (!N) return this.gameLoop.next(this.gameState);
-	return this.gameLoop.jumpTo(this.gameState, Math.abs(N));
+	if (!N) return this.gameLoop.next(this.state);
+	return this.gameLoop.jumpTo(this.state, Math.abs(N));
 };
 
 /**
@@ -3893,8 +3905,8 @@ Game.prototype.next = function (N) {
  * 	@see Game.gameLoop
  */
 Game.prototype.previous = function (N) {
-	if (!N) return this.gameLoop.previous(this.gameState);
-	return this.gameLoop.jumpTo(this.gameState, -Math.abs(N));
+	if (!N) return this.gameLoop.previous(this.state);
+	return this.gameLoop.jumpTo(this.state, -Math.abs(N));
 };
 
 /**
@@ -3915,7 +3927,7 @@ Game.prototype.previous = function (N) {
  */
 Game.prototype.jumpTo = function (jump) {
 	if (!jump) return false;
-	var gs = this.gameLoop.jumpTo(this.gameState, jump);
+	var gs = this.gameLoop.jumpTo(this.state, jump);
 	if (!gs) return false;
 	return this.updateState(gs);
 };
@@ -3938,12 +3950,12 @@ Game.prototype.publishState = function() {
 	// <!-- Important: SAY -->
 	if (!this.observer) {
 		var stateEvent = GameMsg.OUT + GameMsg.actions.SAY + '.STATE'; 
-		node.emit(stateEvent, this.gameState, 'ALL');
+		node.emit(stateEvent, this.state, 'ALL');
 	}
 	
 	node.emit('STATECHANGE');
 	
-	node.log('New State = ' + new GameState(this.gameState), 'DEBUG');
+	node.log('New State = ' + new GameState(this.state), 'DEBUG');
 };
 
 /**
@@ -3963,7 +3975,7 @@ Game.prototype.updateState = function (state) {
 	
 	if (this.step(state) !== false) {
 		this.paused = false;
-		this.gameState.is =  GameState.iss.LOADED;
+		this.state.is =  GameState.iss.LOADED;
 		if (this.ready) {
 			node.emit('LOADED');
 		}
@@ -3981,7 +3993,7 @@ Game.prototype.updateState = function (state) {
  * Retrieves from the game-loop and executes the function for the 
  * specified game-state
  * 
- * @param {GameState} gameState 4 54 Optional. The GameState to run
+ * @param {GameState} gameState Optional. The GameState to run
  * @return {Boolean} FALSE, if the execution encountered an error
  * 
  * 	@see Game.gameLoop
@@ -4010,13 +4022,13 @@ Game.prototype.step = function (gameState) {
 			
 			// Local Listeners from previous state are erased 
 			// before proceeding to next one
-			node._ee.clearState(this.gameState);
+			node._ee.clearState(this.state);
 			
 			// For NDDB EventEmitter
 			//console.log(node._ee._listeners.count());
 			
 			gameState.is = GameState.iss.LOADING;
-			this.gameState = gameState;
+			this.state = gameState;
 		
 			// This could speed up the loading in other client,
 			// but now causes problems of multiple update
@@ -4036,18 +4048,17 @@ Game.prototype.step = function (gameState) {
 /**
  * # nodeGame
  * 
- * Copyright(c) 2012 Stefano Balietti
- * MIT Licensed 
+ * Copyright(c) 2012 Stefano Balietti MIT Licensed
  * 
  * ### nodeGame: Web Experiments in the Browser
  * 
- * *nodeGame* is a free, open source, event-driven javascript framework for on line, 
- * multiplayer games in the browser.
+ * *nodeGame* is a free, open source, event-driven javascript framework for on
+ * line, multiplayer games in the browser.
  */
 (function (node) {
 	
 	// Declaring variables
-	////////////////////////////////////////////
+	// //////////////////////////////////////////
 		
 	var EventEmitter = node.EventEmitter;
 	var GameSocketClient = node.GameSocketClient;
@@ -4059,7 +4070,7 @@ Game.prototype.step = function (gameState) {
 	
 	
 	// Adding constants directly to node
-	//////////////////////////////////////////
+	// ////////////////////////////////////////
 	
 	node.actions 	= GameMsg.actions;
 	node.IN 		= GameMsg.IN;
@@ -4068,13 +4079,13 @@ Game.prototype.step = function (gameState) {
 	node.states 	= GameState.iss;
 	
 	// Creating EventEmitter
-	///////////////////////////////////////////
+	// /////////////////////////////////////////
 	
 	var ee = node.events = node._ee = new EventEmitter();
 
 
 	// Creating objects
-	///////////////////////////////////////////
+	// /////////////////////////////////////////
 	
 	node.msg		= node.GameMsgGenerator;	
 	node.gsc 		= new GameSocketClient();
@@ -4084,14 +4095,21 @@ Game.prototype.step = function (gameState) {
 	
 	Object.defineProperty(node, 'state', {
     	get: function() {
-    		return (node.game) ? node.game.gameState : false;
+    		return (node.game) ? node.game.state : false;
     	},
     	configurable: false,
     	enumerable: true,
 	});
 	
+	node.env = function (env, func, ctx, params) {
+		if (!env || !func || !node.env[env]) return;
+		ctx = ctx || node;
+		params = params || [];
+		func.apply(ctx, params);
+	};
+	
 	// Adding methods
-	///////////////////////////////////////////
+	// /////////////////////////////////////////
 	
 	/**
 	 * Parses the a node configuration object and add default and missing
@@ -4125,13 +4143,23 @@ Game.prototype.step = function (gameState) {
 		
 		
 		// Add a trailing slash if missing
-		if (conf.host.lastIndexOf('/') !== host.length) {
+		if (conf.host && conf.host.lastIndexOf('/') !== host.length) {
 			conf.host = conf.host + '/';
 		}
 		
 		// VERBOSITY
 		if ('undefined' !== typeof conf.verbosity) {
 			node.verbosity = conf.verbosity;
+		}
+		
+		
+		// Environments
+		if ('undefined' !== typeof conf.env) {
+			for (var i in conf.env) {
+				if (conf.env.hasOwnProperty(i)) {
+					node.env[i] = conf.env[i];
+				}
+			}
 		}
 		
 		this.conf = conf;
@@ -4166,7 +4194,7 @@ Game.prototype.step = function (gameState) {
 	node.play = function (conf, game) {	
 		node._analyzeConf(conf);
 		
-		//node.gsc.connect(conf);
+		// node.gsc.connect(conf);
 		
 		node.game = new Game(game);
 		node.emit('NODEGAME_GAME_CREATED');
@@ -4180,34 +4208,34 @@ Game.prototype.step = function (gameState) {
 		node.log('ready.');
 	};	
 	
-//	node.observe = function (conf, game) {
-//		node._analyzeConf(conf);
+// node.observe = function (conf, game) {
+// node._analyzeConf(conf);
 //		
-//		var game = game || {loops: {1: {state: function(){}}}};
-//		node.gsc = that.gsc = new GameSocketClient(conf);
+// var game = game || {loops: {1: {state: function(){}}}};
+// node.gsc = that.gsc = new GameSocketClient(conf);
 //		
-//		node.game = that.game = new Game(game, that.gsc);
-//		node.gsc.setGame(that.game);
+// node.game = that.game = new Game(game, that.gsc);
+// node.gsc.setGame(that.game);
 //		
-//		node.on('NODEGAME_READY', function(){
+// node.on('NODEGAME_READY', function(){
 //			
-//			// Retrieve the game and set is as observer
-//			node.get('LOOP', function(game) {
+// // Retrieve the game and set is as observer
+// node.get('LOOP', function(game) {
 //				
-//				// alert(game);
-//				// console.log('ONLY ONE');
-//				// console.log(game);
-//	// var game = game.observer = true;
-//	// node.game = that.game = game;
-//	//			
-//	// that.game.init();
-//	//			
-//	// that.gsc.setGame(that.game);
-//	//			
-//	// node.log('nodeGame: game loaded...');
-//	// node.log('nodeGame: ready.');
-//			});
-//		});
+// // alert(game);
+// // console.log('ONLY ONE');
+// // console.log(game);
+// // var game = game.observer = true;
+// // node.game = that.game = game;
+// //
+// // that.game.init();
+// //
+// // that.gsc.setGame(that.game);
+// //
+// // node.log('nodeGame: game loaded...');
+// // node.log('nodeGame: ready.');
+// });
+// });
 		
 		
 // node.onDATA('GAME', function(data){
@@ -4219,7 +4247,7 @@ Game.prototype.step = function (gameState) {
 // console.log('--------->Eh!')
 // console.log(msg);
 // });
-//	};	
+// };
 	
 	node.emit = function (event, p1, p2, p3) {	
 		ee.emit(event, p1, p2, p3);
@@ -4350,7 +4378,7 @@ Game.prototype.step = function (gameState) {
 		setTimeout(function(func) {
 			func.call();
 		}, Math.random()*timing, func);
-	}
+	};
 		
 	node.log(node.version + ' loaded', 'ALWAYS');
 	
