@@ -421,7 +421,7 @@ ARRAY.removeElement = function (needle, haystack) {
 };
 
 /**
- * ## ARRAY.in_array
+ * ## ARRAY.inArray 
  * 
  * Returns TRUE if the element is contained in the array,
  * FALSE otherwise
@@ -429,13 +429,15 @@ ARRAY.removeElement = function (needle, haystack) {
  * For objects, deep equality comparison is performed 
  * through JSUS.equals.
  * 
+ * Alias ARRAY.in_array (deprecated)
+ * 
  * @param {mixed} needle The element to search in the array
  * @param {Array} haystack The array to search in
  * @return {Boolean} TRUE, if the element is contained in the array
  * 
  * 	@see JSUS.equals
  */
-ARRAY.in_array = function (needle, haystack) {
+ARRAY.inArray = ARRAY.in_array = function (needle, haystack) {
     if (!haystack) return false;
     
     var func = JSUS.equals;    

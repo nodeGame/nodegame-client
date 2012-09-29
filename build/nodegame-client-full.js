@@ -1920,8 +1920,8 @@ if (!store) {
 	console.log('fs.shelf.js: shelf.js core not found. File system storage not available.');
 	return;
 }
-	
 
+store.filename = './shelf.out';
 
 var fs = require('fs'),
 	path = require('path'),
@@ -1939,17 +1939,16 @@ var copyFile = function(srcFile, destFile, cb) {
   };
 
 
-var timeout = {},
-	file = store.name || 'shelf.out';
+var timeout = {};
 
 var overwrite = function (fileName, items) {
-	var file = fileName || file;
+	var file = fileName || store.filename;
 	if (!file) {
 		store.log('You must specify a valid file.', 'ERR');
 		return false;
 	}
 	
-	var tmp_copy = '.' + file;
+	var tmp_copy = path.dirname(file) + '.' + path.basename(file);
 	
 //	console.log('files')
 //	console.log(file);
@@ -1974,21 +1973,47 @@ var overwrite = function (fileName, items) {
 	
 };
 
-var save = function (fileName, key, value) {
-	var file = fileName || file;
-	if (!file) {
-		store.log('You must specify a valid file.', 'ERR');
-		return false;
-	}
-	if (!key) return;
-	
-	var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
-	
-	return fs.appendFileSync(file, item, 'utf-8');
-};
+if ('undefined' !== typeof fs.appendFileSync) {
+	// node 0.8
+	var save = function (fileName, key, value) {
+		var file = fileName || store.filename;
+		if (!file) {
+			store.log('You must specify a valid file.', 'ERR');
+			return false;
+		}
+		if (!key) return;
+		
+		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
+		
+		return fs.appendFileSync(file, item, 'utf-8');
+	};	
+}
+else {
+	// node < 0.8
+	var save = function (fileName, key, value) {
+		var file = fileName || store.filename;
+		if (!file) {
+			store.log('You must specify a valid file.', 'ERR');
+			return false;
+		}
+		if (!key) return;
+		
+		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
+		
+
+
+		fs.open(file, 'a', 666, function( e, id ) {
+			fs.write( id, item, null, 'utf8', function(){
+				fs.close(id, function(){});
+			});
+		});
+		
+		return true;
+	};
+}
 
 var load = function (fileName, key) {
-	var file = fileName || file;
+	var file = fileName || store.filename;
 	if (!file) {
 		store.log('You must specify a valid file.', 'ERR');
 		return false;
@@ -2015,7 +2040,7 @@ var load = function (fileName, key) {
 };
 
 var deleteVariable = function (fileName, key) {
-	file = fileName || file;
+	var file = fileName || store.filename;
 	var items = load(file);
 //	console.log('dele')
 //	console.log(items)
@@ -2027,7 +2052,7 @@ var deleteVariable = function (fileName, key) {
 
 store.addType("fs", function(key, value, options) {
 	
-	var filename = options.file || file;
+	var filename = options.file || store.filename;
 	
 	if (!key) { 
 		return load(filename);
@@ -2048,18 +2073,18 @@ store.addType("fs", function(key, value, options) {
 	}
 	
 	// save item
-	save(file, key, value);
+	save(filename, key, value);
 	
 	if (options.expires) {
 		timeout[key] = setTimeout(function() {
-			deleteVariable(file, key);
+			deleteVariable(filename, key);
 		}, options.expires);
 	}
 
 	return value;
 });
 
-}(('undefined' !== typeof module && 'function' === typeof require) ? module.exports.store || module.parent.exports : {}));
+}(('undefined' !== typeof module && 'function' === typeof require) ? module.exports || module.parent.exports : {}));
 /**
  * # JSUS: JavaScript UtilS. 
  * Copyright(c) 2012 Stefano Balietti
@@ -2483,7 +2508,7 @@ ARRAY.removeElement = function (needle, haystack) {
 };
 
 /**
- * ## ARRAY.in_array
+ * ## ARRAY.inArray 
  * 
  * Returns TRUE if the element is contained in the array,
  * FALSE otherwise
@@ -2491,13 +2516,15 @@ ARRAY.removeElement = function (needle, haystack) {
  * For objects, deep equality comparison is performed 
  * through JSUS.equals.
  * 
+ * Alias ARRAY.in_array (deprecated)
+ * 
  * @param {mixed} needle The element to search in the array
  * @param {Array} haystack The array to search in
  * @return {Boolean} TRUE, if the element is contained in the array
  * 
  * 	@see JSUS.equals
  */
-ARRAY.in_array = function (needle, haystack) {
+ARRAY.inArray = ARRAY.in_array = function (needle, haystack) {
     if (!haystack) return false;
     
     var func = JSUS.equals;    

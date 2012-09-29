@@ -179,6 +179,15 @@ function build(options) {
 		}
 		else {
 			console.log('  - nodegame-window');
+			
+			// Build custom shelf.js if not existing
+			if (!path.existsSync(ngWdir + 'build/nodegame-window.js')) {
+				var window_build = ngWdir + 'bin/build.js';
+				console.log("\n  - building custom nodegame-window.js")
+				var buildWindow = require(window_build);
+				buildWindow.build({all: true});
+			}
+			
 			files = files.concat(ng_window);
 		}
 		
@@ -191,6 +200,15 @@ function build(options) {
 		}
 		else {
 			console.log('  - nodegame-widgets');
+			
+			// Build custom shelf.js if not existing
+			if (!path.existsSync(ngWdgdir + 'build/nodegame-widgets.js')) {
+				var widgets_build = ngWdgdir + 'bin/build.js';
+				console.log("\n  - building custom nodegame-widgets.js")
+				var buildWidgets = require(widgets_build);
+				buildWidgets.build({all: true});
+			}
+			
 			files = files.concat(ng_widgets);
 		}
 	}

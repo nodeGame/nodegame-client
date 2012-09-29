@@ -24,8 +24,8 @@
       "JSON": "1.0.0",
       "shelf.js": ">= 0.2.1",
       "es5-shim": "1.2.10",
-      "nodegame-window": ">= 0.2.11",
-      "nodegame-widgets": ">= 1.2.1"
+      "nodegame-window": ">= 0.2.13",
+      "nodegame-widgets": "0.2.10"
     }
   , "devDependencies": {
     "mocha": ">= 0.3.0",
