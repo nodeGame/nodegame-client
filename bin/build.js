@@ -89,36 +89,15 @@ function build(options) {
 	var ngWdir = J.resolveModuleDir('nodegame-window', __dirname);
 	
 	var ng_window = [
-		ngWdir + "GameWindow.js",
-		ngWdir + "Canvas.js",
-		ngWdir + "HTMLRenderer.js",
-		ngWdir + "List.js",
-		ngWdir + "Table.js",
+		ngWdir + "build/nodegame-window.js",
 	]; 
 		
 	// nodegame-widgets
 	var ngWdgdir = J.resolveModuleDir('nodegame-widgets', __dirname);
 	
 	var ng_widgets = [
-		ngWdgdir + "ChernoffFaces.js",
-		ngWdgdir + "Controls.js",
-		ngWdgdir + "DataBar.js",
-		ngWdgdir + "DynamicTable.js",
-		ngWdgdir + "EventButton.js",
-		ngWdgdir + "GameBoard.js",
-		ngWdgdir + "GameSummary.js",
-		ngWdgdir + "GameTable.js",
-		ngWdgdir + "MsgBar.js",
-		ngWdgdir + "NDDBBrowser.js",
-		ngWdgdir + "NextPreviousState.js",
-		ngWdgdir + "ServerInfoDisplay.js",
-		ngWdgdir + "StateBar.js",
-		ngWdgdir + "StateDisplay.js",
-		ngWdgdir + "VisualState.js",
-		ngWdgdir + "VisualTimer.js",
-		ngWdgdir + "WaitScreen.js",
-		ngWdgdir + "Wall.js",
-		ngWdgdir + "MoneyTalks.js",
+	    ngWdgdir + 'build/nodegame-widgets.js',
+	                 
 	];
 	
 	// es5-shim

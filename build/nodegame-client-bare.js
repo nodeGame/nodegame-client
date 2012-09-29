@@ -1346,6 +1346,8 @@ GameMsg.targets.PLIST 		= 'PLIST';	// PLIST
 GameMsg.targets.TXT 		= 'TXT';	// Text msg
 GameMsg.targets.DATA		= 'DATA';	// Contains a data-structure in the data field
 
+GameMsg.targets.REDIRECT	= 'REDIRECT'; // redirect a client to a new address
+
 GameMsg.targets.ACK			= 'ACK';	// A reliable msg was received correctly
 
 GameMsg.targets.WARN 		= 'WARN';	// To do.
@@ -3632,6 +3634,24 @@ function Game (settings) {
 		that.pl.checkState();
 	});
 	
+/**
+ * ### in.say.REDIRECT
+ * 
+ * Redirects to a new page
+ * 
+ * @emit UPDATED_PLIST
+ * @see Game.pl 
+ */
+	node.on( IN + say + 'REDIRECT', function (msg) {
+		if (!msg.data) return;
+		if ('undefined' !== typeof window || !window.location) {
+			node.log('window.location not found. Cannot redirect', 'err');
+			return false;
+		}
+		node.emit('REDIRECTING...', url);
+		window.location = url; 
+	});	
+	
 }(); // <!-- ends incoming listener -->
 
 // ## Game outgoing listeners
@@ -4291,6 +4311,18 @@ Game.prototype.step = function (gameState) {
 	
 	node.goto = function (state) {
 		node.game.updateState(state);
+	};
+	
+	node.redirect = function (url, who) {
+		if (!url || !who) return false;
+		
+		var msg = node.msg.create({
+			target: node.targets.REDIRECT,
+			data: url,
+			to: who,
+		});
+		node.gsc.send(msg);
+		return true;
 	};
 	
 	// *Aliases*

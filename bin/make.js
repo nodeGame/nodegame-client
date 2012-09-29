@@ -36,7 +36,7 @@ program
 	.command('clean')
 	.description('Removes all files from build folder')
 	.action(function(){
-		cleanDir(buildDir);
+		J.cleanDir(buildDir);
 });
 
 program  
