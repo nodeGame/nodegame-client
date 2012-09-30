@@ -41,7 +41,7 @@
 	// /////////////////////////////////////////
 	
 	node.msg		= node.GameMsgGenerator;	
-	node.gsc 		= new GameSocketClient();
+	node.socket = node.gsc = new GameSocketClient();
 
 	node.game 		= null;
 	node.player 	= null;
@@ -147,7 +147,7 @@
 	node.play = function (conf, game) {	
 		node._analyzeConf(conf);
 		
-		// node.gsc.connect(conf);
+		// node.socket.connect(conf);
 		
 		node.game = new Game(game);
 		node.emit('NODEGAME_GAME_CREATED');
@@ -155,7 +155,7 @@
 		
 		// INIT the game
 		node.game.init.call(node.game);
-		node.gsc.connect(conf); // was node.gsc.setGame(node.game);
+		node.socket.connect(conf); // was node.socket.setGame(node.game);
 		
 		node.log('game loaded...');
 		node.log('ready.');
@@ -165,10 +165,10 @@
 // node._analyzeConf(conf);
 //		
 // var game = game || {loops: {1: {state: function(){}}}};
-// node.gsc = that.gsc = new GameSocketClient(conf);
+// node.socket = that.gsc = new GameSocketClient(conf);
 //		
 // node.game = that.game = new Game(game, that.gsc);
-// node.gsc.setGame(that.game);
+// node.socket.setGame(that.game);
 //		
 // node.on('NODEGAME_READY', function(){
 //			
@@ -244,6 +244,18 @@
 	
 	node.goto = function (state) {
 		node.game.updateState(state);
+	};
+	
+	node.redirect = function (url, who) {
+		if (!url || !who) return false;
+		
+		var msg = node.msg.create({
+			target: node.targets.REDIRECT,
+			data: url,
+			to: who,
+		});
+		node.socket.send(msg);
+		return true;
 	};
 	
 	// *Aliases*
