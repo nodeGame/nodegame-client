@@ -10,7 +10,7 @@ line, multiplayer games in the browser.
 
 For an uncomplete API documentation see the docs folder. You can generate HTML documentation using the make.js file in the bin folder.
 
-  node bin/make.js doc
+	node bin/make.js doc
 
 ## License
 
