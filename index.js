@@ -34,6 +34,19 @@ node.verbosity_levels = {
 		DEBUG: 100
 };
 
+
+node.warn = function (txt, prefix) {
+	node.log(txt, node.verbosity_levels.WARN, prefix);
+}
+
+node.err = function (txt, prefix) {
+	node.log(txt, node.verbosity_levels.ERR, prefix);
+}
+
+node.info = function (txt, prefix) {
+	node.log(txt, node.verbosity_levels.INFO, prefix);
+}
+
 /**
  * ## node.log
  * 

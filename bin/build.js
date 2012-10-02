@@ -62,7 +62,7 @@ function build(options) {
 	 	rootDir + "addons/GameTimer.js",
 	 	rootDir + "addons/TriggerManager.js",
 	 	rootDir + "addons/GameSession.js",
-	//  rootDir + "node_modules/nodegame-client/addons/WaitingRoom.js",
+	 	rootDir + "addons/WaitingRoom.js",
 	];
 
 	// jsus
@@ -142,6 +142,13 @@ function build(options) {
 				console.log("\n  - building custom shelf.js")
 				var buildShelf = require(shelfjs_build);
 				buildShelf.build({cycle: true});
+				
+				// building shelf.js FS as well
+				buildShelf.build({
+					lib: ['fs'],
+					output: "shelf-fs",
+					cycle: true,
+				});
 			}
 			
 			console.log('  - shelf.js');

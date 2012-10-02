@@ -144,7 +144,7 @@
 	};
 	
 	// TODO: create conf objects
-	node.play = function (conf, game) {	
+	node.connect = node.play = function (conf, game) {	
 		node._analyzeConf(conf);
 		
 		// node.socket.connect(conf);
@@ -210,13 +210,15 @@
 		ee.emit('out.say.DATA', data, whom, what);
 	};
 	
-	/**
-	 * Set the pair (key,value) into the server
-	 * 
-	 * @value can be an object literal.
-	 * 
-	 * 
-	 */
+/**
+ * ### node.set
+ * 
+ * Store a key, value pair in the server memory
+ * 
+ * @param {string} key An alphanumeric (must not be unique)
+ * @param {mixed} The value to store (can be of any type)
+ * 
+ */
 	node.set = function (key, value) {
 		// TODO: parameter to say who will get the msg
 		ee.emit('out.set.DATA', value, null, key);
@@ -236,16 +238,52 @@
 		
 		node.on('in.say.DATA', listener);
 	};
-	
+
+/**
+ * ### node.replay
+ * 
+ * Moves the game state to 1.1.1
+ * 
+ * @param {boolean} rest TRUE, to erase the game memory before update the game state
+ */	
 	node.replay = function (reset) {
 		if (reset) node.game.memory.clear(true);
 		node.goto(new GameState({state: 1, step: 1, round: 1}));
 	}
-	
+
+/**
+ * ### node.goto
+ * 
+ * Moves the game to the specified game state
+ * 
+ * @param {string|GameState} The state to go to
+ * 
+ */	
 	node.goto = function (state) {
 		node.game.updateState(state);
 	};
 	
+/**
+ * ### node.redirect
+ * 
+ * Redirects a player to the specified url
+ * 
+ * Works only if it is a monitor client to send
+ * the message, i.e. players cannot redirect each 
+ * other.
+ * 
+ * Examples
+ *  
+ * 	// Redirect to http://mydomain/mygame/missing_auth
+ * 	node.redirect('missing_auth', 'xxx'); 
+ * 
+ *  // Redirect to external urls
+ *  node.redirect('http://www.google.com');
+ * 
+ * @param {string} url the url of the redirection
+ * @param {string} who A player id or 'ALL'
+ * @return {boolean} TRUE, if the redirect message is sent
+ */	
 	node.redirect = function (url, who) {
 		if (!url || !who) return false;
 		
