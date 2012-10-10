@@ -53,8 +53,15 @@ function build(options) {
 	 	rootDir + "lib/GameSocketClient.js",
 	 	rootDir + "lib/GameDB.js",
 	 	rootDir + "lib/Game.js", 
+	 		 	
 	 // nodeGame
 	 	rootDir + "nodeGame.js",
+	 	
+	 // listeners
+	 	
+	 	rootDir + "listeners/incoming.js",
+	 	rootDir + "listeners/outgoing.js",
+	 	rootDir + "listeners/internal.js",
 	];
 
 	// ng-addons
