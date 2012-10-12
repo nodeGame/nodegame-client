@@ -14,6 +14,80 @@
 		set = GameMsg.actions.SET + '.',
 		get = GameMsg.actions.GET + '.',
 		IN  = GameMsg.IN;
+
+	
+/**
+ * ### in.say.PCONNECT
+ * 
+ * Adds a new player to the player list from the data contained in the message
+ * 
+ * @emit UPDATED_PLIST
+ * @see Game.pl 
+ */
+	node.on( IN + say + 'PCONNECT', function (msg) {
+		if (!msg.data) return;
+		that.pl.add(new Player(msg.data));
+		node.emit('UPDATED_PLIST');
+		that.pl.checkState();
+	});	
+	
+/**
+ * ### in.say.PDISCONNECT
+ * 
+ * Removes a player from the player list based on the data contained in the message
+ * 
+ * @emit UPDATED_PLIST
+ * @see Game.pl 
+ */
+	node.on( IN + say + 'PDISCONNECT', function (msg) {
+		if (!msg.data) return;
+		that.pl.remove(msg.data.id);
+		node.emit('UPDATED_PLIST');
+		that.pl.checkState();
+	});	
+
+/**
+ * ### in.say.MCONNECT
+ * 
+ * Adds a new monitor to the monitor list from the data contained in the message
+ * 
+ * @emit UPDATED_PLIST
+ * @see Game.ml 
+ */
+	node.on( IN + say + 'MCONNECT', function (msg) {
+		if (!msg.data) return;
+		that.ml.add(new Player(msg.data));
+		node.emit('UPDATED_MLIST');
+	});	
+		
+/**
+ * ### in.say.MDISCONNECT
+ * 
+ * Removes a monitor from the player list based on the data contained in the message
+ * 
+ * @emit UPDATED_MLIST
+ * @see Game.ml 
+ */
+	node.on( IN + say + 'MDISCONNECT', function (msg) {
+		if (!msg.data) return;
+		that.ml.remove(msg.data.id);
+		node.emit('UPDATED_MLIST');
+	});		
+			
+
+/**
+ * ### in.say.MLIST
+ * 
+ * Creates a new player-list object from the data contained in the message
+ * 
+ * @emit UPDATED_MLIST
+ * @see Game.pl 
+ */
+node.on( IN + say + 'MLIST', function (msg) {
+	if (!msg.data) return;
+	node.game.ml = new PlayerList({}, msg.data);
+	node.emit('UPDATED_MLIST');
+});	
 	
 /**
  * ### in.get.DATA
@@ -85,21 +159,6 @@ node.on( IN + set + 'DATA', function (msg) {
 			node.game.updateState(msg.data);
 		}
 	});
-
-/**
- * ### in.say.PLIST
- * 
- * Creates a new player-list object from the data contained in the message
- * 
- * @emit UPDATED_PLIST
- * @see Game.pl 
- */
-node.on( IN + say + 'PLIST', function (msg) {
-	if (!msg.data) return;
-	node.game.pl = new PlayerList({}, msg.data);
-	node.emit('UPDATED_PLIST');
-	node.game.pl.checkState();
-});
 	
 /**
  * ### in.say.REDIRECT
