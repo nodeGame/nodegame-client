@@ -78,7 +78,7 @@ node.log = function (txt, level, prefix) {
 
 // <!-- It will be overwritten later -->
 node.game 		= {};
-node.gsc 		= {};
+node.socket 	= {};
 node.session 	= {};
 node.player 	= {};
 node.memory 	= {};
@@ -92,6 +92,11 @@ if ('undefined' !== typeof store) node.store = store;
 if ('object' === typeof module && 'function' === typeof require) {
     require('./init.node.js');
     require('./nodeGame.js');
+
+    // ### Loading Event listeners
+    require('./listeners/incoming.js');
+    require('./listeners/internal.js');
+    require('./listeners/outgoing.js');
 }
 // end node -->
 	

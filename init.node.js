@@ -151,7 +151,6 @@ node.TriggerManager = require('./addons/TriggerManager').TriggerManager;
 require('./addons/GameSession').GameSession;
 
 
-
 // ### Enable file system operations
  
 
@@ -296,26 +295,4 @@ node.memory.dumpAllIndexes = function (dir, options) {
 	
 };
 
-///**
-// * ## PlayerList.dump (Node.JS)
-// * 
-// * Seriales as a csv file all the players
-// * 
-// * @param {string} path The path to the csv file
-// * @param {options} options Optional. Configuration options
-// *
-// * 	@see node.fs.writeCsv
-// */
-//node.PlayerList.prototype.dump = function (path, options) {
-//	if ('undefined' === typeof path) {
-//		node.log('Missing path parameter', 'ERR', 'PlayerList.dump: ');
-//		return;
-//	}
-//	options = options || {};
-//	if (!options.headers) {
-//		options.headers = node.JSUS.keys(this.first());
-//	}
-//	node.fs.writeCsv(path, this.split().fetchValues(), options);
-//};
-//	
 })('undefined' != typeof node ? node : module.parent.exports);

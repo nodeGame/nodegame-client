@@ -8,7 +8,9 @@
 	}
 	
 	var GameMsg = node.GameMsg,
-		GameState = node.GameState;
+		GameState = node.GameState,
+		PlayerList = node.PlayerList,
+		Player = node.Player;
 	
 	var say = GameMsg.actions.SAY + '.',
 		set = GameMsg.actions.SET + '.',
@@ -26,9 +28,9 @@
  */
 	node.on( IN + say + 'PCONNECT', function (msg) {
 		if (!msg.data) return;
-		that.pl.add(new Player(msg.data));
+		node.game.pl.add(new Player(msg.data));
 		node.emit('UPDATED_PLIST');
-		that.pl.checkState();
+		node.game.pl.checkState();
 	});	
 	
 /**
@@ -41,9 +43,9 @@
  */
 	node.on( IN + say + 'PDISCONNECT', function (msg) {
 		if (!msg.data) return;
-		that.pl.remove(msg.data.id);
+		node.game.pl.remove(msg.data.id);
 		node.emit('UPDATED_PLIST');
-		that.pl.checkState();
+		node.game.pl.checkState();
 	});	
 
 /**
@@ -56,7 +58,7 @@
  */
 	node.on( IN + say + 'MCONNECT', function (msg) {
 		if (!msg.data) return;
-		that.ml.add(new Player(msg.data));
+		node.game.ml.add(new Player(msg.data));
 		node.emit('UPDATED_MLIST');
 	});	
 		
@@ -70,7 +72,7 @@
  */
 	node.on( IN + say + 'MDISCONNECT', function (msg) {
 		if (!msg.data) return;
-		that.ml.remove(msg.data.id);
+		node.game.ml.remove(msg.data.id);
 		node.emit('UPDATED_MLIST');
 	});		
 			
