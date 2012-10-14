@@ -23,7 +23,8 @@
 /**
  * ### STATEDONE
  * 
- * Fired when all the 
+ * Fired when all the players in the player list have their
+ * state set to DONE
  */ 
 node.on('STATEDONE', function() {
 	// <!-- If we go auto -->
