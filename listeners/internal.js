@@ -39,7 +39,7 @@ node.on('STATEDONE', function() {
 		// TODO: differentiate between before the game starts and during the game
 		else {
 			node.emit('OUT.say.TXT', node.game.minPlayers + ' players ready. Game can proceed');
-			node.log(pl.length + ' players ready. Game can proceed');
+			node.log(node.game.pl.length + ' players ready. Game can proceed');
 			node.game.updateState(node.game.next());
 		}
 	}
