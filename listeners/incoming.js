@@ -78,9 +78,23 @@
 			
 
 /**
- * ### in.say.MLIST
+ * ### in.say.PLIST
  * 
  * Creates a new player-list object from the data contained in the message
+ * 
+ * @emit UPDATED_MLIST
+ * @see Game.pl 
+ */
+node.on( IN + say + 'PLIST', function (msg) {
+	if (!msg.data) return;
+	node.game.pl = new PlayerList({}, msg.data);
+	node.emit('UPDATED_PLIST');
+});	
+	
+/**
+ * ### in.say.MLIST
+ * 
+ * Creates a new monitor-list object from the data contained in the message
  * 
  * @emit UPDATED_MLIST
  * @see Game.pl 
