@@ -13,13 +13,13 @@
 	// Declaring variables
 	// //////////////////////////////////////////
 		
-	var EventEmitter = node.EventEmitter;
-	var GameSocketClient = node.GameSocketClient;
-	var GameState = node.GameState;
-	var GameMsg = node.GameMsg;
-	var Game = node.Game;
-	var Player = node.Player;
-	var GameSession = node.GameSession;
+	var EventEmitter = node.EventEmitter,
+		GameSocketClient = node.GameSocketClient,
+		GameState = node.GameState,
+		GameMsg = node.GameMsg,
+		Game = node.Game,
+		Player = node.Player,
+		GameSession = node.GameSession;
 	
 	
 	// Adding constants directly to node
@@ -34,7 +34,7 @@
 	// Creating EventEmitter
 	// /////////////////////////////////////////
 	
-	var ee = node.events = node._ee = new EventEmitter();
+	node.events = new EventEmitter();
 
 
 	// Creating objects
@@ -123,11 +123,11 @@
 	node.on = function (event, listener) {
 		// It is in the init function;
 		if (!node.state || (GameState.compare(node.state, new GameState(), true) === 0 )) {
-			ee.addListener(event, listener);
+			node.events.add(event, listener);
 			// node.log('global');
 		}
 		else {
-			ee.addLocalListener(event, listener);
+			node.events.addLocal(event, listener);
 			// node.log('local');
 		}
 	};
@@ -135,12 +135,12 @@
 	node.once = function (event, listener) {
 		node.on(event, listener);
 		node.on(event, function(event, listener) {
-			ee.removeListener(event, listener);
+			node.events.remove(event, listener);
 		});
 	};
 	
 	node.removeListener = function (event, func) {
-		return ee.removeListener(event, func);
+		return node.events.remove(event, func);
 	};
 	
 	// TODO: create conf objects
@@ -203,11 +203,11 @@
 // };
 	
 	node.emit = function (event, p1, p2, p3) {	
-		ee.emit(event, p1, p2, p3);
+		node.events.emit(event, p1, p2, p3);
 	};	
 	
 	node.say = function (data, what, whom) {
-		ee.emit('out.say.DATA', data, whom, what);
+		node.events.emit('out.say.DATA', data, whom, what);
 	};
 	
 /**
@@ -221,19 +221,19 @@
  */
 	node.set = function (key, value) {
 		// TODO: parameter to say who will get the msg
-		ee.emit('out.set.DATA', value, null, key);
+		node.events.emit('out.set.DATA', value, null, key);
 	};
 	
 	
 	node.get = function (key, func) {
-		ee.emit('out.get.DATA', key);
+		node.events.emit('out.get.DATA', key);
 		
 		var listener = function(msg) {
 			if (msg.text === key) {
 				func.call(node.game, msg.data);
-				ee.removeListener('in.say.DATA',listener);
+				node.events.remove('in.say.DATA', listener);
 			}
-			// ee.printAllListeners();
+			// node.events.printAll();
 		};
 		
 		node.on('in.say.DATA', listener);
