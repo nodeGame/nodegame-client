@@ -329,12 +329,14 @@
 	node.onDATA = function(text, func) {
 		node.on('in.say.DATA', function(msg) {
 			if (text && msg.text === text) {
-				func.call(node.game,msg);
+				func.call(node.game, msg);
 			}
 		});
 		
 		node.on('in.set.DATA', function(msg) {
-			func.call(node.game,msg);
+			if (text && msg.text === text) {
+				func.call(node.game, msg);
+			}
 		});
 	};
 	
