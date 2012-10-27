@@ -238,7 +238,7 @@ function build_support(options) {
 	
 	
 	if (options.all) {
-		options.only = ['es5', 'shelf', 'JSUS', 'NDDB', 'addons', 'window', 'widgets'];
+		options.only = ['es5', 'shelf', 'jsus', 'nddb', 'addons', 'window', 'widgets'];
 	}
 	
 	var library, out, files;
@@ -293,14 +293,14 @@ function build_support(options) {
 			}
 			break;
 			
-		case 'JSUS':
+		case 'jsus':
 			console.log('  - JSUS');
 			files = files.concat(ng_jsus);
 			break;
 	
 
 	
-		case 'NDDB':
+		case 'nddb':
 			
 			console.log('  - NDDB');
 			files = files.concat(ng_nddb);
