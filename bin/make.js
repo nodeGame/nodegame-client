@@ -42,12 +42,12 @@ program
 program  
 	.command('build [options]')
 	.description('Creates a nodegame-client custom build')
-	.option('-B, --bare', 'bare naked nodegame-client (no dependencies)')
+	.option('-B, --bare', 'bare naked nodegame-client (no dependencies, no addons)')
 	.option('-J, --JSUS', 'with JSUS')
 	.option('-N, --NDDB', 'with NDDB')
-	.option('-W, --window', 'with nodeGame-window')
-	.option('-w, --widgets', 'with nodeGame-widgets')
-	.option('-d, --addons', 'with nodeGame-client addons')
+	.option('-W, --window', 'with nodegame-window')
+	.option('-w, --widgets', 'with nodegame-widgets')
+	.option('-d, --addons', 'with nodegame-client addons')
 	.option('-s, --shelf', 'with Shelf.js')
 	.option('-e, --es5', 'with support for old browsers')
 	.option('-a, --all', 'full build of nodeGame-client')
@@ -71,10 +71,23 @@ program
 			bare: true,
 			output: "nodegame-client-bare",
 		});
+
 		build({
 			output: "nodegame-client",
 		});
 		
+		build({
+			addons_only: true,
+		});
+		build({
+			window_only: true,
+		});
+		build({
+			widgets_only: true,
+		});
+		build({
+			es5_only: true,
+		});
 });
 
 program

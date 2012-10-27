@@ -120,8 +120,6 @@ if ('object' === typeof module && 'function' === typeof require) {
 	
 var NDDB = node.NDDB;
 
-console.log(NDDB);
-
 exports.EventEmitter = EventEmitter;
 
 /**
@@ -134,20 +132,21 @@ function EventEmitter() {
 // ## Public properties	
 	
 /**
- * ### EventEmitter._listeners
+ * ### EventEmitter.global
+ * 
  * 
  * Global listeners always active during the game
  * 
  */	
-    this._listeners = {};
+    this.global = this._listeners = {};
     
  /**
-  * ### EventEmitter._localListeners
+  * ### EventEmitter.local
   * 
   * Local listeners erased after every state update
   * 
   */   
-    this._localListeners = {};
+    this.local = this._localListeners = {};
 
 /**
  * ### EventEmitter.history
@@ -163,23 +162,12 @@ function EventEmitter() {
     		indexes: true,
     }});
     
-    console.log(this.history)
-    
     this.history.h('state', function(e) {
     	if (!e) return;
     	var state = ('object' === typeof e.state) ? e.state
     											  : node.game.state;
     	return node.GameState.toHash(state, 'S.s.r');
     });
- 
-/**
- * ### EventEmitter.store
- * 
- * If TRUE all emitted events are saved in the history database
- * 
- * 	@see EventEmitter.history
- */       
-    this.store = true; // by default
 }
 
 // ## EventEmitter methods
@@ -189,7 +177,7 @@ EventEmitter.prototype = {
     constructor: EventEmitter,
 	
 /**
- * ### EventEmitter.addListener
+ * ### EventEmitter.add
  * 
  * Registers a global listener for an event
  * 
@@ -199,19 +187,19 @@ EventEmitter.prototype = {
  * @param {string} type The event name
  * @param {function} listener The function to fire
  * 
- * @see EventEmitter.addLocalListener
+ * @see EventEmitter.addLocal
  */
-    addListener: function (type, listener) {
+    add: function (type, listener) {
     	if (!type || !listener) return;
-    	if ('undefined' === typeof this._listeners[type]){
-    		this._listeners[type] = [];
+    	if ('undefined' === typeof this.global[type]){
+    		this.global[type] = [];
     	}
         node.log('Added Listener: ' + type + ' ' + listener, 'DEBUG');
-        this._listeners[type].push(listener);
+        this.global[type].push(listener);
     },
     
 /**
- * ### EventEmitter.addLocalListener
+ * ### EventEmitter.addLocal
  * 
  * Registers a local listener for an event
  * 
@@ -222,16 +210,16 @@ EventEmitter.prototype = {
  * @param {string} type The event name
  * @param {function} listener The function to fire
  * 
- * @see EventEmitter.addListener
+ * @see EventEmitter.add
  * 
  */
-    addLocalListener: function (type, listener) {
+    addLocal: function (type, listener) {
     	if (!type || !listener) return;
-    	if ('undefined' === typeof this._localListeners[type]){
-            this._localListeners[type] = [];
+    	if ('undefined' === typeof this.local[type]){
+            this.local[type] = [];
         }
     	node.log('Added Local Listener: ' + type + ' ' + listener, 'DEBUG');
-        this._localListeners[type].push(listener);
+        this.local[type].push(listener);
     },
 
 /**
@@ -267,7 +255,7 @@ EventEmitter.prototype = {
         // console.log('Fired ' + event.type); -->
         
         // Log the event into node.history object, if present
-        if (this.store) {
+        if (node.conf.events.history) {
         	var o = {
 	        		event: event.type,
 	        		//target: node.game,
@@ -282,16 +270,16 @@ EventEmitter.prototype = {
         
         
         // Fires global listeners
-        if (this._listeners[event.type] instanceof Array) {
-            var listeners = this._listeners[event.type];
+        if (this.global[event.type] instanceof Array) {
+            var listeners = this.global[event.type];
             for (var i=0, len=listeners.length; i < len; i++){
             	listeners[i].call(this.game, p1, p2, p3);
             }
         }
         
         // Fires local listeners
-        if (this._localListeners[event.type] instanceof Array) {
-            var listeners = this._localListeners[event.type];
+        if (this.local[event.type] instanceof Array) {
+            var listeners = this.local[event.type];
             for (var i=0, len=listeners.length; i < len; i++) {
             	listeners[i].call(this.game, p1, p2, p3);
             }
@@ -300,7 +288,7 @@ EventEmitter.prototype = {
     },
 
 /**
- * ### EventEmitter.removeListener
+ * ### EventEmitter.remove
  * 
  * Deregister an event, or an event listener
  * 
@@ -309,7 +297,7 @@ EventEmitter.prototype = {
  * 
  * @return Boolean TRUE, if the removal is successful
  */
-	removeListener: function(type, listener) {
+	remove: function(type, listener) {
 	
 		function removeFromList(type, listener, list) {
 	    	//<!-- console.log('Trying to remove ' + type + ' ' + listener); -->
@@ -337,8 +325,8 @@ EventEmitter.prototype = {
 	        return false;
 		}
 		
-		var r1 = removeFromList(type, listener, this._listeners);
-		var r2 = removeFromList(type, listener, this._localListeners);
+		var r1 = removeFromList(type, listener, this.global);
+		var r2 = removeFromList(type, listener, this.local);
 	
 		return r1 || r2;
 	},
@@ -351,7 +339,7 @@ EventEmitter.prototype = {
  * @TODO: This method wraps up clearLocalListeners. To re-design.
  */ 
 	clearState: function(state) {
-		this.clearLocalListeners();
+		this.clearLocal();
 		return true;
 	},
     
@@ -361,33 +349,33 @@ EventEmitter.prototype = {
  * Removes all entries from the local listeners register
  * 
  */
-	clearLocalListeners: function() {
+	clearLocal: function() {
 		node.log('Cleaning Local Listeners', 'DEBUG');
-		for (var key in this._localListeners) {
-			if (this._localListeners.hasOwnProperty(key)) {
-				this.removeListener(key, this._localListeners[key]);
+		for (var key in this.local) {
+			if (this.local.hasOwnProperty(key)) {
+				this.remove(key, this.local[key]);
 			}
 		}
 		
-		this._localListeners = {};
+		this.local = {};
 	},
     
 /**
- * ### EventEmitter.printAllListeners
+ * ### EventEmitter.printAll
  * 
  * Prints to console all the registered functions 
  */
-	printAllListeners: function() {
+	printAll: function() {
 		node.log('nodeGame:\tPRINTING ALL LISTENERS', 'DEBUG');
 	    
-		for (var i in this._listeners){
-	    	if (this._listeners.hasOwnProperty(i)){
+		for (var i in this.global){
+	    	if (this.global.hasOwnProperty(i)){
 	    		console.log(i + ' ' + i.length);
 	    	}
 	    }
 		
-		for (var i in this._localListeners){
-	    	if (this._listeners.hasOwnProperty(i)){
+		for (var i in this.local){
+	    	if (this.local.hasOwnProperty(i)){
 	    		console.log(i + ' ' + i.length);
 	    	}
 	    }
@@ -3572,11 +3560,13 @@ function Game (settings) {
 	this.auto_wait = ('undefined' !== typeof settings.auto_wait) ? settings.auto_wait 
 																 : false; 
 	
+	// TODO: check this
 	this.minPlayers = settings.minPlayers || 1;
 	this.maxPlayers = settings.maxPlayers || 1000;
 	
-	// TODO: Check this
-	this.init = settings.init || this.init;
+	if (settings.init) {
+		this.init = settings.init;
+	}
 
 /**
  * ### Game.memory
@@ -3596,6 +3586,18 @@ function Game (settings) {
 } // <!-- ends constructor -->
 
 // ## Game methods
+
+/** 
+ * ### Game.init
+ * 
+ * Initialization function
+ * 
+ * This function is called as soon as the game is instantiated,
+ * i.e. at state 0.0.0. All event listeners declared here will
+ * stay valid throughout the game.
+ * 
+ */
+Game.prototype.init = function () {};
 
 /**
  * ### Game.pause
@@ -3763,17 +3765,9 @@ Game.prototype.step = function (gameState) {
 		
 		
 		if (func) {
-
-			// For NDDB EventEmitter
-			//console.log('HOW MANY LISTENERS???');
-			//console.log(node._ee._listeners.count());
-			
 			// Local Listeners from previous state are erased 
 			// before proceeding to next one
-			node._ee.clearState(this.state);
-			
-			// For NDDB EventEmitter
-			//console.log(node._ee._listeners.count());
+			node.events.clearState(this.state);
 			
 			gameState.is = GameState.iss.LOADING;
 			this.state = gameState;
@@ -3808,13 +3802,13 @@ Game.prototype.step = function (gameState) {
 	// Declaring variables
 	// //////////////////////////////////////////
 		
-	var EventEmitter = node.EventEmitter;
-	var GameSocketClient = node.GameSocketClient;
-	var GameState = node.GameState;
-	var GameMsg = node.GameMsg;
-	var Game = node.Game;
-	var Player = node.Player;
-	var GameSession = node.GameSession;
+	var EventEmitter = node.EventEmitter,
+		GameSocketClient = node.GameSocketClient,
+		GameState = node.GameState,
+		GameMsg = node.GameMsg,
+		Game = node.Game,
+		Player = node.Player,
+		GameSession = node.GameSession;
 	
 	
 	// Adding constants directly to node
@@ -3829,7 +3823,7 @@ Game.prototype.step = function (gameState) {
 	// Creating EventEmitter
 	// /////////////////////////////////////////
 	
-	var ee = node.events = node._ee = new EventEmitter();
+	node.events = new EventEmitter();
 
 
 	// Creating objects
@@ -3910,6 +3904,12 @@ Game.prototype.step = function (gameState) {
 			}
 		}
 		
+		if (!conf.events) { conf.events = {}; };
+		
+		if ('undefined' === conf.events.history) {
+			conf.events.history = false;
+		}
+		
 		this.conf = conf;
 		return conf;
 	};
@@ -3918,11 +3918,11 @@ Game.prototype.step = function (gameState) {
 	node.on = function (event, listener) {
 		// It is in the init function;
 		if (!node.state || (GameState.compare(node.state, new GameState(), true) === 0 )) {
-			ee.addListener(event, listener);
+			node.events.add(event, listener);
 			// node.log('global');
 		}
 		else {
-			ee.addLocalListener(event, listener);
+			node.events.addLocal(event, listener);
 			// node.log('local');
 		}
 	};
@@ -3930,12 +3930,12 @@ Game.prototype.step = function (gameState) {
 	node.once = function (event, listener) {
 		node.on(event, listener);
 		node.on(event, function(event, listener) {
-			ee.removeListener(event, listener);
+			node.events.remove(event, listener);
 		});
 	};
 	
 	node.removeListener = function (event, func) {
-		return ee.removeListener(event, func);
+		return node.events.remove(event, func);
 	};
 	
 	// TODO: create conf objects
@@ -3998,11 +3998,11 @@ Game.prototype.step = function (gameState) {
 // };
 	
 	node.emit = function (event, p1, p2, p3) {	
-		ee.emit(event, p1, p2, p3);
+		node.events.emit(event, p1, p2, p3);
 	};	
 	
 	node.say = function (data, what, whom) {
-		ee.emit('out.say.DATA', data, whom, what);
+		node.events.emit('out.say.DATA', data, whom, what);
 	};
 	
 /**
@@ -4016,19 +4016,19 @@ Game.prototype.step = function (gameState) {
  */
 	node.set = function (key, value) {
 		// TODO: parameter to say who will get the msg
-		ee.emit('out.set.DATA', value, null, key);
+		node.events.emit('out.set.DATA', value, null, key);
 	};
 	
 	
 	node.get = function (key, func) {
-		ee.emit('out.get.DATA', key);
+		node.events.emit('out.get.DATA', key);
 		
 		var listener = function(msg) {
 			if (msg.text === key) {
 				func.call(node.game, msg.data);
-				ee.removeListener('in.say.DATA',listener);
+				node.events.remove('in.say.DATA', listener);
 			}
-			// ee.printAllListeners();
+			// node.events.printAll();
 		};
 		
 		node.on('in.say.DATA', listener);
@@ -4124,12 +4124,14 @@ Game.prototype.step = function (gameState) {
 	node.onDATA = function(text, func) {
 		node.on('in.say.DATA', function(msg) {
 			if (text && msg.text === text) {
-				func.call(node.game,msg);
+				func.call(node.game, msg);
 			}
 		});
 		
 		node.on('in.set.DATA', function(msg) {
-			func.call(node.game,msg);
+			if (text && msg.text === text) {
+				func.call(node.game, msg);
+			}
 		});
 	};
 	
@@ -4192,7 +4194,9 @@ Game.prototype.step = function (gameState) {
 	}
 	
 	var GameMsg = node.GameMsg,
-		GameState = node.GameState;
+		GameState = node.GameState,
+		PlayerList = node.PlayerList,
+		Player = node.Player;
 	
 	var say = GameMsg.actions.SAY + '.',
 		set = GameMsg.actions.SET + '.',
@@ -4210,9 +4214,9 @@ Game.prototype.step = function (gameState) {
  */
 	node.on( IN + say + 'PCONNECT', function (msg) {
 		if (!msg.data) return;
-		that.pl.add(new Player(msg.data));
+		node.game.pl.add(new Player(msg.data));
 		node.emit('UPDATED_PLIST');
-		that.pl.checkState();
+		node.game.pl.checkState();
 	});	
 	
 /**
@@ -4225,9 +4229,9 @@ Game.prototype.step = function (gameState) {
  */
 	node.on( IN + say + 'PDISCONNECT', function (msg) {
 		if (!msg.data) return;
-		that.pl.remove(msg.data.id);
+		node.game.pl.remove(msg.data.id);
 		node.emit('UPDATED_PLIST');
-		that.pl.checkState();
+		node.game.pl.checkState();
 	});	
 
 /**
@@ -4240,7 +4244,7 @@ Game.prototype.step = function (gameState) {
  */
 	node.on( IN + say + 'MCONNECT', function (msg) {
 		if (!msg.data) return;
-		that.ml.add(new Player(msg.data));
+		node.game.ml.add(new Player(msg.data));
 		node.emit('UPDATED_MLIST');
 	});	
 		
@@ -4254,15 +4258,29 @@ Game.prototype.step = function (gameState) {
  */
 	node.on( IN + say + 'MDISCONNECT', function (msg) {
 		if (!msg.data) return;
-		that.ml.remove(msg.data.id);
+		node.game.ml.remove(msg.data.id);
 		node.emit('UPDATED_MLIST');
 	});		
 			
 
 /**
- * ### in.say.MLIST
+ * ### in.say.PLIST
  * 
  * Creates a new player-list object from the data contained in the message
+ * 
+ * @emit UPDATED_MLIST
+ * @see Game.pl 
+ */
+node.on( IN + say + 'PLIST', function (msg) {
+	if (!msg.data) return;
+	node.game.pl = new PlayerList({}, msg.data);
+	node.emit('UPDATED_PLIST');
+});	
+	
+/**
+ * ### in.say.MLIST
+ * 
+ * Creates a new monitor-list object from the data contained in the message
  * 
  * @emit UPDATED_MLIST
  * @see Game.pl 
@@ -4498,7 +4516,8 @@ node.log('outgoing listeners added');
 /**
  * ### STATEDONE
  * 
- * Fired when all the 
+ * Fired when all the players in the player list have their
+ * state set to DONE
  */ 
 node.on('STATEDONE', function() {
 	// <!-- If we go auto -->
@@ -4514,7 +4533,7 @@ node.on('STATEDONE', function() {
 		// TODO: differentiate between before the game starts and during the game
 		else {
 			node.emit('OUT.say.TXT', node.game.minPlayers + ' players ready. Game can proceed');
-			node.log(pl.length + ' players ready. Game can proceed');
+			node.log(node.game.pl.length + ' players ready. Game can proceed');
 			node.game.updateState(node.game.next());
 		}
 	}

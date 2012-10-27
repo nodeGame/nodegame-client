@@ -18,14 +18,32 @@ var smoosh = require('smoosh'),
 var pkg = require('../package.json'),
     version = pkg.version;
 
-
 function build(options) {
 
 	if (!options.bare && !options.JSUS && !options.NDDB && !options.shelf && !options.all && !options.cycle) {
 		options.standard = true;
 	}
 	
-	var out = options.output || "nodegame-client";
+	var out;
+	
+	if (options.output) {
+		out = options.output;
+	} 
+	else if (options.addons_only) {
+		out = "nodegame-addons";
+	} 
+	else if (options.es5_only) {
+		out = "nodegame-es5";
+	} 
+	else if (options.window_only) {
+		out = "nodegame-window";
+	} 
+	else if (options.widgets_only) {
+		out = "nodegame-widgets";
+	} 
+	else {
+		out = "nodegame-client";
+	} 
 	
 	if (path.extname(out) === '.js') {
 		out = path.basename(out, '.js');
@@ -125,7 +143,7 @@ function build(options) {
 	var files = [];
 
 	// 0. ES5-shim
-	if (options.es5 || options.all) {
+	if (options.es5 || options.es5_only) {
 		if (!path.existsSync(es5Dir)) {
 			console.log('  - ERR: es5-shim not found!');
 		}
@@ -181,7 +199,7 @@ function build(options) {
 	files = files.concat(ng_client);
 
 	// 4. nodegame-client addons
-	if (options.addons || options.all || options.standard) {
+	if (options.addons || options.all || options.addons_only || options.standard) {
 		console.log('  - nodegame-client addons');
 		files = files.concat(ng_addons);
 	}
