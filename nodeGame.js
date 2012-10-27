@@ -115,6 +115,12 @@
 			}
 		}
 		
+		if (!conf.events) { conf.events = {}; };
+		
+		if ('undefined' === conf.events.history) {
+			conf.events.history = false;
+		}
+		
 		this.conf = conf;
 		return conf;
 	};
