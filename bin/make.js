@@ -21,13 +21,16 @@ var program = require('commander'),
 var pkg = require('../package.json'),
     version = pkg.version;
 
-module.exports.program = program;
-
-var build = require('./build.js').build;
+var build = require('./build.js').build,
+	build_support = require('./build.js').build_support;
 
 
 var rootDir = path.resolve(__dirname, '..') + '/';
 var buildDir = rootDir + 'build/';
+
+function list(val) {
+	return val.split(',');
+}
 
 program
   .version(version);
@@ -37,6 +40,18 @@ program
 	.description('Removes all files from build folder')
 	.action(function(){
 		J.cleanDir(buildDir);
+});
+
+program  
+	.command('build-support [options]')
+	.description('Creates a separate builds of nodegame-client support libraries')
+	.option('-l, --lib <items>', 'choose libraries to build', list)
+	.option('-a, --all', 'all support libraries')
+	.option('-C, --clean', 'clean build directory')
+	.option('-A, --analyse', 'analyse build')
+	.option('-o, --output <file>', 'output file (without .js)')
+.action(function(env, options){
+	build_support(options);
 });
 
 program  
@@ -76,17 +91,8 @@ program
 			output: "nodegame-client",
 		});
 		
-		build({
-			addons_only: true,
-		});
-		build({
-			window_only: true,
-		});
-		build({
-			widgets_only: true,
-		});
-		build({
-			es5_only: true,
+		build_support({
+			all: true,
 		});
 });
 
