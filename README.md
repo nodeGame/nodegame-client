@@ -12,7 +12,7 @@ For documentation please check the root [nodeGame](https://github.com/shakty/nod
 
 ### API
 
-For an uncomplete API documentation see the docs folder. You can generate HTML documentation using the make.js file in the bin folder.
+For an incomplete API documentation see the docs folder. You can generate HTML documentation using the make.js file in the bin folder.
 
 	node bin/make.js doc
 
