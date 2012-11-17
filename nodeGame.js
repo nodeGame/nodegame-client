@@ -121,6 +121,10 @@
 			conf.events.history = false;
 		}
 		
+		if ('undefined' === conf.events.dumpEvents) {
+			conf.events.dumpEvents = false;
+		}
+		
 		this.conf = conf;
 		return conf;
 	};

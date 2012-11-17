@@ -27,6 +27,12 @@
  * state set to DONE
  */ 
 node.on('STATEDONE', function() {
+	
+	// In single player mode we ignore when all the players have completed the state
+	if (node.game.solo_mode) {
+		return;
+	}
+	
 	// <!-- If we go auto -->
 	if (node.game.auto_step && !node.game.observer) {
 		node.log('We play AUTO', 'DEBUG');
@@ -80,7 +86,11 @@ node.on('DONE', function(p1, p2, p3) {
 			node.emit('WAITING...');
 		}
 	}
-	node.game.publishState();	
+	node.game.publishState();
+	
+	if (node.game.solo_mode) {
+		node.game.updateState(node.game.next());
+	}
 });
 
 /**
