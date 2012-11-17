@@ -1,5 +1,21 @@
 # nodegame-client change log
 
+## 0.4.5
+
+  - events.dumpEvents added to configuration object
+  - added examples folder
+  - added solo_mode
+
+## 0.4.0
+
+  - events.history added to configuration object
+  - fixed bug onDATA
+  - several bug fixing
+  - PCONNECT, PDISCONNECT, MCONNECT, MDISCONNECT, MLIST events added
+  - node.ee -> node.events
+  - node.gsc -> node.socket
+
+
 ## 0.2.10
 
   - node.redirect (for monitor only)
