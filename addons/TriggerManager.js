@@ -90,7 +90,7 @@ this.triggers = [];
 			return returnAt;
 		},
 		configurable: true,
-		enumerable: true,
+		enumerable: true
 	});
 
 /**

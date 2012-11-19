@@ -59,7 +59,7 @@
 		};
 		
 		var onConnectFunc = function() {
-			console.log('added')
+			//console.log('added')
 			node.onPLIST(function(){
 				pullTriggers();
 			});
@@ -81,7 +81,7 @@
 			get: function() {
 				return onConnect;
 			},
-			configurable: true,
+			configurable: true
 		});
 		
 		var onTimeout, onTimeoutTime;
@@ -104,7 +104,7 @@
 			get: function() {
 				return onTimeoutTime;
 			},
-			configurable: true,
+			configurable: true
 		});
 		
 		var onInterval, onIntervalTime;
@@ -127,7 +127,7 @@
 			get: function() {
 				return onIntervalTime;
 			},
-			configurable: true,
+			configurable: true
 		});
 		
 		
@@ -146,7 +146,7 @@
 		this.addTrigger(function(){
 			return new Group({
 				players: node.pool,
-				game: options.loops,
+				game: options.loops
 			});
 		});
 		
@@ -167,7 +167,7 @@
 				
 				return new Group({
 					players: node.pool,
-					game: options.loops,
+					game: options.loops
 				});
 			});
 		}
@@ -180,7 +180,7 @@
 				
 				return new Group({
 					players: node.pool,
-					game: options.loops,
+					game: options.loops
 				});
 			});
 		}
@@ -192,7 +192,7 @@
 					var players = node.pool.shuffle().limit(options.maxPlayers);
 					return new Group({
 						players: players,
-						game: options.loops,
+						game: options.loops
 					});
 					
 				}
@@ -205,7 +205,7 @@
 					// Take N = maxPlayers random player
 					return new Group({
 						players: node.pool,
-						game: options.loops,
+						game: options.loops
 					});
 					
 				}

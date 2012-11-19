@@ -50,7 +50,7 @@
 					memory: node.game.memory,
 					state: 	node.game.state,
 					game: 	node.game.name,
-					history: undefined,
+					history: undefined
 			};
 			
 			// If we saved the emitted events, add them to the
@@ -81,7 +81,7 @@
     		return (node.store) ? node.store.persistent : false;
     	},
     	configurable: false,
-    	enumerable: true,
+    	enumerable: true
 	});
 
 /**
