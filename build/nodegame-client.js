@@ -281,12 +281,12 @@ ARRAY.isArray = function (o) {
  *  
  * Returns FALSE, in case parameters are incorrectly specified
  * 
- * @param {Number} start The first element of the sequence
- * @param {Number} end The last element of the sequence
- * @param {Number} increment Optional. The increment between two subsequents element of the sequence
+ * @param {number} start The first element of the sequence
+ * @param {number} end The last element of the sequence
+ * @param {number} increment Optional. The increment between two subsequents element of the sequence
  * @param {Function} func Optional. A callback function that can modify each number of the sequence before returning it
  *  
- * @return {Array} out The final sequence 
+ * @return {array} out The final sequence 
  */
 ARRAY.seq = function (start, end, increment, func) {
 	if ('number' !== typeof start) return false;
@@ -330,7 +330,7 @@ ARRAY.seq = function (start, end, increment, func) {
  * 
  * If an error occurs returns FALSE.
  * 
- * @param {Array} array The array to loop in
+ * @param {array} array The array to loop in
  * @param {Function} func The callback for each element in the array
  * @param {object} context Optional. The context of execution of the callback. Defaults ARRAY.each
  * 
@@ -358,7 +358,7 @@ ARRAY.each = function (array, func, context) {
  * Any number of additional parameters can be passed after the 
  * callback function
  * 
- * @return {Array} out The result of the mapping execution
+ * @return {array} out The result of the mapping execution
  * @see ARRAY.each
  * 
  */
@@ -395,7 +395,7 @@ ARRAY.map = function () {
  * If no element is removed returns FALSE.
  * 
  * @param {mixed} needle The element to search in the array
- * @param {Array} haystack The array to search in
+ * @param {array} haystack The array to search in
  * 
  * @return {mixed} The element that was removed, FALSE if none was removed
  * @see JSUS.equals
@@ -432,7 +432,7 @@ ARRAY.removeElement = function (needle, haystack) {
  * Alias ARRAY.in_array (deprecated)
  * 
  * @param {mixed} needle The element to search in the array
- * @param {Array} haystack The array to search in
+ * @param {array} haystack The array to search in
  * @return {Boolean} TRUE, if the element is contained in the array
  * 
  * 	@see JSUS.equals
@@ -463,9 +463,9 @@ ARRAY.inArray = ARRAY.in_array = function (needle, haystack) {
  *  @see ARRAY.generateCombinations
  *  @see ARRAY.matchN
  *  
- * @param {Array} array The array to split in subgroups
- * @param {Number} N The number of subgroups
- * @return {Array} Array containing N groups
+ * @param {array} array The array to split in subgroups
+ * @param {number} N The number of subgroups
+ * @return {array} Array containing N groups
  */ 
 ARRAY.getNGroups = function (array, N) {
     return ARRAY.getGroupsSizeN(array, Math.floor(array.length / N));
@@ -477,9 +477,9 @@ ARRAY.getNGroups = function (array, N) {
  * Returns an array of array containing N elements each
  * The last group could have less elements
  * 
- * @param {Array} array The array to split in subgroups
- * @param {Number} N The number of elements in each subgroup
- * @return {Array} Array containing groups of size N
+ * @param {array} array The array to split in subgroups
+ * @param {number} N The number of elements in each subgroup
+ * @return {array} Array containing groups of size N
  * 
  *  	@see ARRAY.getNGroups
  *  	@see ARRAY.generateCombinations
@@ -587,9 +587,9 @@ ARRAY._latinSquare = function (S, N, self) {
  * 
  * If N is defined, it returns "Latin Rectangle" (SxN) 
  * 
- * @param {Number} S The number of rows
- * @param {Number} Optional. N The number of columns. Defaults N = S
- * @return {Array} The resulting latin square (or rectangle)
+ * @param {number} S The number of rows
+ * @param {number} Optional. N The number of columns. Defaults N = S
+ * @return {array} The resulting latin square (or rectangle)
  * 
  */
 ARRAY.latinSquare = function (S, N) {
@@ -608,9 +608,9 @@ ARRAY.latinSquare = function (S, N) {
  * 
  * If N < S, it returns a "Latin Rectangle" (SxN)
  * 
- * @param {Number} S The number of rows
- * @param {Number} Optional. N The number of columns. Defaults N = S-1
- * @return {Array} The resulting latin square (or rectangle)
+ * @param {number} S The number of rows
+ * @param {number} Optional. N The number of columns. Defaults N = S-1
+ * @return {array} The resulting latin square (or rectangle)
  */
 ARRAY.latinSquareNoSelf = function (S, N) {
 	if (!N) N = S-1;
@@ -627,9 +627,9 @@ ARRAY.latinSquareNoSelf = function (S, N) {
  *  Generates all distinct combinations of exactly r elements each 
  *  and returns them into an array
  *  
- *  @param {Array} array The array from which the combinations are extracted
- *  @param {Number} r The number of elements in each combination
- *  @return {Array} The total sets of combinations
+ *  @param {array} array The array from which the combinations are extracted
+ *  @param {number} r The number of elements in each combination
+ *  @return {array} The total sets of combinations
  *  
  *  	@see ARRAY.getGroupSizeN
  *  	@see ARRAY.getNGroups
@@ -669,10 +669,10 @@ ARRAY.generateCombinations = function (array, r) {
  * already used. Another recombination would be able to match all the 
  * elements instead.
  * 
- * @param {Array} array The array in which operate the matching
- * @param {Number} N The number of matches per element
+ * @param {array} array The array in which operate the matching
+ * @param {number} N The number of matches per element
  * @param {Boolean} strict Optional. If TRUE, matched elements cannot be repeated. Defaults, FALSE 
- * @return {Array} result The results of the matching
+ * @return {array} result The results of the matching
  * 
  *  	@see ARRAY.getGroupSizeN
  *  	@see ARRAY.getNGroups
@@ -713,9 +713,9 @@ ARRAY.matchN = function (array, N, strict) {
  * 
  * The original array is not modified.
  * 
- * @param {Array} array the array to repeat 
+ * @param {array} array the array to repeat 
  * @param {number} times The number of times the array must be appended to itself
- * @return {Array} A copy of the original array appended to itself
+ * @return {array} A copy of the original array appended to itself
  * 
  */
 ARRAY.rep = function (array, times) {
@@ -733,6 +733,56 @@ ARRAY.rep = function (array, times) {
     return result;
 };
 
+/**
+ * ## ARRAY.stretch
+ * 
+ * Repeats each element of the array N times
+ * 
+ * N can be specified as an integer or as an array. In the former case all 
+ * the elements are repeat the same number of times. In the latter, the each
+ * element can be repeated a custom number of times. If the length of the `times`
+ * array differs from that of the array to stretch a recycle rule is applied.
+ * 
+ * The original array is not modified.
+ * 
+ * E.g.:
+ * 
+ * ```js
+ * 	var foo = [1,2,3];
+ * 
+ * 	ARRAY.stretch(foo, 2); // [1, 1, 2, 2, 3, 3]
+ * 
+ * 	ARRAY.stretch(foo, [1,2,3]); // [1, 2, 2, 3, 3, 3];
+ *
+ * 	ARRAY.stretch(foo, [2,1]); // [1, 1, 2, 3, 3];
+ * ```
+ * 
+ * @param {array} array the array to strech
+ * @param {number|array} times The number of times each element must be repeated
+ * @return {array} A stretched copy of the original array
+ * 
+ */
+ARRAY.stretch = function (array, times) {
+	if (!array) return;
+	if (!times) return array.slice(0);
+	if ('number' === typeof times) {
+		if (times < 1) {
+			JSUS.log('times must be greater or equal 1', 'ERR');
+			return;
+		}
+		times = ARRAY.rep([times], array.length);
+	}
+	
+    var result = [];
+    for (var i = 0; i < array.length; i++) {
+    	var repeat = times[(i % times.length)];
+        for (var j = 0; j < repeat ; j++) {
+        	result.push(array[i]);
+        }
+    }
+    return result;
+};
+
 
 /**
  * ## ARRAY.arrayIntersect
@@ -741,9 +791,9 @@ ARRAY.rep = function (array, times) {
  * 
  * Arrays can contain both primitive types and objects.
  * 
- * @param {Array} a1 The first array
- * @param {Array a2 The second array
- * @return {Array} All the values of the first array that are found also in the second one
+ * @param {array} a1 The first array
+ * @param {array} a2 The second array
+ * @return {array} All the values of the first array that are found also in the second one
  */
 ARRAY.arrayIntersect = function (a1, a2) {
     return a1.filter( function(i) {
@@ -758,9 +808,9 @@ ARRAY.arrayIntersect = function (a1, a2) {
  * 
  * Arrays can contain both primitive types and objects.
  * 
- * @param {Array} a1 The first array
- * @param {Array a2 The second array
- * @return {Array} All the values of the first array that are not found in the second one
+ * @param {array} a1 The first array
+ * @param {array} a2 The second array
+ * @return {array} All the values of the first array that are not found in the second one
  */
 ARRAY.arrayDiff = function (a1, a2) {
     return a1.filter( function(i) {
@@ -775,8 +825,8 @@ ARRAY.arrayDiff = function (a1, a2) {
  * 
  * The original array is not modified, and a copy is returned.
  * 
- * @param {Array} shuffle The array to shuffle
- * @return {Array} copy The shuffled array
+ * @param {array} shuffle The array to shuffle
+ * @return {array} copy The shuffled array
  * 
  * 		@see http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
  */
@@ -799,9 +849,9 @@ ARRAY.shuffle = function (array) {
  * 
  * Select N random elements from the array and returns them
  * 
- * @param {Array} array The array from which extracts random elements
- * @paran {Number} N The number of random elements to extract
- * @return {Array} An new array with N elements randomly chose from the original array  
+ * @param {array} array The array from which extracts random elements
+ * @paran {number} N The number of random elements to extract
+ * @return {array} An new array with N elements randomly chose from the original array  
  */
 ARRAY.getNRandom = function (array, N) {
     return ARRAY.shuffle(array).slice(0,N);
@@ -816,8 +866,8 @@ ARRAY.getNRandom = function (array, N) {
  * 
  * Comparison is done with `JSUS.equals`.
  * 
- * @param {Array} array The array from which eliminates duplicates
- * @return {Array} out A copy of the array without duplicates
+ * @param {array} array The array from which eliminates duplicates
+ * @return {array} out A copy of the array without duplicates
  * 
  * 	@see JSUS.equals
  */
@@ -833,6 +883,39 @@ ARRAY.distinct = function (array) {
 	return out;
 	
 };
+
+/**
+ * ## ARRAY.transpose
+ * 
+ * Transposes a given 2D array.
+ * 
+ * The original array is not modified, and a new copy is
+ * returned.
+ *
+ * @param {array} array The array to transpose
+ * @return {array} The Transposed Array
+ * 
+ */
+ARRAY.transpose = function (array) {
+	if (!array) return;  
+	
+	// Calculate width and height
+    var w, h, i, j, t = []; 
+	w = array.length || 0;
+	h = (ARRAY.isArray(array[0])) ? array[0].length : 0;
+	if (w === 0 || h === 0) return t;
+	
+	for ( i = 0; i < h; i++) {
+		t[i] = [];
+	    for ( j = 0; j < w; j++) {	   
+	    	t[i][j] = array[j][i];
+	    }
+	} 
+	return t;
+};
+
+
+
 
 JSUS.extend(ARRAY);
     
@@ -908,10 +991,126 @@ DOM.writeln = function (root, text, rc) {
     return (text) ? DOM.write(root, text) : br;
 };
 
-// TODO
-//DOM.sprintf = function (root, text, modifiers) {
-//	
-//};
+/**
+ * ### DOM.sprintf
+ * 
+ * Builds up a decorated HTML text element
+ * 
+ * Performs string substitution from an args object where the first 
+ * character of the key bears the following semantic: 
+ *  
+ * 	- '@': variable substitution with escaping 
+ * 	- '!': variable substitution without variable escaping
+ *  - '%': wraps a portion of string into a _span_ element to which is possible 
+ *  		to associate a css class or id. Alternatively, it also possible to 
+ *  		add in-line style. E.g.:
+ * 
+ * 	sprintf('%sImportant!%s An error has occurred: %pre@err%pre', {
+ * 		'%pre': {
+ * 			style: 'font-size: 12px; font-family: courier;'
+ * 		},
+ * 		'%s': {
+ * 			id: 'myId',
+ * 			'class': 'myClass',
+ * 		},
+ * 		'@err': 'file not found',
+ * 	}, document.body);
+ * 
+ * 
+ * @param {string} string A text to transform
+ * @param {object} args Optional. An object containing the spans to apply to the string
+ * @param {Element} root Optional. An HTML element to which append the string. Defaults, a new _span_ element
+ * 
+ */
+DOM.sprintf = function (string, args, root) {
+	
+	var text, textNode, span, idx_start, idx_finish, idx_replace, idxs, spans = {};
+	
+	if (!args) {
+		return document.createTextNode(string);
+	}
+	
+	root = root || document.createElement('span');
+	
+	// Transform arguments before inserting them.
+	for (var key in args) {
+		if (args.hasOwnProperty(key)) {
+			
+			// pattern not found
+			if (idx_start === -1) continue;
+			
+			switch(key[0]) {
+			
+			case '%': // span
+				
+				idx_start = string.indexOf(key);
+				idx_replace = idx_start + key.length;
+				idx_finish = string.indexOf(key, idx_replace);
+				
+				if (idx_finish === -1) {
+					JSUS.log('Error. Could not find closing key: ' + key);
+					continue;
+				}
+				
+				spans[idx_start] = key;
+				
+				break;
+			
+			case '@': // replace and sanitize
+				string = string.replace(key, escape(args[key]));
+				break;
+				
+			case '!': // replace and not sanitize
+				string = string.replace(key, args[key]);
+				break;
+				
+			default:
+				JSUS.log('Identifier not in [!,@,%]: ' + key[0]);
+		
+			}
+		}
+	}
+	
+	// No span to creates
+	if (!JSUS.size(spans)) {
+		return document.createTextNode(string);
+	}
+	
+	// Re-assamble the string
+	
+	idxs = JSUS.keys(spans).sort(function(a,b){return a-b;});
+	idx_finish = 0;
+	for (var i = 0; i < idxs.length; i++) {
+		
+		// add span
+		key = spans[idxs[i]];
+		idx_start = string.indexOf(key);
+		
+		// add fragments of string
+		if (idx_finish !== idx_start-1) {
+			root.appendChild(document.createTextNode(string.substring(idx_finish, idx_start)));
+		}
+		
+		idx_replace = idx_start + key.length;
+		idx_finish = string.indexOf(key, idx_replace);
+		
+		span = W.getElement('span', null, args[key]);
+
+		text = string.substring(idx_replace, idx_finish);
+		
+		span.appendChild(document.createTextNode(text));
+		
+		root.appendChild(span);
+		idx_finish = idx_finish + key.length;
+	}
+	
+	// add the final part of the string
+	if (idx_finish !== string.length) {
+		root.appendChild(document.createTextNode(string.substring(idx_finish)));
+	}
+	
+	return root;
+}
 
 
 /**
@@ -1380,7 +1579,7 @@ DOM.addCSS = function (root, css, id, attributes) {
     
     attributes = JSUS.merge(attributes, {rel : 'stylesheet',
                                         type: 'text/css',
-                                        href: css,
+                                        href: css
     });
     
     return this.addElement('link', root, id, attributes);
@@ -1398,7 +1597,7 @@ DOM.addJS = function (root, js, id, attributes) {
     
     attributes = JSUS.merge(attributes, {charset : 'utf-8',
                                         type: 'text/javascript',
-                                        src: js,
+                                        src: js
     });
     
     return this.addElement('script', root, id, attributes);
@@ -1877,10 +2076,24 @@ OBJ.clone = function (obj) {
 	if ('boolean' === typeof obj) return obj;
 	if (obj === NaN) return obj;
 	if (obj === Infinity) return obj;
-	 
-	var clone = {};
+	
+	var clone;
+	if ('function' === typeof obj) {
+//		clone = obj;
+		// <!-- Check when and if we need this -->
+		clone = function() { return obj.apply(clone, arguments); };
+	}
+	else {
+		clone = (Object.prototype.toString.call(obj) === '[object Array]') ? [] : {};
+	}
+	
 	for (var i in obj) {
 		var value;
+		// TODO: index i is being updated, so apply is called on the 
+		// last element, instead of the correct one.
+//		if ('function' === typeof obj[i]) {
+//			value = function() { return obj[i].apply(clone, arguments); };
+//		}
 		// It is not NULL and it is an object
 		if (obj[i] && 'object' === typeof obj[i]) {
 			// is an array
@@ -1900,11 +2113,16 @@ OBJ.clone = function (obj) {
 	    	clone[i] = value;
 	    }
 	    else {
-	    	Object.defineProperty(clone, i, {
-	    		value: value,
-         		writable: true,
-         		configurable: true,
-         	});
+	    	try {
+		    	Object.defineProperty(clone, i, {
+		    		value: value,
+	         		writable: true,
+	         		configurable: true
+	         	});
+	    	}
+	    	catch(e) {
+	    		clone[i] = value;
+	    	}
 
 	    }
     }
@@ -1959,6 +2177,8 @@ OBJ.join = function (obj1, obj2) {
  * 
  * In case keys overlap the values from obj2 are taken. 
  * 
+ * Only own properties are copied.
+ * 
  * Returns a new object, the original ones are not modified.
  * 
  * E.g.
@@ -1992,7 +2212,12 @@ OBJ.merge = function (obj1, obj2) {
             	// a non-object, we need to cast the 
             	// type of obj1
             	if ('object' !== typeof clone[i]) {
-            		clone[i] = {};
+            		if (Object.prototype.toString.call(obj2[i]) === '[object Array]') {
+            			clone[i] = [];
+            		}
+            		else {
+            			clone[i] = {};
+            		}
             	}
                 clone[i] = OBJ.merge(clone[i], obj2[i]);
             } else {
@@ -2002,6 +2227,66 @@ OBJ.merge = function (obj1, obj2) {
     }
     
     return clone;
+};
+
+/**
+ * ## OBJ.mixin
+ * 
+ * Adds all the properties of obj2 into obj1
+ * 
+ * Original object is modified
+ * 
+ * @param {object} obj1 The object to which the new properties will be added
+ * @param {object} obj2 The mixin-in object
+ */
+OBJ.mixin = function (obj1, obj2) {
+	if (!obj1 && !obj2) return;
+	if (!obj1) return obj2;
+	if (!obj2) return obj1;
+	
+	for (var i in obj2) {
+		obj1[i] = obj2[i];
+	}
+};
+
+/**
+ * ## OBJ.mixin
+ * 
+ * Copies only non-overlapping properties from obj2 to obj1
+ * 
+ * Original object is modified
+ * 
+ * @param {object} obj1 The object to which the new properties will be added
+ * @param {object} obj2 The mixin-in object
+ */
+OBJ.mixout = function (obj1, obj2) {
+	if (!obj1 && !obj2) return;
+	if (!obj1) return obj2;
+	if (!obj2) return obj1;
+	
+	for (var i in obj2) {
+		if (!obj1[i]) obj1[i] = obj2[i];
+	}
+};
+
+/**
+ * ## OBJ.mixcommon
+ * 
+ * Copies only overlapping properties from obj2 to obj1
+ * 
+ * Original object is modified
+ * 
+ * @param {object} obj1 The object to which the new properties will be added
+ * @param {object} obj2 The mixin-in object
+ */
+OBJ.mixcommon = function (obj1, obj2) {
+	if (!obj1 && !obj2) return;
+	if (!obj1) return obj2;
+	if (!obj2) return obj1;
+	
+	for (var i in obj2) {
+		if (obj1[i]) obj1[i] = obj2[i];
+	}
 };
 
 /**
@@ -2081,7 +2366,7 @@ OBJ.subobj = function (o, select) {
  * Use '.' (dot) to point to a nested property.
  * 
  * @param {object} o The object to dissect
- * @param {string|array} select The selection of properties to remove
+ * @param {string|array} remove The selection of properties to remove
  * @return {object} out The subobject with the properties from the parent one 
  * 
  * 	@see OBJ.getNestedValue
@@ -2550,6 +2835,9 @@ JSUS.extend(PARSE);
  */
 
 (function (exports, JSUS, store) {
+    
+// ## Global scope
+
 	
 var nddb_operation = null;
 var nddb_conditions = [];
@@ -4499,12 +4787,16 @@ NDDB.prototype.resolveTag = function (tag) {
 
 // ## Persistance    
 
+var isNodeJS = function() {
+	return ('object' === typeof module && 'function' === typeof require);
+};
+
 var storageAvailable = function() {
 	return ('function' === typeof store);
 }
 
 // if node
-if (JSUS.isNodeJS()) {   
+if (isNodeJS()) {   
 	require('./external/cycle.js');		
 	var fs = require('fs');
 };
@@ -4518,7 +4810,7 @@ NDDB.prototype.save = function (file, callback) {
 	}
 	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!JSUS.isNodeJS()){
+	if (!isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
@@ -4543,7 +4835,7 @@ NDDB.prototype.load = function (file, callback) {
 	}
 	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!JSUS.isNodeJS()){
+	if (!isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
@@ -4587,10 +4879,11 @@ NDDB.prototype.load = function (file, callback) {
 
 
 // ## Closure    
+    
 })(
     'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
   , 'undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
-  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store
+  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store  		  
 );
 /**
  * # nodeGame
@@ -4640,6 +4933,43 @@ node.err = function (txt, prefix) {
 node.info = function (txt, prefix) {
 	node.log(txt, node.verbosity_levels.INFO, prefix);
 }
+
+
+/**
+ *  ## node.support
+ *  
+ *  A collection of features that are supported by the current browser
+ *  
+ */
+node.support = {};
+
+(function(){
+	
+	try {
+		Object.defineProperty({}, "a", {enumerable: false, value: 1})
+		node.support.defineProperty = true;
+	}
+	catch(e) {
+		node.support.defineProperty = false;	
+	}
+	
+	try {
+		eval('({ get x(){ return 1 } }).x === 1')
+		node.support.setter = true;
+	}
+	catch(err) {
+		node.support.setter = false;
+	}
+	  
+	try {
+		var value;
+		eval('({ set x(v){ value = v; } }).x = 1');
+		node.support.getter = true;
+	}
+	catch(err) {
+		node.support.getter = false;
+	}	  
+})();
 
 /**
  * ## node.log
@@ -4857,7 +5187,7 @@ EventEmitter.prototype = {
 	        	var o = {
 		        		event: event.type,
 		        		//target: node.game,
-		        		state: node.state,
+		        		state: node.game.state,
 		        		p1: p1,
 		        		p2: p2,
 		        		p3: p3
@@ -5007,7 +5337,7 @@ function Listener (o) {
 	
 	// the state in which the listener is
 	// allowed to be executed
-	this.state = o.state || node.state || undefined; 	
+	this.state = o.state || node.game.state; 	
 	
 	// for how many extra steps is the event 
 	// still valid. -1 = always valid
@@ -5593,7 +5923,7 @@ PlayerList.prototype.exist = function (id) {
  * Checks whether all players in the database are DONE
  * for the specified `GameState`.
  * 
- * @param {GameState} state Optional. The GameState to check. Defaults state = node.state
+ * @param {GameState} state Optional. The GameState to check. Defaults state = node.game.state
  * @param {Boolean} extended Optional. If TRUE, also newly connected players are checked. Defaults, FALSE
  * @return {Boolean} TRUE, if all the players are DONE with the specified `GameState`
  * 
@@ -5603,7 +5933,7 @@ PlayerList.prototype.exist = function (id) {
 PlayerList.prototype.isStateDone = function (state, extended) {
 	
 	// <!-- console.log('1--- ' + state); -->
-	state = state || node.state;
+	state = state || node.game.state;
 	// <!-- console.log('2--- ' + state); -->
 	extended = extended || false;
 	
@@ -5665,7 +5995,7 @@ PlayerList.prototype.actives = function () {
  * If all the players are DONE with the specfied state,
  * emits a `STATEDONE` event
  * 
- * @param {GameState} state Optional. The GameState to check. Defaults state = node.state
+ * @param {GameState} state Optional. The GameState to check. Defaults state = node.game.state
  * @param {Boolean} extended Optional. If TRUE, also newly connected players are checked. Defaults, FALSE
  * 
  * 		@see `PlayerList.actives`
@@ -5810,10 +6140,15 @@ function Player (pl) {
  * 
  */	
 	var sid = pl.sid;
-	Object.defineProperty(this, 'sid', {
-		value: sid,
-    	enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'sid', {
+			value: sid,
+	    	enumerable: true
+		});
+	}
+	else {
+		this.sid = sid;
+	}
 	
 /**
  * ### Player.id
@@ -5825,10 +6160,15 @@ function Player (pl) {
  * 
  */	
 	var id = pl.id || sid;
-	Object.defineProperty(this, 'id', {
-		value: id,
-    	enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'id', {
+			value: id,
+	    	enumerable: true
+		});
+	}
+	else {
+		this.id = id;
+	}
 	
 /**
  * ### Player.count
@@ -5838,10 +6178,15 @@ function Player (pl) {
  * 	@see PlayerList
  */		
 	var count = pl.count;
-	Object.defineProperty(this, 'count', {
-    	value: count,
-    	enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'count', {
+	    	value: count,
+	    	enumerable: true
+		});
+	}
+	else {
+		this.count = count;
+	}
 	
 // ## Player public properties
 
@@ -6017,10 +6362,15 @@ function GameMsg (gm) {
  * @api private
  */	
 	var id = gm.id || Math.floor(Math.random()*1000000);
-	Object.defineProperty(this, 'id', {
-		value: id,
-		enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'id', {
+			value: id,
+			enumerable: true
+		});
+	}
+	else {
+		this.id = id;
+	}
 
 /**
  * ### GameMsg.session
@@ -6030,10 +6380,15 @@ function GameMsg (gm) {
  * @api private
  */	
 	var session = gm.session;
-	Object.defineProperty(this, 'session', {
-		value: session,
-		enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'session', {
+			value: session,
+			enumerable: true
+		});
+	}
+	else {
+		this.session = session;
+	}
 
 // ## Public properties	
 
@@ -6337,17 +6692,34 @@ function GameLoop (loop) {
  * ### GameLoop.length
  * 
  * The total number of states + steps in the game-loop
+ * 
+ * @see GameLoop.size()
+ * 
+ * @deprecated
  */
-	Object.defineProperty(this, 'length', {
-    	set: function(){},
-    	get: function(){
-    		return this.steps2Go(new GameState());
-    	},
-    	configurable: true
-	});	
+	if (node.support.getter) {
+		Object.defineProperty(this, 'length', {
+	    	set: function(){},
+	    	get: this.size,
+	    	configurable: true
+		});
+	}
+	else {
+		this.length = null;
+	}	
 }
 
 // ## GameLoop methods
+
+/**
+ * ### GameLoop.size
+ * 
+ * Returns the total number of states + steps in the game-loop
+ * 
+ */
+GameLoop.prototype.size = function() {
+	return this.steps2Go(new GameState());
+};
 
 /**
  * ### GameLoop.exist
@@ -6386,12 +6758,12 @@ GameLoop.prototype.exist = function (gameState) {
  * An optional input parameter can control the state from which 
  * to compute the next state
  * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.state
+ * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
  * @return {GameState|boolean} The next game-state, or FALSE if it does not exist
  * 
  */
 GameLoop.prototype.next = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.game.state;
 	
 	// Game has not started yet, do it!
 	if (gameState.state === 0) {
@@ -6448,11 +6820,11 @@ GameLoop.prototype.next = function (gameState) {
  * An optional input parameter can control the state from which 
  * to compute the previous state
  * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.state
+ * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
  * @return {GameState|boolean} The previous game-state, or FALSE if it does not exist
  */
 GameLoop.prototype.previous = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.game.state;
 	
 	if (!this.exist(gameState)) {
 		node.log('No previous state of non-existing state: ' + gameState, 'WARN');
@@ -6497,11 +6869,11 @@ GameLoop.prototype.previous = function (gameState) {
  * 
  * Returns the name associated with a game-state
  * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.state
+ * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
  * @return {string|boolean} The name of the game-state, or FALSE if state does not exists
  */
 GameLoop.prototype.getName = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.game.state;
 	if (!this.exist(gameState)) return false;
 	return this.loop[gameState.state]['state'][gameState.step]['name'];
 };
@@ -6515,7 +6887,7 @@ GameLoop.prototype.getName = function (gameState) {
  * @return {object|boolean} The function of the game-state, or FALSE if state does not exists
  */
 GameLoop.prototype.getFunction = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.game.state;
 	if (!this.exist(gameState)) return false;
 	return this.loop[gameState.state]['state'][gameState.step]['state'];
 };
@@ -6529,7 +6901,7 @@ GameLoop.prototype.getFunction = function (gameState) {
  * @return {object|boolean} The state object, or FALSE if state does not exists
  */
 GameLoop.prototype.getAllParams = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.game.state;
 	if (!this.exist(gameState)) return false;
 	return this.loop[gameState.state]['state'][gameState.step];
 };
@@ -6567,11 +6939,11 @@ GameLoop.prototype.jumpTo = function (gameState, N) {
  * An optional input parameter can control the starting state
  * for the computation
  * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.state
+ * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
  * @return {number} The total number of steps left
  */
 GameLoop.prototype.steps2Go = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.game.state;
 	var count = 0;
 	while (gameState) { 
 		count++;
@@ -6619,7 +6991,7 @@ GameLoop.prototype.indexOf = function (state) {
  * in the game-loop.
  * 
  * @param {GameState} state1 The reference game-state
- * @param {GameState} state2 Optional. The second state for comparison. Defaults node.state
+ * @param {GameState} state2 Optional. The second state for comparison. Defaults node.game.state
  * 
  * @return {number} The state index in the loop, or -1 if it does not exist
  * 
@@ -6630,8 +7002,8 @@ GameLoop.prototype.diff = function (state1, state2) {
 	state1 = new GameState(state1) ;
 	
 	if (!state2) {
-		if (!node.state) return false;
-		state2 = node.state
+		if (!node.game.state) return false;
+		state2 = node.game.state
 	}
 	else {
 		state2 = new GameState(state2) ;
@@ -6708,7 +7080,7 @@ GameMsgGenerator.create = function (msg) {
 
   var base = {
 		session: node.gsc.session, 
-		state: node.state,
+		state: node.game.state,
 		action: GameMsg.actions.SAY,
 		target: GameMsg.targets.DATA,
 		from: node.player.sid,
@@ -6733,7 +7105,7 @@ GameMsgGenerator.create = function (msg) {
  * 
  * @param {Player} player The player to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
@@ -6744,7 +7116,7 @@ GameMsgGenerator.createHI = function (player, to, reliable) {
   
 	return new GameMsg( {
             			session: node.gsc.session,
-            			state: node.state,
+            			state: node.game.state,
             			action: GameMsg.actions.SAY,
             			target: GameMsg.targets.HI,
             			from: node.player.sid,
@@ -6763,11 +7135,11 @@ GameMsgGenerator.createHI = function (player, to, reliable) {
  * 
  * Creates a say.STATE message
  * 
- * Notice: state is different from node.state
+ * Notice: state is different from node.game.state
  * 
  * @param {GameState} state The game-state to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -6784,7 +7156,7 @@ GameMsgGenerator.saySTATE = function (state, to, reliable) {
  * 
  * @param {GameState} state The game-state to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -6801,7 +7173,7 @@ GameMsgGenerator.setSTATE = function (state, to, reliable) {
  * 
  * @param {GameState} state The game-state to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -6819,7 +7191,7 @@ GameMsgGenerator.getSTATE = function (state, to, reliable) {
  * @param {string} action A nodeGame action (e.g. 'get' or 'set')
  * @param {GameState} state The game-state to communicate
  * @param {string} to Optional. The recipient of the message. Defaults, SERVER
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -6832,7 +7204,7 @@ GameMsgGenerator.createSTATE = function (action, state, to, reliable) {
 	reliable = reliable || 1;
 	return new GameMsg({
 						session: node.gsc.session,
-						state: node.state,
+						state: node.game.state,
 						action: action,
 						target: GameMsg.targets.STATE,
 						from: node.player.sid,
@@ -6853,7 +7225,7 @@ GameMsgGenerator.createSTATE = function (action, state, to, reliable) {
  * 
  * @param {PlayerList} plist The player-list to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -6870,7 +7242,7 @@ GameMsgGenerator.sayPLIST = function (plist, to, reliable) {
  * 
  * @param {PlayerList} plist The player-list to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -6887,7 +7259,7 @@ GameMsgGenerator.setPLIST = function (plist, to, reliable) {
  * 
  * @param {PlayerList} plist The player-list to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -6905,7 +7277,7 @@ GameMsgGenerator.getPLIST = function (plist, to, reliable) {
  * @param {string} action A nodeGame action (e.g. 'get' or 'set')
  * @param {PlayerList} plist The player-list to communicate
  * @param {string} to Optional. The recipient of the message. Defaults, SERVER
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -6921,7 +7293,7 @@ GameMsgGenerator.createPLIST = function (action, plist, to, reliable) {
 	
 	return new GameMsg({
 						session: node.gsc.session, 
-						state: node.state,
+						state: node.game.state,
 						action: action,
 						target: GameMsg.targets.PLIST,
 						from: node.player.sid,
@@ -6944,7 +7316,7 @@ GameMsgGenerator.createPLIST = function (action, plist, to, reliable) {
  * 
  * @param {string} text The text to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
@@ -6954,7 +7326,7 @@ GameMsgGenerator.createTXT = function (text, to, reliable) {
 	
 	return new GameMsg({
 						session: node.gsc.session,
-						state: node.state,
+						state: node.game.state,
 						action: GameMsg.actions.SAY,
 						target: GameMsg.targets.TXT,
 						from: node.player.sid,
@@ -6976,7 +7348,7 @@ GameMsgGenerator.createTXT = function (text, to, reliable) {
  * 
  * @param {object} data An object to exchange
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
@@ -6991,7 +7363,7 @@ GameMsgGenerator.sayDATA = function (data, to, text, reliable) {
  * 
  * @param {object} data An object to exchange
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
@@ -7006,7 +7378,7 @@ GameMsgGenerator.setDATA = function (data, to, text, reliable) {
  * 
  * @param {object} data An object to exchange
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
@@ -7022,7 +7394,7 @@ GameMsgGenerator.getDATA = function (data, to, text, reliable) {
  * @param {string} action A nodeGame action (e.g. 'get' or 'set')
  * @param {object} data An object to exchange
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
@@ -7033,7 +7405,7 @@ GameMsgGenerator.createDATA = function (action, data, to, text, reliable) {
 	
 	return new GameMsg({
 						session: node.gsc.session, 
-						state: node.state,
+						state: node.game.state,
 						action: action,
 						target: GameMsg.targets.DATA,
 						from: node.player.sid,
@@ -7059,7 +7431,7 @@ GameMsgGenerator.createACK = function (gm, to, reliable) {
 	
 	var newgm = new GameMsg({
 							session: node.gsc.session, 
-							state: node.state,
+							state: node.game.state,
 							action: GameMsg.actions.SAY,
 							target: GameMsg.targets.ACK,
 							from: node.player.sid,
@@ -7130,10 +7502,15 @@ function GameSocketClient (options) {
  * @api private
  */ 
 	buffer = [];
-	Object.defineProperty(this, 'buffer', {
-		value: buffer,
-		enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'buffer', {
+			value: buffer,
+			enumerable: true
+		});
+	}
+	else {
+		this.buffer = buffer;
+	}
 	
 /**
  * ### GameSocketClient.session
@@ -7144,11 +7521,15 @@ function GameSocketClient (options) {
  * 
  */
 	session = null;
-	Object.defineProperty(this, 'session', {
-		value: session,
-		enumerable: true
-	});
-	
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'session', {
+			value: session,
+			enumerable: true
+		});
+	}
+	else {
+		this.session = session;
+	}
 // ## Public properties
 	
 /**
@@ -7318,7 +7699,7 @@ GameSocketClient.prototype.restoreSession = function (sessionObj, sid) {
 		});
 	};
 	
-	if (node.game.ready) {
+	if (node.game.isReady()) {
 		remit.call(node.game);
 	}
 	else {
@@ -7362,20 +7743,27 @@ GameSocketClient.prototype.createPlayer = function (player) {
 //				if (player.hasOwnProperty(key)) {
 //					continue;
 //				}
-				
-				Object.defineProperty(player, key, {
-			    	value: pconf[key],
-			    	enumerable: true
-				});
+				if (node.support.defineProperty) {
+					Object.defineProperty(player, key, {
+				    	value: pconf[key],
+				    	enumerable: true
+					});
+				}
+				else {
+					player[key] = pconf[key];
+				}
 			}
 		}
 	}
-	
-	Object.defineProperty(node, 'player', {
-    	value: player,
-    	enumerable: true
-	});
-
+	if (node.support.defineProperty) {
+		Object.defineProperty(node, 'player', {
+	    	value: player,
+	    	enumerable: true
+		});
+	}
+	else {
+		node.player = player;
+	}
 	return player;
 };
 
@@ -7556,7 +7944,7 @@ GameSocketClient.prototype.attachMsgListeners = function (socket, session) {
 		
 		if (msg) { // Parsing successful
 			// Wait to fire the msgs if the game state is loading
-			if (node.game && node.game.ready) {	
+			if (node.game && node.game.isReady()) {	
 				node.emit(msg.toInEvent(), msg);
 			}
 			else {
@@ -8026,10 +8414,16 @@ function Game (settings) {
  * @api private
  */
 	name = settings.name || 'A nodeGame game';
-	Object.defineProperty(this, 'name', {
-		value: name,
-		enumerable: true
-	});
+	
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'name', {
+			value: name,
+			enumerable: true
+		});
+	}
+	else {
+		this.name = name;
+	}
 
 /**
  * ### Game.description
@@ -8039,10 +8433,15 @@ function Game (settings) {
  * @api private
  */
 	description = settings.description || 'No Description';
-	Object.defineProperty(this, 'description', {
-		value: description,
-		enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'description', {
+			value: description,
+			enumerable: true
+		});
+	}
+	else {
+		this.description = description;
+	}
 
 /**
  * ### Game.gameLoop
@@ -8054,11 +8453,16 @@ function Game (settings) {
  */
 	// <!-- support for deprecated options loops -->
 	gameLoop = new GameLoop(settings.loop || settings.loops);
-	Object.defineProperty(this, 'gameLoop', {
-		value: gameLoop,
-		enumerable: true
-	});
-
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'gameLoop', {
+			value: gameLoop,
+			enumerable: true
+		});
+	}
+	else {
+		this.gameLoop = gameLoop;
+	}
+	
 /**
  * ### Game.pl
  * 
@@ -8069,12 +8473,17 @@ function Game (settings) {
  * @api private
  */
 	pl = new PlayerList();
-	Object.defineProperty(this, 'pl', {
-		value: pl,
-		enumerable: true,
-		configurable: true,
-		writable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'pl', {
+			value: pl,
+			enumerable: true,
+			configurable: true,
+			writable: true
+		});
+	}
+	else {
+		this.pl = pl;
+	}
 
 /**
  * ### Game.pl
@@ -8086,38 +8495,45 @@ function Game (settings) {
  * @api private
  */
 	ml = new PlayerList();
-	Object.defineProperty(this, 'ml', {
-		value: pl,
-		enumerable: true,
-		configurable: true,
-		writable: true
-	});	
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'ml', {
+			value: pl,
+			enumerable: true,
+			configurable: true,
+			writable: true
+		});
+	}
+	else {
+		this.ml = ml;
+	}
 	
 /**
  * ### Game.ready
  * 
  * If TRUE, the nodeGame engine is fully loaded
  * 
- * During stepping between functions in the game-loop
- * the flag is temporarily turned to FALSE, and all events 
- * are queued and fired only after nodeGame is ready to 
- * handle them again.
+ * Shortcut to game.isReady
+ * 
+ * If the browser does not support the method object setters,
+ * this property is disabled, and Game.isReady() should be used
+ * instead.
+ * 
+ * @see Game.isReady();
  * 
  * @api private
+ * @deprecated
+ * 
  */
-	Object.defineProperty(this, 'ready', {
-		set: function(){},
-		get: function(){
-			if (this.state.is < GameState.iss.LOADED) return false;
-			
-			// Check if there is a gameWindow obj and whether it is loading
-			if (node.window) {	
-				return (node.window.state >= GameState.iss.LOADED) ? true : false;
-			}
-			return true;
-		},
-		enumerable: true
-	});
+	if (node.support.getter) {
+		Object.defineProperty(this, 'ready', {
+			set: function(){},
+			get: this.isReady,
+			enumerable: true
+		});
+	}
+	else {
+		this.ready = null;
+	}
 
 
 
@@ -8350,7 +8766,7 @@ Game.prototype.updateState = function (state) {
 	if (this.step(state) !== false) {
 		this.paused = false;
 		this.state.is =  GameState.iss.LOADED;
-		if (this.ready) {
+		if (this.isReady()) {
 			node.emit('LOADED');
 		}
 	}		
@@ -8406,6 +8822,33 @@ Game.prototype.step = function (gameState) {
 	return false;
 };
 
+/**
+ * ### Game.isReady
+ * 
+ * Returns TRUE if the nodeGame engine is fully loaded
+ * 
+ * During stepping between functions in the game-loop
+ * the flag is temporarily turned to FALSE, and all events 
+ * are queued and fired only after nodeGame is ready to 
+ * handle them again.
+ * 
+ * If the browser does not support the method object setters,
+ * this property is disabled, and Game.isReady() should be used
+ * instead.
+ * 
+ * @see Game.ready;
+ * 
+ */
+Game.prototype.isReady = function() {
+	if (this.state.is < GameState.iss.LOADED) return false;
+	
+	// Check if there is a gameWindow obj and whether it is loading
+	if (node.window) {	
+		return (node.window.state >= GameState.iss.LOADED) ? true : false;
+	}
+	return true;
+};
+
 // ## Closure
 })(
 	'undefined' != typeof node ? node : module.exports
@@ -8453,19 +8896,8 @@ Game.prototype.step = function (gameState) {
 	// Creating objects
 	// /////////////////////////////////////////
 	
-	node.msg		= node.GameMsgGenerator;	
+	node.msg	= node.GameMsgGenerator;	
 	node.socket = node.gsc = new GameSocketClient();
-
-	node.game 		= null;
-	node.player 	= null;
-	
-	Object.defineProperty(node, 'state', {
-    	get: function() {
-    		return (node.game) ? node.game.state : false;
-    	},
-    	configurable: false,
-    	enumerable: true
-	});
 	
 	node.env = function (env, func, ctx, params) {
 		if (!env || !func || !node.env[env]) return;
@@ -8545,7 +8977,7 @@ Game.prototype.step = function (gameState) {
 	
 	node.on = function (event, listener) {
 		// It is in the init function;
-		if (!node.state || (GameState.compare(node.state, new GameState(), true) === 0 )) {
+		if (!node.game || !node.game.state || (GameState.compare(node.game.state, new GameState(), true) === 0 )) {
 			node.events.add(event, listener);
 			// node.log('global');
 		}
@@ -8967,7 +9399,7 @@ node.on( IN + set + 'DATA', function (msg) {
  */
 	node.on( IN + say + 'STATE', function (msg) {
 //		console.log('updateState: ' + msg.from + ' -- ' + new GameState(msg.data), 'DEBUG');
-//		console.log(node.game.pl.length)
+//		console.log(node.game.pl.count())
 		
 		//console.log(node.socket.serverid + 'AAAAAA');
 		if (node.socket.serverid && msg.from === node.socket.serverid) {
@@ -9157,7 +9589,7 @@ node.on('STATEDONE', function() {
 	// <!-- If we go auto -->
 	if (node.game.auto_step && !node.game.observer) {
 		node.log('We play AUTO', 'DEBUG');
-		var morePlayers = ('undefined' !== node.game.minPlayers) ? node.game.minPlayers - node.game.pl.length : 0 ;
+		var morePlayers = ('undefined' !== node.game.minPlayers) ? node.game.minPlayers - node.game.pl.count() : 0 ;
 		node.log('Additional player required: ' + morePlayers > 0 ? MorePlayers : 0, 'DEBUG');
 		
 		if (morePlayers > 0) {
@@ -9167,7 +9599,7 @@ node.on('STATEDONE', function() {
 		// TODO: differentiate between before the game starts and during the game
 		else {
 			node.emit('OUT.say.TXT', node.game.minPlayers + ' players ready. Game can proceed');
-			node.log(node.game.pl.length + ' players ready. Game can proceed');
+			node.log(node.game.pl.count() + ' players ready. Game can proceed');
 			node.game.updateState(node.game.next());
 		}
 	}
@@ -10001,7 +10433,7 @@ TriggerManager.prototype.size = function () {
 			return session;
 		}
 		
-		if (!node.session.enabled) {
+		if (!node.session.isEnabled()) {
 			return false;
 		}
 		
@@ -10010,18 +10442,15 @@ TriggerManager.prototype.size = function () {
 	};
 
 /**
- * ## node.session.enabled
+ * ## node.session.isEnabled
  * 
  * TRUE, if the session can be saved to a persistent support
  * 
  */	
-	Object.defineProperty(node.session, 'enabled', {
-    	get: function(){
-    		return (node.store) ? node.store.persistent : false;
-    	},
-    	configurable: false,
-    	enumerable: true
-	});
+	node.session.isEnabled = function() {
+		return (node.store) ? node.store.isPersistent() : false;
+	};
+	
 
 /**
  * ## node.session.store
@@ -10031,7 +10460,7 @@ TriggerManager.prototype.size = function () {
  * @return {boolean} TRUE, if session saving was successful
  */	
 	node.session.store = function() {
-		if (!node.session.enabled) {
+		if (!node.session.isEnabled()) {
 			node.log('Could not save the session');
 			return false;
 		}

@@ -56,7 +56,7 @@ node.info = function (txt, prefix) {
  */
 node.support = {};
 
-((function(){
+(function(){
 	
 	try {
 		Object.defineProperty({}, "a", {enumerable: false, value: 1})

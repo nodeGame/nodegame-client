@@ -281,12 +281,12 @@ ARRAY.isArray = function (o) {
  *  
  * Returns FALSE, in case parameters are incorrectly specified
  * 
- * @param {Number} start The first element of the sequence
- * @param {Number} end The last element of the sequence
- * @param {Number} increment Optional. The increment between two subsequents element of the sequence
+ * @param {number} start The first element of the sequence
+ * @param {number} end The last element of the sequence
+ * @param {number} increment Optional. The increment between two subsequents element of the sequence
  * @param {Function} func Optional. A callback function that can modify each number of the sequence before returning it
  *  
- * @return {Array} out The final sequence 
+ * @return {array} out The final sequence 
  */
 ARRAY.seq = function (start, end, increment, func) {
 	if ('number' !== typeof start) return false;
@@ -330,7 +330,7 @@ ARRAY.seq = function (start, end, increment, func) {
  * 
  * If an error occurs returns FALSE.
  * 
- * @param {Array} array The array to loop in
+ * @param {array} array The array to loop in
  * @param {Function} func The callback for each element in the array
  * @param {object} context Optional. The context of execution of the callback. Defaults ARRAY.each
  * 
@@ -358,7 +358,7 @@ ARRAY.each = function (array, func, context) {
  * Any number of additional parameters can be passed after the 
  * callback function
  * 
- * @return {Array} out The result of the mapping execution
+ * @return {array} out The result of the mapping execution
  * @see ARRAY.each
  * 
  */
@@ -395,7 +395,7 @@ ARRAY.map = function () {
  * If no element is removed returns FALSE.
  * 
  * @param {mixed} needle The element to search in the array
- * @param {Array} haystack The array to search in
+ * @param {array} haystack The array to search in
  * 
  * @return {mixed} The element that was removed, FALSE if none was removed
  * @see JSUS.equals
@@ -432,7 +432,7 @@ ARRAY.removeElement = function (needle, haystack) {
  * Alias ARRAY.in_array (deprecated)
  * 
  * @param {mixed} needle The element to search in the array
- * @param {Array} haystack The array to search in
+ * @param {array} haystack The array to search in
  * @return {Boolean} TRUE, if the element is contained in the array
  * 
  * 	@see JSUS.equals
@@ -463,9 +463,9 @@ ARRAY.inArray = ARRAY.in_array = function (needle, haystack) {
  *  @see ARRAY.generateCombinations
  *  @see ARRAY.matchN
  *  
- * @param {Array} array The array to split in subgroups
- * @param {Number} N The number of subgroups
- * @return {Array} Array containing N groups
+ * @param {array} array The array to split in subgroups
+ * @param {number} N The number of subgroups
+ * @return {array} Array containing N groups
  */ 
 ARRAY.getNGroups = function (array, N) {
     return ARRAY.getGroupsSizeN(array, Math.floor(array.length / N));
@@ -477,9 +477,9 @@ ARRAY.getNGroups = function (array, N) {
  * Returns an array of array containing N elements each
  * The last group could have less elements
  * 
- * @param {Array} array The array to split in subgroups
- * @param {Number} N The number of elements in each subgroup
- * @return {Array} Array containing groups of size N
+ * @param {array} array The array to split in subgroups
+ * @param {number} N The number of elements in each subgroup
+ * @return {array} Array containing groups of size N
  * 
  *  	@see ARRAY.getNGroups
  *  	@see ARRAY.generateCombinations
@@ -587,9 +587,9 @@ ARRAY._latinSquare = function (S, N, self) {
  * 
  * If N is defined, it returns "Latin Rectangle" (SxN) 
  * 
- * @param {Number} S The number of rows
- * @param {Number} Optional. N The number of columns. Defaults N = S
- * @return {Array} The resulting latin square (or rectangle)
+ * @param {number} S The number of rows
+ * @param {number} Optional. N The number of columns. Defaults N = S
+ * @return {array} The resulting latin square (or rectangle)
  * 
  */
 ARRAY.latinSquare = function (S, N) {
@@ -608,9 +608,9 @@ ARRAY.latinSquare = function (S, N) {
  * 
  * If N < S, it returns a "Latin Rectangle" (SxN)
  * 
- * @param {Number} S The number of rows
- * @param {Number} Optional. N The number of columns. Defaults N = S-1
- * @return {Array} The resulting latin square (or rectangle)
+ * @param {number} S The number of rows
+ * @param {number} Optional. N The number of columns. Defaults N = S-1
+ * @return {array} The resulting latin square (or rectangle)
  */
 ARRAY.latinSquareNoSelf = function (S, N) {
 	if (!N) N = S-1;
@@ -627,9 +627,9 @@ ARRAY.latinSquareNoSelf = function (S, N) {
  *  Generates all distinct combinations of exactly r elements each 
  *  and returns them into an array
  *  
- *  @param {Array} array The array from which the combinations are extracted
- *  @param {Number} r The number of elements in each combination
- *  @return {Array} The total sets of combinations
+ *  @param {array} array The array from which the combinations are extracted
+ *  @param {number} r The number of elements in each combination
+ *  @return {array} The total sets of combinations
  *  
  *  	@see ARRAY.getGroupSizeN
  *  	@see ARRAY.getNGroups
@@ -669,10 +669,10 @@ ARRAY.generateCombinations = function (array, r) {
  * already used. Another recombination would be able to match all the 
  * elements instead.
  * 
- * @param {Array} array The array in which operate the matching
- * @param {Number} N The number of matches per element
+ * @param {array} array The array in which operate the matching
+ * @param {number} N The number of matches per element
  * @param {Boolean} strict Optional. If TRUE, matched elements cannot be repeated. Defaults, FALSE 
- * @return {Array} result The results of the matching
+ * @return {array} result The results of the matching
  * 
  *  	@see ARRAY.getGroupSizeN
  *  	@see ARRAY.getNGroups
@@ -713,9 +713,9 @@ ARRAY.matchN = function (array, N, strict) {
  * 
  * The original array is not modified.
  * 
- * @param {Array} array the array to repeat 
+ * @param {array} array the array to repeat 
  * @param {number} times The number of times the array must be appended to itself
- * @return {Array} A copy of the original array appended to itself
+ * @return {array} A copy of the original array appended to itself
  * 
  */
 ARRAY.rep = function (array, times) {
@@ -733,6 +733,56 @@ ARRAY.rep = function (array, times) {
     return result;
 };
 
+/**
+ * ## ARRAY.stretch
+ * 
+ * Repeats each element of the array N times
+ * 
+ * N can be specified as an integer or as an array. In the former case all 
+ * the elements are repeat the same number of times. In the latter, the each
+ * element can be repeated a custom number of times. If the length of the `times`
+ * array differs from that of the array to stretch a recycle rule is applied.
+ * 
+ * The original array is not modified.
+ * 
+ * E.g.:
+ * 
+ * ```js
+ * 	var foo = [1,2,3];
+ * 
+ * 	ARRAY.stretch(foo, 2); // [1, 1, 2, 2, 3, 3]
+ * 
+ * 	ARRAY.stretch(foo, [1,2,3]); // [1, 2, 2, 3, 3, 3];
+ *
+ * 	ARRAY.stretch(foo, [2,1]); // [1, 1, 2, 3, 3];
+ * ```
+ * 
+ * @param {array} array the array to strech
+ * @param {number|array} times The number of times each element must be repeated
+ * @return {array} A stretched copy of the original array
+ * 
+ */
+ARRAY.stretch = function (array, times) {
+	if (!array) return;
+	if (!times) return array.slice(0);
+	if ('number' === typeof times) {
+		if (times < 1) {
+			JSUS.log('times must be greater or equal 1', 'ERR');
+			return;
+		}
+		times = ARRAY.rep([times], array.length);
+	}
+	
+    var result = [];
+    for (var i = 0; i < array.length; i++) {
+    	var repeat = times[(i % times.length)];
+        for (var j = 0; j < repeat ; j++) {
+        	result.push(array[i]);
+        }
+    }
+    return result;
+};
+
 
 /**
  * ## ARRAY.arrayIntersect
@@ -741,9 +791,9 @@ ARRAY.rep = function (array, times) {
  * 
  * Arrays can contain both primitive types and objects.
  * 
- * @param {Array} a1 The first array
- * @param {Array a2 The second array
- * @return {Array} All the values of the first array that are found also in the second one
+ * @param {array} a1 The first array
+ * @param {array} a2 The second array
+ * @return {array} All the values of the first array that are found also in the second one
  */
 ARRAY.arrayIntersect = function (a1, a2) {
     return a1.filter( function(i) {
@@ -758,9 +808,9 @@ ARRAY.arrayIntersect = function (a1, a2) {
  * 
  * Arrays can contain both primitive types and objects.
  * 
- * @param {Array} a1 The first array
- * @param {Array a2 The second array
- * @return {Array} All the values of the first array that are not found in the second one
+ * @param {array} a1 The first array
+ * @param {array} a2 The second array
+ * @return {array} All the values of the first array that are not found in the second one
  */
 ARRAY.arrayDiff = function (a1, a2) {
     return a1.filter( function(i) {
@@ -775,8 +825,8 @@ ARRAY.arrayDiff = function (a1, a2) {
  * 
  * The original array is not modified, and a copy is returned.
  * 
- * @param {Array} shuffle The array to shuffle
- * @return {Array} copy The shuffled array
+ * @param {array} shuffle The array to shuffle
+ * @return {array} copy The shuffled array
  * 
  * 		@see http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
  */
@@ -799,9 +849,9 @@ ARRAY.shuffle = function (array) {
  * 
  * Select N random elements from the array and returns them
  * 
- * @param {Array} array The array from which extracts random elements
- * @paran {Number} N The number of random elements to extract
- * @return {Array} An new array with N elements randomly chose from the original array  
+ * @param {array} array The array from which extracts random elements
+ * @paran {number} N The number of random elements to extract
+ * @return {array} An new array with N elements randomly chose from the original array  
  */
 ARRAY.getNRandom = function (array, N) {
     return ARRAY.shuffle(array).slice(0,N);
@@ -816,8 +866,8 @@ ARRAY.getNRandom = function (array, N) {
  * 
  * Comparison is done with `JSUS.equals`.
  * 
- * @param {Array} array The array from which eliminates duplicates
- * @return {Array} out A copy of the array without duplicates
+ * @param {array} array The array from which eliminates duplicates
+ * @return {array} out A copy of the array without duplicates
  * 
  * 	@see JSUS.equals
  */
@@ -833,6 +883,39 @@ ARRAY.distinct = function (array) {
 	return out;
 	
 };
+
+/**
+ * ## ARRAY.transpose
+ * 
+ * Transposes a given 2D array.
+ * 
+ * The original array is not modified, and a new copy is
+ * returned.
+ *
+ * @param {array} array The array to transpose
+ * @return {array} The Transposed Array
+ * 
+ */
+ARRAY.transpose = function (array) {
+	if (!array) return;  
+	
+	// Calculate width and height
+    var w, h, i, j, t = []; 
+	w = array.length || 0;
+	h = (ARRAY.isArray(array[0])) ? array[0].length : 0;
+	if (w === 0 || h === 0) return t;
+	
+	for ( i = 0; i < h; i++) {
+		t[i] = [];
+	    for ( j = 0; j < w; j++) {	   
+	    	t[i][j] = array[j][i];
+	    }
+	} 
+	return t;
+};
+
+
+
 
 JSUS.extend(ARRAY);
     
@@ -908,10 +991,126 @@ DOM.writeln = function (root, text, rc) {
     return (text) ? DOM.write(root, text) : br;
 };
 
-// TODO
-//DOM.sprintf = function (root, text, modifiers) {
-//	
-//};
+/**
+ * ### DOM.sprintf
+ * 
+ * Builds up a decorated HTML text element
+ * 
+ * Performs string substitution from an args object where the first 
+ * character of the key bears the following semantic: 
+ *  
+ * 	- '@': variable substitution with escaping 
+ * 	- '!': variable substitution without variable escaping
+ *  - '%': wraps a portion of string into a _span_ element to which is possible 
+ *  		to associate a css class or id. Alternatively, it also possible to 
+ *  		add in-line style. E.g.:
+ * 
+ * 	sprintf('%sImportant!%s An error has occurred: %pre@err%pre', {
+ * 		'%pre': {
+ * 			style: 'font-size: 12px; font-family: courier;'
+ * 		},
+ * 		'%s': {
+ * 			id: 'myId',
+ * 			'class': 'myClass',
+ * 		},
+ * 		'@err': 'file not found',
+ * 	}, document.body);
+ * 
+ * 
+ * @param {string} string A text to transform
+ * @param {object} args Optional. An object containing the spans to apply to the string
+ * @param {Element} root Optional. An HTML element to which append the string. Defaults, a new _span_ element
+ * 
+ */
+DOM.sprintf = function (string, args, root) {
+	
+	var text, textNode, span, idx_start, idx_finish, idx_replace, idxs, spans = {};
+	
+	if (!args) {
+		return document.createTextNode(string);
+	}
+	
+	root = root || document.createElement('span');
+	
+	// Transform arguments before inserting them.
+	for (var key in args) {
+		if (args.hasOwnProperty(key)) {
+			
+			// pattern not found
+			if (idx_start === -1) continue;
+			
+			switch(key[0]) {
+			
+			case '%': // span
+				
+				idx_start = string.indexOf(key);
+				idx_replace = idx_start + key.length;
+				idx_finish = string.indexOf(key, idx_replace);
+				
+				if (idx_finish === -1) {
+					JSUS.log('Error. Could not find closing key: ' + key);
+					continue;
+				}
+				
+				spans[idx_start] = key;
+				
+				break;
+			
+			case '@': // replace and sanitize
+				string = string.replace(key, escape(args[key]));
+				break;
+				
+			case '!': // replace and not sanitize
+				string = string.replace(key, args[key]);
+				break;
+				
+			default:
+				JSUS.log('Identifier not in [!,@,%]: ' + key[0]);
+		
+			}
+		}
+	}
+	
+	// No span to creates
+	if (!JSUS.size(spans)) {
+		return document.createTextNode(string);
+	}
+	
+	// Re-assamble the string
+	
+	idxs = JSUS.keys(spans).sort(function(a,b){return a-b;});
+	idx_finish = 0;
+	for (var i = 0; i < idxs.length; i++) {
+		
+		// add span
+		key = spans[idxs[i]];
+		idx_start = string.indexOf(key);
+		
+		// add fragments of string
+		if (idx_finish !== idx_start-1) {
+			root.appendChild(document.createTextNode(string.substring(idx_finish, idx_start)));
+		}
+		
+		idx_replace = idx_start + key.length;
+		idx_finish = string.indexOf(key, idx_replace);
+		
+		span = W.getElement('span', null, args[key]);
+
+		text = string.substring(idx_replace, idx_finish);
+		
+		span.appendChild(document.createTextNode(text));
+		
+		root.appendChild(span);
+		idx_finish = idx_finish + key.length;
+	}
+	
+	// add the final part of the string
+	if (idx_finish !== string.length) {
+		root.appendChild(document.createTextNode(string.substring(idx_finish)));
+	}
+	
+	return root;
+}
 
 
 /**
@@ -1380,7 +1579,7 @@ DOM.addCSS = function (root, css, id, attributes) {
     
     attributes = JSUS.merge(attributes, {rel : 'stylesheet',
                                         type: 'text/css',
-                                        href: css,
+                                        href: css
     });
     
     return this.addElement('link', root, id, attributes);
@@ -1398,7 +1597,7 @@ DOM.addJS = function (root, js, id, attributes) {
     
     attributes = JSUS.merge(attributes, {charset : 'utf-8',
                                         type: 'text/javascript',
-                                        src: js,
+                                        src: js
     });
     
     return this.addElement('script', root, id, attributes);
@@ -1877,10 +2076,24 @@ OBJ.clone = function (obj) {
 	if ('boolean' === typeof obj) return obj;
 	if (obj === NaN) return obj;
 	if (obj === Infinity) return obj;
-	 
-	var clone = {};
+	
+	var clone;
+	if ('function' === typeof obj) {
+//		clone = obj;
+		// <!-- Check when and if we need this -->
+		clone = function() { return obj.apply(clone, arguments); };
+	}
+	else {
+		clone = (Object.prototype.toString.call(obj) === '[object Array]') ? [] : {};
+	}
+	
 	for (var i in obj) {
 		var value;
+		// TODO: index i is being updated, so apply is called on the 
+		// last element, instead of the correct one.
+//		if ('function' === typeof obj[i]) {
+//			value = function() { return obj[i].apply(clone, arguments); };
+//		}
 		// It is not NULL and it is an object
 		if (obj[i] && 'object' === typeof obj[i]) {
 			// is an array
@@ -1900,11 +2113,16 @@ OBJ.clone = function (obj) {
 	    	clone[i] = value;
 	    }
 	    else {
-	    	Object.defineProperty(clone, i, {
-	    		value: value,
-         		writable: true,
-         		configurable: true,
-         	});
+	    	try {
+		    	Object.defineProperty(clone, i, {
+		    		value: value,
+	         		writable: true,
+	         		configurable: true
+	         	});
+	    	}
+	    	catch(e) {
+	    		clone[i] = value;
+	    	}
 
 	    }
     }
@@ -1959,6 +2177,8 @@ OBJ.join = function (obj1, obj2) {
  * 
  * In case keys overlap the values from obj2 are taken. 
  * 
+ * Only own properties are copied.
+ * 
  * Returns a new object, the original ones are not modified.
  * 
  * E.g.
@@ -1992,7 +2212,12 @@ OBJ.merge = function (obj1, obj2) {
             	// a non-object, we need to cast the 
             	// type of obj1
             	if ('object' !== typeof clone[i]) {
-            		clone[i] = {};
+            		if (Object.prototype.toString.call(obj2[i]) === '[object Array]') {
+            			clone[i] = [];
+            		}
+            		else {
+            			clone[i] = {};
+            		}
             	}
                 clone[i] = OBJ.merge(clone[i], obj2[i]);
             } else {
@@ -2002,6 +2227,66 @@ OBJ.merge = function (obj1, obj2) {
     }
     
     return clone;
+};
+
+/**
+ * ## OBJ.mixin
+ * 
+ * Adds all the properties of obj2 into obj1
+ * 
+ * Original object is modified
+ * 
+ * @param {object} obj1 The object to which the new properties will be added
+ * @param {object} obj2 The mixin-in object
+ */
+OBJ.mixin = function (obj1, obj2) {
+	if (!obj1 && !obj2) return;
+	if (!obj1) return obj2;
+	if (!obj2) return obj1;
+	
+	for (var i in obj2) {
+		obj1[i] = obj2[i];
+	}
+};
+
+/**
+ * ## OBJ.mixin
+ * 
+ * Copies only non-overlapping properties from obj2 to obj1
+ * 
+ * Original object is modified
+ * 
+ * @param {object} obj1 The object to which the new properties will be added
+ * @param {object} obj2 The mixin-in object
+ */
+OBJ.mixout = function (obj1, obj2) {
+	if (!obj1 && !obj2) return;
+	if (!obj1) return obj2;
+	if (!obj2) return obj1;
+	
+	for (var i in obj2) {
+		if (!obj1[i]) obj1[i] = obj2[i];
+	}
+};
+
+/**
+ * ## OBJ.mixcommon
+ * 
+ * Copies only overlapping properties from obj2 to obj1
+ * 
+ * Original object is modified
+ * 
+ * @param {object} obj1 The object to which the new properties will be added
+ * @param {object} obj2 The mixin-in object
+ */
+OBJ.mixcommon = function (obj1, obj2) {
+	if (!obj1 && !obj2) return;
+	if (!obj1) return obj2;
+	if (!obj2) return obj1;
+	
+	for (var i in obj2) {
+		if (obj1[i]) obj1[i] = obj2[i];
+	}
 };
 
 /**
@@ -2081,7 +2366,7 @@ OBJ.subobj = function (o, select) {
  * Use '.' (dot) to point to a nested property.
  * 
  * @param {object} o The object to dissect
- * @param {string|array} select The selection of properties to remove
+ * @param {string|array} remove The selection of properties to remove
  * @return {object} out The subobject with the properties from the parent one 
  * 
  * 	@see OBJ.getNestedValue

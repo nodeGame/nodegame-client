@@ -194,23 +194,31 @@ store.name = "__shelf__";
 store.verbosity = 0;
 store.types = {};
 
-var mainStorageType = null;
 
-Object.defineProperty(store, 'type', {
-	set: function(type){
-		if ('undefined' === typeof store.types[type]) {
-			store.log('Cannot set store.type to an invalid type: ' + type);
-			return false;
-		}
-		mainStorageType = type;
-		return type;
-	},
-	get: function(){
-		return mainStorageType;
-	},
-	configurable: false,
-	enumerable: true
-});
+var mainStorageType = "volatile";
+
+//if Object.defineProperty works...
+try {	
+	
+	Object.defineProperty(store, 'type', {
+		set: function(type){
+			if ('undefined' === typeof store.types[type]) {
+				store.log('Cannot set store.type to an invalid type: ' + type);
+				return false;
+			}
+			mainStorageType = type;
+			return type;
+		},
+		get: function(){
+			return mainStorageType;
+		},
+		configurable: false,
+		enumerable: true
+	});
+}
+catch(e) {
+	store.type = mainStorageType; // default: memory
+}
 
 store.addType = function (type, storage) {
 	store.types[type] = storage;
@@ -236,15 +244,24 @@ store.log = function(text) {
 	
 };
 
-Object.defineProperty(store, 'persistent', {
-	set: function(){},
-	get: function(){
-		if (!store.types.length) return false;
-		if (store.types.length === 1 && store.type === "volatile") return false;
-		return true;
-	},
-	configurable: false
-});
+store.isPersistent = function() {
+	if (!store.types) return false;
+	if (store.type === "volatile") return false;
+	return true;
+};
+
+//if Object.defineProperty works...
+try {	
+	Object.defineProperty(store, 'persistent', {
+		set: function(){},
+		get: store.isPersistent,
+		configurable: false
+	});
+}
+catch(e) {
+	// safe case
+	store.persistent = false;
+}
 
 store.decycle = function(o) {
 	if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
@@ -329,7 +346,6 @@ store.parse = function(o) {
 }());
 
 }('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
-
 /**
  * ## Cookie storage for Shelf.js
  * 
@@ -646,185 +662,6 @@ if (cookie.test()) {
 
 }(this));
 /**
- * ## File System storage for Shelf.js
- * 
- * ### Available only in Node.JS
- */
-
-(function(exports) {
-	
-var store = exports.store;
-
-if (!store) {
-	console.log('fs.shelf.js: shelf.js core not found. File system storage not available.');
-	return;
-}
-
-store.filename = './shelf.out';
-
-var fs = require('fs'),
-	path = require('path'),
-	util = require('util');
-
-// https://github.com/jprichardson/node-fs-extra/blob/master/lib/copy.js
-var copyFile = function(srcFile, destFile, cb) {
-    var fdr, fdw;
-    fdr = fs.createReadStream(srcFile);
-    fdw = fs.createWriteStream(destFile);
-    fdr.on('end', function() {
-      return cb(null);
-    });
-    return fdr.pipe(fdw);
-  };
-
-
-var timeout = {};
-
-var overwrite = function (fileName, items) {
-	var file = fileName || store.filename;
-	if (!file) {
-		store.log('You must specify a valid file.', 'ERR');
-		return false;
-	}
-	
-	var tmp_copy = path.dirname(file) + '.' + path.basename(file);
-	
-//	console.log('files')
-//	console.log(file);
-//	console.log(fileName);
-//	console.log(tmp_copy)
-	
-	copyFile(file, tmp_copy, function(){
-		var s = store.stringify(items);
-		// removing leading { and trailing }
-		s = s.substr(1, s = s.substr(0, s.legth-1));
-//		console.log('SAVING')
-//		console.log(s)
-		fs.writeFile(file, s, 'utf-8', function(e) {
-			if (e) throw e;
-			fs.unlink(tmp_copy, function (err) {
-				if (err) throw err;  
-			});
-			return true;
-		});
-
-	});
-	
-};
-
-if ('undefined' !== typeof fs.appendFileSync) {
-	// node 0.8
-	var save = function (fileName, key, value) {
-		var file = fileName || store.filename;
-		if (!file) {
-			store.log('You must specify a valid file.', 'ERR');
-			return false;
-		}
-		if (!key) return;
-		
-		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
-		
-		return fs.appendFileSync(file, item, 'utf-8');
-	};	
-}
-else {
-	// node < 0.8
-	var save = function (fileName, key, value) {
-		var file = fileName || store.filename;
-		if (!file) {
-			store.log('You must specify a valid file.', 'ERR');
-			return false;
-		}
-		if (!key) return;
-		
-		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
-		
-
-
-		fs.open(file, 'a', 666, function( e, id ) {
-			fs.write( id, item, null, 'utf8', function(){
-				fs.close(id, function(){});
-			});
-		});
-		
-		return true;
-	};
-}
-
-var load = function (fileName, key) {
-	var file = fileName || store.filename;
-	if (!file) {
-		store.log('You must specify a valid file.', 'ERR');
-		return false;
-	}
-
-	var s = fs.readFileSync(file, 'utf-8');
-	
-//	console.log('BEFORE removing end')
-//	console.log(s)
-	
-	
-	s = s.substr(0, s.length-2); // removing last ',' and /n
-	
-//	console.log('BEFORE PARSING')
-//	console.log(s)
-	
-	var items = store.parse('{' + s + '}');
-	
-//	console.log('PARSED')
-//	console.log(items)
-	
-	return (key) ? items[key] : items; 
-
-};
-
-var deleteVariable = function (fileName, key) {
-	var file = fileName || store.filename;
-	var items = load(file);
-//	console.log('dele')
-//	console.log(items)
-//	console.log(key)
-	delete items[key];
-	overwrite(file, items);
-	return null;
-};
-
-store.addType("fs", function(key, value, options) {
-	
-	var filename = options.file || store.filename;
-	
-	if (!key) { 
-		return load(filename);
-	}
-
-	if (value === undefined) {
-		return load(filename, key);
-	}
-
-	if (timeout[key]) {
-		clearTimeout(timeout[key]);
-		deleteVariable(filename, key);
-	}
-
-	if (value === null) {
-		deleteVariable(filename, key);
-		return null;
-	}
-	
-	// save item
-	save(filename, key, value);
-	
-	if (options.expires) {
-		timeout[key] = setTimeout(function() {
-			deleteVariable(filename, key);
-		}, options.expires);
-	}
-
-	return value;
-});
-
-}(('undefined' !== typeof module && 'function' === typeof require) ? module.exports || module.parent.exports : {}));
-/**
  * ## Amplify storage for Shelf.js
  * 
  */
@@ -1063,6 +900,185 @@ if (!store.types.localStorage && window.globalStorage) {
 
 
 }(this));
+/**
+ * ## File System storage for Shelf.js
+ * 
+ * ### Available only in Node.JS
+ */
+
+(function(exports) {
+	
+var store = exports.store;
+
+if (!store) {
+	console.log('fs.shelf.js: shelf.js core not found. File system storage not available.');
+	return;
+}
+
+store.filename = './shelf.out';
+
+var fs = require('fs'),
+	path = require('path'),
+	util = require('util');
+
+// https://github.com/jprichardson/node-fs-extra/blob/master/lib/copy.js
+var copyFile = function(srcFile, destFile, cb) {
+    var fdr, fdw;
+    fdr = fs.createReadStream(srcFile);
+    fdw = fs.createWriteStream(destFile);
+    fdr.on('end', function() {
+      return cb(null);
+    });
+    return fdr.pipe(fdw);
+  };
+
+
+var timeout = {};
+
+var overwrite = function (fileName, items) {
+	var file = fileName || store.filename;
+	if (!file) {
+		store.log('You must specify a valid file.', 'ERR');
+		return false;
+	}
+	
+	var tmp_copy = path.dirname(file) + '.' + path.basename(file);
+	
+//	console.log('files')
+//	console.log(file);
+//	console.log(fileName);
+//	console.log(tmp_copy)
+	
+	copyFile(file, tmp_copy, function(){
+		var s = store.stringify(items);
+		// removing leading { and trailing }
+		s = s.substr(1, s = s.substr(0, s.legth-1));
+//		console.log('SAVING')
+//		console.log(s)
+		fs.writeFile(file, s, 'utf-8', function(e) {
+			if (e) throw e;
+			fs.unlink(tmp_copy, function (err) {
+				if (err) throw err;  
+			});
+			return true;
+		});
+
+	});
+	
+};
+
+if ('undefined' !== typeof fs.appendFileSync) {
+	// node 0.8
+	var save = function (fileName, key, value) {
+		var file = fileName || store.filename;
+		if (!file) {
+			store.log('You must specify a valid file.', 'ERR');
+			return false;
+		}
+		if (!key) return;
+		
+		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
+		
+		return fs.appendFileSync(file, item, 'utf-8');
+	};	
+}
+else {
+	// node < 0.8
+	var save = function (fileName, key, value) {
+		var file = fileName || store.filename;
+		if (!file) {
+			store.log('You must specify a valid file.', 'ERR');
+			return false;
+		}
+		if (!key) return;
+		
+		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
+		
+
+
+		fs.open(file, 'a', 666, function( e, id ) {
+			fs.write( id, item, null, 'utf8', function(){
+				fs.close(id, function(){});
+			});
+		});
+		
+		return true;
+	};
+}
+
+var load = function (fileName, key) {
+	var file = fileName || store.filename;
+	if (!file) {
+		store.log('You must specify a valid file.', 'ERR');
+		return false;
+	}
+
+	var s = fs.readFileSync(file, 'utf-8');
+	
+//	console.log('BEFORE removing end')
+//	console.log(s)
+	
+	
+	s = s.substr(0, s.length-2); // removing last ',' and /n
+	
+//	console.log('BEFORE PARSING')
+//	console.log(s)
+	
+	var items = store.parse('{' + s + '}');
+	
+//	console.log('PARSED')
+//	console.log(items)
+	
+	return (key) ? items[key] : items; 
+
+};
+
+var deleteVariable = function (fileName, key) {
+	var file = fileName || store.filename;
+	var items = load(file);
+//	console.log('dele')
+//	console.log(items)
+//	console.log(key)
+	delete items[key];
+	overwrite(file, items);
+	return null;
+};
+
+store.addType("fs", function(key, value, options) {
+	
+	var filename = options.file || store.filename;
+	
+	if (!key) { 
+		return load(filename);
+	}
+
+	if (value === undefined) {
+		return load(filename, key);
+	}
+
+	if (timeout[key]) {
+		clearTimeout(timeout[key]);
+		deleteVariable(filename, key);
+	}
+
+	if (value === null) {
+		deleteVariable(filename, key);
+		return null;
+	}
+	
+	// save item
+	save(filename, key, value);
+	
+	if (options.expires) {
+		timeout[key] = setTimeout(function() {
+			deleteVariable(filename, key);
+		}, options.expires);
+	}
+
+	return value;
+});
+
+}(('undefined' !== typeof module && 'function' === typeof require) ? module.exports || module.parent.exports : {}));
 /**
  * # JSUS: JavaScript UtilS. 
  * Copyright(c) 2012 Stefano Balietti
@@ -1346,12 +1362,12 @@ ARRAY.isArray = function (o) {
  *  
  * Returns FALSE, in case parameters are incorrectly specified
  * 
- * @param {Number} start The first element of the sequence
- * @param {Number} end The last element of the sequence
- * @param {Number} increment Optional. The increment between two subsequents element of the sequence
+ * @param {number} start The first element of the sequence
+ * @param {number} end The last element of the sequence
+ * @param {number} increment Optional. The increment between two subsequents element of the sequence
  * @param {Function} func Optional. A callback function that can modify each number of the sequence before returning it
  *  
- * @return {Array} out The final sequence 
+ * @return {array} out The final sequence 
  */
 ARRAY.seq = function (start, end, increment, func) {
 	if ('number' !== typeof start) return false;
@@ -1395,7 +1411,7 @@ ARRAY.seq = function (start, end, increment, func) {
  * 
  * If an error occurs returns FALSE.
  * 
- * @param {Array} array The array to loop in
+ * @param {array} array The array to loop in
  * @param {Function} func The callback for each element in the array
  * @param {object} context Optional. The context of execution of the callback. Defaults ARRAY.each
  * 
@@ -1423,7 +1439,7 @@ ARRAY.each = function (array, func, context) {
  * Any number of additional parameters can be passed after the 
  * callback function
  * 
- * @return {Array} out The result of the mapping execution
+ * @return {array} out The result of the mapping execution
  * @see ARRAY.each
  * 
  */
@@ -1460,7 +1476,7 @@ ARRAY.map = function () {
  * If no element is removed returns FALSE.
  * 
  * @param {mixed} needle The element to search in the array
- * @param {Array} haystack The array to search in
+ * @param {array} haystack The array to search in
  * 
  * @return {mixed} The element that was removed, FALSE if none was removed
  * @see JSUS.equals
@@ -1497,7 +1513,7 @@ ARRAY.removeElement = function (needle, haystack) {
  * Alias ARRAY.in_array (deprecated)
  * 
  * @param {mixed} needle The element to search in the array
- * @param {Array} haystack The array to search in
+ * @param {array} haystack The array to search in
  * @return {Boolean} TRUE, if the element is contained in the array
  * 
  * 	@see JSUS.equals
@@ -1528,9 +1544,9 @@ ARRAY.inArray = ARRAY.in_array = function (needle, haystack) {
  *  @see ARRAY.generateCombinations
  *  @see ARRAY.matchN
  *  
- * @param {Array} array The array to split in subgroups
- * @param {Number} N The number of subgroups
- * @return {Array} Array containing N groups
+ * @param {array} array The array to split in subgroups
+ * @param {number} N The number of subgroups
+ * @return {array} Array containing N groups
  */ 
 ARRAY.getNGroups = function (array, N) {
     return ARRAY.getGroupsSizeN(array, Math.floor(array.length / N));
@@ -1542,9 +1558,9 @@ ARRAY.getNGroups = function (array, N) {
  * Returns an array of array containing N elements each
  * The last group could have less elements
  * 
- * @param {Array} array The array to split in subgroups
- * @param {Number} N The number of elements in each subgroup
- * @return {Array} Array containing groups of size N
+ * @param {array} array The array to split in subgroups
+ * @param {number} N The number of elements in each subgroup
+ * @return {array} Array containing groups of size N
  * 
  *  	@see ARRAY.getNGroups
  *  	@see ARRAY.generateCombinations
@@ -1652,9 +1668,9 @@ ARRAY._latinSquare = function (S, N, self) {
  * 
  * If N is defined, it returns "Latin Rectangle" (SxN) 
  * 
- * @param {Number} S The number of rows
- * @param {Number} Optional. N The number of columns. Defaults N = S
- * @return {Array} The resulting latin square (or rectangle)
+ * @param {number} S The number of rows
+ * @param {number} Optional. N The number of columns. Defaults N = S
+ * @return {array} The resulting latin square (or rectangle)
  * 
  */
 ARRAY.latinSquare = function (S, N) {
@@ -1673,9 +1689,9 @@ ARRAY.latinSquare = function (S, N) {
  * 
  * If N < S, it returns a "Latin Rectangle" (SxN)
  * 
- * @param {Number} S The number of rows
- * @param {Number} Optional. N The number of columns. Defaults N = S-1
- * @return {Array} The resulting latin square (or rectangle)
+ * @param {number} S The number of rows
+ * @param {number} Optional. N The number of columns. Defaults N = S-1
+ * @return {array} The resulting latin square (or rectangle)
  */
 ARRAY.latinSquareNoSelf = function (S, N) {
 	if (!N) N = S-1;
@@ -1692,9 +1708,9 @@ ARRAY.latinSquareNoSelf = function (S, N) {
  *  Generates all distinct combinations of exactly r elements each 
  *  and returns them into an array
  *  
- *  @param {Array} array The array from which the combinations are extracted
- *  @param {Number} r The number of elements in each combination
- *  @return {Array} The total sets of combinations
+ *  @param {array} array The array from which the combinations are extracted
+ *  @param {number} r The number of elements in each combination
+ *  @return {array} The total sets of combinations
  *  
  *  	@see ARRAY.getGroupSizeN
  *  	@see ARRAY.getNGroups
@@ -1734,10 +1750,10 @@ ARRAY.generateCombinations = function (array, r) {
  * already used. Another recombination would be able to match all the 
  * elements instead.
  * 
- * @param {Array} array The array in which operate the matching
- * @param {Number} N The number of matches per element
+ * @param {array} array The array in which operate the matching
+ * @param {number} N The number of matches per element
  * @param {Boolean} strict Optional. If TRUE, matched elements cannot be repeated. Defaults, FALSE 
- * @return {Array} result The results of the matching
+ * @return {array} result The results of the matching
  * 
  *  	@see ARRAY.getGroupSizeN
  *  	@see ARRAY.getNGroups
@@ -1778,9 +1794,9 @@ ARRAY.matchN = function (array, N, strict) {
  * 
  * The original array is not modified.
  * 
- * @param {Array} array the array to repeat 
+ * @param {array} array the array to repeat 
  * @param {number} times The number of times the array must be appended to itself
- * @return {Array} A copy of the original array appended to itself
+ * @return {array} A copy of the original array appended to itself
  * 
  */
 ARRAY.rep = function (array, times) {
@@ -1798,6 +1814,56 @@ ARRAY.rep = function (array, times) {
     return result;
 };
 
+/**
+ * ## ARRAY.stretch
+ * 
+ * Repeats each element of the array N times
+ * 
+ * N can be specified as an integer or as an array. In the former case all 
+ * the elements are repeat the same number of times. In the latter, the each
+ * element can be repeated a custom number of times. If the length of the `times`
+ * array differs from that of the array to stretch a recycle rule is applied.
+ * 
+ * The original array is not modified.
+ * 
+ * E.g.:
+ * 
+ * ```js
+ * 	var foo = [1,2,3];
+ * 
+ * 	ARRAY.stretch(foo, 2); // [1, 1, 2, 2, 3, 3]
+ * 
+ * 	ARRAY.stretch(foo, [1,2,3]); // [1, 2, 2, 3, 3, 3];
+ *
+ * 	ARRAY.stretch(foo, [2,1]); // [1, 1, 2, 3, 3];
+ * ```
+ * 
+ * @param {array} array the array to strech
+ * @param {number|array} times The number of times each element must be repeated
+ * @return {array} A stretched copy of the original array
+ * 
+ */
+ARRAY.stretch = function (array, times) {
+	if (!array) return;
+	if (!times) return array.slice(0);
+	if ('number' === typeof times) {
+		if (times < 1) {
+			JSUS.log('times must be greater or equal 1', 'ERR');
+			return;
+		}
+		times = ARRAY.rep([times], array.length);
+	}
+	
+    var result = [];
+    for (var i = 0; i < array.length; i++) {
+    	var repeat = times[(i % times.length)];
+        for (var j = 0; j < repeat ; j++) {
+        	result.push(array[i]);
+        }
+    }
+    return result;
+};
+
 
 /**
  * ## ARRAY.arrayIntersect
@@ -1806,9 +1872,9 @@ ARRAY.rep = function (array, times) {
  * 
  * Arrays can contain both primitive types and objects.
  * 
- * @param {Array} a1 The first array
- * @param {Array a2 The second array
- * @return {Array} All the values of the first array that are found also in the second one
+ * @param {array} a1 The first array
+ * @param {array} a2 The second array
+ * @return {array} All the values of the first array that are found also in the second one
  */
 ARRAY.arrayIntersect = function (a1, a2) {
     return a1.filter( function(i) {
@@ -1823,9 +1889,9 @@ ARRAY.arrayIntersect = function (a1, a2) {
  * 
  * Arrays can contain both primitive types and objects.
  * 
- * @param {Array} a1 The first array
- * @param {Array a2 The second array
- * @return {Array} All the values of the first array that are not found in the second one
+ * @param {array} a1 The first array
+ * @param {array} a2 The second array
+ * @return {array} All the values of the first array that are not found in the second one
  */
 ARRAY.arrayDiff = function (a1, a2) {
     return a1.filter( function(i) {
@@ -1840,8 +1906,8 @@ ARRAY.arrayDiff = function (a1, a2) {
  * 
  * The original array is not modified, and a copy is returned.
  * 
- * @param {Array} shuffle The array to shuffle
- * @return {Array} copy The shuffled array
+ * @param {array} shuffle The array to shuffle
+ * @return {array} copy The shuffled array
  * 
  * 		@see http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
  */
@@ -1864,9 +1930,9 @@ ARRAY.shuffle = function (array) {
  * 
  * Select N random elements from the array and returns them
  * 
- * @param {Array} array The array from which extracts random elements
- * @paran {Number} N The number of random elements to extract
- * @return {Array} An new array with N elements randomly chose from the original array  
+ * @param {array} array The array from which extracts random elements
+ * @paran {number} N The number of random elements to extract
+ * @return {array} An new array with N elements randomly chose from the original array  
  */
 ARRAY.getNRandom = function (array, N) {
     return ARRAY.shuffle(array).slice(0,N);
@@ -1881,8 +1947,8 @@ ARRAY.getNRandom = function (array, N) {
  * 
  * Comparison is done with `JSUS.equals`.
  * 
- * @param {Array} array The array from which eliminates duplicates
- * @return {Array} out A copy of the array without duplicates
+ * @param {array} array The array from which eliminates duplicates
+ * @return {array} out A copy of the array without duplicates
  * 
  * 	@see JSUS.equals
  */
@@ -1898,6 +1964,39 @@ ARRAY.distinct = function (array) {
 	return out;
 	
 };
+
+/**
+ * ## ARRAY.transpose
+ * 
+ * Transposes a given 2D array.
+ * 
+ * The original array is not modified, and a new copy is
+ * returned.
+ *
+ * @param {array} array The array to transpose
+ * @return {array} The Transposed Array
+ * 
+ */
+ARRAY.transpose = function (array) {
+	if (!array) return;  
+	
+	// Calculate width and height
+    var w, h, i, j, t = []; 
+	w = array.length || 0;
+	h = (ARRAY.isArray(array[0])) ? array[0].length : 0;
+	if (w === 0 || h === 0) return t;
+	
+	for ( i = 0; i < h; i++) {
+		t[i] = [];
+	    for ( j = 0; j < w; j++) {	   
+	    	t[i][j] = array[j][i];
+	    }
+	} 
+	return t;
+};
+
+
+
 
 JSUS.extend(ARRAY);
     
@@ -1973,10 +2072,126 @@ DOM.writeln = function (root, text, rc) {
     return (text) ? DOM.write(root, text) : br;
 };
 
-// TODO
-//DOM.sprintf = function (root, text, modifiers) {
-//	
-//};
+/**
+ * ### DOM.sprintf
+ * 
+ * Builds up a decorated HTML text element
+ * 
+ * Performs string substitution from an args object where the first 
+ * character of the key bears the following semantic: 
+ *  
+ * 	- '@': variable substitution with escaping 
+ * 	- '!': variable substitution without variable escaping
+ *  - '%': wraps a portion of string into a _span_ element to which is possible 
+ *  		to associate a css class or id. Alternatively, it also possible to 
+ *  		add in-line style. E.g.:
+ * 
+ * 	sprintf('%sImportant!%s An error has occurred: %pre@err%pre', {
+ * 		'%pre': {
+ * 			style: 'font-size: 12px; font-family: courier;'
+ * 		},
+ * 		'%s': {
+ * 			id: 'myId',
+ * 			'class': 'myClass',
+ * 		},
+ * 		'@err': 'file not found',
+ * 	}, document.body);
+ * 
+ * 
+ * @param {string} string A text to transform
+ * @param {object} args Optional. An object containing the spans to apply to the string
+ * @param {Element} root Optional. An HTML element to which append the string. Defaults, a new _span_ element
+ * 
+ */
+DOM.sprintf = function (string, args, root) {
+	
+	var text, textNode, span, idx_start, idx_finish, idx_replace, idxs, spans = {};
+	
+	if (!args) {
+		return document.createTextNode(string);
+	}
+	
+	root = root || document.createElement('span');
+	
+	// Transform arguments before inserting them.
+	for (var key in args) {
+		if (args.hasOwnProperty(key)) {
+			
+			// pattern not found
+			if (idx_start === -1) continue;
+			
+			switch(key[0]) {
+			
+			case '%': // span
+				
+				idx_start = string.indexOf(key);
+				idx_replace = idx_start + key.length;
+				idx_finish = string.indexOf(key, idx_replace);
+				
+				if (idx_finish === -1) {
+					JSUS.log('Error. Could not find closing key: ' + key);
+					continue;
+				}
+				
+				spans[idx_start] = key;
+				
+				break;
+			
+			case '@': // replace and sanitize
+				string = string.replace(key, escape(args[key]));
+				break;
+				
+			case '!': // replace and not sanitize
+				string = string.replace(key, args[key]);
+				break;
+				
+			default:
+				JSUS.log('Identifier not in [!,@,%]: ' + key[0]);
+		
+			}
+		}
+	}
+	
+	// No span to creates
+	if (!JSUS.size(spans)) {
+		return document.createTextNode(string);
+	}
+	
+	// Re-assamble the string
+	
+	idxs = JSUS.keys(spans).sort(function(a,b){return a-b;});
+	idx_finish = 0;
+	for (var i = 0; i < idxs.length; i++) {
+		
+		// add span
+		key = spans[idxs[i]];
+		idx_start = string.indexOf(key);
+		
+		// add fragments of string
+		if (idx_finish !== idx_start-1) {
+			root.appendChild(document.createTextNode(string.substring(idx_finish, idx_start)));
+		}
+		
+		idx_replace = idx_start + key.length;
+		idx_finish = string.indexOf(key, idx_replace);
+		
+		span = W.getElement('span', null, args[key]);
+
+		text = string.substring(idx_replace, idx_finish);
+		
+		span.appendChild(document.createTextNode(text));
+		
+		root.appendChild(span);
+		idx_finish = idx_finish + key.length;
+	}
+	
+	// add the final part of the string
+	if (idx_finish !== string.length) {
+		root.appendChild(document.createTextNode(string.substring(idx_finish)));
+	}
+	
+	return root;
+}
 
 
 /**
@@ -2445,7 +2660,7 @@ DOM.addCSS = function (root, css, id, attributes) {
     
     attributes = JSUS.merge(attributes, {rel : 'stylesheet',
                                         type: 'text/css',
-                                        href: css,
+                                        href: css
     });
     
     return this.addElement('link', root, id, attributes);
@@ -2463,7 +2678,7 @@ DOM.addJS = function (root, js, id, attributes) {
     
     attributes = JSUS.merge(attributes, {charset : 'utf-8',
                                         type: 'text/javascript',
-                                        src: js,
+                                        src: js
     });
     
     return this.addElement('script', root, id, attributes);
@@ -2942,10 +3157,24 @@ OBJ.clone = function (obj) {
 	if ('boolean' === typeof obj) return obj;
 	if (obj === NaN) return obj;
 	if (obj === Infinity) return obj;
-	 
-	var clone = {};
+	
+	var clone;
+	if ('function' === typeof obj) {
+//		clone = obj;
+		// <!-- Check when and if we need this -->
+		clone = function() { return obj.apply(clone, arguments); };
+	}
+	else {
+		clone = (Object.prototype.toString.call(obj) === '[object Array]') ? [] : {};
+	}
+	
 	for (var i in obj) {
 		var value;
+		// TODO: index i is being updated, so apply is called on the 
+		// last element, instead of the correct one.
+//		if ('function' === typeof obj[i]) {
+//			value = function() { return obj[i].apply(clone, arguments); };
+//		}
 		// It is not NULL and it is an object
 		if (obj[i] && 'object' === typeof obj[i]) {
 			// is an array
@@ -2965,11 +3194,16 @@ OBJ.clone = function (obj) {
 	    	clone[i] = value;
 	    }
 	    else {
-	    	Object.defineProperty(clone, i, {
-	    		value: value,
-         		writable: true,
-         		configurable: true,
-         	});
+	    	try {
+		    	Object.defineProperty(clone, i, {
+		    		value: value,
+	         		writable: true,
+	         		configurable: true
+	         	});
+	    	}
+	    	catch(e) {
+	    		clone[i] = value;
+	    	}
 
 	    }
     }
@@ -3024,6 +3258,8 @@ OBJ.join = function (obj1, obj2) {
  * 
  * In case keys overlap the values from obj2 are taken. 
  * 
+ * Only own properties are copied.
+ * 
  * Returns a new object, the original ones are not modified.
  * 
  * E.g.
@@ -3057,7 +3293,12 @@ OBJ.merge = function (obj1, obj2) {
             	// a non-object, we need to cast the 
             	// type of obj1
             	if ('object' !== typeof clone[i]) {
-            		clone[i] = {};
+            		if (Object.prototype.toString.call(obj2[i]) === '[object Array]') {
+            			clone[i] = [];
+            		}
+            		else {
+            			clone[i] = {};
+            		}
             	}
                 clone[i] = OBJ.merge(clone[i], obj2[i]);
             } else {
@@ -3067,6 +3308,66 @@ OBJ.merge = function (obj1, obj2) {
     }
     
     return clone;
+};
+
+/**
+ * ## OBJ.mixin
+ * 
+ * Adds all the properties of obj2 into obj1
+ * 
+ * Original object is modified
+ * 
+ * @param {object} obj1 The object to which the new properties will be added
+ * @param {object} obj2 The mixin-in object
+ */
+OBJ.mixin = function (obj1, obj2) {
+	if (!obj1 && !obj2) return;
+	if (!obj1) return obj2;
+	if (!obj2) return obj1;
+	
+	for (var i in obj2) {
+		obj1[i] = obj2[i];
+	}
+};
+
+/**
+ * ## OBJ.mixin
+ * 
+ * Copies only non-overlapping properties from obj2 to obj1
+ * 
+ * Original object is modified
+ * 
+ * @param {object} obj1 The object to which the new properties will be added
+ * @param {object} obj2 The mixin-in object
+ */
+OBJ.mixout = function (obj1, obj2) {
+	if (!obj1 && !obj2) return;
+	if (!obj1) return obj2;
+	if (!obj2) return obj1;
+	
+	for (var i in obj2) {
+		if (!obj1[i]) obj1[i] = obj2[i];
+	}
+};
+
+/**
+ * ## OBJ.mixcommon
+ * 
+ * Copies only overlapping properties from obj2 to obj1
+ * 
+ * Original object is modified
+ * 
+ * @param {object} obj1 The object to which the new properties will be added
+ * @param {object} obj2 The mixin-in object
+ */
+OBJ.mixcommon = function (obj1, obj2) {
+	if (!obj1 && !obj2) return;
+	if (!obj1) return obj2;
+	if (!obj2) return obj1;
+	
+	for (var i in obj2) {
+		if (obj1[i]) obj1[i] = obj2[i];
+	}
 };
 
 /**
@@ -3146,7 +3447,7 @@ OBJ.subobj = function (o, select) {
  * Use '.' (dot) to point to a nested property.
  * 
  * @param {object} o The object to dissect
- * @param {string|array} select The selection of properties to remove
+ * @param {string|array} remove The selection of properties to remove
  * @return {object} out The subobject with the properties from the parent one 
  * 
  * 	@see OBJ.getNestedValue
@@ -3615,6 +3916,9 @@ JSUS.extend(PARSE);
  */
 
 (function (exports, JSUS, store) {
+    
+// ## Global scope
+
 	
 var nddb_operation = null;
 var nddb_conditions = [];
@@ -5564,12 +5868,16 @@ NDDB.prototype.resolveTag = function (tag) {
 
 // ## Persistance    
 
+var isNodeJS = function() {
+	return ('object' === typeof module && 'function' === typeof require);
+};
+
 var storageAvailable = function() {
 	return ('function' === typeof store);
 }
 
 // if node
-if (JSUS.isNodeJS()) {   
+if (isNodeJS()) {   
 	require('./external/cycle.js');		
 	var fs = require('fs');
 };
@@ -5583,7 +5891,7 @@ NDDB.prototype.save = function (file, callback) {
 	}
 	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!JSUS.isNodeJS()){
+	if (!isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
@@ -5608,7 +5916,7 @@ NDDB.prototype.load = function (file, callback) {
 	}
 	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!JSUS.isNodeJS()){
+	if (!isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
@@ -5652,10 +5960,11 @@ NDDB.prototype.load = function (file, callback) {
 
 
 // ## Closure    
+    
 })(
     'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
   , 'undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
-  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store
+  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store  		  
 );
 /**
  * # nodeGame
@@ -5705,6 +6014,43 @@ node.err = function (txt, prefix) {
 node.info = function (txt, prefix) {
 	node.log(txt, node.verbosity_levels.INFO, prefix);
 }
+
+
+/**
+ *  ## node.support
+ *  
+ *  A collection of features that are supported by the current browser
+ *  
+ */
+node.support = {};
+
+(function(){
+	
+	try {
+		Object.defineProperty({}, "a", {enumerable: false, value: 1})
+		node.support.defineProperty = true;
+	}
+	catch(e) {
+		node.support.defineProperty = false;	
+	}
+	
+	try {
+		eval('({ get x(){ return 1 } }).x === 1')
+		node.support.setter = true;
+	}
+	catch(err) {
+		node.support.setter = false;
+	}
+	  
+	try {
+		var value;
+		eval('({ set x(v){ value = v; } }).x = 1');
+		node.support.getter = true;
+	}
+	catch(err) {
+		node.support.getter = false;
+	}	  
+})();
 
 /**
  * ## node.log
@@ -5922,7 +6268,7 @@ EventEmitter.prototype = {
 	        	var o = {
 		        		event: event.type,
 		        		//target: node.game,
-		        		state: node.state,
+		        		state: node.game.state,
 		        		p1: p1,
 		        		p2: p2,
 		        		p3: p3
@@ -6072,7 +6418,7 @@ function Listener (o) {
 	
 	// the state in which the listener is
 	// allowed to be executed
-	this.state = o.state || node.state || undefined; 	
+	this.state = o.state || node.game.state; 	
 	
 	// for how many extra steps is the event 
 	// still valid. -1 = always valid
@@ -6658,7 +7004,7 @@ PlayerList.prototype.exist = function (id) {
  * Checks whether all players in the database are DONE
  * for the specified `GameState`.
  * 
- * @param {GameState} state Optional. The GameState to check. Defaults state = node.state
+ * @param {GameState} state Optional. The GameState to check. Defaults state = node.game.state
  * @param {Boolean} extended Optional. If TRUE, also newly connected players are checked. Defaults, FALSE
  * @return {Boolean} TRUE, if all the players are DONE with the specified `GameState`
  * 
@@ -6668,7 +7014,7 @@ PlayerList.prototype.exist = function (id) {
 PlayerList.prototype.isStateDone = function (state, extended) {
 	
 	// <!-- console.log('1--- ' + state); -->
-	state = state || node.state;
+	state = state || node.game.state;
 	// <!-- console.log('2--- ' + state); -->
 	extended = extended || false;
 	
@@ -6730,7 +7076,7 @@ PlayerList.prototype.actives = function () {
  * If all the players are DONE with the specfied state,
  * emits a `STATEDONE` event
  * 
- * @param {GameState} state Optional. The GameState to check. Defaults state = node.state
+ * @param {GameState} state Optional. The GameState to check. Defaults state = node.game.state
  * @param {Boolean} extended Optional. If TRUE, also newly connected players are checked. Defaults, FALSE
  * 
  * 		@see `PlayerList.actives`
@@ -6875,10 +7221,15 @@ function Player (pl) {
  * 
  */	
 	var sid = pl.sid;
-	Object.defineProperty(this, 'sid', {
-		value: sid,
-    	enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'sid', {
+			value: sid,
+	    	enumerable: true
+		});
+	}
+	else {
+		this.sid = sid;
+	}
 	
 /**
  * ### Player.id
@@ -6890,10 +7241,15 @@ function Player (pl) {
  * 
  */	
 	var id = pl.id || sid;
-	Object.defineProperty(this, 'id', {
-		value: id,
-    	enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'id', {
+			value: id,
+	    	enumerable: true
+		});
+	}
+	else {
+		this.id = id;
+	}
 	
 /**
  * ### Player.count
@@ -6903,10 +7259,15 @@ function Player (pl) {
  * 	@see PlayerList
  */		
 	var count = pl.count;
-	Object.defineProperty(this, 'count', {
-    	value: count,
-    	enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'count', {
+	    	value: count,
+	    	enumerable: true
+		});
+	}
+	else {
+		this.count = count;
+	}
 	
 // ## Player public properties
 
@@ -7082,10 +7443,15 @@ function GameMsg (gm) {
  * @api private
  */	
 	var id = gm.id || Math.floor(Math.random()*1000000);
-	Object.defineProperty(this, 'id', {
-		value: id,
-		enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'id', {
+			value: id,
+			enumerable: true
+		});
+	}
+	else {
+		this.id = id;
+	}
 
 /**
  * ### GameMsg.session
@@ -7095,10 +7461,15 @@ function GameMsg (gm) {
  * @api private
  */	
 	var session = gm.session;
-	Object.defineProperty(this, 'session', {
-		value: session,
-		enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'session', {
+			value: session,
+			enumerable: true
+		});
+	}
+	else {
+		this.session = session;
+	}
 
 // ## Public properties	
 
@@ -7402,17 +7773,34 @@ function GameLoop (loop) {
  * ### GameLoop.length
  * 
  * The total number of states + steps in the game-loop
+ * 
+ * @see GameLoop.size()
+ * 
+ * @deprecated
  */
-	Object.defineProperty(this, 'length', {
-    	set: function(){},
-    	get: function(){
-    		return this.steps2Go(new GameState());
-    	},
-    	configurable: true
-	});	
+	if (node.support.getter) {
+		Object.defineProperty(this, 'length', {
+	    	set: function(){},
+	    	get: this.size,
+	    	configurable: true
+		});
+	}
+	else {
+		this.length = null;
+	}	
 }
 
 // ## GameLoop methods
+
+/**
+ * ### GameLoop.size
+ * 
+ * Returns the total number of states + steps in the game-loop
+ * 
+ */
+GameLoop.prototype.size = function() {
+	return this.steps2Go(new GameState());
+};
 
 /**
  * ### GameLoop.exist
@@ -7451,12 +7839,12 @@ GameLoop.prototype.exist = function (gameState) {
  * An optional input parameter can control the state from which 
  * to compute the next state
  * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.state
+ * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
  * @return {GameState|boolean} The next game-state, or FALSE if it does not exist
  * 
  */
 GameLoop.prototype.next = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.game.state;
 	
 	// Game has not started yet, do it!
 	if (gameState.state === 0) {
@@ -7513,11 +7901,11 @@ GameLoop.prototype.next = function (gameState) {
  * An optional input parameter can control the state from which 
  * to compute the previous state
  * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.state
+ * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
  * @return {GameState|boolean} The previous game-state, or FALSE if it does not exist
  */
 GameLoop.prototype.previous = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.game.state;
 	
 	if (!this.exist(gameState)) {
 		node.log('No previous state of non-existing state: ' + gameState, 'WARN');
@@ -7562,11 +7950,11 @@ GameLoop.prototype.previous = function (gameState) {
  * 
  * Returns the name associated with a game-state
  * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.state
+ * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
  * @return {string|boolean} The name of the game-state, or FALSE if state does not exists
  */
 GameLoop.prototype.getName = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.game.state;
 	if (!this.exist(gameState)) return false;
 	return this.loop[gameState.state]['state'][gameState.step]['name'];
 };
@@ -7580,7 +7968,7 @@ GameLoop.prototype.getName = function (gameState) {
  * @return {object|boolean} The function of the game-state, or FALSE if state does not exists
  */
 GameLoop.prototype.getFunction = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.game.state;
 	if (!this.exist(gameState)) return false;
 	return this.loop[gameState.state]['state'][gameState.step]['state'];
 };
@@ -7594,7 +7982,7 @@ GameLoop.prototype.getFunction = function (gameState) {
  * @return {object|boolean} The state object, or FALSE if state does not exists
  */
 GameLoop.prototype.getAllParams = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.game.state;
 	if (!this.exist(gameState)) return false;
 	return this.loop[gameState.state]['state'][gameState.step];
 };
@@ -7632,11 +8020,11 @@ GameLoop.prototype.jumpTo = function (gameState, N) {
  * An optional input parameter can control the starting state
  * for the computation
  * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.state
+ * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
  * @return {number} The total number of steps left
  */
 GameLoop.prototype.steps2Go = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.state;
+	gameState = (gameState) ? new GameState(gameState) : node.game.state;
 	var count = 0;
 	while (gameState) { 
 		count++;
@@ -7684,7 +8072,7 @@ GameLoop.prototype.indexOf = function (state) {
  * in the game-loop.
  * 
  * @param {GameState} state1 The reference game-state
- * @param {GameState} state2 Optional. The second state for comparison. Defaults node.state
+ * @param {GameState} state2 Optional. The second state for comparison. Defaults node.game.state
  * 
  * @return {number} The state index in the loop, or -1 if it does not exist
  * 
@@ -7695,8 +8083,8 @@ GameLoop.prototype.diff = function (state1, state2) {
 	state1 = new GameState(state1) ;
 	
 	if (!state2) {
-		if (!node.state) return false;
-		state2 = node.state
+		if (!node.game.state) return false;
+		state2 = node.game.state
 	}
 	else {
 		state2 = new GameState(state2) ;
@@ -7773,7 +8161,7 @@ GameMsgGenerator.create = function (msg) {
 
   var base = {
 		session: node.gsc.session, 
-		state: node.state,
+		state: node.game.state,
 		action: GameMsg.actions.SAY,
 		target: GameMsg.targets.DATA,
 		from: node.player.sid,
@@ -7798,7 +8186,7 @@ GameMsgGenerator.create = function (msg) {
  * 
  * @param {Player} player The player to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
@@ -7809,7 +8197,7 @@ GameMsgGenerator.createHI = function (player, to, reliable) {
   
 	return new GameMsg( {
             			session: node.gsc.session,
-            			state: node.state,
+            			state: node.game.state,
             			action: GameMsg.actions.SAY,
             			target: GameMsg.targets.HI,
             			from: node.player.sid,
@@ -7828,11 +8216,11 @@ GameMsgGenerator.createHI = function (player, to, reliable) {
  * 
  * Creates a say.STATE message
  * 
- * Notice: state is different from node.state
+ * Notice: state is different from node.game.state
  * 
  * @param {GameState} state The game-state to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -7849,7 +8237,7 @@ GameMsgGenerator.saySTATE = function (state, to, reliable) {
  * 
  * @param {GameState} state The game-state to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -7866,7 +8254,7 @@ GameMsgGenerator.setSTATE = function (state, to, reliable) {
  * 
  * @param {GameState} state The game-state to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -7884,7 +8272,7 @@ GameMsgGenerator.getSTATE = function (state, to, reliable) {
  * @param {string} action A nodeGame action (e.g. 'get' or 'set')
  * @param {GameState} state The game-state to communicate
  * @param {string} to Optional. The recipient of the message. Defaults, SERVER
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -7897,7 +8285,7 @@ GameMsgGenerator.createSTATE = function (action, state, to, reliable) {
 	reliable = reliable || 1;
 	return new GameMsg({
 						session: node.gsc.session,
-						state: node.state,
+						state: node.game.state,
 						action: action,
 						target: GameMsg.targets.STATE,
 						from: node.player.sid,
@@ -7918,7 +8306,7 @@ GameMsgGenerator.createSTATE = function (action, state, to, reliable) {
  * 
  * @param {PlayerList} plist The player-list to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -7935,7 +8323,7 @@ GameMsgGenerator.sayPLIST = function (plist, to, reliable) {
  * 
  * @param {PlayerList} plist The player-list to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -7952,7 +8340,7 @@ GameMsgGenerator.setPLIST = function (plist, to, reliable) {
  * 
  * @param {PlayerList} plist The player-list to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -7970,7 +8358,7 @@ GameMsgGenerator.getPLIST = function (plist, to, reliable) {
  * @param {string} action A nodeGame action (e.g. 'get' or 'set')
  * @param {PlayerList} plist The player-list to communicate
  * @param {string} to Optional. The recipient of the message. Defaults, SERVER
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
@@ -7986,7 +8374,7 @@ GameMsgGenerator.createPLIST = function (action, plist, to, reliable) {
 	
 	return new GameMsg({
 						session: node.gsc.session, 
-						state: node.state,
+						state: node.game.state,
 						action: action,
 						target: GameMsg.targets.PLIST,
 						from: node.player.sid,
@@ -8009,7 +8397,7 @@ GameMsgGenerator.createPLIST = function (action, plist, to, reliable) {
  * 
  * @param {string} text The text to communicate
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
@@ -8019,7 +8407,7 @@ GameMsgGenerator.createTXT = function (text, to, reliable) {
 	
 	return new GameMsg({
 						session: node.gsc.session,
-						state: node.state,
+						state: node.game.state,
 						action: GameMsg.actions.SAY,
 						target: GameMsg.targets.TXT,
 						from: node.player.sid,
@@ -8041,7 +8429,7 @@ GameMsgGenerator.createTXT = function (text, to, reliable) {
  * 
  * @param {object} data An object to exchange
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
@@ -8056,7 +8444,7 @@ GameMsgGenerator.sayDATA = function (data, to, text, reliable) {
  * 
  * @param {object} data An object to exchange
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
@@ -8071,7 +8459,7 @@ GameMsgGenerator.setDATA = function (data, to, text, reliable) {
  * 
  * @param {object} data An object to exchange
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
@@ -8087,7 +8475,7 @@ GameMsgGenerator.getDATA = function (data, to, text, reliable) {
  * @param {string} action A nodeGame action (e.g. 'get' or 'set')
  * @param {object} data An object to exchange
  * @param {string} to The recipient of the message
- * @param {boolean} reliable Optional. Experimental. Requires an acknoledgment
+ * @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
@@ -8098,7 +8486,7 @@ GameMsgGenerator.createDATA = function (action, data, to, text, reliable) {
 	
 	return new GameMsg({
 						session: node.gsc.session, 
-						state: node.state,
+						state: node.game.state,
 						action: action,
 						target: GameMsg.targets.DATA,
 						from: node.player.sid,
@@ -8124,7 +8512,7 @@ GameMsgGenerator.createACK = function (gm, to, reliable) {
 	
 	var newgm = new GameMsg({
 							session: node.gsc.session, 
-							state: node.state,
+							state: node.game.state,
 							action: GameMsg.actions.SAY,
 							target: GameMsg.targets.ACK,
 							from: node.player.sid,
@@ -8195,10 +8583,15 @@ function GameSocketClient (options) {
  * @api private
  */ 
 	buffer = [];
-	Object.defineProperty(this, 'buffer', {
-		value: buffer,
-		enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'buffer', {
+			value: buffer,
+			enumerable: true
+		});
+	}
+	else {
+		this.buffer = buffer;
+	}
 	
 /**
  * ### GameSocketClient.session
@@ -8209,11 +8602,15 @@ function GameSocketClient (options) {
  * 
  */
 	session = null;
-	Object.defineProperty(this, 'session', {
-		value: session,
-		enumerable: true
-	});
-	
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'session', {
+			value: session,
+			enumerable: true
+		});
+	}
+	else {
+		this.session = session;
+	}
 // ## Public properties
 	
 /**
@@ -8383,7 +8780,7 @@ GameSocketClient.prototype.restoreSession = function (sessionObj, sid) {
 		});
 	};
 	
-	if (node.game.ready) {
+	if (node.game.isReady()) {
 		remit.call(node.game);
 	}
 	else {
@@ -8427,20 +8824,27 @@ GameSocketClient.prototype.createPlayer = function (player) {
 //				if (player.hasOwnProperty(key)) {
 //					continue;
 //				}
-				
-				Object.defineProperty(player, key, {
-			    	value: pconf[key],
-			    	enumerable: true
-				});
+				if (node.support.defineProperty) {
+					Object.defineProperty(player, key, {
+				    	value: pconf[key],
+				    	enumerable: true
+					});
+				}
+				else {
+					player[key] = pconf[key];
+				}
 			}
 		}
 	}
-	
-	Object.defineProperty(node, 'player', {
-    	value: player,
-    	enumerable: true
-	});
-
+	if (node.support.defineProperty) {
+		Object.defineProperty(node, 'player', {
+	    	value: player,
+	    	enumerable: true
+		});
+	}
+	else {
+		node.player = player;
+	}
 	return player;
 };
 
@@ -8621,7 +9025,7 @@ GameSocketClient.prototype.attachMsgListeners = function (socket, session) {
 		
 		if (msg) { // Parsing successful
 			// Wait to fire the msgs if the game state is loading
-			if (node.game && node.game.ready) {	
+			if (node.game && node.game.isReady()) {	
 				node.emit(msg.toInEvent(), msg);
 			}
 			else {
@@ -9091,10 +9495,16 @@ function Game (settings) {
  * @api private
  */
 	name = settings.name || 'A nodeGame game';
-	Object.defineProperty(this, 'name', {
-		value: name,
-		enumerable: true
-	});
+	
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'name', {
+			value: name,
+			enumerable: true
+		});
+	}
+	else {
+		this.name = name;
+	}
 
 /**
  * ### Game.description
@@ -9104,10 +9514,15 @@ function Game (settings) {
  * @api private
  */
 	description = settings.description || 'No Description';
-	Object.defineProperty(this, 'description', {
-		value: description,
-		enumerable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'description', {
+			value: description,
+			enumerable: true
+		});
+	}
+	else {
+		this.description = description;
+	}
 
 /**
  * ### Game.gameLoop
@@ -9119,11 +9534,16 @@ function Game (settings) {
  */
 	// <!-- support for deprecated options loops -->
 	gameLoop = new GameLoop(settings.loop || settings.loops);
-	Object.defineProperty(this, 'gameLoop', {
-		value: gameLoop,
-		enumerable: true
-	});
-
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'gameLoop', {
+			value: gameLoop,
+			enumerable: true
+		});
+	}
+	else {
+		this.gameLoop = gameLoop;
+	}
+	
 /**
  * ### Game.pl
  * 
@@ -9134,12 +9554,17 @@ function Game (settings) {
  * @api private
  */
 	pl = new PlayerList();
-	Object.defineProperty(this, 'pl', {
-		value: pl,
-		enumerable: true,
-		configurable: true,
-		writable: true
-	});
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'pl', {
+			value: pl,
+			enumerable: true,
+			configurable: true,
+			writable: true
+		});
+	}
+	else {
+		this.pl = pl;
+	}
 
 /**
  * ### Game.pl
@@ -9151,38 +9576,45 @@ function Game (settings) {
  * @api private
  */
 	ml = new PlayerList();
-	Object.defineProperty(this, 'ml', {
-		value: pl,
-		enumerable: true,
-		configurable: true,
-		writable: true
-	});	
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'ml', {
+			value: pl,
+			enumerable: true,
+			configurable: true,
+			writable: true
+		});
+	}
+	else {
+		this.ml = ml;
+	}
 	
 /**
  * ### Game.ready
  * 
  * If TRUE, the nodeGame engine is fully loaded
  * 
- * During stepping between functions in the game-loop
- * the flag is temporarily turned to FALSE, and all events 
- * are queued and fired only after nodeGame is ready to 
- * handle them again.
+ * Shortcut to game.isReady
+ * 
+ * If the browser does not support the method object setters,
+ * this property is disabled, and Game.isReady() should be used
+ * instead.
+ * 
+ * @see Game.isReady();
  * 
  * @api private
+ * @deprecated
+ * 
  */
-	Object.defineProperty(this, 'ready', {
-		set: function(){},
-		get: function(){
-			if (this.state.is < GameState.iss.LOADED) return false;
-			
-			// Check if there is a gameWindow obj and whether it is loading
-			if (node.window) {	
-				return (node.window.state >= GameState.iss.LOADED) ? true : false;
-			}
-			return true;
-		},
-		enumerable: true
-	});
+	if (node.support.getter) {
+		Object.defineProperty(this, 'ready', {
+			set: function(){},
+			get: this.isReady,
+			enumerable: true
+		});
+	}
+	else {
+		this.ready = null;
+	}
 
 
 
@@ -9415,7 +9847,7 @@ Game.prototype.updateState = function (state) {
 	if (this.step(state) !== false) {
 		this.paused = false;
 		this.state.is =  GameState.iss.LOADED;
-		if (this.ready) {
+		if (this.isReady()) {
 			node.emit('LOADED');
 		}
 	}		
@@ -9471,6 +9903,33 @@ Game.prototype.step = function (gameState) {
 	return false;
 };
 
+/**
+ * ### Game.isReady
+ * 
+ * Returns TRUE if the nodeGame engine is fully loaded
+ * 
+ * During stepping between functions in the game-loop
+ * the flag is temporarily turned to FALSE, and all events 
+ * are queued and fired only after nodeGame is ready to 
+ * handle them again.
+ * 
+ * If the browser does not support the method object setters,
+ * this property is disabled, and Game.isReady() should be used
+ * instead.
+ * 
+ * @see Game.ready;
+ * 
+ */
+Game.prototype.isReady = function() {
+	if (this.state.is < GameState.iss.LOADED) return false;
+	
+	// Check if there is a gameWindow obj and whether it is loading
+	if (node.window) {	
+		return (node.window.state >= GameState.iss.LOADED) ? true : false;
+	}
+	return true;
+};
+
 // ## Closure
 })(
 	'undefined' != typeof node ? node : module.exports
@@ -9518,19 +9977,8 @@ Game.prototype.step = function (gameState) {
 	// Creating objects
 	// /////////////////////////////////////////
 	
-	node.msg		= node.GameMsgGenerator;	
+	node.msg	= node.GameMsgGenerator;	
 	node.socket = node.gsc = new GameSocketClient();
-
-	node.game 		= null;
-	node.player 	= null;
-	
-	Object.defineProperty(node, 'state', {
-    	get: function() {
-    		return (node.game) ? node.game.state : false;
-    	},
-    	configurable: false,
-    	enumerable: true
-	});
 	
 	node.env = function (env, func, ctx, params) {
 		if (!env || !func || !node.env[env]) return;
@@ -9610,7 +10058,7 @@ Game.prototype.step = function (gameState) {
 	
 	node.on = function (event, listener) {
 		// It is in the init function;
-		if (!node.state || (GameState.compare(node.state, new GameState(), true) === 0 )) {
+		if (!node.game || !node.game.state || (GameState.compare(node.game.state, new GameState(), true) === 0 )) {
 			node.events.add(event, listener);
 			// node.log('global');
 		}
@@ -10032,7 +10480,7 @@ node.on( IN + set + 'DATA', function (msg) {
  */
 	node.on( IN + say + 'STATE', function (msg) {
 //		console.log('updateState: ' + msg.from + ' -- ' + new GameState(msg.data), 'DEBUG');
-//		console.log(node.game.pl.length)
+//		console.log(node.game.pl.count())
 		
 		//console.log(node.socket.serverid + 'AAAAAA');
 		if (node.socket.serverid && msg.from === node.socket.serverid) {
@@ -10222,7 +10670,7 @@ node.on('STATEDONE', function() {
 	// <!-- If we go auto -->
 	if (node.game.auto_step && !node.game.observer) {
 		node.log('We play AUTO', 'DEBUG');
-		var morePlayers = ('undefined' !== node.game.minPlayers) ? node.game.minPlayers - node.game.pl.length : 0 ;
+		var morePlayers = ('undefined' !== node.game.minPlayers) ? node.game.minPlayers - node.game.pl.count() : 0 ;
 		node.log('Additional player required: ' + morePlayers > 0 ? MorePlayers : 0, 'DEBUG');
 		
 		if (morePlayers > 0) {
@@ -10232,7 +10680,7 @@ node.on('STATEDONE', function() {
 		// TODO: differentiate between before the game starts and during the game
 		else {
 			node.emit('OUT.say.TXT', node.game.minPlayers + ' players ready. Game can proceed');
-			node.log(node.game.pl.length + ' players ready. Game can proceed');
+			node.log(node.game.pl.count() + ' players ready. Game can proceed');
 			node.game.updateState(node.game.next());
 		}
 	}
@@ -11066,7 +11514,7 @@ TriggerManager.prototype.size = function () {
 			return session;
 		}
 		
-		if (!node.session.enabled) {
+		if (!node.session.isEnabled()) {
 			return false;
 		}
 		
@@ -11075,18 +11523,15 @@ TriggerManager.prototype.size = function () {
 	};
 
 /**
- * ## node.session.enabled
+ * ## node.session.isEnabled
  * 
  * TRUE, if the session can be saved to a persistent support
  * 
  */	
-	Object.defineProperty(node.session, 'enabled', {
-    	get: function(){
-    		return (node.store) ? node.store.persistent : false;
-    	},
-    	configurable: false,
-    	enumerable: true
-	});
+	node.session.isEnabled = function() {
+		return (node.store) ? node.store.isPersistent() : false;
+	};
+	
 
 /**
  * ## node.session.store
@@ -11096,7 +11541,7 @@ TriggerManager.prototype.size = function () {
  * @return {boolean} TRUE, if session saving was successful
  */	
 	node.session.store = function() {
-		if (!node.session.enabled) {
+		if (!node.session.isEnabled()) {
 			node.log('Could not save the session');
 			return false;
 		}
@@ -11377,1002 +11822,825 @@ TriggerManager.prototype.size = function () {
 	('undefined' !== typeof node) ? node : module.exports
   , ('undefined' !== typeof node) ? node : module.parent.exports
 );
+/**
+ * 
+ * # GameWindow
+ * 
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed
+ * 
+ * GameWindow provides a handy API to interface nodeGame with the 
+ * browser window.
+ * 
+ * Creates a custom root element inside the HTML page, and insert an
+ * iframe element inside it.
+ * 
+ * Dynamic content can be loaded inside the iframe without losing the
+ * javascript state inside the page.
+ * 
+ * Defines a number of pre-defined profiles associated with special
+ * configuration of widgets.
+ * 
+ * Depends on nodegame-client. 
+ * GameWindow.Table and GameWindow.List depend on NDDB and JSUS.
+ * 
+ * Widgets can have custom dependencies, which are checked internally 
+ * by the GameWindow engine.
+ * 
+ * 
+ */
 (function (window, node) {
-	
-	/**
-	 * 
-	 * nodeGame-window: GameWindow
-	 * 
-	 * GameWindow provides a handy API to interface nodeGame with the 
-	 * browser window.
-	 * 
-	 * Creates a custom root element inside the HTML page, and insert an
-	 * iframe element inside it.
-	 * 
-	 * Dynamic content can be loaded inside the iframe without losing the
-	 * javascript state inside the page.
-	 * 
-	 * Loads and unloads special javascript/HTML snippets, called widgets,
-	 * in the page.
-	 * 
-	 * Defines a number of pre-defined profiles associated with special
-	 * configuration of widgets.
-	 * 
-	 * Depends on nodegame-client. 
-	 * GameWindow.Table and GameWindow.List depend on NDDB and JSUS.
-	 * 
-	 * Widgets can have custom dependencies, which are checked internally 
-	 * by the GameWindow engine.
-	 * 
-	 */
-	
-	var JSUS = node.JSUS;
-	
-	var Player = node.Player;
-	var PlayerList = node.PlayerList;
-	var GameState = node.GameState;
-	var GameMsg = node.GameMsg;
-	var GameMsgGenerator = node.GameMsgGenerator;
-	
-	var DOM = JSUS.get('DOM');
-	GameWindow.prototype = DOM;
-	GameWindow.prototype.constructor = GameWindow;
-	
-	// The widgets container
-	GameWindow.prototype.widgets = {};
-	
-	
-	// Configuration object
-	GameWindow.defaults = {};
-	
-	// Default settings
-	GameWindow.defaults.promptOnleave = true;
-	GameWindow.defaults.noEscape = true;
-	
-	
-	/**
-	 * The constructor performs the following operations:
-	 * 
-	 * 		- creates a root div element (this.root)
-	 * 		- creates an iframe element inside the root element	(this.frame)
-	 * 		- defines standard event listeners for showing and hiding elements
-	 * 
-	 */
-	function GameWindow() {
-		var that = this;
 		
-		if ('undefined' === typeof window) {
-			throw new Error('nodeWindow: no DOM found. Are we in a browser? Aborting.');
+var J = node.JSUS;
+
+var Player = node.Player,
+	PlayerList = node.PlayerList,
+	GameState = node.GameState,
+	GameMsg = node.GameMsg,
+	GameMsgGenerator = node.GameMsgGenerator;
+
+var DOM = J.get('DOM');
+GameWindow.prototype = DOM;
+GameWindow.prototype.constructor = GameWindow;
+
+// Configuration object
+GameWindow.defaults = {};
+
+// Default settings
+GameWindow.defaults.promptOnleave = true;
+GameWindow.defaults.noEscape = true;
+
+
+/**
+ * ## GameWindow constructor
+ * 
+ * The constructor performs the following operations:
+ * 
+ * 		- creates a root div element (this.root)
+ * 		- creates an iframe element inside the root element	(this.frame)
+ * 		- defines standard event listeners for showing and hiding elements
+ * 
+ */
+function GameWindow() {
+	var that = this;
+	
+	if ('undefined' === typeof window) {
+		throw new Error('nodeWindow: no DOM found. Are we in a browser? Aborting.');
+	}
+	
+	if ('undefined' === typeof node) {
+		node.log('nodeWindow: nodeGame not found', 'ERR');
+	}
+	
+	node.log('nodeWindow: loading...');
+	
+	this.frame = null; // contains an iframe 
+	this.mainframe = 'mainframe';
+	this.root = null;
+	
+	this.conf = {};
+	
+	this.state = GameState.iss.LOADED;
+	this.areLoading = 0; 
+	
+	// Init default behavior
+	this.init();
+	
+};
+
+// ## GameWindow methods
+
+/**
+ * ### GameWindow.init
+ * 
+ * Sets global variables based on local configuration.
+ * 
+ * Defaults:
+ * 
+ * 		- promptOnleave TRUE
+ * 		- captures ESC key
+ * 
+ * @param {object} options Configuration options
+ * 
+ */
+GameWindow.prototype.init = function (options) {
+	options = options || {};
+	this.conf = J.merge(GameWindow.defaults, options);
+	
+	if (this.conf.promptOnleave) {
+		this.promptOnleave();
+	}
+	else if (this.conf.promptOnleave === false) {
+		this.restoreOnleave();
+	}
+	
+	if (this.conf.noEscape) {
+		this.noEscape();
+	}
+	else if (this.conf.noEscape === false){
+		this.restoreEscape();
+	}
+	
+};
+
+/**
+ * ### GameWindow.getElementById
+ * 
+ * Returns the element with id 'id'. Looks first into the iframe,
+ * and then into the rest of the page.
+ * 
+ * @see GameWindow.getElementsByTagName
+ */
+GameWindow.prototype.getElementById = function (id) {
+	var el = null; // @TODO: should be init to undefined instead ?
+	if (this.frame && this.frame.getElementById) {
+		el = this.frame.getElementById(id);
+	}
+	if (!el) {
+		el = document.getElementById(id);
+	}
+	return el; 
+};
+
+/**
+ * Returns a collection of elements with the tag name equal to @tag . 
+ * Looks first into the iframe and then into the rest of the page.
+ * 
+ * @see GameWindow.getElementById
+ * 
+ */
+GameWindow.prototype.getElementsByTagName = function (tag) {
+	// @TODO: Should that be more similar to GameWindow.getElementById
+	return (this.frame) ? this.frame.getElementsByTagName(tag) : document.getElementsByTagName(tag);
+};
+
+/**
+ * ### GameWindow.setup
+ * 
+ * Setups the page with a predefined configuration of widgets.
+ * 
+ * @param {string} type The type of page to setup (MONITOR|PLAYER)
+ * 
+ */
+GameWindow.prototype.setup = function (type){
+
+	if (!this.root) {
+		this.root = document.body;
+		//this.root = this.generateNodeGameRoot();
+	}
+	
+	switch (type) {
+	
+	case 'MONITOR':
+		
+		node.widgets.append('NextPreviousState');
+		node.widgets.append('GameSummary');
+		node.widgets.append('StateDisplay');
+		node.widgets.append('StateBar');
+		node.widgets.append('DataBar');
+		node.widgets.append('MsgBar');
+		node.widgets.append('GameBoard');
+		node.widgets.append('ServerInfoDisplay');
+		node.widgets.append('Wall');
+
+		// Add default CSS
+		if (node.conf.host) {
+			this.addCSS(document.body, node.conf.host + '/stylesheets/monitor.css');
 		}
 		
-		if ('undefined' === typeof node) {
-			node.log('nodeWindow: nodeGame not found', 'ERR');
+		break;
+		
+	case 'PLAYER':
+		
+		//var maincss		= this.addCSS(this.root, 'style.css');
+		this.header 	= this.generateHeader();
+	    var mainframe 	= this.addIFrame(this.root,'mainframe');
+	    
+		node.game.vs 	= node.widgets.append('VisualState', this.header);
+		node.game.timer = node.widgets.append('VisualTimer', this.header);
+		//node.game.doneb = node.widgets.append('DoneButton', this.header);
+		node.game.sd 	= node.widgets.append('StateDisplay', this.header);
+
+		node.widgets.append('WaitScreen');
+	    
+		// Add default CSS
+		if (node.conf.host) {
+			this.addCSS(document.body, node.conf.host + '/stylesheets/player.css');
 		}
-		
-		node.log('nodeWindow: loading...');
-		var gsc = node.gsc || null;
-		var game = node.game || null;
-		
-		
-		
-		this.frame = null; // contains an iframe 
-		this.mainframe = 'mainframe';
-		this.root = null;
-		
-		this.conf = {};
-		
-		this.state = GameState.iss.LOADED;
-		this.areLoading = 0; 
-		
-		// Init default behavior
-		this.init();
-		
-		
-		var listeners = function() {
-			
-			node.on('NODEGAME_GAME_CREATED', function() {
-				that.init(node.conf.window);
-			});
-			
-			node.on('HIDE', function(id) {
-				var el = that.getElementById(id);
-				if (!el) {
-					node.log('Cannot hide element ' + id);
-					return;
-				}
-				el.style.visibility = 'hidden';    
-			});
-			
-			node.on('SHOW', function(id) {
-				var el = that.getElementById(id);
-				if (!el) {
-					node.log('Cannot show element ' + id);
-					return;
-				}
-				el.style.visibility = 'visible'; 
-			});
-			
-			node.on('TOGGLE', function(id) {
-				var el = that.getElementById(id);
-				if (!el) {
-					node.log('Cannot toggle element ' + id);
-					return;
-				}
-				if (el.style.visibility === 'visible') {
-					el.style.visibility = 'hidden';
-				}
-				else {
-					el.style.visibility = 'visible';
-				}
-			});
-			
-			// Disable all the input forms found within a given id element
-			node.on('INPUT_DISABLE', function(id) {
-				that.toggleInputs(id, true);			
-			});
-			
-			// Disable all the input forms found within a given id element
-			node.on('INPUT_ENABLE', function(id) {
-				that.toggleInputs(id, false);
-			});
-			
-			// Disable all the input forms found within a given id element
-			node.on('INPUT_TOGGLE', function(id) {
-				that.toggleInputs(id);
-			});
-			
-		}();
-	};
 	
-	/**
-	 * Set global variables based on local configuration.
-	 * 
-	 * Defaults:
-	 * 
-	 * 		- promptOnleave TRUE
-	 * 		- captures ESC key
-	 * 
-	 */
-	GameWindow.prototype.init = function(options) {
-		options = options || {};
-		this.conf = JSUS.merge(GameWindow.defaults, options);
-		
-		if (this.conf.promptOnleave) {
-			this.promptOnleave();
-		}
-		else if (this.conf.promptOnleave === false) {
-			this.restoreOnleave();
-		}
-		
+		this.frame = window.frames[this.mainframe]; // there is no document yet
+		var initPage = this.getBlankPage();
 		if (this.conf.noEscape) {
-			this.noEscape();
-		}
-		else if (this.conf.noEscape === false){
-			this.restoreEscape();
-		}
-		
-	};
-	
-	/**
-	 * Binds the ESC key to a function that always returns FALSE.
-	 * 
-	 * This prevents socket.io to break the connection with the
-	 * server.
-	 * 
-	 */
-	GameWindow.prototype.noEscape = function (windowObj) {
-		windowObj = windowObj || window;
-		windowObj.document.onkeydown = function(e) {
-			var keyCode = (window.event) ? event.keyCode : e.keyCode;
-			if (keyCode === 27) {
-				return false;
-			}
-		}; 
-	};
-	
-	/**
-	 * Removes the the listener on the ESC key.
-	 * 
-	 * @see GameWindow.noEscape()
-	 */
-	GameWindow.prototype.restoreEscape = function (windowObj) {
-		windowObj = windowObj || window;
-		windowObj.document.onkeydown = null;
-	};
-	
-	
-	
-	/**
-	 * Captures the onbeforeunload event, and warns the user
-	 * that leaving the page may halt the game.
-	 * 
-	 * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
-	 * 
-	 */
-	GameWindow.prototype.promptOnleave = function (windowObj, text) {
-		windowObj = windowObj || window;
-		text = ('undefined' === typeof text) ? this.conf.textOnleave : text; 
-		windowObj.onbeforeunload = function(e) {	  
-			  e = e || window.event;
-			  // For IE<8 and Firefox prior to version 4
-			  if (e) {
-			    e.returnValue = text;
-			  }
-			  // For Chrome, Safari, IE8+ and Opera 12+
-			  return text;
-		};
-	};
-	
-	/**
-	 * Removes the onbeforeunload event listener.
-	 * 
-	 * @see GameWindow.promptOnleave
-	 * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
-	 * 
-	 */
-	GameWindow.prototype.restoreOnleave = function (windowObj) {
-		windowObj = windowObj || window;
-		windowObj.onbeforeunload = null;
-	};
-	
-	
-	
-	/**
-	 * Setups the page with a predefined configuration of widgets.
-	 * 
-	 */
-	GameWindow.prototype.setup = function (type){
-	
-		if (!this.root) {
-			this.root = document.body;
-			//this.root = this.generateNodeGameRoot();
+			// TODO: inject the no escape code here
+			// not working
+			//this.addJS(initPage, node.conf.host + 'javascripts/noescape.js');
 		}
 		
-		switch (type) {
-		
-		case 'MONITOR':
-			
-			// TODO: Check this
-			node.removeListener('in.STATE');
-			
-			this.addWidget('NextPreviousState');
-			this.addWidget('GameSummary');
-			this.addWidget('StateDisplay');
-			this.addWidget('StateBar');
-			this.addWidget('DataBar');
-			this.addWidget('MsgBar');
-			this.addWidget('GameBoard');
-			this.addWidget('ServerInfoDisplay');
-			this.addWidget('Wall');
-			//this.addWidget('GameTable');
+		window.frames[this.mainframe].src = initPage;
+	    
+		break;
+	}
 	
-			// Add default CSS
-			if (node.conf.host) {
-				this.addCSS(document.body, node.conf.host + '/stylesheets/monitor.css');
-			}
-			
-			break;
-			
-		case 'PLAYER':
-			
-			//var maincss		= this.addCSS(this.root, 'style.css');
-			this.header 	= this.generateHeader();
-		    var mainframe 	= this.addIFrame(this.root,'mainframe');
-		    
-			node.game.vs 	= this.addWidget('VisualState', this.header);
-			node.game.timer = this.addWidget('VisualTimer', this.header);
-			//node.game.doneb = this.addWidget('DoneButton', this.header);
-			node.game.sd 	= this.addWidget('StateDisplay', this.header);
+};
 
-			this.addWidget('WaitScreen');
-		    
-			// Add default CSS
-			if (node.conf.host) {
-				this.addCSS(document.body, node.conf.host + '/stylesheets/player.css');
-			}
-		
-			this.frame = window.frames[this.mainframe]; // there is no document yet
-			var initPage = this.getBlankPage();
-			if (this.conf.noEscape) {
-				// TODO: inject the no escape code here
-				// not working
-				//this.addJS(initPage, node.conf.host + 'javascripts/noescape.js');
-			}
+
+/**
+ * ## GameWindow.load
+ * 
+ * Loads content from an uri (remote or local) into the iframe, 
+ * and after it is loaded executes the callback function. 
+ * 
+ * The third parameter is the id of the frame in which to load the content. 
+ * If it is not specified, the default iframe of the game is assumed.
+ * 
+ * Warning: Security policies may block this methods, if the 
+ * content is coming from another domain.
+ * 
+ * @param {string} uri The uri to load
+ * @param {function} func The callback function to call once the DOM is ready
+ * @param {string} frame The name of the frame in which loading the uri
+ * 
+ */
+GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func, frame) {
+	if (!uri) return;
+	frame =  frame || this.mainframe;
+	
+	this.state = GameState.iss.LOADING;
+	this.areLoading++; // keep track of nested call to loadFrame
+	
+	var that = this;	
 			
-			window.frames[this.mainframe].src = initPage;
-		    
-			break;
+	// First add the onload event listener
+	var iframe = document.getElementById(frame);
+	iframe.onload = function () {
+		if (that.conf.noEscape) {
+			
+			// TODO: inject the no escape code here
+			
+			//that.addJS(iframe.document, node.conf.host + 'javascripts/noescape.js');
+			//that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noescape.js');
 		}
-		
-		
+		that.updateStatus(func, frame);
+	};
 
-	};
-	
-
-	/**
-	 * Returns the screen of the game, i.e. the innermost element
-	 * inside which to display content. 
-	 * 
-	 * In the following order the screen can be:
-	 * 
-	 * 		- the body element of the iframe 
-	 * 		- the document element of the iframe 
-	 * 		- the body element of the document 
-	 * 		- the last child element of the document
-	 * 
-	 */
-	GameWindow.prototype.getScreen = function() {
-		var el = this.frame;
-		if (el) {
-			el = this.frame.body || el;
-		}
-		else {
-			el = document.body || document.lastElementChild;
-		}
-		return 	el;
-	};
-	
-	/**
-	 * Returns the document element of the iframe of the game.
-	 * 
-	 * @TODO: What happens if the mainframe is not called mainframe?
-	 */
-	GameWindow.prototype.getFrame = function() {
-		return this.frame = window.frames['mainframe'].document;
-	};
+	// Then update the frame location
+	window.frames[frame].location = uri;
 	
 	
-	/**
-	 * Loads content from an uri (remote or local) into the iframe, 
-	 * and after it is loaded executes the callback function. 
-	 * 
-	 * The third parameter is the id of the frame in which to load the content. 
-	 * If it is not specified, the default iframe of the game is assumed.
-	 * 
-	 * Warning: Security policies may block this methods, if the 
-	 * content is coming from another domain.
-	 * 
-	 */
-	GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (url, func, frame) {
-		if (!url) return;
- 		
- 		this.state = GameState.iss.LOADING;
- 		this.areLoading++; // keep track of nested call to loadFrame
- 		
-		var frame =  frame || this.mainframe;
- 		var that = this;	
- 				
- 		// First add the onload event listener
-		var iframe = document.getElementById(frame);
-		iframe.onload = function () {
-			if (that.conf.noEscape) {
-				
-				// TODO: inject the no escape code here
-				
-				//that.addJS(iframe.document, node.conf.host + 'javascripts/noescape.js');
-				//that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noescape.js');
-			}
-			that.updateStatus(func, frame);
-		};
-	
-		// Then update the frame location
-		window.frames[frame].location = url;
-		
-		
-		// Adding a reference to nodeGame also in the iframe
-		window.frames[frame].window.node = node;
+	// Adding a reference to nodeGame also in the iframe
+	window.frames[frame].window.node = node;
 //		console.log('the frame just as it is');
 //		console.log(window.frames[frame]);
-		// Experimental
-//		if (url === 'blank') {
+	// Experimental
+//		if (uri === 'blank') {
 //			window.frames[frame].src = this.getBlankPage();
 //			window.frames[frame].location = '';
 //		}
 //		else {
-//			window.frames[frame].location = url;
+//			window.frames[frame].location = uri;
 //		}
-		
- 						
- 	};
- 	
- 	
- 	GameWindow.prototype.updateStatus = function(func, frame) {
- 		// Update the reference to the frame obj
-		this.frame = window.frames[frame].document;
-			
-		if (func) {
-    		func.call(node.game); // TODO: Pass the right this reference
-    		//node.log('Frame Loaded correctly!');
-    	}
-			
-		this.areLoading--;
-		//console.log('ARE LOADING: ' + this.areLoading);
-		if (this.areLoading === 0) {
-			this.state = GameState.iss.LOADED;
-			node.emit('WINDOW_LOADED');
-		}
-		else {
-			node.log('Attempt to update state, before the window object was loaded', 'DEBUG');
-		}
- 	};
- 		
- 	/**
- 	 * Retrieves, instantiates and returns the specified widget.
- 	 * 
- 	 * It can attach standard javascript listeners to the root element of
- 	 * the widget if specified in the options.
- 	 * 
- 	 * @TODO: add supports for any listener. Maybe requires some refactoring.
- 	 * @TODO: add example.
- 	 * 
- 	 * The dependencies are checked, and if the conditions are not met, 
- 	 * returns FALSE.
- 	 * 
- 	 * @see GameWindow.addWidget
- 	 * 
- 	 */
- 	GameWindow.prototype.getWidget = function (w_str, options) {
-		if (!w_str) return;
-		var that = this;
-		var options = options || {};
-		
-		function attachListeners (options, w) {
-			if (!options || !w) return;
-			for (var i in options) {
-				if (options.hasOwnProperty(i)) {
-					if (JSUS.in_array(i, ['onclick', 'onfocus', 'onblur', 'onchange', 'onsubmit', 'onload', 'onunload', 'onmouseover'])) {
-						w.getRoot()[i] = function() {
-							options[i].call(w);
-						};
-					}
-				}			
-			};
-		};
-		
-		var w = JSUS.getNestedValue(w_str, this.widgets);
-		
-		if (!w) {
-			node.log('Widget ' + w_str + ' not found.', 'ERR');
-			return;
-		}
-		
-		node.log('nodeWindow: registering gadget ' + w.name + ' v.' +  w.version);
-		
-		if (! this.checkDependencies(w)) return false;
-		
-		var id = ('undefined' !== typeof options.id) ? options.id : w.id; 
-		options.id = this.generateUniqueId(id);
-		
-		
-		w = new w(options);
 	
-		
-		try {
-	
-			// nodeGame listeners
-			w.listeners();
-			// user listeners
-			attachListeners(options, w);
-			}
-			catch(e){
-				throw 'Error while loading widget ' + w.name + ': ' + e;
-			}
-		return w;
-	};
-	
-	/**
-	 * Appends a widget to the specified root element. If no root element
-	 * is specified the widget is append to the global root. 
-	 * 
-	 * The first parameter can be string representing the name of the widget or 
-	 * a valid widget already loaded, for example through GameWindow.getWidget. 
-	 * In the latter case, dependencies are checked, and it returns FALSE if
-	 * conditions are not met.
-	 * 
-	 * It automatically creates a fieldset element around the widget if 
-	 * requested by the internal widget configuration, or if specified in the
-	 * options parameter.
-	 * 
- 	 * @see GameWindow.getWidget
-	 * 
-	 */
-	GameWindow.prototype.addWidget = function (w, root, options) {
-		if (!w) return;
-		var that = this;
-		
-		function appendFieldset(root, options, w) {
-			if (!options) return root;
-			var idFieldset = options.id || w.id + '_fieldset';
-			var legend = options.legend || w.legend;
-			return that.addFieldset(root, idFieldset, legend, options.attributes);
-		};
-		
-		
-		// Init default values
-		root = root || this.root;
-		options = options || {};
-		
+					
+};
 
-		// Check if it is a object (new gadget)
-		// If it is a string is the name of an existing gadget
-		// In this case a dependencies check is done
-		if ('object' !== typeof w) w = this.getWidget(w, options);
-		if (!w) return false;	
-		
-		// options exists and options.fieldset exist
-		var fieldsetOptions = ('undefined' !== typeof options.fieldset) ? options.fieldset : w.fieldset; 
-		root = appendFieldset(root, fieldsetOptions, w);
-		w.append(root);
 
-		return w;
-	};
+GameWindow.prototype.updateStatus = function(func, frame) {
+	// Update the reference to the frame obj
+	this.frame = window.frames[frame].document;
+		
+	if (func) {
+		func.call(node.game); // TODO: Pass the right this reference
+		//node.log('Frame Loaded correctly!');
+	}
+		
+	this.areLoading--;
+	//console.log('ARE LOADING: ' + this.areLoading);
+	if (this.areLoading === 0) {
+		this.state = GameState.iss.LOADED;
+		node.emit('WINDOW_LOADED');
+	}
+	else {
+		node.log('Attempt to update state, before the window object was loaded', 'DEBUG');
+	}
+};
 	
-	/**
-	 * Checks if all the necessary objects are already loaded and returns TRUE,
-	 * or FALSE otherwise.
-	 * 
-	 * TODO: Check for version and other constraints.
-	 * 
-	 * @see GameWindow.getWidgets
-	 * 
-	 */ 
-	GameWindow.prototype.checkDependencies = function (w, quiet) {
-		if (!w.dependencies) return true;
-		
-		var errMsg = function (w, d) {
-			var name = w.name || w.id;// || w.toString();
-			node.log(d + ' not found. ' + name + ' cannot be loaded.', 'ERR');
-		};
-		
-		var parents = [window, node, node.window.widgets, node.window];
-		
-		var d = w.dependencies;
-		for (var lib in d) {
-			if (d.hasOwnProperty(lib)) {
-				var found = false;
-				for (var i=0; i<parents.length; i++) {
-					if (JSUS.getNestedValue(lib, parents[i])) {
-						var found = true;
-						break;
-					}
-				}
-				if (!found) {	
-					if (!quiet) errMsg(w, lib);
-					return false;
-				}
+/**
+ * Creates and adds a container div with id 'gn_header' to 
+ * the root element. 
+ * 
+ * If an header element has already been created, deletes it, 
+ * and creates a new one.
+ * 
+ * @TODO: Should be always added as first child
+ * 
+ */
+GameWindow.prototype.generateHeader = function () {
+	if (this.header) {
+		this.header.innerHTML = '';
+		this.header = null;
+	}
+	
+	return this.addElement('div', this.root, 'gn_header');
+};
+
+
+// Overriding Document.write and DOM.writeln and DOM.write
+GameWindow.prototype._write = DOM.write;
+GameWindow.prototype._writeln = DOM.writeln;
+/**
+ * ### GameWindow.write
+ * 
+ * Appends a text string, an HTML node or element inside
+ * the specified root element. 
+ * 
+ * If no root element is specified, the default screen is 
+ * used.
+ * 
+ * @see GameWindow.writeln
+ * 
+ */
+GameWindow.prototype.write = function (text, root) {		
+	var root = root || this.getScreen();
+	if (!root) {
+		node.log('Could not determine where writing', 'ERR');
+		return false;
+	}
+	return this._write(root, text);
+};
+
+/**
+ * ### GameWindow.writeln
+ * 
+ * Appends a text string, an HTML node or element inside
+ * the specified root element, and adds a break element
+ * immediately afterwards.
+ * 
+ * If no root element is specified, the default screen is 
+ * used.
+ * 
+ * @see GameWindow.write
+ * 
+ */
+GameWindow.prototype.writeln = function (text, root, br) {
+	var root = root || this.getScreen();
+	if (!root) {
+		node.log('Could not determine where writing', 'ERR');
+		return false;
+	}
+	return this._writeln(root, text, br);
+};
+
+
+/**
+ * ### GameWindow.toggleInputs
+ * 
+ * Enables / Disables all input in a container with id @id.
+ * If no container with id @id is found, then the whole document is used.
+ * 
+ * If @op is defined, all the input are set to @op, otherwise, the disabled
+ * property is toggled. (i.e. false means enable, true means disable) 
+ * 
+ */
+GameWindow.prototype.toggleInputs = function (id, op) {
+	
+	if ('undefined' !== typeof id) {
+		var container = this.getElementById(id);
+	}
+	if ('undefined' === typeof container) {
+		var container = this.frame.body;
+	}
+	
+	var inputTags = ['button', 'select', 'textarea', 'input'];
+
+	var j=0;
+	for (;j<inputTags.length;j++) {
+		var all = container.getElementsByTagName(inputTags[j]);
+		var i=0;
+		var max = all.length;
+		for (; i < max; i++) {
 			
+			// If op is defined do that
+			// Otherwise toggle
+			state = ('undefined' !== typeof op) ? op 
+												: all[i].disabled ? false 
+																  : true;
+			
+			if (state) {
+				all[i].disabled = state;
+			}
+			else {
+				all[i].removeAttribute('disabled');
 			}
 		}
-		return true;
-	};
-	
-	// Overriding Document.write and DOM.writeln and DOM.write
-	GameWindow.prototype._write = DOM.write;
-	GameWindow.prototype._writeln = DOM.writeln;
-	/**
-	 * Appends a text string, an HTML node or element inside
-	 * the specified root element. 
-	 * 
-	 * If no root element is specified, the default screen is 
-	 * used.
-	 * 
-	 * @see GameWindow.writeln
-	 * 
-	 */
-	GameWindow.prototype.write = function (text, root) {		
-		var root = root || this.getScreen();
-		if (!root) {
-			node.log('Could not determine where writing', 'ERR');
-			return false;
-		}
-		return this._write(root, text);
-	};
-	
-	/**
-	 * Appends a text string, an HTML node or element inside
-	 * the specified root element, and adds a break element
-	 * immediately afterwards.
-	 * 
-	 * If no root element is specified, the default screen is 
-	 * used.
-	 * 
-	 * @see GameWindow.write
-	 * 
-	 */
-	GameWindow.prototype.writeln = function (text, root, br) {
-		var root = root || this.getScreen();
-		if (!root) {
-			node.log('Could not determine where writing', 'ERR');
-			return false;
-		}
-		return this._writeln(root, text, br);
-	};
-	
-	
-	/**
-	 * Enables / Disables all input in a container with id @id.
-	 * If no container with id @id is found, then the whole document is used.
-	 * 
-	 * If @op is defined, all the input are set to @op, otherwise, the disabled
-	 * property is toggled. (i.e. false means enable, true means disable) 
-	 * 
-	 */
-	GameWindow.prototype.toggleInputs = function (id, op) {
-		
-		if ('undefined' !== typeof id) {
-			var container = this.getElementById(id);
-		}
-		if ('undefined' === typeof container) {
-			var container = this.frame.body;
-		}
-		
-		var inputTags = ['button', 'select', 'textarea', 'input'];
+	}
+};
 
-		var j=0;
-		for (;j<inputTags.length;j++) {
-			var all = container.getElementsByTagName(inputTags[j]);
-			var i=0;
-			var max = all.length;
-			for (; i < max; i++) {
-				
-				// If op is defined do that
-				// Otherwise toggle
-				state = ('undefined' !== typeof op) ? op 
-													: all[i].disabled ? false 
-																	  : true;
-				
-				if (state) {
-					all[i].disabled = state;
-				}
-				else {
-					all[i].removeAttribute('disabled');
-				}
-			}
-		}
-	};
-	
-	/**
-	 * Creates a div element with the given id and 
-	 * tries to append it in the following order to:
-	 * 
-	 * 		- the specified root element
-	 * 		- the body element
-	 * 		- the last element of the document
-	 * 
-	 * If it fails, it creates a new body element, appends it
-	 * to the document, and then appends the div element to it.
-	 * 
-	 * Returns the newly created root element.
-	 * 
-	 * @api private
-	 * 
-	 */
-	GameWindow.prototype._generateRoot = function (root, id) {
-		var root = root || document.body || document.lastElementChild;
-		if (!root) {
-			this.addElement('body', document);
-			root = document.body;
-		}
-		this.root = this.addElement('div', root, id);
-		return this.root;
-	};
-	
-	
-	/**
-	 * Creates a div element with id 'nodegame' and returns it.
-	 * 
-	 * @see GameWindow._generateRoot()
-	 * 
-	 */
-	GameWindow.prototype.generateNodeGameRoot = function (root) {
-		return this._generateRoot(root, 'nodegame');
-	};
-	
-	/**
-	 * Creates a div element with id 'nodegame' and returns it.
-	 * 
-	 * @see GameWindow._generateRoot()
-	 * 
-	 */
-	GameWindow.prototype.generateRandomRoot = function (root, id) {
-		return this._generateRoot(root, this.generateUniqueId());
-	};
-	
+/**
+ * Creates a div element with the given id and 
+ * tries to append it in the following order to:
+ * 
+ * 		- the specified root element
+ * 		- the body element
+ * 		- the last element of the document
+ * 
+ * If it fails, it creates a new body element, appends it
+ * to the document, and then appends the div element to it.
+ * 
+ * Returns the newly created root element.
+ * 
+ * @api private
+ * 
+ */
+GameWindow.prototype._generateRoot = function (root, id) {
+	var root = root || document.body || document.lastElementChild;
+	if (!root) {
+		this.addElement('body', document);
+		root = document.body;
+	}
+	this.root = this.addElement('div', root, id);
+	return this.root;
+};
 
-	
-	
-	/**
-	 * Creates and adds a container div with id 'gn_header' to 
-	 * the root element. 
-	 * 
-	 * If an header element has already been created, deletes it, 
-	 * and creates a new one.
-	 * 
-	 * @TODO: Should be always added as first child
-	 * 
-	 */
-	GameWindow.prototype.generateHeader = function () {
-		if (this.header) {
-			this.header.innerHTML = '';
-			this.header = null;
-		}
-		
-		return this.addElement('div', this.root, 'gn_header');
+
+/**
+ * Creates a div element with id 'nodegame' and returns it.
+ * 
+ * @see GameWindow._generateRoot()
+ * 
+ */
+GameWindow.prototype.generateNodeGameRoot = function (root) {
+	return this._generateRoot(root, 'nodegame');
+};
+
+/**
+ * Creates a div element with id 'nodegame' and returns it.
+ * 
+ * @see GameWindow._generateRoot()
+ * 
+ */
+GameWindow.prototype.generateRandomRoot = function (root, id) {
+	return this._generateRoot(root, this.generateUniqueId());
+};
+
+// Useful
+
+/**
+ * Creates an HTML button element that will emit the specified
+ * nodeGame event when clicked and returns it.
+ * 
+ */
+GameWindow.prototype.getEventButton = function (event, text, id, attributes) {
+	if (!event) return;
+	var b = this.getButton(id, text, attributes);
+	b.onclick = function () {
+		node.emit(event);
 	};
-	
-	
-	
-	/**
-	 * Returns the element with id 'id'. Looks first into the iframe,
-	 * and then into the rest of the page.
-	 * 
-	 * @see GameWindow.getElementsByTagName
-	 */
-	GameWindow.prototype.getElementById = function (id) {
-		var el = null; // @TODO: should be init to undefined instead ?
-		if (this.frame && this.frame.getElementById) {
-			el = this.frame.getElementById(id);
-		}
-		if (!el) {
-			el = document.getElementById(id);
-		}
-		return el; 
-	};
-	
-	/**
-	 * Returns a collection of elements with the tag name equal to @tag . 
-	 * Looks first into the iframe and then into the rest of the page.
-	 * 
-	 * @see GameWindow.getElementById
-	 * 
-	 */
-	GameWindow.prototype.getElementsByTagName = function (tag) {
-		// @TODO: Should that be more similar to GameWindow.getElementById
-		return (this.frame) ? this.frame.getElementsByTagName(tag) : document.getElementsByTagName(tag);
-	};
-	
-	
-	
-	
-	// Header
-//	GameWindow.prototype.addHeader = function (root, id) {
-//		return this.addDiv(root,id);
-//	};
-	
-	/**
-	 * Creates an HTML select element already populated with the 
-	 * of the data of other players.
-	 * 
-	 * @TODO: adds options to control which players/servers to add.
-	 * 
-	 * @see GameWindow.addRecipientSelector
-	 * @see GameWindow.addStandardRecipients
-	 * @see GameWindow.populateRecipientSelector
-	 * 
-	 */
-	GameWindow.prototype.getRecipientSelector = function (id) {
-		var toSelector = document.createElement('select');
-		if ('undefined' !== typeof id) {
-			toSelector.id = id;
-		}
-		this.addStandardRecipients(toSelector);
-		return toSelector;
-	};
-	
-	/**
-	 * Appends a RecipientSelector element to the specified root element.
-	 * 
-	 * Returns FALSE if no valid root element is found.
-	 * 
-	 * @TODO: adds options to control which players/servers to add.
-	 * 
-	 * @see GameWindow.addRecipientSelector
-	 * @see GameWindow.addStandardRecipients 
-	 * @see GameWindow.populateRecipientSelector
-	 * 
-	 */
-	GameWindow.prototype.addRecipientSelector = function (root, id) {
-		if (!root) return false;
-		var toSelector = this.getRecipientSelector(id);
-		return root.appendChild(toSelector);		
-	};
-	
-	/**
-	 * Adds an ALL and a SERVER option to a specified select element.
-	 * 
-	 * @TODO: adds options to control which players/servers to add.
-	 * 
-	 * @see GameWindow.populateRecipientSelector
-	 * 
-	 */
-	GameWindow.prototype.addStandardRecipients = function (toSelector) {
-			
-		var opt = document.createElement('option');
-		opt.value = 'ALL';
-		opt.appendChild(document.createTextNode('ALL'));
-		toSelector.appendChild(opt);
-		
-		var opt = document.createElement('option');
-		opt.value = 'SERVER';
-		opt.appendChild(document.createTextNode('SERVER'));
-		toSelector.appendChild(opt);
-		
-	};
-	
-	/**
-	 * Adds all the players from a specified playerList object to a given
-	 * select element.
-	 * 
-	 * @see GameWindow.addStandardRecipients 
-	 * 
-	 */
-	GameWindow.prototype.populateRecipientSelector = function (toSelector, playerList) {
-		
-		if ('object' !==  typeof playerList || 'object' !== typeof toSelector) return;
-		
-		this.removeChildrenFromNode(toSelector);
-		this.addStandardRecipients(toSelector);
-		
-		var opt;
-		var pl = new PlayerList({}, playerList);
-		try {
-			pl.forEach( function(p) {
-				opt = document.createElement('option');
-				opt.value = p.id;
-				opt.appendChild(document.createTextNode(p.name || p.id));
-				toSelector.appendChild(opt);
-			});
-		}
-		catch (e) {
-			node.log('Bad Formatted Player List. Discarded. ' + p, 'ERR');
-		}
-	};
-	
-	/**
-	 * Creates an HTML select element with all the predefined actions
-	 * (SET,GET,SAY,SHOW*) as options and returns it.
-	 * 
-	 * *not yet implemented
-	 * 
-	 * @see GameWindow.addActionSelector
-	 * 
-	 */
-	GameWindow.prototype.getActionSelector = function (id) {
-		var actionSelector = document.createElement('select');
-		if ('undefined' !== typeof id ) {
-			actionSelector.id = id;
-		}
-		this.populateSelect(actionSelector, node.actions);
-		return actionSelector;
-	};
-	
-	/**
-	 * Appends an ActionSelector element to the specified root element.
-	 * 
-	 * @see GameWindow.getActionSelector
-	 * 
-	 */
-	GameWindow.prototype.addActionSelector = function (root, id) {
-		if (!root) return;
-		var actionSelector = this.getActionSelector(id);
-		return root.appendChild(actionSelector);
-	};
-	
-	/**
-	 * Creates an HTML select element with all the predefined targets
-	 * (HI,TXT,DATA, etc.) as options and returns it.
-	 * 
-	 * *not yet implemented
-	 * 
-	 * @see GameWindow.addActionSelector
-	 * 
-	 */
-	GameWindow.prototype.getTargetSelector = function (id) {
-		var targetSelector = document.createElement('select');
-		if ('undefined' !== typeof id ) {
-			targetSelector.id = id;
-		}
-		this.populateSelect(targetSelector, node.targets);
-		return targetSelector;
-	};
-	
-	/**
-	 * Appends a Target Selector element to the specified root element.
-	 * 
-	 * @see GameWindow.getTargetSelector
-	 * 
-	 */
-	GameWindow.prototype.addTargetSelector = function (root, id) {
-		if (!root) return;
-		var targetSelector = this.getTargetSelector(id);
-		return root.appendChild(targetSelector);
-	};
-	
-	
-	/**
-	 * @experimental
-	 * 
-	 * Creates an HTML text input element where a nodeGame state can
-	 * be inserted. This method should be improved to automatically
-	 * show all the available states of a game.
-	 * 
-	 * @see GameWindow.addActionSelector
-	 */
-	GameWindow.prototype.getStateSelector = function (id) {
-		var stateSelector = this.getTextInput(id);
-		return stateSelector;
-	};
-	
-	/**
-	 * @experimental
-	 * 
-	 * Appends a StateSelector to the specified root element.
-	 * 
-	 * @see GameWindow.getActionSelector
-	 * 
-	 */
-	GameWindow.prototype.addStateSelector = function (root, id) {
-		if (!root) return;
-		var stateSelector = this.getStateSelector(id);
-		return root.appendChild(stateSelector);
-	};
-	
-	/**
-	 * Creates an HTML button element that will emit the specified
-	 * nodeGame event when clicked and returns it.
-	 * 
-	 */
-	GameWindow.prototype.getEventButton = function (event, text, id, attributes) {
-		if (!event) return;
-		var b = this.getButton(id, text, attributes);
-		b.onclick = function () {
-			node.emit(event);
-		};
-		return b;
-	};
-	
-	/**
-	 * Adds an EventButton to the specified root element.
-	 * 
-	 * If no valid root element is provided, it is append as last element
-	 * in the current screen.
-	 * 
-	 * @see GameWindow.getEventButton
-	 * 
-	 */
-	GameWindow.prototype.addEventButton = function (event, text, root, id, attributes) {
-		if (!event) return;
-		if (!root) {
+	return b;
+};
+
+/**
+ * Adds an EventButton to the specified root element.
+ * 
+ * If no valid root element is provided, it is append as last element
+ * in the current screen.
+ * 
+ * @see GameWindow.getEventButton
+ * 
+ */
+GameWindow.prototype.addEventButton = function (event, text, root, id, attributes) {
+	if (!event) return;
+	if (!root) {
 //			var root = root || this.frame.body;
 //			root = root.lastElementChild || root;
-			var root = this.getScreen();
-		}
-		var eb = this.getEventButton(event, text, id, attributes);
-		return root.appendChild(eb);
-	};
-	
-	/**
-	 * Overrides JSUS.DOM.generateUniqueId
-	 * 
-	 * @experimental
-	 * @TODO: it is not always working fine. 
-	 * @TODO: fix doc
-	 * 
-	 */
-	GameWindow.prototype.generateUniqueId = function (prefix) {
-		var id = '' + (prefix || JSUS.randomInt(0, 1000));
-		var found = this.getElementById(id);
+		var root = this.getScreen();
+	}
+	var eb = this.getEventButton(event, text, id, attributes);
+	return root.appendChild(eb);
+};
+
+
+//Useful API
+
+/**
+* Creates an HTML select element already populated with the 
+* of the data of other players.
+* 
+* @TODO: adds options to control which players/servers to add.
+* 
+* @see GameWindow.addRecipientSelector
+* @see GameWindow.addStandardRecipients
+* @see GameWindow.populateRecipientSelector
+* 
+*/
+GameWindow.prototype.getRecipientSelector = function (id) {
+	var toSelector = document.createElement('select');
+	if ('undefined' !== typeof id) {
+		toSelector.id = id;
+	}
+	this.addStandardRecipients(toSelector);
+	return toSelector;
+};
+
+/**
+* Appends a RecipientSelector element to the specified root element.
+* 
+* Returns FALSE if no valid root element is found.
+* 
+* @TODO: adds options to control which players/servers to add.
+* 
+* @see GameWindow.addRecipientSelector
+* @see GameWindow.addStandardRecipients 
+* @see GameWindow.populateRecipientSelector
+* 
+*/
+GameWindow.prototype.addRecipientSelector = function (root, id) {
+	if (!root) return false;
+	var toSelector = this.getRecipientSelector(id);
+	return root.appendChild(toSelector);		
+};
+
+/**
+* Adds an ALL and a SERVER option to a specified select element.
+* 
+* @TODO: adds options to control which players/servers to add.
+* 
+* @see GameWindow.populateRecipientSelector
+* 
+*/
+GameWindow.prototype.addStandardRecipients = function (toSelector) {
 		
-		while (found) {
-			id = '' + prefix + '_' + JSUS.randomInt(0, 1000);
-			found = this.getElementById(id);
-		}
-		return id;
-	};
+	var opt = document.createElement('option');
+	opt.value = 'ALL';
+	opt.appendChild(document.createTextNode('ALL'));
+	toSelector.appendChild(opt);
 	
-	//Expose nodeGame to the global object
-	node.window = new GameWindow();
-	if ('undefined' !== typeof window) window.W = node.window;
+	var opt = document.createElement('option');
+	opt.value = 'SERVER';
+	opt.appendChild(document.createTextNode('SERVER'));
+	toSelector.appendChild(opt);
+	
+};
+
+/**
+* Adds all the players from a specified playerList object to a given
+* select element.
+* 
+* @see GameWindow.addStandardRecipients 
+* 
+*/
+GameWindow.prototype.populateRecipientSelector = function (toSelector, playerList) {
+	
+	if ('object' !==  typeof playerList || 'object' !== typeof toSelector) return;
+	
+	this.removeChildrenFromNode(toSelector);
+	this.addStandardRecipients(toSelector);
+	
+	var opt;
+	var pl = new PlayerList({}, playerList);
+	try {
+		pl.forEach( function(p) {
+			opt = document.createElement('option');
+			opt.value = p.id;
+			opt.appendChild(document.createTextNode(p.name || p.id));
+			toSelector.appendChild(opt);
+		});
+	}
+	catch (e) {
+		node.log('Bad Formatted Player List. Discarded. ' + p, 'ERR');
+	}
+};
+
+/**
+* Creates an HTML select element with all the predefined actions
+* (SET,GET,SAY,SHOW*) as options and returns it.
+* 
+* *not yet implemented
+* 
+* @see GameWindow.addActionSelector
+* 
+*/
+GameWindow.prototype.getActionSelector = function (id) {
+	var actionSelector = document.createElement('select');
+	if ('undefined' !== typeof id ) {
+		actionSelector.id = id;
+	}
+	this.populateSelect(actionSelector, node.actions);
+	return actionSelector;
+};
+
+/**
+* Appends an ActionSelector element to the specified root element.
+* 
+* @see GameWindow.getActionSelector
+* 
+*/
+GameWindow.prototype.addActionSelector = function (root, id) {
+	if (!root) return;
+	var actionSelector = this.getActionSelector(id);
+	return root.appendChild(actionSelector);
+};
+
+/**
+* Creates an HTML select element with all the predefined targets
+* (HI,TXT,DATA, etc.) as options and returns it.
+* 
+* *not yet implemented
+* 
+* @see GameWindow.addActionSelector
+* 
+*/
+GameWindow.prototype.getTargetSelector = function (id) {
+	var targetSelector = document.createElement('select');
+	if ('undefined' !== typeof id ) {
+		targetSelector.id = id;
+	}
+	this.populateSelect(targetSelector, node.targets);
+	return targetSelector;
+};
+
+/**
+* Appends a Target Selector element to the specified root element.
+* 
+* @see GameWindow.getTargetSelector
+* 
+*/
+GameWindow.prototype.addTargetSelector = function (root, id) {
+	if (!root) return;
+	var targetSelector = this.getTargetSelector(id);
+	return root.appendChild(targetSelector);
+};
+
+
+/**
+* @experimental
+* 
+* Creates an HTML text input element where a nodeGame state can
+* be inserted. This method should be improved to automatically
+* show all the available states of a game.
+* 
+* @see GameWindow.addActionSelector
+*/
+GameWindow.prototype.getStateSelector = function (id) {
+	var stateSelector = this.getTextInput(id);
+	return stateSelector;
+};
+
+/**
+* @experimental
+* 
+* Appends a StateSelector to the specified root element.
+* 
+* @see GameWindow.getActionSelector
+* 
+*/
+GameWindow.prototype.addStateSelector = function (root, id) {
+	if (!root) return;
+	var stateSelector = this.getStateSelector(id);
+	return root.appendChild(stateSelector);
+};
+
+
+// Do we need it?
+
+/**
+ * Overrides JSUS.DOM.generateUniqueId
+ * 
+ * @experimental
+ * @TODO: it is not always working fine. 
+ * @TODO: fix doc
+ * 
+ */
+GameWindow.prototype.generateUniqueId = function (prefix) {
+	var id = '' + (prefix || J.randomInt(0, 1000));
+	var found = this.getElementById(id);
+	
+	while (found) {
+		id = '' + prefix + '_' + J.randomInt(0, 1000);
+		found = this.getElementById(id);
+	}
+	return id;
+};
+
+
+
+// Where to place them?
+
+/**
+ * ### GameWindow.noEscape
+ * 
+ * Binds the ESC key to a function that always returns FALSE.
+ * 
+ * This prevents socket.io to break the connection with the
+ * server.
+ * 
+ * @param {object} windowObj Optional. The window container in which binding the ESC key
+ */
+GameWindow.prototype.noEscape = function (windowObj) {
+	windowObj = windowObj || window;
+	windowObj.document.onkeydown = function(e) {
+		var keyCode = (window.event) ? event.keyCode : e.keyCode;
+		if (keyCode === 27) {
+			return false;
+		}
+	}; 
+};
+
+/**
+ * ### GameWindow.restoreEscape
+ * 
+ * Removes the the listener on the ESC key.
+ * 
+ * @param {object} windowObj Optional. The window container in which binding the ESC key
+ * @see GameWindow.noEscape()
+ */
+GameWindow.prototype.restoreEscape = function (windowObj) {
+	windowObj = windowObj || window;
+	windowObj.document.onkeydown = null;
+};
+
+
+
+/**
+ * ### GameWindow.promptOnleave
+ * 
+ * Captures the onbeforeunload event, and warns the user
+ * that leaving the page may halt the game.
+ * 
+ * @param {object} windowObj Optional. The window container in which binding the ESC key
+ * @param {string} text Optional. A text to be displayed in the alert message. 
+ * 
+ * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
+ * 
+ */
+GameWindow.prototype.promptOnleave = function (windowObj, text) {
+	windowObj = windowObj || window;
+	text = ('undefined' === typeof text) ? this.conf.textOnleave : text; 
+	windowObj.onbeforeunload = function(e) {	  
+		  e = e || window.event;
+		  // For IE<8 and Firefox prior to version 4
+		  if (e) {
+		    e.returnValue = text;
+		  }
+		  // For Chrome, Safari, IE8+ and Opera 12+
+		  return text;
+	};
+};
+
+/**
+ * ### GameWindow.restoreOnleave
+ * 
+ * Removes the onbeforeunload event listener.
+ * 
+ * @param {object} windowObj Optional. The window container in which binding the ESC key
+ * 
+ * @see GameWindow.promptOnleave
+ * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
+ * 
+ */
+GameWindow.prototype.restoreOnleave = function (windowObj) {
+	windowObj = windowObj || window;
+	windowObj.onbeforeunload = null;
+};
+
+// Do we need these?
+
+/**
+ * Returns the screen of the game, i.e. the innermost element
+ * inside which to display content. 
+ * 
+ * In the following order the screen can be:
+ * 
+ * 		- the body element of the iframe 
+ * 		- the document element of the iframe 
+ * 		- the body element of the document 
+ * 		- the last child element of the document
+ * 
+ */
+GameWindow.prototype.getScreen = function() {
+	var el = this.frame;
+	if (el) {
+		el = this.frame.body || el;
+	}
+	else {
+		el = document.body || document.lastElementChild;
+	}
+	return 	el;
+};
+
+/**
+ * Returns the document element of the iframe of the game.
+ * 
+ * @TODO: What happens if the mainframe is not called mainframe?
+ */
+GameWindow.prototype.getFrame = function() {
+	return this.frame = window.frames['mainframe'].document;
+};
+
+
+
+//Expose nodeGame to the global object
+node.window = new GameWindow();
+if ('undefined' !== typeof window) window.W = node.window;
 	
 })(
 	// GameWindow works only in the browser environment. The reference 
@@ -12380,6 +12648,77 @@ TriggerManager.prototype.size = function () {
 	('undefined' !== typeof window) ? window : module.parent.exports.window,
 	('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
+// ## Game incoming listeners
+// Incoming listeners are fired in response to incoming messages
+(function (node, window) {
+	
+	if (!node) {
+		console.log('nodegame-window: node object not found.');
+		return false;
+	}
+	if (!window) {
+		node.err('window object not found.', 'nodegame-window');
+		return false;
+	}
+	
+	node.on('NODEGAME_GAME_CREATED', function() {
+		window.init(node.conf.window);
+	});
+	
+	node.on('HIDE', function(id) {
+		var el = window.getElementById(id);
+		if (!el) {
+			node.log('Cannot hide element ' + id);
+			return;
+		}
+		el.style.visibility = 'hidden';    
+	});
+	
+	node.on('SHOW', function(id) {
+		var el = window.getElementById(id);
+		if (!el) {
+			node.log('Cannot show element ' + id);
+			return;
+		}
+		el.style.visibility = 'visible'; 
+	});
+	
+	node.on('TOGGLE', function(id) {
+		var el = window.getElementById(id);
+		if (!el) {
+			node.log('Cannot toggle element ' + id);
+			return;
+		}
+		if (el.style.visibility === 'visible') {
+			el.style.visibility = 'hidden';
+		}
+		else {
+			el.style.visibility = 'visible';
+		}
+	});
+	
+	// Disable all the input forms found within a given id element
+	node.on('INPUT_DISABLE', function(id) {
+		window.toggleInputs(id, true);			
+	});
+	
+	// Disable all the input forms found within a given id element
+	node.on('INPUT_ENABLE', function(id) {
+		window.toggleInputs(id, false);
+	});
+	
+	// Disable all the input forms found within a given id element
+	node.on('INPUT_TOGGLE', function(id) {
+		window.toggleInputs(id);
+	});
+	
+	node.log('node-window: listeners added');
+	
+})(
+	'undefined' !== typeof node ? node : undefined
+ ,  'undefined' !== typeof node.window ? node.window : undefined			
+); 
+// <!-- ends nodegame-window listener -->
 (function(exports) {
 	
 	/*!
@@ -13392,664 +13731,847 @@ function Entity (e) {
 	('undefined' !== typeof node) ? node : module.parent.exports.node // node
 );
 
-(function (exports, JSUS) {
+// nodegame-widgets
+
+(function (node) {
+
+node.Widget = Widget;	
 	
-	var Table = node.window.Table;
+function Widget() {
+	this.root = null;
+}
+
+Widget.prototype.dependencies = {};
+
+Widget.prototype.defaults = {};
+
+Widget.prototype.defaults.fieldset = {
+	legend: 'Widget',
+};
+
+
+Widget.prototype.listeners = function () {};
+
+Widget.prototype.getRoot = function () {
+	return this.root;
+};
+
+Widget.prototype.getValues = function () {};
+
+Widget.prototype.append = function () {};
+
+Widget.prototype.init = function () {};
+
+Widget.prototype.getRoot = function () {};
+
+Widget.prototype.listeners = function () {};
+
+Widget.prototype.getAllValues = function () {};
+
+Widget.prototype.highlight = function () {};
+
+})(
+	// Widgets works only in the browser environment.
+	('undefined' !== typeof node) ? node : module.parent.exports.node
+);
+/**
+ * 
+ * # nodegame-widgets
+ * 
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed
+ * 
+ */
+(function (window, node) {
+
+	var J = node.JSUS;
 	
-	/**
-	* Expose constructor
-	*/
-	exports.ChernoffFaces = ChernoffFaces;
-	exports.ChernoffFaces.FaceVector = FaceVector;
-	exports.ChernoffFaces.FacePainter = FacePainter;
+function Widgets() {
+	this.widgets = {};
+	this.root = node.window.root || document.body;
+}
+
+/**
+ * ### Widgets.register
+ * 
+ * Registers a new widget in the collection
+ * 
+ * A name and a prototype class must be provided. All properties
+ * that are presetn in `node.Widget`, but missing in the prototype
+ * are added. 
+ * 
+ * Registered widgets can be loaded with Widgets.get or Widgets.append.
+ * 
+ * @param {string} name The id under which registering the widget
+ * @param {function} w The widget to add
+ * @return {object|boolean} The registered widget, or FALSE if an error occurs
+ * 
+ */
+Widgets.prototype.register = function (name, w) {
+	if (!name || !w) {
+		node.err('Could not register widget: ' + name, 'nodegame-widgets: ');
+		return false;
+	}
+	
+	// Add default properties to widget prototype
+	for (var i in node.Widget.prototype) {
+		if (!w[i] && !w.prototype[i] && !(w.prototype.__proto__ && w.prototype.__proto__[i])) {
+			w.prototype[i] = J.clone(node.Widget.prototype[i]);
+		}
+	}
+	
+	this.widgets[name] = w;
+	return this.widgets[name];
+};
+
+/**
+ * ### Widgets.get
+ * 
+ * Retrieves, instantiates and returns the specified widget
+ * 
+ * It can attach standard javascript listeners to the root element of
+ * the widget if specified in the options.
+ * 
+ * The dependencies are checked, and if the conditions are not met, 
+ * returns FALSE.
+ * 
+ * @param {string} w_str The name of the widget to load
+ * @param {options} options Optional. Configuration options to be passed to the widgets
+ * 
+ * @see Widgets.add
+ * 
+ * @TODO: add supports for any listener. Maybe requires some refactoring.
+ * @TODO: add example.
+ * 
+ */
+Widgets.prototype.get = function (w_str, options) {
+	if (!w_str) return;
+	var that = this;
+	options = options || {};
 	
 	
-	ChernoffFaces.defaults = {};
-	ChernoffFaces.defaults.canvas = {};
-	ChernoffFaces.defaults.canvas.width = 100;
-	ChernoffFaces.defaults.canvas.heigth = 100;
-	
-	ChernoffFaces.id = 'ChernoffFaces';
-	ChernoffFaces.name = 'Chernoff Faces';
-	ChernoffFaces.version = '0.3';
-	ChernoffFaces.description = 'Display parametric data in the form of a Chernoff Face.';
-	
-	ChernoffFaces.dependencies = {
-		JSUS: {},
-		Table: {},
-		Canvas: {},
-		'Controls.Slider': {}
+	function createListenerFunction (w, e, l) {
+		if (!w || !e || !l) return;
+		w.getRoot()[e] = function() {
+			l.call(w); 
+		};
 	};
 	
-	function ChernoffFaces (options) {
-		this.options = options;
-		this.id = options.id;
-		this.table = new Table({id: 'cf_table'});
-		this.root = options.root || document.createElement('div');
-		this.root.id = this.id;
-		
-		this.sc = node.window.getWidget('Controls.Slider');	// Slider Controls
-		this.fp = null;	// Face Painter
-		this.canvas = null;
-		this.dims = null;	// width and height of the canvas
-
-		this.change = 'CF_CHANGE';
-		var that = this;
-		this.changeFunc = function () {
-			that.draw(that.sc.getAllValues());
+	function attachListeners (options, w) {
+		if (!options || !w) return;
+		var isEvent = false;
+		for (var i in options) {
+			if (options.hasOwnProperty(i)) {
+				isEvent = J.in_array(i, ['onclick', 'onfocus', 'onblur', 'onchange', 'onsubmit', 'onload', 'onunload', 'onmouseover']);  
+				if (isEvent && 'function' === typeof options[i]) {
+					createListenerFunction(w, i, options[i]);
+				}
+			}			
 		};
+	};
+	
+	var wProto = J.getNestedValue(w_str, this.widgets);
+	var widget;
+	
+	if (!wProto) {
+		node.err('widget ' + w_str + ' not found.', 'node-widgets: ');
+		return;
+	}
+	
+	node.info('registering ' + wProto.name + ' v.' +  wProto.version, 'node-widgets: ');
+	
+	if (!this.checkDependencies(wProto)) return false;
+	
+	// Add missing properties to the user options
+	J.mixout(options, J.clone(wProto.defaults));
+	
+	try {
+		widget = new wProto(options);
+		// Re-inject defaults
+		widget.defaults = options;
 		
-		this.features = null;
-		this.controls = null;
+		// Call listeners
+		widget.listeners.call(widget);
 		
+		// user listeners
+		attachListeners(options, widget);
+	}
+	catch (e) {
+		throw new Error('Error while loading widget ' + wProto.name + ': ' + e);
+	}
+	return widget;
+};
+
+/**
+ * ### Widgets.append
+ * 
+ * Appends a widget to the specified root element. If no root element
+ * is specified the widget is append to the global root. 
+ * 
+ * The first parameter can be string representing the name of the widget or 
+ * a valid widget already loaded, for example through Widgets.get. 
+ * In the latter case, dependencies are checked, and it returns FALSE if
+ * conditions are not met.
+ * 
+ * It automatically creates a fieldset element around the widget if 
+ * requested by the internal widget configuration, or if specified in the
+ * options parameter.
+ * 
+ * @param {string} w_str The name of the widget to load
+ * @param {object} root. The HTML element to which appending the widget
+ * @param {options} options Optional. Configuration options to be passed to the widgets
+ * @return {object|boolean} The requested widget, or FALSE is an error occurs
+ * 
+ * @see Widgets.get
+ * 
+ */
+Widgets.prototype.append = Widgets.prototype.add = function (w, root, options) {
+	if (!w) return;
+	var that = this;
+	
+	function appendFieldset(root, options, w) {
+		if (!options) return root;
+		var idFieldset = options.id || w.id + '_fieldset';
+		var legend = options.legend || w.legend;
+		return W.addFieldset(root, idFieldset, legend, options.attributes);
+	};
+	
+	
+	// Init default values
+	root = root || this.root;
+	options = options || {};
+
+	// Check if it is a object (new widget)
+	// If it is a string is the name of an existing widget
+	// In this case a dependencies check is done
+	if ('object' !== typeof w) w = this.get(w, options);
+	if (!w) return false;	
+	
+	// options exists and options.fieldset exist
+	root = appendFieldset(root, options.fieldset || w.defaults.fieldset, w);
+	w.append(root);
+
+	return w;
+};
+
+/**
+ * ### Widgets.checkDependencies
+ * 
+ * Checks if all the dependencies are already loaded
+ * 
+ * Dependencies are searched for in the following objects
+ * 
+ *  	- window
+ *  	- node
+ *  	- this.widgets
+ *  	- node.window
+ * 
+ * TODO: Check for version and other constraints.
+ * 
+ * @param {object} The widget to check
+ * @param {boolean} quiet Optional. If TRUE, no warning will be raised. Defaults FALSE
+ * @return {boolean} TRUE, if all dependencies are met
+ */ 
+Widgets.prototype.checkDependencies = function (w, quiet) {
+	if (!w.dependencies) return true;
+	
+	var errMsg = function (w, d) {
+		var name = w.name || w.id;// || w.toString();
+		node.log(d + ' not found. ' + name + ' cannot be loaded.', 'ERR');
+	};
+	
+	var parents = [window, node, this.widgets, node.window];
+	
+	var d = w.dependencies;
+	for (var lib in d) {
+		if (d.hasOwnProperty(lib)) {
+			var found = false;
+			for (var i=0; i<parents.length; i++) {
+				if (J.getNestedValue(lib, parents[i])) {
+					var found = true;
+					break;
+				}
+			}
+			if (!found) {	
+				if (!quiet) errMsg(w, lib);
+				return false;
+			}
+		
+		}
+	}
+	return true;
+};
+
+//Expose Widgets to the global object
+node.widgets = new Widgets();
+	
+})(
+	// Widgets works only in the browser environment.
+	('undefined' !== typeof window) ? window : module.parent.exports.window,
+	('undefined' !== typeof window) ? window.node : module.parent.exports.node
+);
+(function (node) {
+
+	node.widgets.register('WaitScreen', WaitScreen);
+	
+// ## Defaults
+	
+	WaitScreen.defaults = {};
+	WaitScreen.defaults.id = 'waiting';
+	WaitScreen.defaults.fieldset = false;
+	
+// ## Meta-data
+	
+	WaitScreen.name = 'WaitingScreen';
+	WaitScreen.version = '0.3.2';
+	WaitScreen.description = 'Show a standard waiting screen';
+	
+	function WaitScreen (options) {
+		this.id = options.id;
+		
+		this.text = 'Waiting for other players to be done...';
+		this.waitingDiv = null;
+	}
+	
+	WaitScreen.prototype.append = function (root) {
+		return root;
+	};
+	
+	WaitScreen.prototype.getRoot = function () {
+		return this.waitingDiv;
+	};
+	
+	WaitScreen.prototype.listeners = function () {
+		var that = this;
+		node.on('WAITING...', function (text) {
+			if (!that.waitingDiv) {
+				that.waitingDiv = node.window.addDiv(document.body, that.id);
+			}
+			
+			if (that.waitingDiv.style.display === 'none'){
+				that.waitingDiv.style.display = '';
+			}			
+		
+			that.waitingDiv.innerHTML = text || that.text;
+			node.game.pause();
+		});
+		
+		// It is supposed to fade away when a new state starts
+		node.on('LOADED', function(text) {
+			if (that.waitingDiv) {
+				
+				if (that.waitingDiv.style.display === ''){
+					that.waitingDiv.style.display = 'none';
+				}
+			// TODO: Document.js add method to remove element
+			}
+		});
+		
+	}; 
+})(node);
+(function (node) {
+	
+	
+	node.widgets.register('D3', D3);
+	node.widgets.register('D3ts', D3ts);
+	
+	D3.prototype.__proto__ = node.Widget.prototype;
+	D3.prototype.constructor = D3;
+
+// ## Defaults
+	
+	D3.defaults = {};
+	D3.defaults.id = 'D3';
+	D3.defaults.fieldset = {
+		legend: 'D3 plot'
+	};
+
+	
+// ## Meta-data
+	
+	D3.name = 'D3';
+	D3.version = '0.1';
+	D3.description = 'Real time plots for nodeGame with d3.js';
+	
+// ## Dependencies
+	
+	D3.dependencies = {
+		d3: {},	
+		JSUS: {},
+	};
+	
+	function D3 (options) {
+		this.id = options.id || D3.id;
+		this.event = options.event || 'D3';
+		this.svg = null;
+		
+		var that = this;
+		node.on(this.event, function (value) {
+			that.tick.call(that, value); 
+		});
+	}
+	
+	D3.prototype.append = function (root) {
+		this.root = root;
+		this.svg = d3.select(root).append("svg");
+		return root;
+	};
+	
+	D3.prototype.tick = function () {};
+	
+// # D3ts
+	
+	
+// ## Meta-data
+	
+	D3ts.id = 'D3ts';
+	D3ts.name = 'D3ts';
+	D3ts.version = '0.1';
+	D3ts.description = 'Time series plot for nodeGame with d3.js';
+	
+// ## Dependencies	
+	D3ts.dependencies = {
+		D3: {},	
+		JSUS: {},
+	};
+	
+	D3ts.prototype.__proto__ = D3.prototype;
+	D3ts.prototype.constructor = D3ts;
+	
+	D3ts.defaults = {};
+	
+	D3ts.defaults.width = 400;
+	D3ts.defaults.height = 200;
+	
+	D3ts.defaults.margin = {
+    	top: 10, 
+    	right: 10, 
+    	bottom: 20, 
+    	left: 40 
+	};
+	
+	D3ts.defaults.domain = {
+		x: [0, 10],
+		y: [0, 1]
+	};
+	
+    D3ts.defaults.range = {
+    	x: [0, D3ts.defaults.width],
+    	y: [D3ts.defaults.height, 0]
+    };
+	
+	function D3ts (options) {
+		D3.call(this, options);
+		
+		
+		var o = this.options = JSUS.merge(D3ts.defaults, options);
+		
+		var n = this.n = o.n;
+		
+	    this.data = [0];
+	    
+	    this.margin = o.margin;
+	    
+		var width = this.width = o.width - this.margin.left - this.margin.right;
+		var height = this.height = o.height - this.margin.top - this.margin.bottom;
+
+		// identity function
+		var x = this.x = d3.scale.linear()
+		    .domain(o.domain.x)
+		    .range(o.range.x);
+
+		var y = this.y = d3.scale.linear()
+		    .domain(o.domain.y)
+		    .range(o.range.y);
+
+		// line generator
+		this.line = d3.svg.line()
+		    .x(function(d, i) { return x(i); })
+		    .y(function(d, i) { return y(d); });
+	}
+	
+	D3ts.prototype.init = function (options) {
+		//D3.init.call(this, options);
+		
+		console.log('init!');
+		var x = this.x,
+			y = this.y,
+			height = this.height,
+			width = this.width,
+			margin = this.margin;
+		
+		
+		// Create the SVG and place it in the middle
+		this.svg.attr("width", width + margin.left + margin.right)
+		    .attr("height", height + margin.top + margin.bottom)
+		  .append("g")
+		    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+		// Line does not go out the axis
+		this.svg.append("defs").append("clipPath")
+		    .attr("id", "clip")
+		  .append("rect")
+		    .attr("width", width)
+		    .attr("height", height);
+
+		// X axis
+		this.svg.append("g")
+		    .attr("class", "x axis")
+		    .attr("transform", "translate(0," + height + ")")
+		    .call(d3.svg.axis().scale(x).orient("bottom"));
+
+		// Y axis
+		this.svg.append("g")
+		    .attr("class", "y axis")
+		    .call(d3.svg.axis().scale(y).orient("left"));
+
+		this.path = this.svg.append("g")
+		    .attr("clip-path", "url(#clip)")
+		  .append("path")
+		    .data([this.data])
+		    .attr("class", "line")
+		    .attr("d", this.line);		
+	};
+	
+	D3ts.prototype.tick = function (value) {
+		this.alreadyInit = this.alreadyInit || false;
+		if (!this.alreadyInit) {
+			this.init();
+			this.alreadyInit = true;
+		}
+		
+		var x = this.x;
+		
+		console.log('tick!');
+	
+		// push a new data point onto the back
+		this.data.push(value);
+
+		// redraw the line, and slide it to the left
+		this.path
+	    	.attr("d", this.line)
+	    	.attr("transform", null);
+
+		// pop the old data point off the front
+		if (this.data.length > this.n) {
+		
+	  		this.path
+	  			.transition()
+	  			.duration(500)
+	  			.ease("linear")
+	  			.attr("transform", "translate(" + x(-1) + ")");
+	  		
+	  		this.data.shift();
+	  	  
+		}
+	};
+	
+})(node);
+(function (node) {
+	
+	node.widgets.register('NDDBBrowser', NDDBBrowser);
+	
+	var JSUS = node.JSUS,
+		NDDB = node.NDDB,
+		TriggerManager = node.TriggerManager;
+
+// ## Defaults
+	
+	NDDBBrowser.defaults = {};
+	NDDBBrowser.defaults.id = 'nddbbrowser';
+	NDDBBrowser.defaults.fieldset = false;
+	
+// ## Meta-data
+	
+	NDDBBrowser.name = 'NDDBBrowser';
+	NDDBBrowser.version = '0.1.2';
+	NDDBBrowser.description = 'Provides a very simple interface to control a NDDB istance.';
+	
+// ## Dependencies
+	
+	NDDBBrowser.dependencies = {
+		JSUS: {},
+		NDDB: {},
+		TriggerManager: {}
+	};
+	
+	function NDDBBrowser (options) {
+		this.options = options;
+		this.nddb = null;
+		
+		this.commandsDiv = document.createElement('div');
+		this.id = options.id;
+		if ('undefined' !== typeof this.id) {
+			this.commandsDiv.id = this.id;
+		}
+		
+		this.info = null;
 		this.init(this.options);
 	}
 	
-	ChernoffFaces.prototype.init = function (options) {
-		var that = this;
-		this.id = options.id || this.id;
-		var PREF = this.id + '_';
+	NDDBBrowser.prototype.init = function (options) {
 		
-		this.features = options.features || this.features || FaceVector.random();
-		
-		this.controls = ('undefined' !== typeof options.controls) ?  options.controls : true;
-		
-		var idCanvas = (options.idCanvas) ? options.idCanvas : PREF + 'canvas';
-		var idButton = (options.idButton) ? options.idButton : PREF + 'button';
-
-		this.dims = {
-				width: (options.width) ? options.width : ChernoffFaces.defaults.canvas.width, 
-				height:(options.height) ? options.height : ChernoffFaces.defaults.canvas.heigth
-		};
-		
-		this.canvas = node.window.getCanvas(idCanvas, this.dims);
-		this.fp = new FacePainter(this.canvas);		
-		this.fp.draw(new FaceVector(this.features));
-		
-		var sc_options = {
-			id: 'cf_controls',
-			features: JSUS.mergeOnKey(FaceVector.defaults, this.features, 'value'),
-			change: this.change,
-			fieldset: {id: this.id + '_controls_fieldest', 
-						legend: this.controls.legend || 'Controls'
-			},
-			submit: 'Send'
-		};
-		
-		this.sc = node.window.getWidget('Controls.Slider', sc_options);
-		
-		// Controls are always there, but may not be visible
-		if (this.controls) {
-			this.table.add(this.sc);
+		function addButtons() {
+			var id = this.id;
+			node.window.addEventButton(id + '_GO_TO_FIRST', '<<', this.commandsDiv, 'go_to_first');
+			node.window.addEventButton(id + '_GO_TO_PREVIOUS', '<', this.commandsDiv, 'go_to_previous');
+			node.window.addEventButton(id + '_GO_TO_NEXT', '>', this.commandsDiv, 'go_to_next');
+			node.window.addEventButton(id + '_GO_TO_LAST', '>>', this.commandsDiv, 'go_to_last');
+			node.window.addBreak(this.commandsDiv);
+		}
+		function addInfoBar() {
+			var span = this.commandsDiv.appendChild(document.createElement('span'));
+			return span;
 		}
 		
-		// Dealing with the onchange event
-		if ('undefined' === typeof options.change) {	
-			node.on(this.change, this.changeFunc); 
-		} else {
-			if (options.change) {
-				node.on(options.change, this.changeFunc);
+		
+		addButtons.call(this);
+		this.info = addInfoBar.call(this);
+		
+		this.tm = new TriggerManager();
+		this.tm.init(options.triggers);
+		this.nddb = options.nddb || new NDDB({auto_update_pointer: true});
+	};
+	
+	NDDBBrowser.prototype.append = function (root) {
+		this.root = root;
+		root.appendChild(this.commandsDiv);
+		return root;
+	};
+	
+	NDDBBrowser.prototype.getRoot = function (root) {
+		return this.commandsDiv;
+	};
+	
+	NDDBBrowser.prototype.add = function (o) {
+		return this.nddb.insert(o);
+	};
+	
+	NDDBBrowser.prototype.sort = function (key) {
+		return this.nddb.sort(key);
+	};
+	
+	NDDBBrowser.prototype.addTrigger = function (trigger) {
+		return this.tm.addTrigger(trigger);
+	};
+	
+	NDDBBrowser.prototype.removeTrigger = function (trigger) {
+		return this.tm.removeTrigger(trigger);
+	};
+	
+	NDDBBrowser.prototype.resetTriggers = function () {
+		return this.tm.resetTriggers();
+	};
+	
+	NDDBBrowser.prototype.listeners = function() {
+		var that = this;
+		var id = this.id;
+		
+		function notification (el, text) {
+			if (el) {
+				node.emit(id + '_GOT', el);
+				this.writeInfo((this.nddb.nddb_pointer + 1) + '/' + this.nddb.length);
 			}
 			else {
-				node.removeListener(this.change, this.changeFunc);
+				this.writeInfo('No element found');
 			}
-			this.change = options.change;
 		}
 		
+		node.on(id + '_GO_TO_FIRST', function() {
+			var el = that.tm.pullTriggers(that.nddb.first());
+			notification.call(that, el);
+		});
 		
-		this.table.add(this.canvas);
-		this.table.parse();
-		this.root.appendChild(this.table.table);
+		node.on(id + '_GO_TO_PREVIOUS', function() {
+			var el = that.tm.pullTriggers(that.nddb.previous());
+			notification.call(that, el);
+		});
+		
+		node.on(id + '_GO_TO_NEXT', function() {
+			var el = that.tm.pullTriggers(that.nddb.next());
+			notification.call(that, el);
+		});
+
+		node.on(id + '_GO_TO_LAST', function() {
+			var el = that.tm.pullTriggers(that.nddb.last());
+			notification.call(that, el);
+			
+		});
 	};
 	
-	ChernoffFaces.prototype.getRoot = function() {
-		return this.root;
+	NDDBBrowser.prototype.writeInfo = function (text) {
+		if (this.infoTimeout) clearTimeout(this.infoTimeout);
+		this.info.innerHTML = text;
+		var that = this;
+		this.infoTimeout = setTimeout(function(){
+			that.info.innerHTML = '';
+		}, 2000);
 	};
 	
-	ChernoffFaces.prototype.getCanvas = function() {
-		return this.canvas;
+	
+})(node);
+(function (node) {
+	
+	node.widgets.register('DataBar', DataBar);
+	
+// ## Defaults
+	DataBar.defaults = {};
+	DataBar.defaults.id = 'databar';
+	DataBar.defaults.fieldset = {	
+		legend: 'Send DATA to players'
 	};
 	
-	ChernoffFaces.prototype.append = function (root) {
-		root.appendChild(this.root);
-		this.table.parse();
-		return this.root;
-	};
+// ## Meta-data
+	DataBar.name = 'Data Bar';
+	DataBar.version = '0.3';
+	DataBar.description = 'Adds a input field to send DATA messages to the players';
+		
+	function DataBar (options) {
+		this.bar = null;
+		this.root = null;
+		this.recipient = null;
+	}
 	
-	ChernoffFaces.prototype.listeners = function () {};
 	
-	ChernoffFaces.prototype.draw = function (features) {
-		if (!features) return;
-		var fv = new FaceVector(features);
-		this.fp.redraw(fv);
-		// Without merging wrong values are passed as attributes
-		this.sc.init({features: JSUS.mergeOnKey(FaceVector.defaults, features, 'value')});
-		this.sc.refresh();
-	};
-	
-	ChernoffFaces.prototype.getAllValues = function() {
-		//if (this.sc) return this.sc.getAllValues();
-		return this.fp.face;
-	};
-	
-	ChernoffFaces.prototype.randomize = function() {
-		var fv = FaceVector.random();
-		this.fp.redraw(fv);
-	
-		var sc_options = {
-				features: JSUS.mergeOnValue(FaceVector.defaults, fv),
-				change: this.change
+	DataBar.prototype.append = function (root) {
+		
+		var sendButton, textInput, dataInput;
+		
+		sendButton = W.addButton(root);
+		W.writeln('Text');
+		textInput = W.addTextInput(root, 'data-bar-text');
+		W.writeln('Data');
+		dataInput = W.addTextInput(root, 'data-bar-data');
+		
+		this.recipient = W.addRecipientSelector(root);
+		
+		var that = this;
+		
+		sendButton.onclick = function() {
+			
+			var to, data, text;
+			
+			to = that.recipient.value;
+			text = textInput.value;
+			data = dataInput.value;
+			
+			node.log('Parsed Data: ' + JSON.stringify(data));
+			
+			node.say(data, text, to);
 		};
-		this.sc.init(sc_options);
-		this.sc.refresh();
-	
-		return true;
+		
+		node.on('UPDATED_PLIST', function() {
+			node.window.populateRecipientSelector(that.recipient, node.game.pl);
+		});
+		
+		return root;
+		
 	};
 	
-	// FacePainter
-	// The class that actually draws the faces on the Canvas
-	function FacePainter (canvas, settings) {
-			
-		this.canvas = new node.window.Canvas(canvas);
-		
-		this.scaleX = canvas.width / ChernoffFaces.defaults.canvas.width;
-		this.scaleY = canvas.height / ChernoffFaces.defaults.canvas.heigth;
-	}
+})(node);
+(function (node) {
 	
-	//Draws a Chernoff face.
-	FacePainter.prototype.draw = function (face, x, y) {
-		if (!face) return;
-		this.face = face;
-		this.fit2Canvas(face);
-		this.canvas.scale(face.scaleX, face.scaleY);
-		
-		//console.log('Face Scale ' + face.scaleY + ' ' + face.scaleX );
-		
-		x = x || this.canvas.centerX;
-		y = y || this.canvas.centerY;
-		
-		this.drawHead(face, x, y);
-			
-		this.drawEyes(face, x, y);
+	node.widgets.register('ServerInfoDisplay', ServerInfoDisplay);	
+
+// ## Defaults
 	
-		this.drawPupils(face, x, y);
-	
-		this.drawEyebrow(face, x, y);
-	
-		this.drawNose(face, x, y);
-		
-		this.drawMouth(face, x, y);
-		
+	ServerInfoDisplay.defaults = {};
+	ServerInfoDisplay.defaults.id = 'serverinfodisplay';
+	ServerInfoDisplay.defaults.fieldset = {
+			legend: 'Server Info',
+			id: 'serverinfo_fieldset',
 	};		
-		
-	FacePainter.prototype.redraw = function (face, x, y) {
-		this.canvas.clear();
-		this.draw(face,x,y);
-	};
 	
-	FacePainter.prototype.scale = function (x, y) {
-		this.canvas.scale(this.scaleX, this.scaleY);
-	};
+// ## Meta-data
 	
-	// TODO: Improve. It eats a bit of the margins
-	FacePainter.prototype.fit2Canvas = function(face) {
-		if (!this.canvas) {
-		console.log('No canvas found');
-			return;
-		}
-		
-		var ration;
-		if (this.canvas.width > this.canvas.height) {
-			ratio = this.canvas.width / face.head_radius * face.head_scale_x;
-		}
-		else {
-			ratio = this.canvas.height / face.head_radius * face.head_scale_y;
-		}
-		
-		face.scaleX = ratio / 2;
-		face.scaleY = ratio / 2;
-	};
+	ServerInfoDisplay.name = 'Server Info Display';
+	ServerInfoDisplay.version = '0.3';
 	
-	FacePainter.prototype.drawHead = function (face, x, y) {
+	function ServerInfoDisplay (options) {	
+		this.id = options.id;
 		
-		var radius = face.head_radius;
 		
-		this.canvas.drawOval({
-						x: x, 
-						y: y,
-						radius: radius,
-						scale_x: face.head_scale_x,
-						scale_y: face.head_scale_y,
-						color: face.color,
-						lineWidth: face.lineWidth
-		});
-	};
-	
-	FacePainter.prototype.drawEyes = function (face, x, y) {
-		
-		var height = FacePainter.computeFaceOffset(face, face.eye_height, y);
-		var spacing = face.eye_spacing;
-			
-		var radius = face.eye_radius;
-		//console.log(face);
-		this.canvas.drawOval({
-						x: x - spacing,
-						y: height,
-						radius: radius,
-						scale_x: face.eye_scale_x,
-						scale_y: face.eye_scale_y,
-						color: face.color,
-						lineWidth: face.lineWidth
-						
-		});
-		//console.log(face);
-		this.canvas.drawOval({
-						x: x + spacing,
-						y: height,
-						radius: radius,
-						scale_x: face.eye_scale_x,
-						scale_y: face.eye_scale_y,
-						color: face.color,
-						lineWidth: face.lineWidth
-		});
-	};
-	
-	FacePainter.prototype.drawPupils = function (face, x, y) {
-			
-		var radius = face.pupil_radius;
-		var spacing = face.eye_spacing;
-		var height = FacePainter.computeFaceOffset(face, face.eye_height, y);
-		
-		this.canvas.drawOval({
-						x: x - spacing,
-						y: height,
-						radius: radius,
-						scale_x: face.pupil_scale_x,
-						scale_y: face.pupil_scale_y,
-						color: face.color,
-						lineWidth: face.lineWidth
-		});
-		
-		this.canvas.drawOval({
-						x: x + spacing,
-						y: height,
-						radius: radius,
-						scale_x: face.pupil_scale_x,
-						scale_y: face.pupil_scale_y,
-						color: face.color,
-						lineWidth: face.lineWidth
-		});
-	
-	};
-	
-	FacePainter.prototype.drawEyebrow = function (face, x, y) {
-		
-		var height = FacePainter.computeEyebrowOffset(face,y);
-		var spacing = face.eyebrow_spacing;
-		var length = face.eyebrow_length;
-		var angle = face.eyebrow_angle;
-		
-		this.canvas.drawLine({
-						x: x - spacing,
-						y: height,
-						length: length,
-						angle: angle,
-						color: face.color,
-						lineWidth: face.lineWidth
-					
-						
-		});
-		
-		this.canvas.drawLine({
-						x: x + spacing,
-						y: height,
-						length: 0-length,
-						angle: -angle,	
-						color: face.color,
-						lineWidth: face.lineWidth
-		});
-		
-	};
-	
-	FacePainter.prototype.drawNose = function (face, x, y) {
-		
-		var height = FacePainter.computeFaceOffset(face, face.nose_height, y);
-		var nastril_r_x = x + face.nose_width / 2;
-		var nastril_r_y = height + face.nose_length;
-		var nastril_l_x = nastril_r_x - face.nose_width;
-		var nastril_l_y = nastril_r_y; 
-		
-		this.canvas.ctx.lineWidth = face.lineWidth;
-		this.canvas.ctx.strokeStyle = face.color;
-		
-		this.canvas.ctx.save();
-		this.canvas.ctx.beginPath();
-		this.canvas.ctx.moveTo(x,height);
-		this.canvas.ctx.lineTo(nastril_r_x,nastril_r_y);
-		this.canvas.ctx.lineTo(nastril_l_x,nastril_l_y);
-		//this.canvas.ctx.closePath();
-		this.canvas.ctx.stroke();
-		this.canvas.ctx.restore();
-	
-	};
-			
-	FacePainter.prototype.drawMouth = function (face, x, y) {
-		
-		var height = FacePainter.computeFaceOffset(face, face.mouth_height, y);
-		var startX = x - face.mouth_width / 2;
-		var endX = x + face.mouth_width / 2;
-		
-		var top_y = height - face.mouth_top_y;
-		var bottom_y = height + face.mouth_bottom_y;
-		
-		// Upper Lip
-		this.canvas.ctx.moveTo(startX,height);
-		this.canvas.ctx.quadraticCurveTo(x, top_y, endX, height);
-		this.canvas.ctx.stroke();
-		
-		//Lower Lip
-		this.canvas.ctx.moveTo(startX,height);
-		this.canvas.ctx.quadraticCurveTo(x, bottom_y, endX, height);
-		this.canvas.ctx.stroke();
-	
-	};	
-	
-	
-	//TODO Scaling ?
-	FacePainter.computeFaceOffset = function (face, offset, y) {
-		y = y || 0;
-		//var pos = y - face.head_radius * face.scaleY + face.head_radius * face.scaleY * 2 * offset;
-		var pos = y - face.head_radius + face.head_radius * 2 * offset;
-		//console.log('POS: ' + pos);
-		return pos;
-	};
-	
-	FacePainter.computeEyebrowOffset = function (face, y) {
-		y = y || 0;
-		var eyemindistance = 2;
-		return FacePainter.computeFaceOffset(face, face.eye_height, y) - eyemindistance - face.eyebrow_eyedistance;
-	};
-	
-	
-	/*!
-	* 
-	* A description of a Chernoff Face.
-	*
-	* This class packages the 11-dimensional vector of numbers from 0 through 1 that completely
-	* describe a Chernoff face.  
-	*
-	*/
-
-	
-	FaceVector.defaults = {
-			// Head
-			head_radius: {
-				// id can be specified otherwise is taken head_radius
-				min: 10,
-				max: 100,
-				step: 0.01,
-				value: 30,
-				label: 'Face radius'
-			},
-			head_scale_x: {
-				min: 0.2,
-				max: 2,
-				step: 0.01,
-				value: 0.5,
-				label: 'Scale head horizontally'
-			},
-			head_scale_y: {
-				min: 0.2,
-				max: 2,
-				step: 0.01,
-				value: 1,
-				label: 'Scale head vertically'
-			},
-			// Eye
-			eye_height: {
-				min: 0.1,
-				max: 0.9,
-				step: 0.01,
-				value: 0.4,
-				label: 'Eye height'
-			},
-			eye_radius: {
-				min: 2,
-				max: 30,
-				step: 0.01,
-				value: 5,
-				label: 'Eye radius'
-			},
-			eye_spacing: {
-				min: 0,
-				max: 50,
-				step: 0.01,
-				value: 10,
-				label: 'Eye spacing'
-			},
-			eye_scale_x: {
-				min: 0.2,
-				max: 2,
-				step: 0.01,
-				value: 1,
-				label: 'Scale eyes horizontally'
-			},
-			eye_scale_y: {
-				min: 0.2,
-				max: 2,
-				step: 0.01,
-				value: 1,
-				label: 'Scale eyes vertically'
-			},
-			// Pupil
-			pupil_radius: {
-				min: 1,
-				max: 9,
-				step: 0.01,
-				value: 1,  //this.eye_radius;
-				label: 'Pupil radius'
-			},
-			pupil_scale_x: {
-				min: 0.2,
-				max: 2,
-				step: 0.01,
-				value: 1,
-				label: 'Scale pupils horizontally'
-			},
-			pupil_scale_y: {
-				min: 0.2,
-				max: 2,
-				step: 0.01,
-				value: 1,
-				label: 'Scale pupils vertically'
-			},
-			// Eyebrow
-			eyebrow_length: {
-				min: 1,
-				max: 30,
-				step: 0.01,
-				value: 10,
-				label: 'Eyebrow length'
-			},
-			eyebrow_eyedistance: {
-				min: 0.3,
-				max: 10,
-				step: 0.01,
-				value: 3, // From the top of the eye
-				label: 'Eyebrow from eye'
-			},
-			eyebrow_angle: {
-				min: -2,
-				max: 2,
-				step: 0.01,
-				value: -0.5,
-				label: 'Eyebrow angle'
-			},
-			eyebrow_spacing: {
-				min: 0,
-				max: 20,
-				step: 0.01,
-				value: 5,
-				label: 'Eyebrow spacing'
-			},
-			// Nose
-			nose_height: {
-				min: 0.4,
-				max: 1,
-				step: 0.01,
-				value: 0.4,
-				label: 'Nose height'
-			},
-			nose_length: {
-				min: 0.2,
-				max: 30,
-				step: 0.01,
-				value: 15,
-				label: 'Nose length'
-			},
-			nose_width: {
-				min: 0,
-				max: 30,
-				step: 0.01,
-				value: 10,
-				label: 'Nose width'
-			},
-			// Mouth
-			mouth_height: {
-				min: 0.2,
-				max: 2,
-				step: 0.01,
-				value: 0.75, 
-				label: 'Mouth height'
-			},
-			mouth_width: {
-				min: 2,
-				max: 100,
-				step: 0.01,
-				value: 20,
-				label: 'Mouth width'
-			},
-			mouth_top_y: {
-				min: -10,
-				max: 30,
-				step: 0.01,
-				value: -2,
-				label: 'Upper lip'
-			},
-			mouth_bottom_y: {
-				min: -10,
-				max: 30,
-				step: 0.01,
-				value: 20,
-				label: 'Lower lip'
-			}					
-	};
-	
-	//Constructs a random face vector.
-	FaceVector.random = function () {
-		var out = {};
-		for (var key in FaceVector.defaults) {
-			if (FaceVector.defaults.hasOwnProperty(key)) {
-				if (!JSUS.in_array(key,['color','lineWidth','scaleX','scaleY'])) {
-					out[key] = FaceVector.defaults[key].min + Math.random() * FaceVector.defaults[key].max;
-				}
-			}
-		}
-	
-		out.scaleX = 1;
-		out.scaleY = 1;
-		
-		out.color = 'green';
-		out.lineWidth = 1; 
-		
-		return new FaceVector(out);
-	};
-	
-	function FaceVector (faceVector) {
-		faceVector = faceVector || {};
-
-		this.scaleX = faceVector.scaleX || 1;
-		this.scaleY = faceVector.scaleY || 1;
-
-
-		this.color = faceVector.color || 'green';
-		this.lineWidth = faceVector.lineWidth || 1;
-		
-		// Merge on key
-		for (var key in FaceVector.defaults) {
-			if (FaceVector.defaults.hasOwnProperty(key)){
-				if (faceVector.hasOwnProperty(key)){
-					this[key] = faceVector[key];
-				}
-				else {
-					this[key] = FaceVector.defaults[key].value;
-				}
-			}
-		}
+		this.root = null;
+		this.div = document.createElement('div');
+		this.table = null; //new node.window.Table();
+		this.button = null;
 		
 	}
-
-	//Constructs a random face vector.
-	FaceVector.prototype.shuffle = function () {
-		for (var key in this) {
-			if (this.hasOwnProperty(key)) {
-				if (FaceVector.defaults.hasOwnProperty(key)) {
-					if (key !== 'color') {
-						this[key] = FaceVector.defaults[key].min + Math.random() * FaceVector.defaults[key].max;
-						
-					}
-				}
-			}
+	
+	ServerInfoDisplay.prototype.init = function (options) {
+		var that = this;
+		if (!this.div) {
+			this.div = document.createElement('div');
 		}
+		this.div.innerHTML = 'Waiting for the reply from Server...';
+		if (!this.table) {
+			this.table = new node.window.Table(options);
+		}
+		this.table.clear(true);
+		this.button = document.createElement('button');
+		this.button.value = 'Refresh';
+		this.button.appendChild(document.createTextNode('Refresh'));
+		this.button.onclick = function(){
+			that.getInfo();
+		};
+		this.root.appendChild(this.button);
+		this.getInfo();
 	};
 	
-	//Computes the Euclidean distance between two FaceVectors.
-	FaceVector.prototype.distance = function (face) {
-		return FaceVector.distance(this,face);
-	};
-		
-		
-	FaceVector.distance = function (face1, face2) {
-		var sum = 0.0;
-		var diff;
-		
-		for (var key in face1) {
-			if (face1.hasOwnProperty(key)) {
-				diff = face1[key] - face2[key];
-				sum = sum + diff * diff;
-			}
-		}
-		
-		return Math.sqrt(sum);
+	ServerInfoDisplay.prototype.append = function (root) {
+		this.root = root;
+		root.appendChild(this.div);
+		return root;
 	};
 	
-	FaceVector.prototype.toString = function() {
-		var out = 'Face: ';
-		for (var key in this) {
-			if (this.hasOwnProperty(key)) {
-				out += key + ' ' + this[key];
+	ServerInfoDisplay.prototype.getInfo = function() {
+		var that = this;
+		node.get('INFO', function (info) {
+			node.window.removeChildrenFromNode(that.div);
+			that.div.appendChild(that.processInfo(info));
+		});
+	};
+	
+	ServerInfoDisplay.prototype.processInfo = function(info) {
+		this.table.clear(true);
+		for (var key in info) {
+			if (info.hasOwnProperty(key)){
+				this.table.addRow([key,info[key]]);
 			}
 		}
-		return out;
+		return this.table.parse();
 	};
-
-})(node.window.widgets, node.JSUS);
-(function (exports) {
+	
+	ServerInfoDisplay.prototype.listeners = function () {
+		var that = this;
+		node.on('NODEGAME_READY', function(){
+			that.init();
+		});
+	}; 
+	
+})(node);
+(function (node) {
 	
 
 	// TODO: handle different events, beside onchange
 	
-	/**
-	* Controls
-	* 
-	*/
+	node.widgets.register('Controls', Controls);	
 	
-	exports.Controls = Controls;	
-	exports.Controls.Slider = SliderControls;
-	exports.Controls.jQuerySlider = jQuerySliderControls;
-	exports.Controls.Radio	= RadioControls;
+// ## Defaults
 	
-	Controls.id = 'controls';
+	var defaults = {
+			id: 'controls',
+	}
+	
+	Controls.defaults = defaults;
+	
+	Controls.Slider = SliderControls;
+	Controls.jQuerySlider = jQuerySliderControls;
+	Controls.Radio	= RadioControls;
+	
+	// Meta-data
+	
 	Controls.name = 'Controls';
 	Controls.version = '0.2';
 	Controls.description = 'Wraps a collection of user-inputs controls.';
@@ -14345,224 +14867,465 @@ function Entity (e) {
 		return false;
 	};
 	
-})(node.window.widgets);
-(function (exports) {
+})(node);
+(function (node) {
 	
-
-	/*
-	* ServerInfoDisplay
-	* 
-	* Sends STATE msgs
-	*/
+	node.widgets.register('VisualState', VisualState);
 	
-	exports.ServerInfoDisplay = ServerInfoDisplay;	
-		
-	ServerInfoDisplay.id = 'serverinfodisplay';
-	ServerInfoDisplay.name = 'Server Info Display';
-	ServerInfoDisplay.version = '0.2';
+	var GameState = node.GameState,
+		JSUS = node.JSUS,
+		Table = node.window.Table;
 	
-	function ServerInfoDisplay (options) {	
-		this.game = node.game;
+// ## Defaults
+	
+	VisualState.defaults = {};
+	VisualState.defaults.id = 'visualstate';
+	VisualState.defaults.fieldset = { 
+		legend: 'State',
+		id: 'visualstate_fieldset',
+	};	
+	
+// ## Meta-data
+	
+	VisualState.name = 'Visual State';
+	VisualState.version = '0.2.1';
+	VisualState.description = 'Visually display current, previous and next state of the game.';
+	
+// ## Dependencies
+	
+	VisualState.dependencies = {
+		JSUS: {},
+		Table: {}
+	};
+	
+	
+	function VisualState (options) {
 		this.id = options.id;
+		this.gameLoop = node.game.gameLoop;
 		
-		this.fieldset = { legend: 'Server Info',
-							id: this.id + '_fieldset'
-		};
-		
-		this.root = null;
-		this.div = document.createElement('div');
-		this.table = null; //new node.window.Table();
-		this.button = null;
-		
+		this.root = null;		// the parent element
+		this.table = new Table();
 	}
 	
-	ServerInfoDisplay.prototype.init = function (options) {
-		var that = this;
-		if (!this.div) {
-			this.div = document.createElement('div');
-		}
-		this.div.innerHTML = 'Waiting for the reply from Server...';
-		if (!this.table) {
-			this.table = new node.window.Table(options);
-		}
-		this.table.clear(true);
-		this.button = document.createElement('button');
-		this.button.value = 'Refresh';
-		this.button.appendChild(document.createTextNode('Refresh'));
-		this.button.onclick = function(){
-			that.getInfo();
-		};
-		this.root.appendChild(this.button);
-		this.getInfo();
-	};
-	
-	ServerInfoDisplay.prototype.append = function (root) {
-		this.root = root;
-		root.appendChild(this.div);
-		return root;
-	};
-	
-	ServerInfoDisplay.prototype.getInfo = function() {
-		var that = this;
-		node.get('INFO', function (info) {
-			node.window.removeChildrenFromNode(that.div);
-			that.div.appendChild(that.processInfo(info));
-		});
-	};
-	
-	ServerInfoDisplay.prototype.processInfo = function(info) {
-		this.table.clear(true);
-		for (var key in info) {
-			if (info.hasOwnProperty(key)){
-				this.table.addRow([key,info[key]]);
-			}
-		}
-		return this.table.parse();
-	};
-	
-	ServerInfoDisplay.prototype.listeners = function () {
-		var that = this;
-		node.on('NODEGAME_READY', function(){
-			that.init();
-		});
-	}; 
-	
-})(node.window.widgets);
-(function (exports) {
-	
-	// TODO: Introduce rules for update: other vs self
-	
-	exports.StateBar = StateBar;	
-	
-	StateBar.id = 'statebar';
-	StateBar.name = 'State Bar';
-	StateBar.version = '0.3.1';
-	StateBar.description = 'Provides a simple interface to change the state of the game.';
-	
-	function StateBar (options) {
-		this.id = options.id;
-		
-		this.actionSel = null;
-		this.recipient = null;
-		
-		this.fieldset = {
-			legend: 'Change Game State'
-		};
-	}
-	
-	// TODO: Write a proper INIT method
-	StateBar.prototype.init = function () {};
-	
-	StateBar.prototype.getRoot = function () {
+	VisualState.prototype.getRoot = function () {
 		return this.root;
 	};
 	
-	StateBar.prototype.append = function (root) {
+	VisualState.prototype.append = function (root, ids) {
+		var that = this;
+		var PREF = this.id + '_';
+		root.appendChild(this.table.table);
+		this.writeState();
+		return root;
+	};
 		
+	VisualState.prototype.listeners = function () {
+		var that = this;
+		node.on('STATECHANGE', function() {
+			that.writeState();
+		}); 
+	};
+	
+	VisualState.prototype.writeState = function () {
+		var state = false;
+		var pr = false;
+		var nx = false;
+		
+		var miss = '-';
+		
+		if (node.game && node.game.state) {
+			state = this.gameLoop.getName(node.game.state) || miss;
+			pr = this.gameLoop.getName(node.game.previous()) || miss;
+			nx = this.gameLoop.getName(node.game.next()) || miss;
+		}
+		else {
+			state = 'Uninitialized';
+			pr = miss;
+			nx = miss;
+		}
+		this.table.clear(true);
+
+		this.table.addRow(['Previous: ', pr]);
+		this.table.addRow(['Current: ', state]);
+		this.table.addRow(['Next: ', nx]);
+	
+		var t = this.table.select('y', '=', 2);
+		t.addClass('strong');
+		t.select('x','=',0).addClass('underline');
+		this.table.parse();
+	};
+	
+})(node);
+(function (node) {
+
+	var Table = node.window.Table,
+		GameState = node.GameState;
+	
+	node.widgets.register('StateDisplay', StateDisplay);	
+
+// ## Defaults
+	
+	StateDisplay.defaults = {};
+	StateDisplay.defaults.id = 'statedisplay';
+	StateDisplay.defaults.fieldset = { legend: 'State Display' };		
+	
+// ## Meta-data
+	
+	StateDisplay.name = 'State Display';
+	StateDisplay.version = '0.4.1';
+	StateDisplay.description = 'Display basic information about player\'s status.';
+	
+	function StateDisplay (options) {
+		
+		this.id = options.id;
+				
+		this.root = null;
+		this.table = new Table();
+	}
+	
+	// TODO: Write a proper INIT method
+	StateDisplay.prototype.init = function () {};
+	
+	StateDisplay.prototype.getRoot = function () {
+		return this.root;
+	};
+	
+	
+	StateDisplay.prototype.append = function (root) {
+		var that = this;
 		var PREF = this.id + '_';
 		
-		var idButton = PREF + 'sendButton';
-		var idStateSel = PREF + 'stateSel';
-		var idActionSel = PREF + 'actionSel';
-		var idRecipient = PREF + 'recipient'; 
-				
-		var sendButton = node.window.addButton(root, idButton);
-		var stateSel = node.window.addStateSelector(root, idStateSel);
-		this.actionSel = node.window.addActionSelector(root, idActionSel);
-		this.recipient = node.window.addRecipientSelector(root, idRecipient);
-		
-		var that = this;
-	
-		sendButton.onclick = function() {
-	
-			// Should be within the range of valid values
-			// but we should add a check
-			var to = that.recipient.value;
+		var idFieldset = PREF + 'fieldset';
+		var idPlayer = PREF + 'player';
+		var idState = PREF + 'state'; 
 			
-			//var parseState = /(\d+)(?:\.(\d+))?(?::(\d+))?/;
-			//var parseState = /^\b\d+\.\b[\d+]?\b:[\d+)]?$/;
-			//var parseState = /^(\d+)$/;
-			//var parseState = /(\S+)?/;
-			var parseState = /^(\d+)(?:\.(\d+))?(?::(\d+))?$/;
-			
-			var result = parseState.exec(stateSel.value);
-			
-			if (result !== null) {
-				// Note: not result[0]!
-				var state = result[1];
-				var step = result[2] || 1;
-				var round = result[3] || 1;
-				console.log('Action: ' + that.actionSel.value + ' Parsed State: ' + result.join("|"));
-				
-				state = new node.GameState({
-													state: state,
-													step: step,
-													round: round
-				});
-				
-				var stateEvent;
-				
-				// Self Update
-				if (to === 'ALL') {
-					stateEvent = node.IN + node.actions.SAY + '.STATE';
-					var stateMsg = node.msg.createSTATE(stateEvent, state);
-					node.emit(stateEvent, stateMsg);
-				}
-				
-				// Update Others
-				stateEvent = node.OUT + that.actionSel.value + '.STATE';
-				node.emit(stateEvent,state,to);
+		var checkPlayerName = setInterval(function(idState,idPlayer){
+			if (node.player !== null){
+				clearInterval(checkPlayerName);
+				that.updateAll();
 			}
-			else {
-				console.log('Not valid state. Not sent.');
-				node.gsc.sendTXT('E: not valid state. Not sent');
-			}
-		};
-		
+		}, 100);
+	
+		root.appendChild(this.table.table);
 		this.root = root;
 		return root;
 		
 	};
 	
-	StateBar.prototype.listeners = function () {
+	StateDisplay.prototype.updateAll = function() {
+		this.table.clear(true);
+		this.table.addRow(['Name: ', node.player.name]);
+		this.table.addRow(['State: ', new GameState(node.state).toString()]);
+		this.table.addRow(['Id: ', node.player.id]);
+		this.table.parse();
+		
+	};
+	
+	StateDisplay.prototype.listeners = function () {
 		var that = this;
 		var say = node.actions.SAY + '.';
 		var set = node.actions.SET + '.';
 		var get = node.actions.GET + '.'; 
+		var IN =  node.IN;
+		var OUT = node.OUT;
 		
-		node.onPLIST( function(msg) {
-			node.window.populateRecipientSelector(that.recipient,msg.data);
+		node.on('STATECHANGE', function() {
+			that.updateAll(node.state);
 		}); 
 	}; 
-})(node.window.widgets);
-(function (exports, JSUS) {
+	
+})(node);
+(function (node) {
+
+	var GameState = node.GameState,
+		PlayerList = node.PlayerList,
+		Table = node.window.Table,
+		HTMLRenderer = node.window.HTMLRenderer;
+	
+	node.widgets.register('DynamicTable', DynamicTable);
+	
+	
+	DynamicTable.prototype = new Table();
+	DynamicTable.prototype.constructor = Table;	
+	
+	
+	DynamicTable.id = 'dynamictable';
+	DynamicTable.name = 'Dynamic Table';
+	DynamicTable.version = '0.3.1';
+	
+	DynamicTable.dependencies = {
+		Table: {},
+		JSUS: {},
+		HTMLRenderer: {}
+	};
+	
+	function DynamicTable (options, data) {
+		//JSUS.extend(node.window.Table,this);
+		Table.call(this, options, data);
+		this.options = options;
+		this.id = options.id;
+		this.name = options.name || 'Dynamic Table';
+		this.fieldset = { legend: this.name,
+							id: this.id + '_fieldset'
+		};
+		
+		this.root = null;
+		this.bindings = {};
+		this.init(this.options);
+	}
+	
+	DynamicTable.prototype.init = function (options) {
+		this.options = options;
+		this.name = options.name || this.name;
+		this.auto_update = ('undefined' !== typeof options.auto_update) ? options.auto_update : true;
+		this.replace = options.replace || false;
+		this.htmlRenderer = new HTMLRenderer({renderers: options.renderers});
+		this.c('state', GameState.compare);
+		this.setLeft([]);
+		this.parse(true);
+	};
+		
+	DynamicTable.prototype.bind = function (event, bindings) {
+		if (!event || !bindings) return;
+		var that = this;
+
+		node.on(event, function(msg) {
+			
+			if (bindings.x || bindings.y) {
+				// Cell
+				var func;
+				if (that.replace) {
+					func = function (x, y) {
+						var found = that.get(x,y);
+						if (found.length !== 0) {
+							for (var ci=0; ci < found.length; ci++) {
+								bindings.cell.call(that, msg, found[ci]);
+							}
+						}
+						else {
+							var cell = bindings.cell.call(that, msg, new Table.Cell({x: x, y: y}));
+							that.add(cell);
+						}
+					};
+				}
+				else {
+					func = function (x, y) {
+						var cell = bindings.cell.call(that, msg, new Table.Cell({x: x, y: y}));
+						that.add(cell, x, y);
+					};
+				}
+				
+				var x = bindings.x.call(that, msg);
+				var y = bindings.y.call(that, msg);
+				
+				if (x && y) {
+					
+					x = (x instanceof Array) ? x : [x];
+					y = (y instanceof Array) ? y : [y];
+					
+//					console.log('Bindings found:');
+//					console.log(x);
+//					console.log(y);
+					
+					for (var xi=0; xi < x.length; xi++) {
+						for (var yi=0; yi < y.length; yi++) {
+							// Replace or Add
+							func.call(that, x[xi], y[yi]);
+						}
+					}
+				}
+				// End Cell
+			}
+			
+			// Header
+			if (bindings.header) {
+				var h = bindings.header.call(that, msg);
+				h = (h instanceof Array) ? h : [h];
+				that.setHeader(h);
+			}
+			
+			// Left
+			if (bindings.left) {
+				var l = bindings.left.call(that, msg);
+				if (!JSUS.in_array(l, that.left)) {
+					that.header.push(l);
+				}
+			}
+			
+			// Auto Update?
+			if (that.auto_update) {
+				that.parse();
+			}
+		});
+		
+	};
+
+	DynamicTable.prototype.append = function (root) {
+		this.root = root;
+		root.appendChild(this.table);
+		return root;
+	};
+	
+	DynamicTable.prototype.listeners = function () {}; 
+
+})(node);
+(function (node) {
+	
+	node.widgets.register('GameBoard', GameBoard);
+	
+	var GameState = node.GameState,
+		PlayerList = node.PlayerList;
+
+// ## Defaults	
+	
+	GameBoard.defaults = {};
+	GameBoard.defaults.id = 'gboard';
+	GameBoard.defaults.fieldset = {
+			legend: 'Game Board'
+	};
+	
+// ## Meta-data
+	
+	GameBoard.name = 'GameBoard';
+	GameBoard.version = '0.4.0';
+	GameBoard.description = 'Offer a visual representation of the state of all players in the game.';
+	
+	function GameBoard (options) {
+		
+		this.id = options.id || GameBoard.defaults.id;
+		this.status_id = this.id + '_statusbar';
+		
+		this.board = null;
+		this.status = null;
+		this.root = null;
+	
+	}
+	
+	GameBoard.prototype.append = function (root) {
+		this.root = root;
+		this.status = node.window.addDiv(root, this.status_id);
+		this.board = node.window.addDiv(root, this.id);
+		
+		this.updateBoard(node.game.pl);
+		
+		
+		return root;
+	};
+	
+	GameBoard.prototype.listeners = function() {
+		var that = this;		
+//		node.on('in.say.PCONNECT', function (msg) {
+//			that.addPlayerToBoard(msg.data);
+//		});
+//
+//		node.on('in.say.PDISCONNECT', function (msg) {
+//			that.removePlayerFromBoard(msg.data);
+//		});
+		
+		node.on('UPDATED_PLIST', function() {
+			that.updateBoard(node.game.pl);
+		});
+		
+	};
+	
+	GameBoard.prototype.printLine = function (p) {
+
+		var line = '[' + (p.name || p.id) + "]> \t"; 
+		
+		line += '(' +  p.state.round + ') ' + p.state.state + '.' + p.state.step; 
+		line += ' ';
+		
+		switch (p.state.is) {
+
+			case GameState.iss.UNKNOWN:
+				line += '(unknown)';
+				break;
+				
+			case GameState.iss.LOADING:
+				line += '(loading)';
+				break;
+				
+			case GameState.iss.LOADED:
+				line += '(loaded)';
+				break;
+				
+			case GameState.iss.PLAYING:
+				line += '(playing)';
+				break;
+			case GameState.iss.DONE:
+				line += '(done)';
+				break;		
+			default:
+				line += '('+p.state.is+')';
+				break;		
+		}
+		
+		if (p.state.paused) {
+			line += ' (P)';
+		}
+		
+		return line;
+	};
+	
+	GameBoard.prototype.printSeparator = function (p) {
+		return W.getElement('hr', null, {style: 'color: #CCC;'});
+	};
+	
+	
+	GameBoard.prototype.updateBoard = function (pl) {
+		var that = this;
+		
+		this.status.innerHTML = 'Updating...';
+		
+		var player, separator;
+		
+		if (pl.length) {
+			that.board.innerHTML = '';
+			pl.forEach( function(p) {
+				player = that.printLine(p);
+				
+				W.write(player, that.board);
+				
+				separator = that.printSeparator(p);
+				W.write(separator, that.board);
+			});
+		}
+		
+		
+		this.status.innerHTML = 'Connected players: ' + node.game.pl.length;
+	};
+	
+})(node);
+(function (node) {
 	
 	var Table = node.window.Table;
 	
-	/**
-	 * Expose constructor
-	 */
-	exports.ChernoffFaces = ChernoffFaces;
-	exports.ChernoffFaces.FaceVector = FaceVector;
-	exports.ChernoffFaces.FacePainter = FacePainter;
+	node.widgets.register('ChernoffFacesSimple', ChernoffFaces);
 	
-	
+	// # Defaults
+		
 	ChernoffFaces.defaults = {};
+	ChernoffFaces.defaults.id = 'ChernoffFaces';
 	ChernoffFaces.defaults.canvas = {};
 	ChernoffFaces.defaults.canvas.width = 100;
 	ChernoffFaces.defaults.canvas.heigth = 100;
+
+	// ## Meta-data
 	
-	ChernoffFaces.id = 'ChernoffFaces';
 	ChernoffFaces.name = 'Chernoff Faces';
 	ChernoffFaces.version = '0.3';
 	ChernoffFaces.description = 'Display parametric data in the form of a Chernoff Face.'
 	
+	// ## Dependencies 		
 	ChernoffFaces.dependencies = {
 		JSUS: {},
 		Table: {},
 		Canvas: {},
 		'Controls.Slider': {}
 	};
+	
+	ChernoffFaces.FaceVector = FaceVector;
+	ChernoffFaces.FacePainter = FacePainter;
 	
 	function ChernoffFaces (options) {
 		this.options = options;
@@ -14571,7 +15334,7 @@ function Entity (e) {
 		this.root = options.root || document.createElement('div');
 		this.root.id = this.id;
 		
-		this.sc = node.window.getWidget('Controls.Slider'); 	// Slider Controls
+		this.sc = node.widgets.get('Controls.Slider'); 	// Slider Controls
 		this.fp = null; 	// Face Painter
 		this.canvas = null;
 		this.dims = null;	// width and height of the canvas
@@ -14619,7 +15382,7 @@ function Entity (e) {
 			submit: 'Send'
 		};
 		
-		this.sc = node.window.getWidget('Controls.Slider', sc_options);
+		this.sc = node.widgets.get('Controls.Slider', sc_options);
 		
 		// Controls are always there, but may not be visible
 		if (this.controls) {
@@ -15175,100 +15938,26 @@ function Entity (e) {
 		return out;
 	};
 
-})(node.window.widgets, node.JSUS);
-(function (exports) {
+})(node);
+(function (node) {
 
-	JSUS = node.JSUS;
-	Table = node.window.Table;
+	var JSUS = node.JSUS;
+
+	node.widgets.register('EventButton', EventButton);
 	
-	exports.StateDisplay = StateDisplay;	
+// ## Defaults
 	
-	StateDisplay.id = 'statedisplay';
-	StateDisplay.name = 'State Display';
-	StateDisplay.version = '0.4.1';
-	StateDisplay.description = 'Display basic information about player\'s status.';
+	EventButton.defaults = {};
+	EventButton.defaults.id = 'eventbutton';
+	EventButton.defaults.fieldset = false;	
 	
-	function StateDisplay (options) {
-		
-		this.id = options.id;
-		
-		this.fieldset = {
-			legend: 'Player Status'
-		};
-		
-		this.root = null;
-		this.table = new Table();
-	}
+// ## Meta-data	
 	
-	// TODO: Write a proper INIT method
-	StateDisplay.prototype.init = function () {};
-	
-	StateDisplay.prototype.getRoot = function () {
-		return this.root;
-	};
-	
-	
-	StateDisplay.prototype.append = function (root) {
-		var that = this;
-		var PREF = this.id + '_';
-		
-		var idFieldset = PREF + 'fieldset';
-		var idPlayer = PREF + 'player';
-		var idState = PREF + 'state'; 
-			
-		var checkPlayerName = setInterval(function(idState,idPlayer){
-			if (node.player !== null){
-				clearInterval(checkPlayerName);
-				that.updateAll();
-			}
-		}, 100);
-	
-		root.appendChild(this.table.table);
-		this.root = root;
-		return root;
-		
-	};
-	
-	StateDisplay.prototype.updateAll = function() {
-		this.table.clear(true);
-		this.table.addRow(['Name: ', node.player.name]);
-		this.table.addRow(['State: ', new GameState(node.state).toString()]);
-		this.table.addRow(['Id: ', node.player.id]);
-		this.table.parse();
-		
-	};
-	
-	StateDisplay.prototype.listeners = function () {
-		var that = this;
-		var say = node.actions.SAY + '.';
-		var set = node.actions.SET + '.';
-		var get = node.actions.GET + '.'; 
-		var IN =  node.IN;
-		var OUT = node.OUT;
-		
-		node.on( 'STATECHANGE', function() {
-			that.updateAll(node.state);
-		}); 
-	}; 
-	
-})(node.window.widgets);
-(function (exports) {
-	
-	
-	/*
-	* EventButton
-	* 
-	* Sends DATA msgs
-	* 
-	*/
-	
-	exports.EventButton	= EventButton;
-	
-	JSUS = node.JSUS;
-	
-	EventButton.id = 'eventbutton';
 	EventButton.name = 'Event Button';
 	EventButton.version = '0.2';
+	
+// ## Dependencies
+	
 	EventButton.dependencies = {
 		JSUS: {}
 	};
@@ -15322,16 +16011,21 @@ function Entity (e) {
 	
 	EventButton.prototype.listeners = function () {};
 		
-	// Done Button
-
-	exports.DoneButton = DoneButton;
+// # Done Button
+	
+	node.widgets.register('DoneButton', DoneButton);
 	
 	DoneButton.prototype.__proto__ = EventButton.prototype;
 	DoneButton.prototype.constructor = DoneButton;
+
+// ## Meta-data
 	
 	DoneButton.id = 'donebutton';
 	DoneButton.version = '0.1';
 	DoneButton.name = 'Done Button';
+	
+// ## Dependencies
+	
 	DoneButton.dependencies = {
 		EventButton: {}
 	};
@@ -15342,364 +16036,663 @@ function Entity (e) {
 		EventButton.call(this, options);
 	}
 	
-})(node.window.widgets);
-(function (exports) {
+})(node);
+(function (node) {
 	
+	var JSUS = node.JSUS,
+		Table = node.window.Table;
 	
-	// TODO: Introduce rules for update: other vs self
+	node.widgets.register('ChernoffFaces', ChernoffFaces);
 	
-	exports.NextPreviousState =	NextPreviousState;
+	// ## Defaults
 	
-	NextPreviousState.id = 'nextprevious';
-	NextPreviousState.name = 'Next,Previous State';
-	NextPreviousState.version = '0.3.1';
-	NextPreviousState.description = 'Adds two buttons to push forward or rewind the state of the game by one step.';
-		
-	function NextPreviousState(options) {
-		this.game = node.game;
-		this.id = options.id || NextPreviousState.id;
-		
-		this.fieldset = {
-			legend: 'Rew-Fwd'
-		};
-	}
+	ChernoffFaces.defaults = {};
+	ChernoffFaces.defaults.id = 'ChernoffFaces';
+	ChernoffFaces.defaults.canvas = {};
+	ChernoffFaces.defaults.canvas.width = 100;
+	ChernoffFaces.defaults.canvas.heigth = 100;
 	
-	// TODO: Write a proper INIT method
-	NextPreviousState.prototype.init = function () {};
+	// ## Meta-data
 	
-	NextPreviousState.prototype.getRoot = function () {
-		return this.root;
-	};
+	ChernoffFaces.name = 'Chernoff Faces';
+	ChernoffFaces.version = '0.3';
+	ChernoffFaces.description = 'Display parametric data in the form of a Chernoff Face.';
 	
-	NextPreviousState.prototype.append = function (root) {
-		var idRew = this.id + '_button';
-		var idFwd = this.id + '_button';
-		
-		var rew = node.window.addButton(root, idRew, '<<');
-		var fwd = node.window.addButton(root, idFwd, '>>');
-		
-		
-		var that = this;
-	
-		var updateState = function (state) {
-			if (state) {
-				var stateEvent = node.IN + node.actions.SAY + '.STATE';
-				var stateMsg = node.msg.createSTATE(stateEvent, state);
-				// Self Update
-				node.emit(stateEvent, stateMsg);
-				
-				// Update Others
-				stateEvent = node.OUT + node.actions.SAY + '.STATE';
-				node.emit(stateEvent, state, 'ALL');
-			}
-			else {
-				node.log('No next/previous state. Not sent', 'ERR');
-			}
-		};
-		
-		fwd.onclick = function() {
-			updateState(that.game.next());
-		};
-			
-		rew.onclick = function() {
-			updateState(that.game.previous());
-		};
-		
-		this.root = root;
-		return root;
-	};
-	
-	NextPreviousState.prototype.listeners = function () {}; 
-
-})(node.window.widgets);
-(function (exports) {
-
-	/*
-	* NDDBBrowser
-	* 
-	* Sends DATA msgs
-	* 
-	*/
-	
-	exports.NDDBBrowser = NDDBBrowser;
-	
-	JSUS = node.JSUS;
-	NDDB = node.NDDB;
-	TriggerManager = node.TriggerManager;
-	
-	NDDBBrowser.id = 'nddbbrowser';
-	NDDBBrowser.name = 'NDDBBrowser';
-	NDDBBrowser.version = '0.1.2';
-	NDDBBrowser.description = 'Provides a very simple interface to control a NDDB istance.';
-	
-	NDDBBrowser.dependencies = {
+	// ## Dependencies 
+	ChernoffFaces.dependencies = {
 		JSUS: {},
-		NDDB: {},
-		TriggerManager: {}
+		Table: {},
+		Canvas: {},
+		'Controls.Slider': {}
 	};
 	
-	function NDDBBrowser (options) {
+	ChernoffFaces.FaceVector = FaceVector;
+	ChernoffFaces.FacePainter = FacePainter;
+	
+	function ChernoffFaces (options) {
 		this.options = options;
-		this.nddb = null;
-		
-		this.commandsDiv = document.createElement('div');
 		this.id = options.id;
-		if ('undefined' !== typeof this.id) {
-			this.commandsDiv.id = this.id;
-		}
+		this.table = new Table({id: 'cf_table'});
+		this.root = options.root || document.createElement('div');
+		this.root.id = this.id;
 		
-		this.info = null;
+		this.sc = node.widgets.get('Controls.Slider');	// Slider Controls
+		this.fp = null;	// Face Painter
+		this.canvas = null;
+
+		this.change = 'CF_CHANGE';
+		var that = this;
+		this.changeFunc = function () {
+			that.draw(that.sc.getAllValues());
+		};
+		
+		this.features = null;
+		this.controls = null;
+		
 		this.init(this.options);
 	}
 	
-	NDDBBrowser.prototype.init = function (options) {
-		
-		function addButtons() {
-			var id = this.id;
-			node.window.addEventButton(id + '_GO_TO_FIRST', '<<', this.commandsDiv, 'go_to_first');
-			node.window.addEventButton(id + '_GO_TO_PREVIOUS', '<', this.commandsDiv, 'go_to_previous');
-			node.window.addEventButton(id + '_GO_TO_NEXT', '>', this.commandsDiv, 'go_to_next');
-			node.window.addEventButton(id + '_GO_TO_LAST', '>>', this.commandsDiv, 'go_to_last');
-			node.window.addBreak(this.commandsDiv);
-		}
-		function addInfoBar() {
-			var span = this.commandsDiv.appendChild(document.createElement('span'));
-			return span;
-		}
-		
-		
-		addButtons.call(this);
-		this.info = addInfoBar.call(this);
-		
-		this.tm = new TriggerManager();
-		this.tm.init(options.triggers);
-		this.nddb = options.nddb || new NDDB({auto_update_pointer: true});
-	};
-	
-	NDDBBrowser.prototype.append = function (root) {
-		this.root = root;
-		root.appendChild(this.commandsDiv);
-		return root;
-	};
-	
-	NDDBBrowser.prototype.getRoot = function (root) {
-		return this.commandsDiv;
-	};
-	
-	NDDBBrowser.prototype.add = function (o) {
-		return this.nddb.insert(o);
-	};
-	
-	NDDBBrowser.prototype.sort = function (key) {
-		return this.nddb.sort(key);
-	};
-	
-	NDDBBrowser.prototype.addTrigger = function (trigger) {
-		return this.tm.addTrigger(trigger);
-	};
-	
-	NDDBBrowser.prototype.removeTrigger = function (trigger) {
-		return this.tm.removeTrigger(trigger);
-	};
-	
-	NDDBBrowser.prototype.resetTriggers = function () {
-		return this.tm.resetTriggers();
-	};
-	
-	NDDBBrowser.prototype.listeners = function() {
+	ChernoffFaces.prototype.init = function (options) {
 		var that = this;
-		var id = this.id;
+		this.id = options.id || this.id;
+		var PREF = this.id + '_';
 		
-		function notification (el, text) {
-			if (el) {
-				node.emit(id + '_GOT', el);
-				this.writeInfo((this.nddb.nddb_pointer + 1) + '/' + this.nddb.length);
+		this.features = options.features || this.features || FaceVector.random();
+		
+		this.controls = ('undefined' !== typeof options.controls) ?  options.controls : true;
+		
+		var idCanvas = (options.idCanvas) ? options.idCanvas : PREF + 'canvas';
+		var idButton = (options.idButton) ? options.idButton : PREF + 'button';
+		
+		this.canvas = node.window.getCanvas(idCanvas, options.canvas);
+		this.fp = new FacePainter(this.canvas);		
+		this.fp.draw(new FaceVector(this.features));
+		
+		var sc_options = {
+			id: 'cf_controls',
+			features: JSUS.mergeOnKey(FaceVector.defaults, this.features, 'value'),
+			change: this.change,
+			fieldset: {id: this.id + '_controls_fieldest', 
+						legend: this.controls.legend || 'Controls'
+			},
+			submit: 'Send'
+		};
+		
+		this.sc = node.widgets.get('Controls.Slider', sc_options);
+		
+		// Controls are always there, but may not be visible
+		if (this.controls) {
+			this.table.add(this.sc);
+		}
+		
+		// Dealing with the onchange event
+		if ('undefined' === typeof options.change) {	
+			node.on(this.change, this.changeFunc); 
+		} else {
+			if (options.change) {
+				node.on(options.change, this.changeFunc);
 			}
 			else {
-				this.writeInfo('No element found');
+				node.removeListener(this.change, this.changeFunc);
 			}
+			this.change = options.change;
 		}
 		
-		node.on(id + '_GO_TO_FIRST', function() {
-			var el = that.tm.pullTriggers(that.nddb.first());
-			notification.call(that, el);
-		});
 		
-		node.on(id + '_GO_TO_PREVIOUS', function() {
-			var el = that.tm.pullTriggers(that.nddb.previous());
-			notification.call(that, el);
-		});
-		
-		node.on(id + '_GO_TO_NEXT', function() {
-			var el = that.tm.pullTriggers(that.nddb.next());
-			notification.call(that, el);
-		});
-
-		node.on(id + '_GO_TO_LAST', function() {
-			var el = that.tm.pullTriggers(that.nddb.last());
-			notification.call(that, el);
-			
-		});
+		this.table.add(this.canvas);
+		this.table.parse();
+		this.root.appendChild(this.table.table);
 	};
 	
-	NDDBBrowser.prototype.writeInfo = function (text) {
-		if (this.infoTimeout) clearTimeout(this.infoTimeout);
-		this.info.innerHTML = text;
-		var that = this;
-		this.infoTimeout = setTimeout(function(){
-			that.info.innerHTML = '';
-		}, 2000);
+	ChernoffFaces.prototype.getCanvas = function() {
+		return this.canvas;
 	};
 	
-	
-})(node.window.widgets);
-(function (exports) {
-	
-	exports.Wall = Wall;
-	
-	var JSUS = node.JSUS;
-	
-	Wall.id = 'wall';
-	Wall.name = 'Wall';
-	Wall.version = '0.3';
-	Wall.description = 'Intercepts all LOG events and prints them ';
-	Wall.description += 'into a DIV element with an ordinal number and a timestamp.';
-	
-	Wall.dependencies = {
-		JSUS: {}
+	ChernoffFaces.prototype.append = function (root) {
+		root.appendChild(this.root);
+		this.table.parse();
+		return this.root;
 	};
 	
-	function Wall (options) {
-		this.id = options.id || Wall.id;
-		this.name = options.name || this.name;
-		this.buffer = [];
-		this.counter = 0;
-
-		this.wall = node.window.getElement('pre', this.id);
-		
-		this.fieldset = {
-			legend: 'Game Log',
-			id: this.id
+	ChernoffFaces.prototype.draw = function (features) {
+		if (!features) return;
+		var fv = new FaceVector(features);
+		this.fp.redraw(fv);
+		// Without merging wrong values are passed as attributes
+		this.sc.init({features: JSUS.mergeOnKey(FaceVector.defaults, features, 'value')});
+		this.sc.refresh();
+	};
+	
+	ChernoffFaces.prototype.getAllValues = function() {
+		//if (this.sc) return this.sc.getAllValues();
+		return this.fp.face;
+	};
+	
+	ChernoffFaces.prototype.randomize = function() {
+		var fv = FaceVector.random();
+		this.fp.redraw(fv);
+	
+		var sc_options = {
+				features: JSUS.mergeOnValue(FaceVector.defaults, fv),
+				change: this.change
 		};
-	}
+		this.sc.init(sc_options);
+		this.sc.refresh();
 	
-	Wall.prototype.init = function (options) {
-		options = options || {};
-		this.counter = options.counter || this.counter;
+		return true;
 	};
 	
-	Wall.prototype.append = function (root) {
-		return root.appendChild(this.wall);
-	};
 	
-	Wall.prototype.getRoot = function () {
-		return this.wall;
-	};
-	
-	Wall.prototype.listeners = function() {
-		var that = this;	
-		node.on('LOG', function (msg) {
-			that.debuffer();
-			that.write(msg);
-		});
-	}; 
-	
-	Wall.prototype.write = function (text) {
-		if (document.readyState !== 'complete') {
-			this.buffer.push(s);
-		} else {
-			var mark = this.counter++ + ') ' + JSUS.getTime() + ' ';
-			this.wall.innerHTML = mark + text + "\n" + this.wall.innerHTML;
-		}
-	};
-
-	Wall.prototype.debuffer = function () {
-		if (document.readyState === 'complete' && this.buffer.length > 0) {
-			for (var i=0; i < this.buffer.length; i++) {
-				this.write(this.buffer[i]);
-			}
-			this.buffer = [];
-		}
-	};
-	
-})(node.window.widgets);
-(function (exports) {
-
-	exports.WaitScreen = WaitScreen;
-	
-	WaitScreen.id = 'waiting';
-	WaitScreen.name = 'WaitingScreen';
-	WaitScreen.version = '0.3.2';
-	WaitScreen.description = 'Show a standard waiting screen';
-	
-	function WaitScreen (options) {
-		this.id = options.id;
-		
-		this.text = 'Waiting for other players to be done...';
-		this.waitingDiv = null;
-	}
-	
-	// TODO: Write a proper init function
-	WaitScreen.prototype.init = function (options) {};	
-	
-	WaitScreen.prototype.append = function (root) {
-		return root;
-	};
-	
-	WaitScreen.prototype.getRoot = function () {
-		return this.waitingDiv;
-	};
-	
-	WaitScreen.prototype.listeners = function () {
-		var that = this;
-		node.on('WAITING...', function (text) {
-			if (!that.waitingDiv) {
-				that.waitingDiv = node.window.addDiv(document.body, that.id);
-			}
+	// FacePainter
+	// The class that actually draws the faces on the Canvas
+	function FacePainter (canvas, settings) {
 			
-			if (that.waitingDiv.style.display === 'none'){
-				that.waitingDiv.style.display = '';
-			}			
+		this.canvas = new node.window.Canvas(canvas);
 		
-			that.waitingDiv.innerHTML = text || that.text;
-			node.game.pause();
-		});
-		
-		// It is supposed to fade away when a new state starts
-		node.on('LOADED', function(text) {
-			if (that.waitingDiv) {
-				
-				if (that.waitingDiv.style.display === ''){
-					that.waitingDiv.style.display = 'none';
-				}
-			// TODO: Document.js add method to remove element
-			}
-		});
-		
-	}; 
-})(node.window.widgets);
-(function (exports) {
-
-	exports.GameSummary	= GameSummary;
+		this.scaleX = canvas.width / ChernoffFaces.defaults.canvas.width;
+		this.scaleY = canvas.height / ChernoffFaces.defaults.canvas.heigth;
+	}
 	
-	GameSummary.id = 'gamesummary';
+	//Draws a Chernoff face.
+	FacePainter.prototype.draw = function (face, x, y) {
+		if (!face) return;
+		this.face = face;
+		this.fit2Canvas(face);
+		this.canvas.scale(face.scaleX, face.scaleY);
+		
+		//console.log('Face Scale ' + face.scaleY + ' ' + face.scaleX );
+		
+		x = x || this.canvas.centerX;
+		y = y || this.canvas.centerY;
+		
+		this.drawHead(face, x, y);
+			
+		this.drawEyes(face, x, y);
+	
+		this.drawPupils(face, x, y);
+	
+		this.drawEyebrow(face, x, y);
+	
+		this.drawNose(face, x, y);
+		
+		this.drawMouth(face, x, y);
+		
+	};		
+		
+	FacePainter.prototype.redraw = function (face, x, y) {
+		this.canvas.clear();
+		this.draw(face,x,y);
+	};
+	
+	FacePainter.prototype.scale = function (x, y) {
+		this.canvas.scale(this.scaleX, this.scaleY);
+	};
+	
+	// TODO: Improve. It eats a bit of the margins
+	FacePainter.prototype.fit2Canvas = function(face) {
+		if (!this.canvas) {
+		console.log('No canvas found');
+			return;
+		}
+		
+		var ration;
+		if (this.canvas.width > this.canvas.height) {
+			ratio = this.canvas.width / face.head_radius * face.head_scale_x;
+		}
+		else {
+			ratio = this.canvas.height / face.head_radius * face.head_scale_y;
+		}
+		
+		face.scaleX = ratio / 2;
+		face.scaleY = ratio / 2;
+	};
+	
+	FacePainter.prototype.drawHead = function (face, x, y) {
+		
+		var radius = face.head_radius;
+		
+		this.canvas.drawOval({
+						x: x, 
+						y: y,
+						radius: radius,
+						scale_x: face.head_scale_x,
+						scale_y: face.head_scale_y,
+						color: face.color,
+						lineWidth: face.lineWidth
+		});
+	};
+	
+	FacePainter.prototype.drawEyes = function (face, x, y) {
+		
+		var height = FacePainter.computeFaceOffset(face, face.eye_height, y);
+		var spacing = face.eye_spacing;
+			
+		var radius = face.eye_radius;
+		//console.log(face);
+		this.canvas.drawOval({
+						x: x - spacing,
+						y: height,
+						radius: radius,
+						scale_x: face.eye_scale_x,
+						scale_y: face.eye_scale_y,
+						color: face.color,
+						lineWidth: face.lineWidth
+						
+		});
+		//console.log(face);
+		this.canvas.drawOval({
+						x: x + spacing,
+						y: height,
+						radius: radius,
+						scale_x: face.eye_scale_x,
+						scale_y: face.eye_scale_y,
+						color: face.color,
+						lineWidth: face.lineWidth
+		});
+	};
+	
+	FacePainter.prototype.drawPupils = function (face, x, y) {
+			
+		var radius = face.pupil_radius;
+		var spacing = face.eye_spacing;
+		var height = FacePainter.computeFaceOffset(face, face.eye_height, y);
+		
+		this.canvas.drawOval({
+						x: x - spacing,
+						y: height,
+						radius: radius,
+						scale_x: face.pupil_scale_x,
+						scale_y: face.pupil_scale_y,
+						color: face.color,
+						lineWidth: face.lineWidth
+		});
+		
+		this.canvas.drawOval({
+						x: x + spacing,
+						y: height,
+						radius: radius,
+						scale_x: face.pupil_scale_x,
+						scale_y: face.pupil_scale_y,
+						color: face.color,
+						lineWidth: face.lineWidth
+		});
+	
+	};
+	
+	FacePainter.prototype.drawEyebrow = function (face, x, y) {
+		
+		var height = FacePainter.computeEyebrowOffset(face,y);
+		var spacing = face.eyebrow_spacing;
+		var length = face.eyebrow_length;
+		var angle = face.eyebrow_angle;
+		
+		this.canvas.drawLine({
+						x: x - spacing,
+						y: height,
+						length: length,
+						angle: angle,
+						color: face.color,
+						lineWidth: face.lineWidth
+					
+						
+		});
+		
+		this.canvas.drawLine({
+						x: x + spacing,
+						y: height,
+						length: 0-length,
+						angle: -angle,	
+						color: face.color,
+						lineWidth: face.lineWidth
+		});
+		
+	};
+	
+	FacePainter.prototype.drawNose = function (face, x, y) {
+		
+		var height = FacePainter.computeFaceOffset(face, face.nose_height, y);
+		var nastril_r_x = x + face.nose_width / 2;
+		var nastril_r_y = height + face.nose_length;
+		var nastril_l_x = nastril_r_x - face.nose_width;
+		var nastril_l_y = nastril_r_y; 
+		
+		this.canvas.ctx.lineWidth = face.lineWidth;
+		this.canvas.ctx.strokeStyle = face.color;
+		
+		this.canvas.ctx.save();
+		this.canvas.ctx.beginPath();
+		this.canvas.ctx.moveTo(x,height);
+		this.canvas.ctx.lineTo(nastril_r_x,nastril_r_y);
+		this.canvas.ctx.lineTo(nastril_l_x,nastril_l_y);
+		//this.canvas.ctx.closePath();
+		this.canvas.ctx.stroke();
+		this.canvas.ctx.restore();
+	
+	};
+			
+	FacePainter.prototype.drawMouth = function (face, x, y) {
+		
+		var height = FacePainter.computeFaceOffset(face, face.mouth_height, y);
+		var startX = x - face.mouth_width / 2;
+		var endX = x + face.mouth_width / 2;
+		
+		var top_y = height - face.mouth_top_y;
+		var bottom_y = height + face.mouth_bottom_y;
+		
+		// Upper Lip
+		this.canvas.ctx.moveTo(startX,height);
+		this.canvas.ctx.quadraticCurveTo(x, top_y, endX, height);
+		this.canvas.ctx.stroke();
+		
+		//Lower Lip
+		this.canvas.ctx.moveTo(startX,height);
+		this.canvas.ctx.quadraticCurveTo(x, bottom_y, endX, height);
+		this.canvas.ctx.stroke();
+	
+	};	
+	
+	
+	//TODO Scaling ?
+	FacePainter.computeFaceOffset = function (face, offset, y) {
+		y = y || 0;
+		//var pos = y - face.head_radius * face.scaleY + face.head_radius * face.scaleY * 2 * offset;
+		var pos = y - face.head_radius + face.head_radius * 2 * offset;
+		//console.log('POS: ' + pos);
+		return pos;
+	};
+	
+	FacePainter.computeEyebrowOffset = function (face, y) {
+		y = y || 0;
+		var eyemindistance = 2;
+		return FacePainter.computeFaceOffset(face, face.eye_height, y) - eyemindistance - face.eyebrow_eyedistance;
+	};
+	
+	
+	/*!
+	* 
+	* A description of a Chernoff Face.
+	*
+	* This class packages the 11-dimensional vector of numbers from 0 through 1 that completely
+	* describe a Chernoff face.  
+	*
+	*/
+
+	
+	FaceVector.defaults = {
+			// Head
+			head_radius: {
+				// id can be specified otherwise is taken head_radius
+				min: 10,
+				max: 100,
+				step: 0.01,
+				value: 30,
+				label: 'Face radius'
+			},
+			head_scale_x: {
+				min: 0.2,
+				max: 2,
+				step: 0.01,
+				value: 0.5,
+				label: 'Scale head horizontally'
+			},
+			head_scale_y: {
+				min: 0.2,
+				max: 2,
+				step: 0.01,
+				value: 1,
+				label: 'Scale head vertically'
+			},
+			// Eye
+			eye_height: {
+				min: 0.1,
+				max: 0.9,
+				step: 0.01,
+				value: 0.4,
+				label: 'Eye height'
+			},
+			eye_radius: {
+				min: 2,
+				max: 30,
+				step: 0.01,
+				value: 5,
+				label: 'Eye radius'
+			},
+			eye_spacing: {
+				min: 0,
+				max: 50,
+				step: 0.01,
+				value: 10,
+				label: 'Eye spacing'
+			},
+			eye_scale_x: {
+				min: 0.2,
+				max: 2,
+				step: 0.01,
+				value: 1,
+				label: 'Scale eyes horizontally'
+			},
+			eye_scale_y: {
+				min: 0.2,
+				max: 2,
+				step: 0.01,
+				value: 1,
+				label: 'Scale eyes vertically'
+			},
+			// Pupil
+			pupil_radius: {
+				min: 1,
+				max: 9,
+				step: 0.01,
+				value: 1,  //this.eye_radius;
+				label: 'Pupil radius'
+			},
+			pupil_scale_x: {
+				min: 0.2,
+				max: 2,
+				step: 0.01,
+				value: 1,
+				label: 'Scale pupils horizontally'
+			},
+			pupil_scale_y: {
+				min: 0.2,
+				max: 2,
+				step: 0.01,
+				value: 1,
+				label: 'Scale pupils vertically'
+			},
+			// Eyebrow
+			eyebrow_length: {
+				min: 1,
+				max: 30,
+				step: 0.01,
+				value: 10,
+				label: 'Eyebrow length'
+			},
+			eyebrow_eyedistance: {
+				min: 0.3,
+				max: 10,
+				step: 0.01,
+				value: 3, // From the top of the eye
+				label: 'Eyebrow from eye'
+			},
+			eyebrow_angle: {
+				min: -2,
+				max: 2,
+				step: 0.01,
+				value: -0.5,
+				label: 'Eyebrow angle'
+			},
+			eyebrow_spacing: {
+				min: 0,
+				max: 20,
+				step: 0.01,
+				value: 5,
+				label: 'Eyebrow spacing'
+			},
+			// Nose
+			nose_height: {
+				min: 0.4,
+				max: 1,
+				step: 0.01,
+				value: 0.4,
+				label: 'Nose height'
+			},
+			nose_length: {
+				min: 0.2,
+				max: 30,
+				step: 0.01,
+				value: 15,
+				label: 'Nose length'
+			},
+			nose_width: {
+				min: 0,
+				max: 30,
+				step: 0.01,
+				value: 10,
+				label: 'Nose width'
+			},
+			// Mouth
+			mouth_height: {
+				min: 0.2,
+				max: 2,
+				step: 0.01,
+				value: 0.75, 
+				label: 'Mouth height'
+			},
+			mouth_width: {
+				min: 2,
+				max: 100,
+				step: 0.01,
+				value: 20,
+				label: 'Mouth width'
+			},
+			mouth_top_y: {
+				min: -10,
+				max: 30,
+				step: 0.01,
+				value: -2,
+				label: 'Upper lip'
+			},
+			mouth_bottom_y: {
+				min: -10,
+				max: 30,
+				step: 0.01,
+				value: 20,
+				label: 'Lower lip'
+			}					
+	};
+	
+	//Constructs a random face vector.
+	FaceVector.random = function () {
+		var out = {};
+		for (var key in FaceVector.defaults) {
+			if (FaceVector.defaults.hasOwnProperty(key)) {
+				if (!JSUS.in_array(key,['color','lineWidth','scaleX','scaleY'])) {
+					out[key] = FaceVector.defaults[key].min + Math.random() * FaceVector.defaults[key].max;
+				}
+			}
+		}
+	
+		out.scaleX = 1;
+		out.scaleY = 1;
+		
+		out.color = 'green';
+		out.lineWidth = 1; 
+		
+		return new FaceVector(out);
+	};
+	
+	function FaceVector (faceVector) {
+		faceVector = faceVector || {};
+
+		this.scaleX = faceVector.scaleX || 1;
+		this.scaleY = faceVector.scaleY || 1;
+
+
+		this.color = faceVector.color || 'green';
+		this.lineWidth = faceVector.lineWidth || 1;
+		
+		// Merge on key
+		for (var key in FaceVector.defaults) {
+			if (FaceVector.defaults.hasOwnProperty(key)){
+				if (faceVector.hasOwnProperty(key)){
+					this[key] = faceVector[key];
+				}
+				else {
+					this[key] = FaceVector.defaults[key].value;
+				}
+			}
+		}
+		
+	}
+
+	//Constructs a random face vector.
+	FaceVector.prototype.shuffle = function () {
+		for (var key in this) {
+			if (this.hasOwnProperty(key)) {
+				if (FaceVector.defaults.hasOwnProperty(key)) {
+					if (key !== 'color') {
+						this[key] = FaceVector.defaults[key].min + Math.random() * FaceVector.defaults[key].max;
+						
+					}
+				}
+			}
+		}
+	};
+	
+	//Computes the Euclidean distance between two FaceVectors.
+	FaceVector.prototype.distance = function (face) {
+		return FaceVector.distance(this,face);
+	};
+		
+		
+	FaceVector.distance = function (face1, face2) {
+		var sum = 0.0;
+		var diff;
+		
+		for (var key in face1) {
+			if (face1.hasOwnProperty(key)) {
+				diff = face1[key] - face2[key];
+				sum = sum + diff * diff;
+			}
+		}
+		
+		return Math.sqrt(sum);
+	};
+	
+	FaceVector.prototype.toString = function() {
+		var out = 'Face: ';
+		for (var key in this) {
+			if (this.hasOwnProperty(key)) {
+				out += key + ' ' + this[key];
+			}
+		}
+		return out;
+	};
+
+})(node);
+(function (node) {
+
+	node.widgets.register('GameSummary', GameSummary);
+	
+
+// ## Defaults
+	
+	GameSummary.defaults = {};
+	GameSummary.defaults.id = 'gamesummary';
+	GameSummary.defaults.fieldset = {
+		legend: 'Game Summary',
+	};
+	
+// ## Meta-data
+	
 	GameSummary.name = 'Game Summary';
 	GameSummary.version = '0.3';
 	GameSummary.description = 'Show the general configuration options of the game.';
 	
-	function GameSummary(options) {
-		
-		this.game = node.game;
-		this.id = options.id;
-		
-		this.fieldset = {
-			legend: 'Game Summary'
-		};
+	function GameSummary (options) {
 		this.summaryDiv = null;
 	}
-	
-	// TODO: Write a proper INIT method
-	GameSummary.prototype.init = function () {};
 	
 	GameSummary.prototype.append = function (root) {
 		this.root = root;
@@ -15708,15 +16701,11 @@ function Entity (e) {
 		return root;
 	};
 	
-	GameSummary.prototype.getRoot = function () {
-		return this.root;
-	};
-	
 	GameSummary.prototype.writeSummary = function (idState, idSummary) {
-		var gName = document.createTextNode('Name: ' + this.game.name);
-		var gDescr = document.createTextNode('Descr: ' + this.game.description);
-		var gMinP = document.createTextNode('Min Pl.: ' + this.game.minPlayers);
-		var gMaxP = document.createTextNode('Max Pl.: ' + this.game.maxPlayers);
+		var gName = document.createTextNode('Name: ' + node.game.name),
+			gDescr = document.createTextNode('Descr: ' + node.game.description),
+			gMinP = document.createTextNode('Min Pl.: ' + node.game.minPlayers),
+			gMaxP = document.createTextNode('Max Pl.: ' + node.game.maxPlayers);
 		
 		this.summaryDiv.appendChild(gName);
 		this.summaryDiv.appendChild(document.createElement('br'));
@@ -15728,102 +16717,445 @@ function Entity (e) {
 		
 		node.window.addDiv(this.root, this.summaryDiv, idSummary);
 	};
-	
-	GameSummary.prototype.listeners = function() {}; 
 
-})(node.window.widgets);
-(function (exports) {
+})(node);
+(function (node) {
 	
-	exports.VisualState	= VisualState;
+	node.widgets.register('MoneyTalks', MoneyTalks);
 	
-	GameState = node.GameState;
-	JSUS = node.JSUS;
-	Table = node.window.Table;
+	var JSUS = node.JSUS;
 	
-	VisualState.id = 'visualstate';
-	VisualState.name = 'Visual State';
-	VisualState.version = '0.2.1';
-	VisualState.description = 'Visually display current, previous and next state of the game.';
+// ## Defaults
 	
-	VisualState.dependencies = {
+	MoneyTalks.defaults = {};
+	MoneyTalks.defaults.id = 'moneytalks';
+	MoneyTalks.defaults.fieldset = {legend: 'Earnings'};
+	
+// ## Meta-data
+	
+	MoneyTalks.name = 'Money talks';
+	MoneyTalks.version = '0.1.0';
+	MoneyTalks.description = 'Display the earnings of a player.';
+
+// ## Dependencies
+	
+	MoneyTalks.dependencies = {
 		JSUS: {},
-		Table: {}
 	};
 	
 	
-	function VisualState (options) {
-		this.id = options.id;
-		this.gameLoop = node.game.gameLoop;
-		
-		this.fieldset = {legend: 'State'};
-		
+	function MoneyTalks (options) {
+		this.id = options.id || MoneyTalks.defaults.id;
+				
 		this.root = null;		// the parent element
-		this.table = new Table();
-		//this.init(options);
+		
+		this.spanCurrency = document.createElement('span');
+		this.spanMoney = document.createElement('span');
+		
+		this.currency = 'EUR';
+		this.money = 0;
+		this.precision = 2;
+		this.init(options);
 	}
 	
-	// TODO: Write a proper INIT method
-	VisualState.prototype.init = function () {};
 	
-	VisualState.prototype.getRoot = function () {
+	MoneyTalks.prototype.init = function (options) {
+		this.currency = options.currency || this.currency;
+		this.money = options.money || this.money;
+		this.precision = options.precision || this.precision;
+		
+		this.spanCurrency.id = options.idCurrency || this.spanCurrency.id || 'moneytalks_currency';
+		this.spanMoney.id = options.idMoney || this.spanMoney.id || 'moneytalks_money';
+		
+		this.spanCurrency.innerHTML = this.currency;
+		this.spanMoney.innerHTML = this.money;
+	};
+	
+	MoneyTalks.prototype.getRoot = function () {
 		return this.root;
 	};
 	
-	VisualState.prototype.append = function (root, ids) {
-		var that = this;
+	MoneyTalks.prototype.append = function (root, ids) {
 		var PREF = this.id + '_';
-		root.appendChild(this.table.table);
-		this.writeState();
+		root.appendChild(this.spanMoney);
+		root.appendChild(this.spanCurrency);
 		return root;
 	};
 		
-	VisualState.prototype.listeners = function () {
+	MoneyTalks.prototype.listeners = function () {
 		var that = this;
-		node.on('STATECHANGE', function() {
-			that.writeState();
+		node.on('MONEYTALKS', function(amount) {
+			that.update(amount);
 		}); 
 	};
 	
-	VisualState.prototype.writeState = function () {
-		var state = false;
-		var pr = false;
-		var nx = false;
-		
-		var miss = '-';
-		
-		if (node.game && node.game.state) {
-			state = this.gameLoop.getName(node.game.state) || miss;
-			pr = this.gameLoop.getName(node.game.previous()) || miss;
-			nx = this.gameLoop.getName(node.game.next()) || miss;
+	MoneyTalks.prototype.update = function (amount) {
+		if ('number' !== typeof amount) {
+			// Try to parse strings
+			amount = parseInt(amount);
+			if (isNaN(n) || !isFinite(n)) {
+				return;
+			}
 		}
-		else {
-			state = 'Uninitialized';
-			pr = miss;
-			nx = miss;
-		}
-		this.table.clear(true);
-
-		this.table.addRow(['Previous: ', pr]);
-		this.table.addRow(['Current: ', state]);
-		this.table.addRow(['Next: ', nx]);
+		this.money += amount;
+		this.spanMoney.innerHTML = this.money.toFixed(this.precision);
+	};
 	
-		var t = this.table.select('y', '=', 2);
-		t.addClass('strong');
-		t.select('x','=',0).addClass('underline');
+})(node);
+(function (node) {
+
+	var GameMsg = node.GameMsg,
+		Table = node.window.Table;
+	
+	node.widgets.register('MsgBar', MsgBar);
+
+// ## Defaults
+	
+	MsgBar.defaults = {};
+	MsgBar.defaults.id = 'msgbar';
+	MsgBar.defaults.fieldset = { legend: 'Send MSG' };	
+	
+// ## Meta-data
+	
+	MsgBar.name = 'Msg Bar';
+	MsgBar.version = '0.4';
+	MsgBar.description = 'Send a nodeGame message to players';
+	
+	function MsgBar (options) {
+		
+		this.id = options.id;
+		
+		this.recipient = null;
+		this.actionSel = null;
+		this.targetSel = null;
+		
+		this.table = new Table();
+			
+		this.init();
+	}
+	
+	// TODO: Write a proper INIT method
+	MsgBar.prototype.init = function () {
+		var that = this;
+		var gm = new GameMsg();
+		var y = 0;
+		for (var i in gm) {
+			if (gm.hasOwnProperty(i)) {
+				var id = this.id + '_' + i;
+				this.table.add(i, 0, y);
+				this.table.add(node.window.getTextInput(id), 1, y);
+				if (i === 'target') {
+					this.targetSel = node.window.getTargetSelector(this.id + '_targets');
+					this.table.add(this.targetSel, 2, y);
+					
+					this.targetSel.onchange = function () {
+						node.window.getElementById(that.id + '_target').value = that.targetSel.value; 
+					};
+				}
+				else if (i === 'action') {
+					this.actionSel = node.window.getActionSelector(this.id + '_actions');
+					this.table.add(this.actionSel, 2, y);
+					this.actionSel.onchange = function () {
+						node.window.getElementById(that.id + '_action').value = that.actionSel.value; 
+					};
+				}
+				else if (i === 'to') {
+					this.recipient = node.window.getRecipientSelector(this.id + 'recipients');
+					this.table.add(this.recipient, 2, y);
+					this.recipient.onchange = function () {
+						node.window.getElementById(that.id + '_to').value = that.recipient.value; 
+					};
+				}
+				y++;
+			}
+		}
 		this.table.parse();
 	};
 	
-})(node.window.widgets);
-(function (exports) {
+	MsgBar.prototype.append = function (root) {
+		
+		var sendButton = node.window.addButton(root);
+		var stubButton = node.window.addButton(root, 'stub', 'Add Stub');
+		
+		var that = this;
+		sendButton.onclick = function() {
+			// Should be within the range of valid values
+			// but we should add a check
+			
+			var msg = that.parse();
+			node.gsc.send(msg);
+			//console.log(msg.stringify());
+		};
+		stubButton.onclick = function() {
+			that.addStub();
+		};
+		
+		root.appendChild(this.table.table);
+		
+		this.root = root;
+		return root;
+	};
 	
-	exports.VisualTimer	= VisualTimer;
+	MsgBar.prototype.getRoot = function () {
+		return this.root;
+	};
 	
-	JSUS = node.JSUS;
+	MsgBar.prototype.listeners = function () {
+		var that = this;	
+		node.onPLIST( function(msg) {
+			node.window.populateRecipientSelector(that.recipient, msg.data);
+		
+		}); 
+	};
 	
-	VisualTimer.id = 'visualtimer';
+	MsgBar.prototype.parse = function () {
+		var msg = {};
+		var that = this;
+		var key = null;
+		var value = null;
+		this.table.forEach( function(e) {
+			
+				if (e.x === 0) {
+					key = e.content;
+					msg[key] = ''; 
+				}
+				else if (e.x === 1) {
+					
+					value = e.content.value;
+					if (key === 'state' || key === 'data') {
+						try {
+							value = JSON.parse(e.content.value);
+						}
+						catch (ex) {
+							value = e.content.value;
+						}
+					}
+					
+					msg[key] = value;
+				}
+		});
+		var gameMsg = new GameMsg(msg);
+		node.info(gameMsg, 'MsgBar sent: ');
+		return gameMsg;
+	};
+	
+	MsgBar.prototype.addStub = function () {
+		node.window.getElementById(this.id + '_from').value = (node.player) ? node.player.id : 'undefined';
+		node.window.getElementById(this.id + '_to').value = this.recipient.value;
+		node.window.getElementById(this.id + '_forward').value = 0;
+		node.window.getElementById(this.id + '_reliable').value = 1;
+		node.window.getElementById(this.id + '_priority').value = 0;
+		
+		if (node.gsc && node.gsc.session) {
+			node.window.getElementById(this.id + '_session').value = node.gsc.session;
+		}
+		
+		node.window.getElementById(this.id + '_state').value = JSON.stringify(node.state);
+		node.window.getElementById(this.id + '_action').value = this.actionSel.value;
+		node.window.getElementById(this.id + '_target').value = this.targetSel.value;
+		
+	};
+	
+})(node);
+(function (node) {
+	
+	node.widgets.register('Chat', Chat);
+	
+	var J = node.JSUS,
+		W = node.window;	
+
+// ## Defaults
+	
+	Chat.defaults = {};
+	Chat.defaults.id = 'chat';
+	Chat.defaults.fieldset = { legend: 'Chat' };	
+	Chat.defaults.mode = 'MANY_TO_MANY'; 
+	Chat.defaults.textarea_id = 'chat_textarea';
+	Chat.defaults.chat_id = 'chat_chat';
+	Chat.defaults.chat_event = 'CHAT';
+	Chat.defaults.submit_id = 'chat_submit';
+	Chat.defaults.submit_text = 'chat';
+
+			
+// ## Meta-data
+	
+	// ### Chat.modes
+	// 	MANY_TO_MANY: everybody can see all the messages, and it possible
+	//    to send private messages
+	//  MANY_TO_ONE: everybody can see all the messages, private messages can
+	//    be received, but not sent
+	//  ONE_TO_ONE: everybody sees only personal messages, private messages can
+	//    be received, but not sent. All messages are sent to the SERVER
+	//  RECEIVER_ONLY: messages can only be received, but not sent
+	Chat.modes = { 
+			MANY_TO_MANY: 'MANY_TO_MANY',
+			MANY_TO_ONE: 'MANY_TO_ONE',
+			ONE_TO_ONE: 'ONE_TO_ONE',
+			RECEIVER_ONLY: 'RECEIVER_ONLY',
+	};
+	
+	Chat.name = 'Chat';
+	Chat.version = '0.4';
+	Chat.description = 'Offers a uni / bi-directional communication interface between players, or between players and the experimenter.';
+
+// ## Dependencies
+	
+	Chat.dependencies = {
+		JSUS: {}
+	};
+	
+	function Chat (options) {
+		this.id = options.id || Chat.id;
+		this.mode = options.mode || Chat.defaults.mode;
+		
+		this.root = null;
+		
+		this.textarea_id = options.textarea_id || Chat.defaults.textarea_id;
+		this.chat_id = options.chat_id || Chat.defaults.chat_id;
+		this.submit_id = options.submit_id || Chat.defaults.submit_id;
+		
+		this.chat_event = options.chat_event || Chat.defaults.chat_event;
+		this.submit_text = options.submit_text || Chat.defaults.submit_text;
+
+		this.submit = W.getEventButton(this.chat_event, this.submit_text, this.submit_id);
+		this.textarea = W.getElement('textarea', this.textarea_id);
+		this.chat = W.getElement('div', this.chat_id);
+		
+		if ('undefined' !== typeof options.displayName) {
+			this.displayName = options.displayName;
+		}
+		
+		switch(this.mode) {
+		
+		case Chat.modes.RECEIVER_ONLY:
+			this.recipient = {value: 'SERVER'};
+			break;
+		case Chat.modes.MANY_TO_ONE:
+			this.recipient = {value: 'ALL'};
+			break;
+		case Chat.modes.ONE_TO_ONE:
+			this.recipient = {value: 'SERVER'};
+			break;
+		default:
+			this.recipient = W.getRecipientSelector();
+		}
+	}
+	
+	
+	Chat.prototype.append = function (root) {
+		this.root = root;
+		root.appendChild(this.chat);
+		
+		if (this.mode !== Chat.modes.RECEIVER_ONLY) {	
+			W.writeln('', root);
+			root.appendChild(this.textarea);
+			W.writeln('', root);
+			root.appendChild(this.submit);
+			if (this.mode === Chat.modes.MANY_TO_MANY) {
+				root.appendChild(this.recipient);
+			}
+		}
+		return root;
+	};
+	
+	Chat.prototype.getRoot = function () {
+		return this.root;
+	};
+	
+	Chat.prototype.displayName = function(from) {
+		return from;
+	};
+	
+	Chat.prototype.readTA = function () {
+		var txt = this.textarea.value;
+		this.textarea.value = '';
+		return txt;
+	};
+	
+	Chat.prototype.writeTA = function (string, args) {
+		J.sprintf(string, args, this.chat);
+	    W.writeln('', this.chat);
+	    this.chat.scrollTop = this.chat.scrollHeight;
+	};
+	
+	Chat.prototype.listeners = function() {
+		var that = this;	
+		    
+	    node.on(this.chat_event, function () {
+	      var msg = that.readTA();
+	      if (!msg) return;
+	      
+	      var to = that.recipient.value;
+	      var args = {
+		        '%s': {
+		          'class': 'chat_me',
+		        },
+		        '%msg': {
+		          'class': 'chat_msg',
+		        },
+		        '!txt': msg,
+	      };
+	      that.writeTA('%sMe%s: %msg!txt%msg', args);
+	      node.say(msg.trim(), that.chat_event, to);
+	    });
+		  
+		if (this.mode === Chat.modes.MANY_TO_MANY) {
+		    node.on('UPDATED_PLIST', function() {
+			      W.populateRecipientSelector(that.recipient, node.game.pl.fetch());
+		    });
+		}
+
+	    node.onDATA(this.chat_event, function (msg) {
+	    	if (msg.from === node.player.id || msg.from === node.player.sid) {
+	    		return;
+	    	}
+	    	
+	    	if (this.mode === Chat.modes.ONE_TO_ONE) { 
+		    	if (msg.from === this.recipient.value) {
+		    		return;
+		    	}
+	    	}
+	    	
+	    	
+	    	var from = that.displayName(msg.from);
+	    	var args = {
+		        '%s': {
+		          'class': 'chat_others',
+		        },
+		        '%msg': {
+		          'class': 'chat_msg',
+		        },
+		        '!txt': msg.data,
+	            '!from': from,
+	      };
+	    	
+	      that.writeTA('%s!from%s: %msg!txt%msg', args);
+	    });
+	};
+	
+})(node);
+(function (node) {
+	
+	node.widgets.register('VisualTimer', VisualTimer);
+	
+	var JSUS = node.JSUS;
+
+// ## Defaults
+	
+	VisualTimer.defaults = {};
+	VisualTimer.defaults.id = 'visualtimer';
+	VisualTimer.defaults.fieldset = {
+			legend: 'Time left',
+			id: 'visualtimer_fieldset',
+	};		
+	
+// ## Meta-data
+	
 	VisualTimer.name = 'Visual Timer';
 	VisualTimer.version = '0.3.3';
 	VisualTimer.description = 'Display a timer for the game. Timer can trigger events. Only for countdown smaller than 1h.';
+	
+// ## Dependencies
 	
 	VisualTimer.dependencies = {
 		GameTimer : {},
@@ -15838,10 +17170,6 @@ function Entity (e) {
 		
 		this.timerDiv = null;	// the DIV in which to display the timer
 		this.root = null;		// the parent element
-		this.fieldset = {
-						legend: 'Time left',
-						id: this.id + '_fieldset'
-		};
 		
 		this.init(this.options);
 	}
@@ -15968,556 +17296,171 @@ function Entity (e) {
 		});
 	};
 	
-})(node.window.widgets);
-(function (exports) {
-	
-	exports.MoneyTalks	= MoneyTalks;
-	
-	JSUS = node.JSUS;
-	
-	MoneyTalks.id = 'moneytalks';
-	MoneyTalks.name = 'Money talks';
-	MoneyTalks.version = '0.1.0';
-	MoneyTalks.description = 'Display the earnings of a player.';
-	
-	MoneyTalks.dependencies = {
-		JSUS: {},
-	};
+})(node);
+(function (node) {
 	
 	
-	function MoneyTalks (options) {
-		this.id = MoneyTalks.id;
+	// TODO: Introduce rules for update: other vs self
+	
+	node.widgets.register('NextPreviousState', NextPreviousState);
+	
+// ## Defaults
+	
+	NextPreviousState.defaults = {};
+	NextPreviousState.defaults.id = 'nextprevious';
+	NextPreviousState.defaults.fieldset = { legend: 'Rew-Fwd' };		
+	
+// ## Meta-data
+	
+	NextPreviousState.name = 'Next,Previous State';
+	NextPreviousState.version = '0.3.1';
+	NextPreviousState.description = 'Adds two buttons to push forward or rewind the state of the game by one step.';
 		
-		this.fieldset = {legend: 'Earnings'};
-		
-		this.root = null;		// the parent element
-		
-		this.spanCurrency = document.createElement('span');
-		this.spanMoney = document.createElement('span');
-		
-		this.currency = 'EUR';
-		this.money = 0;
-		this.precision = 2;
-		this.init(options);
+	function NextPreviousState(options) {
+		this.id = options.id;
 	}
 	
-	
-	MoneyTalks.prototype.init = function (options) {
-		this.currency = options.currency || this.currency;
-		this.money = options.money || this.money;
-		this.precision = options.precision || this.precision;
-		
-		this.spanCurrency.id = options.idCurrency || this.spanCurrency.id || 'moneytalks_currency';
-		this.spanMoney.id = options.idMoney || this.spanMoney.id || 'moneytalks_money';
-		
-		this.spanCurrency.innerHTML = this.currency;
-		this.spanMoney.innerHTML = this.money;
-	};
-	
-	MoneyTalks.prototype.getRoot = function () {
+	NextPreviousState.prototype.getRoot = function () {
 		return this.root;
 	};
 	
-	MoneyTalks.prototype.append = function (root, ids) {
-		var PREF = this.id + '_';
-		root.appendChild(this.spanMoney);
-		root.appendChild(this.spanCurrency);
-		return root;
-	};
+	NextPreviousState.prototype.append = function (root) {
+		var idRew = this.id + '_button';
+		var idFwd = this.id + '_button';
 		
-	MoneyTalks.prototype.listeners = function () {
+		var rew = node.window.addButton(root, idRew, '<<');
+		var fwd = node.window.addButton(root, idFwd, '>>');
+		
+		
 		var that = this;
-		node.on('MONEYTALKS', function(amount) {
-			that.update(amount);
-		}); 
-	};
 	
-	MoneyTalks.prototype.update = function (amount) {
-		if ('number' !== typeof amount) return;
-		this.money += amount;
-		this.spanMoney.innerHTML = this.money.toFixed(this.precision);
-	};
-	
-})(node.window.widgets);
-(function (exports) {
-
-	var GameMsg = node.GameMsg;
-	var Table = node.window.Table;
-	
-	exports.MsgBar	= MsgBar;
-		
-	MsgBar.id = 'msgbar';
-	MsgBar.name = 'Msg Bar';
-	MsgBar.version = '0.4';
-	MsgBar.description = 'Send a nodeGame message to players';
-	
-	function MsgBar (options) {
-		
-		this.id = options.id;
-		
-		this.recipient = null;
-		this.actionSel = null;
-		this.targetSel = null;
-		
-		this.table = new Table();
-		
-		this.fieldset = {
-			legend: 'Send MSG'
-		};
-		
-		this.init();
-	}
-	
-	// TODO: Write a proper INIT method
-	MsgBar.prototype.init = function () {
-		var that = this;
-		var gm = new GameMsg();
-		var y = 0;
-		for (var i in gm) {
-			if (gm.hasOwnProperty(i)) {
-				var id = this.id + '_' + i;
-				this.table.add(i, 0, y);
-				this.table.add(node.window.getTextInput(id), 1, y);
-				if (i === 'target') {
-					this.targetSel = node.window.getTargetSelector(this.id + '_targets');
-					this.table.add(this.targetSel, 2, y);
-					
-					this.targetSel.onchange = function () {
-						node.window.getElementById(that.id + '_target').value = that.targetSel.value; 
-					};
-				}
-				else if (i === 'action') {
-					this.actionSel = node.window.getActionSelector(this.id + '_actions');
-					this.table.add(this.actionSel, 2, y);
-					this.actionSel.onchange = function () {
-						node.window.getElementById(that.id + '_action').value = that.actionSel.value; 
-					};
-				}
-				else if (i === 'to') {
-					this.recipient = node.window.getRecipientSelector(this.id + 'recipients');
-					this.table.add(this.recipient, 2, y);
-					this.recipient.onchange = function () {
-						node.window.getElementById(that.id + '_to').value = that.recipient.value; 
-					};
-				}
-				y++;
+		var updateState = function (state) {
+			if (state) {
+				var stateEvent = node.IN + node.actions.SAY + '.STATE';
+				var stateMsg = node.msg.createSTATE(stateEvent, state);
+				// Self Update
+				node.emit(stateEvent, stateMsg);
+				
+				// Update Others
+				stateEvent = node.OUT + node.actions.SAY + '.STATE';
+				node.emit(stateEvent, state, 'ALL');
 			}
-		}
-		this.table.parse();
-	};
-	
-	MsgBar.prototype.append = function (root) {
+			else {
+				node.log('No next/previous state. Not sent', 'ERR');
+			}
+		};
 		
-		var sendButton = node.window.addButton(root);
-		var stubButton = node.window.addButton(root, 'stub', 'Add Stub');
-		
-		var that = this;
-		sendButton.onclick = function() {
-			// Should be within the range of valid values
-			// but we should add a check
+		fwd.onclick = function() {
+			updateState(node.game.next());
+		};
 			
-			var msg = that.parse();
-			node.gsc.send(msg);
-			//console.log(msg.stringify());
+		rew.onclick = function() {
+			updateState(node.game.previous());
 		};
-		stubButton.onclick = function() {
-			that.addStub();
-		};
-		
-		root.appendChild(this.table.table);
 		
 		this.root = root;
 		return root;
 	};
 	
-	MsgBar.prototype.getRoot = function () {
-		return this.root;
-	};
+})(node);
+(function (node) {
 	
-	MsgBar.prototype.listeners = function () {
-		var that = this;	
-		node.onPLIST( function(msg) {
-			node.window.populateRecipientSelector(that.recipient, msg.data);
-		
-		}); 
-	};
+	node.widgets.register('Wall', Wall);
 	
-	MsgBar.prototype.parse = function () {
-		var msg = {};
-		var that = this;
-		var key = null;
-		var value = null;
-		this.table.forEach( function(e) {
-			
-				if (e.x === 0) {
-					key = e.content;
-					msg[key] = ''; 
-				}
-				else if (e.x === 1) {
-					
-					value = e.content.value;
-					if (key === 'state' || key === 'data') {
-						try {
-							value = JSON.parse(e.content.value);
-						}
-						catch (ex) {
-							value = e.content.value;
-						}
-					}
-					
-					msg[key] = value;
-				}
-		});
-		var gameMsg = new GameMsg(msg);
-		node.info(gameMsg, 'MsgBar sent: ');
-		return gameMsg;
-	};
-	
-	MsgBar.prototype.addStub = function () {
-		node.window.getElementById(this.id + '_from').value = (node.player) ? node.player.id : 'undefined';
-		node.window.getElementById(this.id + '_to').value = this.recipient.value;
-		node.window.getElementById(this.id + '_forward').value = 0;
-		node.window.getElementById(this.id + '_reliable').value = 1;
-		node.window.getElementById(this.id + '_priority').value = 0;
-		
-		if (node.gsc && node.gsc.session) {
-			node.window.getElementById(this.id + '_session').value = node.gsc.session;
-		}
-		
-		node.window.getElementById(this.id + '_state').value = JSON.stringify(node.state);
-		node.window.getElementById(this.id + '_action').value = this.actionSel.value;
-		node.window.getElementById(this.id + '_target').value = this.targetSel.value;
-		
-	};
-	
-})(node.window.widgets);
-(function (exports) {
+	var JSUS = node.JSUS;
 
-	var GameState = node.GameState;
-	var PlayerList = node.PlayerList;
-	var Table = node.window.Table;
-	var HTMLRenderer = node.window.HTMLRenderer;
+// ## Defaults
 	
-	/*!
-	* DynamicTable
-	* 
-	* Show the memory state of the game
-	*/
+	Wall.defaults = {};
+	Wall.defaults.id = 'wall';
+	Wall.defaults.fieldset = { legend: 'Game Log' };		
 	
-	DynamicTable.prototype = new Table();
-	DynamicTable.prototype.constructor = Table;	
+// ## Meta-data
 	
-	exports.DynamicTable = DynamicTable;
+
+	Wall.name = 'Wall';
+	Wall.version = '0.3';
+	Wall.description = 'Intercepts all LOG events and prints them ';
+	Wall.description += 'into a DIV element with an ordinal number and a timestamp.';
+
+// ## Dependencies
 	
-	DynamicTable.id = 'dynamictable';
-	DynamicTable.name = 'Dynamic Table';
-	DynamicTable.version = '0.3.1';
-	
-	DynamicTable.dependencies = {
-		Table: {},
-		JSUS: {},
-		HTMLRenderer: {}
+	Wall.dependencies = {
+		JSUS: {}
 	};
 	
-	function DynamicTable (options, data) {
-		//JSUS.extend(node.window.Table,this);
-		Table.call(this, options, data);
-		this.options = options;
-		this.id = options.id;
-		this.name = options.name || 'Dynamic Table';
-		this.fieldset = { legend: this.name,
-							id: this.id + '_fieldset'
-		};
-		
-		this.root = null;
-		this.bindings = {};
-		this.init(this.options);
-	}
-	
-	DynamicTable.prototype.init = function (options) {
-		this.options = options;
+	function Wall (options) {
+		this.id = options.id || Wall.id;
 		this.name = options.name || this.name;
-		this.auto_update = ('undefined' !== typeof options.auto_update) ? options.auto_update : true;
-		this.replace = options.replace || false;
-		this.htmlRenderer = new HTMLRenderer({renderers: options.renderers});
-		this.c('state', GameState.compare);
-		this.setLeft([]);
-		this.parse(true);
-	};
-		
-	DynamicTable.prototype.bind = function (event, bindings) {
-		if (!event || !bindings) return;
-		var that = this;
+		this.buffer = [];
+		this.counter = 0;
 
-		node.on(event, function(msg) {
-			
-			if (bindings.x || bindings.y) {
-				// Cell
-				var func;
-				if (that.replace) {
-					func = function (x, y) {
-						var found = that.get(x,y);
-						if (found.length !== 0) {
-							for (var ci=0; ci < found.length; ci++) {
-								bindings.cell.call(that, msg, found[ci]);
-							}
-						}
-						else {
-							var cell = bindings.cell.call(that, msg, new Table.Cell({x: x, y: y}));
-							that.add(cell);
-						}
-					};
-				}
-				else {
-					func = function (x, y) {
-						var cell = bindings.cell.call(that, msg, new Table.Cell({x: x, y: y}));
-						that.add(cell, x, y);
-					};
-				}
-				
-				var x = bindings.x.call(that, msg);
-				var y = bindings.y.call(that, msg);
-				
-				if (x && y) {
-					
-					x = (x instanceof Array) ? x : [x];
-					y = (y instanceof Array) ? y : [y];
-					
-//					console.log('Bindings found:');
-//					console.log(x);
-//					console.log(y);
-					
-					for (var xi=0; xi < x.length; xi++) {
-						for (var yi=0; yi < y.length; yi++) {
-							// Replace or Add
-							func.call(that, x[xi], y[yi]);
-						}
-					}
-				}
-				// End Cell
-			}
-			
-			// Header
-			if (bindings.header) {
-				var h = bindings.header.call(that, msg);
-				h = (h instanceof Array) ? h : [h];
-				that.setHeader(h);
-			}
-			
-			// Left
-			if (bindings.left) {
-				var l = bindings.left.call(that, msg);
-				if (!JSUS.in_array(l, that.left)) {
-					that.header.push(l);
-				}
-			}
-			
-			// Auto Update?
-			if (that.auto_update) {
-				that.parse();
-			}
-		});
-		
-	};
-
-	DynamicTable.prototype.append = function (root) {
-		this.root = root;
-		root.appendChild(this.table);
-		return root;
-	};
-	
-	DynamicTable.prototype.listeners = function () {}; 
-
-})(node.window.widgets);
-(function (exports) {
-	
-	exports.DataBar	= DataBar;
-	
-	DataBar.id = 'databar';
-	DataBar.name = 'Data Bar';
-	DataBar.version = '0.3';
-	DataBar.description = 'Adds a input field to send DATA messages to the players';
-		
-	function DataBar (options) {
-		
-		this.game = node.game;
-		this.id = options.id || DataBar.id;
-		
-		this.bar = null;
-		this.root = null;
-		
-		this.fieldset = {
-			legend: 'Send DATA to players'
-		};
-		
-		this.recipient = null;
+		this.wall = node.window.getElement('pre', this.id);
 	}
 	
-	DataBar.prototype.init = function (options) {};
-	
-	DataBar.prototype.append = function (root) {
-		
-		var sendButton = node.window.addButton(root);
-		var dataInput = node.window.addTextInput(root);
-		this.recipient = node.window.addRecipientSelector(root);
-		
-		var that = this;
-	
-		sendButton.onclick = function() {
-			
-			var to = that.recipient.value;
-	
-			//try {
-				//var data = JSON.parse(dataInput.value);
-				data = dataInput.value;
-				console.log('Parsed Data: ' + JSON.stringify(data));
-				
-				node.fire(node.OUT + node.actions.SAY + '.DATA',data,to);
-	//			}
-	//			catch(e) {
-	//				console.log('Impossible to parse the data structure');
-	//			}
-		};
-		
-		return root;
-		
+	Wall.prototype.init = function (options) {
+		options = options || {};
+		this.counter = options.counter || this.counter;
 	};
 	
-	DataBar.prototype.listeners = function () {
-		var that = this;
-		var PREFIX = 'in.';
-		
-		node.onPLIST( function(msg) {
-			node.window.populateRecipientSelector(that.recipient,msg.data);
-		}); 
+	Wall.prototype.append = function (root) {
+		return root.appendChild(this.wall);
 	};
 	
-})(node.window.widgets);
-(function (exports) {
-	
-	exports.GameBoard = GameBoard;
-	
-	GameState = node.GameState;
-	PlayerList = node.PlayerList;
-	
-	GameBoard.id = 'gboard';
-	GameBoard.name = 'GameBoard';
-	GameBoard.version = '0.3.2';
-	GameBoard.description = 'Offer a visual representation of the state of all players in the game.';
-	
-	function GameBoard (options) {
-		
-		this.id = options.id;
-		
-		this.board = null;
-		this.root = null;
-		
-		this.noPlayers = 'No players connected...';
-		
-		this.fieldset = {
-			legend: 'Game State'
-		};
-	}
-	
-	// TODO: Write a proper INIT method
-	GameBoard.prototype.init = function () {};
-	
-	GameBoard.prototype.getRoot = function() {
-		return this.root;
+	Wall.prototype.getRoot = function () {
+		return this.wall;
 	};
 	
-	GameBoard.prototype.append = function (root) {
-		this.root = root;
-		this.board = node.window.addDiv(root, this.id);
-		this.updateBoard(node.game.pl);
-		return root;
-	};
-	
-	GameBoard.prototype.listeners = function() {
-		var that = this;
-		
-		var say = node.actions.SAY + '.';
-		var set = node.actions.SET + '.';
-		var get = node.actions.GET + '.'; 
-		
-		
-		node.on('UPDATED_PLIST', function () {
-			node.log('I Updating Board');
-			that.updateBoard(node.game.pl);
-
+	Wall.prototype.listeners = function() {
+		var that = this;	
+		node.on('LOG', function (msg) {
+			that.debuffer();
+			that.write(msg);
 		});
-	};
+	}; 
 	
-	GameBoard.prototype.updateBoard = function (pl) {
-		var that = this;
-		that.board.innerHTML = 'Updating...';
-		
-		if (pl.length) {
-			that.board.innerHTML = '';
-			pl.forEach( function(p) {
-				//node.log(p);
-				var pText = (p.name) ? p.id + "|" + p.name
-									 : p.id;
-				
-				var line = '[' + pText + "]> \t"; 
-				
-				var pState = '(' +  p.state.round + ') ' + p.state.state + '.' + p.state.step; 
-				pState += ' ';
-				
-				switch (p.state.is) {
-
-					case GameState.iss.UNKNOWN:
-						pState += '(unknown)';
-						break;
-						
-					case GameState.iss.LOADING:
-						pState += '(loading)';
-						break;
-						
-					case GameState.iss.LOADED:
-						pState += '(loaded)';
-						break;
-						
-					case GameState.iss.PLAYING:
-						pState += '(playing)';
-						break;
-					case GameState.iss.DONE:
-						pState += '(done)';
-						break;		
-					default:
-						pState += '('+p.state.is+')';
-						break;		
-				}
-				
-				if (p.state.paused) {
-					pState += ' (P)';
-				}
-				
-				that.board.innerHTML += line + pState +'\n<hr style="color: #CCC;"/>\n';
-			});
+	Wall.prototype.write = function (text) {
+		if (document.readyState !== 'complete') {
+			this.buffer.push(s);
+		} else {
+			var mark = this.counter++ + ') ' + JSUS.getTime() + ' ';
+			this.wall.innerHTML = mark + text + "\n" + this.wall.innerHTML;
 		}
-		else {
-			that.board.innerHTML = that.noPlayers;
+	};
+
+	Wall.prototype.debuffer = function () {
+		if (document.readyState === 'complete' && this.buffer.length > 0) {
+			for (var i=0; i < this.buffer.length; i++) {
+				this.write(this.buffer[i]);
+			}
+			this.buffer = [];
 		}
 	};
 	
-})(node.window.widgets);
-(function (exports) {
+})(node);
+(function (node) {
 
-	var GameState = node.GameState;
-	var PlayerList = node.PlayerList;
+	var GameState = node.GameState,
+		PlayerList = node.PlayerList;
 	
-	/*!
-	* GameTable
-	* 
-	* Show the memory state of the game
-	*/
 	
-	exports.GameTable = GameTable;
+	node.widgets.register('GameTable', GameTable);
 	
-	GameTable.id = 'gametable';
+// ## Defaults
+	
+	GameTable.defaults = {};
+	GameTable.defaults.id = 'gametable';
+	GameTable.defaults.fieldset = { 
+			legend: 'Game Table',
+			id: 'gametable_fieldset'
+	};
+	
+// ## Meta-data
+	
 	GameTable.name = 'Game Table';
 	GameTable.version = '0.2';
+	
+// ## Dependencies
 	
 	GameTable.dependencies = {
 		JSUS: {}
@@ -16527,11 +17470,7 @@ function Entity (e) {
 		this.options = options;
 		this.id = options.id;
 		this.name = options.name || GameTable.name;
-		
-		this.fieldset = { legend: this.name,
-							id: this.id + '_fieldset'
-		};
-		
+				
 		this.root = null;
 		this.gtbl = null;
 		this.plist = null;
@@ -16553,10 +17492,6 @@ function Entity (e) {
 		this.gtbl.c('state', GameState.compare);
 		
 		this.gtbl.setLeft([]);
-		
-//		if (this.gtbl.length === 0) {
-//			this.gtbl.table.appendChild(document.createTextNode('Empty table'));
-//		}
 		
 		this.gtbl.parse(true);
 	};
@@ -16654,4 +17589,97 @@ function Entity (e) {
 	
 	
 
-})(node.window.widgets);
+})(node);
+
+(function (node) {
+	
+	// TODO: Introduce rules for update: other vs self
+	
+	node.widgets.register('StateBar', StateBar);	
+	
+// ## Defaults
+	
+	StateBar.defaults = {};
+	StateBar.defaults.id = 'statebar';
+	StateBar.defaults.fieldset = { legend: 'Change Game State' };	
+	
+// ## Meta-data
+	
+	StateBar.name = 'State Bar';
+	StateBar.version = '0.3.1';
+	StateBar.description = 'Provides a simple interface to change the state of the game.';
+	
+	function StateBar (options) {
+		this.id = options.id;
+		this.recipient = null;
+	}
+	
+	StateBar.prototype.getRoot = function () {
+		return this.root;
+	};
+	
+	StateBar.prototype.append = function (root) {
+		
+		var PREF = this.id + '_';
+		
+		var idButton = PREF + 'sendButton',
+			idStateSel = PREF + 'stateSel',
+			idRecipient = PREF + 'recipient'; 
+				
+		var sendButton = node.window.addButton(root, idButton);
+		var stateSel = node.window.addStateSelector(root, idStateSel);
+		this.recipient = node.window.addRecipientSelector(root, idRecipient);
+		
+		var that = this;
+		
+		node.on('UPDATED_PLIST', function() {
+			node.window.populateRecipientSelector(that.recipient, node.game.pl);
+		});
+		
+		sendButton.onclick = function() {
+	
+			// Should be within the range of valid values
+			// but we should add a check
+			var to = that.recipient.value;
+			
+			// STATE.STEP:ROUND
+			var parseState = /^(\d+)(?:\.(\d+))?(?::(\d+))?$/;
+			
+			var result = parseState.exec(stateSel.value);
+			var state, step, round, stateEvent, stateMsg;
+			if (result !== null) {
+				// Note: not result[0]!
+				state = result[1];
+				step = result[2] || 1;
+				round = result[3] || 1;
+				
+				node.log('Parsed State: ' + result.join("|"));
+				
+				state = new node.GameState({
+					state: state,
+					step: step,
+					round: round
+				});
+				
+				// Self Update
+				if (to === 'ALL') {
+					stateEvent = node.IN + node.actions.SAY + '.STATE';
+					stateMsg = node.msg.createSTATE(stateEvent, state);
+					node.emit(stateEvent, stateMsg);
+				}
+				
+				// Update Others
+				stateEvent = node.OUT + node.actions.SAY + '.STATE';
+				node.emit(stateEvent, state, to);
+			}
+			else {
+				node.err('Not valid state. Not sent.');
+				node.socket.sendTXT('E: not valid state. Not sent');
+			}
+		};
+		
+		this.root = root;
+		return root;
+	};
+	
+})(node);

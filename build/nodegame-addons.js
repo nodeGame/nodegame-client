@@ -731,7 +731,7 @@ TriggerManager.prototype.size = function () {
 			return session;
 		}
 		
-		if (!node.session.enabled) {
+		if (!node.session.isEnabled()) {
 			return false;
 		}
 		
@@ -740,18 +740,15 @@ TriggerManager.prototype.size = function () {
 	};
 
 /**
- * ## node.session.enabled
+ * ## node.session.isEnabled
  * 
  * TRUE, if the session can be saved to a persistent support
  * 
  */	
-	Object.defineProperty(node.session, 'enabled', {
-    	get: function(){
-    		return (node.store) ? node.store.persistent : false;
-    	},
-    	configurable: false,
-    	enumerable: true
-	});
+	node.session.isEnabled = function() {
+		return (node.store) ? node.store.isPersistent() : false;
+	};
+	
 
 /**
  * ## node.session.store
@@ -761,7 +758,7 @@ TriggerManager.prototype.size = function () {
  * @return {boolean} TRUE, if session saving was successful
  */	
 	node.session.store = function() {
-		if (!node.session.enabled) {
+		if (!node.session.isEnabled()) {
 			node.log('Could not save the session');
 			return false;
 		}
