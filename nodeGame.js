@@ -40,19 +40,8 @@
 	// Creating objects
 	// /////////////////////////////////////////
 	
-	node.msg		= node.GameMsgGenerator;	
+	node.msg	= node.GameMsgGenerator;	
 	node.socket = node.gsc = new GameSocketClient();
-
-	node.game 		= null;
-	node.player 	= null;
-	
-	Object.defineProperty(node, 'state', {
-    	get: function() {
-    		return (node.game) ? node.game.state : false;
-    	},
-    	configurable: false,
-    	enumerable: true
-	});
 	
 	node.env = function (env, func, ctx, params) {
 		if (!env || !func || !node.env[env]) return;
@@ -132,7 +121,7 @@
 	
 	node.on = function (event, listener) {
 		// It is in the init function;
-		if (!node.state || (GameState.compare(node.state, new GameState(), true) === 0 )) {
+		if (!node.game || !node.game.state || (GameState.compare(node.game.state, new GameState(), true) === 0 )) {
 			node.events.add(event, listener);
 			// node.log('global');
 		}

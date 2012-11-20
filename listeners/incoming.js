@@ -153,7 +153,7 @@ node.on( IN + set + 'DATA', function (msg) {
  */
 	node.on( IN + say + 'STATE', function (msg) {
 //		console.log('updateState: ' + msg.from + ' -- ' + new GameState(msg.data), 'DEBUG');
-//		console.log(node.game.pl.length)
+//		console.log(node.game.pl.count())
 		
 		//console.log(node.socket.serverid + 'AAAAAA');
 		if (node.socket.serverid && msg.from === node.socket.serverid) {

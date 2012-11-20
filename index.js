@@ -47,6 +47,43 @@ node.info = function (txt, prefix) {
 	node.log(txt, node.verbosity_levels.INFO, prefix);
 }
 
+
+/**
+ *  ## node.support
+ *  
+ *  A collection of features that are supported by the current browser
+ *  
+ */
+node.support = {};
+
+((function(){
+	
+	try {
+		Object.defineProperty({}, "a", {enumerable: false, value: 1})
+		node.support.defineProperty = true;
+	}
+	catch(e) {
+		node.support.defineProperty = false;	
+	}
+	
+	try {
+		eval('({ get x(){ return 1 } }).x === 1')
+		node.support.setter = true;
+	}
+	catch(err) {
+		node.support.setter = false;
+	}
+	  
+	try {
+		var value;
+		eval('({ set x(v){ value = v; } }).x = 1');
+		node.support.getter = true;
+	}
+	catch(err) {
+		node.support.getter = false;
+	}	  
+})();
+
 /**
  * ## node.log
  * 
