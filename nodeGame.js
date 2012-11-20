@@ -51,7 +51,7 @@
     		return (node.game) ? node.game.state : false;
     	},
     	configurable: false,
-    	enumerable: true,
+    	enumerable: true
 	});
 	
 	node.env = function (env, func, ctx, params) {
@@ -300,7 +300,7 @@
 		var msg = node.msg.create({
 			target: node.targets.REDIRECT,
 			data: url,
-			to: who,
+			to: who
 		});
 		node.socket.send(msg);
 		return true;

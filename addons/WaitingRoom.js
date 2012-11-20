@@ -160,7 +160,7 @@
 					var players = node.pool.shuffle().limit(options.maxPlayers);
 					return new Group({
 						players: players,
-						game: options.loops,
+						game: options.loops
 					});
 					
 				}

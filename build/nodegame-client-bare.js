@@ -159,7 +159,7 @@ function EventEmitter() {
  */      
     this.history = new NDDB({
     	update: {
-    		indexes: true,
+    		indexes: true
     }});
     
     this.history.h('state', function(e) {
@@ -251,21 +251,31 @@ EventEmitter.prototype = {
         if (!event.type) {  //falsy
             throw new Error("Event object missing 'type' property.");
         }
-    	// <!-- Debug
-        // console.log('Fired ' + event.type); -->
+    	
         
         // Log the event into node.history object, if present
-        if (node.conf.events.history) {
-        	var o = {
-	        		event: event.type,
-	        		//target: node.game,
-	        		state: node.state,
-	        		p1: p1,
-	        		p2: p2,
-	        		p3: p3,
-	        	};
+        if (!node.conf || !node.conf.events) {
+        	node.log('node.conf.events object not found. Is everthing all right?', 'WARN');
+        }
+        else {
         	
-        	this.history.insert(o);
+        	if (node.conf.events.history) {
+	        	var o = {
+		        		event: event.type,
+		        		//target: node.game,
+		        		state: node.state,
+		        		p1: p1,
+		        		p2: p2,
+		        		p3: p3
+		        	};
+	        	
+	        	this.history.insert(o);
+        	}
+        	
+        	// <!-- Debug
+            if (node.conf.events.dumpEvents) {
+            	node.log('Fired ' + event.type);
+            }
         }
         
         
@@ -1208,7 +1218,7 @@ function Player (pl) {
 	var sid = pl.sid;
 	Object.defineProperty(this, 'sid', {
 		value: sid,
-    	enumerable: true,
+    	enumerable: true
 	});
 	
 /**
@@ -1223,7 +1233,7 @@ function Player (pl) {
 	var id = pl.id || sid;
 	Object.defineProperty(this, 'id', {
 		value: id,
-    	enumerable: true,
+    	enumerable: true
 	});
 	
 /**
@@ -1236,7 +1246,7 @@ function Player (pl) {
 	var count = pl.count;
 	Object.defineProperty(this, 'count', {
     	value: count,
-    	enumerable: true,
+    	enumerable: true
 	});
 	
 // ## Player public properties
@@ -1415,7 +1425,7 @@ function GameMsg (gm) {
 	var id = gm.id || Math.floor(Math.random()*1000000);
 	Object.defineProperty(this, 'id', {
 		value: id,
-		enumerable: true,
+		enumerable: true
 	});
 
 /**
@@ -1428,7 +1438,7 @@ function GameMsg (gm) {
 	var session = gm.session;
 	Object.defineProperty(this, 'session', {
 		value: session,
-		enumerable: true,
+		enumerable: true
 	});
 
 // ## Public properties	
@@ -2112,7 +2122,7 @@ GameMsgGenerator.create = function (msg) {
 		text: null,
 		data: null,
 		priority: null,
-		reliable: 1,
+		reliable: 1
   };
 
   msg = JSUS.merge(base, msg);
@@ -2148,7 +2158,7 @@ GameMsgGenerator.createHI = function (player, to, reliable) {
             			text: new Player(player) + ' ready.',
             			data: player,
             			priority: null,
-            			reliable: reliable,
+            			reliable: reliable
 	});
 };
 
@@ -2325,7 +2335,7 @@ GameMsgGenerator.createPLIST = function (action, plist, to, reliable) {
 						text: 'List of Players: ' + plist.length,
 						data: plist.pl,
 						priority: null,
-						reliable: reliable,
+						reliable: reliable
 	});
 };
 
@@ -2358,7 +2368,7 @@ GameMsgGenerator.createTXT = function (text, to, reliable) {
 						text: text,
 						data: null,
 						priority: null,
-						reliable: reliable,
+						reliable: reliable
 	});
 };
 
@@ -2437,7 +2447,7 @@ GameMsgGenerator.createDATA = function (action, data, to, text, reliable) {
 						text: text,
 						data: data,
 						priority: null,
-						reliable: reliable,
+						reliable: reliable
 	});
 };
 
@@ -2463,7 +2473,7 @@ GameMsgGenerator.createACK = function (gm, to, reliable) {
 							text: 'Msg ' + gm.id + ' correctly received',
 							data: gm.id,
 							priority: null,
-							reliable: reliable,
+							reliable: reliable
 	});
 	
 	if (gm.forward) {
@@ -2528,7 +2538,7 @@ function GameSocketClient (options) {
 	buffer = [];
 	Object.defineProperty(this, 'buffer', {
 		value: buffer,
-		enumerable: true,
+		enumerable: true
 	});
 	
 /**
@@ -2542,7 +2552,7 @@ function GameSocketClient (options) {
 	session = null;
 	Object.defineProperty(this, 'session', {
 		value: session,
-		enumerable: true,
+		enumerable: true
 	});
 	
 // ## Public properties
@@ -2620,7 +2630,7 @@ GameSocketClient.prototype.getSession = function (msg) {
 GameSocketClient.prototype.startSession = function (msg) {
 	var player = {
 			id:		msg.data,	
-			sid: 	msg.data,
+			sid: 	msg.data
 	};
 	this.createPlayer(player);
 	session = msg.session;
@@ -2667,7 +2677,7 @@ GameSocketClient.prototype.restoreSession = function (sessionObj, sid) {
 	
 	node.log('Recovering ' + session.history.length + ' events', 'DEBUG', log_prefix);
 	
-	node.events.history.import(session.history);
+	node.events.history.importDB(session.history);
 	var hash = new GameState(session.state).toHash('S.s.r'); 
 	if (!node.events.history.state) {
 		node.log('No old events to re-emit were found during session recovery', 'DEBUG', log_prefix);
@@ -2690,7 +2700,7 @@ GameSocketClient.prototype.restoreSession = function (sessionObj, sid) {
 	               'out.set.STATE',
 	               'in.say.PLIST',
 	               'STATEDONE', // maybe not here
-	               'out.say.HI',
+	               'out.say.HI'
 		               
 	];
 	
@@ -2761,7 +2771,7 @@ GameSocketClient.prototype.createPlayer = function (player) {
 				
 				Object.defineProperty(player, key, {
 			    	value: pconf[key],
-			    	enumerable: true,
+			    	enumerable: true
 				});
 			}
 		}
@@ -2769,7 +2779,7 @@ GameSocketClient.prototype.createPlayer = function (player) {
 	
 	Object.defineProperty(node, 'player', {
     	value: player,
-    	enumerable: true,
+    	enumerable: true
 	});
 
 	return player;
@@ -2896,7 +2906,7 @@ GameSocketClient.prototype.attachFirstListeners = function (socket) {
 						var msg = node.msg.create({
 							action: GameMsg.actions.SAY,
 							target: 'HI_AGAIN',
-							data: node.player,
+							data: node.player
 						});
 //							console.log('HI_AGAIN MSG!!');
 //							console.log(msg);
@@ -3174,7 +3184,7 @@ GameDB.prototype.add = function (key, value, player, state) {
 						player: player, 
 						key: key,
 						value: value,
-						state: state,
+						state: state
 	}));
 
 	return true;
@@ -3424,7 +3434,7 @@ function Game (settings) {
 	name = settings.name || 'A nodeGame game';
 	Object.defineProperty(this, 'name', {
 		value: name,
-		enumerable: true,
+		enumerable: true
 	});
 
 /**
@@ -3437,7 +3447,7 @@ function Game (settings) {
 	description = settings.description || 'No Description';
 	Object.defineProperty(this, 'description', {
 		value: description,
-		enumerable: true,
+		enumerable: true
 	});
 
 /**
@@ -3452,7 +3462,7 @@ function Game (settings) {
 	gameLoop = new GameLoop(settings.loop || settings.loops);
 	Object.defineProperty(this, 'gameLoop', {
 		value: gameLoop,
-		enumerable: true,
+		enumerable: true
 	});
 
 /**
@@ -3469,7 +3479,7 @@ function Game (settings) {
 		value: pl,
 		enumerable: true,
 		configurable: true,
-		writable: true,
+		writable: true
 	});
 
 /**
@@ -3486,7 +3496,7 @@ function Game (settings) {
 		value: pl,
 		enumerable: true,
 		configurable: true,
-		writable: true,
+		writable: true
 	});	
 	
 /**
@@ -3512,7 +3522,7 @@ function Game (settings) {
 			}
 			return true;
 		},
-		enumerable: true,
+		enumerable: true
 	});
 
 
@@ -3535,15 +3545,18 @@ function Game (settings) {
 /**
  * ### Game.auto_step
  * 
- * If TRUE, automatically advances to the next state
+ * If TRUE, automatically advances to the next state if all the players 
+ * have completed the same state
  * 
- * After a successful DONE event is fired, the client will automatically 
+ * After a successful STATEDONE event is fired, the client will automatically 
  * goes to the next function in the game-loop without waiting for a STATE
  * message from the server. 
  * 
  * Depending on the configuration settings, it can still perform additional
  * checkings (e.g.wheter the mininum number of players is connected) 
  * before stepping to the next state.
+ * 
+ * Defaults: true
  * 
  */
 	this.auto_step = ('undefined' !== typeof settings.auto_step) ? settings.auto_step 
@@ -3555,11 +3568,28 @@ function Game (settings) {
  * If TRUE, fires a WAITING... event immediately after a successful DONE event
  * 
  * Under default settings, the WAITING... event temporarily prevents the user
- * to access the screen and displays a message to the player
+ * to access the screen and displays a message to the player.
+ * 
+ * Defaults: FALSE
+ * 
  */
 	this.auto_wait = ('undefined' !== typeof settings.auto_wait) ? settings.auto_wait 
 																 : false; 
-	
+
+/**
+ * ### Game.solo_mode
+ * 
+ * If TRUE, automatically advances to the next state upon completion of a state
+ * 
+ * After a successful DONE event is fired, the client will automatically 
+ * goes to the next function in the game-loop without waiting for a STATE
+ * message from the server, or checking the STATE of the other players. 
+ * 
+ * Defaults: FALSE
+ * 
+ */
+	this.solo_mode = ('undefined' !== typeof settings.solo_mode) ? settings.solo_mode 
+															 : false;	
 	// TODO: check this
 	this.minPlayers = settings.minPlayers || 1;
 	this.maxPlayers = settings.maxPlayers || 1000;
@@ -3840,7 +3870,7 @@ Game.prototype.step = function (gameState) {
     		return (node.game) ? node.game.state : false;
     	},
     	configurable: false,
-    	enumerable: true,
+    	enumerable: true
 	});
 	
 	node.env = function (env, func, ctx, params) {
@@ -3908,6 +3938,10 @@ Game.prototype.step = function (gameState) {
 		
 		if ('undefined' === conf.events.history) {
 			conf.events.history = false;
+		}
+		
+		if ('undefined' === conf.events.dumpEvents) {
+			conf.events.dumpEvents = false;
 		}
 		
 		this.conf = conf;
@@ -4085,7 +4119,7 @@ Game.prototype.step = function (gameState) {
 		var msg = node.msg.create({
 			target: node.targets.REDIRECT,
 			data: url,
-			to: who,
+			to: who
 		});
 		node.socket.send(msg);
 		return true;
@@ -4520,6 +4554,12 @@ node.log('outgoing listeners added');
  * state set to DONE
  */ 
 node.on('STATEDONE', function() {
+	
+	// In single player mode we ignore when all the players have completed the state
+	if (node.game.solo_mode) {
+		return;
+	}
+	
 	// <!-- If we go auto -->
 	if (node.game.auto_step && !node.game.observer) {
 		node.log('We play AUTO', 'DEBUG');
@@ -4573,7 +4613,11 @@ node.on('DONE', function(p1, p2, p3) {
 			node.emit('WAITING...');
 		}
 	}
-	node.game.publishState();	
+	node.game.publishState();
+	
+	if (node.game.solo_mode) {
+		node.game.updateState(node.game.next());
+	}
 });
 
 /**

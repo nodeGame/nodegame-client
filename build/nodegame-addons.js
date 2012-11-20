@@ -455,7 +455,7 @@ this.triggers = [];
 			return returnAt;
 		},
 		configurable: true,
-		enumerable: true,
+		enumerable: true
 	});
 
 /**
@@ -719,7 +719,7 @@ TriggerManager.prototype.size = function () {
 					memory: node.game.memory,
 					state: 	node.game.state,
 					game: 	node.game.name,
-					history: undefined,
+					history: undefined
 			};
 			
 			// If we saved the emitted events, add them to the
@@ -750,7 +750,7 @@ TriggerManager.prototype.size = function () {
     		return (node.store) ? node.store.persistent : false;
     	},
     	configurable: false,
-    	enumerable: true,
+    	enumerable: true
 	});
 
 /**
@@ -864,7 +864,7 @@ TriggerManager.prototype.size = function () {
 		};
 		
 		var onConnectFunc = function() {
-			console.log('added')
+			//console.log('added')
 			node.onPLIST(function(){
 				pullTriggers();
 			});
@@ -886,7 +886,7 @@ TriggerManager.prototype.size = function () {
 			get: function() {
 				return onConnect;
 			},
-			configurable: true,
+			configurable: true
 		});
 		
 		var onTimeout, onTimeoutTime;
@@ -909,7 +909,7 @@ TriggerManager.prototype.size = function () {
 			get: function() {
 				return onTimeoutTime;
 			},
-			configurable: true,
+			configurable: true
 		});
 		
 		var onInterval, onIntervalTime;
@@ -932,7 +932,7 @@ TriggerManager.prototype.size = function () {
 			get: function() {
 				return onIntervalTime;
 			},
-			configurable: true,
+			configurable: true
 		});
 		
 		
@@ -951,7 +951,7 @@ TriggerManager.prototype.size = function () {
 		this.addTrigger(function(){
 			return new Group({
 				players: node.pool,
-				game: options.loops,
+				game: options.loops
 			});
 		});
 		
@@ -965,14 +965,14 @@ TriggerManager.prototype.size = function () {
 					var players = node.pool.shuffle().limit(options.maxPlayers);
 					return new Group({
 						players: players,
-						game: options.loops,
+						game: options.loops
 					});
 					
 				}
 				
 				return new Group({
 					players: node.pool,
-					game: options.loops,
+					game: options.loops
 				});
 			});
 		}
@@ -985,7 +985,7 @@ TriggerManager.prototype.size = function () {
 				
 				return new Group({
 					players: node.pool,
-					game: options.loops,
+					game: options.loops
 				});
 			});
 		}
@@ -997,7 +997,7 @@ TriggerManager.prototype.size = function () {
 					var players = node.pool.shuffle().limit(options.maxPlayers);
 					return new Group({
 						players: players,
-						game: options.loops,
+						game: options.loops
 					});
 					
 				}
@@ -1010,7 +1010,7 @@ TriggerManager.prototype.size = function () {
 					// Take N = maxPlayers random player
 					return new Group({
 						players: node.pool,
-						game: options.loops,
+						game: options.loops
 					});
 					
 				}
