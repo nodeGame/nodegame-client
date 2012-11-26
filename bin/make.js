@@ -91,9 +91,9 @@ program
 			output: "nodegame",
 		});
 		
-		build_support({
-			all: true,
-		});
+//		build_support({
+//			all: true,
+//		});
 });
 
 program
