@@ -19,7 +19,7 @@
       "socket.io-client": "0.9.2",
       "JSUS": ">= 0.5.1",
       "ya-csv": "0.9.2",
-      "smoosh": "0.3.2",
+      "smoosh": "0.4.0",
       "JSON": "1.0.0",
       "shelf.js": ">= 0.2.1",
       "es5-shim": "1.2.10",

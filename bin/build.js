@@ -110,7 +110,7 @@ function build(options) {
 		options.standard = true;
 	}
 	
-	var out = options.output || "nodegame-client";
+	var out = options.output || "nodegame";
 		
 	console.log('Building nodeGame-client v.' + version + ' with:');
 
@@ -234,8 +234,6 @@ function build(options) {
 
 
 function build_support(options) {
-
-	
 	
 	if (options.all) {
 		options.only = ['es5', 'shelf', 'jsus', 'nddb', 'addons', 'window', 'widgets'];

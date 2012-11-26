@@ -80,15 +80,15 @@ program
 		console.log('Multi-build for nodegame-client v.' + version);
 		build({
 			all: true,
-			output: "nodegame-client-full",
+			output: "nodegame-full",
 		});
 		build({
 			bare: true,
-			output: "nodegame-client-bare",
+			output: "nodegame-bare",
 		});
 
 		build({
-			output: "nodegame-client",
+			output: "nodegame",
 		});
 		
 		build_support({
