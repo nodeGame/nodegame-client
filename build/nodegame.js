@@ -5,57 +5,7 @@
  * 
  * Collection of general purpose javascript functions. JSUS helps!
  * 
- * 
- * JSUS is designed to be modular and easy to extend. 
- * 
- * Just use: 
- * 
- *         JSUS.extend(myClass);
- * 
- * to extend the functionalities of JSUS. All the methods of myClass 
- * are immediately added to JSUS, and a reference to myClass is stored
- * in JSUS._classes.
- * 
- * MyClass can be either of type Object or Function.
- * 
- * JSUS can also extend other objects. Just pass a second parameter:
- * 
- * 
- *         JSUS.extend(myClass, mySecondClass);
- * 
- * and mySecondClass will receive all the methods of myClass. In this case,
- * no reference of myClass is stored.
- * 
- * To get a copy of one of the registered JSUS libraries
- * 
- *  	var myClass = JSUS.require('myClass');
- * 
- * JSUS come shipped in with a default set of libraries
- * 
- * 1. OBJ
- * 2. ARRAY
- * 3. TIME
- * 4. EVAL
- * 5. DOM
- * 6. RANDOM
- * 7. PARSE
- * 
- * Documentation
- * 
- * Automatic documentation for all libraries can be generated with the command
- * 
- * ```javascript
- * node bin/make.js doc
- * ```
- *  
- * Build
- * 
- * Create your customized build of JSUS.js using the make file in the bin directory
- * 
- * ```javascript
- * node make.js build // Full build, about 20Kb minified
- * node make.js build -l obj,array -o jsus-oa.js // about 12Kb minified
- * ```
+ * See README.md for extra help.
  */
 
 (function (exports) {
@@ -108,7 +58,7 @@ JSUS.extend = function (additional, target) {
     // of the additional object into the hidden
     // JSUS._classes object;
     if ('undefined' === typeof target) {
-        var target = target || this;
+        target = target || this;
         if ('function' === typeof additional) {
             var name = additional.toString();
             name = name.substr('function '.length);
@@ -167,6 +117,7 @@ JSUS.require = JSUS.get = function (className) {
         return false;
     }
     return JSUS.clone(JSUS._classes[className]);
+    //return new JSUS._classes[className]();
 };
 
 /**
@@ -185,6 +136,7 @@ JSUS.isNodeJS = function () {
 // ## Node.JS includes
 // if node
 if (JSUS.isNodeJS()) {
+    require('./lib/compatibility');
     require('./lib/obj');
     require('./lib/array');
     require('./lib/time');
@@ -953,9 +905,7 @@ JSUS.extend(ARRAY);
 
 (function (JSUS) {
     
-
-
-function DOM () {};
+function DOM() {};
 
 // ## GENERAL
 
@@ -1792,6 +1742,13 @@ JSUS.extend(EVAL);
     
 function OBJ(){};
 
+var compatibility = null;
+
+if ('undefined' !== typeof JSUS.compatibility) {
+	compatibility = JSUS.compatibility();
+}
+
+
 /**
  * ## OBJ.equals
  * 
@@ -2113,17 +2070,27 @@ OBJ.clone = function (obj) {
 	    	clone[i] = value;
 	    }
 	    else {
-	    	try {
+	    	// we know if object.defineProperty is available
+	    	if (compatibility && compatibility.defineProperty) {
 		    	Object.defineProperty(clone, i, {
 		    		value: value,
 	         		writable: true,
 	         		configurable: true
 	         	});
 	    	}
-	    	catch(e) {
-	    		clone[i] = value;
+	    	else {
+	    		// or we try...
+	    		try {
+	    			Object.defineProperty(clone, i, {
+			    		value: value,
+		         		writable: true,
+		         		configurable: true
+		         	});
+	    		}
+		    	catch(e) {
+		    		clone[i] = value;
+		    	}
 	    	}
-
 	    }
     }
     return clone;
@@ -2835,9 +2802,6 @@ JSUS.extend(PARSE);
  */
 
 (function (exports, JSUS, store) {
-    
-// ## Global scope
-
 	
 var nddb_operation = null;
 var nddb_conditions = [];
@@ -2849,7 +2813,7 @@ var addCondition = function(type, condition) {
 	}
 	nddb_conditions.push({
 		type: type,
-		condition: condition,
+		condition: condition
 	});
 	return true;
 }
@@ -2878,6 +2842,8 @@ NDDB.prototype.or = NDDB.prototype.OR = function (d, op, value) {
 NDDB.prototype.not = NDDB.prototype.NOT = function (d, op, value) {
 	return addOperation('NOT', d, op, value);
 };
+
+NDDB.compatibility = JSUS.compatibility();
 	
 // Expose constructors
 exports.NDDB = NDDB;
@@ -2960,13 +2926,12 @@ function NDDB (options, db, parent) {
     
     // ### length
     // The number of items in the database
-    Object.defineProperty(this, 'length', {
-    	set: function(){},
-    	get: function(){
-    		return this.db.length;
-    	},
-    	configurable: true
-	});
+    if (NDDB.compatibility.getter) {
+    	this.__defineGetter__('length', function() { return this.db.length; });
+    }
+	else {
+    	this.length = null;
+    }
    
     
     // ### __C
@@ -3106,11 +3071,16 @@ NDDB.prototype._masquerade = function (o, db) {
     if ('undefined' !== typeof o.nddbid) return o;
     db = db || this.db;
     
-    Object.defineProperty(o, 'nddbid', {
-    	value: db.length,
-    	configurable: true,
-    	writable: true,
-	});
+    if (NDDB.compatibility.defineProperty) {
+	    Object.defineProperty(o, 'nddbid', {
+	    	value: db.length,
+	    	configurable: true,
+	    	writable: true
+		});
+    }
+    else {
+    	o.nddbid = db.length;
+    }
     
     return o;
 };
@@ -3145,7 +3115,8 @@ NDDB.prototype._masqueradeDB = function (db) {
  * @param {object} options Optional. Configuration object
  */
 NDDB.prototype._autoUpdate = function (options) {
-	var update = JSUS.merge(options || {}, this.__update);
+	var update = (options) ? JSUS.merge(options, this.__update)
+						   : this.__update;
 	
     if (update.pointer) {
         this.nddb_pointer = this.db.length-1;
@@ -3285,16 +3256,29 @@ NDDB.prototype.toString = function () {
  * 
  * Cyclic objects are decycled.
  * 
+ * @param {boolean} TRUE, if compressed
  * @return {string} out A machine-readable representation of the database
  * 
  */
-NDDB.prototype.stringify = function () {
+NDDB.prototype.stringify = function (compressed) {
 	if (!this.length) return '[]';
+	compressed = ('undefined' === typeof compressed) ? true : compressed;
 	
-	var objToStr = function(o) {
-		// Skip empty objects
-		if (JSUS.isEmpty(o)) return '{}';
-		return JSON.stringify(o);
+	var objToStr;
+	
+	if (compressed) {
+		objToStr = function(o) {
+			// Skip empty objects
+			if (JSUS.isEmpty(o)) return '{}';
+			return JSON.stringify(o);
+		}	
+	}
+	else {
+		objToStr = function(o) {
+			// Skip empty objects
+			if (JSUS.isEmpty(o)) return '{}';
+			return JSON.stringify(o, null, 4);
+		}
 	}
 	
     var out = '[';
@@ -4787,55 +4771,104 @@ NDDB.prototype.resolveTag = function (tag) {
 
 // ## Persistance    
 
-var isNodeJS = function() {
-	return ('object' === typeof module && 'function' === typeof require);
-};
-
 var storageAvailable = function() {
 	return ('function' === typeof store);
 }
 
 // if node
-if (isNodeJS()) {   
+if (JSUS.isNodeJS()) {   
 	require('./external/cycle.js');		
 	var fs = require('fs');
 };
 
 //end node  
-    
-NDDB.prototype.save = function (file, callback) {
+
+/**
+ * ### NDDB.save
+ * 
+ * Saves the database to a persistent medium in JSON format
+ * 
+ * If NDDB is executed in the browser, it tries to use the `store` method - 
+ * usually associated to shelf.js - to write to the browser database. 
+ * If no `store` object is found, an error is issued and the database
+ * is not saved.
+ * 
+ * If NDDB is executed in the Node.JS environment it saves to the file system
+ * using the standard `fs.writeFile` method.
+ * 
+ * Cyclic objects are decycled, and do not cause errors. Upon loading, the cycles
+ * are restored.
+ * 
+ * @param {string} file The file system path, or the identifier for the browser database
+ * @param {function} callback Optional. A callback to execute after the database was saved
+ * @param {compress} boolean Optional. If TRUE, output will be compressed. Defaults, FALSE
+ * 
+ * @see NDDB.load
+ * @see NDDB.stringify
+ * @see https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+ * @return {boolean} TRUE, if operation is successful
+ * 
+ */
+NDDB.prototype.save = function (file, callback, compress) {
 	if (!file) {
-		NDDB.log('You must specify a valid file name.', 'ERR');
+		NDDB.log('You must specify a valid file / id.', 'ERR');
 		return false;
 	}
 	
+	compress = compress || false;
+	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!isNodeJS()){
+	if (!JSUS.isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
 		}
 		
-		store(file, this.stringify());
+		store(file, this.stringify(compress));
+		if (callback) callback();
 		return true;
 	}
 	
 	// Save in Node.js
-	fs.writeFile(file, this.stringify(), 'utf-8', function(e) {
+	fs.writeFile(file, this.stringify(compress), 'utf-8', function(e) {
 		if (e) throw e
 		if (callback) callback();
 		return true;
 	});
 };
 
+/**
+ * ### NDDB.load
+ * 
+ * Loads a JSON object into the database from a persistent medium
+ * 
+ * If NDDB is executed in the browser, it tries to use the `store` method - 
+ * usually associated to shelf.js - to load from the browser database. 
+ * If no `store` object is found, an error is issued and the database
+ * is not loaded.
+ * 
+ * If NDDB is executed in the Node.JS environment it loads from the file system
+ * using the standard `fs.readFileSync` or `fs.readFile` method.
+ * 
+ * Cyclic objects previously decycled will be retrocycled. 
+ * 
+ * @param {string} file The file system path, or the identifier for the browser database
+ * @param {function} callback Optional. A callback to execute after the database was saved
+ * 
+ * @see NDDB.save
+ * @see NDDB.stringify
+ * @see https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+ * @return {boolean} TRUE, if operation is successful
+ * 
+ */
 NDDB.prototype.load = function (file, callback) {
 	if (!file) {
-		NDDB.log('You must specify a valid file.', 'ERR');
+		NDDB.log('You must specify a valid file / id.', 'ERR');
 		return false;
 	}
 	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!isNodeJS()){
+	if (!JSUS.isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
@@ -4879,11 +4912,10 @@ NDDB.prototype.load = function (file, callback) {
 
 
 // ## Closure    
-    
 })(
     'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
   , 'undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
-  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store  		  
+  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store
 );
 /**
  * # nodeGame
