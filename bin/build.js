@@ -59,8 +59,8 @@ var ng_addons = [
 var JSUSdir = J.resolveModuleDir('JSUS');
 
 var ng_jsus = [
-	JSUSdir + "lib/compatibility.js",
 	JSUSdir + "jsus.js",
+	JSUSdir + "lib/compatibility.js",
 	JSUSdir + "lib/array.js",
 	JSUSdir + "lib/dom.js",
 	JSUSdir + "lib/eval.js",
