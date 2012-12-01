@@ -1,9 +1,7 @@
 /**
- * # nodeGame
+ * # nodeGame: Web Experiments in the Browser
  * 
  * Copyright(c) 2012 Stefano Balietti MIT Licensed
- * 
- * ### nodeGame: Web Experiments in the Browser
  * 
  * *nodeGame* is a free, open source, event-driven javascript framework for on
  * line, multiplayer games in the browser.
@@ -16,7 +14,8 @@
 		GameMsg 			= node.GameMsg,
 		Game 				= node.Game,
 		Player 				= node.Player,
-		GameSession 		= node.GameSession;
+		GameSession 		= node.GameSession,
+		J					= node.JSUS;
 	
 	
 	// Exposing constants
@@ -34,7 +33,7 @@
 	node.socket = node.gsc = new GameSocketClient();
 	
 	
-	// ## Methods
+// ## Methods
 	
 	
 /**
@@ -57,7 +56,7 @@
 	
 	
 /**
- * ## node.setup 
+ * ### node.setup 
  * 
  * Setups the nodeGame object
  * 
@@ -130,16 +129,30 @@
 	};
 	
 /**
- * ## node.on
+ * ### node.on
  * 
  * Registers an event listener
  * 
- * 
+ * Listeners registered before a game is started, e.g. in
+ * the init function of the game object, will stay valid 
+ * throughout the game. Listeners registered after the game 
+ * is started will be removed after the game has advanced
+ * to its next stage. 
  * 
  * @param {string} event The name of the event
  * @param {function} listener The callback function
  */	
 	node.on = function (event, listener) {
+		
+		if (!event) { 
+			node.err('undefined event'); 
+			return;
+		}
+		if ('function' !== typeof listener) { 
+			node.err('callback must be of time function'); 
+			return;
+		}
+		
 		// It is in the init function;
 		if (!node.game || !node.game.state || (GameState.compare(node.game.state, new GameState(), true) === 0 )) {
 			node.events.add(event, listener);
@@ -150,7 +163,7 @@
 	};
 
 /**
- * ## node.once
+ * ### node.once
  * 
  * Registers an event listener that will be removed 
  * after its first invocation
@@ -162,6 +175,7 @@
  * @see node.off
  */		
 	node.once = function (event, listener) {
+		if (!event || !listener) return;
 		node.on(event, listener);
 		node.on(event, function(event, listener) {
 			node.events.remove(event, listener);
@@ -169,7 +183,7 @@
 	};
 	
 /**
- * ## node.off
+ * ### node.off
  * 
  * Deregisters one or multiple event listeners
  * 
@@ -185,9 +199,9 @@
 	
 
 /**
- * ## node.play
+ * ### node.play
  * 
- * Establish a connection with a socket.io server, and starts the game
+ * Establishes a connection with a socket.io server, and starts the game
  * 
  * @param {object} conf A configuration object
  * @param {object} game The game object
@@ -213,7 +227,12 @@
 /**
  * ### node.emit
  * 
- * Emits an event and 
+ * Emits an event locally
+ *
+ * @param {string} event The name of the event to emit
+ * @param {object} p1 Optional. A parameter to be passed to the listener
+ * @param {object} p2 Optional. A parameter to be passed to the listener
+ * @param {object} p3 Optional. A parameter to be passed to the listener
  */	
 	node.emit = function (event, p1, p2, p3) {	
 		node.events.emit(event, p1, p2, p3);
@@ -224,7 +243,10 @@
  * 
  * Sends a DATA message to a specified recipient
  * 
- * 
+ * @param {mixed} data The content of the DATA message
+ * @param {string} what The label associated to the message
+ * @param {string} whom Optional. The recipient of the message
+ *  
  */	
 	node.say = function (data, what, whom) {
 		node.events.emit('out.say.DATA', data, whom, what);
@@ -250,9 +272,14 @@
 /**
  * ### node.get
  * 
+ * Sends a GET message to a recipient and listen to the reply 
  * 
+ * @param {string} key The label of the GET message
+ * @param {function} func The callback function to handle the return message
  */	
 	node.get = function (key, func) {
+		if (!key || !func) return;
+		
 		node.events.emit('out.get.DATA', key);
 		
 		var listener = function(msg) {
@@ -260,7 +287,6 @@
 				func.call(node.game, msg.data);
 				node.events.remove('in.say.DATA', listener);
 			}
-			// node.events.printAll();
 		};
 		
 		node.on('in.say.DATA', listener);
@@ -323,30 +349,79 @@
 		return true;
 	};
 	
-// ### Aliases
 
+
+/**
+ * ### node.alias
+ * 
+ * Creates event listeners aliases
+ * 
+ * This method creates a new property to the `node.on` object named
+ * after the alias. The alias can be used as a shortcut to register
+ * to new listeners on the given events.
+ * 
+ * 
+ * ```javascript
+ * 	node.alias('myAlias', ['in.say.DATA', 'myEvent']);
+ * 
+ * 	node.on.myAlias(function(){ console.log('myEvent or in.say.DATA'); };
+ * ```	
+ * 
+ * @param {string} alias The name of alias
+ * @param {string|array} The events under which the listeners will be registered to
+ */	
+	node.alias = function(alias, events) {
+		if (!alias || !events) { 
+			node.err('undefined alias or events'); 
+			return; 
+		}
+		if (!J.isArray(events)) events = [events];
+		
+		J.each(events, function(){
+			node.on[alias] = function(func) {
+				node.on(event, function(msg){
+					func.call(node.game, msg);
+				});
+			};
+		});
+	};
+
+// ## Aliases
+
+// ### node.on.txt	
+	node.alias('txt', 'in.say.TXT');
 	
+// ### node.on.data	
+	node.alias('data', ['in.say.DATA', 'in.set.DATA']);
+	
+// ### node.on.state	
+	node.alias('state', 'in.set.STATE');
+	
+// ### node.on.plist	
+	node.alias('plist', ['in.set.PLIST', 'in.say.PLIST']);
+ 	
 	node.onTXT = function(func) {
-		node.on("in.say.TXT", function(msg) {
+		if (!func) return;
+		node.on("", function(msg) {
 			func.call(node.game,msg);
 		});
 	};
 	
 	node.onDATA = function(text, func) {
+		if (!text || !func) return;
+		
 		node.on('in.say.DATA', function(msg) {
-			if (text && msg.text === text) {
+			if (msg.text === text) {
 				func.call(node.game, msg);
 			}
 		});
 		
 		node.on('in.set.DATA', function(msg) {
-			if (text && msg.text === text) {
+			if (msg.text === text) {
 				func.call(node.game, msg);
 			}
 		});
 	};
-	
-	// Set
 	
 	node.onSTATE = function(func) {
 		node.on("in.set.STATE", function(msg) {
@@ -364,33 +439,67 @@
 		});
 	};
 	
-	node.DONE = function (text) {
-		node.emit("DONE",text);
+/**
+ *  ### node.DONE
+ * 
+ * Emits locally a DONE event
+ * 
+ * The DONE event signals that the player has terminated a game stage, 
+ * and that it is ready to advance to the next one.
+ * 
+ * @param {mixed} param Optional. An additional parameter passed along
+ */
+	node.DONE = function (param) {
+		node.emit("DONE", param);
 	};
-	
+
+/**
+ *  ### node.TXT
+ * 
+ *  Emits locally a TXT event
+ *  
+ *  The TXT event signals that a text message needs to be delivered
+ *  to a recipient.
+ *  
+ *  @param {string} text The text of the message
+ *  @param {string} to The id of the recipient
+ */	
 	node.TXT = function (text, to) {
 		node.emit('out.say.TXT', text, to);
-	};	
-	
+	};		
 
 // ## node.random
 	
 	node.random = {};
 	
-	// Generates event at RANDOM timing in milliseconds
-	// if timing is missing, default is 6000
-	node.random.emit = function (event, timing){
-		var timing = timing || 6000;
+/**
+ * ### node.random.emit
+ * 
+ * Emits an event after a random time interval between 0 and maxWait 
+ * 
+ * @param {string} event The name of the event
+ * @param {number} maxWait Optional. The maximum time to wait before emitting the event. to Defaults, 6000
+ */	
+	node.random.emit = function (event, maxWait){
+		maxWait = maxWait || 6000;
 		setTimeout(function(event) {
 			node.emit(event);
-		}, Math.random()*timing, event);
+		}, Math.random() * maxWait, event);
 	};
 	
-	node.random.exec = function (func, timing) {
-		var timing = timing || 6000;
+/**
+ * ### node.random.exec 
+ * 
+ * Executes a callback function after a random time interval between 0 and maxWait 
+ * 
+ * @param {function} The callback function to execute
+ * @param {number} maxWait Optional. The maximum time to wait before executing the callback. to Defaults, 6000
+ */	
+	node.random.exec = function (func, maxWait) {
+		maxWait = maxWait || 6000;
 		setTimeout(function(func) {
 			func.call();
-		}, Math.random()*timing, func);
+		}, Math.random() * maxWait, func);
 	};
 		
 	node.log(node.version + ' loaded', 'ALWAYS');
