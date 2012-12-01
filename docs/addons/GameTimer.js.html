@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GameTimer.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../', thisFile = 'addons/GameTimer.js', defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#gametimer">GameTimer</a>
+      </div>
+      <div class="heading h2">
+        <a href="#global-scope">Global scope</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer-status-levels">GameTimer status levels</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gametimer-constructor">GameTimer constructor</a>
+      </div>
+      <div class="heading h2">
+        <a href="#public-properties">Public properties</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.status">GameTimer.status</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.options">GameTimer.options</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.timer">GameTimer.timer</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.timeleft">GameTimer.timeLeft</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.timepassed">GameTimer.timePassed</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.update">GameTimer.update</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.timeup">GameTimer.timeup</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.hooks">GameTimer.hooks</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gametimer-methods">GameTimer methods</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.init">GameTimer.init</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.fire">GameTimer.fire</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.start">GameTimer.start</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.addhook">GameTimer.addHook</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.pause">GameTimer.pause</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.resume">GameTimer.resume</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.stop">GameTimer.stop</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.restart">GameTimer.restart</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.listeners">GameTimer.listeners</a>
+      </div>
+      <div class="heading h2">
+        <a href="#closure">Closure</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer">
+  <h1>
+    <a href="#gametimer" class="pilcrow">&#182;</a>
+    GameTimer
+  </h1>
+</div>
+
+  </div>
+  <div class="body"><p>Copyright(c) 2012 Stefano Balietti
+MIT Licensed </p>
+
+<p>Creates a controllable timer object for nodeGame </p>
+
+<hr />
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="global-scope">
+  <h2>
+    <a href="#global-scope" class="pilcrow">&#182;</a>
+    Global scope
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  
+<span class="nx">exports</span><span class="p">.</span><span class="nx">GameTimer</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">;</span>
+
+<span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer-status-levels">
+  <h3>
+    <a href="#gametimer-status-levels" class="pilcrow">&#182;</a>
+    GameTimer status levels
+  </h3>
+</div>
+
+
+<p>Numerical levels representing the state of the GameTimer</p>
+  </div>
+  <div class="body"><p>@see GameTimer.status</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameTimer</span><span class="p">.</span><span class="nx">STOPPED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span>
+<span class="nx">GameTimer</span><span class="p">.</span><span class="nx">PAUSED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">;</span>
+<span class="nx">GameTimer</span><span class="p">.</span><span class="nx">UNINITIALIZED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="nx">GameTimer</span><span class="p">.</span><span class="nx">INITIALIZED</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="nx">GameTimer</span><span class="p">.</span><span class="nx">LOADING</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="nx">GameTimer</span><span class="p">.</span><span class="nx">RUNNING</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer-constructor">
+  <h2>
+    <a href="#gametimer-constructor" class="pilcrow">&#182;</a>
+    GameTimer constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates an instance of GameTimer</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>options.</span>
+      <span class="dox_type">object</span>
+      <span>Optional. A configuration object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">GameTimer</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="public-properties">
+  <h2>
+    <a href="#public-properties" class="pilcrow">&#182;</a>
+    Public properties
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.status">
+  <h3>
+    <a href="#gametimer.status" class="pilcrow">&#182;</a>
+    GameTimer.status
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Numerical index representing the current the state of the GameTimer object</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">;</span>  
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.options">
+  <h3>
+    <a href="#gametimer.options" class="pilcrow">&#182;</a>
+    GameTimer.options
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The current settings for the GameTimer</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.timer">
+  <h3>
+    <a href="#gametimer.timer" class="pilcrow">&#182;</a>
+    GameTimer.timer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The ID of the javascript interval</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.timeleft">
+  <h3>
+    <a href="#gametimer.timeleft" class="pilcrow">&#182;</a>
+    GameTimer.timeLeft
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Milliseconds left before time is up</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">timeLeft</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.timepassed">
+  <h3>
+    <a href="#gametimer.timepassed" class="pilcrow">&#182;</a>
+    GameTimer.timePassed
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Milliseconds already passed from the start of the timer</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">timePassed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.update">
+  <h3>
+    <a href="#gametimer.update" class="pilcrow">&#182;</a>
+    GameTimer.update
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The frequency of update for the timer (in milliseconds)</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span> 
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.timeup">
+  <h3>
+    <a href="#gametimer.timeup" class="pilcrow">&#182;</a>
+    GameTimer.timeup
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Event string or function to fire when the time is up</p>
+
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameTimer</span><span class="o">.</span><span class="n">fire</span>
+</code></pre></div>
+
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">=</span> <span class="s1">&#39;TIMEUP&#39;</span><span class="p">;</span> 
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.hooks">
+  <h3>
+    <a href="#gametimer.hooks" class="pilcrow">&#182;</a>
+    GameTimer.hooks
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Array of hook functions to fire at every update</p>
+
+<p>The array works as a LIFO queue</p>
+
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameTimer</span><span class="o">.</span><span class="n">fire</span>
+</code></pre></div>
+
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span> <span class="o">=</span> <span class="p">[];</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>TODO: remove into a new addon</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">listeners</span><span class="p">();</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="gametimer-methods">
+  <h2>
+    <a href="#gametimer-methods" class="pilcrow">&#182;</a>
+    GameTimer methods
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.init">
+  <h3>
+    <a href="#gametimer.init" class="pilcrow">&#182;</a>
+    GameTimer.init
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Inits the GameTimer</p>
+
+<p>Takes the configuration as an input parameter or 
+recycles the settings in <code>this.options</code>.</p>
+
+<p>The configuration object is of the type</p>
+
+
+<div class="highlight"><pre><code><span class="n">var</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">milliseconds:</span> <span class="mi">4000</span><span class="p">,</span> <span class="sr">//</span> <span class="n">The</span> <span class="nb">length</span> <span class="n">of</span> <span class="n">the</span> <span class="n">interval</span>
+    <span class="n">update:</span> <span class="mi">1000</span><span class="p">,</span> <span class="sr">//</span> <span class="n">How</span> <span class="n">often</span> <span class="n">to</span> <span class="n">update</span> <span class="n">the</span> <span class="nb">time</span> <span class="n">counter</span><span class="o">.</span> <span class="n">Defaults</span> <span class="n">every</span> <span class="mi">1</span><span class="n">sec</span>
+    <span class="n">timeup:</span> <span class="s">&#39;MY_EVENT&#39;</span><span class="p">,</span> <span class="sr">//</span> <span class="n">An</span> <span class="n">event</span> <span class="n">ot</span> <span class="n">function</span> <span class="n">to</span> <span class="n">fire</span> <span class="n">when</span> <span class="n">the</span> <span class="n">timer</span> <span class="n">expires</span>
+    <span class="n">hooks:</span> <span class="p">[</span> <span class="n">myFunc</span><span class="p">,</span> <span class="sr">//</span> <span class="n">Array</span> <span class="n">of</span> <span class="n">functions</span> <span class="ow">or</span> <span class="n">events</span> <span class="n">to</span> <span class="n">fire</span> <span class="n">at</span> <span class="n">every</span> <span class="n">update</span>
+            <span class="s">&#39;MY_EVENT_UPDATE&#39;</span><span class="p">,</span> 
+            <span class="p">{</span> <span class="n">hook:</span> <span class="n">myFunc2</span><span class="p">,</span>
+              <span class="n">ctx:</span> <span class="n">that</span><span class="p">,</span> <span class="p">},</span>     
+            <span class="p">],</span> 
+<span class="p">}</span> 
+<span class="sr">//</span> <span class="n">Units</span> <span class="n">are</span> <span class="n">in</span> <span class="n">milliseconds</span> 
+</code></pre></div>
+
+
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Configuration object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="nx">clearInterval</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">timeLeft</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">timePassed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">update</span> <span class="o">||</span> <span class="mi">1000</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">||</span> <span class="s1">&#39;TIMEUP&#39;</span><span class="p">;</span> <span class="c1">// event to be fire when timer is expired</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>TODO: update and milliseconds must be multiple now</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">hooks</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">hooks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">addHook</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.fire">
+  <h3>
+    <a href="#gametimer.fire" class="pilcrow">&#182;</a>
+    GameTimer.fire
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Fires a registered hook</p>
+
+<p>If it is a string it is emitted as an event, 
+otherwise it called as a function.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>h</span>
+      <span class="dox_type">mixed</span>
+      <span>The hook to fire</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fire</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">h</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">h</span><span class="p">.</span><span class="nx">hook</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">hook</span> <span class="o">=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">hook</span> <span class="o">||</span> <span class="nx">h</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">hook</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">ctx</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
+    <span class="nx">hook</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">ctx</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">hook</span><span class="p">);</span>
+  <span class="p">}</span> 
+<span class="p">};</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.start">
+  <h3>
+    <a href="#gametimer.start" class="pilcrow">&#182;</a>
+    GameTimer.start
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Starts the timer</p>
+
+<p>Updates the status of the timer and calls <code>setInterval</code>
+At every update all the registered hooks are fired, and 
+time left is checked. </p>
+
+<p>When the timer expires the timeup event is fired, and the
+timer is stopped</p>
+
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameTimer</span><span class="o">.</span><span class="n">status</span>
+<span class="nv">@see</span> <span class="n">GameTimer</span><span class="o">.</span><span class="n">timeup</span>
+<span class="nv">@see</span> <span class="n">GameTimer</span><span class="o">.</span><span class="n">fire</span>
+</code></pre></div>
+
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">LOADING</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>fire the event immediately if time is zero</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timeup</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">RUNNING</span><span class="p">;</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;interval started: &#39;</span> <span class="o">+</span> <span class="nx">that</span><span class="p">.</span><span class="nx">timeLeft</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">,</span> <span class="s1">&#39;GameTimer: &#39;</span><span class="p">);</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">timePassed</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">timePassed</span> <span class="o">+</span> <span class="nx">that</span><span class="p">.</span><span class="nx">update</span><span class="p">;</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">timeLeft</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">-</span> <span class="nx">that</span><span class="p">.</span><span class="nx">timePassed</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>Fire custom hooks from the latest to the first if any</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">hooks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[(</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)]);</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<p>Fire Timeup Event</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">timeLeft</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+</div>
+<p>First stop the timer and then call the timeup</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">timeup</span><span class="p">);</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;time is up: &#39;</span> <span class="o">+</span> <span class="nx">that</span><span class="p">.</span><span class="nx">timeup</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">,</span> <span class="s1">&#39;GameTimer: &#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    
+  <span class="p">},</span> <span class="k">this</span><span class="p">.</span><span class="nx">update</span><span class="p">);</span>
+<span class="p">};</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.addhook">
+  <h3>
+    <a href="#gametimer.addhook" class="pilcrow">&#182;</a>
+    GameTimer.addHook
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Add an hook to the hook list after performing conformity checks.
+The first parameter hook can be a string, a function, or an object
+containing an hook property.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addHook</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">hook</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">hook</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">ctx</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">hook</span><span class="p">.</span><span class="nx">hook</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">hook</span><span class="p">.</span><span class="nx">ctx</span> <span class="o">||</span> <span class="nx">ctx</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">hook</span> <span class="o">=</span> <span class="nx">hook</span><span class="p">.</span><span class="nx">hook</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="nx">hook</span><span class="o">:</span> <span class="nx">hook</span><span class="p">,</span> <span class="nx">ctx</span><span class="o">:</span> <span class="nx">ctx</span><span class="p">});</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.pause">
+  <h3>
+    <a href="#gametimer.pause" class="pilcrow">&#182;</a>
+    GameTimer.pause
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Pauses the timer</p>
+
+<p>If the timer was running, clear the interval and sets the
+status property to <code>GameTimer.PAUSED</code></p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pause</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">PAUSED</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+</div>
+<p>console.log('Clearing Interval... pause')</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">clearInterval</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.resume">
+  <h3>
+    <a href="#gametimer.resume" class="pilcrow">&#182;</a>
+    GameTimer.resume
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Resumes a paused timer</p>
+
+<p>If the timer was paused, restarts it with the current configuration</p>
+
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameTimer</span><span class="o">.</span><span class="n">restart</span>
+</code></pre></div>
+
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">resume</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">!==</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">PAUSED</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span> <span class="c1">// timer was not paused</span>
+  <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span><span class="nx">milliseconds</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">timePassed</span><span class="p">},</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">restart</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+<span class="p">};</span>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.stop">
+  <h3>
+    <a href="#gametimer.stop" class="pilcrow">&#182;</a>
+    GameTimer.stop
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Stops the timer</p>
+
+<p>If the timer was paused or running, clear the interval, sets the
+status property to <code>GameTimer.STOPPED</code>, and reset the time passed
+and time left properties</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">STOPPED</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">STOPPED</span><span class="p">;</span>
+  <span class="nx">clearInterval</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">timePassed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">timeLeft</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<span class="p">};</span>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.restart">
+  <h3>
+    <a href="#gametimer.restart" class="pilcrow">&#182;</a>
+    GameTimer.restart
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Restarts the timer</p>
+
+<p>Uses the input parameter as configuration object, 
+or the current settings, if undefined </p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. A configuration object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restart</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.listeners">
+  <h3>
+    <a href="#gametimer.listeners" class="pilcrow">&#182;</a>
+    GameTimer.listeners
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Experimental. Undocumented (for now)</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">listeners</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+</div>
+<p><!-- <br />
+    node.on('GAME_TIMER_START', function() {
+        that.start();
+    }); </p>
+
+
+<div class="highlight"><pre><code><span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;GAME_TIMER_PAUSE&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">that</span><span class="o">.</span><span class="n">pause</span><span class="p">();</span>
+<span class="p">});</span>
+
+<span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;GAME_TIMER_RESUME&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">that</span><span class="o">.</span><span class="n">resume</span><span class="p">();</span>
+<span class="p">});</span>
+
+<span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;GAME_TIMER_STOP&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">that</span><span class="o">.</span><span class="n">stop</span><span class="p">();</span>
+<span class="p">});</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code><span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;DONE&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(){</span>
+    <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;TIMER PAUSED&#39;</span><span class="p">);</span>
+    <span class="n">that</span><span class="o">.</span><span class="n">pause</span><span class="p">();</span>
+<span class="p">});</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+</div>
+<p>TODO: check what is right behavior for this
+    node.on('WAITING...', function(){
+        that.pause();
+    });
+--></p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="closure">
+  <h2>
+    <a href="#closure" class="pilcrow">&#182;</a>
+    Closure
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
+  <span class="p">,</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

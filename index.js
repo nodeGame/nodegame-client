@@ -14,7 +14,7 @@
 
 (function (node) {
 
-node.version = '0.7.5';
+node.version = '0.4.8';
 
 /**
  *  ## node.verbosity

@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PlayerList.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../', thisFile = 'lib/PlayerList.js', defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#playerlist">PlayerList</a>
+      </div>
+      <div class="heading h2">
+        <a href="#global-scope">Global scope</a>
+      </div>
+      <div class="heading h2">
+        <a href="#playerlist.array2groups--static-">PlayerList.array2Groups (static)</a>
+      </div>
+      <div class="heading h2">
+        <a href="#playerlist-constructor">PlayerList constructor</a>
+      </div>
+      <div class="heading h2">
+        <a href="#playerlist-methods">PlayerList methods</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.add">PlayerList.add</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.remove">PlayerList.remove</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.get">PlayerList.get</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.pop">PlayerList.pop</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.getallids">PlayerLIst.getAllIDs</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.updateplayerstate">PlayerList.updatePlayerState</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.exist">PlayerList.exist</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.isstatedone">PlayerList.isStateDone</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.actives">PlayerList.actives</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.checkstate">PlayerList.checkState</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.tostring">PlayerList.toString</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.getngroups">PlayerList.getNGroups</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.getgroupssizen">PlayerList.getGroupsSizeN</a>
+      </div>
+      <div class="heading h3">
+        <a href="#playerlist.getrandom">PlayerList.getRandom</a>
+      </div>
+      <div class="heading h1">
+        <a href="#player-class">Player Class</a>
+      </div>
+      <div class="heading h2">
+        <a href="#player-constructor">Player constructor</a>
+      </div>
+      <div class="heading h2">
+        <a href="#private-properties">Private properties</a>
+      </div>
+      <div class="heading h3">
+        <a href="#player.sid">Player.sid</a>
+      </div>
+      <div class="heading h3">
+        <a href="#player.id">Player.id</a>
+      </div>
+      <div class="heading h3">
+        <a href="#player.count">Player.count</a>
+      </div>
+      <div class="heading h2">
+        <a href="#player-public-properties">Player public properties</a>
+      </div>
+      <div class="heading h3">
+        <a href="#player.ip">Player.ip</a>
+      </div>
+      <div class="heading h3">
+        <a href="#player.name">Player.name</a>
+      </div>
+      <div class="heading h3">
+        <a href="#player.state">Player.state</a>
+      </div>
+      <div class="heading h2">
+        <a href="#extra-properties">Extra properties</a>
+      </div>
+      <div class="heading h2">
+        <a href="#player-methods">Player methods</a>
+      </div>
+      <div class="heading h3">
+        <a href="#player.tostring">Player.toString</a>
+      </div>
+      <div class="heading h2">
+        <a href="#closure">Closure</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist">
+  <h1>
+    <a href="#playerlist" class="pilcrow">&#182;</a>
+    PlayerList
+  </h1>
+</div>
+
+  </div>
+  <div class="body"><p>Copyright(c) 2012 Stefano Balietti
+MIT Licensed </p>
+
+<p>Stores a collection of <code>Player</code> objects and offers methods
+to perform operation on them</p>
+
+<hr />
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="global-scope">
+  <h2>
+    <a href="#global-scope" class="pilcrow">&#182;</a>
+    Global scope
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>Setting up global scope variables </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
+  <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">GameState</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>Exposing constructor</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">PlayerList</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>Inheriting from NDDB    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+<span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">PlayerList</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.array2groups--static-">
+  <h2>
+    <a href="#playerlist.array2groups--static-" class="pilcrow">&#182;</a>
+    PlayerList.array2Groups (static)
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Transforms an array of array (of players) into an
+array of PlayerList instances and returns it.</p>
+
+<p>The original array is modified.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>array</span>
+      <span class="dox_type">Array</span>
+      <span>The array to transform</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">Array</span>
+      <span>array The array of <code>PlayerList</code> objects</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">array2Groups</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">array</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">array</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">array</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">array</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlayerList</span><span class="p">({},</span> <span class="nx">array</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+  <span class="p">};</span>
+  <span class="k">return</span> <span class="nx">array</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist-constructor">
+  <h2>
+    <a href="#playerlist-constructor" class="pilcrow">&#182;</a>
+    PlayerList constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates an instance of PlayerList.</p>
+
+<p>The instance inherits from NDDB, an contains an internal 
+database for storing the players </p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Configuration options for the instance</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>db</span>
+      <span class="dox_type">object</span>
+      <span>Optional. An initial set of players to import </span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>parent</span>
+      <span class="dox_type">PlayerList</span>
+      <span>Optional. A parent object for the instance</span>
+    </div>
+    <div class="dox_tag_title">API</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">public</span>
+    </span>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">PlayerList</span> <span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
+  <span class="nx">NDDB</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">,</span> <span class="nx">parent</span><span class="p">);</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">globalCompare</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">pl1</span><span class="p">,</span> <span class="nx">pl2</span><span class="p">)</span> <span class="p">{</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="nx">pl1</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">pl2</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">pl1</span><span class="p">.</span><span class="nx">count</span> <span class="o">&lt;</span> <span class="nx">pl2</span><span class="p">.</span><span class="nx">count</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">pl1</span><span class="p">.</span><span class="nx">count</span> <span class="o">&gt;</span> <span class="nx">pl2</span><span class="p">.</span><span class="nx">count</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Two players with different id have the same count number&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="playerlist-methods">
+  <h2>
+    <a href="#playerlist-methods" class="pilcrow">&#182;</a>
+    PlayerList methods
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.add">
+  <h3>
+    <a href="#playerlist.add" class="pilcrow">&#182;</a>
+    PlayerList.add
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Adds a new player to the database</p>
+
+<p>Before insertion, objects are checked to be valid <code>Player</code> objects.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>player</span>
+      <span class="dox_type">Player</span>
+      <span>The player object to add to the database</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">Boolean</span>
+      <span>TRUE, if the insertion was successful</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<!-- Check if the object contains the minimum requisite to act as Player -->
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span> <span class="o">||</span> <span class="o">!</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span> <span class="o">||</span> <span class="o">!</span><span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Only instance of Player objects can be added to a PlayerList&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<!-- Check if the id is unique -->
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Attempt to add a new player already in the player list: &#39;</span> <span class="o">+</span> <span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
+  <span class="nx">player</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="nx">player</span><span class="p">.</span><span class="nx">nddbid</span><span class="p">;</span>
+  
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.remove">
+  <h3>
+    <a href="#playerlist.remove" class="pilcrow">&#182;</a>
+    PlayerList.remove
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Removes a player from the database based on its id</p>
+
+<p>If no id is passed, removes all currently selected 
+players</p>
+
+<p>Notice: this operation cannot be undone</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>id</span>
+      <span class="dox_type">number</span>
+      <span>The id of the player to remove</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">Boolean</span>
+      <span>TRUE, if a player is found and removed successfully </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+</div>
+<p>fallback on NDDB.remove</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">return</span> <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+  <span class="p">}</span>
+    
+  <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">p</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Attempt to remove a non-existing player from the the player list. id: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+  <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.get">
+  <h3>
+    <a href="#playerlist.get" class="pilcrow">&#182;</a>
+    PlayerList.get
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Retrieves a player with a given id and returns it</p>
+
+<p>Displays a warning if more than one player is found with the same id</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>id</span>
+      <span class="dox_type">number</span>
+      <span>The id of the player to retrieve</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">Player</span>
+      <span class="dox_type">Boolean</span>
+      <span>The player with the speficied id, or FALSE if no player was found</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">id</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  
+  <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;More than one player found with id: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="nx">p</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">p</span><span class="p">.</span><span class="nx">first</span><span class="p">();</span>
+  <span class="p">}</span>
+  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Attempt to access a non-existing player from the the player list. id: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+  <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.pop">
+  <h3>
+    <a href="#playerlist.pop" class="pilcrow">&#182;</a>
+    PlayerList.pop
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Retrieves a player with a given id, removes it from the database,
+and returns it</p>
+
+<p>Displays a warning if more than one player is found with the same id</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>id</span>
+      <span class="dox_type">number</span>
+      <span>The id of the player to retrieve</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">Player</span>
+      <span class="dox_type">Boolean</span>
+      <span>The player with the speficied id, or FALSE if no player was found </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pop</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">id</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  
+  <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+</div>
+<!-- can be either a Player object or an array of Players -->
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">p</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.getallids">
+  <h3>
+    <a href="#playerlist.getallids" class="pilcrow">&#182;</a>
+    PlayerLIst.getAllIDs
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Fetches all the id of the players in the database and
+returns them into an array</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">Array</span>
+      <span>The array of id of players</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getAllIDs</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>  
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">){</span><span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">;});</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.updateplayerstate">
+  <h3>
+    <a href="#playerlist.updateplayerstate" class="pilcrow">&#182;</a>
+    PlayerList.updatePlayerState
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Updates the value of the <code>state</code> object of a player in the database</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>id</span>
+      <span class="dox_type">number</span>
+      <span>The id of the player to update</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>state</span>
+      <span class="dox_type">GameState</span>
+      <span>The new value of the state property</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">Boolean</span>
+      <span>TRUE, if update is successful</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updatePlayerState</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Attempt to access a non-existing player from the the player list &#39;</span> <span class="o">+</span> <span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> 
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Attempt to assign to a player an undefined state&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="p">).</span><span class="nx">first</span><span class="p">().</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">state</span><span class="p">;</span> 
+
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.exist">
+  <h3>
+    <a href="#playerlist.exist" class="pilcrow">&#182;</a>
+    PlayerList.exist
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Checks whether at least one player with a given player exists</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>id</span>
+      <span class="dox_type">number</span>
+      <span>The id of the player</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">Boolean</span>
+      <span>TRUE, if a player with the specified id was found</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">exist</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="p">).</span><span class="nx">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.isstatedone">
+  <h3>
+    <a href="#playerlist.isstatedone" class="pilcrow">&#182;</a>
+    PlayerList.isStateDone
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Checks whether all players in the database are DONE
+for the specified <code>GameState</code>.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>state</span>
+      <span class="dox_type">GameState</span>
+      <span>Optional. The GameState to check. Defaults state = node.game.state</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>extended</span>
+      <span class="dox_type">Boolean</span>
+      <span>Optional. If TRUE, also newly connected players are checked. Defaults, FALSE</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">Boolean</span>
+      <span>TRUE, if all the players are DONE with the specified <code>GameState</code></span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isStateDone</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">extended</span><span class="p">)</span> <span class="p">{</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<!-- console.log('1--- ' + state); -->
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">state</span> <span class="o">=</span> <span class="nx">state</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<!-- console.log('2--- ' + state); -->
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">extended</span> <span class="o">=</span> <span class="nx">extended</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
+  
+  <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">gs</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+</div>
+<!-- console.log('Going to compare ' + gs + ' and ' + state); -->
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+</div>
+<p>Player is done for his state</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">is</span> <span class="o">!==</span> <span class="nx">GameState</span><span class="p">.</span><span class="nx">iss</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+</div>
+<p>The state of the player is actually the one we are interested in</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">GameState</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">});</span>
+  
+  <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">result</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">sum</span> <span class="o">=</span> <span class="nx">sum</span> <span class="o">+</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+  <span class="p">}</span>
+  
+  <span class="kd">var</span> <span class="nx">total</span> <span class="o">=</span> <span class="p">(</span><span class="nx">extended</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">length</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">actives</span><span class="p">();</span> </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+</div>
+<!--
+    console.log('ISDONE??')
+    console.log(total + ' ' + sum);
+-->    
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">return</span> <span class="p">(</span><span class="nx">sum</span> <span class="o">===</span> <span class="nx">total</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.actives">
+  <h3>
+    <a href="#playerlist.actives" class="pilcrow">&#182;</a>
+    PlayerList.actives
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Counts the number of player whose state is different from 0:0:0</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">number</span>
+      <span>result The number of player whose state is different from 0:0:0</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">actives</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">gs</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">gs</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+</div>
+<!-- Player is on 0.0.0 state -->
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">GameState</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">gs</span><span class="p">,</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">())</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">result</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">});</span> </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+</div>
+<!-- node.log('ACTIVES: ' + result); -->
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.checkstate">
+  <h3>
+    <a href="#playerlist.checkstate" class="pilcrow">&#182;</a>
+    PlayerList.checkState
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>If all the players are DONE with the specfied state,
+emits a <code>STATEDONE</code> event</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>state</span>
+      <span class="dox_type">GameState</span>
+      <span>Optional. The GameState to check. Defaults state = node.game.state</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>extended</span>
+      <span class="dox_type">Boolean</span>
+      <span>Optional. If TRUE, also newly connected players are checked. Defaults, FALSE</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">checkState</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">extended</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isStateDone</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">extended</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;STATEDONE&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.tostring">
+  <h3>
+    <a href="#playerlist.tostring" class="pilcrow">&#182;</a>
+    PlayerList.toString
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a string representation of the state of the 
+PlayerList</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>eol</span>
+      <span class="dox_type">string</span>
+      <span>Optional. End of line separator between players</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">string</span>
+      <span>out The string representation of the state of the PlayerList</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">eol</span><span class="p">)</span> <span class="p">{</span>
+  
+  <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">EOL</span> <span class="o">=</span> <span class="nx">eol</span> <span class="o">||</span> <span class="s1">&#39;\n&#39;</span><span class="p">;</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">out</span> <span class="o">+=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">p</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">state</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>
+      <span class="nx">out</span> <span class="o">+=</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">state</span> <span class="o">+</span> <span class="nx">EOL</span><span class="p">;</span>
+  <span class="p">});</span>
+  <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.getngroups">
+  <h3>
+    <a href="#playerlist.getngroups" class="pilcrow">&#182;</a>
+    PlayerList.getNGroups
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Creates N random groups of players</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>N</span>
+      <span class="dox_type">number</span>
+      <span>The number of groups</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">Array</span>
+      <span>Array containing N <code>PlayerList</code> objects </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getNGroups</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">N</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">groups</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getNGroups</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">,</span> <span class="nx">N</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">array2Groups</span><span class="p">(</span><span class="nx">groups</span><span class="p">);</span>
+<span class="p">};</span>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.getgroupssizen">
+  <h3>
+    <a href="#playerlist.getgroupssizen" class="pilcrow">&#182;</a>
+    PlayerList.getGroupsSizeN
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Creates random groups of N players</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>N</span>
+      <span class="dox_type">number</span>
+      <span>The number player per group</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">Array</span>
+      <span>Array containing N <code>PlayerList</code> objects </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getGroupsSizeN</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">N</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">groups</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getGroupsSizeN</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">,</span> <span class="nx">N</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">array2Groups</span><span class="p">(</span><span class="nx">groups</span><span class="p">);</span>
+<span class="p">};</span>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="playerlist.getrandom">
+  <h3>
+    <a href="#playerlist.getrandom" class="pilcrow">&#182;</a>
+    PlayerList.getRandom
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a set of N random players </p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>N</span>
+      <span class="dox_type">number</span>
+      <span>The number of random players to include in the set. Defaults N = 1</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">Player</span>
+      <span class="dox_type">Array</span>
+      <span>A single player object or an array of</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRandom</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span> 
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">N</span><span class="p">)</span> <span class="nx">N</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">N</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;N must be an integer &gt;= 1&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">();</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">N</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">first</span><span class="p">();</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">limit</span><span class="p">(</span><span class="nx">N</span><span class="p">).</span><span class="nx">fetch</span><span class="p">();</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="player-class">
+  <h1>
+    <a href="#player-class" class="pilcrow">&#182;</a>
+    Player Class
+  </h1>
+</div>
+
+  </div>
+  <div class="body"><p>A Player object is a wrapper object for a number of properties 
+to associate to a player during the game. </p>
+
+<p>Some of the properties are <code>private</code> and can never be changed 
+after an instance of a Player has been created. Defaults one are:</p>
+
+
+<div class="highlight"><pre><code><span class="sb">`sid`</span><span class="p">:</span> <span class="n">The</span> <span class="n">Socket</span><span class="o">.</span><span class="n">io</span> <span class="n">session</span> <span class="n">id</span> <span class="n">associated</span> <span class="n">to</span> <span class="n">the</span> <span class="n">player</span>
+<span class="sb">`id`</span><span class="p">:</span> <span class="n">The</span> <span class="n">nodeGame</span> <span class="n">session</span> <span class="n">id</span> <span class="n">associate</span> <span class="n">to</span> <span class="n">the</span> <span class="n">player</span>
+<span class="sb">`count`</span><span class="p">:</span> <span class="n">The</span> <span class="n">id</span> <span class="n">of</span> <span class="n">the</span> <span class="n">player</span> <span class="n">within</span> <span class="n">a</span> <span class="n">PlayerList</span> <span class="n">object</span>
+</code></pre></div>
+
+
+
+<p>Others properties are public and can be changed during the game.</p>
+
+
+<div class="highlight"><pre><code><span class="sb">`name`</span><span class="p">:</span> <span class="n">An</span> <span class="n">alphanumeric</span> <span class="n">name</span> <span class="n">associated</span> <span class="n">to</span> <span class="n">the</span> <span class="n">player</span> 
+<span class="sb">`state`</span><span class="p">:</span> <span class="n">The</span> <span class="n">current</span> <span class="n">state</span> <span class="n">of</span> <span class="n">the</span> <span class="n">player</span> <span class="n">as</span> <span class="n">relative</span> <span class="n">to</span> <span class="n">a</span> <span class="n">game</span>
+<span class="sb">`ip`</span><span class="p">:</span> <span class="n">The</span> <span class="n">ip</span> <span class="n">address</span> <span class="n">of</span> <span class="n">the</span> <span class="n">player</span>
+</code></pre></div>
+
+
+
+<p>All the additional properties in the configuration object passed 
+to the constructor are also created as <em>private</em> and cannot be further
+modified during the game. </p>
+
+<p>For security reasons, non-default properties cannot be <code>function</code>, and 
+cannot overwrite any previously existing property.</p>
+
+<hr />
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+</div>
+<p>Expose Player constructor</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">Player</span> <span class="o">=</span> <span class="nx">Player</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="player-constructor">
+  <h2>
+    <a href="#player-constructor" class="pilcrow">&#182;</a>
+    Player constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates an instance of Player</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>pl</span>
+      <span class="dox_type">object</span>
+      <span>The object literal representing the player</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">Player</span> <span class="p">(</span><span class="nx">pl</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">pl</span> <span class="o">=</span> <span class="nx">pl</span> <span class="o">||</span> <span class="p">{};</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="private-properties">
+  <h2>
+    <a href="#private-properties" class="pilcrow">&#182;</a>
+    Private properties
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="player.sid">
+  <h3>
+    <a href="#player.sid" class="pilcrow">&#182;</a>
+    Player.sid
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The session id received from the nodeGame server</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">sid</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">sid</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;sid&#39;</span><span class="p">,</span> <span class="p">{</span>
+      <span class="nx">value</span><span class="o">:</span> <span class="nx">sid</span><span class="p">,</span>
+        <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">sid</span> <span class="o">=</span> <span class="nx">sid</span><span class="p">;</span>
+  <span class="p">}</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="player.id">
+  <h3>
+    <a href="#player.id" class="pilcrow">&#182;</a>
+    Player.id
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The nodeGame session id associate to the player </p>
+
+<p>Usually it is the same as the Socket.io id, but in 
+case of reconnections it can change</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">sid</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="p">{</span>
+      <span class="nx">value</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span>
+        <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
+  <span class="p">}</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="player.count">
+  <h3>
+    <a href="#player.count" class="pilcrow">&#182;</a>
+    Player.count
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The ordinal position of the player in a PlayerList object</p>
+
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">PlayerList</span>
+</code></pre></div>
+
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">count</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">count</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="nx">count</span><span class="p">,</span>
+        <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="nx">count</span><span class="p">;</span>
+  <span class="p">}</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="player-public-properties">
+  <h2>
+    <a href="#player-public-properties" class="pilcrow">&#182;</a>
+    Player public properties
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="player.ip">
+  <h3>
+    <a href="#player.ip" class="pilcrow">&#182;</a>
+    Player.ip
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The ip address of the player</p>
+
+<p>Note: this can change in mobile networks</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">ip</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">ip</span><span class="p">;</span>
+ </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="player.name">
+  <h3>
+    <a href="#player.name" class="pilcrow">&#182;</a>
+    Player.name
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>An alphanumeric name associated with the player</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="player.state">
+  <h3>
+    <a href="#player.state" class="pilcrow">&#182;</a>
+    Player.state
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reference to the game-state the player currently is</p>
+
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">state</span>
+<span class="nv">@see</span> <span class="n">GameState</span>
+</code></pre></div>
+
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">state</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">();</span>
+
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="extra-properties">
+  <h2>
+    <a href="#extra-properties" class="pilcrow">&#182;</a>
+    Extra properties
+  </h2>
+</div>
+
+
+<p>Non-default properties are all added as private
+For security reasons, they cannot be of type function, and they 
+cannot overwrite any previously defined variable</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">pl</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">pl</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">pl</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="player-methods">
+  <h2>
+    <a href="#player-methods" class="pilcrow">&#182;</a>
+    Player methods
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="player.tostring">
+  <h3>
+    <a href="#player.tostring" class="pilcrow">&#182;</a>
+    Player.toString
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a string representation of a player</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">string</span>
+      <span>The string representation of a player</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Player</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span> <span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; (&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;) &#39;</span> <span class="o">+</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>
+<span class="p">};</span>
+    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="closure">
+  <h2>
+    <a href="#closure" class="pilcrow">&#182;</a>
+    Closure
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
+  <span class="p">,</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

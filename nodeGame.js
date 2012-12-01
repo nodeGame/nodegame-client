@@ -138,7 +138,7 @@
 		});
 	};
 	
-	node.removeListener = function (event, func) {
+	node.off = node.removeListener = function (event, func) {
 		return node.events.remove(event, func);
 	};
 	

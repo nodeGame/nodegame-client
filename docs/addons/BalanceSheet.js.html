@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BalanceSheet.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../', thisFile = 'addons/BalanceSheet.js', defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#balancesheet-">BalanceSheet:</a>
+      </div>
+      <div class="heading h2">
+        <a href="#global-scope">Global scope</a>
+      </div>
+      <div class="heading h2">
+        <a href="#balancesheet-constructor">BalanceSheet constructor</a>
+      </div>
+      <div class="heading h2">
+        <a href="#public-properties">Public properties</a>
+      </div>
+      <div class="heading h3">
+        <a href="#balancesheet.options">BalanceSheet.options</a>
+      </div>
+      <div class="heading h2">
+        <a href="#balancesheet-methods">BalanceSheet methods</a>
+      </div>
+      <div class="heading h3">
+        <a href="#balancesheet.init">BalanceSheet.init</a>
+      </div>
+      <div class="heading h3">
+        <a href="#balancesheet.addsheet">BalanceSheet.addSheet</a>
+      </div>
+      <div class="heading h3">
+        <a href="#balancesheet.clear">BalanceSheet.clear</a>
+      </div>
+      <div class="heading h1">
+        <a href="#sheet">Sheet</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamedb.add">GameDB.add</a>
+      </div>
+      <div class="heading h2">
+        <a href="#closure">Closure</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="balancesheet-">
+  <h1>
+    <a href="#balancesheet-" class="pilcrow">&#182;</a>
+    BalanceSheet:
+  </h1>
+</div>
+
+  </div>
+  <div class="body"><p>Copyright(c) 2012 Stefano Balietti
+MIT Licensed </p>
+
+<p>Keeps a record of </p>
+
+<hr />
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">){</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="global-scope">
+  <h2>
+    <a href="#global-scope" class="pilcrow">&#182;</a>
+    Global scope
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  
+<span class="nx">exports</span><span class="p">.</span><span class="nx">BalanceSheet</span> <span class="o">=</span> <span class="nx">BalanceSheet</span><span class="p">;</span>
+
+
+<span class="kd">var</span> <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
+  <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">,</span>
+  <span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameDB</span><span class="p">,</span>
+  <span class="nx">GameBit</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameBit</span><span class="p">;</span>
+  
+  <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>//Inheriting from NDDB <br />
+BalanceSheet.prototype = JSUS.clone(NDDB.prototype);
+BalanceSheet.prototype.constructor = BalanceSheet;</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">isValidSheet</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sheet</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sheet</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cannot add a sheet with no name.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sheets</span><span class="p">[</span><span class="nx">sheet</span><span class="p">])</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;A sheet with the same already exists: &#39;</span> <span class="o">+</span> <span class="nx">sheet</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="balancesheet-constructor">
+  <h2>
+    <a href="#balancesheet-constructor" class="pilcrow">&#182;</a>
+    BalanceSheet constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a new instance of BalanceSheet</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">BalanceSheet</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="public-properties">
+  <h2>
+    <a href="#public-properties" class="pilcrow">&#182;</a>
+    Public properties
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  
+  <span class="k">this</span><span class="p">.</span><span class="nx">sheets</span> <span class="o">=</span> <span class="p">{};</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">sheet</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  
+  <span class="nx">log</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">log</span> <span class="o">||</span> <span class="nx">log</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="balancesheet.options">
+  <h3>
+    <a href="#balancesheet.options" class="pilcrow">&#182;</a>
+    BalanceSheet.options
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reference to current configuration</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="balancesheet-methods">
+  <h2>
+    <a href="#balancesheet-methods" class="pilcrow">&#182;</a>
+    BalanceSheet methods
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="balancesheet.init">
+  <h3>
+    <a href="#balancesheet.init" class="pilcrow">&#182;</a>
+    BalanceSheet.init
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Configures the BalanceSheet instance</p>
+
+<p>Takes the configuration as an input parameter or 
+recycles the settings in <code>this.options</code>.</p>
+
+<p>The configuration object is of the type</p>
+
+
+<div class="highlight"><pre><code><span class="n">var</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">returnAt:</span> <span class="s">&#39;first&#39;</span><span class="p">,</span> <span class="sr">//</span> <span class="ow">or</span> <span class="s">&#39;last&#39;</span>
+    <span class="n">triggers:</span> <span class="p">[</span> <span class="n">myFunc</span><span class="p">,</span>
+                <span class="n">myFunc2</span> 
+    <span class="p">],</span>
+<span class="p">}</span> 
+</code></pre></div>
+
+
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Configuration object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">===</span> <span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">first</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">===</span> <span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">last</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">returnAt</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">resetTriggers</span><span class="p">();</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="balancesheet.addsheet">
+  <h3>
+    <a href="#balancesheet.addsheet" class="pilcrow">&#182;</a>
+    BalanceSheet.addSheet
+  </h3>
+</div>
+
+  </div>
+
+<p><div class="body"><p>Adds a new sheet and sets it as default</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>sheet</span>
+      <span class="dox_type">string</span>
+      <span>The sheet name</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>options.</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Configuration options for the sheet</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>items.</span>
+      <span class="dox_type">array</span>
+      <span>Optional. An initial set of items for the sheet</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if the sheet is added successfully</span>
+    </div>
+  </div>
+</div>BalanceSheet.prototype.addSheet = function (sheet, pl, options) {
+if (!isValidSheet(sheet)) return false;
+pl = pl || new PlayerList();</p>
+
+<p>this.sheets[sheet] = pl;</p>
+
+<p>if (!this.initSheet(sheet, options)) {
+    return false;
+}</p>
+
+<p>this.sheet = sheet;
+return true;
+};</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>BalanceSheet.prototype.initSheet = function (sheet, options) {
+if  (!isValidSheet(sheet)) return false;
+this.sheets[sheet].each(function(p){
+    if (!p.<strong>balance) {
+        p.</strong>balance = 0;
+    }
+});
+};</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateBalance</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">amount</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span> <span class="o">||</span> <span class="o">!</span><span class="nx">amount</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">sheet</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;No balance sheet selected&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">sheet</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span>
+    <span class="k">return</span>
+  <span class="p">}</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">sheet</span><span class="p">.</span><span class="nx">players</span><span class="p">[</span><span class="nx">player</span><span class="p">].</span><span class="nx">__balance</span> <span class="o">+=</span> <span class="nx">amount</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">report</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sheet</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isValidSheet</span><span class="p">(</span><span class="nx">sheet</span><span class="p">))</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  
+  
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">sheets</span><span class="p">[</span><span class="nx">sheet</span><span class="p">].</span><span class="nx">keep</span><span class="p">([</span><span class="s1">&#39;__balance&#39;</span><span class="p">]);</span>
+  
+  
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="balancesheet.clear">
+  <h3>
+    <a href="#balancesheet.clear" class="pilcrow">&#182;</a>
+    BalanceSheet.clear
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Clears the trigger array</p>
+
+<p>Requires a boolean parameter to be passed for confirmation</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>clear</span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, to confirm clearing</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if clearing was successful</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Do you really want to clear the current BalanceSheet obj? Please use clear(true)&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">triggersArray</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="k">return</span> <span class="nx">clear</span><span class="p">;</span>
+<span class="p">};</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="sheet">
+  <h1>
+    <a href="#sheet" class="pilcrow">&#182;</a>
+    Sheet
+  </h1>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+</div>
+<p>Inheriting from NDDB    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Sheet</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+<span class="nx">Sheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Sheet</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">Sheet</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
+  <span class="nx">NDDB</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">,</span> <span class="nx">parent</span><span class="p">);</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">pl</span><span class="p">;</span>
+<span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamedb.add">
+  <h3>
+    <a href="#gamedb.add" class="pilcrow">&#182;</a>
+    GameDB.add
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a GameBit and adds it to the database</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>key</span>
+      <span class="dox_type">string</span>
+      <span>An alphanumeric id for the entry</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>value</span>
+      <span class="dox_type">mixed</span>
+      <span>Optional. The value to store</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>player</span>
+      <span class="dox_type">Player</span>
+      <span>Optional. The player associated to the entry. Defaults, node.player</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>player</span>
+      <span class="dox_type">GameState</span>
+      <span>Optional. The state associated to the entry. Defaults, node.game.state</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if insertion was successful</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameBit</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Sheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">key</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  
+  <span class="nx">state</span> <span class="o">=</span> <span class="nx">state</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
+  <span class="nx">player</span> <span class="o">=</span> <span class="nx">player</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameBit</span><span class="p">({</span>
+            <span class="nx">player</span><span class="o">:</span> <span class="nx">player</span><span class="p">,</span> 
+            <span class="nx">key</span><span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="nx">value</span><span class="p">,</span>
+            <span class="nx">state</span><span class="o">:</span> <span class="nx">state</span><span class="p">,</span>
+  <span class="p">}));</span>
+
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">};</span>
+
+
+<span class="nx">Sheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+  
+  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="closure">
+  <h2>
+    <a href="#closure" class="pilcrow">&#182;</a>
+    Closure
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+  <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
+  <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>
