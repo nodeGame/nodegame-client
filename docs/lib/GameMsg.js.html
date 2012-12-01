@@ -190,7 +190,7 @@ message. It specify the nature of requests
 for the message, and specifies the nature of the
 information carried in the message. </p>
 
-<p>It answers the question: "What is the content of the message?"</p>
+<p>It answers the question: "What is the content of the message?" </p>
   </div>
 </div>
         </td>
@@ -249,15 +249,17 @@ information carried in the message. </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gameMsg</span>
+      <span class="dox_tag_name">gameMsg</span>
       <span class="dox_type">GameMsg</span>
       <span>The message to clone</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">GameMsg</span>
-      <span>The cloned messaged</span>
+      <span>The cloned messaged
+
+@see JSUS.clone</span>
     </div>
   </div>
 </div>
@@ -316,7 +318,8 @@ information carried in the message. </p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
 </div>
@@ -349,7 +352,8 @@ information carried in the message. </p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
 </div>
@@ -392,11 +396,7 @@ information carried in the message. </p>
   </div>
   <div class="body"><p>The game-state in which the message was generated</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameState</span>
-</code></pre></div>
-
-
+<p>@see GameState</p>
   </div>
 </div>
         </td>
@@ -416,11 +416,7 @@ information carried in the message. </p>
   </div>
   <div class="body"><p>The action of the message</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameMsg</span><span class="o">.</span><span class="n">actions</span>
-</code></pre></div>
-
-
+<p>@see GameMsg.actions</p>
   </div>
 </div>
         </td>
@@ -441,11 +437,7 @@ information carried in the message. </p>
   </div>
   <div class="body"><p>The target of the message</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameMsg</span><span class="o">.</span><span class="n">targets</span>
-</code></pre></div>
-
-
+<p>@see GameMsg.targets</p>
   </div>
 </div>
         </td>
@@ -466,11 +458,7 @@ information carried in the message. </p>
   </div>
   <div class="body"><p>The id of the sender of the message</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">Player</span><span class="o">.</span><span class="n">id</span>
-</code></pre></div>
-
-
+<p>@see Player.id</p>
   </div>
 </div>
         </td>
@@ -490,12 +478,8 @@ information carried in the message. </p>
   </div>
   <div class="body"><p>The id of the receiver of the message</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">Player</span><span class="o">.</span><span class="n">id</span>
-<span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">id</span>
-</code></pre></div>
-
-
+<p>@see Player.id
+  @see node.player.id</p>
   </div>
 </div>
         </td>
@@ -635,9 +619,11 @@ information carried in the message. </p>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
-      <span>The stringified game-message</span>
+      <span>The stringified game-message
+
+@see GameMsg.toString</span>
     </div>
   </div>
 </div>
@@ -663,9 +649,10 @@ information carried in the message. </p>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
-      <span>The string representation of the message</span>
+      <span>The string representation of the message
+  @see GameMsg.stringify</span>
     </div>
   </div>
 </div>
@@ -710,7 +697,7 @@ information carried in the message. </p>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
       <span>A compact string representing the message </span>
     </div>
@@ -746,9 +733,10 @@ information carried in the message. </p>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
-      <span>The hash string</span>
+      <span>The hash string
+  @see GameMsg.toEvent </span>
     </div>
   </div>
 </div>
@@ -774,9 +762,10 @@ information carried in the message. </p>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
-      <span>The hash string</span>
+      <span>The hash string
+ @see GameMsg.toEvent</span>
     </div>
   </div>
 </div>
@@ -802,7 +791,7 @@ information carried in the message. </p>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
       <span>The hash string</span>
     </div>

@@ -478,7 +478,8 @@
  * Emits an event after a random time interval between 0 and maxWait 
  * 
  * @param {string} event The name of the event
- * @param {number} maxWait Optional. The maximum time to wait before emitting the event. to Defaults, 6000
+ * @param {number} maxWait Optional. The maximum time (in milliseconds)
+ * 	to wait before emitting the event. to Defaults, 6000
  */	
 	node.random.emit = function (event, maxWait){
 		maxWait = maxWait || 6000;
@@ -493,7 +494,8 @@
  * Executes a callback function after a random time interval between 0 and maxWait 
  * 
  * @param {function} The callback function to execute
- * @param {number} maxWait Optional. The maximum time to wait before executing the callback. to Defaults, 6000
+ * @param {number} maxWait Optional. The maximum time (in milliseconds) 
+ * 	to wait before executing the callback. to Defaults, 6000
  */	
 	node.random.exec = function (func, maxWait) {
 		maxWait = maxWait || 6000;

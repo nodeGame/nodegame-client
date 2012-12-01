@@ -168,7 +168,7 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>options</span>
+      <span class="dox_tag_name">options</span>
       <span class="dox_type">object</span>
       <span>Optional. A configuration object</span>
     </div>
@@ -209,7 +209,8 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
 </div>
@@ -355,32 +356,30 @@ game-message</p>
 
 <p>If found, the session object will have the following a structure</p>
 
-
-<div class="highlight"><pre><code><span class="n">var</span> <span class="n">session</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">id:</span>     <span class="n">node</span><span class="o">.</span><span class="n">gsc</span><span class="o">.</span><span class="n">session</span><span class="p">,</span>
-    <span class="n">player:</span> <span class="n">node</span><span class="o">.</span><span class="n">player</span><span class="p">,</span>
-    <span class="n">memory:</span> <span class="n">node</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">memory</span><span class="p">,</span>
-    <span class="n">state:</span>  <span class="n">node</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
-    <span class="n">game:</span>   <span class="n">node</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-    <span class="n">history:</span> <span class="n">undefined</span><span class="p">,</span>
-<span class="p">};</span>  
-</code></pre></div>
-
-
+<p>var session = {
+    id:   node.gsc.session,
+    player: node.player,
+    memory: node.game.memory,
+    state:   node.game.state,
+    game:   node.game.name,
+    history: undefined,
+  };  </p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>msg</span>
+      <span class="dox_tag_name">msg</span>
       <span class="dox_type">GameMsg</span>
       <span>A game-msg</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
       <span class="dox_type">boolean</span>
-      <span>A session object, or FALSE if not was not found</span>
+      <span>A session object, or FALSE if not was not found
+
+@see node.session</span>
     </div>
   </div>
 </div>
@@ -425,15 +424,17 @@ in the session object (GameSocketClient.session)</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>msg</span>
+      <span class="dox_tag_name">msg</span>
       <span class="dox_type">GameMsg</span>
       <span>A game-msg</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, if session was correctly initialized</span>
+      <span>TRUE, if session was correctly initialized
+
+@see GameSocketClient.createPlayer</span>
     </div>
   </div>
 </div>
@@ -465,9 +466,15 @@ in the session object (GameSocketClient.session)</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>session</span>
+      <span class="dox_tag_name">session</span>
       <span class="dox_type">object</span>
-      <span>A session object as loaded by GameSocketClient.getSession</span>
+      <span>A session object as loaded by GameSocketClient.getSession
+
+@emit NODEGAME_RECOVERY
+  @emit LOADED
+
+@see GameSocketClient.createPlayer
+  @see node.session</span>
     </div>
   </div>
 </div>
@@ -672,7 +679,7 @@ set in other sessions (recovery)
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>conf</span>
+      <span class="dox_tag_name">conf</span>
       <span class="dox_type">object</span>
       <span>A configuration object</span>
     </div>
@@ -730,14 +737,14 @@ set in other sessions (recovery)
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>msg</span>
+      <span class="dox_tag_name">msg</span>
       <span class="dox_type">object</span>
       <span class="dox_type">GameMsg</span>
       <span>The game-message to parse</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
       <span>The parsed GameMsg object, or FALSE if an error occurred</span>
@@ -777,11 +784,7 @@ set in other sessions (recovery)
   </div>
   <div class="body"><p>Emits and removes all the events in the message buffer</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">emit</span>
-</code></pre></div>
-
-
+<p>@see node.emit</p>
   </div>
 </div>
         </td>
@@ -816,7 +819,7 @@ be ignored otherwise.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>socket</span>
+      <span class="dox_tag_name">socket</span>
       <span class="dox_type">object</span>
       <span>The socket.io socket</span>
     </div>
@@ -972,12 +975,12 @@ the server, and a session number has been issued</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>socket</span>
+      <span class="dox_tag_name">socket</span>
       <span class="dox_type">object</span>
       <span>The socket.io socket</span>
     </div>
     <div class="dox_tag_detail">
-      <span>session</span>
+      <span class="dox_tag_name">session</span>
       <span class="dox_type">number</span>
       <span>The session id issued by the server</span>
     </div>
@@ -1046,12 +1049,12 @@ the server, and a session number has been issued</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>from</span>
+      <span class="dox_tag_name">from</span>
       <span class="dox_type">string</span>
       <span>Optional. The message sender. Defaults node.player</span>
     </div>
     <div class="dox_tag_detail">
-      <span>to</span>
+      <span class="dox_tag_name">to</span>
       <span class="dox_type">string</span>
       <span>Optional. The recipient of the message. Defaults 'SERVER'</span>
     </div>
@@ -1082,19 +1085,21 @@ the server, and a session number has been issued</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>action</span>
+      <span class="dox_tag_name">action</span>
       <span class="dox_type">string</span>
       <span>A nodeGame action (e.g. 'get' or 'set')</span>
     </div>
     <div class="dox_tag_detail">
-      <span>state</span>
+      <span class="dox_tag_name">state</span>
       <span class="dox_type">GameState</span>
       <span>The GameState object to send</span>
     </div>
     <div class="dox_tag_detail">
-      <span>to</span>
+      <span class="dox_tag_name">to</span>
       <span class="dox_type">string</span>
-      <span>Optional. The recipient of the message.</span>
+      <span>Optional. The recipient of the message.
+
+@see GameMsg.actions</span>
     </div>
   </div>
 </div>
@@ -1121,12 +1126,12 @@ the server, and a session number has been issued</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>text</span>
+      <span class="dox_tag_name">text</span>
       <span class="dox_type">string</span>
       <span>Text to send</span>
     </div>
     <div class="dox_tag_detail">
-      <span>to</span>
+      <span class="dox_tag_name">to</span>
       <span class="dox_type">string</span>
       <span>Optional. The recipient of the message</span>
     </div>
@@ -1155,24 +1160,26 @@ the server, and a session number has been issued</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>action</span>
+      <span class="dox_tag_name">action</span>
       <span class="dox_type">string</span>
       <span>Optional. A nodeGame action (e.g. 'get' or 'set'). Defaults 'say'</span>
     </div>
     <div class="dox_tag_detail">
-      <span>data</span>
+      <span class="dox_tag_name">data</span>
       <span class="dox_type">object</span>
       <span>An object to exchange</span>
     </div>
     <div class="dox_tag_detail">
-      <span>to</span>
+      <span class="dox_tag_name">to</span>
       <span class="dox_type">string</span>
       <span>Optional. The recipient of the message. Defaults 'SERVER'</span>
     </div>
     <div class="dox_tag_detail">
-      <span>text</span>
+      <span class="dox_tag_name">text</span>
       <span class="dox_type">string</span>
-      <span>Optional. A descriptive text associated to the message.</span>
+      <span>Optional. A descriptive text associated to the message.
+
+@see GameMsg.actions</span>
     </div>
   </div>
 </div>
@@ -1204,9 +1211,11 @@ the server, and a session number has been issued</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>The</span>
+      <span class="dox_tag_name">The</span>
       <span class="dox_type">GameMsg</span>
-      <span>game message to send</span>
+      <span>game message to send
+
+@see GameMsg</span>
     </div>
   </div>
 </div>

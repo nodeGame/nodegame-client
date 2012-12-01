@@ -187,7 +187,7 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>settings</span>
+      <span class="dox_tag_name">settings</span>
       <span class="dox_type">object</span>
       <span>Optional. A configuration object</span>
     </div>
@@ -227,7 +227,8 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
 </div>
@@ -261,7 +262,8 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
 </div>
@@ -289,8 +291,7 @@ MIT Licensed </p>
 </div>
 
   </div>
-
-<p><div class="body"><p>An object containing the game logic </p>
+  <div class="body"><p>An object containing the game logic </p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -299,10 +300,13 @@ MIT Licensed </p>
     </div>
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
-</div><!-- support for deprecated options loops --></p>
+</div>
+
+<!-- support for deprecated options loops -->
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">gameLoop</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameLoop</span><span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">loop</span> <span class="o">||</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">loops</span><span class="p">);</span>
   <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
@@ -335,7 +339,8 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
 </div>
@@ -372,7 +377,8 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
 </div>
@@ -414,7 +420,8 @@ instead.</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Game.isReady();</span>
+      <span class="dox_type">Game.isReady();
+</span>
     </div>
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
@@ -581,11 +588,7 @@ message from the server, or checking the STATE of the other players. </p>
 <p>In the server logic the content of SET messages are
 automatically inserted in this object</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">set</span>
-</code></pre></div>
-
-
+<p>@see node.set</p>
   </div>
 </div>
         </td>
@@ -695,16 +698,19 @@ in the game-loop before returning the state</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>N</span>
+      <span class="dox_tag_name">N</span>
       <span class="dox_type">number</span>
       <span>Optional. The number of steps to take in the game-loop. Defaults 1</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
       <span class="dox_type">GameState</span>
-      <span>The next state, or FALSE if it does not exist</span>
+      <span>The next state, or FALSE if it does not exist
+
+@see GameState
+  @see Game.gameLoop</span>
     </div>
   </div>
 </div>
@@ -734,16 +740,19 @@ backward in the game-loop before returning the state</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>times</span>
+      <span class="dox_tag_name">times</span>
       <span class="dox_type">number</span>
       <span>Optional. The number of steps to take in the game-loop. Defaults 1</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
       <span class="dox_type">GameState</span>
-      <span>The previous state, or FALSE if it does not exist</span>
+      <span>The previous state, or FALSE if it does not exist
+
+@see GameState
+  @see Game.gameLoop</span>
     </div>
   </div>
 </div>
@@ -775,15 +784,18 @@ forward in the game-loop</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>jump</span>
+      <span class="dox_tag_name">jump</span>
       <span class="dox_type">number</span>
       <span>The number of steps to take in the game-loop</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, if the game succesfully jumped to the desired state</span>
+      <span>TRUE, if the game succesfully jumped to the desired state
+
+@see GameState
+  @see Game.gameLoop</span>
     </div>
   </div>
 </div>
@@ -817,6 +829,11 @@ but the STATECHANGE event is emitted anyway </p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameState</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type"> Game.observer
+  </span>
     </div>
   </div>
 </div>
@@ -858,7 +875,7 @@ but the STATECHANGE event is emitted anyway </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>state</span>
+      <span class="dox_tag_name">state</span>
       <span class="dox_type">GameState</span>
       <span>The state to load and run</span>
     </div>
@@ -909,15 +926,18 @@ specified game-state</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gameState</span>
+      <span class="dox_tag_name">gameState</span>
       <span class="dox_type">GameState</span>
       <span>Optional. The GameState to run</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">Boolean</span>
-      <span>FALSE, if the execution encountered an error</span>
+      <span>FALSE, if the execution encountered an error
+
+@see Game.gameLoop
+  @see GameState</span>
     </div>
   </div>
 </div>
@@ -1005,7 +1025,9 @@ instead.</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Game.ready;</span>
+      <span class="dox_type">Game.ready;
+
+  </span>
     </div>
   </div>
 </div>
