@@ -1,5 +1,7 @@
 /**
- * # nodeGame: Web Experiments in the Browser
+ * # nodeGame
+ * 
+ * Web Experiments in the Browser
  * 
  * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed 
@@ -80,41 +82,35 @@ node.log = function (txt, level, prefix) {
 };
 
 
-// ### Main objects
-// <!-- will be overwritten later -->
+// ## Objects
+
 node.game 		= {};
 node.socket 	= {};
 node.session 	= {};
 node.player 	= {};
 node.memory 	= {};
 
-// ### Dependencies in the browser
-if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
-if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
-if ('undefined' !== typeof store) node.store = store;
+// ## node.support 
+// A collection of features that are supported by the current browser
+node.support	= {};
 
-
-// TODO: where to put this?
-
-/**
- *  ## node.support
- *  
- *  A collection of features that are supported by the current browser
- *  
- */
-node.support = JSUS.compatibility();
-
-
-// <!-- if node
+// ## Load dependencies 
 if ('object' === typeof module && 'function' === typeof require) {
-    
+	// <!-- Node.js -->
+	require('./init.node.js');
     require('./nodeGame.js');
-
-    // ### Loading Event listeners
     require('./listeners/incoming.js');
     require('./listeners/internal.js');
     require('./listeners/outgoing.js');
 }
-// end node -->
+else {
+	// <!-- Browser -->
+	if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
+	if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
+	if ('undefined' !== typeof store) node.store = store;
+	
+	node.support = JSUS.compatibility();
+}
+
 	
 })('object' === typeof module ? module.exports : (window.node = {}));	

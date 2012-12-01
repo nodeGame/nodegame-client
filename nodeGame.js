@@ -1,10 +1,15 @@
 /**
- * # nodeGame: Web Experiments in the Browser
+ * # nodeGame
+ * 
+ * Web Experiments in the Browser
  * 
  * Copyright(c) 2012 Stefano Balietti MIT Licensed
  * 
  * *nodeGame* is a free, open source, event-driven javascript framework for on
  * line, multiplayer games in the browser.
+ * 
+ * ---
+ * 
  */
 (function (node) {
 		
@@ -18,18 +23,44 @@
 		J					= node.JSUS;
 	
 	
-	// Exposing constants
-	
+// ## Constants 
+
 	node.actions 	= GameMsg.actions;
 	node.IN 		= GameMsg.IN;
 	node.OUT 		= GameMsg.OUT;
 	node.targets 	= GameMsg.targets;		
 	node.states 	= GameState.iss;
 	
-	// Creating main objects
+// ## Objects
 	
+/**
+ * ### node.events
+ * 
+ * Instance of the EventEmitter class
+ * 
+ * Takes care of emitting the events and calling the
+ * proper listener functions 
+ * 
+ * @see node.EventEmitter
+ */	
 	node.events = new EventEmitter();
-	node.msg	= node.GameMsgGenerator;	
+	
+/**
+ * ### node.msg
+ * 
+ * Static factory of game messages
+ * 
+ * @see node.GameMsgGenerator
+ */	
+	node.msg	= node.GameMsgGenerator;
+	
+/**
+ * ### node.socket
+ * 
+ * Instantiates the connection to a nodeGame server
+ * 
+ * @see node.GameSocketClient
+ */	
 	node.socket = node.gsc = new GameSocketClient();
 	
 	
@@ -127,6 +158,42 @@
 		this.conf = conf;
 		return conf;
 	};
+
+/**
+ * ### node.play
+ * 
+ * Establishes a connection with a socket.io server, and starts the game
+ * 
+ * @param {object} conf A configuration object
+ * @param {object} game The game object
+ */	
+	node.connect = node.play = function (conf, game) {	
+		node.setup(conf);
+		
+		// node.socket.connect(conf);
+		
+		node.game = new Game(game);
+		node.emit('NODEGAME_GAME_CREATED');
+		
+		// INIT the game
+		node.game.init.call(node.game);
+		node.socket.connect(conf);
+		
+		node.log('game loaded...');
+		node.log('ready.');
+	};	
+
+/**
+ * ### node.replay
+ * 
+ * Moves the game state to 1.1.1
+ * 
+ * @param {boolean} rest TRUE, to erase the game memory before update the game state
+ */	
+	node.replay = function (reset) {
+		if (reset) node.game.memory.clear(true);
+		node.goto(new GameState({state: 1, step: 1, round: 1}));
+	}	
 	
 /**
  * ### node.on
@@ -196,34 +263,42 @@
 	node.off = node.removeListener = function (event, func) {
 		return node.events.remove(event, func);
 	};
-	
 
 /**
- * ### node.play
+ * ### node.alias
  * 
- * Establishes a connection with a socket.io server, and starts the game
+ * Creates event listeners aliases
  * 
- * @param {object} conf A configuration object
- * @param {object} game The game object
+ * This method creates a new property to the `node.on` object named
+ * after the alias. The alias can be used as a shortcut to register
+ * to new listeners on the given events.
+ * 
+ * 
+ * ```javascript
+ * 	node.alias('myAlias', ['in.say.DATA', 'myEvent']);
+ * 
+ * 	node.on.myAlias(function(){ console.log('myEvent or in.say.DATA'); };
+ * ```	
+ * 
+ * @param {string} alias The name of alias
+ * @param {string|array} The events under which the listeners will be registered to
  */	
-	node.connect = node.play = function (conf, game) {	
-		node.setup(conf);
+	node.alias = function(alias, events) {
+		if (!alias || !events) { 
+			node.err('undefined alias or events'); 
+			return; 
+		}
+		if (!J.isArray(events)) events = [events];
 		
-		// node.socket.connect(conf);
-		
-		node.game = new Game(game);
-		node.emit('NODEGAME_GAME_CREATED');
-		
-		// INIT the game
-		node.game.init.call(node.game);
-		node.socket.connect(conf);
-		
-		node.log('game loaded...');
-		node.log('ready.');
+		J.each(events, function(){
+			node.on[alias] = function(func) {
+				node.on(event, function(msg){
+					func.call(node.game, msg);
+				});
+			};
+		});
 	};	
-
-
-
+	
 /**
  * ### node.emit
  * 
@@ -292,18 +367,6 @@
 		node.on('in.say.DATA', listener);
 	};
 
-/**
- * ### node.replay
- * 
- * Moves the game state to 1.1.1
- * 
- * @param {boolean} rest TRUE, to erase the game memory before update the game state
- */	
-	node.replay = function (reset) {
-		if (reset) node.game.memory.clear(true);
-		node.goto(new GameState({state: 1, step: 1, round: 1}));
-	}
-
 	
 /**
  * ### node.redirect
@@ -340,43 +403,37 @@
 	
 
 
-/**
- * ### node.alias
- * 
- * Creates event listeners aliases
- * 
- * This method creates a new property to the `node.on` object named
- * after the alias. The alias can be used as a shortcut to register
- * to new listeners on the given events.
- * 
- * 
- * ```javascript
- * 	node.alias('myAlias', ['in.say.DATA', 'myEvent']);
- * 
- * 	node.on.myAlias(function(){ console.log('myEvent or in.say.DATA'); };
- * ```	
- * 
- * @param {string} alias The name of alias
- * @param {string|array} The events under which the listeners will be registered to
- */	
-	node.alias = function(alias, events) {
-		if (!alias || !events) { 
-			node.err('undefined alias or events'); 
-			return; 
-		}
-		if (!J.isArray(events)) events = [events];
-		
-		J.each(events, function(){
-			node.on[alias] = function(func) {
-				node.on(event, function(msg){
-					func.call(node.game, msg);
-				});
-			};
-		});
-	};
-
 // ## Aliases
 
+/**
+ *  ### node.DONE
+ * 
+ * Emits locally a DONE event
+ * 
+ * The DONE event signals that the player has terminated a game stage, 
+ * and that it is ready to advance to the next one.
+ * 
+ * @param {mixed} param Optional. An additional parameter passed along
+ */
+	node.DONE = function (param) {
+		node.emit("DONE", param);
+	};
+
+/**
+ *  ### node.TXT
+ * 
+ *  Emits locally a TXT event
+ *  
+ *  The TXT event signals that a text message needs to be delivered
+ *  to a recipient.
+ *  
+ *  @param {string} text The text of the message
+ *  @param {string} to The id of the recipient
+ */	
+	node.TXT = function (text, to) {
+		node.emit('out.say.TXT', text, to);
+	};			
+	
 // ### node.on.txt	
 	node.alias('txt', 'in.say.TXT');
 	
@@ -388,7 +445,7 @@
 	
 // ### node.on.plist	
 	node.alias('plist', ['in.set.PLIST', 'in.say.PLIST']);
- 	
+ 		
 	node.onTXT = function(func) {
 		if (!func) return;
 		node.on("", function(msg) {
@@ -428,36 +485,8 @@
 		});
 	};
 	
-/**
- *  ### node.DONE
- * 
- * Emits locally a DONE event
- * 
- * The DONE event signals that the player has terminated a game stage, 
- * and that it is ready to advance to the next one.
- * 
- * @param {mixed} param Optional. An additional parameter passed along
- */
-	node.DONE = function (param) {
-		node.emit("DONE", param);
-	};
 
-/**
- *  ### node.TXT
- * 
- *  Emits locally a TXT event
- *  
- *  The TXT event signals that a text message needs to be delivered
- *  to a recipient.
- *  
- *  @param {string} text The text of the message
- *  @param {string} to The id of the recipient
- */	
-	node.TXT = function (text, to) {
-		node.emit('out.say.TXT', text, to);
-	};		
-
-// ## node.random
+// ## Extra
 	
 	node.random = {};
 	

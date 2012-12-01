@@ -20,6 +20,9 @@ module.exports = node;
 
 node.JSUS = require('JSUS').JSUS;
 
+// Update compatibility report
+node.support = node.JSUS.compatibility();
+
 /**
  * Expose NDDB
  * 
