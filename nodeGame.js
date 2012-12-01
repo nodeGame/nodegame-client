@@ -9,21 +9,17 @@
  * line, multiplayer games in the browser.
  */
 (function (node) {
-	
-	// Declaring variables
-	// //////////////////////////////////////////
 		
-	var EventEmitter = node.EventEmitter,
-		GameSocketClient = node.GameSocketClient,
-		GameState = node.GameState,
-		GameMsg = node.GameMsg,
-		Game = node.Game,
-		Player = node.Player,
-		GameSession = node.GameSession;
+	var EventEmitter 		= node.EventEmitter,
+		GameSocketClient 	= node.GameSocketClient,
+		GameState 			= node.GameState,
+		GameMsg 			= node.GameMsg,
+		Game 				= node.Game,
+		Player 				= node.Player,
+		GameSession 		= node.GameSession;
 	
 	
-	// Adding constants directly to node
-	// ////////////////////////////////////////
+	// Exposing constants
 	
 	node.actions 	= GameMsg.actions;
 	node.IN 		= GameMsg.IN;
@@ -31,18 +27,27 @@
 	node.targets 	= GameMsg.targets;		
 	node.states 	= GameState.iss;
 	
-	// Creating EventEmitter
-	// /////////////////////////////////////////
+	// Creating main objects
 	
 	node.events = new EventEmitter();
-
-
-	// Creating objects
-	// /////////////////////////////////////////
-	
 	node.msg	= node.GameMsgGenerator;	
 	node.socket = node.gsc = new GameSocketClient();
 	
+	
+	// ## Methods
+	
+	
+/**
+ * ### nove.env
+ * 
+ * Executes a block of code conditionally to nodeGame environment variables  
+ * 
+ * @param env {string} The name of the environment
+ * @param func {function} The callback function to execute
+ * @param ctx {object} Optional. The context of execution
+ * @param params {array} Optional. An array of additional parameters for the callback
+ * 
+ */	
 	node.env = function (env, func, ctx, params) {
 		if (!env || !func || !node.env[env]) return;
 		ctx = ctx || node;
@@ -50,15 +55,21 @@
 		func.apply(ctx, params);
 	};
 	
-	// Adding methods
-	// /////////////////////////////////////////
 	
-	/**
-	 * Parses the a node configuration object and add default and missing
-	 * values. Stores the final configuration in node.conf.
-	 * 
-	 */
-	node._analyzeConf = function (conf) {
+/**
+ * ## node.setup 
+ * 
+ * Setups the nodeGame object
+ * 
+ * Parses a configuration object, adds default and missing
+ * values, and stores the results in `node.conf`.
+ * 
+ * See the examples folder for all available configuration options.
+ * 
+ * @param {object} conf A configutation object
+ * 
+ */
+	node.setup = node._analyzeConf = function (conf) {
 		if (!conf) {
 			node.log('Invalid configuration object found.', 'ERR');
 			return false;
@@ -118,19 +129,38 @@
 		return conf;
 	};
 	
-	
+/**
+ * ## node.on
+ * 
+ * Registers an event listener
+ * 
+ * 
+ * 
+ * @param {string} event The name of the event
+ * @param {function} listener The callback function
+ */	
 	node.on = function (event, listener) {
 		// It is in the init function;
 		if (!node.game || !node.game.state || (GameState.compare(node.game.state, new GameState(), true) === 0 )) {
 			node.events.add(event, listener);
-			// node.log('global');
 		}
 		else {
 			node.events.addLocal(event, listener);
-			// node.log('local');
 		}
 	};
-	
+
+/**
+ * ## node.once
+ * 
+ * Registers an event listener that will be removed 
+ * after its first invocation
+ * 
+ * @param {string} event The name of the event
+ * @param {function} listener The callback function
+ * 
+ * @see node.on
+ * @see node.off
+ */		
 	node.once = function (event, listener) {
 		node.on(event, listener);
 		node.on(event, function(event, listener) {
@@ -138,73 +168,64 @@
 		});
 	};
 	
+/**
+ * ## node.off
+ * 
+ * Deregisters one or multiple event listeners
+ * 
+ * @param {string} event The name of the event
+ * @param {function} listener The callback function
+ * 
+ * @see node.on
+ * @see node.EventEmitter.remove
+ */			
 	node.off = node.removeListener = function (event, func) {
 		return node.events.remove(event, func);
 	};
 	
-	// TODO: create conf objects
+
+/**
+ * ## node.play
+ * 
+ * Establish a connection with a socket.io server, and starts the game
+ * 
+ * @param {object} conf A configuration object
+ * @param {object} game The game object
+ */	
 	node.connect = node.play = function (conf, game) {	
-		node._analyzeConf(conf);
+		node.setup(conf);
 		
 		// node.socket.connect(conf);
 		
 		node.game = new Game(game);
 		node.emit('NODEGAME_GAME_CREATED');
 		
-		
 		// INIT the game
 		node.game.init.call(node.game);
-		node.socket.connect(conf); // was node.socket.setGame(node.game);
+		node.socket.connect(conf);
 		
 		node.log('game loaded...');
 		node.log('ready.');
 	};	
-	
-// node.observe = function (conf, game) {
-// node._analyzeConf(conf);
-//		
-// var game = game || {loops: {1: {state: function(){}}}};
-// node.socket = that.gsc = new GameSocketClient(conf);
-//		
-// node.game = that.game = new Game(game, that.gsc);
-// node.socket.setGame(that.game);
-//		
-// node.on('NODEGAME_READY', function(){
-//			
-// // Retrieve the game and set is as observer
-// node.get('LOOP', function(game) {
-//				
-// // alert(game);
-// // console.log('ONLY ONE');
-// // console.log(game);
-// // var game = game.observer = true;
-// // node.game = that.game = game;
-// //
-// // that.game.init();
-// //
-// // that.gsc.setGame(that.game);
-// //
-// // node.log('nodeGame: game loaded...');
-// // node.log('nodeGame: ready.');
-// });
-// });
-		
-		
-// node.onDATA('GAME', function(data){
-// alert(data);
-// console.log(data);
-// });
-		
-// node.on('DATA', function(msg){
-// console.log('--------->Eh!')
-// console.log(msg);
-// });
-// };
-	
+
+
+
+/**
+ * ### node.emit
+ * 
+ * Emits an event and 
+ */	
 	node.emit = function (event, p1, p2, p3) {	
 		node.events.emit(event, p1, p2, p3);
 	};	
 	
+/**
+ * ### node.say
+ * 
+ * Sends a DATA message to a specified recipient
+ * 
+ * 
+ */	
 	node.say = function (data, what, whom) {
 		node.events.emit('out.say.DATA', data, whom, what);
 	};
@@ -212,7 +233,9 @@
 /**
  * ### node.set
  * 
- * Store a key, value pair in the server memory
+ * Stores a key-value pair in the server memory
+ * 
+ * 
  * 
  * @param {string} key An alphanumeric (must not be unique)
  * @param {mixed} The value to store (can be of any type)
@@ -223,7 +246,12 @@
 		node.events.emit('out.set.DATA', value, null, key);
 	};
 	
-	
+
+/**
+ * ### node.get
+ * 
+ * 
+ */	
 	node.get = function (key, func) {
 		node.events.emit('out.get.DATA', key);
 		
@@ -295,29 +323,8 @@
 		return true;
 	};
 	
-	// *Aliases*
-	//
-	// Conventions:
-	//
-	// - Direction:
-	// 'in' for all
-	//
-	// - Target:
-	// DATA and TXT are 'say' as default
-	// STATE and PLIST are 'set' as default
-	
-	
-	// Sending
-		
-	
-// this.setSTATE = function(action,state,to){
-// var stateEvent = GameMsg.OUT + action + '.STATE';
-// fire(stateEvent,action,state,to);
-// };
-	
-	// Receiving
-	
-	// Say
+// ### Aliases
+
 	
 	node.onTXT = function(func) {
 		node.on("in.say.TXT", function(msg) {
@@ -365,6 +372,8 @@
 		node.emit('out.say.TXT', text, to);
 	};	
 	
+
+// ## node.random
 	
 	node.random = {};
 	

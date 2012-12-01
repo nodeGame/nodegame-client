@@ -50,43 +50,6 @@ node.info = function (txt, prefix) {
 	node.log(txt, node.verbosity_levels.INFO, prefix);
 }
 
-
-/**
- *  ## node.support
- *  
- *  A collection of features that are supported by the current browser
- *  
- */
-node.support = {};
-
-(function(){
-	
-	try {
-		Object.defineProperty({}, "a", {enumerable: false, value: 1})
-		node.support.defineProperty = true;
-	}
-	catch(e) {
-		node.support.defineProperty = false;	
-	}
-	
-	try {
-		eval('({ get x(){ return 1 } }).x === 1')
-		node.support.setter = true;
-	}
-	catch(err) {
-		node.support.setter = false;
-	}
-	  
-	try {
-		var value;
-		eval('({ set x(v){ value = v; } }).x = 1');
-		node.support.getter = true;
-	}
-	catch(err) {
-		node.support.getter = false;
-	}	  
-})();
-
 /**
  * ## node.log
  * 
@@ -116,21 +79,35 @@ node.log = function (txt, level, prefix) {
 	}
 };
 
-// <!-- It will be overwritten later -->
+
+// ### Main objects
+// <!-- will be overwritten later -->
 node.game 		= {};
 node.socket 	= {};
 node.session 	= {};
 node.player 	= {};
 node.memory 	= {};
 
-// <!-- Load the auxiliary library if available in the browser -->
+// ### Dependencies in the browser
 if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
 if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
 if ('undefined' !== typeof store) node.store = store;
 
+
+// TODO: where to put this?
+
+/**
+ *  ## node.support
+ *  
+ *  A collection of features that are supported by the current browser
+ *  
+ */
+node.support = JSUS.compatibility();
+
+
 // <!-- if node
 if ('object' === typeof module && 'function' === typeof require) {
-    require('./init.node.js');
+    
     require('./nodeGame.js');
 
     // ### Loading Event listeners
