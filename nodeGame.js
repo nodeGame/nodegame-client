@@ -304,17 +304,6 @@
 		node.goto(new GameState({state: 1, step: 1, round: 1}));
 	}
 
-/**
- * ### node.goto
- * 
- * Moves the game to the specified game state
- * 
- * @param {string|GameState} The state to go to
- * 
- */	
-	node.goto = function (state) {
-		node.game.updateState(state);
-	};
 	
 /**
  * ### node.redirect
