@@ -14,11 +14,13 @@
 
 (function (node) {
 
-
+// ### version	
 node.version = '0.4.8';
 
+// ## Logging system
+
 /**
- *  ## node.verbosity
+ *  ### node.verbosity
  *  
  *  The minimum level for a log entry to be displayed as output.
  *   
@@ -28,7 +30,11 @@ node.version = '0.4.8';
 node.verbosity = 0;
 
 
-// ## node.verbosity_levels 
+/**
+ * ### node.verbosity_levels
+ * 
+ * ALWAYS, ERR, WARN, INFO, DEBUG
+ */  
 node.verbosity_levels = {
 		// <!-- It is not really always... -->
 		ALWAYS: -(Number.MIN_VALUE+1), 
@@ -38,26 +44,11 @@ node.verbosity_levels = {
 		DEBUG: 100
 };
 
-// ## Logging system
-
-node.warn = function (txt, prefix) {
-	node.log(txt, node.verbosity_levels.WARN, prefix);
-}
-
-node.err = function (txt, prefix) {
-	node.log(txt, node.verbosity_levels.ERR, prefix);
-}
-
-node.info = function (txt, prefix) {
-	node.log(txt, node.verbosity_levels.INFO, prefix);
-}
 
 /**
- * ## node.log
+ * ### node.log
  * 
  * Default nodeGame standard out, override to redirect
- * 
- * Default behavior is to output a text in the form: `nodeGame: some text`.
  * 
  * Logs entries are displayed only if their verbosity level is 
  * greater than `node.verbosity`
@@ -81,20 +72,105 @@ node.log = function (txt, level, prefix) {
 	}
 };
 
+/**
+ * ### node.info
+ * 
+ * Logs an INFO message
+ */
+node.info = function (txt, prefix) {
+	node.log(txt, node.verbosity_levels.INFO, prefix);
+}
+
+/**
+ * ### node.warn
+ * 
+ * Logs a WARNING message
+ */
+node.warn = function (txt, prefix) {
+	node.log(txt, node.verbosity_levels.WARN, prefix);
+}
+
+/**
+ * ### node.err
+ * 
+ * Logs an ERROR message
+ */
+node.err = function (txt, prefix) {
+	node.log(txt, node.verbosity_levels.ERR, prefix);
+}
 
 // ## Objects
 
-node.game 		= {};
-node.socket 	= {};
+/**
+ * ### node.events
+ * 
+ * Instance of the EventEmitter class
+ * 
+ * Takes care of emitting the events and calling the
+ * proper listener functions 
+ * 
+ * @see node.EventEmitter
+ */	
+node.events = {};
+	
+/**
+ * ### node.msg
+ * 
+ * Static factory of game messages
+ * 
+ * @see node.GameMsgGenerator
+ */	
+node.msg = {};
+	
+
+/**
+ * ### node.socket
+ * 
+ * Instantiates the connection to a nodeGame server
+ * 
+ * @see node.GameSocketClient
+ */	
+node.socket = node.gsc = {};
+
+/**
+ * ### node.session
+ * 
+ * Contains a reference to all session variables
+ * 
+ * Session variables can be saved and restored at a later stage
+ */
 node.session 	= {};
+
+/**
+ * ### node.player
+ * Instance of node.Player
+ * 
+ * Contains information about the player
+ * 
+ * @see node.PlayerList.Player
+ */
 node.player 	= {};
+
+/**
+ * ### node.memory
+ * 
+ * Instance of node.GameDB database
+ * 
+ * @see node.GameDB
+ */
 node.memory 	= {};
 
-// ## node.support 
-// A collection of features that are supported by the current browser
+/**
+ * ### node.support 
+ * 
+ * A collection of features that are supported by the current browser
+ */
 node.support	= {};
 
-// ## Load dependencies 
+
+// ## Dependencies 
+// Load dependencies
+
 if ('object' === typeof module && 'function' === typeof require) {
 	// <!-- Node.js -->
 	require('./init.node.js');

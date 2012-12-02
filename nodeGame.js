@@ -21,9 +21,6 @@
 		Player 				= node.Player,
 		GameSession 		= node.GameSession,
 		J					= node.JSUS;
-	
-	
-// ## Constants 
 
 	node.actions 	= GameMsg.actions;
 	node.IN 		= GameMsg.IN;
@@ -31,36 +28,9 @@
 	node.targets 	= GameMsg.targets;		
 	node.states 	= GameState.iss;
 	
-// ## Objects
-	
-/**
- * ### node.events
- * 
- * Instance of the EventEmitter class
- * 
- * Takes care of emitting the events and calling the
- * proper listener functions 
- * 
- * @see node.EventEmitter
- */	
+// <!-- object commented in index.js -->
 	node.events = new EventEmitter();
-	
-/**
- * ### node.msg
- * 
- * Static factory of game messages
- * 
- * @see node.GameMsgGenerator
- */	
 	node.msg	= node.GameMsgGenerator;
-	
-/**
- * ### node.socket
- * 
- * Instantiates the connection to a nodeGame server
- * 
- * @see node.GameSocketClient
- */	
 	node.socket = node.gsc = new GameSocketClient();
 	
 	
