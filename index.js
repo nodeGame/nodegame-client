@@ -1,7 +1,7 @@
 /**
  * # nodeGame
  * 
- * Web Experiments in the Browser
+ * Social Experiments in the Browser
  * 
  * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed 

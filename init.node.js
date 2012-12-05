@@ -1,10 +1,13 @@
 /**
- * # nodeGame init.node.js
+ * # nodeGame 
+ * 
+ * Social Experiments in the Browser
  * 
  * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed 
  * 
- * Inits nodeGame for execution in Node.JS environment
+ * nodeGame is a free, open source, event-driven javascript framework for on line, 
+ * multiplayer games in the browser.
  * 
  */
 
@@ -50,7 +53,7 @@ node.io = require('socket.io-client');
 node.EventEmitter = require('./lib/EventEmitter').EventEmitter;
 
 /**
- * ### node.GameState.
+ * ### node.GameState
  * 
  * @api public
  */
@@ -58,7 +61,7 @@ node.EventEmitter = require('./lib/EventEmitter').EventEmitter;
 node.GameState = require('./lib/GameState').GameState;
 
 /**
- * ### node.PlayerList.
+ * ### node.PlayerList
  * 
  * @api public
  */
@@ -66,7 +69,7 @@ node.GameState = require('./lib/GameState').GameState;
 node.PlayerList = require('./lib/PlayerList').PlayerList;
 
 /**
- * ### node.Player.
+ * ### node.Player
  * 
  * @api public
  */
@@ -135,9 +138,6 @@ node.Game = require('./lib/Game').Game;
 
 // ### Addons
 
-// TODO: add a method to scan the addons directory. Based on
-// configuration
-
 node.GameTimer = require('./addons/GameTimer').GameTimer;
 
 /**
@@ -157,11 +157,9 @@ require('./addons/GameSession').GameSession;
 
 
 // ## File System 
- 
-// ### node.csv
-node.csv = {};
 
 // ### node.fs
+// Responsible for the file system operations
 node.fs = {};
 
 var fs = require('fs'),
@@ -176,12 +174,14 @@ var fs = require('fs'),
  * 
  * It accepts a configuration object as third paramter. Available options:
  *  
- *  	{ 	headers: ['A', 'B', 'C'],// specify the headers directly
- *  		writeHeaders: false, 	// default true,
- *  		flags: 'w', 			// default, 'a'
- *  		encoding: 'utf-8', 		// default null
- *  		mode: 0777, 			// default 0666	}
- *  	
+ * ```
+ * { headers: ['A', 'B', 'C'],	// specify the headers directly
+ *   writeHeaders: false, 		// default true,
+ *   flags: 'w', 				// default, 'a'
+ *   encoding: 'utf-8', 		// default null
+ *   mode: 0777, 				// default 0666	
+ * }
+ * ``` 	
  * 
  * @param {string} path The path to the csv file
  * @param {object} obj The object to serialze as csv file
@@ -281,7 +281,7 @@ node.memory.dumpAllIndexes = function (dir, options) {
 				for (index in node.game.memory[hash]) {
 					if (node.game.memory[hash].hasOwnProperty(index)) {
 						ipath = dir + hash + '_' + index + '.csv';
-						//node.log('Writing ' + ipath, 'DEBUG', 'node.memory.dumpAllIndexes: ');
+						// <!-- node.log('Writing ' + ipath, 'DEBUG', 'node.memory.dumpAllIndexes: '); -->
 	    				node.fs.writeCsv(ipath, node.game.memory[hash][index].split().fetchValues(), options);
 					}
 				}
