@@ -12,8 +12,10 @@
 	
 module.exports = node;
 
+// ## Libraries
+
 /**
- * Expose JSUS
+ * ### node.JSUS
  * 
  * @api public
  */
@@ -24,7 +26,7 @@ node.JSUS = require('JSUS').JSUS;
 node.support = node.JSUS.compatibility();
 
 /**
- * Expose NDDB
+ * ### node.NDDB
  * 
  * @api public
  */
@@ -32,7 +34,7 @@ node.support = node.JSUS.compatibility();
 node.NDDB = require('NDDB').NDDB;
 
 /**
- * Expose Socket.io-client
+ * ### node.Socket.io-client
  * 
  * @api public
  */
@@ -40,7 +42,7 @@ node.NDDB = require('NDDB').NDDB;
 node.io = require('socket.io-client');
 
 /**
- * Expose EventEmitter
+ * ### node.EventEmitter
  * 
  * @api public
  */
@@ -48,7 +50,7 @@ node.io = require('socket.io-client');
 node.EventEmitter = require('./lib/EventEmitter').EventEmitter;
 
 /**
- * Expose GameState.
+ * ### node.GameState.
  * 
  * @api public
  */
@@ -56,7 +58,7 @@ node.EventEmitter = require('./lib/EventEmitter').EventEmitter;
 node.GameState = require('./lib/GameState').GameState;
 
 /**
- * Expose PlayerList.
+ * ### node.PlayerList.
  * 
  * @api public
  */
@@ -64,7 +66,7 @@ node.GameState = require('./lib/GameState').GameState;
 node.PlayerList = require('./lib/PlayerList').PlayerList;
 
 /**
- * Expose Player.
+ * ### node.Player.
  * 
  * @api public
  */
@@ -73,7 +75,7 @@ node.Player = require('./lib/PlayerList').Player;
 
 
 /**
- * Expose GameMsg
+ * ### node.GameMsg
  * 
  * @api public
  */
@@ -81,7 +83,7 @@ node.Player = require('./lib/PlayerList').Player;
  node.GameMsg = require('./lib/GameMsg').GameMsg;
 
 /**
- * Expose GameLoop
+ * ### node.GameLoop
  * 
  * @api public
  */
@@ -90,7 +92,7 @@ node.GameLoop = require('./lib/GameLoop').GameLoop;
 
 
 /**
- * Expose GameMsgGenerator
+ * ### node.GameMsgGenerator
  * 
  * @api public
  */
@@ -98,7 +100,7 @@ node.GameLoop = require('./lib/GameLoop').GameLoop;
 node.GameMsgGenerator = require('./lib/GameMsgGenerator').GameMsgGenerator;
 
 /**
- * Expose GameSocketClient
+ * ### node.GameSocketClient
  * 
  * @api public
  */
@@ -107,7 +109,7 @@ node.GameSocketClient = require('./lib/GameSocketClient').GameSocketClient;
 
 
 /**
- * Expose GameDB
+ * ### node.GameDB
  * 
  * @api public
  */
@@ -115,7 +117,7 @@ node.GameSocketClient = require('./lib/GameSocketClient').GameSocketClient;
 node.GameDB = require('./lib/GameDB').GameDB;
 
 /**
- * Expose GameBit
+ * ### node.GameBit
  * 
  * @api public
  */
@@ -123,7 +125,7 @@ node.GameDB = require('./lib/GameDB').GameDB;
 node.GameBit = require('./lib/GameDB').GameBit;
 
 /**
- * Expose Game
+ * ### node.Game
  * 
  * @api public
  */
@@ -139,7 +141,7 @@ node.Game = require('./lib/Game').Game;
 node.GameTimer = require('./addons/GameTimer').GameTimer;
 
 /**
- * Expose TriggerManager
+ * ### node.TriggerManager
  * 
  * @api public
  */
@@ -147,17 +149,19 @@ node.TriggerManager = require('./addons/TriggerManager').TriggerManager;
 
 
 /**
- * Expose GameSession
+ * ### node.GameSession
  * 
  * @api public
  */
 require('./addons/GameSession').GameSession;
 
 
-// ### Enable file system operations
+// ## File System 
  
-
+// ### node.csv
 node.csv = {};
+
+// ### node.fs
 node.fs = {};
 
 var fs = require('fs'),
@@ -166,7 +170,7 @@ var fs = require('fs'),
 
 
 /**
- * ## node.fs.writeCsv (Node.JS)
+ * ### node.fs.writeCsv (Node.JS)
  * 
  * Serializes an object as a csv file
  * 
@@ -224,18 +228,8 @@ node.fs.writeCsv = function (path, obj, options) {
 	}
 };
 
-// <!-- old one
-//node.fs.writeCsv = function (path, obj) {
-//	var writer = csv.createCsvStreamWriter(fs.createWriteStream( path, {'flags': 'a'}));
-//	var i;
-//    for (i=0; i < obj.length; i++) {
-//		writer.writeRecord(obj[i]);
-//	}
-//};
-// -->
-
 /**
- * ## node.memory.dump (Node.JS)
+ * ### node.memory.dump (Node.JS)
  * 
  * Serializes as a csv file all the entries of the memory object
  * 
@@ -260,7 +254,7 @@ node.memory.dump = function (path, options) {
 };
 
 /**
- * ## node.memory.dumpAllIndexes (Node.JS)
+ * ### node.memory.dumpAllIndexes (Node.JS)
  * 
  * Serialezes as csv file each of the hashed indexes of the memory object
  * 
