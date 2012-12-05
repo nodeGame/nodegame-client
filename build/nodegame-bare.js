@@ -15,7 +15,7 @@
 (function (node) {
 
 // ### version	
-node.version = '0.4.8';
+node.version = '0.5.0';
 
 // ## Logging system
 
@@ -190,6 +190,7 @@ else {
 
 	
 })('object' === typeof module ? module.exports : (window.node = {}));	
+
 /**
  * # EventEmitter
  * 
