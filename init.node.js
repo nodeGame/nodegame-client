@@ -128,6 +128,14 @@ node.GameBit = require('./lib/GameDB').GameBit;
 node.Game = require('./lib/Game').Game;
 
 
+/**
+ * Expose GameSession
+ * 
+ * @api public
+ */
+node.GameSession = require('./lib/Session').GameSession;
+
+
 // ### Addons
 
 // TODO: add a method to scan the addons directory. Based on
@@ -141,14 +149,6 @@ node.GameTimer = require('./addons/GameTimer').GameTimer;
  * @api public
  */
 node.TriggerManager = require('./addons/TriggerManager').TriggerManager;
-
-
-/**
- * Expose GameSession
- * 
- * @api public
- */
-require('./addons/GameSession').GameSession;
 
 
 // ### Enable file system operations

@@ -36,6 +36,7 @@ var ng_client = [
  	rootDir + "lib/GameSocketClient.js",
  	rootDir + "lib/GameDB.js",
  	rootDir + "lib/Game.js", 
+ 	rootDir + "lib/Session.js",
  		 	
  // nodeGame
  	rootDir + "nodeGame.js",
