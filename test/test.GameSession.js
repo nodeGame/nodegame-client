@@ -79,11 +79,14 @@ describe('SessionManager', function() {
 	describe('Import / Export', function() {
 		before(function(){
 			test1 = null;
-			test2 = null;
+			test2 = manager.session;
 		});
 		it("#save()", function() {
 			test1 = manager.save();
-			//test1.should.be.equal(manager.session);
+			
+			var shouldBe = J.clone(manager.session);
+			shouldBe["game.myObj"].value = myObj;
+			test1.should.be.eql(shouldBe);
 		});
 		
 		it("#clear()", function() {
@@ -93,7 +96,7 @@ describe('SessionManager', function() {
 		
 		it("#load()", function() {
 			manager.load(test1);
-			manager.session.should.be.eql(test1);
+			manager.session.should.be.eql(test2);
 		});
 		
 	});
@@ -101,18 +104,13 @@ describe('SessionManager', function() {
 	describe('#restore()', function() {
 		before(function(){
 			test1 = manager.save();
-			console.log(test1)
-			
-//			delete node.game.myObj;
-//			manager.restore(test1);
-		});
-		it("should restore objects in the session", function() {
-			console.log(test1);
+			delete node.game.myObj;
+			manager.restore(test1);
 		});
 		
-//		it("should restore objects in the session", function() {
-//			node.game.myObj.should.be.eql(myObj);
-//		});
+		it("should restore objects in the session", function() {
+			node.game.myObj.should.be.eql(myObj);
+		});
 	});
 	
 });
