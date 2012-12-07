@@ -64,6 +64,13 @@
 			return false;
 		}
 		
+		if (!conf.socket) {
+			conf.socket = {};
+			conf.socket.type = 'SocketIo';
+		}
+		
+		node.socket = new Socket(conf.socket);
+		
 		// URL
 		if (!conf.host) {
 			if ('undefined' !== typeof window) {
@@ -383,6 +390,71 @@
 			func.call();
 		}, Math.random()*timing, func);
 	};
+	
+	
+	
+/**
+ * ### node.createPlayer
+ * 
+ * Mixes in default properties for the player object and
+ * additional configuration variables from node.conf.player
+ * 
+ * Writes the node.player object
+ * 
+ * Properties: `id`, `sid`, `ip` can never be overwritten.
+ * 
+ * Properties added as local configuration cannot be further
+ * modified during the game. 
+ * 
+ * Only the property `name`, can be changed.
+ * 
+ */
+	node.createPlayer = function (player) {
+		
+		player = new Player(player);
+		
+		if (node.conf && node.conf.player) {			
+			var pconf = node.conf.player;
+			for (var key in pconf) {
+				if (pconf.hasOwnProperty(key)) {
+					if (JSUS.in_array(key, ['id', 'sid', 'ip'])) {
+						continue;
+					} 
+					
+					// Cannot be overwritten properties previously 
+					// set in other sessions (recovery)
+//					if (player.hasOwnProperty(key)) {
+//						continue;
+//					}
+					if (node.support.defineProperty) {
+						Object.defineProperty(player, key, {
+					    	value: pconf[key],
+					    	enumerable: true
+						});
+					}
+					else {
+						player[key] = pconf[key];
+					}
+				}
+			}
+		}
+		
+		
+		if (node.support.defineProperty) {
+			Object.defineProperty(node, 'player', {
+		    	value: player,
+		    	enumerable: true
+			});
+		}
+		else {
+			node.player = player;
+		}
+		
+		node.emit('PLAYER_CREATED', player);
+		
+		return player;
+	};
+	
 		
 	node.log(node.version + ' loaded', 'ALWAYS');
 	
