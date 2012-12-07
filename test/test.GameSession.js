@@ -1,8 +1,6 @@
 var util = require('util'),
 	should = require('should');
 
-
-
 var node = module.exports.node = require('./../index.js');
 
 //console.log(node);
@@ -116,6 +114,36 @@ describe('SessionManager', function() {
 });
 
 describe('GameSession', function() {
+	before(function(){
+		session = new GameSession();
+	});
 	
+	describe('#constructor', function(){
+		it('game.state should be in session', function(){
+			session.session['game.state'].should.exists;
+		});
+		it('game.memory should be in session', function(){
+			session.session['game.memory'].should.exists;
+		});
+		it('player should be in session', function(){
+			session.session['player'].should.exists;
+		});
+		it('events.history should be in session', function(){
+			session.session['events.history'].should.exists;
+		});
+	});
 	
+	describe('#restore()', function() {
+		before(function(){
+			node.game.state = state;
+			test1 = session.save();
+			node = {};
+			node = module.exports.node = require('./../index.js');
+			manager.restore(test1);
+		});
+		
+		it("should restore the state object", function() {
+			node.game.state.should.be.eql(state);
+		});
+	});
 });
