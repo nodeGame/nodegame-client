@@ -10,6 +10,7 @@ var node = module.exports.node = require('./../index.js');
 var GameState = node.GameState;
 var GameSession = node.GameSession;
 var SessionManager = GameSession.SessionManager;
+var J = node.JSUS;
 
 var stateLiteral = {
 	state: 3,
@@ -73,6 +74,45 @@ describe('SessionManager', function() {
 		it("should return false if deletion fails", function() {
 			test2.should.be.false;
 		});
+	});
+	
+	describe('Import / Export', function() {
+		before(function(){
+			test1 = null;
+			test2 = null;
+		});
+		it("#save()", function() {
+			test1 = manager.save();
+			//test1.should.be.equal(manager.session);
+		});
+		
+		it("#clear()", function() {
+			manager.clear();
+			J.isEmpty(manager.session).should.be.true;
+		});
+		
+		it("#load()", function() {
+			manager.load(test1);
+			manager.session.should.be.eql(test1);
+		});
+		
+	});
+	
+	describe('#restore()', function() {
+		before(function(){
+			test1 = manager.save();
+			console.log(test1)
+			
+//			delete node.game.myObj;
+//			manager.restore(test1);
+		});
+		it("should restore objects in the session", function() {
+			console.log(test1);
+		});
+		
+//		it("should restore objects in the session", function() {
+//			node.game.myObj.should.be.eql(myObj);
+//		});
 	});
 	
 });
