@@ -36,12 +36,14 @@
 	
 	node.events = new EventEmitter();
 
-
 	// Creating objects
 	// /////////////////////////////////////////
 	
 	node.msg	= node.GameMsgGenerator;	
-	node.socket = node.gsc = new GameSocketClient();
+	//node.socket = node.gsc = new GameSocketClient();
+	
+	node.socket = node.gsc = new Socket();
+	
 	
 	node.env = function (env, func, ctx, params) {
 		if (!env || !func || !node.env[env]) return;
@@ -58,18 +60,20 @@
 	 * values. Stores the final configuration in node.conf.
 	 * 
 	 */
-	node._analyzeConf = function (conf) {
+	node.setup = node._analyzeConf = function (conf) {
 		if (!conf) {
-			node.log('Invalid configuration object found.', 'ERR');
+			node.err('invalid configuration object found.');
 			return false;
 		}
 		
-		if (!conf.socket) {
-			conf.socket = {};
-			conf.socket.type = 'SocketIo';
+		// Socket
+		if (conf.socket) {
+			
+			
+			node.socket.setup(conf.socket);
 		}
 		
-		node.socket = new Socket(conf.socket);
+		
 		
 		// URL
 		if (!conf.host) {
@@ -150,22 +154,24 @@
 	};
 	
 	// TODO: create conf objects
-	node.connect = node.play = function (conf, game) {	
-		node._analyzeConf(conf);
-		
-		// node.socket.connect(conf);
+	node.connect = function (url) {	
+		node.socket.connect(conf);
+		node.emit('NODEGAME_CONNECTED');
+	};	
+	
+	// TODO: create conf objects
+	node.play = function (game) {	
 		
 		node.game = new Game(game);
 		node.emit('NODEGAME_GAME_CREATED');
 		
-		
 		// INIT the game
 		node.game.init.call(node.game);
-		node.socket.connect(conf); // was node.socket.setGame(node.game);
 		
 		node.log('game loaded...');
 		node.log('ready.');
-	};	
+	};		
+	
 	
 // node.observe = function (conf, game) {
 // node._analyzeConf(conf);
