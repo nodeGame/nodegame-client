@@ -130,6 +130,10 @@ if ('object' === typeof module && 'function' === typeof require) {
     require('./init.node.js');
     require('./nodeGame.js');
 
+    // ### Loading Sockets
+    require('./lib/sockets/SocketIo.js');
+    //require('./lib/sockets/SocketDirect.js');
+    
     // ### Loading Event listeners
     require('./listeners/incoming.js');
     require('./listeners/internal.js');

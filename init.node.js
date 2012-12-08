@@ -104,6 +104,23 @@ node.GameSocketClient = require('./lib/GameSocketClient').GameSocketClient;
 
 
 /**
+ * Expose SocketFactory
+ * 
+ * @api public
+ */
+
+node.SocketFactory = require('./lib/sockets/SocketFactory').SocketFactory;
+
+/**
+ * Expose Socket
+ * 
+ * @api public
+ */
+
+node.Socket = require('./lib/Socket').Socket;
+
+
+/**
  * Expose GameDB
  * 
  * @api public

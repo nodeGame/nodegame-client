@@ -10,11 +10,15 @@
  */
 (function (node) {
 	
+	
+	console.log(node.SocketFactory);
+	
 	// Declaring variables
 	// //////////////////////////////////////////
 		
 	var EventEmitter = node.EventEmitter,
 		GameSocketClient = node.GameSocketClient,
+		Socket = node.Socket,
 		GameState = node.GameState,
 		GameMsg = node.GameMsg,
 		Game = node.Game,
@@ -155,7 +159,7 @@
 	
 	// TODO: create conf objects
 	node.connect = function (url) {	
-		node.socket.connect(conf);
+		node.socket.connect(url);
 		node.emit('NODEGAME_CONNECTED');
 	};	
 	
