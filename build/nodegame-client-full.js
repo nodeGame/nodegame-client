@@ -8543,24 +8543,22 @@ function GameMsgGenerator () {}
  * Merges a set of default settings with the object passed
  * as input parameter
  * 
- * 	@see JSUS.merge
  */
 GameMsgGenerator.create = function (msg) {
 
   var base = {
-		session: node.gsc.session, 
-		state: node.game.state,
-		action: GameMsg.actions.SAY,
-		target: GameMsg.targets.DATA,
+		session: ('undefined' !== typeof msg.session) ? msg.session : node.socket.session, 
+		state: msg.state || node.game.state,
+		action: msg.action || GameMsg.actions.SAY,
+		target: msg.target || GameMsg.targets.DATA,
 		from: node.player.sid,
-		to: 'SERVER',
-		text: null,
-		data: null,
-		priority: null,
-		reliable: 1
+		to: ('undefined' !== typeof msg.to) ? msg.to : 'SERVER',
+		text: msg.text || null,
+		data: msg.data || null,
+		priority: msg.priority || null,
+		reliable: msg.reliable || 1
   };
 
-  msg = JSUS.merge(base, msg);
   return new GameMsg(msg);
 
 };
@@ -8972,25 +8970,13 @@ GameMsgGenerator.createACK = function (gm, to, reliable) {
     }
     
     function get( type, options ) {
-    	var Socket = types[type];
-
-    	console.log('------')
-    	console.log(type)
-    	console.log(types)
-    	console.log(Socket);
-    	console.log('so')
-    	
+    	var Socket = types[type];    	
     	return (Socket) ? new Socket(options) : null;
     }
 
     function register( type, proto ) {
     	if (!type || !proto) return;
-    	
-
-//        proto = (proto.prototype) ? proto.prototype : proto;
-//
-//        console.log(proto)
-        
+    	        
         // only register classes that fulfill the contract
         if ( checkContract(proto) ) {
             types[type] = proto;
@@ -9093,19 +9079,23 @@ Socket.prototype.setup = function(options) {
 	options = options || {};
 	
 	if (options.type) {
-		this.open
+		this.setSocketType(options.type);
+	}
+	
+};
+
+Socket.prototype.setSocketType = function(type) {
+	var socket =  SocketFactory.get(type);
+	if (socket) {
+		this.socket = socket;
+		return true;
+	}
+	else {
+		return false;
 	}
 };
 
-Socket.prototype.open = function(options) {
-	options = options || {};
-	
-	this.socket = SocketFactory.get(options.socket.type);
-	
-	console.log(this.socket)
-};
-
-Socket.prototype.connect = function(url) {
+Socket.prototype.connect = function(url, options) {
 	
 	if (!url) {
 		node.err('cannot connect to empty url.', 'ERR');
@@ -9120,10 +9110,7 @@ Socket.prototype.connect = function(url) {
 	this.url = url;
 	node.log('connecting to ' + url);
 	
-	
-	console.log(this.socket);
-	
-	this.socket.connect(url);
+	this.socket.connect(url, options);
 };
 
 Socket.prototype.onDisconnect = function() {
@@ -9146,7 +9133,8 @@ Socket.prototype.onMessage = function(msg) {
 		
 		sessionObj = node.store(msg.session);
 		
-		if (sessionObj) {
+		if (false) {
+		//if (sessionObj) {
 			node.session.restore(sessionObj);
 			
 			msg = node.msg.create({
@@ -10500,7 +10488,9 @@ SessionManager.prototype.store = function() {
 		GameMsg = node.GameMsg,
 		Game = node.Game,
 		Player = node.Player,
-		GameSession = node.GameSession;
+		GameSession = node.GameSession,
+		J = node.JSUS;
+	
 	
 	
 	// Adding constants directly to node
@@ -10613,6 +10603,9 @@ SessionManager.prototype.store = function() {
 		return conf;
 	};
 	
+	node.configure = function(key, value) {
+		J.setNestedValue(key, value, node.conf);
+	};
 	
 	node.on = function (event, listener) {
 		// It is in the init function;
@@ -10651,6 +10644,9 @@ SessionManager.prototype.store = function() {
 		
 		// INIT the game
 		node.game.init.call(node.game);
+		
+		node.game.state.is = GameState.iss.LOADED;
+		node.socket.sendSTATE(GameMsg.actions.SAY, node.game.state);
 		
 		node.log('game loaded...');
 		node.log('ready.');

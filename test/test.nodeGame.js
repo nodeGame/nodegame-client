@@ -36,18 +36,14 @@ var myClass = new MyClass();
 
 describe('#node.env', function() {
 	before(function(){
-		try {
-			node.play({
-				env: {
-					auto: true,
-					debug: false,
-				}
-			});
-		}
-		catch(e) {
-			// no server was specified
-			//console.log(e);
-		}
+		
+		node.setup({
+			env: {
+				auto: true,
+				debug: false,
+			}
+		});
+		
 	});
 	
 	it("node.env('auto') should run the function", function() {

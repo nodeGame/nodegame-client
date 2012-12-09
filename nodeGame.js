@@ -20,7 +20,9 @@
 		GameMsg = node.GameMsg,
 		Game = node.Game,
 		Player = node.Player,
-		GameSession = node.GameSession;
+		GameSession = node.GameSession,
+		J = node.JSUS;
+	
 	
 	
 	// Adding constants directly to node
@@ -133,6 +135,9 @@
 		return conf;
 	};
 	
+	node.configure = function(key, value) {
+		J.setNestedValue(key, value, node.conf);
+	};
 	
 	node.on = function (event, listener) {
 		// It is in the init function;
@@ -171,6 +176,9 @@
 		
 		// INIT the game
 		node.game.init.call(node.game);
+		
+		node.game.state.is = GameState.iss.LOADED;
+		node.socket.sendSTATE(GameMsg.actions.SAY, node.game.state);
 		
 		node.log('game loaded...');
 		node.log('ready.');
