@@ -5,57 +5,7 @@
  * 
  * Collection of general purpose javascript functions. JSUS helps!
  * 
- * 
- * JSUS is designed to be modular and easy to extend. 
- * 
- * Just use: 
- * 
- *         JSUS.extend(myClass);
- * 
- * to extend the functionalities of JSUS. All the methods of myClass 
- * are immediately added to JSUS, and a reference to myClass is stored
- * in JSUS._classes.
- * 
- * MyClass can be either of type Object or Function.
- * 
- * JSUS can also extend other objects. Just pass a second parameter:
- * 
- * 
- *         JSUS.extend(myClass, mySecondClass);
- * 
- * and mySecondClass will receive all the methods of myClass. In this case,
- * no reference of myClass is stored.
- * 
- * To get a copy of one of the registered JSUS libraries
- * 
- *  	var myClass = JSUS.require('myClass');
- * 
- * JSUS come shipped in with a default set of libraries
- * 
- * 1. OBJ
- * 2. ARRAY
- * 3. TIME
- * 4. EVAL
- * 5. DOM
- * 6. RANDOM
- * 7. PARSE
- * 
- * Documentation
- * 
- * Automatic documentation for all libraries can be generated with the command
- * 
- * ```javascript
- * node bin/make.js doc
- * ```
- *  
- * Build
- * 
- * Create your customized build of JSUS.js using the make file in the bin directory
- * 
- * ```javascript
- * node make.js build // Full build, about 20Kb minified
- * node make.js build -l obj,array -o jsus-oa.js // about 12Kb minified
- * ```
+ * See README.md for extra help.
  */
 
 (function (exports) {
@@ -108,7 +58,7 @@ JSUS.extend = function (additional, target) {
     // of the additional object into the hidden
     // JSUS._classes object;
     if ('undefined' === typeof target) {
-        var target = target || this;
+        target = target || this;
         if ('function' === typeof additional) {
             var name = additional.toString();
             name = name.substr('function '.length);
@@ -167,6 +117,7 @@ JSUS.require = JSUS.get = function (className) {
         return false;
     }
     return JSUS.clone(JSUS._classes[className]);
+    //return new JSUS._classes[className]();
 };
 
 /**
@@ -185,6 +136,7 @@ JSUS.isNodeJS = function () {
 // ## Node.JS includes
 // if node
 if (JSUS.isNodeJS()) {
+    require('./lib/compatibility');
     require('./lib/obj');
     require('./lib/array');
     require('./lib/time');
@@ -199,6 +151,70 @@ if (JSUS.isNodeJS()) {
 })('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window);
 
 
+/**
+ * # SUPPORT
+ *  
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed
+ * 
+ * Tests browsers ECMAScript 5 compatibility
+ * 
+ * For more information see http://kangax.github.com/es5-compat-table/
+ * 
+ */
+
+(function (JSUS) {
+    
+function COMPATIBILITY() {};
+
+/**
+ * ## COMPATIBILITY.compatibility
+ * 
+ * Returns a report of the ECS5 features available
+ * 
+ * Useful when an application routinely performs an operation 
+ * depending on a potentially unsupported ECS5 feature. 
+ * 
+ * Transforms multiple try-catch statements in a if-else
+ * 
+ * @return {object} support The compatibility object
+ */
+COMPATIBILITY.compatibility = function() {
+
+	var support = {};
+	
+	try {
+		Object.defineProperty({}, "a", {enumerable: false, value: 1})
+		support.defineProperty = true;
+	}
+	catch(e) {
+		support.defineProperty = false;	
+	}
+	
+	try {
+		eval('({ get x(){ return 1 } }).x === 1')
+		support.setter = true;
+	}
+	catch(err) {
+		support.setter = false;
+	}
+	  
+	try {
+		var value;
+		eval('({ set x(v){ value = v; } }).x = 1');
+		support.getter = true;
+	}
+	catch(err) {
+		support.getter = false;
+	}	  
+
+	return support;
+};
+
+
+JSUS.extend(COMPATIBILITY);
+    
+})('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 /**
  * # ARRAY
  *  
@@ -953,9 +969,7 @@ JSUS.extend(ARRAY);
 
 (function (JSUS) {
     
-
-
-function DOM () {};
+function DOM() {};
 
 // ## GENERAL
 
@@ -1792,6 +1806,13 @@ JSUS.extend(EVAL);
     
 function OBJ(){};
 
+var compatibility = null;
+
+if ('undefined' !== typeof JSUS.compatibility) {
+	compatibility = JSUS.compatibility();
+}
+
+
 /**
  * ## OBJ.equals
  * 
@@ -2113,17 +2134,27 @@ OBJ.clone = function (obj) {
 	    	clone[i] = value;
 	    }
 	    else {
-	    	try {
+	    	// we know if object.defineProperty is available
+	    	if (compatibility && compatibility.defineProperty) {
 		    	Object.defineProperty(clone, i, {
 		    		value: value,
 	         		writable: true,
 	         		configurable: true
 	         	});
 	    	}
-	    	catch(e) {
-	    		clone[i] = value;
+	    	else {
+	    		// or we try...
+	    		try {
+	    			Object.defineProperty(clone, i, {
+			    		value: value,
+		         		writable: true,
+		         		configurable: true
+		         	});
+	    		}
+		    	catch(e) {
+		    		clone[i] = value;
+		    	}
 	    	}
-
 	    }
     }
     return clone;

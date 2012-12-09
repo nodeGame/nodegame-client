@@ -5,57 +5,7 @@
  * 
  * Collection of general purpose javascript functions. JSUS helps!
  * 
- * 
- * JSUS is designed to be modular and easy to extend. 
- * 
- * Just use: 
- * 
- *         JSUS.extend(myClass);
- * 
- * to extend the functionalities of JSUS. All the methods of myClass 
- * are immediately added to JSUS, and a reference to myClass is stored
- * in JSUS._classes.
- * 
- * MyClass can be either of type Object or Function.
- * 
- * JSUS can also extend other objects. Just pass a second parameter:
- * 
- * 
- *         JSUS.extend(myClass, mySecondClass);
- * 
- * and mySecondClass will receive all the methods of myClass. In this case,
- * no reference of myClass is stored.
- * 
- * To get a copy of one of the registered JSUS libraries
- * 
- *  	var myClass = JSUS.require('myClass');
- * 
- * JSUS come shipped in with a default set of libraries
- * 
- * 1. OBJ
- * 2. ARRAY
- * 3. TIME
- * 4. EVAL
- * 5. DOM
- * 6. RANDOM
- * 7. PARSE
- * 
- * Documentation
- * 
- * Automatic documentation for all libraries can be generated with the command
- * 
- * ```javascript
- * node bin/make.js doc
- * ```
- *  
- * Build
- * 
- * Create your customized build of JSUS.js using the make file in the bin directory
- * 
- * ```javascript
- * node make.js build // Full build, about 20Kb minified
- * node make.js build -l obj,array -o jsus-oa.js // about 12Kb minified
- * ```
+ * See README.md for extra help.
  */
 
 (function (exports) {
@@ -108,7 +58,7 @@ JSUS.extend = function (additional, target) {
     // of the additional object into the hidden
     // JSUS._classes object;
     if ('undefined' === typeof target) {
-        var target = target || this;
+        target = target || this;
         if ('function' === typeof additional) {
             var name = additional.toString();
             name = name.substr('function '.length);
@@ -167,6 +117,7 @@ JSUS.require = JSUS.get = function (className) {
         return false;
     }
     return JSUS.clone(JSUS._classes[className]);
+    //return new JSUS._classes[className]();
 };
 
 /**
@@ -185,6 +136,7 @@ JSUS.isNodeJS = function () {
 // ## Node.JS includes
 // if node
 if (JSUS.isNodeJS()) {
+    require('./lib/compatibility');
     require('./lib/obj');
     require('./lib/array');
     require('./lib/time');
@@ -199,6 +151,70 @@ if (JSUS.isNodeJS()) {
 })('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window);
 
 
+/**
+ * # SUPPORT
+ *  
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed
+ * 
+ * Tests browsers ECMAScript 5 compatibility
+ * 
+ * For more information see http://kangax.github.com/es5-compat-table/
+ * 
+ */
+
+(function (JSUS) {
+    
+function COMPATIBILITY() {};
+
+/**
+ * ## COMPATIBILITY.compatibility
+ * 
+ * Returns a report of the ECS5 features available
+ * 
+ * Useful when an application routinely performs an operation 
+ * depending on a potentially unsupported ECS5 feature. 
+ * 
+ * Transforms multiple try-catch statements in a if-else
+ * 
+ * @return {object} support The compatibility object
+ */
+COMPATIBILITY.compatibility = function() {
+
+	var support = {};
+	
+	try {
+		Object.defineProperty({}, "a", {enumerable: false, value: 1})
+		support.defineProperty = true;
+	}
+	catch(e) {
+		support.defineProperty = false;	
+	}
+	
+	try {
+		eval('({ get x(){ return 1 } }).x === 1')
+		support.setter = true;
+	}
+	catch(err) {
+		support.setter = false;
+	}
+	  
+	try {
+		var value;
+		eval('({ set x(v){ value = v; } }).x = 1');
+		support.getter = true;
+	}
+	catch(err) {
+		support.getter = false;
+	}	  
+
+	return support;
+};
+
+
+JSUS.extend(COMPATIBILITY);
+    
+})('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 /**
  * # ARRAY
  *  
@@ -953,9 +969,7 @@ JSUS.extend(ARRAY);
 
 (function (JSUS) {
     
-
-
-function DOM () {};
+function DOM() {};
 
 // ## GENERAL
 
@@ -1792,6 +1806,13 @@ JSUS.extend(EVAL);
     
 function OBJ(){};
 
+var compatibility = null;
+
+if ('undefined' !== typeof JSUS.compatibility) {
+	compatibility = JSUS.compatibility();
+}
+
+
 /**
  * ## OBJ.equals
  * 
@@ -2113,17 +2134,27 @@ OBJ.clone = function (obj) {
 	    	clone[i] = value;
 	    }
 	    else {
-	    	try {
+	    	// we know if object.defineProperty is available
+	    	if (compatibility && compatibility.defineProperty) {
 		    	Object.defineProperty(clone, i, {
 		    		value: value,
 	         		writable: true,
 	         		configurable: true
 	         	});
 	    	}
-	    	catch(e) {
-	    		clone[i] = value;
+	    	else {
+	    		// or we try...
+	    		try {
+	    			Object.defineProperty(clone, i, {
+			    		value: value,
+		         		writable: true,
+		         		configurable: true
+		         	});
+	    		}
+		    	catch(e) {
+		    		clone[i] = value;
+		    	}
 	    	}
-
 	    }
     }
     return clone;
@@ -2835,9 +2866,6 @@ JSUS.extend(PARSE);
  */
 
 (function (exports, JSUS, store) {
-    
-// ## Global scope
-
 	
 var nddb_operation = null;
 var nddb_conditions = [];
@@ -2849,7 +2877,7 @@ var addCondition = function(type, condition) {
 	}
 	nddb_conditions.push({
 		type: type,
-		condition: condition,
+		condition: condition
 	});
 	return true;
 }
@@ -2878,6 +2906,8 @@ NDDB.prototype.or = NDDB.prototype.OR = function (d, op, value) {
 NDDB.prototype.not = NDDB.prototype.NOT = function (d, op, value) {
 	return addOperation('NOT', d, op, value);
 };
+
+NDDB.compatibility = JSUS.compatibility();
 	
 // Expose constructors
 exports.NDDB = NDDB;
@@ -2952,7 +2982,10 @@ function NDDB (options, db, parent) {
     
     // ### hooks
     // The list of hooks and associated callbacks
-    this.hooks = {};
+    this.hooks = {
+		insert: [],
+    	remove: []	
+    };
     
     // ### nddb_pointer
     // Pointer for iterating along all the elements
@@ -2960,13 +2993,12 @@ function NDDB (options, db, parent) {
     
     // ### length
     // The number of items in the database
-    Object.defineProperty(this, 'length', {
-    	set: function(){},
-    	get: function(){
-    		return this.db.length;
-    	},
-    	configurable: true
-	});
+    if (NDDB.compatibility.getter) {
+    	this.__defineGetter__('length', function() { return this.db.length; });
+    }
+	else {
+    	this.length = null;
+    }
    
     
     // ### __C
@@ -2976,6 +3008,10 @@ function NDDB (options, db, parent) {
     // ### __H
     // List of hashing functions
     this.__H = {};
+    
+    // ### __I
+    // List of hashing functions
+    this.__I = {};
     
     // ### __update
     // Auto update options container
@@ -3028,6 +3064,10 @@ NDDB.prototype.init = function(options) {
 		this.__H = options.H;
 	}
 	
+	if (options.I) {
+		this.__I = options.I;
+	}
+	
 	if (options.tags) {
 		this.tags = options.tags;
 	}
@@ -3053,7 +3093,6 @@ NDDB.prototype.init = function(options) {
         	this.__update.sort = options.update.sort;
         }
     }
-    
 };
 
 // ## CORE
@@ -3106,11 +3145,16 @@ NDDB.prototype._masquerade = function (o, db) {
     if ('undefined' !== typeof o.nddbid) return o;
     db = db || this.db;
     
-    Object.defineProperty(o, 'nddbid', {
-    	value: db.length,
-    	configurable: true,
-    	writable: true,
-	});
+    if (NDDB.compatibility.defineProperty) {
+	    Object.defineProperty(o, 'nddbid', {
+	    	value: db.length,
+	    	configurable: true,
+	    	writable: true
+		});
+    }
+    else {
+    	o.nddbid = db.length;
+    }
     
     return o;
 };
@@ -3145,7 +3189,8 @@ NDDB.prototype._masqueradeDB = function (db) {
  * @param {object} options Optional. Configuration object
  */
 NDDB.prototype._autoUpdate = function (options) {
-	var update = JSUS.merge(options || {}, this.__update);
+	var update = (options) ? JSUS.merge(options, this.__update)
+						   : this.__update;
 	
     if (update.pointer) {
         this.nddb_pointer = this.db.length-1;
@@ -3206,15 +3251,15 @@ NDDB.prototype.insert = function (o) {
  * @param {object} o The item or array of items to insert
  */
 NDDB.prototype._insert = function (o) {
-    if ('undefined' === typeof o || o === null) return;
     o = this._masquerade(o);
-    
     this.db.push(o);
+    this.emit('insert', o);
     
-    // We save time calling _hashIt only
+	// We save time calling _hashIt only
     // on the latest inserted element
     if (this.__update.indexes) {
     	this._hashIt(o);
+    	this._indexIt(o);
     }
 	// See above
     this._autoUpdate({indexes: false});
@@ -3256,6 +3301,7 @@ NDDB.prototype.cloneSettings = function () {
     var options = this.__options || {};
     
     options.H = 		this.__H;
+    options.I = 		this.__I;
     options.C = 		this.__C;
     options.tags = 		this.tags;
     options.update = 	this.__update;
@@ -3285,16 +3331,29 @@ NDDB.prototype.toString = function () {
  * 
  * Cyclic objects are decycled.
  * 
+ * @param {boolean} TRUE, if compressed
  * @return {string} out A machine-readable representation of the database
  * 
  */
-NDDB.prototype.stringify = function () {
+NDDB.prototype.stringify = function (compressed) {
 	if (!this.length) return '[]';
+	compressed = ('undefined' === typeof compressed) ? true : compressed;
 	
-	var objToStr = function(o) {
-		// Skip empty objects
-		if (JSUS.isEmpty(o)) return '{}';
-		return JSON.stringify(o);
+	var objToStr;
+	
+	if (compressed) {
+		objToStr = function(o) {
+			// Skip empty objects
+			if (JSUS.isEmpty(o)) return '{}';
+			return JSON.stringify(o);
+		}	
+	}
+	else {
+		objToStr = function(o) {
+			// Skip empty objects
+			if (JSUS.isEmpty(o)) return '{}';
+			return JSON.stringify(o, null, 4);
+		}
 	}
 	
     var out = '[';
@@ -3386,13 +3445,37 @@ NDDB.prototype.isReservedWord = function (key) {
 	return (this[key]) ? true : false; 
 };
 
+
+/**
+ * ### NDDB._isValidIndex
+ *
+ * Returns TRUE if the index is not a reserved word, otherwise
+ * displays an error and returns FALSE. 
+ * 
+ * @param {string} key The name of the property
+ * @return {boolean} TRUE, if the index has a valid name
+ */
+NDDB.prototype._isValidIndex = function (idx) {
+	if ('undefined' === typeof idx) {
+		NDDB.log('A valid index name must be provided', 'ERR');
+		return false;
+	}
+	if (this.isReservedWord(idx)) {
+		var str = 'A reserved word have been selected as an index. ';
+		str += 'Please select another one: ' + idx;
+		NDDB.log(str, 'ERR');
+		return false;
+	}
+	return true;
+};
+
 /**
  * ### NDDB.hash | NDDB.h
  *
- * Registers a new hashing function for index d
+ * Registers a new hashing function
  * 
- * Hashing functions automatically creates indexes 
- * to retrieve objects faster
+ * Hashing functions creates nested NDDB database 
+ * where objects are automatically added 
  * 
  * If no function is specified Object.toString is used.
  * 
@@ -3405,26 +3488,39 @@ NDDB.prototype.isReservedWord = function (key) {
  * 
  */
 NDDB.prototype.hash = NDDB.prototype.h = function (idx, func) {
-	if ('undefined' === typeof idx) {
-		NDDB.log('A valid index name must be provided', 'ERR');
-		return false;
-	}
-	
-	func = func || Object.toString;
-	
-	if (this.isReservedWord(idx)) {
-		var str = 'A reserved word have been selected as an index. ';
-		str += 'Please select another one: ' + idx;
-		NDDB.log(str, 'ERR');
-		return false;
-	}
-	
-	this.__H[idx] = func;
-	
+	if (!this._isValidIndex(idx)) return false;
+	this.__H[idx] = func || Object.toString;
 	this[idx] = {};
-	
 	return true;
 };
+
+
+/**
+ * ### NDDB.index | NDDB.i
+ *
+ * Registers a new indexing function
+ * 
+ * Hashing functions automatically creates indexes 
+ * to have direct access to objects
+ * 
+ * If no function is specified Object.toString is used.
+ * 
+ * @param {string} idx The name of index
+ * @param {function} func The hashing function
+ * @return {boolean} TRUE, if registration was successful
+ * 
+ * @see NDDB.isReservedWord
+ * @see NDDB.rebuildIndexes
+ * 
+ */
+NDDB.prototype.index = NDDB.prototype.i = function (idx, func) {
+	if (!this._isValidIndex(idx)) return false;
+	this.__I[idx] = func || Object.toString;
+	this[idx] = {};
+	return true;
+};
+
+
 
 /**
  * ### NDDB.rebuildIndexes
@@ -3436,23 +3532,47 @@ NDDB.prototype.hash = NDDB.prototype.h = function (idx, func) {
  * @see NDDB.hash
  */
 NDDB.prototype.rebuildIndexes = function() {
-	if (JSUS.isEmpty(this.__H)) {
-		return;
-	} 	
-	// Reset current indexes
-	for (var key in this.__H) {
-		if (this.__H.hasOwnProperty(key)) {
-			this[key] = {};
+	var h = false, i = false;
+	
+	if (!JSUS.isEmpty(this.__H)) {
+		h = true;
+		// Reset current hash-indexes
+		for (var key in this.__H) {
+			if (this.__H.hasOwnProperty(key)) {
+				this[key] = {};
+			}
 		}
 	}
 	
-	this.each(this._hashIt)
+	if (!JSUS.isEmpty(this.__I)) {
+		i = true;
+		// Reset current hash-indexes
+		for (var key in this.__I) {
+			if (this.__I.hasOwnProperty(key)) {
+				this[key] = {};
+			}
+		}
+	}
+	
+	if (h && !i) {
+		this.each(this._hashIt);
+	}
+	else if (!h && i) {
+		this.each(this._indexIt);
+	}
+	else if (h && i) {
+		this.each(function(o){
+			this.hashIt(o);
+			this.indexIt(o);
+		});
+	}
+	
 };
 
 /**
  * ### NDDB._hashIt
  *
- * Hashes an element and adds it to one of the indexes
+ * Hashes an element
  * 
  * @param {object} o The element to hash
  * @return {boolean} TRUE, if insertion to an index was successful
@@ -3489,6 +3609,118 @@ NDDB.prototype._hashIt = function(o) {
 	}
 };
 
+/**
+ * ### NDDB._hashIt
+ *
+ * Indexes an element
+ * 
+ * @param {object} o The element to index
+ * @return {boolean} TRUE, if insertion to an index was successful
+ * 
+ */
+NDDB.prototype._indexIt = function(o) {
+  	if (!o) return false;
+	if (JSUS.isEmpty(this.__I)) {
+		return false;
+	}
+	
+	var func = null,
+		id = null,
+		index = null;
+	
+	for (var key in this.__I) {
+		if (this.__I.hasOwnProperty(key)) {
+			func = this.__I[key];	    			
+			index = func(o);
+
+			if ('undefined' === typeof index) {
+				continue;
+			}
+			if (!this[key]) this[key] = {};
+			this[key][index] = o;
+		}
+	}
+};
+
+// ## Event emitter / listener
+
+/**
+ * ### NDDB.on
+ * 
+ * Registers an event listeners
+ * 
+ * Available events: 
+ * 
+ * 	`insert`: each time an item is inserted 
+ * 	`remove`: each time a collection of items is removed
+ * 
+ * Examples.
+ * 
+ * ```javascript
+ * var db = new NDDB();
+ * 
+ * var trashBin = new NDDB();
+ * 
+ * db.on('insert', function(item){
+ * 		item.id = getMyNextId();	
+ * });
+ * 
+ * db.on('remove', function(array) {
+ * 		trashBin.importDB(array);
+ * });
+ * ```
+ * 
+ */
+NDDB.prototype.on = function(event, func) {
+	if (!event || !func || !this.hooks[event]) return;
+    this.hooks[event].push(func);
+    return true;
+};
+
+/**
+ * ### NDDB.off
+ * 
+ * Deregister an event, or an event listener
+ * 
+ * @param {string} event The event name
+ * @param {function} func Optional. The specific function to deregister 
+ * 
+ * @return Boolean TRUE, if the removal is successful
+ */
+NDDB.prototype.off = function(event, func) {
+	if (!event || !this.hooks[event] || !this.hooks[event].length) return;
+	 
+    if (!func) {
+    	this.hooks[event] = [];
+    	return true;
+    }
+     
+    for (var i=0; i < this.hooks[event].length; i++) {
+    	if (this.hooks[event][i] == func) {
+    		this.hooks[event].splice(i, 1);
+	        return true;
+	    }
+	}
+     
+    return false;
+}
+
+/**
+ * ### NDDB.emit
+ * 
+ * Fires all the listeners associated with an event
+ * 
+ * @param event {string} The event name 
+ * @param {object} o Optional. A parameter to be passed to the listener
+ * 
+ */
+NDDB.prototype.emit = function(event, o) {
+	if (!event || !this.hooks[event] || !this.hooks[event].length) return;
+	
+	for (var i=0; i < this.hooks[event].length; i++) {
+		this.hooks[event][i].call(this, o);
+	}
+};
 
 // ## Sort and Select
 
@@ -3765,11 +3997,12 @@ NDDB.prototype.reverse = function () {
  * 
  * Changes the order of elements in the current database
  * 
+ * @return {NDDB} A a reference to the current instance with shuffled entries
  */
 NDDB.prototype.shuffle = function () {
     // TODO: check do we need to reassign __nddbid__ ?
     this.db = JSUS.shuffle(this.db);
-    return true;
+    return this;
 };
     
 // ## Custom callbacks
@@ -3910,6 +4143,7 @@ NDDB.prototype.remove = function () {
         }
 	}
  
+	this.emit('remove', this.db);
 	this.db = [];
 	this._autoUpdate();
 	return this;
@@ -4744,10 +4978,8 @@ NDDB.prototype.last = function (key) {
  * @TODO: tag should be updated with shuffling and sorting
  * operations.
  * 
- * @status: experimental
- * 
  * @param {string} tag An alphanumeric id
- * @param {string} idx Optional. The index in the database. Defaults nddb_pointer
+ * @param {string} idx Optional. The index in the database, or the. Defaults nddb_pointer
  * @return {boolean} TRUE, if registration is successful
  * 
  * 	@see NDDB.resolveTag
@@ -4757,12 +4989,25 @@ NDDB.prototype.tag = function (tag, idx) {
         NDDB.log('Cannot register empty tag.', 'ERR');
         return false;
     }
-    idx = idx || this.nddb_pointer;
-    if (idx > this.length || idx < 0) {
-        NDDB.log('Invalid index provided for tag registration', 'ERR');
-        return false;
+    
+    var ref = null, typeofIdx = typeof idx;
+    
+    if (typeofIdx === 'undefined') {
+    	ref = this.db[this.nddb_pointer];
     }
-    this.tags[tag] = this.db[idx];
+    else if (typeofIdx === 'number') {
+    	
+    	if (idx > this.length || idx < 0) {
+            NDDB.log('Invalid index provided for tag registration', 'ERR');
+            return false;
+        }
+    	ref = this.db[idx];
+    }
+    else {
+    	ref = idx;
+    }
+    
+    this.tags[tag] = ref;
     return true;
 };
 
@@ -4787,55 +5032,104 @@ NDDB.prototype.resolveTag = function (tag) {
 
 // ## Persistance    
 
-var isNodeJS = function() {
-	return ('object' === typeof module && 'function' === typeof require);
-};
-
 var storageAvailable = function() {
 	return ('function' === typeof store);
 }
 
 // if node
-if (isNodeJS()) {   
+if (JSUS.isNodeJS()) {   
 	require('./external/cycle.js');		
 	var fs = require('fs');
 };
 
 //end node  
-    
-NDDB.prototype.save = function (file, callback) {
+
+/**
+ * ### NDDB.save
+ * 
+ * Saves the database to a persistent medium in JSON format
+ * 
+ * If NDDB is executed in the browser, it tries to use the `store` method - 
+ * usually associated to shelf.js - to write to the browser database. 
+ * If no `store` object is found, an error is issued and the database
+ * is not saved.
+ * 
+ * If NDDB is executed in the Node.JS environment it saves to the file system
+ * using the standard `fs.writeFile` method.
+ * 
+ * Cyclic objects are decycled, and do not cause errors. Upon loading, the cycles
+ * are restored.
+ * 
+ * @param {string} file The file system path, or the identifier for the browser database
+ * @param {function} callback Optional. A callback to execute after the database was saved
+ * @param {compress} boolean Optional. If TRUE, output will be compressed. Defaults, FALSE
+ * 
+ * @see NDDB.load
+ * @see NDDB.stringify
+ * @see https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+ * @return {boolean} TRUE, if operation is successful
+ * 
+ */
+NDDB.prototype.save = function (file, callback, compress) {
 	if (!file) {
-		NDDB.log('You must specify a valid file name.', 'ERR');
+		NDDB.log('You must specify a valid file / id.', 'ERR');
 		return false;
 	}
 	
+	compress = compress || false;
+	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!isNodeJS()){
+	if (!JSUS.isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
 		}
 		
-		store(file, this.stringify());
+		store(file, this.stringify(compress));
+		if (callback) callback();
 		return true;
 	}
 	
 	// Save in Node.js
-	fs.writeFile(file, this.stringify(), 'utf-8', function(e) {
+	fs.writeFile(file, this.stringify(compress), 'utf-8', function(e) {
 		if (e) throw e
 		if (callback) callback();
 		return true;
 	});
 };
 
+/**
+ * ### NDDB.load
+ * 
+ * Loads a JSON object into the database from a persistent medium
+ * 
+ * If NDDB is executed in the browser, it tries to use the `store` method - 
+ * usually associated to shelf.js - to load from the browser database. 
+ * If no `store` object is found, an error is issued and the database
+ * is not loaded.
+ * 
+ * If NDDB is executed in the Node.JS environment it loads from the file system
+ * using the standard `fs.readFileSync` or `fs.readFile` method.
+ * 
+ * Cyclic objects previously decycled will be retrocycled. 
+ * 
+ * @param {string} file The file system path, or the identifier for the browser database
+ * @param {function} callback Optional. A callback to execute after the database was saved
+ * 
+ * @see NDDB.save
+ * @see NDDB.stringify
+ * @see https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+ * @return {boolean} TRUE, if operation is successful
+ * 
+ */
 NDDB.prototype.load = function (file, callback) {
 	if (!file) {
-		NDDB.log('You must specify a valid file.', 'ERR');
+		NDDB.log('You must specify a valid file / id.', 'ERR');
 		return false;
 	}
 	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!isNodeJS()){
+	if (!JSUS.isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
@@ -4879,11 +5173,10 @@ NDDB.prototype.load = function (file, callback) {
 
 
 // ## Closure    
-    
 })(
     'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
   , 'undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
-  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store  		  
+  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store
 );
 /**
  * # nodeGame
@@ -5001,11 +5294,13 @@ node.log = function (txt, level, prefix) {
 };
 
 // <!-- It will be overwritten later -->
+node.conf 		= {};
 node.game 		= {};
 node.socket 	= {};
 node.session 	= {};
 node.player 	= {};
 node.memory 	= {};
+node.store		= function() {};
 
 // <!-- Load the auxiliary library if available in the browser -->
 if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
@@ -5017,6 +5312,10 @@ if ('object' === typeof module && 'function' === typeof require) {
     require('./init.node.js');
     require('./nodeGame.js');
 
+    // ### Loading Sockets
+    require('./lib/sockets/SocketIo.js');
+    //require('./lib/sockets/SocketDirect.js');
+    
     // ### Loading Event listeners
     require('./listeners/incoming.js');
     require('./listeners/internal.js');
@@ -5078,20 +5377,11 @@ function EventEmitter() {
  * Database of emitted events
  * 
  * 	@see NDDB
+ * 	@see EventEmitter.EventHistory
  * 	@see EventEmitter.store
  * 
  */      
-    this.history = new NDDB({
-    	update: {
-    		indexes: true
-    }});
-    
-    this.history.h('state', function(e) {
-    	if (!e) return;
-    	var state = ('object' === typeof e.state) ? e.state
-    											  : node.game.state;
-    	return node.GameState.toHash(state, 'S.s.r');
-    });
+    this.history = new EventHistory();
 }
 
 // ## EventEmitter methods
@@ -5314,8 +5604,106 @@ EventEmitter.prototype = {
 	    	}
 	    }
 	    
-}
+	}
+	
 };
+
+
+/**
+ * # EventHistory
+ * 
+ */
+function EventHistory() {
+	
+	/**
+	 * ### EventHistory.history
+	 * 
+	 * Database of emitted events
+	 * 
+	 * 	@see NDDB
+	 * 	@see EventEmitter.store
+	 * 
+	 */      
+	this.history = new NDDB();
+	    
+    this.history.h('state', function(e) {
+    	if (!e) return;
+    	var state = ('object' === typeof e.state) ? e.state
+    											  : node.game.state;
+    	return node.GameState.toHash(state, 'S.s.r');
+    });
+	    
+}
+
+EventHistory.prototype.remit = function(state, discard, keep) {
+
+	if (!this.history.count()) {
+		node.log('no event history was found to remit', 'WARN');
+		return false;
+	}
+			
+	node.log('remitting ' + node.events.history.count() + ' events', 'DEBUG');
+			
+	var hash, db;
+	
+	if (state) {
+		
+		this.history.rebuildIndexes();
+		
+		hash = new GameState(session.state).toHash('S.s.r'); 
+		
+		if (!this.history.state) {
+			node.log('no old events to re-emit were found during session recovery', 'DEBUG');
+			return false; 
+		}
+		if (!this.history.state[hash]){
+			node.log('the current state ' + hash + ' has no events to re-emit', 'DEBUG');
+			return false; 
+		}
+		
+		db = this.history.state[hash];
+	}
+	else {
+		db = this.history;
+	}
+	
+	// cleaning up the events to remit
+	
+	if (discard) {
+		db.select('event', 'in', discard).remove();
+	}
+	
+	if (keep) {
+		db = db.select('event', 'in', keep);
+	}
+		
+	if (!db.count()){
+		node.log('no valid events to re-emit after cleanup', 'DEBUG');
+		return false;
+	}
+	
+	var remit = function () {
+		node.log('re-emitting ' + db.count() + ' events', 'DEBUG');
+		// We have events that were fired at the state when 
+		// disconnection happened. Let's fire them again 
+		db.each(function(e) {
+			node.emit(e.event, e.p1, e.p2, e.p3);
+		});
+	};
+	
+	if (node.game.isReady()) {
+		remit.call(node.game);
+	}
+	else {
+		node.on('LOADED', function(){
+			remit.call(node.game);
+		});
+	}
+	
+	return true;
+};
+
+
 
 /**
  * # Listener
@@ -7456,6 +7844,468 @@ GameMsgGenerator.createACK = function (gm, to, reliable) {
   , 'undefined' != typeof node ? node : module.parent.exports
 );
 /**
+ * # SocketFactory
+ * 
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed 
+ * 
+ * `nodeGame` component responsible for registering and instantiating 
+ * new GameSocket clients
+ * 
+ * Contract: Socket prototypes must implement the following methods:
+ * 
+ * 	- connect: establish a communication channel with a ServerNode instance
+ * 	- send: pushes messages into the communication channel
+ * 
+ * ---
+ * 
+ */
+
+
+(function( exports, node ) {
+
+
+    // Storage for socket types
+    var types = {};
+
+    function checkContract( proto ) {
+    	var test = proto;
+//    	if (!proto.prototype) {
+    		test = new proto();
+//    	}
+    	
+    	if (!test.send) {
+    		console.log('no send')
+    		return false;
+    	}
+    	if (!test.connect){
+    		console.log('no connect')
+    		return false;
+    	}
+    	
+    	return true;
+    }
+    
+    function getTypes() {
+    	return types;
+    }
+    
+    function get( type, options ) {
+    	var Socket = types[type];
+
+    	console.log('------')
+    	console.log(type)
+    	console.log(types)
+    	console.log(Socket);
+    	console.log('so')
+    	
+    	return (Socket) ? new Socket(options) : null;
+    }
+
+    function register( type, proto ) {
+    	if (!type || !proto) return;
+    	
+
+//        proto = (proto.prototype) ? proto.prototype : proto;
+//
+//        console.log(proto)
+        
+        // only register classes that fulfill the contract
+        if ( checkContract(proto) ) {
+            types[type] = proto;
+        }
+        else {
+        	node.err('cannot register invalid Socket class: ' + type);
+        }
+    }
+    
+    // expose the socketFactory methods
+    exports.SocketFactory = {
+    	checkContract: checkContract,
+    	getTypes: getTypes,
+    	get: get,
+    	register: register
+    };
+    
+    
+// ## Closure	
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);
+/**
+ * # Socket
+ * 
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed 
+ * 
+ * `nodeGame` component responsible for dispatching events and messages 
+ * 
+ * ---
+ * 
+ */
+
+(function (exports, node) {
+
+	
+exports.Socket = Socket;	
+	
+// ## Global scope
+	
+var GameMsg = node.GameMsg,
+	GameState = node.GameState,
+	Player = node.Player,
+	GameMsgGenerator = node.GameMsgGenerator,
+	SocketFactory = node.SocketFactory;
+
+var buffer,
+	session;
+
+function Socket(options) {
+	
+// ## Private properties
+
+/**
+ * ### Socket.buffer
+ * 
+ * Buffer of queued messages 
+ * 
+ * @api private
+ */ 
+	buffer = [];
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'buffer', {
+			value: buffer,
+			enumerable: true
+		});
+	}
+	else {
+		this.buffer = buffer;
+	}
+	
+/**
+ * ### Socket.session
+ * 
+ * The session id shared with the server
+ * 
+ * This property is initialized only when a game starts
+ * 
+ */
+	session = null;
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'session', {
+			value: session,
+			enumerable: true
+		});
+	}
+	else {
+		this.session = session;
+	}
+	
+	this.socket = null;
+	
+	this.url = null;
+}
+
+
+Socket.prototype.setup = function(options) {
+	options = options || {};
+	
+	if (options.type) {
+		this.open
+	}
+};
+
+Socket.prototype.open = function(options) {
+	options = options || {};
+	
+	this.socket = SocketFactory.get(options.socket.type);
+	
+	console.log(this.socket)
+};
+
+Socket.prototype.connect = function(url) {
+	
+	if (!url) {
+		node.err('cannot connect to empty url.', 'ERR');
+		return false;
+	}
+	
+	if (!this.socket) {
+		node.err('cannot connet to ' + url + ' . No open socket.');
+		return false;
+	}
+	
+	this.url = url;
+	node.log('connecting to ' + url);
+	
+	
+	console.log(this.socket);
+	
+	this.socket.connect(url);
+};
+
+Socket.prototype.onDisconnect = function() {
+	// Save the current state of the game
+	node.session.store();
+	node.log('closed');
+};
+
+Socket.prototype.onMessage = function(msg) {
+	
+	var msg = this.secureParse(msg);
+	if (!msg) return;
+	
+	var sessionObj;
+	
+	// Parsing successful
+	if (msg.target === 'HI') {
+		
+		this.startSession(msg)
+		
+		sessionObj = node.store(msg.session);
+		
+		if (sessionObj) {
+			node.session.restore(sessionObj);
+			
+			msg = node.msg.create({
+				action: GameMsg.actions.SAY,
+				target: 'HI_AGAIN',
+				data: node.player
+			});
+			
+			this.send(msg);
+			
+		}
+		else {
+			node.store(msg.session, node.session.save());
+			
+			console.log('HERE')
+			
+			this.sendHI(node.player, 'ALL');
+		}
+		
+
+		this.attachMsgListeners();
+
+   	 } 
+};
+
+Socket.prototype.attachMsgListeners = function() {
+	node.info('attaching FULL listeners');
+	
+	this.onMessage = this.onMessageFull;
+	
+	node.emit('NODEGAME_READY');
+	// Ready to play
+	//node.emit('out.say.HI');
+};
+
+Socket.prototype.onMessageFull = function(msg) {
+	var msg = this.secureParse(msg);
+	
+	if (msg) { // Parsing successful
+		// TODO: improve
+		if (node.game.isReady && node.game.isReady()) {	
+			node.emit(msg.toInEvent(), msg);
+		}
+		else {
+			node.log('buffering: ' + msg, 'DEBUG');
+			buffer.push(msg);
+		}
+	}
+};
+
+
+Socket.prototype.registerServer = function(msg) {
+	// Setting global info
+	this.servername = msg.from;
+	// Keep serverid = msg.from for now
+	this.serverid = msg.from;
+};
+
+
+Socket.prototype.secureParse = secureParse = function (msg) {
+	
+	var gameMsg;
+	try {
+		gameMsg = GameMsg.clone(JSON.parse(msg));
+		node.info(gameMsg, 'R: ');
+	}
+	catch(e) {
+		return logSecureParseError('malformed msg received',  e);
+	}
+	
+	if (this.session && gameMsg.session !== this.session) {
+		return logSecureParseError('local session id does not match incoming message session id');
+	}
+	
+	return gameMsg;
+};
+
+
+/**
+ * ### Socket.clearBuffer
+ * 
+ * Emits and removes all the events in the message buffer
+ * 
+ * @see node.emit
+ */
+Socket.prototype.clearBuffer = function () {
+	var nelem = buffer.length, msg;
+	for (var i=0; i < nelem; i++) {
+		msg = this.buffer.shift();
+		if (msg) {
+			node.emit(msg.toInEvent(), msg);
+			node.log('Debuffered ' + msg, 'DEBUG');
+		}
+	}
+};
+
+
+/**
+ * ### Socket.startSession
+ * 
+ * Initializes a nodeGame session
+ * 
+ * Creates a the player and saves it in node.player, and stores the session ids
+ * in the session object (GameSocketClient.session)
+ * 
+ * @param {GameMsg} msg A game-msg
+ * @return {boolean} TRUE, if session was correctly initialized
+ * 
+ * 	@see GameSocketClient.createPlayer
+ */
+Socket.prototype.startSession = function (msg) {
+
+	// Store server info
+	this.registerServer(msg);
+	
+	var player = {
+			id:		msg.data,	
+			sid: 	msg.data
+	};
+	node.createPlayer(player);
+	this.session = msg.session;
+	return true;
+};
+
+//## SEND methods
+
+
+/**
+* ### Socket.send
+* 
+* Pushes a message into the socket.
+* 
+* The msg is actually received by the client itself as well.
+* 
+* @param {GameMsg} The game message to send
+* 
+* 	@see GameMsg
+* 
+* @TODO: Check Do volatile msgs exist for clients?
+*/
+Socket.prototype.send = function(msg) {
+	if (!this.socket) {
+		node.err('socket cannot send message. No open socket.');
+		return false;
+	}
+	
+	this.socket.send(msg);
+	node.info('S: ' + msg);
+	node.emit('LOG', 'S: ' + msg.toSMS());
+	return true;
+}
+
+
+/**
+* ### Socket.sendHI
+* 
+* Creates a HI message and pushes it into the socket
+*   
+* @param {string} from Optional. The message sender. Defaults node.player
+* @param {string} to Optional. The recipient of the message. Defaults 'SERVER'
+* 
+*/
+Socket.prototype.sendHI = function (from, to) {
+	from = from || node.player;
+	to = to || 'SERVER';
+	var msg = node.msg.createHI(from, to);
+	this.send(msg);
+};
+
+/**
+* ### Socket.sendSTATE
+* 
+* Creates a STATE message and pushes it into the socket
+* 
+* @param {string} action A nodeGame action (e.g. 'get' or 'set')
+* @param {GameState} state The GameState object to send
+* @param {string} to Optional. The recipient of the message.
+* 
+* 	@see GameMsg.actions
+*/
+Socket.prototype.sendSTATE = function (action, state, to) {	
+	var msg = node.msg.createSTATE(action, state, to);
+	this.send(msg);
+};
+
+/**
+* ### Socket.sendTXT
+*
+* Creates a TXT message and pushes it into the socket
+* 
+* @param {string} text Text to send
+* @param {string} to Optional. The recipient of the message
+*/
+Socket.prototype.sendTXT = function(text, to) {	
+	var msg = node.msg.createTXT(text,to);
+	this.send(msg);
+};
+
+/**
+* ### Socket.sendDATA
+* 
+* Creates a DATA message and pushes it into the socket
+* 
+* @param {string} action Optional. A nodeGame action (e.g. 'get' or 'set'). Defaults 'say'
+* @param {object} data An object to exchange
+* @param {string} to Optional. The recipient of the message. Defaults 'SERVER'
+* @param {string} text Optional. A descriptive text associated to the message.
+* 
+* 	@see GameMsg.actions
+* 
+* @TODO: invert parameter order: first data then action
+*/
+Socket.prototype.sendDATA = function (action, data, to, text) {
+	action = action || GameMsg.say;
+	to = to || 'SERVER';
+	text = text || 'DATA';
+	var msg = node.msg.createDATA(action, data, to, text);
+	this.send(msg);
+};
+
+
+// helping methods
+
+var logSecureParseError = function (text, e) {
+	text = text || 'Generic error while parsing a game message';
+	var error = (e) ? text + ": " + e : text;
+	node.log(error, 'ERR');
+	node.emit('LOG', 'E: ' + error);
+	return false;
+}
+
+
+
+
+
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);
+/**
  * # GameSocketClient
  * 
  * Copyright(c) 2012 Stefano Balietti
@@ -7476,580 +8326,40 @@ var GameMsg = node.GameMsg,
 	Player = node.Player,
 	GameMsgGenerator = node.GameMsgGenerator;
 
-var buffer,
-	session;
-	
+exports.SocketIo = SocketIo;
 
-exports.GameSocketClient = GameSocketClient;
 
-/**
- * ## GameSocketClient constructor
- * 
- * Creates a new instance of GameSocketClient
- * 
- * @param {object} options Optional. A configuration object
- */
-function GameSocketClient (options) {
-	options = options || {};
-	
-// ## Private properties
-	
-/**
- * ### GameSocketClient.buffer
- * 
- * Buffer of queued messages 
- * 
- * @api private
- */ 
-	buffer = [];
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'buffer', {
-			value: buffer,
-			enumerable: true
-		});
-	}
-	else {
-		this.buffer = buffer;
-	}
-	
-/**
- * ### GameSocketClient.session
- * 
- * The session id shared with the server
- * 
- * This property is initialized only when a game starts
- * 
- */
-	session = null;
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'session', {
-			value: session,
-			enumerable: true
-		});
-	}
-	else {
-		this.session = session;
-	}
-// ## Public properties
-	
-/**
- * ### GameSocketClient.io
- * 
- * 
- */	
-	this.io 		= null;
-/**
- * ### GameSocketClient.url
- * 
- */		
-	this.url 		= null;
-	
-/**
- * ### GameSocketClient.servername
- * 
- */	
-	this.servername = null;
 
+function SocketIo() {
+	this.socket = null;
 }
 
-// ## GameSocketClient methods
-
-/**
- * ### GameSocketClient.getSession
- * 
- * Searches the node.session object for a saved session matching the passed 
- * game-message
- * 
- * If found, the session object will have the following a structure
- * 
- *	var session = {
- * 		id: 	node.gsc.session,
- * 		player: node.player,
- * 		memory: node.game.memory,
- * 		state: 	node.game.state,
- * 		game: 	node.game.name,
- * 		history: undefined,
- * 	};	
- * 
- * 
- * @param {GameMsg} msg A game-msg
- * @return {object|boolean} A session object, or FALSE if not was not found
- * 
- * 	@see node.session
- */
-GameSocketClient.prototype.getSession = function (msg) {
-	if (!msg) return false;
-	
-	var session = false;
-	if ('function' === typeof node.session)	{
-		session = node.session(msg.session);
-	}
-	
-	// TODO: check if session is still valid
-	return (session) ? session : false;
-};
-
-/**
- * ### GameSocketClient.startSession
- * 
- * Initializes a nodeGame session
- * 
- * Creates a the player and saves it in node.player, and stores the session ids
- * in the session object (GameSocketClient.session)
- * 
- * @param {GameMsg} msg A game-msg
- * @return {boolean} TRUE, if session was correctly initialized
- * 
- * 	@see GameSocketClient.createPlayer
- */
-GameSocketClient.prototype.startSession = function (msg) {
-	var player = {
-			id:		msg.data,	
-			sid: 	msg.data
-	};
-	this.createPlayer(player);
-	session = msg.session;
-	return true;
-};
-
-/**
- * ### GameSocketClient.restoreSession
- * 
- * Restores a session object
- * 
- * @param {object} session A session object as loaded by GameSocketClient.getSession
- * 
- * 
- * 	@emit NODEGAME_RECOVERY
- * 	@emit LOADED
- * 
- * 	@see GameSocketClient.createPlayer
- * 	@see node.session
- */
-GameSocketClient.prototype.restoreSession = function (sessionObj, sid) {
-	if (!sessionObj) return;
-	
-	var log_prefix = 'nodeGame session recovery: ';
-	
-	node.log('Starting session recovery ' + sid, 'INFO', log_prefix);
-	node.emit('NODEGAME_RECOVERY', sid);
-	
-	sid = sid || sessionObj.player.sid;
-	
-	this.session = sessionObj.id;
-	
-	// Important! The new socket.io ID
-	session.player.sid = sid;
-
-	this.createPlayer(session.player);
-	node.game.memory = session.memory;
-	node.goto(session.state);
-	
-	if (!sessionObj.history) {
-		node.log('No event history was found to recover', 'WARN', log_prefix);
-		return true;
-	}
-	
-	node.log('Recovering ' + session.history.length + ' events', 'DEBUG', log_prefix);
-	
-	node.events.history.importDB(session.history);
-	var hash = new GameState(session.state).toHash('S.s.r'); 
-	if (!node.events.history.state) {
-		node.log('No old events to re-emit were found during session recovery', 'DEBUG', log_prefix);
-		return true; 
-	}
-	if (!node.events.history.state[hash]){
-		node.log('The current state ' + hash + ' has no events to re-emit', 'DEBUG', log_prefix);
-		return true; 
-	}
-	
-	var discard = ['LOG', 
-	               'STATECHANGE',
-	               'WINDOW_LOADED',
-	               'BEFORE_LOADING',
-	               'LOADED',
-	               'in.say.STATE',
-	               'UPDATED_PLIST',
-	               'NODEGAME_READY',
-	               'out.say.STATE',
-	               'out.set.STATE',
-	               'in.say.PLIST',
-	               'STATEDONE', // maybe not here
-	               'out.say.HI'
-		               
-	];
-	
-	var to_remit = node.events.history.state[hash];
-	to_remit.select('event', 'in', discard).remove();
-	
-	if (!to_remit.length){
-		node.log('The current state ' + hash + ' has no valid events to re-emit', 'DEBUG', log_prefix);
-		return true;
-	}
-	
-	var remit = function () {
-		node.log('Re-emitting ' + to_remit.length + ' events', 'DEBUG', log_prefix);
-		// We have events that were fired at the state when 
-		// disconnection happened. Let's fire them again 
-		to_remit.each(function(e) {
-			// Falsy, should already been discarded
-			if (!JSUS.in_array(e.event, discard)) {
-				node.emit(e.event, e.p1, e.p2, e.p3);
-			}
-		});
-	};
-	
-	if (node.game.isReady()) {
-		remit.call(node.game);
-	}
-	else {
-		node.on('LOADED', function(){
-			remit.call(node.game);
-		});
-	}
-	
-	return true;
-};
-
-/**
- * ### GameSocketClient.createPlayer
- * 
- * Mixes in default properties for the player object and
- * additional configuration variables from node.conf.player
- * 
- * Writes the node.player object
- * 
- * Properties: `id`, `sid`, `ip` can never be overwritten.
- * 
- * Properties added as local configuration cannot be further
- * modified during the game. 
- * 
- * Only the property `name`, can be changed.
- * 
- */
-GameSocketClient.prototype.createPlayer = function (player) {	
-	player = new Player(player);
-	
-	if (node.conf && node.conf.player) {			
-		var pconf = node.conf.player;
-		for (var key in pconf) {
-			if (pconf.hasOwnProperty(key)) {
-				if (JSUS.in_array(key, ['id', 'sid', 'ip'])) {
-					continue;
-				} 
-				
-				// Cannot be overwritten properties previously 
-				// set in other sessions (recovery)
-//				if (player.hasOwnProperty(key)) {
-//					continue;
-//				}
-				if (node.support.defineProperty) {
-					Object.defineProperty(player, key, {
-				    	value: pconf[key],
-				    	enumerable: true
-					});
-				}
-				else {
-					player[key] = pconf[key];
-				}
-			}
-		}
-	}
-	if (node.support.defineProperty) {
-		Object.defineProperty(node, 'player', {
-	    	value: player,
-	    	enumerable: true
-		});
-	}
-	else {
-		node.player = player;
-	}
-	return player;
-};
-
-/**
- * ### GameSocketClient.connect
- * 
- * Initializes the connection to a nodeGame server
- * 
- * 
- * 
- * @param {object} conf A configuration object
- */
-GameSocketClient.prototype.connect = function (conf) {
-	conf = conf || {};
-	if (!conf.url) {
-		node.log('cannot connect to empty url.', 'ERR');
-		return false;
-	}
-	
-	this.url = conf.url;
-	
-	node.log('connecting to ' + conf.url);
-	this.io = io.connect(conf.url, conf.io);
-    this.attachFirstListeners(this.io);
-    return this.io;
-};
-
-// ## I/O Functions
-
-
-var logSecureParseError = function (text, e) {
-	text = text || 'Generic error while parsing a game message';
-	var error = (e) ? text + ": " + e : text;
-	node.log(error, 'ERR');
-	node.emit('LOG', 'E: ' + error);
-	return false;
-}
-
-/**
- * ### GameSocketClient.secureParse
- * 
- * Parse the message received in the Socket
- * 
- * @param {object|GameMsg} msg The game-message to parse
- * @return {GameMsg|boolean} The parsed GameMsg object, or FALSE if an error occurred
- *  
- */
-GameSocketClient.prototype.secureParse = function (msg) {
-	
-	var gameMsg;
-	try {
-		gameMsg = GameMsg.clone(JSON.parse(msg));
-		node.info(gameMsg, 'R: ');
-	}
-	catch(e) {
-		return logSecureParseError('Malformed msg received',  e);
-	}
-	
-	if (this.session && gameMsg.session !== this.session) {
-		return logSecureParseError('Local session id does not match incoming message session id');
-	}
-	
-	return gameMsg;
-};
-
-/**
- * ### GameSocketClient.clearBuffer
- * 
- * Emits and removes all the events in the message buffer
- * 
- * 	@see node.emit
- */
-GameSocketClient.prototype.clearBuffer = function () {
-	var nelem = buffer.length;
-	for (var i=0; i < nelem; i++) {
-		var msg = this.buffer.shift();
-		if (msg) {
-			node.emit(msg.toInEvent(), msg);
-			node.log('Debuffered ' + msg, 'DEBUG');
-		}
-	}
-};
-
-/**
- * ### GameSocketClient.attachFirstListeners
- *
- * Initializes the socket to wait for a HI message from the server
- * 
- * Nothing is done until the SERVER send an HI msg. All the others msgs will
- * be ignored otherwise.
- * 
- * @param {object} socket The socket.io socket
- */
-GameSocketClient.prototype.attachFirstListeners = function (socket) {
-	
+SocketIo.prototype.connect = function(url, options) {
 	var that = this;
 	
-	socket.on('connect', function (msg) {
-		var connString = 'nodeGame: connection open';
-	    node.log(connString); 
+	this.socket = io.connect(url, options); //conf.io
+	
+	this.socket.on('connect', function (msg) {
+			
+	    node.info('socket.io connection open'); 
 	    
-	    socket.on('message', function (msg) {	
-	    	
-	    	var msg = that.secureParse(msg);
-	    	
-	    	if (msg) { // Parsing successful
-				if (msg.target === 'HI') {
-
-					// Setting global info
-					that.servername = msg.from;
-					// Keep serverid = msg.from for now
-					that.serverid = msg.from;
-					
-					var sessionObj = that.getSession(msg);
-					
-					if (sessionObj) {
-						that.restoreSession(sessionObj, socket.id);
-						
-						// Get Ready to play
-						that.attachMsgListeners(socket, msg.session);
-						
-						var msg = node.msg.create({
-							action: GameMsg.actions.SAY,
-							target: 'HI_AGAIN',
-							data: node.player
-						});
-//							console.log('HI_AGAIN MSG!!');
-//							console.log(msg);
-						that.send(msg);
-						
-					}
-					else {
-						that.startSession(msg);
-						// Get Ready to play
-						that.attachMsgListeners(socket, msg.session);
-						
-						// Send own name to SERVER
-						that.sendHI(node.player, 'ALL');
-					}
-					
-
-					// Ready to play
-					node.emit('out.say.HI');
-			   	 } 
-	    	}
+	    that.socket.on('message', function(msg) {
+	    	node.socket.onMessage(msg);
 	    });
 	    
 	});
 	
-    socket.on('disconnect', function() {
-    	// Save the current state of the game
-    	node.session.store();
-    	node.log('closed');
-    });
-};
-
-/**
- * ### GameSocketClient.attachMsgListeners
- * 
- * Attaches standard message listeners
- * 
- * This method is called after the client has received a valid HI message from
- * the server, and a session number has been issued
- * 
- * @param {object} socket The socket.io socket
- * @param {number} session The session id issued by the server
- * 
- * @emit NODEGAME_READY
- */
-GameSocketClient.prototype.attachMsgListeners = function (socket, session) {   
-	var that = this;
+    this.socket.on('disconnect', node.socket.onDisconnect);
 	
-	node.log('Attaching FULL listeners');
-	socket.removeAllListeners('message');
-		
-	socket.on('message', function(msg) {
-		var msg = that.secureParse(msg);
-		
-		if (msg) { // Parsing successful
-			// Wait to fire the msgs if the game state is loading
-			if (node.game && node.game.isReady()) {	
-				node.emit(msg.toInEvent(), msg);
-			}
-			else {
-				node.log('Buffering: ' + msg, 'DEBUG');
-				buffer.push(msg);
-			}
-		}
-	});
-	
-	node.emit('NODEGAME_READY');
 };
 
-// ## SEND methods
-
-/**
- * ### GameSocketClient.sendHI
- * 
- * Creates a HI message and pushes it into the socket
- *   
- * @param {string} from Optional. The message sender. Defaults node.player
- * @param {string} to Optional. The recipient of the message. Defaults 'SERVER'
- * 
- */
-GameSocketClient.prototype.sendHI = function (from, to) {
-	from = from || node.player;
-	to = to || 'SERVER';
-	var msg = node.msg.createHI(from, to);
-	this.send(msg);
+SocketIo.prototype.send = function (msg) {
+	this.socket.send(msg.stringify());
 };
 
-/**
- * ### GameSocketClient.sendSTATE
- * 
- * Creates a STATE message and pushes it into the socket
- * 
- * @param {string} action A nodeGame action (e.g. 'get' or 'set')
- * @param {GameState} state The GameState object to send
- * @param {string} to Optional. The recipient of the message.
- * 
- * 	@see GameMsg.actions
- */
-GameSocketClient.prototype.sendSTATE = function (action, state, to) {	
-	var msg = node.msg.createSTATE(action, state, to);
-	this.send(msg);
-};
 
-/**
- * ### GameSocketClient.sendTXT
- *
- * Creates a TXT message and pushes it into the socket
- * 
- * @param {string} text Text to send
- * @param {string} to Optional. The recipient of the message
- */
-GameSocketClient.prototype.sendTXT = function(text, to) {	
-	var msg = node.msg.createTXT(text,to);
-	this.send(msg);
-};
+node.SocketFactory.register('SocketIo', SocketIo);
 
-/**
- * ### GameSocketClient.sendDATA
- * 
- * Creates a DATA message and pushes it into the socket
- * 
- * @param {string} action Optional. A nodeGame action (e.g. 'get' or 'set'). Defaults 'say'
- * @param {object} data An object to exchange
- * @param {string} to Optional. The recipient of the message. Defaults 'SERVER'
- * @param {string} text Optional. A descriptive text associated to the message.
- * 
- * 	@see GameMsg.actions
- * 
- * @TODO: invert parameter order: first data then action
- */
-GameSocketClient.prototype.sendDATA = function (action, data, to, text) {
-	action = action || GameMsg.say;
-	to = to || 'SERVER';
-	text = text || 'DATA';
-	var msg = node.msg.createDATA(action, data, to, text);
-	this.send(msg);
-};
-
-/**
- * ### GameSocketClient.send
- * 
- * Pushes a message into the socket.
- * 
- * The msg is actually received by the client itself as well.
- * 
- * @param {GameMsg} The game message to send
- * 
- * 	@see GameMsg
- * 
- * @TODO: Check Do volatile msgs exist for clients?
- */
-GameSocketClient.prototype.send = function (msg) {
-
-	// if (msg.reliable) {
-		this.io.send(msg.stringify());
-	// }
-	// else {
-	// this.io.volatile.send(msg.stringify());
-	// }
-	node.log('S: ' + msg);
-	node.emit('LOG', 'S: ' + msg.toSMS());
-};
 
 })(
 	'undefined' != typeof node ? node : module.exports
@@ -8855,6 +9165,239 @@ Game.prototype.isReady = function() {
   , 'undefined' != typeof node ? node : module.parent.exports
 );
 /**
+ * # GameSession
+ * 
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed 
+ * 
+ * `nodeGame` session manager
+ * 
+ * ---
+ * 
+ */
+
+(function (exports, node) {
+	
+// ## Global scope
+	
+var GameMsg = node.GameMsg,
+	GameState = node.GameState,
+	Player = node.Player,
+	GameMsgGenerator = node.GameMsgGenerator,
+	J = node.JSUS;
+
+//Exposing constructor
+exports.GameSession = GameSession;
+exports.GameSession.SessionManager = SessionManager;
+
+GameSession.prototype = new SessionManager();
+GameSession.prototype.constructor = GameSession; 
+
+function GameSession() {
+	SessionManager.call(this);
+	
+	this.register('player', {
+		set: function(p) {
+			node.createPlayer(p);
+		},
+		get: function() {
+			return node.player;
+		}
+	});
+	
+	this.register('game.memory', {
+		set: function(value) {
+			node.game.memory.clear(true);
+			node.game.memory.importDB(value);
+		},
+		get: function() {
+			return (node.game.memory) ? node.game.memory.fetch() : null;	
+		}
+	});
+	
+	this.register('events.history', {
+		set: function(value) {
+			node.events.history.history.clear(true);
+			node.events.history.history.importDB(value);
+		},
+		get: function() {
+			return (node.events.history) ? node.events.history.history.fetch() : null;
+		}
+	});
+	
+	
+	this.register('game.state', {
+		set: GameSession.restoreState
+	});
+}
+
+
+GameSession.prototype.restoreState = function(state) {
+		
+	try {
+		// GOTO STATE
+		node.goto(state);
+		
+		var discard = ['LOG', 
+		               'STATECHANGE',
+		               'WINDOW_LOADED',
+		               'BEFORE_LOADING',
+		               'LOADED',
+		               'in.say.STATE',
+		               'UPDATED_PLIST',
+		               'NODEGAME_READY',
+		               'out.say.STATE',
+		               'out.set.STATE',
+		               'in.say.PLIST',
+		               'STATEDONE', // maybe not here
+		               'out.say.HI'	               
+		];
+		
+		// RE-EMIT EVENTS
+		node.events.history.remit(node.game.state, discard);
+		node.info('game state restored');
+		return true;
+	}
+	catch(e) {
+		node.err('could not restore game state. An error has occurred: ' + e);
+		return false;
+	}
+
+};
+
+
+/// Session Manager
+
+function SessionManager() {
+	this.session = {};
+}
+
+SessionManager.getVariable = function(p) {
+	J.getNestedValue(p, node);
+};
+
+SessionManager.setVariable = function(p, value) {
+	J.setNestedValue(p, value, node);
+};
+
+SessionManager.prototype.register = function(path, options) {
+	if (!path) {
+		node.err('cannot add an empty path to session');
+		return false;
+	}
+	
+	this.session[path] = {
+			
+		get: (options && options.get) ? options.get
+									  : function() {
+										  return J.getNestedValue(path, node);
+									  },
+									  
+		set: (options && options.set) ? options.set 
+									  : function(value) {
+										  J.setNestedValue(path, value, node);
+									  }
+		
+	};
+	
+	return true;
+};
+
+SessionManager.prototype.unregister = function(path) {
+	if (!path) {
+		node.err('cannot delete an empty path from session');
+		return false;
+	}
+	if (!this.session[path]) {
+		node.err(path + ' is not registered in the session');
+		return false;
+	}
+	
+	delete this.session[path];	
+	return true;
+};
+
+SessionManager.prototype.get = function(path) {
+	var session = {};
+	
+	if (path) {
+		 return (this.session[path]) ? this.session[path].get() : undefined;
+	}
+	else {
+		for (var path in this.session) {
+			if (this.session.hasOwnProperty(path)) {
+				session[path] = this.session[path].get();
+			}
+		}
+
+		return session;
+	}
+};
+
+SessionManager.prototype.save = function() {
+	var session = {};
+	for (var path in this.session) {
+		if (this.session.hasOwnProperty(path)) {
+			session[path] = {
+					value: this.session[path].get(),
+					get: this.session[path].get,
+					set: this.session[path].set
+			};
+		}
+	}
+	return session;
+};
+
+SessionManager.prototype.load = function(session) {
+	for (var i in session) {
+		if (session.hasOwnProperty(i)) {
+			this.register(i, session[i]);
+		}
+	}
+};
+
+SessionManager.prototype.clear = function() {
+	this.session = {};
+};
+
+SessionManager.prototype.restore = function (sessionObj) {
+	if (!sessionObj) {
+		node.err('cannot restore empty session object');
+		return ;
+	}
+	
+	for (var i in sessionObj) {
+		if (sessionObj.hasOwnProperty(i)) {
+			sessionObj[i].set(sessionObj[i].value);
+		}
+	}
+	
+	return true;
+};
+
+SessionManager.prototype.store = function() {
+	//node.store(node.socket.id, this.get());
+};
+
+SessionManager.prototype.store = function() {
+	//node.store(node.socket.id, this.get());
+};
+
+// Helping functions
+
+//function isReference(value) {
+//	var type = typeof(value);
+//	if ('function' === type) return true;
+//	if ('object' === type) return true;
+//	return false;
+//}
+
+
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);
+/**
  * # nodeGame
  * 
  * Copyright(c) 2012 Stefano Balietti MIT Licensed
@@ -8871,6 +9414,7 @@ Game.prototype.isReady = function() {
 		
 	var EventEmitter = node.EventEmitter,
 		GameSocketClient = node.GameSocketClient,
+		Socket = node.Socket,
 		GameState = node.GameState,
 		GameMsg = node.GameMsg,
 		Game = node.Game,
@@ -8892,12 +9436,17 @@ Game.prototype.isReady = function() {
 	
 	node.events = new EventEmitter();
 
-
 	// Creating objects
 	// /////////////////////////////////////////
 	
 	node.msg	= node.GameMsgGenerator;	
-	node.socket = node.gsc = new GameSocketClient();
+	//node.socket = node.gsc = new GameSocketClient();
+	
+	
+	node.session = new GameSession();
+	
+	node.socket = node.gsc = new Socket();
+	
 	
 	node.env = function (env, func, ctx, params) {
 		if (!env || !func || !node.env[env]) return;
@@ -8914,11 +9463,20 @@ Game.prototype.isReady = function() {
 	 * values. Stores the final configuration in node.conf.
 	 * 
 	 */
-	node._analyzeConf = function (conf) {
+	node.setup = node._analyzeConf = function (conf) {
 		if (!conf) {
-			node.log('Invalid configuration object found.', 'ERR');
+			node.err('invalid configuration object found.');
 			return false;
 		}
+		
+		// Socket
+		if (conf.socket) {
+			
+			
+			node.socket.setup(conf.socket);
+		}
+		
+		
 		
 		// URL
 		if (!conf.host) {
@@ -8999,22 +9557,24 @@ Game.prototype.isReady = function() {
 	};
 	
 	// TODO: create conf objects
-	node.connect = node.play = function (conf, game) {	
-		node._analyzeConf(conf);
-		
-		// node.socket.connect(conf);
+	node.connect = function (url) {	
+		node.socket.connect(url);
+		node.emit('NODEGAME_CONNECTED');
+	};	
+	
+	// TODO: create conf objects
+	node.play = function (game) {	
 		
 		node.game = new Game(game);
 		node.emit('NODEGAME_GAME_CREATED');
 		
-		
 		// INIT the game
 		node.game.init.call(node.game);
-		node.socket.connect(conf); // was node.socket.setGame(node.game);
 		
 		node.log('game loaded...');
 		node.log('ready.');
-	};	
+	};		
+	
 	
 // node.observe = function (conf, game) {
 // node._analyzeConf(conf);
@@ -9239,6 +9799,71 @@ Game.prototype.isReady = function() {
 			func.call();
 		}, Math.random()*timing, func);
 	};
+	
+	
+	
+/**
+ * ### node.createPlayer
+ * 
+ * Mixes in default properties for the player object and
+ * additional configuration variables from node.conf.player
+ * 
+ * Writes the node.player object
+ * 
+ * Properties: `id`, `sid`, `ip` can never be overwritten.
+ * 
+ * Properties added as local configuration cannot be further
+ * modified during the game. 
+ * 
+ * Only the property `name`, can be changed.
+ * 
+ */
+	node.createPlayer = function (player) {
+		
+		player = new Player(player);
+		
+		if (node.conf && node.conf.player) {			
+			var pconf = node.conf.player;
+			for (var key in pconf) {
+				if (pconf.hasOwnProperty(key)) {
+					if (JSUS.in_array(key, ['id', 'sid', 'ip'])) {
+						continue;
+					} 
+					
+					// Cannot be overwritten properties previously 
+					// set in other sessions (recovery)
+//					if (player.hasOwnProperty(key)) {
+//						continue;
+//					}
+					if (node.support.defineProperty) {
+						Object.defineProperty(player, key, {
+					    	value: pconf[key],
+					    	enumerable: true
+						});
+					}
+					else {
+						player[key] = pconf[key];
+					}
+				}
+			}
+		}
+		
+		
+		if (node.support.defineProperty) {
+			Object.defineProperty(node, 'player', {
+		    	value: player,
+		    	enumerable: true
+			});
+		}
+		else {
+			node.player = player;
+		}
+		
+		node.emit('PLAYER_CREATED', player);
+		
+		return player;
+	};
+	
 		
 	node.log(node.version + ' loaded', 'ALWAYS');
 	
@@ -10365,378 +10990,6 @@ TriggerManager.prototype.size = function () {
 	
 
 // ## Closure	
-})(
-	('undefined' !== typeof node) ? node : module.exports
-  , ('undefined' !== typeof node) ? node : module.parent.exports
-);
-/**
- * # GameSession
- * 
- * Copyright(c) 2012 Stefano Balietti
- * MIT Licensed 
- * 
- * Addon to save and load the nodeGame session in the browser
- * 
- *  @see node.store
- *  
- * ---
- * 
- */
-
-(function (node) {
-	
-	// ## Global scope
-	
-	var JSUS = node.JSUS,
-		NDDB = node.NDDB,
-		store = node.store;
-
-	var prefix = 'nodegame_';
-
-/**
- * ## node.session
- *
- * Loads a nodeGame session
- *
- * If no parameter is passed it will return the current session.
- * Else, it will try to load a session with the given id. 
- *
- * This method interact with the `node.store` object that provides
- * lower level capabilities to write to a persistent support (e.g. 
- * the browser localStorate).
- * 
- * @param {number} sid Optional. The session id to load
- * @return {object} The session object
- * 
- *  @see node.store
- * 
- */
-	node.session = function (sid) {
-				
-		// Returns the current session
-		if (!sid) {
-			var session = {
-					id: 	node.gsc.session,
-					player: node.player,
-					memory: node.game.memory,
-					state: 	node.game.state,
-					game: 	node.game.name,
-					history: undefined
-			};
-			
-			// If we saved the emitted events, add them to the
-			// session object
-			if (node.events.history || node.events.history.length) {
-				session.history = node.events.history.fetch();
-			}
-			
-			return session;
-		}
-		
-		if (!node.session.isEnabled()) {
-			return false;
-		}
-		
-		// Tries to return a stored session
-		return node.store(prefix + sid);
-	};
-
-/**
- * ## node.session.isEnabled
- * 
- * TRUE, if the session can be saved to a persistent support
- * 
- */	
-	node.session.isEnabled = function() {
-		return (node.store) ? node.store.isPersistent() : false;
-	};
-	
-
-/**
- * ## node.session.store
- * 
- * Stores the current session to a persistent medium
- * 
- * @return {boolean} TRUE, if session saving was successful
- */	
-	node.session.store = function() {
-		if (!node.session.isEnabled()) {
-			node.log('Could not save the session');
-			return false;
-		}
-		
-		var session = node.session();
-		var sid = session.id;
-		node.store(prefix + sid, session);
-		node.log('Session saved with id ' + sid);
-		return true;
-	}
-	
-// <!--	
-//	node.session.restore = function (sessionObj, sid) {
-//		
-//		if (!sessionObj) return false;
-//		if (!sessionObj.player) return false;
-//		if (!sessionObj.state) return false;
-//		
-//		sid = sid || sessionObj.player.sid;
-//		if (!sid) return false;
-//		
-//		var player = {
-//				id: 	sessionObj.player.id,
-//				sid: 	sid,
-//				name:	node.gsc.name,
-//		};
-//	
-//		that.createPlayer(player);
-//		
-//		node.gsc.session 	= sessionObj.id;
-//		node.game.memory 	= sessionObj.memory;
-//		
-//		node.goto(session.state);	
-//		
-//		return true;
-//		
-//	};
-// -->
-
-// ## Closure	
-})('undefined' != typeof node ? node : module.parent.exports);
-/**
- * ## WaitingRoom
- * 
- * Holds a list of players and starts one or more games based on a 
- * list of criteria. 
- *  
- */
-
-(function(exports, node){
-	
-	if (!node.TriggerManager) {
-		throw new Error('node.TriggerManager not found. Aborting');
-	}
-	
-	function Group(options) {
-		options = options || {}
-		
-		this.players = options.players;
-	}
-	
-//	if (!node.Group) {
-//		throw new Error('node.TriggerManager not found. Aborting');
-//	}
-	
-	var J = node.JSUS;
-	
-	
-	exports.WaitingRoom = WaitingRoom;
-	
-	WaitingRoom.prototype = new node.TriggerManager();
-	WaitingRoom.prototype.constructor = WaitingRoom;
-	
-	WaitingRoom.defaults = {};
-	
-
-	
-	function WaitingRoom (options) {
-		node.TriggerManager.call(this, options);
-		
-		
-		node.pool = new node.PlayerList();
-		node.game.room = {};
-		
-		var that = this;
-
-		var pullTriggers = function() {
-			console.log('CAPTURED')
-			var groups  = that.pullTriggers();
-
-			if (!groups) return;
-			if (!J.isArray(groups)) groups = [groups];
-			
-			var i, name, count = 0;
-			for (i = 0; i< groups.length; i++) {
-				name = groups[i].name || count++;
-				node.game.room[name] = new Game(groups[i]);
-				node.game.room[name].step();
-			}
-		};
-		
-		var onConnectFunc = function() {
-			//console.log('added')
-			node.onPLIST(function(){
-				pullTriggers();
-			});
-		};
-		
-		var onConnect;
-		Object.defineProperty(this, 'onConnect', {
-			set: function(value) {
-				if (value === false) {
-					node.removeListener('in.say.PLIST', pullTriggers);
-					node.removeListener('in.set.PLIST', pullTriggers);
-				}
-				else if (value === true) {
-					node.onPLIST(pullTriggers);
-				}
-				onConnect = value;
-				
-			},
-			get: function() {
-				return onConnect;
-			},
-			configurable: true
-		});
-		
-		var onTimeout, onTimeoutTime;
-		Object.defineProperty(this, 'onTimeout', {
-			set: function(value) {
-				if (!value) {
-					clearTimeout(onTimeout);
-					onTimeoutTime = value;
-					onTimeout = false;
-				}
-				else if ('numeric' === typeof value) {
-				
-					if (onTimeout) {
-						clearTimeout(onTimeout);
-					}
-					onTimeoutTime = value;
-					onTimeout = setTimeout(pullTriggers);
-				}
-			},
-			get: function() {
-				return onTimeoutTime;
-			},
-			configurable: true
-		});
-		
-		var onInterval, onIntervalTime;
-		Object.defineProperty(this, 'onInterval', {
-			set: function(value) {
-				if (!value) {
-					clearInterval(onInterval);
-					onIntervalTime = value;
-					onInterval = false;
-				}
-				else if ('numeric' === typeof value) {
-				
-					if (onInterval) {
-						clearInterval(onInterval);
-					}
-					onInterval = setInterval(pullTriggers);
-					onIntervalTime = value;
-				}
-			},
-			get: function() {
-				return onIntervalTime;
-			},
-			configurable: true
-		});
-		
-		
-		this.init(options);
-	}
-
-	
-	WaitingRoom.prototype.init = function (options) {
-		options = options || {};
-		
-		this.onConnect = options.onConnect || true;
-		this.onTimeout = options.onTimeout || false;
-		this.onInterval = options.onInterval || false;
-		
-		
-		this.addTrigger(function(){
-			return new Group({
-				players: node.pool,
-				game: options.loops
-			});
-		});
-		
-		if (options.minPlayers && options.maxPlayers) {
-			this.addTrigger(function(){
-				if (node.pool.length < options.minPlayers) {
-					return false;
-				}
-				if (node.pool.length > options.maxPlayers) {
-					// Take N = maxPlayers random player
-					var players = node.pool.shuffle().limit(options.maxPlayers);
-					return new Group({
-						players: players,
-						game: options.loops
-					});
-					
-				}
-				
-				return new Group({
-					players: node.pool,
-					game: options.loops
-				});
-			});
-		}
-		
-		if (options.minPlayers) {
-			this.addTrigger(function(){
-				if (node.pool.length < options.minPlayers) {
-					return false;
-				}
-				
-				return new Group({
-					players: node.pool,
-					game: options.loops
-				});
-			});
-		}
-		
-		if (options.maxPlayers) {
-			this.addTrigger(function(){
-				if (node.pool.length > options.maxPlayers) {
-					// Take N = maxPlayers random player
-					var players = node.pool.shuffle().limit(options.maxPlayers);
-					return new Group({
-						players: players,
-						game: options.loops
-					});
-					
-				}
-			});
-		}
-		
-		if (options.nPlayers) {
-			this.addTrigger(function(){
-				if (node.pool.length === options.nPlayers) {
-					// Take N = maxPlayers random player
-					return new Group({
-						players: node.pool,
-						game: options.loops
-					});
-					
-				}
-			});
-		}
-		
-	};
-	
-	
-	WaitingRoom.prototype.criteria = function (func, pos) {
-		this.addTrigger(func, pos);
-	};
-	
-	
-	/**
-	 * ## WaitingRoom.setInterval
-	 * 
-	 * Set the update interval
-	 * 
-	 */
-	WaitingRoom.prototype.setInterval = function(interval) {
-		if (!interval) clearInterval(this.interval);
-		if (this.interval) clearInterval(this.interval);
-		this.interval = setInterval(this.pullTriggers, interval);
-	};
-	
-	
 })(
 	('undefined' !== typeof node) ? node : module.exports
   , ('undefined' !== typeof node) ? node : module.parent.exports

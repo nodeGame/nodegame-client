@@ -114,6 +114,7 @@ node.log = function (txt, level, prefix) {
 };
 
 // <!-- It will be overwritten later -->
+node.conf 		= {};
 node.game 		= {};
 node.socket 	= {};
 node.session 	= {};
