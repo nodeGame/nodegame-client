@@ -10,9 +10,6 @@
  */
 (function (node) {
 	
-	
-	console.log(node.SocketFactory);
-	
 	// Declaring variables
 	// //////////////////////////////////////////
 		
@@ -45,6 +42,9 @@
 	
 	node.msg	= node.GameMsgGenerator;	
 	//node.socket = node.gsc = new GameSocketClient();
+	
+	
+	node.session = new GameSession();
 	
 	node.socket = node.gsc = new Socket();
 	

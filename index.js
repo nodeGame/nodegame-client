@@ -119,6 +119,7 @@ node.socket 	= {};
 node.session 	= {};
 node.player 	= {};
 node.memory 	= {};
+node.store		= function() {};
 
 // <!-- Load the auxiliary library if available in the browser -->
 if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
