@@ -79,8 +79,6 @@
 			node.socket.setup(conf.socket);
 		}
 		
-		
-		
 		// URL
 		if (!conf.host) {
 			if ('undefined' !== typeof window) {

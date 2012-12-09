@@ -15,23 +15,23 @@
 		get = GameMsg.actions.GET + '.',
 		OUT  = GameMsg.OUT;
 	
-/** 
- * ### out.say.HI
- * 
- * Updates the game-state of the game upon connection to a server
- * 
- */
-node.on( OUT + say + 'HI', function() {
-	// Enter the first state
-	if (node.game.auto_step) {
-		node.game.updateState(node.game.next());
-	}
-	else {
-		// The game is ready to step when necessary;
-		node.game.state.is = GameState.iss.LOADED;
-		node.socket.sendSTATE(GameMsg.actions.SAY, node.game.state);
-	}
-});
+///** 
+// * ### out.say.HI
+// * 
+// * Updates the game-state of the game upon connection to a server
+// * 
+// */
+//node.on( OUT + say + 'HI', function() {
+//	// Enter the first state
+//	if (node.game.auto_step) {
+//		node.game.updateState(node.game.next());
+//	}
+//	else {
+//		// The game is ready to step when necessary;
+//		node.game.state.is = GameState.iss.LOADED;
+//		node.socket.sendSTATE(GameMsg.actions.SAY, node.game.state);
+//	}
+//});
 
 /**
  * ### out.say.STATE
