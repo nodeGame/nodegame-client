@@ -134,7 +134,7 @@ if ('object' === typeof module && 'function' === typeof require) {
 
     // ### Loading Sockets
     require('./lib/sockets/SocketIo.js');
-    //require('./lib/sockets/SocketDirect.js');
+    require('./lib/sockets/SocketDirect.js');
     
     // ### Loading Event listeners
     require('./listeners/incoming.js');
