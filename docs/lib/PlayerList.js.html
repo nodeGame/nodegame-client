@@ -190,7 +190,7 @@ to perform operation on them</p>
 </div>
 <p>Inheriting from NDDB    </p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
 <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">PlayerList</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -213,13 +213,13 @@ array of PlayerList instances and returns it.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">array</span>
+      <span>array</span>
       <span class="dox_type">Array</span>
       <span>The array to transform</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">Array</span>
       <span>array The array of <code>PlayerList</code> objects</span>
     </div>
@@ -254,25 +254,23 @@ database for storing the players </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">options</span>
+      <span>options</span>
       <span class="dox_type">object</span>
       <span>Optional. Configuration options for the instance</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">db</span>
+      <span>db</span>
       <span class="dox_type">object</span>
       <span>Optional. An initial set of players to import </span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">parent</span>
+      <span>parent</span>
       <span class="dox_type">PlayerList</span>
       <span>Optional. A parent object for the instance</span>
     </div>
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">public
-
-</span>
+      <span class="dox_type">public</span>
     </span>
   </div>
 </div>
@@ -332,13 +330,13 @@ database for storing the players </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">player</span>
+      <span>player</span>
       <span class="dox_type">Player</span>
       <span>The player object to add to the database</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">Boolean</span>
       <span>TRUE, if the insertion was successful</span>
     </div>
@@ -401,21 +399,15 @@ players</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">id</span>
+      <span>id</span>
       <span class="dox_type">number</span>
       <span>The id of the player to remove</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">Boolean</span>
-      <span>TRUE, if a player is found and removed successfully 
-
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="sb">`PlayerList.pop`</span>
-</code></pre></div>
-
-</span>
+      <span>TRUE, if a player is found and removed successfully </span>
     </div>
   </div>
 </div>
@@ -463,22 +455,16 @@ players</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">id</span>
+      <span>id</span>
       <span class="dox_type">number</span>
       <span>The id of the player to retrieve</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">Player</span>
       <span class="dox_type">Boolean</span>
-      <span>The player with the speficied id, or FALSE if no player was found
-
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="sb">`PlayerList.pop`</span>  
-</code></pre></div>
-
-</span>
+      <span>The player with the speficied id, or FALSE if no player was found</span>
     </div>
   </div>
 </div>
@@ -520,22 +506,16 @@ and returns it</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">id</span>
+      <span>id</span>
       <span class="dox_type">number</span>
       <span>The id of the player to retrieve</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">Player</span>
       <span class="dox_type">Boolean</span>
-      <span>The player with the speficied id, or FALSE if no player was found  
-
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="sb">`PlayerList.remove`</span>
-</code></pre></div>
-
-</span>
+      <span>The player with the speficied id, or FALSE if no player was found </span>
     </div>
   </div>
 </div>
@@ -580,7 +560,7 @@ returns them into an array</p>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">Array</span>
       <span>The array of id of players</span>
     </div>
@@ -608,18 +588,18 @@ returns them into an array</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">id</span>
+      <span>id</span>
       <span class="dox_type">number</span>
       <span>The id of the player to update</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">state</span>
+      <span>state</span>
       <span class="dox_type">GameState</span>
       <span>The new value of the state property</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">Boolean</span>
       <span>TRUE, if update is successful</span>
     </div>
@@ -660,13 +640,13 @@ returns them into an array</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">id</span>
+      <span>id</span>
       <span class="dox_type">number</span>
       <span>The id of the player</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">Boolean</span>
       <span>TRUE, if a player with the specified id was found</span>
     </div>
@@ -695,27 +675,20 @@ for the specified <code>GameState</code>.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">state</span>
+      <span>state</span>
       <span class="dox_type">GameState</span>
       <span>Optional. The GameState to check. Defaults state = node.game.state</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">extended</span>
+      <span>extended</span>
       <span class="dox_type">Boolean</span>
       <span>Optional. If TRUE, also newly connected players are checked. Defaults, FALSE</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">Boolean</span>
-      <span>TRUE, if all the players are DONE with the specified <code>GameState</code>
-
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="sb">`PlayerList.actives`</span>
-<span class="nv">@see</span> <span class="sb">`PlayerList.checkState`</span>
-</code></pre></div>
-
-</span>
+      <span>TRUE, if all the players are DONE with the specified <code>GameState</code></span>
     </div>
   </div>
 </div>
@@ -822,7 +795,7 @@ for the specified <code>GameState</code>.</p>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">number</span>
       <span>result The number of player whose state is different from 0:0:0</span>
     </div>
@@ -877,21 +850,14 @@ emits a <code>STATEDONE</code> event</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">state</span>
+      <span>state</span>
       <span class="dox_type">GameState</span>
       <span>Optional. The GameState to check. Defaults state = node.game.state</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">extended</span>
+      <span>extended</span>
       <span class="dox_type">Boolean</span>
-      <span>Optional. If TRUE, also newly connected players are checked. Defaults, FALSE
-
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="sb">`PlayerList.actives`</span>
-<span class="nv">@see</span> <span class="sb">`PlayerList.isStateDone`</span>
-</code></pre></div>
-
-</span>
+      <span>Optional. If TRUE, also newly connected players are checked. Defaults, FALSE</span>
     </div>
   </div>
 </div>
@@ -920,13 +886,13 @@ PlayerList</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">eol</span>
+      <span>eol</span>
       <span class="dox_type">string</span>
       <span>Optional. End of line separator between players</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">string</span>
       <span>out The string representation of the state of the PlayerList</span>
     </div>
@@ -963,21 +929,15 @@ PlayerList</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">N</span>
+      <span>N</span>
       <span class="dox_type">number</span>
       <span>The number of groups</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">Array</span>
-      <span>Array containing N <code>PlayerList</code> objects 
-
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="sb">`JSUS.getNGroups`</span>
-</code></pre></div>
-
-</span>
+      <span>Array containing N <code>PlayerList</code> objects </span>
     </div>
   </div>
 </div>
@@ -1005,21 +965,15 @@ PlayerList</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">N</span>
+      <span>N</span>
       <span class="dox_type">number</span>
       <span>The number player per group</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">Array</span>
-      <span>Array containing N <code>PlayerList</code> objects 
-
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="sb">`JSUS.getGroupsSizeN`</span>
-</code></pre></div>
-
-</span>
+      <span>Array containing N <code>PlayerList</code> objects </span>
     </div>
   </div>
 </div>
@@ -1047,13 +1001,13 @@ PlayerList</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">N</span>
+      <span>N</span>
       <span class="dox_type">number</span>
       <span>The number of random players to include in the set. Defaults N = 1</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">Player</span>
       <span class="dox_type">Array</span>
       <span>A single player object or an array of</span>
@@ -1094,15 +1048,23 @@ to associate to a player during the game. </p>
 <p>Some of the properties are <code>private</code> and can never be changed 
 after an instance of a Player has been created. Defaults one are:</p>
 
-<p><code>sid</code>: The Socket.io session id associated to the player
-  <code>id</code>: The nodeGame session id associate to the player
-  <code>count</code>: The id of the player within a PlayerList object</p>
+
+<div class="highlight"><pre><code><span class="sb">`sid`</span><span class="p">:</span> <span class="n">The</span> <span class="n">Socket</span><span class="o">.</span><span class="n">io</span> <span class="n">session</span> <span class="n">id</span> <span class="n">associated</span> <span class="n">to</span> <span class="n">the</span> <span class="n">player</span>
+<span class="sb">`id`</span><span class="p">:</span> <span class="n">The</span> <span class="n">nodeGame</span> <span class="n">session</span> <span class="n">id</span> <span class="n">associate</span> <span class="n">to</span> <span class="n">the</span> <span class="n">player</span>
+<span class="sb">`count`</span><span class="p">:</span> <span class="n">The</span> <span class="n">id</span> <span class="n">of</span> <span class="n">the</span> <span class="n">player</span> <span class="n">within</span> <span class="n">a</span> <span class="n">PlayerList</span> <span class="n">object</span>
+</code></pre></div>
+
+
 
 <p>Others properties are public and can be changed during the game.</p>
 
-<p><code>name</code>: An alphanumeric name associated to the player 
- <code>state</code>: The current state of the player as relative to a game
- <code>ip</code>: The ip address of the player</p>
+
+<div class="highlight"><pre><code><span class="sb">`name`</span><span class="p">:</span> <span class="n">An</span> <span class="n">alphanumeric</span> <span class="n">name</span> <span class="n">associated</span> <span class="n">to</span> <span class="n">the</span> <span class="n">player</span> 
+<span class="sb">`state`</span><span class="p">:</span> <span class="n">The</span> <span class="n">current</span> <span class="n">state</span> <span class="n">of</span> <span class="n">the</span> <span class="n">player</span> <span class="n">as</span> <span class="n">relative</span> <span class="n">to</span> <span class="n">a</span> <span class="n">game</span>
+<span class="sb">`ip`</span><span class="p">:</span> <span class="n">The</span> <span class="n">ip</span> <span class="n">address</span> <span class="n">of</span> <span class="n">the</span> <span class="n">player</span>
+</code></pre></div>
+
+
 
 <p>All the additional properties in the configuration object passed 
 to the constructor are also created as <em>private</em> and cannot be further
@@ -1144,7 +1106,7 @@ cannot overwrite any previously existing property.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">pl</span>
+      <span>pl</span>
       <span class="dox_type">object</span>
       <span>The object literal representing the player</span>
     </div>
@@ -1180,7 +1142,7 @@ cannot overwrite any previously existing property.</p>
 </div>
 
   </div>
-  <div class="body"><p>The session id received from the nodeGame server </p>
+  <div class="body"><p>The session id received from the nodeGame server</p>
   </div>
 </div>
         </td>
@@ -1241,7 +1203,11 @@ case of reconnections it can change</p>
   </div>
   <div class="body"><p>The ordinal position of the player in a PlayerList object</p>
 
-<p>@see PlayerList</p>
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">PlayerList</span>
+</code></pre></div>
+
+
   </div>
 </div>
         </td>
@@ -1324,8 +1290,12 @@ case of reconnections it can change</p>
   </div>
   <div class="body"><p>Reference to the game-state the player currently is</p>
 
-<p>@see node.game.state
-  @see GameState</p>
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">state</span>
+<span class="nv">@see</span> <span class="n">GameState</span>
+</code></pre></div>
+
+
   </div>
 </div>
         </td>
@@ -1389,7 +1359,7 @@ cannot overwrite any previously defined variable</p>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">string</span>
       <span>The string representation of a player</span>
     </div>

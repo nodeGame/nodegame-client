@@ -102,13 +102,22 @@ node.GameLoop = require('./lib/GameLoop').GameLoop;
 
 node.GameMsgGenerator = require('./lib/GameMsgGenerator').GameMsgGenerator;
 
+
 /**
- * ### node.GameSocketClient
+ * Expose SocketFactory
  * 
  * @api public
  */
 
-node.GameSocketClient = require('./lib/GameSocketClient').GameSocketClient;
+node.SocketFactory = require('./lib/sockets/SocketFactory').SocketFactory;
+
+/**
+ * Expose Socket
+ * 
+ * @api public
+ */
+
+node.Socket = require('./lib/Socket').Socket;
 
 
 /**
@@ -134,6 +143,14 @@ node.GameBit = require('./lib/GameDB').GameBit;
  */
 
 node.Game = require('./lib/Game').Game;
+
+
+/**
+ * Expose GameSession
+ * 
+ * @api public
+ */
+node.GameSession = require('./lib/Session').GameSession;
 
 
 // ### Addons

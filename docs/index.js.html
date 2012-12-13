@@ -67,10 +67,19 @@
         <a href="#node.memory">node.memory</a>
       </div>
       <div class="heading h3">
+        <a href="#node.store">node.store</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.support">node.support</a>
       </div>
       <div class="heading h2">
         <a href="#dependencies">Dependencies</a>
+      </div>
+      <div class="heading h3">
+        <a href="#loading-sockets">Loading Sockets</a>
+      </div>
+      <div class="heading h3">
+        <a href="#loading-event-listeners">Loading Event listeners</a>
       </div>
     </div>
   </div>
@@ -112,7 +121,7 @@ multiplayer games in the browser.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.4.8&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.6.0&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -202,20 +211,20 @@ greater than <code>node.verbosity</code></p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">txt</span>
+      <span>txt</span>
       <span class="dox_type">string</span>
       <span>The text to output</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">level</span>
+      <span>level</span>
       <span class="dox_type">string</span>
       <span class="dox_type">number</span>
       <span>Optional. The verbosity level of this log. Defaults, level = 0</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">prefix</span>
+      <span>prefix</span>
       <span class="dox_type">string</span>
-      <span>Optional. A text to display at the beginning of the log entry. Defaults prefix = 'nodeGame: ' </span>
+      <span>Optional. A text to display at the beginning of the log entry. Defaults prefix = 'nodeGame: '</span>
     </div>
   </div>
 </div>
@@ -327,8 +336,7 @@ proper listener functions </p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.EventEmitter
-    </span>
+      <span class="dox_type">node.EventEmitter</span>
     </div>
   </div>
 </div>
@@ -353,8 +361,7 @@ proper listener functions </p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.GameMsgGenerator
-    </span>
+      <span class="dox_type">node.GameMsgGenerator</span>
     </div>
   </div>
 </div>
@@ -379,8 +386,7 @@ proper listener functions </p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.GameSocketClient
-    </span>
+      <span class="dox_type">node.GameSocketClient</span>
     </div>
   </div>
 </div>
@@ -426,8 +432,7 @@ proper listener functions </p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.PlayerList.Player
-  </span>
+      <span class="dox_type">node.PlayerList.Player</span>
     </div>
   </div>
 </div>
@@ -451,13 +456,37 @@ proper listener functions </p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.GameDB
-  </span>
+      <span class="dox_type">node.GameDB</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">memory</span>   <span class="o">=</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.store">
+  <h3>
+    <a href="#node.store" class="pilcrow">&#182;</a>
+    node.store
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Makes the nodeGame session persistent, saving it
+to the browser local database or to a cookie</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">shelf.js</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">store</span>    <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -496,13 +525,40 @@ proper listener functions </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <!-- Node.js -->
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./init.node.js&#39;</span><span class="p">);</span>
-    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./nodeGame.js&#39;</span><span class="p">);</span>
-    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/incoming.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./nodeGame.js&#39;</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="loading-sockets">
+  <h3>
+    <a href="#loading-sockets" class="pilcrow">&#182;</a>
+    Loading Sockets
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/sockets/SocketIo.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/sockets/SocketDirect.js&#39;</span><span class="p">);</span>
+    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="loading-event-listeners">
+  <h3>
+    <a href="#loading-event-listeners" class="pilcrow">&#182;</a>
+    Loading Event listeners
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/incoming.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/internal.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/outgoing.js&#39;</span><span class="p">);</span>
 <span class="p">}</span>
@@ -512,7 +568,7 @@ proper listener functions </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <!-- Browser -->
         </td>
@@ -522,7 +578,6 @@ proper listener functions </p>
   
   <span class="nx">node</span><span class="p">.</span><span class="nx">support</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">compatibility</span><span class="p">();</span>
 <span class="p">}</span>
-
   
 <span class="p">})(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">module</span> <span class="o">?</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">:</span> <span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="p">{}));</span> 
 </pre></div>

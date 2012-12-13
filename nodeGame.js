@@ -13,25 +13,32 @@
  */
 (function (node) {
 		
-	var EventEmitter 		= node.EventEmitter,
-		GameSocketClient 	= node.GameSocketClient,
-		GameState 			= node.GameState,
-		GameMsg 			= node.GameMsg,
-		Game 				= node.Game,
-		Player 				= node.Player,
-		GameSession 		= node.GameSession,
-		J					= node.JSUS;
-
+	var EventEmitter = node.EventEmitter,
+		Socket = node.Socket,
+		GameState = node.GameState,
+		GameMsg = node.GameMsg,
+		Game = node.Game,
+		Player = node.Player,
+		GameSession = node.GameSession,
+		J = node.JSUS;
+	
+		
 	node.actions 	= GameMsg.actions;
 	node.IN 		= GameMsg.IN;
 	node.OUT 		= GameMsg.OUT;
 	node.targets 	= GameMsg.targets;		
 	node.states 	= GameState.iss;
 	
-// <!-- object commented in index.js -->
+
+	// <!-- object commented in index.js -->
 	node.events = new EventEmitter();
-	node.msg	= node.GameMsgGenerator;
-	node.socket = node.gsc = new GameSocketClient();
+
+	node.msg	= node.GameMsgGenerator;	
+	
+	node.session = new GameSession();
+	
+	node.socket = node.gsc = new Socket();
+	
 	
 	
 // ## Methods
@@ -71,8 +78,15 @@
  */
 	node.setup = node._analyzeConf = function (conf) {
 		if (!conf) {
-			node.log('Invalid configuration object found.', 'ERR');
+			node.err('invalid configuration object found.');
 			return false;
+		}
+		
+		// Socket
+		if (conf.socket) {
+			
+			
+			node.socket.setup(conf.socket);
 		}
 		
 		// URL
@@ -129,30 +143,113 @@
 		return conf;
 	};
 
+	node.configure = function(key, value) {
+		J.setNestedValue(key, value, node.conf);
+	};
+
+	
+	
+	
+	
+/**
+ * ### node.createPlayer
+ * 
+ * Mixes in default properties for the player object and
+ * additional configuration variables from node.conf.player
+ * 
+ * Writes the node.player object
+ * 
+ * Properties: `id`, `sid`, `ip` can never be overwritten.
+ * 
+ * Properties added as local configuration cannot be further
+ * modified during the game. 
+ * 
+ * Only the property `name`, can be changed.
+ * 
+ */
+	node.createPlayer = function (player) {
+		
+		player = new Player(player);
+		
+		if (node.conf && node.conf.player) {			
+			var pconf = node.conf.player;
+			for (var key in pconf) {
+				if (pconf.hasOwnProperty(key)) {
+					if (JSUS.in_array(key, ['id', 'sid', 'ip'])) {
+						continue;
+					} 
+					
+					// Cannot be overwritten properties previously 
+					// set in other sessions (recovery)
+//						if (player.hasOwnProperty(key)) {
+//							continue;
+//						}
+					if (node.support.defineProperty) {
+						Object.defineProperty(player, key, {
+					    	value: pconf[key],
+					    	enumerable: true
+						});
+					}
+					else {
+						player[key] = pconf[key];
+					}
+				}
+			}
+		}
+		
+		
+		if (node.support.defineProperty) {
+			Object.defineProperty(node, 'player', {
+		    	value: player,
+		    	enumerable: true
+			});
+		}
+		else {
+			node.player = player;
+		}
+		
+		node.emit('PLAYER_CREATED', player);
+		
+		return player;
+	};	
+	
+/**
+ * ### node.connect
+ * 
+ * Establishes a connection with a nodeGame server
+ * 
+ * @param {object} conf A configuration object
+ * @param {object} game The game object
+ */		
+	node.connect = function (url) {	
+		node.socket.connect(url);
+		node.emit('NODEGAME_CONNECTED');
+	};	
+	
+	
 /**
  * ### node.play
  * 
- * Establishes a connection with a socket.io server, and starts the game
+ * Starts a game
  * 
  * @param {object} conf A configuration object
  * @param {object} game The game object
  */	
-	node.connect = node.play = function (conf, game) {	
-		node.setup(conf);
-		
-		// node.socket.connect(conf);
+	node.play = function (game) {	
 		
 		node.game = new Game(game);
 		node.emit('NODEGAME_GAME_CREATED');
 		
 		// INIT the game
 		node.game.init.call(node.game);
-		node.socket.connect(conf);
+		
+		node.game.state.is = GameState.iss.LOADED;
+		node.socket.sendSTATE(GameMsg.actions.SAY, node.game.state);
 		
 		node.log('game loaded...');
 		node.log('ready.');
-	};	
-
+	};
+	
 /**
  * ### node.replay
  * 
@@ -163,111 +260,8 @@
 	node.replay = function (reset) {
 		if (reset) node.game.memory.clear(true);
 		node.goto(new GameState({state: 1, step: 1, round: 1}));
-	}	
-	
-/**
- * ### node.on
- * 
- * Registers an event listener
- * 
- * Listeners registered before a game is started, e.g. in
- * the init function of the game object, will stay valid 
- * throughout the game. Listeners registered after the game 
- * is started will be removed after the game has advanced
- * to its next stage. 
- * 
- * @param {string} event The name of the event
- * @param {function} listener The callback function
- */	
-	node.on = function (event, listener) {
-		
-		if (!event) { 
-			node.err('undefined event'); 
-			return;
-		}
-		if ('function' !== typeof listener) { 
-			node.err('callback must be of time function'); 
-			return;
-		}
-		
-		// It is in the init function;
-		if (!node.game || !node.game.state || (GameState.compare(node.game.state, new GameState(), true) === 0 )) {
-			node.events.add(event, listener);
-		}
-		else {
-			node.events.addLocal(event, listener);
-		}
-	};
-
-/**
- * ### node.once
- * 
- * Registers an event listener that will be removed 
- * after its first invocation
- * 
- * @param {string} event The name of the event
- * @param {function} listener The callback function
- * 
- * @see node.on
- * @see node.off
- */		
-	node.once = function (event, listener) {
-		if (!event || !listener) return;
-		node.on(event, listener);
-		node.on(event, function(event, listener) {
-			node.events.remove(event, listener);
-		});
-	};
-	
-/**
- * ### node.off
- * 
- * Deregisters one or multiple event listeners
- * 
- * @param {string} event The name of the event
- * @param {function} listener The callback function
- * 
- * @see node.on
- * @see node.EventEmitter.remove
- */			
-	node.off = node.removeListener = function (event, func) {
-		return node.events.remove(event, func);
-	};
-
-/**
- * ### node.alias
- * 
- * Creates event listeners aliases
- * 
- * This method creates a new property to the `node.on` object named
- * after the alias. The alias can be used as a shortcut to register
- * to new listeners on the given events.
- * 
- * 
- * ```javascript
- * 	node.alias('myAlias', ['in.say.DATA', 'myEvent']);
- * 
- * 	node.on.myAlias(function(){ console.log('myEvent or in.say.DATA'); };
- * ```	
- * 
- * @param {string} alias The name of alias
- * @param {string|array} The events under which the listeners will be registered to
- */	
-	node.alias = function(alias, events) {
-		if (!alias || !events) { 
-			node.err('undefined alias or events'); 
-			return; 
-		}
-		if (!J.isArray(events)) events = [events];
-		
-		J.each(events, function(){
-			node.on[alias] = function(func) {
-				node.on(event, function(msg){
-					func.call(node.game, msg);
-				});
-			};
-		});
 	};	
+	
 	
 /**
  * ### node.emit
@@ -372,9 +366,114 @@
 	};
 	
 
+/**
+ * ### node.on
+ * 
+ * Registers an event listener
+ * 
+ * Listeners registered before a game is started, e.g. in
+ * the init function of the game object, will stay valid 
+ * throughout the game. Listeners registered after the game 
+ * is started will be removed after the game has advanced
+ * to its next stage. 
+ * 
+ * @param {string} event The name of the event
+ * @param {function} listener The callback function
+ */	
+	node.on = function (event, listener) {
+		
+		if (!event) { 
+			node.err('undefined event'); 
+			return;
+		}
+		if ('function' !== typeof listener) { 
+			node.err('callback must be of time function'); 
+			return;
+		}
+		
+		// It is in the init function;
+		if (!node.game || !node.game.state || (GameState.compare(node.game.state, new GameState(), true) === 0 )) {
+			node.events.add(event, listener);
+		}
+		else {
+			node.events.addLocal(event, listener);
+		}
+	};
 
-// ## Aliases
+/**
+ * ### node.once
+ * 
+ * Registers an event listener that will be removed 
+ * after its first invocation
+ * 
+ * @param {string} event The name of the event
+ * @param {function} listener The callback function
+ * 
+ * @see node.on
+ * @see node.off
+ */		
+	node.once = function (event, listener) {
+		if (!event || !listener) return;
+		node.on(event, listener);
+		node.on(event, function(event, listener) {
+			node.events.remove(event, listener);
+		});
+	};
+	
+/**
+ * ### node.off
+ * 
+ * Deregisters one or multiple event listeners
+ * 
+ * @param {string} event The name of the event
+ * @param {function} listener The callback function
+ * 
+ * @see node.on
+ * @see node.EventEmitter.remove
+ */			
+	node.off = node.removeListener = function (event, func) {
+		return node.events.remove(event, func);
+	};
 
+// ## Aliases	
+	
+	
+/**
+ * ### node.alias
+ * 
+ * Creates event listeners aliases
+ * 
+ * This method creates a new property to the `node.on` object named
+ * after the alias. The alias can be used as a shortcut to register
+ * to new listeners on the given events.
+ * 
+ * 
+ * ```javascript
+ * 	node.alias('myAlias', ['in.say.DATA', 'myEvent']);
+ * 
+ * 	node.on.myAlias(function(){ console.log('myEvent or in.say.DATA'); };
+ * ```	
+ * 
+ * @param {string} alias The name of alias
+ * @param {string|array} The events under which the listeners will be registered to
+ */	
+	node.alias = function(alias, events) {
+		if (!alias || !events) { 
+			node.err('undefined alias or events'); 
+			return; 
+		}
+		if (!J.isArray(events)) events = [events];
+		
+		J.each(events, function(){
+			node.on[alias] = function(func) {
+				node.on(event, function(msg){
+					func.call(node.game, msg);
+				});
+			};
+		});
+	};	
+				
+	
 /**
  *  ### node.DONE
  * 
@@ -490,7 +589,7 @@
 		setTimeout(function(func) {
 			func.call();
 		}, Math.random() * maxWait, func);
-	};
+	};	
 		
 	node.log(node.version + ' loaded', 'ALWAYS');
 	

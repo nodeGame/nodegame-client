@@ -53,7 +53,7 @@
  * 
  * Adds a new monitor to the monitor list from the data contained in the message
  * 
- * @emit UPDATED_PLIST
+ * @emit UPDATED_MLIST
  * @see Game.ml 
  */
 	node.on( IN + say + 'MCONNECT', function (msg) {
@@ -82,7 +82,7 @@
  * 
  * Creates a new player-list object from the data contained in the message
  * 
- * @emit UPDATED_MLIST
+ * @emit UPDATED_PLIST
  * @see Game.pl 
  */
 node.on( IN + say + 'PLIST', function (msg) {

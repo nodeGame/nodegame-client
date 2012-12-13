@@ -193,7 +193,7 @@ will be executed first.</p>
 </div>
 
   </div>
-  <div class="body"><p>Array of trigger functions </p>
+  <div class="body"><p>Array of trigger functions</p>
   </div>
 </div>
         </td>
@@ -325,17 +325,21 @@ recycles the settings in <code>this.options</code>.</p>
 
 <p>The configuration object is of the type</p>
 
-<p>var options = {
-    returnAt: 'first', // or 'last'
-    triggers: [ myFunc,
-          myFunc2 
-    ],
-  } </p>
+
+<div class="highlight"><pre><code><span class="n">var</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">returnAt:</span> <span class="s">&#39;first&#39;</span><span class="p">,</span> <span class="sr">//</span> <span class="ow">or</span> <span class="s">&#39;last&#39;</span>
+    <span class="n">triggers:</span> <span class="p">[</span> <span class="n">myFunc</span><span class="p">,</span>
+                <span class="n">myFunc2</span> 
+    <span class="p">],</span>
+<span class="p">}</span> 
+</code></pre></div>
+
+
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">options</span>
+      <span>options</span>
       <span class="dox_type">object</span>
       <span>Optional. Configuration object</span>
     </div>
@@ -367,10 +371,10 @@ recycles the settings in <code>this.options</code>.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">triggers</span>
+      <span>triggers</span>
       <span class="dox_type">function</span>
       <span class="dox_type">array</span>
-      <span>An array of trigger functions or a single function </span>
+      <span>An array of trigger functions or a single function</span>
     </div>
   </div>
 </div>
@@ -431,13 +435,13 @@ contained in <code>TriggerManager.options.triggers</code></p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">clear</span>
+      <span>clear</span>
       <span class="dox_type">boolean</span>
       <span>TRUE, to confirm clearing</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">boolean</span>
       <span>TRUE, if clearing was successful</span>
     </div>
@@ -471,18 +475,18 @@ contained in <code>TriggerManager.options.triggers</code></p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">trigger</span>
+      <span>trigger</span>
       <span class="dox_type">function</span>
       <span>The function to add</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">pos</span>
+      <span>pos</span>
       <span class="dox_type">number</span>
       <span>Optional. The index of the trigger in the array</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">boolean</span>
       <span>TRUE, if insertion is successful</span>
     </div>
@@ -519,13 +523,13 @@ contained in <code>TriggerManager.options.triggers</code></p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">trigger</span>
+      <span>trigger</span>
       <span class="dox_type">function</span>
       <span>The function to remove</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">boolean</span>
       <span>TRUE, if removal is successful</span>
     </div>
@@ -562,23 +566,25 @@ functions are fired first.</p>
 <p>Depending on the value of <code>TriggerManager.returnAt</code>, some trigger
 functions may not be called. In fact a value is returned </p>
 
-<ul>
-<li>'first': after the first trigger returns a truthy value</li>
-<li>'last': after all triggers have been executed</li>
-</ul>
+
+<div class="highlight"><pre><code><span class="o">-</span> <span class="s">&#39;first&#39;</span><span class="p">:</span> <span class="n">after</span> <span class="n">the</span> <span class="n">first</span> <span class="n">trigger</span> <span class="n">returns</span> <span class="n">a</span> <span class="n">truthy</span> <span class="n">value</span>
+<span class="o">-</span> <span class="s">&#39;last&#39;</span><span class="p">:</span> <span class="n">after</span> <span class="n">all</span> <span class="n">triggers</span> <span class="n">have</span> <span class="n">been</span> <span class="n">executed</span>
+</code></pre></div>
+
+
 
 <p>If no trigger is registered the target object is returned unchanged</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">o</span>
+      <span>o</span>
       <span class="dox_type">object</span>
       <span>The target object</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">object</span>
       <span>The target object after the triggers have been fired</span>
     </div>

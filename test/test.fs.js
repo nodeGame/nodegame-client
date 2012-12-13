@@ -241,17 +241,17 @@ describe('FS operations', function() {
 	});
 	
 	describe('#node.memory.dumpAllIndexes()', function() {
-		before(function() {
-			createDirIfNotExists('./tmp');
-			node.game.memory.h('painter', function(p){
-				return p.painter;
-			});
-			node.game.memory.importDB(items);
-			node.memory.dumpAllIndexes('./tmp');
-		});
-		after(function() {
-			deleteCsvDir('./tmp/');
-		});
+//		before(function() {
+//			createDirIfNotExists('./tmp');
+//			node.game.memory.h('painter', function(p){
+//				return p.painter;
+//			});
+//			node.game.memory.importDB(items);
+//			node.memory.dumpAllIndexes('./tmp');
+//		});
+//		after(function() {
+//			deleteCsvDir('./tmp/');
+//		});
 		it('should create csv files for index \'painter\'', function() {
 //			for (var i=0; i< items.length) {
 //				var item = items[i];

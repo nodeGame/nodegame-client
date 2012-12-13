@@ -33,9 +33,13 @@ var ng_client = [
  	rootDir + "lib/GameMsg.js",
  	rootDir + "lib/GameLoop.js",
  	rootDir + "lib/GameMsgGenerator.js",
- 	rootDir + "lib/GameSocketClient.js",
+ 	rootDir + "lib/sockets/SocketFactory.js",
+ 	rootDir + "lib/Socket.js",
+ 	rootDir + "lib/sockets/SocketIo.js",
+ 	//rootDir + "lib/GameSocketClient.js",
  	rootDir + "lib/GameDB.js",
  	rootDir + "lib/Game.js", 
+ 	rootDir + "lib/Session.js",
  		 	
  // nodeGame
  	rootDir + "nodeGame.js",
@@ -51,8 +55,8 @@ var ng_client = [
 var ng_addons = [           
  	rootDir + "addons/GameTimer.js",
  	rootDir + "addons/TriggerManager.js",
- 	rootDir + "addons/GameSession.js",
- 	rootDir + "addons/WaitingRoom.js",
+// 	rootDir + "addons/GameSession.js",
+// 	rootDir + "addons/WaitingRoom.js",
 ];
 
 // jsus
@@ -420,7 +424,8 @@ function smooshIt(conf) {
 	    }
 	    
 	    // builds both uncompressed and compressed files
-	    smooshed.build(); 
+//	    smooshed.build(); 
+	    smooshed.build('uncompressed');
 	        
     	if (options.analyse) {
     		smooshed.run(); // runs jshint on full build

@@ -15,7 +15,7 @@
 (function (node) {
 
 // ### version	
-node.version = '0.5.0';
+node.version = '0.6.0';
 
 // ## Logging system
 
@@ -161,6 +161,16 @@ node.player 	= {};
 node.memory 	= {};
 
 /**
+ * ### node.store
+ * 
+ * Makes the nodeGame session persistent, saving it
+ * to the browser local database or to a cookie
+ * 
+ * @see shelf.js
+ */
+node.store		= function() {};
+
+/**
  * ### node.support 
  * 
  * A collection of features that are supported by the current browser
@@ -175,6 +185,12 @@ if ('object' === typeof module && 'function' === typeof require) {
 	// <!-- Node.js -->
 	require('./init.node.js');
     require('./nodeGame.js');
+
+    // ### Loading Sockets
+    require('./lib/sockets/SocketIo.js');
+    require('./lib/sockets/SocketDirect.js');
+    
+    // ### Loading Event listeners
     require('./listeners/incoming.js');
     require('./listeners/internal.js');
     require('./listeners/outgoing.js');
@@ -187,6 +203,5 @@ else {
 	
 	node.support = JSUS.compatibility();
 }
-
 	
 })('object' === typeof module ? module.exports : (window.node = {}));	

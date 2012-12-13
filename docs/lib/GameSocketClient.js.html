@@ -52,34 +52,10 @@
         <a href="#gamesocketclient-methods">GameSocketClient methods</a>
       </div>
       <div class="heading h3">
-        <a href="#gamesocketclient.getsession">GameSocketClient.getSession</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamesocketclient.startsession">GameSocketClient.startSession</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamesocketclient.restoresession">GameSocketClient.restoreSession</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamesocketclient.createplayer">GameSocketClient.createPlayer</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamesocketclient.connect">GameSocketClient.connect</a>
-      </div>
-      <div class="heading h2">
-        <a href="#i-o-functions">I/O Functions</a>
-      </div>
-      <div class="heading h3">
         <a href="#gamesocketclient.secureparse">GameSocketClient.secureParse</a>
       </div>
       <div class="heading h3">
         <a href="#gamesocketclient.clearbuffer">GameSocketClient.clearBuffer</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamesocketclient.attachfirstlisteners">GameSocketClient.attachFirstListeners</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamesocketclient.attachmsglisteners">GameSocketClient.attachMsgListeners</a>
       </div>
       <div class="heading h2">
         <a href="#send-methods">SEND methods</a>
@@ -98,6 +74,30 @@
       </div>
       <div class="heading h3">
         <a href="#gamesocketclient.send">GameSocketClient.send</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamesocketclient.getsession">GameSocketClient.getSession</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamesocketclient.startsession">GameSocketClient.startSession</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamesocketclient.restoresession">GameSocketClient.restoreSession</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamesocketclient.createplayer">GameSocketClient.createPlayer</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamesocketclient.connect">GameSocketClient.connect</a>
+      </div>
+      <div class="heading h2">
+        <a href="#i-o-functions">I/O Functions</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamesocketclient.attachfirstlisteners">GameSocketClient.attachFirstListeners</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamesocketclient.attachmsglisteners">GameSocketClient.attachMsgListeners</a>
       </div>
     </div>
   </div>
@@ -168,7 +168,7 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">options</span>
+      <span>options</span>
       <span class="dox_type">object</span>
       <span>Optional. A configuration object</span>
     </div>
@@ -209,8 +209,7 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private
-</span>
+      <span class="dox_type">private</span>
     </span>
   </div>
 </div>
@@ -343,6 +342,311 @@ MIT Licensed </p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="gamesocketclient.secureparse">
+  <h3>
+    <a href="#gamesocketclient.secureparse" class="pilcrow">&#182;</a>
+    GameSocketClient.secureParse
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Parse the message received in the Socket</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>msg</span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">GameMsg</span>
+      <span>The game-message to parse</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span></span>
+      <span class="dox_type">GameMsg</span>
+      <span class="dox_type">boolean</span>
+      <span>The parsed GameMsg object, or FALSE if an error occurred</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">secureParse</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+  
+  <span class="kd">var</span> <span class="nx">gameMsg</span><span class="p">;</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="nx">gameMsg</span> <span class="o">=</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">msg</span><span class="p">));</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">gameMsg</span><span class="p">,</span> <span class="s1">&#39;R: &#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">logSecureParseError</span><span class="p">(</span><span class="s1">&#39;Malformed msg received&#39;</span><span class="p">,</span>  <span class="nx">e</span><span class="p">);</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">&amp;&amp;</span> <span class="nx">gameMsg</span><span class="p">.</span><span class="nx">session</span> <span class="o">!==</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">logSecureParseError</span><span class="p">(</span><span class="s1">&#39;Local session id does not match incoming message session id&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="nx">gameMsg</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamesocketclient.clearbuffer">
+  <h3>
+    <a href="#gamesocketclient.clearbuffer" class="pilcrow">&#182;</a>
+    GameSocketClient.clearBuffer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Emits and removes all the events in the message buffer</p>
+
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">emit</span>
+</code></pre></div>
+
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearBuffer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">nelem</span> <span class="o">=</span> <span class="nx">buffer</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nelem</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">toInEvent</span><span class="p">(),</span> <span class="nx">msg</span><span class="p">);</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Debuffered &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="send-methods">
+  <h2>
+    <a href="#send-methods" class="pilcrow">&#182;</a>
+    SEND methods
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamesocketclient.sendhi">
+  <h3>
+    <a href="#gamesocketclient.sendhi" class="pilcrow">&#182;</a>
+    GameSocketClient.sendHI
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a HI message and pushes it into the socket</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>from</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The message sender. Defaults node.player</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>to</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The recipient of the message. Defaults 'SERVER'</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">sendHI</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">from</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">from</span> <span class="o">=</span> <span class="nx">from</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
+  <span class="nx">to</span> <span class="o">=</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">createHI</span><span class="p">(</span><span class="nx">from</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamesocketclient.sendstate">
+  <h3>
+    <a href="#gamesocketclient.sendstate" class="pilcrow">&#182;</a>
+    GameSocketClient.sendSTATE
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a STATE message and pushes it into the socket</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>action</span>
+      <span class="dox_type">string</span>
+      <span>A nodeGame action (e.g. 'get' or 'set')</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>state</span>
+      <span class="dox_type">GameState</span>
+      <span>The GameState object to send</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>to</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The recipient of the message.</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">sendSTATE</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span> 
+  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">createSTATE</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamesocketclient.sendtxt">
+  <h3>
+    <a href="#gamesocketclient.sendtxt" class="pilcrow">&#182;</a>
+    GameSocketClient.sendTXT
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a TXT message and pushes it into the socket</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>text</span>
+      <span class="dox_type">string</span>
+      <span>Text to send</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>to</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The recipient of the message</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">sendTXT</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span> 
+  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">createTXT</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span><span class="nx">to</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamesocketclient.senddata">
+  <h3>
+    <a href="#gamesocketclient.senddata" class="pilcrow">&#182;</a>
+    GameSocketClient.sendDATA
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a DATA message and pushes it into the socket</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>action</span>
+      <span class="dox_type">string</span>
+      <span>Optional. A nodeGame action (e.g. 'get' or 'set'). Defaults 'say'</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>data</span>
+      <span class="dox_type">object</span>
+      <span>An object to exchange</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>to</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The recipient of the message. Defaults 'SERVER'</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span>text</span>
+      <span class="dox_type">string</span>
+      <span>Optional. A descriptive text associated to the message.</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">sendDATA</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">action</span> <span class="o">=</span> <span class="nx">action</span> <span class="o">||</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">say</span><span class="p">;</span>
+  <span class="nx">to</span> <span class="o">=</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">;</span>
+  <span class="nx">text</span> <span class="o">=</span> <span class="nx">text</span> <span class="o">||</span> <span class="s1">&#39;DATA&#39;</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">createDATA</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamesocketclient.send">
+  <h3>
+    <a href="#gamesocketclient.send" class="pilcrow">&#182;</a>
+    GameSocketClient.send
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Pushes a message into the socket.</p>
+
+<p>The msg is actually received by the client itself as well.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span>The</span>
+      <span class="dox_type">GameMsg</span>
+      <span>game message to send</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">send</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>if (msg.reliable) {</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">stringify</span><span class="p">());</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>}
+else {
+this.io.volatile.send(msg.stringify());
+}</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;S: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;LOG&#39;</span><span class="p">,</span> <span class="s1">&#39;S: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">toSMS</span><span class="p">());</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="gamesocketclient.getsession">
   <h3>
     <a href="#gamesocketclient.getsession" class="pilcrow">&#182;</a>
@@ -356,30 +660,32 @@ game-message</p>
 
 <p>If found, the session object will have the following a structure</p>
 
-<p>var session = {
-    id:   node.gsc.session,
-    player: node.player,
-    memory: node.game.memory,
-    state:   node.game.state,
-    game:   node.game.name,
-    history: undefined,
-  };  </p>
+
+<div class="highlight"><pre><code><span class="n">var</span> <span class="n">session</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">id:</span>     <span class="n">node</span><span class="o">.</span><span class="n">gsc</span><span class="o">.</span><span class="n">session</span><span class="p">,</span>
+    <span class="n">player:</span> <span class="n">node</span><span class="o">.</span><span class="n">player</span><span class="p">,</span>
+    <span class="n">memory:</span> <span class="n">node</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">memory</span><span class="p">,</span>
+    <span class="n">state:</span>  <span class="n">node</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+    <span class="n">game:</span>   <span class="n">node</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+    <span class="n">history:</span> <span class="n">undefined</span><span class="p">,</span>
+<span class="p">};</span>  
+</code></pre></div>
+
+
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">msg</span>
+      <span>msg</span>
       <span class="dox_type">GameMsg</span>
       <span>A game-msg</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">object</span>
       <span class="dox_type">boolean</span>
-      <span>A session object, or FALSE if not was not found
-
-@see node.session</span>
+      <span>A session object, or FALSE if not was not found</span>
     </div>
   </div>
 </div>
@@ -397,7 +703,7 @@ game-message</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>TODO: check if session is still valid</p>
         </td>
@@ -424,17 +730,15 @@ in the session object (GameSocketClient.session)</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">msg</span>
+      <span>msg</span>
       <span class="dox_type">GameMsg</span>
       <span>A game-msg</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, if session was correctly initialized
-
-@see GameSocketClient.createPlayer</span>
+      <span>TRUE, if session was correctly initialized</span>
     </div>
   </div>
 </div>
@@ -466,15 +770,9 @@ in the session object (GameSocketClient.session)</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">session</span>
+      <span>session</span>
       <span class="dox_type">object</span>
-      <span>A session object as loaded by GameSocketClient.getSession
-
-@emit NODEGAME_RECOVERY
-  @emit LOADED
-
-@see GameSocketClient.createPlayer
-  @see node.session</span>
+      <span>A session object as loaded by GameSocketClient.getSession</span>
     </div>
   </div>
 </div>
@@ -496,7 +794,7 @@ in the session object (GameSocketClient.session)</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Important! The new socket.io ID</p>
         </td>
@@ -555,7 +853,7 @@ in the session object (GameSocketClient.session)</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>We have events that were fired at the state when 
 disconnection happened. Let's fire them again </p>
@@ -566,7 +864,7 @@ disconnection happened. Let's fire them again </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Falsy, should already been discarded</p>
         </td>
@@ -630,7 +928,7 @@ modified during the game. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Cannot be overwritten properties previously 
 set in other sessions (recovery)
@@ -679,7 +977,7 @@ set in other sessions (recovery)
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">conf</span>
+      <span>conf</span>
       <span class="dox_type">object</span>
       <span>A configuration object</span>
     </div>
@@ -724,85 +1022,6 @@ set in other sessions (recovery)
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="gamesocketclient.secureparse">
-  <h3>
-    <a href="#gamesocketclient.secureparse" class="pilcrow">&#182;</a>
-    GameSocketClient.secureParse
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Parse the message received in the Socket</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">msg</span>
-      <span class="dox_type">object</span>
-      <span class="dox_type">GameMsg</span>
-      <span>The game-message to parse</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">GameMsg</span>
-      <span class="dox_type">boolean</span>
-      <span>The parsed GameMsg object, or FALSE if an error occurred</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">secureParse</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-  
-  <span class="kd">var</span> <span class="nx">gameMsg</span><span class="p">;</span>
-  <span class="k">try</span> <span class="p">{</span>
-    <span class="nx">gameMsg</span> <span class="o">=</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">msg</span><span class="p">));</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">gameMsg</span><span class="p">,</span> <span class="s1">&#39;R: &#39;</span><span class="p">);</span>
-  <span class="p">}</span>
-  <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">logSecureParseError</span><span class="p">(</span><span class="s1">&#39;Malformed msg received&#39;</span><span class="p">,</span>  <span class="nx">e</span><span class="p">);</span>
-  <span class="p">}</span>
-  
-  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">&amp;&amp;</span> <span class="nx">gameMsg</span><span class="p">.</span><span class="nx">session</span> <span class="o">!==</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">logSecureParseError</span><span class="p">(</span><span class="s1">&#39;Local session id does not match incoming message session id&#39;</span><span class="p">);</span>
-  <span class="p">}</span>
-  
-  <span class="k">return</span> <span class="nx">gameMsg</span><span class="p">;</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamesocketclient.clearbuffer">
-  <h3>
-    <a href="#gamesocketclient.clearbuffer" class="pilcrow">&#182;</a>
-    GameSocketClient.clearBuffer
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Emits and removes all the events in the message buffer</p>
-
-<p>@see node.emit</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearBuffer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">nelem</span> <span class="o">=</span> <span class="nx">buffer</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nelem</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">toInEvent</span><span class="p">(),</span> <span class="nx">msg</span><span class="p">);</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Debuffered &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
 <div class="pilwrap" id="gamesocketclient.attachfirstlisteners">
   <h3>
     <a href="#gamesocketclient.attachfirstlisteners" class="pilcrow">&#182;</a>
@@ -819,7 +1038,7 @@ be ignored otherwise.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">socket</span>
+      <span>socket</span>
       <span class="dox_type">object</span>
       <span>The socket.io socket</span>
     </div>
@@ -845,7 +1064,7 @@ be ignored otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Setting global info</p>
         </td>
@@ -855,7 +1074,7 @@ be ignored otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Keep serverid = msg.from for now</p>
         </td>
@@ -871,7 +1090,7 @@ be ignored otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Get Ready to play</p>
         </td>
@@ -887,7 +1106,7 @@ be ignored otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 
 <div class="highlight"><pre><code>                    <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;HI_AGAIN MSG!!&#39;</span><span class="p">);</span>
@@ -906,7 +1125,7 @@ be ignored otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>Get Ready to play</p>
         </td>
@@ -917,7 +1136,7 @@ be ignored otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>Send own name to SERVER</p>
         </td>
@@ -929,7 +1148,7 @@ be ignored otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>Ready to play</p>
         </td>
@@ -946,7 +1165,7 @@ be ignored otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Save the current state of the game</p>
         </td>
@@ -975,12 +1194,12 @@ the server, and a session number has been issued</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">socket</span>
+      <span>socket</span>
       <span class="dox_type">object</span>
       <span>The socket.io socket</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">session</span>
+      <span>session</span>
       <span class="dox_type">number</span>
       <span>The session id issued by the server</span>
     </div>
@@ -1002,7 +1221,7 @@ the server, and a session number has been issued</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>Wait to fire the msgs if the game state is loading</p>
         </td>
@@ -1017,235 +1236,8 @@ the server, and a session number has been issued</p>
   <span class="p">});</span>
   
   <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_READY&#39;</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="send-methods">
-  <h2>
-    <a href="#send-methods" class="pilcrow">&#182;</a>
-    SEND methods
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamesocketclient.sendhi">
-  <h3>
-    <a href="#gamesocketclient.sendhi" class="pilcrow">&#182;</a>
-    GameSocketClient.sendHI
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Creates a HI message and pushes it into the socket</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">from</span>
-      <span class="dox_type">string</span>
-      <span>Optional. The message sender. Defaults node.player</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
-      <span class="dox_type">string</span>
-      <span>Optional. The recipient of the message. Defaults 'SERVER'</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">sendHI</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">from</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">from</span> <span class="o">=</span> <span class="nx">from</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
-  <span class="nx">to</span> <span class="o">=</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">createHI</span><span class="p">(</span><span class="nx">from</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamesocketclient.sendstate">
-  <h3>
-    <a href="#gamesocketclient.sendstate" class="pilcrow">&#182;</a>
-    GameSocketClient.sendSTATE
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Creates a STATE message and pushes it into the socket</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">action</span>
-      <span class="dox_type">string</span>
-      <span>A nodeGame action (e.g. 'get' or 'set')</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">state</span>
-      <span class="dox_type">GameState</span>
-      <span>The GameState object to send</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
-      <span class="dox_type">string</span>
-      <span>Optional. The recipient of the message.
-
-@see GameMsg.actions</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">sendSTATE</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span> 
-  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">createSTATE</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamesocketclient.sendtxt">
-  <h3>
-    <a href="#gamesocketclient.sendtxt" class="pilcrow">&#182;</a>
-    GameSocketClient.sendTXT
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Creates a TXT message and pushes it into the socket</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">text</span>
-      <span class="dox_type">string</span>
-      <span>Text to send</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
-      <span class="dox_type">string</span>
-      <span>Optional. The recipient of the message</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">sendTXT</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span> 
-  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">createTXT</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span><span class="nx">to</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamesocketclient.senddata">
-  <h3>
-    <a href="#gamesocketclient.senddata" class="pilcrow">&#182;</a>
-    GameSocketClient.sendDATA
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Creates a DATA message and pushes it into the socket</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">action</span>
-      <span class="dox_type">string</span>
-      <span>Optional. A nodeGame action (e.g. 'get' or 'set'). Defaults 'say'</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">data</span>
-      <span class="dox_type">object</span>
-      <span>An object to exchange</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
-      <span class="dox_type">string</span>
-      <span>Optional. The recipient of the message. Defaults 'SERVER'</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">text</span>
-      <span class="dox_type">string</span>
-      <span>Optional. A descriptive text associated to the message.
-
-@see GameMsg.actions</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">sendDATA</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">action</span> <span class="o">=</span> <span class="nx">action</span> <span class="o">||</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">say</span><span class="p">;</span>
-  <span class="nx">to</span> <span class="o">=</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">;</span>
-  <span class="nx">text</span> <span class="o">=</span> <span class="nx">text</span> <span class="o">||</span> <span class="s1">&#39;DATA&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">createDATA</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamesocketclient.send">
-  <h3>
-    <a href="#gamesocketclient.send" class="pilcrow">&#182;</a>
-    GameSocketClient.send
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Pushes a message into the socket.</p>
-
-<p>The msg is actually received by the client itself as well.</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">The</span>
-      <span class="dox_type">GameMsg</span>
-      <span>game message to send
-
-@see GameMsg</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameSocketClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">send</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
-</div>
-<p>if (msg.reliable) {</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">stringify</span><span class="p">());</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
-</div>
-<p>}
-else {
-this.io.volatile.send(msg.stringify());
-}</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;S: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;LOG&#39;</span><span class="p">,</span> <span class="s1">&#39;S: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">toSMS</span><span class="p">());</span>
 <span class="p">};</span>
+
 
 <span class="p">})(</span>
   <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>

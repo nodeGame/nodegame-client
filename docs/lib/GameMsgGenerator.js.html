@@ -125,9 +125,13 @@ MIT Licensed </p>
 
 <p>All message are reliable, but TXT messages.</p>
 
-<p>@see GameMSg
-  @see GameMsg.targets
-  @see GameMsg.actions</p>
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameMSg</span>
+<span class="nv">@see</span> <span class="n">GameMsg</span><span class="o">.</span><span class="n">targets</span>
+<span class="nv">@see</span> <span class="n">GameMsg</span><span class="o">.</span><span class="n">actions</span>
+</code></pre></div>
+
+
 
 <hr />
   </div>
@@ -202,27 +206,24 @@ MIT Licensed </p>
 
 <p>Merges a set of default settings with the object passed
 as input parameter</p>
-
-<p>@see JSUS.merge</p>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
 
   <span class="kd">var</span> <span class="nx">base</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">session</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span> 
-    <span class="nx">state</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
-    <span class="nx">action</span><span class="o">:</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
-    <span class="nx">target</span><span class="o">:</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
+    <span class="nx">session</span><span class="o">:</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span><span class="p">)</span> <span class="o">?</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span> 
+    <span class="nx">state</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">state</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
+    <span class="nx">action</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">action</span> <span class="o">||</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
+    <span class="nx">target</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
     <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
-    <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
-    <span class="nx">text</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nx">data</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nx">priority</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nx">reliable</span><span class="o">:</span> <span class="mi">1</span>
+    <span class="nx">to</span><span class="o">:</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">to</span><span class="p">)</span> <span class="o">?</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">to</span> <span class="o">:</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
+    <span class="nx">text</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">||</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span> <span class="o">||</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nx">priority</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">priority</span> <span class="o">||</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nx">reliable</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">reliable</span> <span class="o">||</span> <span class="mi">1</span>
   <span class="p">};</span>
 
-  <span class="nx">msg</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">base</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
   <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
 
 <span class="p">};</span></pre></div>
@@ -257,23 +258,23 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">player</span>
+      <span>player</span>
       <span class="dox_type">Player</span>
       <span>The player to communicate</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>The recipient of the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
       <span>The game message, or FALSE if error in the input parameters is detected</span>
@@ -332,28 +333,26 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">state</span>
+      <span>state</span>
       <span class="dox_type">GameState</span>
       <span>The game-state to communicate</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>The recipient of the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
-      <span>The game message, or FALSE if error in the input parameters is detected
-
-@see GameState</span>
+      <span>The game message, or FALSE if error in the input parameters is detected</span>
     </div>
   </div>
 </div>
@@ -379,28 +378,26 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">state</span>
+      <span>state</span>
       <span class="dox_type">GameState</span>
       <span>The game-state to communicate</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>The recipient of the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
-      <span>The game message, or FALSE if error in the input parameters is detected
-
-@see GameState</span>
+      <span>The game message, or FALSE if error in the input parameters is detected</span>
     </div>
   </div>
 </div>
@@ -426,28 +423,26 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">state</span>
+      <span>state</span>
       <span class="dox_type">GameState</span>
       <span>The game-state to communicate</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>The recipient of the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
-      <span>The game message, or FALSE if error in the input parameters is detected
-
-@see GameState</span>
+      <span>The game message, or FALSE if error in the input parameters is detected</span>
     </div>
   </div>
 </div>
@@ -473,34 +468,31 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">action</span>
+      <span>action</span>
       <span class="dox_type">string</span>
       <span>A nodeGame action (e.g. 'get' or 'set')</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">state</span>
+      <span>state</span>
       <span class="dox_type">GameState</span>
       <span>The game-state to communicate</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>Optional. The recipient of the message. Defaults, SERVER</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
-      <span>The game message, or FALSE if error in the input parameters is detected
-
-@see GameState
-  @see GameMsg.actions</span>
+      <span>The game message, or FALSE if error in the input parameters is detected</span>
     </div>
   </div>
 </div>
@@ -553,28 +545,26 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">plist</span>
+      <span>plist</span>
       <span class="dox_type">PlayerList</span>
       <span>The player-list to communicate</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>The recipient of the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
-      <span>The game message, or FALSE if error in the input parameters is detected
-
-@see PlayerList</span>
+      <span>The game message, or FALSE if error in the input parameters is detected</span>
     </div>
   </div>
 </div>
@@ -600,28 +590,26 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">plist</span>
+      <span>plist</span>
       <span class="dox_type">PlayerList</span>
       <span>The player-list to communicate</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>The recipient of the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
-      <span>The game message, or FALSE if error in the input parameters is detected
-
-@see PlayerList</span>
+      <span>The game message, or FALSE if error in the input parameters is detected</span>
     </div>
   </div>
 </div>
@@ -647,28 +635,26 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">plist</span>
+      <span>plist</span>
       <span class="dox_type">PlayerList</span>
       <span>The player-list to communicate</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>The recipient of the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
-      <span>The game message, or FALSE if error in the input parameters is detected
-
-@see PlayerList</span>
+      <span>The game message, or FALSE if error in the input parameters is detected</span>
     </div>
   </div>
 </div>
@@ -694,34 +680,31 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">action</span>
+      <span>action</span>
       <span class="dox_type">string</span>
       <span>A nodeGame action (e.g. 'get' or 'set')</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">plist</span>
+      <span>plist</span>
       <span class="dox_type">PlayerList</span>
       <span>The player-list to communicate</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>Optional. The recipient of the message. Defaults, SERVER</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
-      <span>The game message, or FALSE if error in the input parameters is detected
-
-@see GameMsg.actions
- @see PlayerList</span>
+      <span>The game message, or FALSE if error in the input parameters is detected</span>
     </div>
   </div>
 </div>
@@ -779,23 +762,23 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">text</span>
+      <span>text</span>
       <span class="dox_type">string</span>
       <span>The text to communicate</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>The recipient of the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
       <span>The game message, or FALSE if error in the input parameters is detected</span>
@@ -851,23 +834,23 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">data</span>
+      <span>data</span>
       <span class="dox_type">object</span>
       <span>An object to exchange</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>The recipient of the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
       <span>The game message, or FALSE if error in the input parameters is detected</span>
@@ -896,23 +879,23 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">data</span>
+      <span>data</span>
       <span class="dox_type">object</span>
       <span>An object to exchange</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>The recipient of the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
       <span>The game message, or FALSE if error in the input parameters is detected</span>
@@ -941,23 +924,23 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">data</span>
+      <span>data</span>
       <span class="dox_type">object</span>
       <span>An object to exchange</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>The recipient of the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
       <span>The game message, or FALSE if error in the input parameters is detected</span>
@@ -986,28 +969,28 @@ as input parameter</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">action</span>
+      <span>action</span>
       <span class="dox_type">string</span>
       <span>A nodeGame action (e.g. 'get' or 'set')</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">data</span>
+      <span>data</span>
       <span class="dox_type">object</span>
       <span>An object to exchange</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
+      <span>to</span>
       <span class="dox_type">string</span>
       <span>The recipient of the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
+      <span>reliable</span>
       <span class="dox_type">boolean</span>
       <span>Optional. Experimental. Requires an acknowledgment</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">boolean</span>
       <span>The game message, or FALSE if error in the input parameters is detected</span>

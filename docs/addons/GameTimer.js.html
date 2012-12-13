@@ -178,7 +178,7 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">options.</span>
+      <span>options.</span>
       <span class="dox_type">object</span>
       <span>Optional. A configuration object</span>
     </div>
@@ -326,7 +326,11 @@ MIT Licensed </p>
   </div>
   <div class="body"><p>Event string or function to fire when the time is up</p>
 
-<p>@see GameTimer.fire</p>
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameTimer</span><span class="o">.</span><span class="n">fire</span>
+</code></pre></div>
+
+
   </div>
 </div>
         </td>
@@ -349,7 +353,11 @@ MIT Licensed </p>
 
 <p>The array works as a LIFO queue</p>
 
-<p>@see GameTimer.fire</p>
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameTimer</span><span class="o">.</span><span class="n">fire</span>
+</code></pre></div>
+
+
   </div>
 </div>
         </td>
@@ -400,26 +408,28 @@ recycles the settings in <code>this.options</code>.</p>
 
 <p>The configuration object is of the type</p>
 
-<p>var options = {
-    milliseconds: 4000, // The length of the interval
-    update: 1000, // How often to update the time counter. Defaults every 1sec
-    timeup: 'MY_EVENT', // An event ot function to fire when the timer expires
-    hooks: [ myFunc, // Array of functions or events to fire at every update
-        'MY_EVENT_UPDATE', 
-        { hook: myFunc2,
-          ctx: that, }, <br />
-        ], 
-  } 
-  // Units are in milliseconds </p>
+
+<div class="highlight"><pre><code><span class="n">var</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">milliseconds:</span> <span class="mi">4000</span><span class="p">,</span> <span class="sr">//</span> <span class="n">The</span> <span class="nb">length</span> <span class="n">of</span> <span class="n">the</span> <span class="n">interval</span>
+    <span class="n">update:</span> <span class="mi">1000</span><span class="p">,</span> <span class="sr">//</span> <span class="n">How</span> <span class="n">often</span> <span class="n">to</span> <span class="n">update</span> <span class="n">the</span> <span class="nb">time</span> <span class="n">counter</span><span class="o">.</span> <span class="n">Defaults</span> <span class="n">every</span> <span class="mi">1</span><span class="n">sec</span>
+    <span class="n">timeup:</span> <span class="s">&#39;MY_EVENT&#39;</span><span class="p">,</span> <span class="sr">//</span> <span class="n">An</span> <span class="n">event</span> <span class="n">ot</span> <span class="n">function</span> <span class="n">to</span> <span class="n">fire</span> <span class="n">when</span> <span class="n">the</span> <span class="n">timer</span> <span class="n">expires</span>
+    <span class="n">hooks:</span> <span class="p">[</span> <span class="n">myFunc</span><span class="p">,</span> <span class="sr">//</span> <span class="n">Array</span> <span class="n">of</span> <span class="n">functions</span> <span class="ow">or</span> <span class="n">events</span> <span class="n">to</span> <span class="n">fire</span> <span class="n">at</span> <span class="n">every</span> <span class="n">update</span>
+            <span class="s">&#39;MY_EVENT_UPDATE&#39;</span><span class="p">,</span> 
+            <span class="p">{</span> <span class="n">hook:</span> <span class="n">myFunc2</span><span class="p">,</span>
+              <span class="n">ctx:</span> <span class="n">that</span><span class="p">,</span> <span class="p">},</span>     
+            <span class="p">],</span> 
+<span class="p">}</span> 
+<span class="sr">//</span> <span class="n">Units</span> <span class="n">are</span> <span class="n">in</span> <span class="n">milliseconds</span> 
+</code></pre></div>
+
+
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">options</span>
+      <span>options</span>
       <span class="dox_type">object</span>
-      <span>Optional. Configuration object
-
-@see GameTimer.addHook</span>
+      <span>Optional. Configuration object</span>
     </div>
   </div>
 </div>
@@ -471,7 +481,7 @@ otherwise it called as a function.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">h</span>
+      <span>h</span>
       <span class="dox_type">mixed</span>
       <span>The hook to fire</span>
     </div>
@@ -512,9 +522,13 @@ time left is checked. </p>
 <p>When the timer expires the timeup event is fired, and the
 timer is stopped</p>
 
-<p>@see GameTimer.status
-  @see GameTimer.timeup
-  @see GameTimer.fire </p>
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameTimer</span><span class="o">.</span><span class="n">status</span>
+<span class="nv">@see</span> <span class="n">GameTimer</span><span class="o">.</span><span class="n">timeup</span>
+<span class="nv">@see</span> <span class="n">GameTimer</span><span class="o">.</span><span class="n">fire</span>
+</code></pre></div>
+
+
   </div>
 </div>
         </td>
@@ -659,7 +673,11 @@ status property to <code>GameTimer.PAUSED</code></p>
 
 <p>If the timer was paused, restarts it with the current configuration</p>
 
-<p>@see GameTimer.restart</p>
+
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameTimer</span><span class="o">.</span><span class="n">restart</span>
+</code></pre></div>
+
+
   </div>
 </div>
         </td>
@@ -719,11 +737,9 @@ or the current settings, if undefined </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">options</span>
+      <span>options</span>
       <span class="dox_type">object</span>
-      <span>Optional. A configuration object
-
-@see GameTimer.init</span>
+      <span>Optional. A configuration object</span>
     </div>
   </div>
 </div>
