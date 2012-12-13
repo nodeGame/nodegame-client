@@ -14,7 +14,6 @@
 	// //////////////////////////////////////////
 		
 	var EventEmitter = node.EventEmitter,
-		GameSocketClient = node.GameSocketClient,
 		Socket = node.Socket,
 		GameState = node.GameState,
 		GameMsg = node.GameMsg,
@@ -43,8 +42,6 @@
 	// /////////////////////////////////////////
 	
 	node.msg	= node.GameMsgGenerator;	
-	//node.socket = node.gsc = new GameSocketClient();
-	
 	
 	node.session = new GameSession();
 	

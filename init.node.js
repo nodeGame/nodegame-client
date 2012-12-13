@@ -94,14 +94,6 @@ node.GameLoop = require('./lib/GameLoop').GameLoop;
 
 node.GameMsgGenerator = require('./lib/GameMsgGenerator').GameMsgGenerator;
 
-/**
- * Expose GameSocketClient
- * 
- * @api public
- */
-
-node.GameSocketClient = require('./lib/GameSocketClient').GameSocketClient;
-
 
 /**
  * Expose SocketFactory
