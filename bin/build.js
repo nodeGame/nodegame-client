@@ -26,23 +26,37 @@ var distDir =  rootDir + 'build/';
 // nodegame-client
 var ng_client = [
  	rootDir + "index.js",
+ 	
+ // modules
+ 	rootDir + "lib/modules/log.js",
+ 	rootDir + "lib/modules/variables.js",
+
+ 	
  // lib
- 	rootDir + "lib/EventEmitter.js",
- 	rootDir + "lib/GameState.js",
- 	rootDir + "lib/PlayerList.js",
- 	rootDir + "lib/GameMsg.js",
- 	rootDir + "lib/GameLoop.js",
- 	rootDir + "lib/GameMsgGenerator.js",
- 	rootDir + "lib/sockets/SocketFactory.js",
- 	rootDir + "lib/Socket.js",
+ 	rootDir + "lib/core/EventEmitter.js",
+ 	rootDir + "lib/core/GameState.js",
+ 	rootDir + "lib/core/PlayerList.js",
+ 	rootDir + "lib/core/GameMsg.js",
+ 	rootDir + "lib/core/GameLoop.js",
+ 	rootDir + "lib/core/GameMsgGenerator.js",
+ 	
+ 	rootDir + "lib/core/SocketFactory.js",
+ 	rootDir + "lib/core/Socket.js",
+ 	
  	rootDir + "lib/sockets/SocketIo.js",
- 	//rootDir + "lib/GameSocketClient.js",
- 	rootDir + "lib/GameDB.js",
- 	rootDir + "lib/Game.js", 
- 	rootDir + "lib/Session.js",
+ 	
+ 	rootDir + "lib/core/GameDB.js",
+ 	rootDir + "lib/core/Game.js", 
+ 	rootDir + "lib/core/Session.js",
  		 	
  // nodeGame
- 	rootDir + "nodeGame.js",
+ 	rootDir + "lib/nodegame.js",
+ 	
+ 	
+// modules
+ 	rootDir + "lib/modules/setup.js",
+ 	rootDir + "lib/modules/alias.js",
+ 	rootDir + "lib/modules/random.js",
  	
  // listeners
  	

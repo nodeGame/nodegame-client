@@ -10,12 +10,13 @@
 	var GameMsg = node.GameMsg,
 		GameState = node.GameState,
 		PlayerList = node.PlayerList,
-		Player = node.Player;
+		Player = node.Player,
+		J = node.JSUS;
 	
-	var say = GameMsg.actions.SAY + '.',
-		set = GameMsg.actions.SET + '.',
-		get = GameMsg.actions.GET + '.',
-		IN  = GameMsg.IN;
+	var say = node.actions.SAY + '.',
+		set = node.actions.SET + '.',
+		get = node.actions.GET + '.',
+		IN  = node.IN;
 
 	
 /**
@@ -181,7 +182,6 @@ node.on( IN + set + 'DATA', function (msg) {
  * 
  * Redirects to a new page
  * 
- * @emit REDIRECTING...
  * @see node.redirect
  */
 node.on( IN + say + 'REDIRECT', function (msg) {
@@ -190,9 +190,24 @@ node.on( IN + say + 'REDIRECT', function (msg) {
 		node.log('window.location not found. Cannot redirect', 'err');
 		return false;
 	}
-	node.emit('REDIRECTING...', msg.data);
+
 	window.location = msg.data; 
 });	
+
+
+/**
+ * ### in.say.SETUP
+ * 
+ * Setups a features of nodegame
+ * 
+ * @see node.setup
+ */
+node.on( IN + say + 'SETUP', function (msg) {
+	if (!msg.text) return;
+	node.setup(msg.text, msg.data);
+	
+});	
+
 	
 	node.log('incoming listeners added');
 	

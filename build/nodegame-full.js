@@ -6278,88 +6278,6 @@ NDDB.prototype.load = function (file, callback) {
 // ### version	
 node.version = '0.6.0';
 
-// ## Logging system
-
-/**
- *  ### node.verbosity
- *  
- *  The minimum level for a log entry to be displayed as output.
- *   
- *  Defaults, only errors are displayed.
- *  
- */
-node.verbosity = 0;
-
-
-/**
- * ### node.verbosity_levels
- * 
- * ALWAYS, ERR, WARN, INFO, DEBUG
- */  
-node.verbosity_levels = {
-		// <!-- It is not really always... -->
-		ALWAYS: -(Number.MIN_VALUE+1), 
-		ERR: -1,
-		WARN: 0,
-		INFO: 1,
-		DEBUG: 100
-};
-
-
-/**
- * ### node.log
- * 
- * Default nodeGame standard out, override to redirect
- * 
- * Logs entries are displayed only if their verbosity level is 
- * greater than `node.verbosity`
- * 
- * @param {string} txt The text to output
- * @param {string|number} level Optional. The verbosity level of this log. Defaults, level = 0
- * @param {string} prefix Optional. A text to display at the beginning of the log entry. Defaults prefix = 'nodeGame: ' 
- * 
- */
-node.log = function (txt, level, prefix) {
-	if ('undefined' === typeof txt) return false;
-	
-	level 	= level || 0;
-	prefix 	= ('undefined' === typeof prefix) 	? 'nodeGame: '
-												: prefix;
-	if ('string' === typeof level) {
-		level = node.verbosity_levels[level];
-	}
-	if (node.verbosity > level) {
-		console.log(prefix + txt);
-	}
-};
-
-/**
- * ### node.info
- * 
- * Logs an INFO message
- */
-node.info = function (txt, prefix) {
-	node.log(txt, node.verbosity_levels.INFO, prefix);
-}
-
-/**
- * ### node.warn
- * 
- * Logs a WARNING message
- */
-node.warn = function (txt, prefix) {
-	node.log(txt, node.verbosity_levels.WARN, prefix);
-}
-
-/**
- * ### node.err
- * 
- * Logs an ERROR message
- */
-node.err = function (txt, prefix) {
-	node.log(txt, node.verbosity_levels.ERR, prefix);
-}
-
 // ## Objects
 
 /**
@@ -6431,6 +6349,17 @@ node.memory 	= {};
  */
 node.store		= function() {};
 
+
+/**
+ * ### node.setup
+ * 
+ * Configures a specific feature of nodeGame and and stores 
+ * the settings in `node.conf`.
+ * 
+ * @see Setup
+ */
+node.setup		= function() {};
+
 /**
  * ### node.support 
  * 
@@ -6444,9 +6373,17 @@ node.support	= {};
 
 if ('object' === typeof module && 'function' === typeof require) {
 	// <!-- Node.js -->
+	
+	require('./lib/modules/log.js');
+	require('./lib/modules/variables.js');
+	
 	require('./init.node.js');
-    require('./nodeGame.js');
+    require('./lib/nodegame.js');
 
+    require('./lib/modules/setup.js');
+	require('./lib/modules/alias.js');
+	require('./lib/modules/random.js');
+    
     // ### Loading Sockets
     require('./lib/sockets/SocketIo.js');
     require('./lib/sockets/SocketDirect.js');
@@ -6467,6 +6404,221 @@ else {
 	
 })('object' === typeof module ? module.exports : (window.node = {}));	
 
+/**
+ * # Setup
+ * 
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed 
+ * 
+ * `nodeGame` setup module
+ * 
+ * ---
+ * 
+ */
+
+(function (exports, node) {
+	
+
+
+// ## Logging system
+
+/**
+ *  ### node.verbosity
+ *  
+ *  The minimum level for a log entry to be displayed as output.
+ *   
+ *  Defaults, only errors are displayed.
+ *  
+ */
+	node.verbosity = 0;
+
+
+/**
+ * ### node.verbosity_levels
+ * 
+ * ALWAYS, ERR, WARN, INFO, DEBUG
+ */  
+	node.verbosity_levels = {
+			// <!-- It is not really always... -->
+			ALWAYS: -(Number.MIN_VALUE+1), 
+			ERR: -1,
+			WARN: 0,
+			INFO: 1,
+			DEBUG: 100
+	};
+
+
+/**
+ * ### node.log
+ * 
+ * Default nodeGame standard out, override to redirect
+ * 
+ * Logs entries are displayed only if their verbosity level is 
+ * greater than `node.verbosity`
+ * 
+ * @param {string} txt The text to output
+ * @param {string|number} level Optional. The verbosity level of this log. Defaults, level = 0
+ * @param {string} prefix Optional. A text to display at the beginning of the log entry. Defaults prefix = 'nodeGame: ' 
+ * 
+ */
+	node.log = function (txt, level, prefix) {
+		if ('undefined' === typeof txt) return false;
+		
+		level 	= level || 0;
+		prefix 	= ('undefined' === typeof prefix) 	? 'nodeGame: '
+													: prefix;
+		if ('string' === typeof level) {
+			level = node.verbosity_levels[level];
+		}
+		if (node.verbosity > level) {
+			console.log(prefix + txt);
+		}
+	};
+
+/**
+ * ### node.info
+ * 
+ * Logs an INFO message
+ */
+	node.info = function (txt, prefix) {
+		node.log(txt, node.verbosity_levels.INFO, prefix);
+	};
+
+/**
+ * ### node.warn
+ * 
+ * Logs a WARNING message
+ */
+	node.warn = function (txt, prefix) {
+		node.log(txt, node.verbosity_levels.WARN, prefix);
+	};
+
+/**
+ * ### node.err
+ * 
+ * Logs an ERROR message
+ */
+	node.err = function (txt, prefix) {
+		node.log(txt, node.verbosity_levels.ERR, prefix);
+	};
+
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);
+/**
+ * # Setup
+ * 
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed 
+ * 
+ * `nodeGame` setup module
+ * 
+ * ---
+ * 
+ */
+
+(function (exports, node) {
+	
+	// ## Constants
+
+
+	/**
+	 * ### node.actions
+	 * 
+	 * Collection of available nodeGame actions
+	 * 
+	 * The action adds an initial semantic meaning to the
+	 * message. It specify the nature of requests
+	 * "Why the message was sent?"
+	 * 
+	 * Semantics:
+	 * 
+	 * - SET: Store / changes the value of a property in the receiver of the msg
+	 * - GET: Asks the value value of a property to the receiver of the msg
+	 * - SAY: Announces a change of state or other global property in the sender of the msg
+	 * 
+	 */
+	node.actions = {};
+
+	node.actions.SET = 'set'; 	
+	node.actions.GET = 'get'; 	
+	node.actions.SAY = 'say'; 	
+
+	/**
+	 * ### node.targets
+	 * 
+	 * Collection of available nodeGame targets
+	 * 
+	 * The target adds an additional level of semantic 
+	 * for the message, and specifies the nature of the
+	 * information carried in the message. 
+	 * 
+	 * It answers the question: "What is the content of the message?" 
+	 */
+	node.targets = {};
+
+	node.targets.HI			= 'HI';			// Client connects
+	node.targets.HI_AGAIN	= 'HI_AGAIN'; 	// Client reconnects
+
+	node.targets.PCONNECT	= 'PCONNECT'; 		// A new player just connected
+	node.targets.PDISCONNECT = 'PDISCONNECT';	// A player just disconnected
+
+	node.targets.MCONNECT	= 'MCONNECT'; 		// A new monitor just connected
+	node.targets.MDISCONNECT = 'MDISCONNECT';	// A monitor just disconnected
+
+	node.targets.PLIST 		= 'PLIST';	// PLIST
+	node.targets.MLIST 		= 'MLIST';	// PLIST
+
+	node.targets.STATE		= 'STATE';	// STATE
+
+	node.targets.TXT 		= 'TXT';	// Text msg
+	node.targets.DATA		= 'DATA';	// Contains a data-structure in the data field
+
+	node.targets.REDIRECT	= 'REDIRECT'; // redirect a client to a new address
+
+	node.targets.ENV		= 'ENV'; // setup global variables
+
+	node.targets.SETUP		= 'SETUP'; // general setup
+
+	node.targets.GAME		= 'GAME'; // set the game
+
+
+
+	// Still to implement
+	node.targets.BYE			= 'BYE';	// Force disconnects
+	node.targets.ACK			= 'ACK';	// A reliable msg was received correctly
+	node.targets.WARN 		= 'WARN';	// To do.
+	node.targets.ERR			= 'ERR';	// To do.
+
+
+
+
+	/**
+	 * ### Direction
+	 * 
+	 * Distiguish between incoming and outgoing messages
+	 * 
+	 * - node.IN
+	 * - node.OUT
+	 */
+
+	node.IN					= 'in.';
+	node.OUT					= 'out.';	
+
+
+	
+	node.iss = {};
+	node.iss.UNKNOWN = 0; 		// Game has not been initialized
+	node.iss.LOADING = 10;		// The game is loading
+	node.iss.LOADED  = 25;		// Game is loaded, but the GameWindow could still require some time
+	node.iss.PLAYING = 50;		// Everything is ready
+	node.iss.DONE = 100;		// The player completed the game state
+
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);
 /**
  * # EventEmitter
  * 
@@ -7800,64 +7952,6 @@ var GameState = node.GameState,
 	JSUS = node.JSUS;
 
 exports.GameMsg = GameMsg;
-
-/**
- * ### GameMsg.actions
- * 
- * Collection of available nodeGame actions
- * 
- * The action adds an initial semantic meaning to the
- * message. It specify the nature of requests
- * "Why the message was sent?"
- * 
- */
-GameMsg.actions = {};
-
-GameMsg.actions.SET 		= 'set'; 	// Changes properties of the receiver
-GameMsg.actions.GET 		= 'get'; 	// Ask a properties of the receiver
-GameMsg.actions.SAY			= 'say'; 	// Announce properties of the sender
-
-/**
- * ### GameMsg.targets
- * 
- * Collection of available nodeGame targets
- * 
- * The target adds an additional level of semantic 
- * for the message, and specifies the nature of the
- * information carried in the message. 
- * 
- * It answers the question: "What is the content of the message?" 
- */
-GameMsg.targets = {};
-
-GameMsg.targets.HI			= 'HI';			// Client connects
-GameMsg.targets.HI_AGAIN	= 'HI_AGAIN'; 	// Client reconnects
-
-GameMsg.targets.PCONNECT	= 'PCONNECT'; 		// A new player just connected
-GameMsg.targets.PDISCONNECT = 'PDISCONNECT';	// A player just disconnected
-
-GameMsg.targets.MCONNECT	= 'MCONNECT'; 		// A new monitor just connected
-GameMsg.targets.MDISCONNECT = 'MDISCONNECT';	// A monitor just disconnected
-
-GameMsg.targets.PLIST 		= 'PLIST';	// PLIST
-GameMsg.targets.MLIST 		= 'MLIST';	// PLIST
-
-GameMsg.targets.STATE		= 'STATE';	// STATE
-
-GameMsg.targets.TXT 		= 'TXT';	// Text msg
-GameMsg.targets.DATA		= 'DATA';	// Contains a data-structure in the data field
-
-GameMsg.targets.REDIRECT	= 'REDIRECT'; // redirect a client to a new address
-
-// Still to implement
-GameMsg.targets.BYE			= 'BYE';	// Force disconnects
-GameMsg.targets.ACK			= 'ACK';	// A reliable msg was received correctly
-GameMsg.targets.WARN 		= 'WARN';	// To do.
-GameMsg.targets.ERR			= 'ERR';	// To do.
-
-
-GameMsg.IN					= 'in.';	// Prefix for incoming msgs
-GameMsg.OUT					= 'out.';	// Prefix for outgoing msgs
 
 
 /**
@@ -10180,7 +10274,7 @@ Game.prototype.jumpTo = function (jump) {
 Game.prototype.publishState = function() {
 	// <!-- Important: SAY -->
 	if (!this.observer) {
-		var stateEvent = GameMsg.OUT + GameMsg.actions.SAY + '.STATE'; 
+		var stateEvent = node.OUT + node.actions.SAY + '.STATE'; 
 		node.emit(stateEvent, this.state, 'ALL');
 	}
 	
@@ -10360,6 +10454,9 @@ function GameSession() {
 	this.register('game.state', {
 		set: GameSession.restoreState
 	});
+	
+	this.register('node.env');
+	
 }
 
 
@@ -10541,7 +10638,7 @@ SessionManager.prototype.store = function() {
  * ---
  * 
  */
-(function (node) {
+(function (exports, node) {
 		
 	var EventEmitter = node.EventEmitter,
 		Socket = node.Socket,
@@ -10570,7 +10667,6 @@ SessionManager.prototype.store = function() {
 	node.socket = node.gsc = new Socket();
 	
 	
-	
 // ## Methods
 	
 	
@@ -10592,95 +10688,7 @@ SessionManager.prototype.store = function() {
 		func.apply(ctx, params);
 	};
 	
-	
-/**
- * ### node.setup 
- * 
- * Setups the nodeGame object
- * 
- * Parses a configuration object, adds default and missing
- * values, and stores the results in `node.conf`.
- * 
- * See the examples folder for all available configuration options.
- * 
- * @param {object} conf A configutation object
- * 
- */
-	node.setup = node._analyzeConf = function (conf) {
-		if (!conf) {
-			node.err('invalid configuration object found.');
-			return false;
-		}
 		
-		// Socket
-		if (conf.socket) {
-			
-			
-			node.socket.setup(conf.socket);
-		}
-		
-		// URL
-		if (!conf.host) {
-			if ('undefined' !== typeof window) {
-				if ('undefined' !== typeof window.location) {
-					var host = window.location.href;
-				}
-			}
-			else {
-				var host = conf.url;
-			}
-			if (host) {
-				var tokens = host.split('/').slice(0,-2);
-				// url was not of the form '/channel'
-				if (tokens.length > 1) {
-					conf.host = tokens.join('/');
-				}
-			}
-		}
-		
-		
-		// Add a trailing slash if missing
-		if (conf.host && conf.host.lastIndexOf('/') !== host.length) {
-			conf.host = conf.host + '/';
-		}
-		
-		// VERBOSITY
-		if ('undefined' !== typeof conf.verbosity) {
-			node.verbosity = conf.verbosity;
-		}
-		
-		
-		// Environments
-		if ('undefined' !== typeof conf.env) {
-			for (var i in conf.env) {
-				if (conf.env.hasOwnProperty(i)) {
-					node.env[i] = conf.env[i];
-				}
-			}
-		}
-		
-		if (!conf.events) { conf.events = {}; };
-		
-		if ('undefined' === conf.events.history) {
-			conf.events.history = false;
-		}
-		
-		if ('undefined' === conf.events.dumpEvents) {
-			conf.events.dumpEvents = false;
-		}
-		
-		this.conf = conf;
-		return conf;
-	};
-
-	node.configure = function(key, value) {
-		J.setNestedValue(key, value, node.conf);
-	};
-
-	
-	
-	
-	
 /**
  * ### node.createPlayer
  * 
@@ -10755,7 +10763,7 @@ SessionManager.prototype.store = function() {
 		node.socket.connect(url);
 		node.emit('NODEGAME_CONNECTED');
 	};	
-	
+
 	
 /**
  * ### node.play
@@ -10765,10 +10773,9 @@ SessionManager.prototype.store = function() {
  * @param {object} conf A configuration object
  * @param {object} game The game object
  */	
-	node.play = function (game) {	
+	node.play = function(game) {	
 		
-		node.game = new Game(game);
-		node.emit('NODEGAME_GAME_CREATED');
+		node.setup.game(game);
 		
 		// INIT the game
 		node.game.init.call(node.game);
@@ -10861,41 +10868,6 @@ SessionManager.prototype.store = function() {
 		node.on('in.say.DATA', listener);
 	};
 
-	
-/**
- * ### node.redirect
- * 
- * Redirects a player to the specified url
- * 
- * Works only if it is a monitor client to send
- * the message, i.e. players cannot redirect each 
- * other.
- * 
- * Examples
- *  
- * 	// Redirect to http://mydomain/mygame/missing_auth
- * 	node.redirect('missing_auth', 'xxx'); 
- * 
- *  // Redirect to external urls
- *  node.redirect('http://www.google.com');
- * 
- * @param {string} url the url of the redirection
- * @param {string} who A player id or 'ALL'
- * @return {boolean} TRUE, if the redirect message is sent
- */	
-	node.redirect = function (url, who) {
-		if (!url || !who) return false;
-		
-		var msg = node.msg.create({
-			target: node.targets.REDIRECT,
-			data: url,
-			to: who
-		});
-		node.socket.send(msg);
-		return true;
-	};
-	
-
 /**
  * ### node.on
  * 
@@ -10965,9 +10937,263 @@ SessionManager.prototype.store = function() {
 		return node.events.remove(event, func);
 	};
 
-// ## Aliases	
 	
 	
+/**
+ * ### node.redirect
+ * 
+ * Redirects a player to the specified url
+ * 
+ * Works only if it is a monitor client to send
+ * the message, i.e. players cannot redirect each 
+ * other.
+ * 
+ * Examples
+ *  
+ * 	// Redirect to http://mydomain/mygame/missing_auth
+ * 	node.redirect('missing_auth', 'xxx'); 
+ * 
+ *  // Redirect to external urls
+ *  node.redirect('http://www.google.com');
+ * 
+ * @param {string} url the url of the redirection
+ * @param {string} who A player id or 'ALL'
+ * @return {boolean} TRUE, if the redirect message is sent
+ */	
+	node.redirect = function (url, who) {
+		if (!url || !who) return false;
+		
+		var msg = node.msg.create({
+			target: node.targets.REDIRECT,
+			data: url,
+			to: who
+		});
+		node.socket.send(msg);
+		return true;
+	};
+			
+
+	
+	node.log(node.version + ' loaded', 'ALWAYS');
+	
+})(
+		this
+	, 	'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
+ * # Setup
+ * 
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed 
+ * 
+ * `nodeGame` setup module
+ * 
+ * ---
+ * 
+ */
+
+(function (exports, node) {
+	
+// ## Global scope
+	
+var GameMsg = node.GameMsg,
+	GameState = node.GameState,
+	Player = node.Player,
+	GameMsgGenerator = node.GameMsgGenerator,
+	J = node.JSUS;
+
+// TODO: check this
+var frozen = false;
+
+/**
+ * ### node.setup
+ * 
+ * Setups the nodeGame object
+ * 
+ * Configures a specific feature of nodeGame and and stores 
+ * the settings in `node.conf`.
+ * 
+ * See the examples folder for all available configuration options.
+ * 
+ * @param {string} property The feature to configure
+ * @param {mixed} options The value of the option to configure
+ * @return{boolean} TRUE, if configuration is successful
+ * 
+ * @see node.setup.register
+ * 
+ */	
+	node.setup = function(property, options) {
+		if (frozen) {
+			node.err('nodeGame configuration is frozen. No modification allowed.');
+			return false;
+		}
+		
+		if (!node.setup[property]) {
+			node.warn('no such property to configure: ' + property);
+			return false;
+		}
+		
+		node.conf[property] = node.setup[property].call(exports, options);
+		return true;
+	};
+	
+/**
+ * ### node.setup.register
+ * 
+ * Registers a configuration function
+ * 
+ * @param {string} property The feature to configure
+ * @param {mixed} options The value of the option to configure
+ * @return{boolean} TRUE, if configuration is successful
+ * 
+ * @see node.setup
+ */	
+	node.setup.register = function(property, func) {
+		if (!property || !func) {
+			node.err('cannot register empty setup function');
+			return false;
+		}
+		
+		if (property === 'register') {
+			node.err('cannot overwrite register function');
+			return false;
+		}
+		
+		node.setup[property] = func;
+		return true;
+	};	
+
+// ## Configuration functions	
+
+	node.setup.register('nodegame', function(options) {
+		for (var i in node.setup) {
+			if (node.setup.hasOwnProperty(i)) {
+				if (i !== 'register' && i !== 'nodegame') {
+					node.setup[i].call(exports, options[i]);
+				}
+			}
+		}
+		
+		
+	});
+	
+	
+	node.setup.register('socket', function(conf) {
+		if (!conf) return;
+		node.socket.setup(conf);
+	});
+	
+	node.setup.register('host', function(conf) {
+		// URL
+		if (!conf.host) {
+			if ('undefined' !== typeof window) {
+				if ('undefined' !== typeof window.location) {
+					var host = window.location.href;
+				}
+			}
+			else {
+				var host = conf.url;
+			}
+			if (host) {
+				var tokens = host.split('/').slice(0,-2);
+				// url was not of the form '/channel'
+				if (tokens.length > 1) {
+					conf.host = tokens.join('/');
+				}
+			}
+			
+			// Add a trailing slash if missing
+			if (conf.host && conf.host.lastIndexOf('/') !== host.length) {
+				conf.host = conf.host + '/';
+			}
+		}
+		
+		return conf;
+	});
+	
+	
+	node.setup.register('verbosity', function(level){
+		// VERBOSITY
+		if ('undefined' !== typeof level) {
+			node.verbosity = level;
+		}
+		
+		return level;
+	});
+	
+	
+	node.setup.register('env', function(conf){
+		if ('undefined' !== typeof conf) {
+			for (var i in conf) {
+				if (conf.hasOwnProperty(i)) {
+					node.env[i] = conf[i];
+				}
+			}
+		}
+		
+		return conf;
+	});
+	
+	node.setup.register('events', function(conf){
+		conf = conf || {};
+		if ('undefined' === conf.history) {
+			conf.events.history = false;
+		}
+		
+		if ('undefined' === conf.dumpEvents) {
+			conf.events.dumpEvents = false;
+		}
+		
+		return conf;
+	});
+	
+	
+/**
+ * ### node.setup.game
+ * 
+ * 
+ */	
+	node.setup.register('game', function(game) {
+		if (!game) return {};
+		node.game = new Game(game);
+		node.emit('NODEGAME_GAME_CREATED');
+		return node.game;
+	});
+		
+	node.setup.register('player', node.createPlayer);
+
+
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);
+/**
+ * # Setup
+ * 
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed 
+ * 
+ * `nodeGame` setup module
+ * 
+ * ---
+ * 
+ */
+
+(function (exports, node) {
+	
+// ## Global scope
+	
+var GameMsg = node.GameMsg,
+	GameState = node.GameState,
+	Player = node.Player,
+	GameMsgGenerator = node.GameMsgGenerator,
+	J = node.JSUS;
+
+
+//## Aliases	
+
+
 /**
  * ### node.alias
  * 
@@ -11083,48 +11309,75 @@ SessionManager.prototype.store = function() {
 			func.call(node.game, msg);
 		});
 	};
-	
+		
 
-// ## Extra
-	
-	node.random = {};
-	
+
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);
 /**
- * ### node.random.emit
+ * # Setup
  * 
- * Emits an event after a random time interval between 0 and maxWait 
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed 
  * 
- * @param {string} event The name of the event
- * @param {number} maxWait Optional. The maximum time (in milliseconds)
- * 	to wait before emitting the event. to Defaults, 6000
- */	
+ * `nodeGame` setup module
+ * 
+ * ---
+ * 
+ */
+
+(function (exports, node) {
+	
+// ## Global scope
+	
+var GameMsg = node.GameMsg,
+	GameState = node.GameState,
+	Player = node.Player,
+	GameMsgGenerator = node.GameMsgGenerator,
+	J = node.JSUS;
+//## Extra
+
+node.random = {};
+
+/**
+* ### node.random.emit
+* 
+* Emits an event after a random time interval between 0 and maxWait 
+* 
+* @param {string} event The name of the event
+* @param {number} maxWait Optional. The maximum time (in milliseconds)
+* 	to wait before emitting the event. to Defaults, 6000
+*/	
 	node.random.emit = function (event, maxWait){
 		maxWait = maxWait || 6000;
 		setTimeout(function(event) {
 			node.emit(event);
 		}, Math.random() * maxWait, event);
 	};
-	
+
 /**
- * ### node.random.exec 
- * 
- * Executes a callback function after a random time interval between 0 and maxWait 
- * 
- * @param {function} The callback function to execute
- * @param {number} maxWait Optional. The maximum time (in milliseconds) 
- * 	to wait before executing the callback. to Defaults, 6000
- */	
+* ### node.random.exec 
+* 
+* Executes a callback function after a random time interval between 0 and maxWait 
+* 
+* @param {function} The callback function to execute
+* @param {number} maxWait Optional. The maximum time (in milliseconds) 
+* 	to wait before executing the callback. to Defaults, 6000
+*/	
 	node.random.exec = function (func, maxWait) {
 		maxWait = maxWait || 6000;
 		setTimeout(function(func) {
 			func.call();
 		}, Math.random() * maxWait, func);
 	};	
-		
-	node.log(node.version + ' loaded', 'ALWAYS');
-	
-})('undefined' != typeof node ? node : module.parent.exports);
 
+
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);
 // ## Game incoming listeners
 // Incoming listeners are fired in response to incoming messages
 (function (node) {
@@ -11137,12 +11390,13 @@ SessionManager.prototype.store = function() {
 	var GameMsg = node.GameMsg,
 		GameState = node.GameState,
 		PlayerList = node.PlayerList,
-		Player = node.Player;
+		Player = node.Player,
+		J = node.JSUS;
 	
-	var say = GameMsg.actions.SAY + '.',
-		set = GameMsg.actions.SET + '.',
-		get = GameMsg.actions.GET + '.',
-		IN  = GameMsg.IN;
+	var say = node.actions.SAY + '.',
+		set = node.actions.SET + '.',
+		get = node.actions.GET + '.',
+		IN  = node.IN;
 
 	
 /**
@@ -11308,7 +11562,6 @@ node.on( IN + set + 'DATA', function (msg) {
  * 
  * Redirects to a new page
  * 
- * @emit REDIRECTING...
  * @see node.redirect
  */
 node.on( IN + say + 'REDIRECT', function (msg) {
@@ -11317,9 +11570,24 @@ node.on( IN + say + 'REDIRECT', function (msg) {
 		node.log('window.location not found. Cannot redirect', 'err');
 		return false;
 	}
-	node.emit('REDIRECTING...', msg.data);
+
 	window.location = msg.data; 
 });	
+
+
+/**
+ * ### in.say.SETUP
+ * 
+ * Setups a features of nodegame
+ * 
+ * @see node.setup
+ */
+node.on( IN + say + 'SETUP', function (msg) {
+	if (!msg.text) return;
+	node.setup(msg.text, msg.data);
+	
+});	
+
 	
 	node.log('incoming listeners added');
 	
