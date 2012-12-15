@@ -11,12 +11,15 @@
 		return false;
 	}
 	
+	var action = node.action,
+		target = node.target;
+	
 	var GameMsg = node.GameMsg,
 		GameState = node.GameState;
 	
-	var say = GameMsg.actions.SAY + '.',
-		set = GameMsg.actions.SET + '.',
-		get = GameMsg.actions.GET + '.',
+	var say = action.SAY + '.',
+		set = action.SET + '.',
+		get = action.GET + '.',
 		IN  = GameMsg.IN,
 		OUT = GameMsg.OUT;
 	

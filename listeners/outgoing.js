@@ -10,9 +10,12 @@
 	var GameMsg = node.GameMsg,
 		GameState = node.GameState;
 	
-	var say = GameMsg.actions.SAY + '.',
-		set = GameMsg.actions.SET + '.',
-		get = GameMsg.actions.GET + '.',
+	var action = node.action,
+		target = node.target;
+	
+	var say = action.SAY + '.',
+		set = action.SET + '.',
+		get = action.GET + '.',
 		OUT  = GameMsg.OUT;
 	
 ///** 
@@ -29,7 +32,7 @@
 //	else {
 //		// The game is ready to step when necessary;
 //		node.game.state.is = GameState.iss.LOADED;
-//		node.socket.sendSTATE(GameMsg.actions.SAY, node.game.state);
+//		node.socket.sendSTATE(action.SAY, node.game.state);
 //	}
 //});
 
@@ -43,7 +46,7 @@
  * 
  */
 node.on( OUT + say + 'STATE', function (state, to) {
-	node.socket.sendSTATE(GameMsg.actions.SAY, state, to);
+	node.socket.sendSTATE(action.SAY, state, to);
 });	
 
 /**
@@ -61,7 +64,7 @@ node.on( OUT + say + 'TXT', function (text, to) {
  * Sends out a DATA message to the specified recipient
  */
 node.on( OUT + say + 'DATA', function (data, to, key) {
-	node.socket.sendDATA(GameMsg.actions.SAY, data, to, key);
+	node.socket.sendDATA(action.SAY, data, to, key);
 });
 
 /**
@@ -74,7 +77,7 @@ node.on( OUT + say + 'DATA', function (data, to, key) {
  * of the sender
  */
 node.on( OUT + set + 'STATE', function (state, to) {
-	node.socket.sendSTATE(GameMsg.actions.SET, state, to);
+	node.socket.sendSTATE(action.SET, state, to);
 });
 
 /**
@@ -87,7 +90,7 @@ node.on( OUT + set + 'STATE', function (state, to) {
  * 	@see Game.memory
  */
 node.on( OUT + set + 'DATA', function (data, to, key) {
-	node.socket.sendDATA(GameMsg.actions.SET, data, to, key);
+	node.socket.sendDATA(action.SET, data, to, key);
 });
 
 /**
@@ -98,7 +101,7 @@ node.on( OUT + set + 'DATA', function (data, to, key) {
  * Experimental. Undocumented (for now)
  */
 node.on( OUT + get + 'DATA', function (data, to, key) {
-	node.socket.sendDATA(GameMsg.actions.GET, data, to, data);
+	node.socket.sendDATA(action.GET, data, to, data);
 });
 	
 node.log('outgoing listeners added');

@@ -119,6 +119,7 @@ if ('object' === typeof module && 'function' === typeof require) {
 	require('./init.node.js');
     require('./lib/nodegame.js');
 
+    require('./lib/modules/fs.js');
     require('./lib/modules/setup.js');
 	require('./lib/modules/alias.js');
 	require('./lib/modules/random.js');

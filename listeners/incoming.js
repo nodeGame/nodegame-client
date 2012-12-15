@@ -13,9 +13,12 @@
 		Player = node.Player,
 		J = node.JSUS;
 	
-	var say = node.actions.SAY + '.',
-		set = node.actions.SET + '.',
-		get = node.actions.GET + '.',
+	var action = node.action,
+		target = node.target;
+	
+	var say = action.SAY + '.',
+		set = action.SET + '.',
+		get = action.GET + '.',
 		IN  = node.IN;
 
 	
@@ -113,7 +116,7 @@ node.on( IN + say + 'MLIST', function (msg) {
  */ 
 node.on( IN + get + 'DATA', function (msg) {
 	if (msg.text === 'LOOP'){
-		node.socket.sendDATA(GameMsg.actions.SAY, node.game.gameLoop, msg.from, 'GAME');
+		node.socket.sendDATA(action.SAY, node.game.gameLoop, msg.from, 'GAME');
 	}
 	// <!-- We could double emit
 	// node.emit(msg.text, msg.data); -->
