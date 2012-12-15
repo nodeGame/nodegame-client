@@ -31,7 +31,7 @@
 //	}
 //	else {
 //		// The game is ready to step when necessary;
-//		node.game.state.is = GameState.iss.LOADED;
+//		node.game.state.is = node.is.LOADED;
 //		node.socket.sendSTATE(action.SAY, node.game.state);
 //	}
 //});

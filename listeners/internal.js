@@ -78,7 +78,7 @@ node.on('DONE', function(p1, p2, p3) {
 	
 	if (done) ok = done.call(node.game, p1, p2, p3);
 	if (!ok) return;
-	node.game.state.is = GameState.iss.DONE;
+	node.game.state.is = node.is.DONE;
 	
 	// Call all the functions that want to do 
 	// something before changing state
@@ -138,7 +138,7 @@ node.on('GAME_LOADED', function() {
  */
 node.on('LOADED', function() {
 	node.emit('BEFORE_LOADING');
-	node.game.state.is =  GameState.iss.PLAYING;
+	node.game.state.is = node.is.PLAYING;
 	//TODO: the number of messages to emit to inform other players
 	// about its own state should be controlled. Observer is 0 
 	//node.game.publishState();
