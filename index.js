@@ -17,7 +17,14 @@
 // ### version	
 node.version = '0.6.0';
 
+
 // ## Objects
+/**
+ * ### node.log
+ * 
+ * Standard out
+ */	
+node.log = function () {};
 
 /**
  * ### node.events

@@ -20,8 +20,8 @@
 	var say = action.SAY + '.',
 		set = action.SET + '.',
 		get = action.GET + '.',
-		IN  = GameMsg.IN,
-		OUT = GameMsg.OUT;
+		IN  = node.IN,
+		OUT = node.OUT;
 	
 /**
  * ### STATEDONE
@@ -39,16 +39,16 @@ node.on('STATEDONE', function() {
 	// <!-- If we go auto -->
 	if (node.game.auto_step && !node.game.observer) {
 		node.log('We play AUTO', 'DEBUG');
-		var morePlayers = ('undefined' !== node.game.minPlayers) ? node.game.minPlayers - node.game.pl.count() : 0 ;
+		var morePlayers = ('undefined' !== typeof node.game.minPlayers) ? node.game.minPlayers - node.game.pl.count() : 0 ;
 		node.log('Additional player required: ' + morePlayers > 0 ? MorePlayers : 0, 'DEBUG');
 		
 		if (morePlayers > 0) {
-			node.emit('OUT.say.TXT', morePlayers + ' player/s still needed to play the game');
+			node.emit(OUT + say + target.TXT, morePlayers + ' player/s still needed to play the game');
 			node.log(morePlayers + ' player/s still needed to play the game');
 		}
 		// TODO: differentiate between before the game starts and during the game
 		else {
-			node.emit('OUT.say.TXT', node.game.minPlayers + ' players ready. Game can proceed');
+			node.emit(OUT + say + target.TXT, node.game.minPlayers + ' players ready. Game can proceed');
 			node.log(node.game.pl.count() + ' players ready. Game can proceed');
 			node.game.updateState(node.game.next());
 		}
