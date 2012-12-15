@@ -16,7 +16,7 @@
 	var say = action.SAY + '.',
 		set = action.SET + '.',
 		get = action.GET + '.',
-		OUT  = GameMsg.OUT;
+		OUT  = node.OUT;
 	
 ///** 
 // * ### out.say.HI

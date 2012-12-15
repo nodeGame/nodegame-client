@@ -74,7 +74,17 @@ node.session 	= {};
  * 
  * @see node.PlayerList.Player
  */
-node.player 	= {};
+node.player = {};
+
+/**
+ * ### node.game
+ * 
+ * Instance of node.Game
+ * 
+ * @see node.Game
+ */
+node.game = {};
+
 
 /**
  * ### node.memory
@@ -83,7 +93,7 @@ node.player 	= {};
  * 
  * @see node.GameDB
  */
-node.memory 	= {};
+node.game.memory = null;
 
 /**
  * ### node.store
@@ -105,6 +115,16 @@ node.store		= function() {};
  * @see Setup
  */
 node.setup		= function() {};
+
+
+/**
+ * ### node.conf
+ * 
+ * A reference to the current nodegame configuration
+ * 
+ * @see Setup
+ */
+node.conf = {};
 
 /**
  * ### node.support 

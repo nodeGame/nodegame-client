@@ -5197,7 +5197,14 @@ NDDB.prototype.load = function (file, callback) {
 // ### version	
 node.version = '0.6.0';
 
+
 // ## Objects
+/**
+ * ### node.log
+ * 
+ * Standard out
+ */	
+node.log = function () {};
 
 /**
  * ### node.events
@@ -5299,6 +5306,7 @@ if ('object' === typeof module && 'function' === typeof require) {
 	require('./init.node.js');
     require('./lib/nodegame.js');
 
+    require('./lib/modules/fs.js');
     require('./lib/modules/setup.js');
 	require('./lib/modules/alias.js');
 	require('./lib/modules/random.js');
@@ -5458,14 +5466,14 @@ else {
 	 * - SAY: Announces a change of state or other global property in the sender of the msg
 	 * 
 	 */
-	node.actions = {};
+	node.action = {};
 
-	node.actions.SET = 'set'; 	
-	node.actions.GET = 'get'; 	
-	node.actions.SAY = 'say'; 	
+	node.action.SET = 'set'; 	
+	node.action.GET = 'get'; 	
+	node.action.SAY = 'say'; 	
 
 	/**
-	 * ### node.targets
+	 * ### node.target
 	 * 
 	 * Collection of available nodeGame targets
 	 * 
@@ -5475,40 +5483,40 @@ else {
 	 * 
 	 * It answers the question: "What is the content of the message?" 
 	 */
-	node.targets = {};
+	node.target = {};
 
-	node.targets.HI			= 'HI';			// Client connects
-	node.targets.HI_AGAIN	= 'HI_AGAIN'; 	// Client reconnects
+	node.target.HI			= 'HI';			// Client connects
+	node.target.HI_AGAIN	= 'HI_AGAIN'; 	// Client reconnects
 
-	node.targets.PCONNECT	= 'PCONNECT'; 		// A new player just connected
-	node.targets.PDISCONNECT = 'PDISCONNECT';	// A player just disconnected
+	node.target.PCONNECT	= 'PCONNECT'; 		// A new player just connected
+	node.target.PDISCONNECT = 'PDISCONNECT';	// A player just disconnected
 
-	node.targets.MCONNECT	= 'MCONNECT'; 		// A new monitor just connected
-	node.targets.MDISCONNECT = 'MDISCONNECT';	// A monitor just disconnected
+	node.target.MCONNECT	= 'MCONNECT'; 		// A new monitor just connected
+	node.target.MDISCONNECT = 'MDISCONNECT';	// A monitor just disconnected
 
-	node.targets.PLIST 		= 'PLIST';	// PLIST
-	node.targets.MLIST 		= 'MLIST';	// PLIST
+	node.target.PLIST 		= 'PLIST';	// PLIST
+	node.target.MLIST 		= 'MLIST';	// PLIST
 
-	node.targets.STATE		= 'STATE';	// STATE
+	node.target.STATE		= 'STATE';	// STATE
 
-	node.targets.TXT 		= 'TXT';	// Text msg
-	node.targets.DATA		= 'DATA';	// Contains a data-structure in the data field
+	node.target.TXT 		= 'TXT';	// Text msg
+	node.target.DATA		= 'DATA';	// Contains a data-structure in the data field
 
-	node.targets.REDIRECT	= 'REDIRECT'; // redirect a client to a new address
+	node.target.REDIRECT	= 'REDIRECT'; // redirect a client to a new address
 
-	node.targets.ENV		= 'ENV'; // setup global variables
+	node.target.ENV		= 'ENV'; // setup global variables
 
-	node.targets.SETUP		= 'SETUP'; // general setup
+	node.target.SETUP		= 'SETUP'; // general setup
 
-	node.targets.GAME		= 'GAME'; // set the game
+	node.target.GAME		= 'GAME'; // set the game
 
 
 
 	// Still to implement
-	node.targets.BYE			= 'BYE';	// Force disconnects
-	node.targets.ACK			= 'ACK';	// A reliable msg was received correctly
-	node.targets.WARN 		= 'WARN';	// To do.
-	node.targets.ERR			= 'ERR';	// To do.
+	node.target.BYE			= 'BYE';	// Force disconnects
+	node.target.ACK			= 'ACK';	// A reliable msg was received correctly
+	node.target.WARN 		= 'WARN';	// To do.
+	node.target.ERR			= 'ERR';	// To do.
 
 
 
@@ -5522,8 +5530,8 @@ else {
 	 * - node.OUT
 	 */
 
-	node.IN					= 'in.';
-	node.OUT					= 'out.';	
+	node.IN		= 'in.';
+	node.OUT	= 'out.';	
 
 
 	
@@ -6950,7 +6958,7 @@ function GameMsg (gm) {
  * 
  * The action of the message
  * 
- * 	@see GameMsg.actions
+ * 	@see node.action
  */		
 	this.action = gm.action;
 	
@@ -6959,7 +6967,7 @@ function GameMsg (gm) {
  * 
  * The target of the message
  * 
- * 	@see GameMsg.targets
+ * 	@see node.target
  */	
 	this.target = gm.target;
 	
@@ -7583,8 +7591,8 @@ GameLoop.prototype.diff = function (state1, state2) {
  * All message are reliable, but TXT messages.
  * 
  * 	@see GameMSg
- * 	@see GameMsg.targets
- * 	@see GameMsg.actions
+ * 	@see node.target
+ * 	@see node.action
  * 
  * ---
  *
@@ -7597,6 +7605,9 @@ var GameMsg = node.GameMsg,
 	GameState = node.GameState,
 	Player = node.Player,
 	JSUS = node.JSUS;
+
+var target = node.target,
+	action = node.action;
 
 exports.GameMsgGenerator = GameMsgGenerator; 
 
@@ -7624,8 +7635,8 @@ GameMsgGenerator.create = function (msg) {
   var base = {
 		session: ('undefined' !== typeof msg.session) ? msg.session : node.socket.session, 
 		state: msg.state || node.game.state,
-		action: msg.action || GameMsg.actions.SAY,
-		target: msg.target || GameMsg.targets.DATA,
+		action: msg.action || action.SAY,
+		target: msg.target || target.DATA,
 		from: node.player.sid,
 		to: ('undefined' !== typeof msg.to) ? msg.to : 'SERVER',
 		text: msg.text || null,
@@ -7659,8 +7670,8 @@ GameMsgGenerator.createHI = function (player, to, reliable) {
 	return new GameMsg( {
             			session: node.gsc.session,
             			state: node.game.state,
-            			action: GameMsg.actions.SAY,
-            			target: GameMsg.targets.HI,
+            			action: action.SAY,
+            			target: target.HI,
             			from: node.player.sid,
             			to: to,
             			text: new Player(player) + ' ready.',
@@ -7738,7 +7749,6 @@ GameMsgGenerator.getSTATE = function (state, to, reliable) {
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
  * 	@see GameState
- * 	@see GameMsg.actions
  */
 GameMsgGenerator.createSTATE = function (action, state, to, reliable) {
 	if (!action || !state) return false;
@@ -7748,7 +7758,7 @@ GameMsgGenerator.createSTATE = function (action, state, to, reliable) {
 						session: node.gsc.session,
 						state: node.game.state,
 						action: action,
-						target: GameMsg.targets.STATE,
+						target: target.STATE,
 						from: node.player.sid,
 						to: to,
 						text: 'New State: ' + GameState.stringify(state),
@@ -7774,7 +7784,7 @@ GameMsgGenerator.createSTATE = function (action, state, to, reliable) {
  * 	@see PlayerList
  */
 GameMsgGenerator.sayPLIST = function (plist, to, reliable) {
-	return this.createPLIST(GameMsg.actions.SAY, plist, to, reliable);
+	return this.createPLIST(action.SAY, plist, to, reliable);
 };
 
 /**
@@ -7791,7 +7801,7 @@ GameMsgGenerator.sayPLIST = function (plist, to, reliable) {
  * 	@see PlayerList
  */
 GameMsgGenerator.setPLIST = function (plist, to, reliable) {
-	return this.createPLIST(GameMsg.actions.SET, plist, to, reliable);
+	return this.createPLIST(action.SET, plist, to, reliable);
 };
 
 /**
@@ -7808,7 +7818,7 @@ GameMsgGenerator.setPLIST = function (plist, to, reliable) {
  * 	@see PlayerList
  */
 GameMsgGenerator.getPLIST = function (plist, to, reliable) {
-	return this.createPLIST(GameMsg.actions.GET, plist, to, reliable);
+	return this.createPLIST(action.GET, plist, to, reliable);
 };
 
 /**
@@ -7823,7 +7833,6 @@ GameMsgGenerator.getPLIST = function (plist, to, reliable) {
  * 
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  * 
- * 	@see GameMsg.actions
  *  @see PlayerList
  */
 GameMsgGenerator.createPLIST = function (action, plist, to, reliable) {
@@ -7837,7 +7846,7 @@ GameMsgGenerator.createPLIST = function (action, plist, to, reliable) {
 						session: node.gsc.session, 
 						state: node.game.state,
 						action: action,
-						target: GameMsg.targets.PLIST,
+						target: target.PLIST,
 						from: node.player.sid,
 						to: to,
 						text: 'List of Players: ' + plist.length,
@@ -7869,8 +7878,8 @@ GameMsgGenerator.createTXT = function (text, to, reliable) {
 	return new GameMsg({
 						session: node.gsc.session,
 						state: node.game.state,
-						action: GameMsg.actions.SAY,
-						target: GameMsg.targets.TXT,
+						action: action.SAY,
+						target: target.TXT,
 						from: node.player.sid,
 						to: to,
 						text: text,
@@ -7895,7 +7904,7 @@ GameMsgGenerator.createTXT = function (text, to, reliable) {
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
 GameMsgGenerator.sayDATA = function (data, to, text, reliable) {
-	return this.createDATA(GameMsg.actions.SAY, data, to, text, reliable);
+	return this.createDATA(action.SAY, data, to, text, reliable);
 };
 
 /**
@@ -7910,7 +7919,7 @@ GameMsgGenerator.sayDATA = function (data, to, text, reliable) {
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
 GameMsgGenerator.setDATA = function (data, to, text, reliable) {
-	return this.createDATA(GameMsg.actions.SET, data, to, text, reliable);
+	return this.createDATA(action.SET, data, to, text, reliable);
 };
 
 /**
@@ -7925,7 +7934,7 @@ GameMsgGenerator.setDATA = function (data, to, text, reliable) {
  * @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
  */
 GameMsgGenerator.getDATA = function (data, to, text, reliable) {
-	return this.createDATA(GameMsg.actions.GET, data, to, text, reliable);
+	return this.createDATA(action.GET, data, to, text, reliable);
 };
 
 /**
@@ -7949,7 +7958,7 @@ GameMsgGenerator.createDATA = function (action, data, to, text, reliable) {
 						session: node.gsc.session, 
 						state: node.game.state,
 						action: action,
-						target: GameMsg.targets.DATA,
+						target: target.DATA,
 						from: node.player.sid,
 						to: to,
 						text: text,
@@ -7974,8 +7983,8 @@ GameMsgGenerator.createACK = function (gm, to, reliable) {
 	var newgm = new GameMsg({
 							session: node.gsc.session, 
 							state: node.game.state,
-							action: GameMsg.actions.SAY,
-							target: GameMsg.targets.ACK,
+							action: action.SAY,
+							target: target.ACK,
 							from: node.player.sid,
 							to: to,
 							text: 'Msg ' + gm.id + ' correctly received',
@@ -8100,6 +8109,8 @@ var GameMsg = node.GameMsg,
 	GameMsgGenerator = node.GameMsgGenerator,
 	SocketFactory = node.SocketFactory;
 
+var action = node.action;
+
 var buffer,
 	session;
 
@@ -8208,7 +8219,7 @@ Socket.prototype.onMessage = function(msg) {
 			node.session.restore(sessionObj);
 			
 			msg = node.msg.create({
-				action: GameMsg.actions.SAY,
+				action: action.SAY,
 				target: 'HI_AGAIN',
 				data: node.player
 			});
@@ -8380,8 +8391,7 @@ Socket.prototype.sendHI = function (from, to) {
 * @param {string} action A nodeGame action (e.g. 'get' or 'set')
 * @param {GameState} state The GameState object to send
 * @param {string} to Optional. The recipient of the message.
-* 
-* 	@see GameMsg.actions
+*  
 */
 Socket.prototype.sendSTATE = function (action, state, to) {	
 	var msg = node.msg.createSTATE(action, state, to);
@@ -8410,8 +8420,6 @@ Socket.prototype.sendTXT = function(text, to) {
 * @param {object} data An object to exchange
 * @param {string} to Optional. The recipient of the message. Defaults 'SERVER'
 * @param {string} text Optional. A descriptive text associated to the message.
-* 
-* 	@see GameMsg.actions
 * 
 * @TODO: invert parameter order: first data then action
 */
@@ -8838,6 +8846,7 @@ var GameState = node.GameState,
 	GameLoop = node.GameLoop,
 	JSUS = node.JSUS;
 
+var action = node.action;
 
 exports.Game = Game;
 
@@ -9193,7 +9202,7 @@ Game.prototype.jumpTo = function (jump) {
 Game.prototype.publishState = function() {
 	// <!-- Important: SAY -->
 	if (!this.observer) {
-		var stateEvent = node.OUT + node.actions.SAY + '.STATE'; 
+		var stateEvent = node.OUT + action.SAY + '.STATE'; 
 		node.emit(stateEvent, this.state, 'ALL');
 	}
 	
@@ -9566,15 +9575,7 @@ SessionManager.prototype.store = function() {
 		Game = node.Game,
 		Player = node.Player,
 		GameSession = node.GameSession,
-		J = node.JSUS;
-	
-		
-	node.actions 	= GameMsg.actions;
-	node.IN 		= GameMsg.IN;
-	node.OUT 		= GameMsg.OUT;
-	node.targets 	= GameMsg.targets;		
-	node.states 	= GameState.iss;
-	
+		J = node.JSUS;	
 
 	// <!-- object commented in index.js -->
 	node.events = new EventEmitter();
@@ -9700,7 +9701,7 @@ SessionManager.prototype.store = function() {
 		node.game.init.call(node.game);
 		
 		node.game.state.is = GameState.iss.LOADED;
-		node.socket.sendSTATE(GameMsg.actions.SAY, node.game.state);
+		node.socket.sendSTATE(node.actions.SAY, node.game.state);
 		
 		node.log('game loaded...');
 		node.log('ready.');
@@ -10312,9 +10313,12 @@ node.random = {};
 		Player = node.Player,
 		J = node.JSUS;
 	
-	var say = node.actions.SAY + '.',
-		set = node.actions.SET + '.',
-		get = node.actions.GET + '.',
+	var action = node.action,
+		target = node.target;
+	
+	var say = action.SAY + '.',
+		set = action.SET + '.',
+		get = action.GET + '.',
 		IN  = node.IN;
 
 	
@@ -10412,7 +10416,7 @@ node.on( IN + say + 'MLIST', function (msg) {
  */ 
 node.on( IN + get + 'DATA', function (msg) {
 	if (msg.text === 'LOOP'){
-		node.socket.sendDATA(GameMsg.actions.SAY, node.game.gameLoop, msg.from, 'GAME');
+		node.socket.sendDATA(action.SAY, node.game.gameLoop, msg.from, 'GAME');
 	}
 	// <!-- We could double emit
 	// node.emit(msg.text, msg.data); -->
@@ -10524,9 +10528,12 @@ node.on( IN + say + 'SETUP', function (msg) {
 	var GameMsg = node.GameMsg,
 		GameState = node.GameState;
 	
-	var say = GameMsg.actions.SAY + '.',
-		set = GameMsg.actions.SET + '.',
-		get = GameMsg.actions.GET + '.',
+	var action = node.action,
+		target = node.target;
+	
+	var say = action.SAY + '.',
+		set = action.SET + '.',
+		get = action.GET + '.',
 		OUT  = GameMsg.OUT;
 	
 ///** 
@@ -10543,7 +10550,7 @@ node.on( IN + say + 'SETUP', function (msg) {
 //	else {
 //		// The game is ready to step when necessary;
 //		node.game.state.is = GameState.iss.LOADED;
-//		node.socket.sendSTATE(GameMsg.actions.SAY, node.game.state);
+//		node.socket.sendSTATE(action.SAY, node.game.state);
 //	}
 //});
 
@@ -10557,7 +10564,7 @@ node.on( IN + say + 'SETUP', function (msg) {
  * 
  */
 node.on( OUT + say + 'STATE', function (state, to) {
-	node.socket.sendSTATE(GameMsg.actions.SAY, state, to);
+	node.socket.sendSTATE(action.SAY, state, to);
 });	
 
 /**
@@ -10575,7 +10582,7 @@ node.on( OUT + say + 'TXT', function (text, to) {
  * Sends out a DATA message to the specified recipient
  */
 node.on( OUT + say + 'DATA', function (data, to, key) {
-	node.socket.sendDATA(GameMsg.actions.SAY, data, to, key);
+	node.socket.sendDATA(action.SAY, data, to, key);
 });
 
 /**
@@ -10588,7 +10595,7 @@ node.on( OUT + say + 'DATA', function (data, to, key) {
  * of the sender
  */
 node.on( OUT + set + 'STATE', function (state, to) {
-	node.socket.sendSTATE(GameMsg.actions.SET, state, to);
+	node.socket.sendSTATE(action.SET, state, to);
 });
 
 /**
@@ -10601,7 +10608,7 @@ node.on( OUT + set + 'STATE', function (state, to) {
  * 	@see Game.memory
  */
 node.on( OUT + set + 'DATA', function (data, to, key) {
-	node.socket.sendDATA(GameMsg.actions.SET, data, to, key);
+	node.socket.sendDATA(action.SET, data, to, key);
 });
 
 /**
@@ -10612,7 +10619,7 @@ node.on( OUT + set + 'DATA', function (data, to, key) {
  * Experimental. Undocumented (for now)
  */
 node.on( OUT + get + 'DATA', function (data, to, key) {
-	node.socket.sendDATA(GameMsg.actions.GET, data, to, data);
+	node.socket.sendDATA(action.GET, data, to, data);
 });
 	
 node.log('outgoing listeners added');
@@ -10632,14 +10639,17 @@ node.log('outgoing listeners added');
 		return false;
 	}
 	
+	var action = node.action,
+		target = node.target;
+	
 	var GameMsg = node.GameMsg,
 		GameState = node.GameState;
 	
-	var say = GameMsg.actions.SAY + '.',
-		set = GameMsg.actions.SET + '.',
-		get = GameMsg.actions.GET + '.',
-		IN  = GameMsg.IN,
-		OUT = GameMsg.OUT;
+	var say = action.SAY + '.',
+		set = action.SET + '.',
+		get = action.GET + '.',
+		IN  = node.IN,
+		OUT = node.OUT;
 	
 /**
  * ### STATEDONE
@@ -10657,16 +10667,16 @@ node.on('STATEDONE', function() {
 	// <!-- If we go auto -->
 	if (node.game.auto_step && !node.game.observer) {
 		node.log('We play AUTO', 'DEBUG');
-		var morePlayers = ('undefined' !== node.game.minPlayers) ? node.game.minPlayers - node.game.pl.count() : 0 ;
+		var morePlayers = ('undefined' !== typeof node.game.minPlayers) ? node.game.minPlayers - node.game.pl.count() : 0 ;
 		node.log('Additional player required: ' + morePlayers > 0 ? MorePlayers : 0, 'DEBUG');
 		
 		if (morePlayers > 0) {
-			node.emit('OUT.say.TXT', morePlayers + ' player/s still needed to play the game');
+			node.emit(OUT + say + target.TXT, morePlayers + ' player/s still needed to play the game');
 			node.log(morePlayers + ' player/s still needed to play the game');
 		}
 		// TODO: differentiate between before the game starts and during the game
 		else {
-			node.emit('OUT.say.TXT', node.game.minPlayers + ' players ready. Game can proceed');
+			node.emit(OUT + say + target.TXT, node.game.minPlayers + ' players ready. Game can proceed');
 			node.log(node.game.pl.count() + ' players ready. Game can proceed');
 			node.game.updateState(node.game.next());
 		}
