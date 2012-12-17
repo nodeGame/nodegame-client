@@ -204,7 +204,7 @@ describe('FS operations', function() {
 		
 	});
 	
-	describe('#node.memory.dump()', function() {
+	describe('#node.game.memory.toCsv()', function() {
 		before(function() {
 			filename = './memory.csv';
 			deleteIfExist();
@@ -213,8 +213,8 @@ describe('FS operations', function() {
 		afterEach(function() {
 			deleteIfExist();
 		});
-		it('should dump the memory without headers', function() {
-			node.memory.dump(filename);
+		it('should save the memory to a csv file without headers', function() {
+			node.game.memory.toCsv(filename);
 			checkCsvFile({
 				csv_length: items.length,
 				items: items,
@@ -222,7 +222,7 @@ describe('FS operations', function() {
 		});
 		it('should dump the memory with headers defined by user', function() {
 			var headers = ['painter', 'title', 'year', 'portrait'];
-			node.memory.dump(filename, {headers: headers});
+			node.game.memory.toCsv(filename, {headers: headers});
 			checkCsvFile({
 				csv_length: items.length + 1,
 				headers: headers,
@@ -230,7 +230,7 @@ describe('FS operations', function() {
 			});
 		});
 		it('should dump the memory with headers (guessed)', function() {
-			node.memory.dump(filename, {writeHeaders: true});
+			node.game.memory.toCsv(filename, {writeHeaders: true});
 			checkCsvFile({
 				csv_length: items.length + 1,
 				headers: ['0', '1', '2'],
@@ -240,7 +240,7 @@ describe('FS operations', function() {
 		
 	});
 	
-	describe('#node.memory.dumpAllIndexes()', function() {
+	describe('#node.game.memory.saveAllIndexes()', function() {
 //		before(function() {
 //			createDirIfNotExists('./tmp');
 //			node.game.memory.h('painter', function(p){

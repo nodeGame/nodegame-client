@@ -34,17 +34,29 @@ function MyClass () {
 
 var myClass = new MyClass();
 
-describe('#node.env', function() {
+describe('#node.setup', function() {
 	before(function(){
 		
-		node.setup({
+		node.setup('nodegame', {
 			env: {
 				auto: true,
 				debug: false,
+			},
+			socket: {
+				
 			}
 		});
 		
 	});
+
+	it("should setup glob", function() {
+		//console.log(node.env);
+		node.env('auto', func1);
+		check1.should.be.eql(1);
+	});
+});
+
+describe('#node.env', function() {
 	
 	it("node.env('auto') should run the function", function() {
 		//console.log(node.env);
