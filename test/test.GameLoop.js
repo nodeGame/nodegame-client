@@ -84,9 +84,9 @@ describe('GameLoop', function() {
 	});
 	
 	describe('#next()', function() {
-		it('should return 1.1.1', function() {
-			GameState.compare(gameLoop.next(),'1.1.1').should.be.equal(0); 
-		});
+//		it('should return 1.1.1', function() {
+//			GameState.compare(gameLoop.next(),'1.1.1').should.be.equal(0); 
+//		});
 		it('should return 2.1.1', function() {
 			GameState.compare(gameLoop.next('1.1.1'),'2.1.1').should.be.equal(0); 
 		});
