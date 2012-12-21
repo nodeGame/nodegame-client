@@ -1,6 +1,6 @@
 # nodegame-client
 
-[![Build Status](https://travis-ci.org/shakty/nodegame-client.png)](https://travis-ci.org/shakty/nodegame-client])
+[![Build Status](https://travis-ci.org/shakty/nodegame-client.png)](https://travis-ci.org/shakty/nodegame-client)
 
 *nodeGame* is a free, open source, event-driven javascript framework for on
 line, multiplayer games in the browser.
