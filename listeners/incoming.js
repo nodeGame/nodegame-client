@@ -211,7 +211,6 @@ node.on( IN + say + 'SETUP', function (msg) {
 	
 });	
 
-	
 	node.log('incoming listeners added');
 	
 })('undefined' !== typeof node ? node : module.parent.exports); 
