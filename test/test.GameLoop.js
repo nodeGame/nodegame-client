@@ -70,6 +70,9 @@ var loop = {
 		}
 	};	
 
+node.game.state = new GameState();
+
+
 var gameLoop, test_gameLoop;
 
 describe('GameLoop', function() {
