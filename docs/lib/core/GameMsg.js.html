@@ -3,12 +3,12 @@
 <head>
   <title>GameMsg.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <link rel="stylesheet" media="all" href="../doc-style.css" />
-  <script src="../doc-filelist.js"></script>
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../', thisFile = 'lib/GameMsg.js', defaultSidebar = true;
+    var relativeDir = '../../', thisFile = 'lib/core/GameMsg.js', defaultSidebar = true;
   </script>
-  <script src="../doc-script.js"></script>
+  <script src="../../doc-script.js"></script>
 </head>
 <body>
   <div id="sidebar_wrapper">
@@ -23,12 +23,6 @@
       </div>
       <div class="heading h2">
         <a href="#global-scope">Global scope</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamemsg.actions">GameMsg.actions</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamemsg.targets">GameMsg.targets</a>
       </div>
       <div class="heading h3">
         <a href="#gamemsg.clone--static-">GameMSg.clone (static)</a>
@@ -145,92 +139,6 @@ MIT Licensed </p>
   <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
 <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">GameMsg</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamemsg.actions">
-  <h3>
-    <a href="#gamemsg.actions" class="pilcrow">&#182;</a>
-    GameMsg.actions
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Collection of available nodeGame actions</p>
-
-<p>The action adds an initial semantic meaning to the
-message. It specify the nature of requests
-"Why the message was sent?"</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span> <span class="o">=</span> <span class="p">{};</span>
-
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">SET</span>     <span class="o">=</span> <span class="s1">&#39;set&#39;</span><span class="p">;</span>  <span class="c1">// Changes properties of the receiver</span>
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">GET</span>     <span class="o">=</span> <span class="s1">&#39;get&#39;</span><span class="p">;</span>  <span class="c1">// Ask a properties of the receiver</span>
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">SAY</span>     <span class="o">=</span> <span class="s1">&#39;say&#39;</span><span class="p">;</span>  <span class="c1">// Announce properties of the sender</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamemsg.targets">
-  <h3>
-    <a href="#gamemsg.targets" class="pilcrow">&#182;</a>
-    GameMsg.targets
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Collection of available nodeGame targets</p>
-
-<p>The target adds an additional level of semantic 
-for the message, and specifies the nature of the
-information carried in the message. </p>
-
-<p>It answers the question: "What is the content of the message?"</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span> <span class="o">=</span> <span class="p">{};</span>
-
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">HI</span>      <span class="o">=</span> <span class="s1">&#39;HI&#39;</span><span class="p">;</span>     <span class="c1">// Client connects</span>
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">HI_AGAIN</span>  <span class="o">=</span> <span class="s1">&#39;HI_AGAIN&#39;</span><span class="p">;</span>   <span class="c1">// Client reconnects</span>
-
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">PCONNECT</span>  <span class="o">=</span> <span class="s1">&#39;PCONNECT&#39;</span><span class="p">;</span>     <span class="c1">// A new player just connected</span>
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">PDISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;PDISCONNECT&#39;</span><span class="p">;</span>  <span class="c1">// A player just disconnected</span>
-
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">MCONNECT</span>  <span class="o">=</span> <span class="s1">&#39;MCONNECT&#39;</span><span class="p">;</span>     <span class="c1">// A new monitor just connected</span>
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">MDISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;MDISCONNECT&#39;</span><span class="p">;</span>  <span class="c1">// A monitor just disconnected</span>
-
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">PLIST</span>     <span class="o">=</span> <span class="s1">&#39;PLIST&#39;</span><span class="p">;</span>  <span class="c1">// PLIST</span>
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">MLIST</span>     <span class="o">=</span> <span class="s1">&#39;MLIST&#39;</span><span class="p">;</span>  <span class="c1">// PLIST</span>
-
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">STATE</span>   <span class="o">=</span> <span class="s1">&#39;STATE&#39;</span><span class="p">;</span>  <span class="c1">// STATE</span>
-
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">TXT</span>     <span class="o">=</span> <span class="s1">&#39;TXT&#39;</span><span class="p">;</span>  <span class="c1">// Text msg</span>
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">DATA</span>    <span class="o">=</span> <span class="s1">&#39;DATA&#39;</span><span class="p">;</span> <span class="c1">// Contains a data-structure in the data field</span>
-
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">REDIRECT</span>  <span class="o">=</span> <span class="s1">&#39;REDIRECT&#39;</span><span class="p">;</span> <span class="c1">// redirect a client to a new address</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
-</div>
-<p>Still to implement</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">BYE</span>     <span class="o">=</span> <span class="s1">&#39;BYE&#39;</span><span class="p">;</span>  <span class="c1">// Force disconnects</span>
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">ACK</span>     <span class="o">=</span> <span class="s1">&#39;ACK&#39;</span><span class="p">;</span>  <span class="c1">// A reliable msg was received correctly</span>
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">WARN</span>    <span class="o">=</span> <span class="s1">&#39;WARN&#39;</span><span class="p">;</span> <span class="c1">// To do.</span>
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">ERR</span>     <span class="o">=</span> <span class="s1">&#39;ERR&#39;</span><span class="p">;</span>  <span class="c1">// To do.</span>
-
-
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">IN</span>          <span class="o">=</span> <span class="s1">&#39;in.&#39;</span><span class="p">;</span>  <span class="c1">// Prefix for incoming msgs</span>
-<span class="nx">GameMsg</span><span class="p">.</span><span class="nx">OUT</span>         <span class="o">=</span> <span class="s1">&#39;out.&#39;</span><span class="p">;</span> <span class="c1">// Prefix for outgoing msgs</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -417,7 +325,7 @@ information carried in the message. </p>
   <div class="body"><p>The action of the message</p>
 
 
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameMsg</span><span class="o">.</span><span class="n">actions</span>
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">action</span>
 </code></pre></div>
 
 
@@ -442,7 +350,7 @@ information carried in the message. </p>
   <div class="body"><p>The target of the message</p>
 
 
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameMsg</span><span class="o">.</span><span class="n">targets</span>
+<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">target</span>
 </code></pre></div>
 
 

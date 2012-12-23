@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>variables.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../../', thisFile = 'lib/modules/variables.js', defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#variables">Variables</a>
+      </div>
+      <div class="heading h2">
+        <a href="#constants">Constants</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.actions">node.actions</a>
+      </div>
+      <div class="heading h2">
+        <a href="#semantics">Semantics</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.target">node.target</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.data">target.DATA</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.hi">target.HI</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.hi_again">target.HI_AGAIN</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.pconnect">target.PCONNECT</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.pdisconnect">target.PDISCONNECT</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.mconnect">target.MCONNECT</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.mdisconnect">target.MDISCONNECT</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.plist">target.PLIST</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.mlist">target.MLIST</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.state">target.STATE</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.redirect">target.REDIRECT</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.setup">target.SETUP</a>
+      </div>
+      <div class="heading h3">
+        <a href="#direction">Direction</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.is">node.is</a>
+      </div>
+      <div class="heading h4">
+        <a href="#is.unknown">is.UNKNOWN</a>
+      </div>
+      <div class="heading h4">
+        <a href="#is.loading">is.LOADING</a>
+      </div>
+      <div class="heading h4">
+        <a href="#is.loaded">is.LOADED</a>
+      </div>
+      <div class="heading h4">
+        <a href="#is.playing">is.PLAYING</a>
+      </div>
+      <div class="heading h4">
+        <a href="#is.done">is.DONE</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="variables">
+  <h1>
+    <a href="#variables" class="pilcrow">&#182;</a>
+    Variables
+  </h1>
+</div>
+
+  </div>
+  <div class="body"><p>Copyright(c) 2012 Stefano Balietti
+MIT Licensed </p>
+
+<p><code>nodeGame</code> variables and constants module</p>
+
+<hr />
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="constants">
+  <h2>
+    <a href="#constants" class="pilcrow">&#182;</a>
+    Constants
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.actions">
+  <h3>
+    <a href="#node.actions" class="pilcrow">&#182;</a>
+    node.actions
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Collection of available nodeGame actions</p>
+
+<p>The action adds an initial semantic meaning to the
+message. It specify the nature of requests
+"Why the message was sent?"</p>
+
+
+<div class="pilwrap" id="semantics">
+  <h2>
+    <a href="#semantics" class="pilcrow">&#182;</a>
+    Semantics
+  </h2>
+</div>
+
+
+<ul>
+<li>SET: Store / changes the value of a property in the receiver of the msg</li>
+<li>GET: Asks the value value of a property to the receiver of the msg</li>
+<li>SAY: Announces a change of state or other global property in the sender of the msg</li>
+</ul>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">action</span> <span class="o">=</span> <span class="p">{};</span>
+
+  <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span> <span class="o">=</span> <span class="s1">&#39;set&#39;</span><span class="p">;</span>  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span> <span class="o">=</span> <span class="s1">&#39;get&#39;</span><span class="p">;</span>  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">=</span> <span class="s1">&#39;say&#39;</span><span class="p">;</span>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.target">
+  <h3>
+    <a href="#node.target" class="pilcrow">&#182;</a>
+    node.target
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Collection of available nodeGame targets</p>
+
+<p>The target adds an additional level of semantic 
+for the message, and specifies the nature of the
+information carried in the message. </p>
+
+<p>It answers the question: "What is the content of the message?"</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.data">
+  <h4>
+    <a href="#target.data" class="pilcrow">&#182;</a>
+    target.DATA
+  </h4>
+</div>
+
+
+<p>Generic identifier for any type of data </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span>    <span class="o">=</span> <span class="s1">&#39;DATA&#39;</span><span class="p">;</span>   
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.hi">
+  <h4>
+    <a href="#target.hi" class="pilcrow">&#182;</a>
+    target.HI
+  </h4>
+</div>
+
+
+<p>A client is connecting for the first time</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">HI</span> <span class="o">=</span> <span class="s1">&#39;HI&#39;</span><span class="p">;</span>    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.hi_again">
+  <h4>
+    <a href="#target.hi_again" class="pilcrow">&#182;</a>
+    target.HI_AGAIN
+  </h4>
+</div>
+
+
+<p>A client re-connects to the server within the same session    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">HI_AGAIN</span> <span class="o">=</span> <span class="s1">&#39;HI_AGAIN&#39;</span><span class="p">;</span>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.pconnect">
+  <h4>
+    <a href="#target.pconnect" class="pilcrow">&#182;</a>
+    target.PCONNECT
+  </h4>
+</div>
+
+
+<p>A new client just connected to the player endpoint    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PCONNECT</span> <span class="o">=</span> <span class="s1">&#39;PCONNECT&#39;</span><span class="p">;</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.pdisconnect">
+  <h4>
+    <a href="#target.pdisconnect" class="pilcrow">&#182;</a>
+    target.PDISCONNECT
+  </h4>
+</div>
+
+
+<p>A client that just disconnected from the player endpoint </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PDISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;PDISCONNECT&#39;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.mconnect">
+  <h4>
+    <a href="#target.mconnect" class="pilcrow">&#182;</a>
+    target.MCONNECT
+  </h4>
+</div>
+
+
+<p>A client that just connected to the admin (monitor) endpoint    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MCONNECT</span> <span class="o">=</span> <span class="s1">&#39;MCONNECT&#39;</span><span class="p">;</span>    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.mdisconnect">
+  <h4>
+    <a href="#target.mdisconnect" class="pilcrow">&#182;</a>
+    target.MDISCONNECT
+  </h4>
+</div>
+
+
+<p>A client just disconnected from the admin (monitor) endpoint </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MDISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;MDISCONNECT&#39;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.plist">
+  <h4>
+    <a href="#target.plist" class="pilcrow">&#182;</a>
+    target.PLIST
+  </h4>
+</div>
+
+
+<p>The list of clients connected to the player endpoint was updated</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PLIST</span> <span class="o">=</span> <span class="s1">&#39;PLIST&#39;</span><span class="p">;</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.mlist">
+  <h4>
+    <a href="#target.mlist" class="pilcrow">&#182;</a>
+    target.MLIST
+  </h4>
+</div>
+
+
+<p>The list of clients connected to the admin (monitor) endpoint was updated    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MLIST</span> <span class="o">=</span> <span class="s1">&#39;MLIST&#39;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.state">
+  <h4>
+    <a href="#target.state" class="pilcrow">&#182;</a>
+    target.STATE
+  </h4>
+</div>
+
+
+<p>A client notifies his own state</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STATE</span> <span class="o">=</span> <span class="s1">&#39;STATE&#39;</span><span class="p">;</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.redirect">
+  <h4>
+    <a href="#target.redirect" class="pilcrow">&#182;</a>
+    target.REDIRECT
+  </h4>
+</div>
+
+
+<p>Redirects a client to a new uri</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">REDIRECT</span>  <span class="o">=</span> <span class="s1">&#39;REDIRECT&#39;</span><span class="p">;</span> </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.setup">
+  <h4>
+    <a href="#target.setup" class="pilcrow">&#182;</a>
+    target.SETUP
+  </h4>
+</div>
+
+
+<p>Asks a client update its configuration    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">SETUP</span> <span class="o">=</span> <span class="s1">&#39;SETUP&#39;</span><span class="p">;</span> 
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>TODO change in INFO</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">TXT</span>     <span class="o">=</span> <span class="s1">&#39;TXT&#39;</span><span class="p">;</span>  <span class="c1">// Text msg</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>Still to implement</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">BYE</span>     <span class="o">=</span> <span class="s1">&#39;BYE&#39;</span><span class="p">;</span>  <span class="c1">// Force disconnects</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ACK</span>     <span class="o">=</span> <span class="s1">&#39;ACK&#39;</span><span class="p">;</span>  <span class="c1">// A reliable msg was received correctly</span>
+
+  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">WARN</span>    <span class="o">=</span> <span class="s1">&#39;WARN&#39;</span><span class="p">;</span> <span class="c1">// To do.</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ERR</span>     <span class="o">=</span> <span class="s1">&#39;ERR&#39;</span><span class="p">;</span>  <span class="c1">// To do.</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="direction">
+  <h3>
+    <a href="#direction" class="pilcrow">&#182;</a>
+    Direction
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Distiguishes between incoming and outgoing messages</p>
+
+<ul>
+<li>node.IN</li>
+<li>node.OUT</li>
+</ul>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">IN</span>   <span class="o">=</span> <span class="s1">&#39;in.&#39;</span><span class="p">;</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">OUT</span>  <span class="o">=</span> <span class="s1">&#39;out.&#39;</span><span class="p">;</span> </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.is">
+  <h3>
+    <a href="#node.is" class="pilcrow">&#182;</a>
+    node.is
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Levels associates to the states of the nodeGame engine</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">is</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="is.unknown">
+  <h4>
+    <a href="#is.unknown" class="pilcrow">&#182;</a>
+    is.UNKNOWN
+  </h4>
+</div>
+
+
+<p>A game has not been initialized</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">UNKNOWN</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="is.loading">
+  <h4>
+    <a href="#is.loading" class="pilcrow">&#182;</a>
+    is.LOADING
+  </h4>
+</div>
+
+
+<p>A game is loading    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADING</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>   
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="is.loaded">
+  <h4>
+    <a href="#is.loaded" class="pilcrow">&#182;</a>
+    is.LOADED
+  </h4>
+</div>
+
+
+<p>A game has been loaded, but the GameWindow object could still require some time    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADED</span>  <span class="o">=</span> <span class="mi">25</span><span class="p">;</span>   
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="is.playing">
+  <h4>
+    <a href="#is.playing" class="pilcrow">&#182;</a>
+    is.PLAYING
+  </h4>
+</div>
+
+
+<p>Everything is ready    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">PLAYING</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>   
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="is.done">
+  <h4>
+    <a href="#is.done" class="pilcrow">&#182;</a>
+    is.DONE
+  </h4>
+</div>
+
+
+<p>The player completed the game state    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">DONE</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>     
+
+<span class="p">})(</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
+  <span class="p">,</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

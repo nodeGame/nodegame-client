@@ -3,12 +3,12 @@
 <head>
   <title>GameMsgGenerator.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <link rel="stylesheet" media="all" href="../doc-style.css" />
-  <script src="../doc-filelist.js"></script>
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../', thisFile = 'lib/GameMsgGenerator.js', defaultSidebar = true;
+    var relativeDir = '../../', thisFile = 'lib/core/GameMsgGenerator.js', defaultSidebar = true;
   </script>
-  <script src="../doc-script.js"></script>
+  <script src="../../doc-script.js"></script>
 </head>
 <body>
   <div id="sidebar_wrapper">
@@ -58,7 +58,7 @@
         <a href="#plist-messages">PLIST messages</a>
       </div>
       <div class="heading h3">
-        <a href="#gamemsggenerator.sayplist">GameMSgGenerator.sayPLIST</a>
+        <a href="#gamemsggenerator.sayplist">GameMsgGenerator.sayPLIST</a>
       </div>
       <div class="heading h3">
         <a href="#gamemsggenerator.setplist">GameMSgGenerator.setPLIST</a>
@@ -127,8 +127,8 @@ MIT Licensed </p>
 
 
 <div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameMSg</span>
-<span class="nv">@see</span> <span class="n">GameMsg</span><span class="o">.</span><span class="n">targets</span>
-<span class="nv">@see</span> <span class="n">GameMsg</span><span class="o">.</span><span class="n">actions</span>
+<span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">target</span>
+<span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">action</span>
 </code></pre></div>
 
 
@@ -156,6 +156,9 @@ MIT Licensed </p>
   <span class="nx">GameState</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span><span class="p">,</span>
   <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
   <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span>
+  <span class="nx">action</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">;</span>
 
 <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">GameMsgGenerator</span><span class="p">;</span> </pre></div>
         </td>
@@ -211,11 +214,11 @@ as input parameter</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
 
-  <span class="kd">var</span> <span class="nx">base</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">gameMsg</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">session</span><span class="o">:</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span><span class="p">)</span> <span class="o">?</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span> 
     <span class="nx">state</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">state</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
-    <span class="nx">action</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">action</span> <span class="o">||</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
-    <span class="nx">target</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
+    <span class="nx">action</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">action</span> <span class="o">||</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
+    <span class="nx">target</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
     <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
     <span class="nx">to</span><span class="o">:</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">to</span><span class="p">)</span> <span class="o">?</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">to</span> <span class="o">:</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
     <span class="nx">text</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">||</span> <span class="kc">null</span><span class="p">,</span>
@@ -224,7 +227,7 @@ as input parameter</p>
     <span class="nx">reliable</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">reliable</span> <span class="o">||</span> <span class="mi">1</span>
   <span class="p">};</span>
 
-  <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">(</span><span class="nx">gameMsg</span><span class="p">);</span>
 
 <span class="p">};</span></pre></div>
         </td>
@@ -290,8 +293,8 @@ as input parameter</p>
   <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">(</span> <span class="p">{</span>
                   <span class="nx">session</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span>
                   <span class="nx">state</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
-                  <span class="nx">action</span><span class="o">:</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
-                  <span class="nx">target</span><span class="o">:</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">HI</span><span class="p">,</span>
+                  <span class="nx">action</span><span class="o">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
+                  <span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">HI</span><span class="p">,</span>
                   <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
                   <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span><span class="p">,</span>
                   <span class="nx">text</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Player</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; ready.&#39;</span><span class="p">,</span>
@@ -358,7 +361,7 @@ as input parameter</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">saySTATE</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createSTATE</span><span class="p">(</span><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createSTATE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -403,7 +406,7 @@ as input parameter</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">setSTATE</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createSTATE</span><span class="p">(</span><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createSTATE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -448,7 +451,7 @@ as input parameter</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">getSTATE</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createSTATE</span><span class="p">(</span><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span><span class="nx">reliable</span><span class="p">);</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createSTATE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span><span class="nx">reliable</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -505,7 +508,7 @@ as input parameter</p>
             <span class="nx">session</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span>
             <span class="nx">state</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
             <span class="nx">action</span><span class="o">:</span> <span class="nx">action</span><span class="p">,</span>
-            <span class="nx">target</span><span class="o">:</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">STATE</span><span class="p">,</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">STATE</span><span class="p">,</span>
             <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
             <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span><span class="p">,</span>
             <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;New State: &#39;</span> <span class="o">+</span> <span class="nx">GameState</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">state</span><span class="p">),</span>
@@ -535,7 +538,7 @@ as input parameter</p>
 <div class="pilwrap" id="gamemsggenerator.sayplist">
   <h3>
     <a href="#gamemsggenerator.sayplist" class="pilcrow">&#182;</a>
-    GameMSgGenerator.sayPLIST
+    GameMsgGenerator.sayPLIST
   </h3>
 </div>
 
@@ -570,7 +573,7 @@ as input parameter</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">sayPLIST</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">plist</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createPLIST</span><span class="p">(</span><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">plist</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createPLIST</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">plist</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -615,7 +618,7 @@ as input parameter</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">setPLIST</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">plist</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createPLIST</span><span class="p">(</span><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span> <span class="nx">plist</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createPLIST</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span> <span class="nx">plist</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -660,7 +663,7 @@ as input parameter</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">getPLIST</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">plist</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createPLIST</span><span class="p">(</span><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span> <span class="nx">plist</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createPLIST</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span> <span class="nx">plist</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -720,7 +723,7 @@ as input parameter</p>
             <span class="nx">session</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span> 
             <span class="nx">state</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
             <span class="nx">action</span><span class="o">:</span> <span class="nx">action</span><span class="p">,</span>
-            <span class="nx">target</span><span class="o">:</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">PLIST</span><span class="p">,</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">PLIST</span><span class="p">,</span>
             <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
             <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span><span class="p">,</span>
             <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;List of Players: &#39;</span> <span class="o">+</span> <span class="nx">plist</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
@@ -793,8 +796,8 @@ as input parameter</p>
   <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">({</span>
             <span class="nx">session</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span>
             <span class="nx">state</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
-            <span class="nx">action</span><span class="o">:</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
-            <span class="nx">target</span><span class="o">:</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">TXT</span><span class="p">,</span>
+            <span class="nx">action</span><span class="o">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">TXT</span><span class="p">,</span>
             <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
             <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span><span class="p">,</span>
             <span class="nx">text</span><span class="o">:</span> <span class="nx">text</span><span class="p">,</span>
@@ -859,7 +862,7 @@ as input parameter</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">sayDATA</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createDATA</span><span class="p">(</span><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createDATA</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -904,7 +907,7 @@ as input parameter</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">setDATA</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createDATA</span><span class="p">(</span><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createDATA</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -949,7 +952,7 @@ as input parameter</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">getDATA</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createDATA</span><span class="p">(</span><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createDATA</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1007,7 +1010,7 @@ as input parameter</p>
             <span class="nx">session</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span> 
             <span class="nx">state</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
             <span class="nx">action</span><span class="o">:</span> <span class="nx">action</span><span class="p">,</span>
-            <span class="nx">target</span><span class="o">:</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
             <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
             <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span><span class="p">,</span>
             <span class="nx">text</span><span class="o">:</span> <span class="nx">text</span><span class="p">,</span>
@@ -1053,8 +1056,8 @@ as input parameter</p>
   <span class="kd">var</span> <span class="nx">newgm</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">({</span>
               <span class="nx">session</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span> 
               <span class="nx">state</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
-              <span class="nx">action</span><span class="o">:</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
-              <span class="nx">target</span><span class="o">:</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">ACK</span><span class="p">,</span>
+              <span class="nx">action</span><span class="o">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
+              <span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">ACK</span><span class="p">,</span>
               <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
               <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span><span class="p">,</span>
               <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;Msg &#39;</span> <span class="o">+</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; correctly received&#39;</span><span class="p">,</span>

@@ -72,21 +72,6 @@
       <div class="heading h3">
         <a href="#node.gamesession">node.GameSession</a>
       </div>
-      <div class="heading h2">
-        <a href="#file-system">File System</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.fs">node.fs</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.fs.writecsv--node.js-">node.fs.writeCsv (Node.JS)</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.memory.dump--node.js-">node.memory.dump (Node.JS)</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.memory.dumpallindexes--node.js-">node.memory.dumpAllIndexes (Node.JS)</a>
-      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -235,7 +220,7 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/EventEmitter&#39;</span><span class="p">).</span><span class="nx">EventEmitter</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/EventEmitter&#39;</span><span class="p">).</span><span class="nx">EventEmitter</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -259,7 +244,7 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/GameState&#39;</span><span class="p">).</span><span class="nx">GameState</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameState&#39;</span><span class="p">).</span><span class="nx">GameState</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -283,7 +268,7 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/PlayerList&#39;</span><span class="p">).</span><span class="nx">PlayerList</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/PlayerList&#39;</span><span class="p">).</span><span class="nx">PlayerList</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -307,7 +292,7 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">Player</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/PlayerList&#39;</span><span class="p">).</span><span class="nx">Player</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">Player</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/PlayerList&#39;</span><span class="p">).</span><span class="nx">Player</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -331,7 +316,7 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/GameMsg&#39;</span><span class="p">).</span><span class="nx">GameMsg</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameMsg&#39;</span><span class="p">).</span><span class="nx">GameMsg</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -355,7 +340,7 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameLoop</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/GameLoop&#39;</span><span class="p">).</span><span class="nx">GameLoop</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameLoop</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameLoop&#39;</span><span class="p">).</span><span class="nx">GameLoop</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -379,7 +364,7 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/GameMsgGenerator&#39;</span><span class="p">).</span><span class="nx">GameMsgGenerator</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameMsgGenerator&#39;</span><span class="p">).</span><span class="nx">GameMsgGenerator</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -400,7 +385,7 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">SocketFactory</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/sockets/SocketFactory&#39;</span><span class="p">).</span><span class="nx">SocketFactory</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">SocketFactory</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/SocketFactory&#39;</span><span class="p">).</span><span class="nx">SocketFactory</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -421,7 +406,7 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">Socket</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/Socket&#39;</span><span class="p">).</span><span class="nx">Socket</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">Socket</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Socket&#39;</span><span class="p">).</span><span class="nx">Socket</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -445,7 +430,7 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/GameDB&#39;</span><span class="p">).</span><span class="nx">GameDB</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameDB&#39;</span><span class="p">).</span><span class="nx">GameDB</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -469,7 +454,7 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameBit</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/GameDB&#39;</span><span class="p">).</span><span class="nx">GameBit</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameBit</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameDB&#39;</span><span class="p">).</span><span class="nx">GameBit</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -493,7 +478,7 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">Game</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/Game&#39;</span><span class="p">).</span><span class="nx">Game</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">Game</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Game&#39;</span><span class="p">).</span><span class="nx">Game</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -514,7 +499,7 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/Session&#39;</span><span class="p">).</span><span class="nx">GameSession</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Session&#39;</span><span class="p">).</span><span class="nx">GameSession</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -575,240 +560,8 @@ multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./addons/GameSession&#39;</span><span class="p">).</span><span class="nx">GameSession</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="file-system">
-  <h2>
-    <a href="#file-system" class="pilcrow">&#182;</a>
-    File System
-  </h2>
-</div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./addons/GameSession&#39;</span><span class="p">).</span><span class="nx">GameSession</span><span class="p">;</span>
 
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="node.fs">
-  <h3>
-    <a href="#node.fs" class="pilcrow">&#182;</a>
-    node.fs
-  </h3>
-</div>
-
-
-<p>Responsible for the file system operations</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">fs</span> <span class="o">=</span> <span class="p">{};</span>
-
-<span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">),</span>
-  <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">),</span>
-  <span class="nx">csv</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;ya-csv&#39;</span><span class="p">);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.fs.writecsv--node.js-">
-  <h3>
-    <a href="#node.fs.writecsv--node.js-" class="pilcrow">&#182;</a>
-    node.fs.writeCsv (Node.JS)
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Serializes an object as a csv file</p>
-
-<p>It accepts a configuration object as third paramter. Available options:</p>
-
-<p><code>
-{ headers: ['A', 'B', 'C'],    // specify the headers directly
-  writeHeaders: false,         // default true,
-  flags: 'w',                 // default, 'a'
-  encoding: 'utf-8',         // default null
-  mode: 0777,                 // default 0666 
-}
-</code>     </p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span>path</span>
-      <span class="dox_type">string</span>
-      <span>The path to the csv file</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span>obj</span>
-      <span class="dox_type">object</span>
-      <span>The object to serialze as csv file</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span>options</span>
-      <span class="dox_type">options</span>
-      <span>Optional. Configuration options</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">fs</span><span class="p">.</span><span class="nx">writeCsv</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">obj</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">path</span> <span class="o">||</span> <span class="o">!</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Empty path or object. Aborting.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">,</span> <span class="s1">&#39;node.fs.writeCsv: &#39;</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-  <span class="nx">options</span><span class="p">.</span><span class="nx">flags</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">flags</span> <span class="o">||</span> <span class="s1">&#39;a&#39;</span><span class="p">;</span>
-  
-  <span class="kd">var</span> <span class="nx">writer</span> <span class="o">=</span> <span class="nx">csv</span><span class="p">.</span><span class="nx">createCsvStreamWriter</span><span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">createWriteStream</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">));</span>
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
-</div>
-<!-- Add headers, if not otherwise requested, and if found -->
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">headers</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">))</span> <span class="p">{</span>
-      <span class="nx">headers</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">headers</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-    <span class="p">}</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="nx">headers</span> <span class="o">&amp;&amp;</span> <span class="nx">headers</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">writer</span><span class="p">.</span><span class="nx">writeRecord</span><span class="p">(</span><span class="nx">headers</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Could not find headers&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-  
-  <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">writer</span><span class="p">.</span><span class="nx">writeRecord</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-  <span class="p">}</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.memory.dump--node.js-">
-  <h3>
-    <a href="#node.memory.dump--node.js-" class="pilcrow">&#182;</a>
-    node.memory.dump (Node.JS)
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Serializes as a csv file all the entries of the memory object</p>
-
-<p>By defaults, no headers are added. If requested, headers can 
-be specified in the <code>options</code> parameter.</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span>path</span>
-      <span class="dox_type">string</span>
-      <span>The path to the csv file</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span>options</span>
-      <span class="dox_type">options</span>
-      <span>Optional. Configuration options</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">dump</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Missing path parameter&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">,</span> <span class="s1">&#39;node.memory.dump: &#39;</span><span class="p">);</span>
-    <span class="k">return</span><span class="p">;</span>
-  <span class="p">}</span>
-  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">fs</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetchValues</span><span class="p">(),</span> <span class="nx">options</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.memory.dumpallindexes--node.js-">
-  <h3>
-    <a href="#node.memory.dumpallindexes--node.js-" class="pilcrow">&#182;</a>
-    node.memory.dumpAllIndexes (Node.JS)
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Serialezes as csv file each of the hashed indexes of the memory object</p>
-
-<p>Each file is named after the name of the hashed property 
-and the index. E.g. state_3.1.1.csv, or player_18432986411.csv`, etc.</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span>dir</span>
-      <span class="dox_type">string</span>
-      <span>The path to the folder in which all files will be saved</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span>options</span>
-      <span class="dox_type">options</span>
-      <span>Optional. Configuration options</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">dumpAllIndexes</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">dir</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Missing dir parameter&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">,</span> <span class="s1">&#39;node.memory.dumpAllIndexes: &#39;</span><span class="p">);</span>
-    <span class="k">return</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  <span class="k">if</span> <span class="p">(</span><span class="nx">dir</span><span class="p">[</span><span class="nx">dir</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="nx">dir</span> <span class="o">=</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">ipath</span><span class="p">;</span>
-  <span class="k">for</span> <span class="p">(</span><span class="nx">hash</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">hash</span><span class="p">)){</span>
-      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">])</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">])</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">].</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">index</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">ipath</span> <span class="o">=</span> <span class="nx">dir</span> <span class="o">+</span> <span class="nx">hash</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">index</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
-</div>
-<!-- node.log('Writing ' + ipath, 'DEBUG', 'node.memory.dumpAllIndexes: '); -->
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>              <span class="nx">node</span><span class="p">.</span><span class="nx">fs</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">ipath</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">][</span><span class="nx">index</span><span class="p">].</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetchValues</span><span class="p">(),</span> <span class="nx">options</span><span class="p">);</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
-        
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-  
-<span class="p">};</span>
 
 <span class="p">})(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">);</span>
 </pre></div>

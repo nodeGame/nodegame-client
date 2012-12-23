@@ -3,12 +3,12 @@
 <head>
   <title>Socket.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <link rel="stylesheet" media="all" href="../doc-style.css" />
-  <script src="../doc-filelist.js"></script>
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../', thisFile = 'lib/Socket.js', defaultSidebar = true;
+    var relativeDir = '../../', thisFile = 'lib/core/Socket.js', defaultSidebar = true;
   </script>
-  <script src="../doc-script.js"></script>
+  <script src="../../doc-script.js"></script>
 </head>
 <body>
   <div id="sidebar_wrapper">
@@ -106,6 +106,8 @@ MIT Licensed </p>
   <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
   <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
   <span class="nx">SocketFactory</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">SocketFactory</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">;</span>
 
 <span class="kd">var</span> <span class="nx">buffer</span><span class="p">,</span>
   <span class="nx">session</span><span class="p">;</span>
@@ -244,6 +246,8 @@ MIT Licensed </p>
 
 <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onMessage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
   
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;FIRST MESSAGE&#39;</span><span class="p">)</span>
+  
   <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">secureParse</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
   
@@ -277,7 +281,7 @@ MIT Licensed </p>
         <td class="code highlight"><div class="highlight"><pre>      <span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">restore</span><span class="p">(</span><span class="nx">sessionObj</span><span class="p">);</span>
       
       <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-        <span class="nx">action</span><span class="o">:</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">actions</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
+        <span class="nx">action</span><span class="o">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
         <span class="nx">target</span><span class="o">:</span> <span class="s1">&#39;HI_AGAIN&#39;</span><span class="p">,</span>
         <span class="nx">data</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span>
       <span class="p">});</span>
@@ -318,6 +322,8 @@ node.emit('out.say.HI');</p>
 <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onMessageFull</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">secureParse</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
   
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;onMessage full&#39;</span><span class="p">)</span>
+  
   <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Parsing successful</span></pre></div>
         </td>
       </tr>
@@ -328,11 +334,12 @@ node.emit('out.say.HI');</p>
 </div>
 <p>TODO: improve</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span> 
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;emitting&#39;</span><span class="p">)</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">toInEvent</span><span class="p">(),</span> <span class="nx">msg</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;buffering: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;buffering: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
       <span class="nx">buffer</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
     <span class="p">}</span>
   <span class="p">}</span>

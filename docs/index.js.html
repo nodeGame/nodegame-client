@@ -25,28 +25,10 @@
         <a href="#version">version</a>
       </div>
       <div class="heading h2">
-        <a href="#logging-system">Logging system</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.verbosity">node.verbosity</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.verbosity_levels">node.verbosity_levels</a>
+        <a href="#objects">Objects</a>
       </div>
       <div class="heading h3">
         <a href="#node.log">node.log</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.info">node.info</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.warn">node.warn</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.err">node.err</a>
-      </div>
-      <div class="heading h2">
-        <a href="#objects">Objects</a>
       </div>
       <div class="heading h3">
         <a href="#node.events">node.events</a>
@@ -64,10 +46,19 @@
         <a href="#node.player">node.player</a>
       </div>
       <div class="heading h3">
+        <a href="#node.game">node.game</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.memory">node.memory</a>
       </div>
       <div class="heading h3">
         <a href="#node.store">node.store</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.setup">node.setup</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.conf">node.conf</a>
       </div>
       <div class="heading h3">
         <a href="#node.support">node.support</a>
@@ -126,74 +117,15 @@ multiplayer games in the browser.</p>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="logging-system">
+<div class="pilwrap" id="objects">
   <h2>
-    <a href="#logging-system" class="pilcrow">&#182;</a>
-    Logging system
+    <a href="#objects" class="pilcrow">&#182;</a>
+    Objects
   </h2>
 </div>
 
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.verbosity">
-  <h3>
-    <a href="#node.verbosity" class="pilcrow">&#182;</a>
-    node.verbosity
-  </h3>
-</div>
 
-
-<p>The minimum level for a log entry to be displayed as output.</p>
-
-<p>Defaults, only errors are displayed.</p>
-  </div>
-  <div class="body">
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.verbosity_levels">
-  <h3>
-    <a href="#node.verbosity_levels" class="pilcrow">&#182;</a>
-    node.verbosity_levels
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>ALWAYS, ERR, WARN, INFO, DEBUG</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span> <span class="o">=</span> <span class="p">{</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
-</div>
-<!-- It is not really always... -->
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">ALWAYS</span><span class="o">:</span> <span class="o">-</span><span class="p">(</span><span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_VALUE</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> 
-    <span class="nx">ERR</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-    <span class="nx">WARN</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="nx">INFO</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="nx">DEBUG</span><span class="o">:</span> <span class="mi">100</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
+<div class="dox">
   <div class="summary">
 <div class="pilwrap" id="node.log">
   <h3>
@@ -203,118 +135,11 @@ multiplayer games in the browser.</p>
 </div>
 
   </div>
-  <div class="body"><p>Default nodeGame standard out, override to redirect</p>
-
-<p>Logs entries are displayed only if their verbosity level is 
-greater than <code>node.verbosity</code></p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span>txt</span>
-      <span class="dox_type">string</span>
-      <span>The text to output</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span>level</span>
-      <span class="dox_type">string</span>
-      <span class="dox_type">number</span>
-      <span>Optional. The verbosity level of this log. Defaults, level = 0</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span>prefix</span>
-      <span class="dox_type">string</span>
-      <span>Optional. A text to display at the beginning of the log entry. Defaults prefix = 'nodeGame: '</span>
-    </div>
+  <div class="body"><p>Standard out</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">level</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">txt</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  
-  <span class="nx">level</span>   <span class="o">=</span> <span class="nx">level</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="nx">prefix</span>  <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">prefix</span><span class="p">)</span>   <span class="o">?</span> <span class="s1">&#39;nodeGame: &#39;</span>
-                        <span class="o">:</span> <span class="nx">prefix</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">level</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">&gt;</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">txt</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.info">
-  <h3>
-    <a href="#node.info" class="pilcrow">&#182;</a>
-    node.info
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Logs an INFO message</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">info</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">INFO</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
-<span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.warn">
-  <h3>
-    <a href="#node.warn" class="pilcrow">&#182;</a>
-    node.warn
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Logs a WARNING message</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">warn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">WARN</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
-<span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.err">
-  <h3>
-    <a href="#node.err" class="pilcrow">&#182;</a>
-    node.err
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Logs an ERROR message</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">err</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">ERR</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
-<span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="objects">
-  <h2>
-    <a href="#objects" class="pilcrow">&#182;</a>
-    Objects
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -437,7 +262,31 @@ proper listener functions </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">player</span>   <span class="o">=</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">player</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.game">
+  <h3>
+    <a href="#node.game" class="pilcrow">&#182;</a>
+    node.game
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Instance of node.Game</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.Game</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -461,7 +310,7 @@ proper listener functions </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">memory</span>   <span class="o">=</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -487,6 +336,55 @@ to the browser local database or to a cookie</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">store</span>    <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.setup">
+  <h3>
+    <a href="#node.setup" class="pilcrow">&#182;</a>
+    node.setup
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Configures a specific feature of nodeGame and and stores 
+the settings in <code>node.conf</code>.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Setup</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span>    <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.conf">
+  <h3>
+    <a href="#node.conf" class="pilcrow">&#182;</a>
+    node.conf
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>A reference to the current nodegame configuration</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Setup</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -525,12 +423,22 @@ to the browser local database or to a cookie</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <!-- Node.js -->
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./init.node.js&#39;</span><span class="p">);</span>
-    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./nodeGame.js&#39;</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>  
+  <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/log.js&#39;</span><span class="p">);</span>
+  <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/variables.js&#39;</span><span class="p">);</span>
+  
+  <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./init.node.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/nodegame.js&#39;</span><span class="p">);</span>
+
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/fs.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/setup.js&#39;</span><span class="p">);</span>
+  <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/alias.js&#39;</span><span class="p">);</span>
+  <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/random.js&#39;</span><span class="p">);</span>
+    </pre></div>
         </td>
       </tr>
       <tr>
@@ -568,7 +476,7 @@ to the browser local database or to a cookie</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <!-- Browser -->
         </td>

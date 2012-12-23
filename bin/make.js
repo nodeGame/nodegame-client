@@ -109,7 +109,7 @@ program
 			console.log('module Docker not found. Cannot build doc. Do \'npm install doc\' to fix it.');
 			return false;
 		}
-		var command = dockerDir + 'docker -i ' + rootDir + ' index.js init.node.js nodeGame.js lib/ addons/ examples/ -o ' + rootDir + 'docs/';
+		var command = dockerDir + 'docker -i ' + rootDir + ' index.js init.node.js lib/ modules/ addons/ examples/ -o ' + rootDir + 'docs/';
 		var child = exec(command, function (error, stdout, stderr) {
 			util.print(stdout);
 			util.print(stderr);
