@@ -70,8 +70,6 @@ var loop = {
 		}
 	};	
 
-node.game.state = new GameState();
-
 
 var gameLoop, test_gameLoop;
 
@@ -80,6 +78,7 @@ describe('GameLoop', function() {
 	describe('#constructor()', function() {
 		before(function(){
 			gameLoop = new GameLoop(loop);
+			node.game.state = new GameState();
 		});
 		it('should result in a player list of length 1', function() {
 			gameLoop.length.should.be.equal(35); // 34 + 0.0.0
@@ -175,7 +174,17 @@ describe('GameLoop', function() {
 		it('should return false at the beginning of the loop', function() {
 			gameLoop.jumpTo('1.1.1',-1).should.be.false; 
 		});
+		
 	});
 	
-	
+	describe('cleanup operations for testing on travis-ci', function() {
+		before(function(){
+			console.log('--------')
+			console.log(node.game.state);
+//			node.game.state = new GameState();
+		});
+		it('testing for travis-ci', function() {
+			console.log(node.game.state)
+		})
+	});
 });
