@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>outgoing.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../', thisFile = 'listeners/outgoing.js', defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#outgoing-listeners">Outgoing listeners</a>
+      </div>
+      <div class="heading h2">
+        <a href="#out.say.state">out.say.STATE</a>
+      </div>
+      <div class="heading h2">
+        <a href="#out.say.txt">out.say.TXT</a>
+      </div>
+      <div class="heading h2">
+        <a href="#out.say.data">out.say.DATA</a>
+      </div>
+      <div class="heading h2">
+        <a href="#out.set.state">out.set.STATE</a>
+      </div>
+      <div class="heading h2">
+        <a href="#out.set.data">out.set.DATA</a>
+      </div>
+      <div class="heading h2">
+        <a href="#out.get.data">out.get.DATA</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="outgoing-listeners">
+  <h1>
+    <a href="#outgoing-listeners" class="pilcrow">&#182;</a>
+    Outgoing listeners
+  </h1>
+</div>
+
+
+<p>Outgoing listeners are fired when messages are sent</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;nodeGame not found. Cannot add outgoing listeners&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
+    <span class="nx">GameState</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span><span class="p">;</span>
+  
+  <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">,</span>
+    <span class="nx">target</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
+  
+  <span class="kd">var</span> <span class="nx">say</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+    <span class="nx">set</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+    <span class="nx">get</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">GET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+    <span class="nx">OUT</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">OUT</span><span class="p">;</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="out.say.state">
+  <h2>
+    <a href="#out.say.state" class="pilcrow">&#182;</a>
+    out.say.STATE
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Sends out a STATE message to the specified recipient</p>
+
+<p>TODO: check with the server 
+The message is for informative purpose</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;STATE&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendSTATE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
+<span class="p">});</span> </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="out.say.txt">
+  <h2>
+    <a href="#out.say.txt" class="pilcrow">&#182;</a>
+    out.say.TXT
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Sends out a TXT message to the specified recipient</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;TXT&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendTXT</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span><span class="nx">to</span><span class="p">);</span>
+<span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="out.say.data">
+  <h2>
+    <a href="#out.say.data" class="pilcrow">&#182;</a>
+    out.say.DATA
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Sends out a DATA message to the specified recipient</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;DATA&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendDATA</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">key</span><span class="p">);</span>
+<span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="out.set.state">
+  <h2>
+    <a href="#out.set.state" class="pilcrow">&#182;</a>
+    out.set.STATE
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Sends out a STATE message to the specified recipient</p>
+
+<p>TODO: check with the server 
+The receiver will update its representation of the state
+of the sender</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">set</span> <span class="o">+</span> <span class="s1">&#39;STATE&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendSTATE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
+<span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="out.set.data">
+  <h2>
+    <a href="#out.set.data" class="pilcrow">&#182;</a>
+    out.set.DATA
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Sends out a DATA message to the specified recipient</p>
+
+<p>The sent data will be stored in the memory of the recipient</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.GameDB</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">set</span> <span class="o">+</span> <span class="s1">&#39;DATA&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendDATA</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">key</span><span class="p">);</span>
+<span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="out.get.data">
+  <h2>
+    <a href="#out.get.data" class="pilcrow">&#182;</a>
+    out.get.DATA
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Issues a DATA request</p>
+
+<p>Experimental. Undocumented (for now)</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;DATA&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendDATA</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+<span class="p">});</span>
+  
+<span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;outgoing listeners added&#39;</span><span class="p">);</span>
+
+<span class="p">})(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">);</span> </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<!-- ends outgoing listener -->
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

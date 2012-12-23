@@ -1,4 +1,4 @@
-// ## Game internal listeners
+// # Internal listeners
 
 // Internal listeners are not directly associated to messages,
 // but they are usually responding to internal nodeGame events, 
@@ -24,7 +24,7 @@
 		OUT = node.OUT;
 	
 /**
- * ### STATEDONE
+ * ## STATEDONE
  * 
  * Fired when all the players in the player list have their
  * state set to DONE
@@ -59,7 +59,7 @@ node.on('STATEDONE', function() {
 });
 
 /**
- * ### DONE
+ * ## DONE
  * 
  * Updates and publishes that the client has successfully terminated a state 
  * 
@@ -97,7 +97,7 @@ node.on('DONE', function(p1, p2, p3) {
 });
 
 /**
- * ### PAUSE
+ * ## PAUSE
  * 
  * Sets the game to PAUSE and publishes the state
  * 
@@ -108,10 +108,10 @@ node.on('PAUSE', function(msg) {
 });
 
 /**
- * ### WINDOW_LOADED
+ * ## WINDOW_LOADED
  * 
  * Checks if the game is ready, and if so fires the LOADED event
- * 
+ *
  * @emit BEFORE_LOADING
  * @emit LOADED
  */
@@ -120,10 +120,10 @@ node.on('WINDOW_LOADED', function() {
 });
 
 /**
- * ### GAME_LOADED
+ * ## GAME_LOADED
  * 
  * Checks if the window was loaded, and if so fires the LOADED event
- * 
+ *
  * @emit BEFORE_LOADING
  * @emit LOADED
  */
@@ -132,7 +132,7 @@ node.on('GAME_LOADED', function() {
 });
 
 /**
- * ### LOADED
+ * ## LOADED
  * 
  * 
  */

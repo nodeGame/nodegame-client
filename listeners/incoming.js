@@ -1,4 +1,4 @@
-// ## Game incoming listeners
+// # Incoming listeners
 // Incoming listeners are fired in response to incoming messages
 (function (node) {
 
@@ -23,7 +23,7 @@
 
 	
 /**
- * ### in.say.PCONNECT
+ * ## in.say.PCONNECT
  * 
  * Adds a new player to the player list from the data contained in the message
  * 
@@ -38,7 +38,7 @@
 	});	
 	
 /**
- * ### in.say.PDISCONNECT
+ * ## in.say.PDISCONNECT
  * 
  * Removes a player from the player list based on the data contained in the message
  * 
@@ -53,7 +53,7 @@
 	});	
 
 /**
- * ### in.say.MCONNECT
+ * ## in.say.MCONNECT
  * 
  * Adds a new monitor to the monitor list from the data contained in the message
  * 
@@ -67,7 +67,7 @@
 	});	
 		
 /**
- * ### in.say.MDISCONNECT
+ * ## in.say.MDISCONNECT
  * 
  * Removes a monitor from the player list based on the data contained in the message
  * 
@@ -82,7 +82,7 @@
 			
 
 /**
- * ### in.say.PLIST
+ * ## in.say.PLIST
  * 
  * Creates a new player-list object from the data contained in the message
  * 
@@ -96,7 +96,7 @@ node.on( IN + say + 'PLIST', function (msg) {
 });	
 	
 /**
- * ### in.say.MLIST
+ * ## in.say.MLIST
  * 
  * Creates a new monitor-list object from the data contained in the message
  * 
@@ -110,7 +110,7 @@ node.on( IN + say + 'MLIST', function (msg) {
 });	
 	
 /**
- * ### in.get.DATA
+ * ## in.get.DATA
  * 
  * Experimental feature. Undocumented (for now)
  */ 
@@ -123,7 +123,7 @@ node.on( IN + get + 'DATA', function (msg) {
 });
 
 /**
- * ### in.set.STATE
+ * ## in.set.STATE
  * 
  * Adds an entry to the memory object 
  * 
@@ -133,7 +133,7 @@ node.on( IN + set + 'STATE', function (msg) {
 });
 
 /**
- * ### in.set.DATA
+ * ## in.set.DATA
  * 
  * Adds an entry to the memory object 
  * 
@@ -143,7 +143,7 @@ node.on( IN + set + 'DATA', function (msg) {
 });
 
 /**
- * ### in.say.STATE
+ * ## in.say.STATE
  * 
  * Updates the game state or updates a player's state in
  * the player-list object
@@ -181,7 +181,7 @@ node.on( IN + set + 'DATA', function (msg) {
 	});
 	
 /**
- * ### in.say.REDIRECT
+ * ## in.say.REDIRECT
  * 
  * Redirects to a new page
  * 
@@ -199,7 +199,7 @@ node.on( IN + say + 'REDIRECT', function (msg) {
 
 
 /**
- * ### in.say.SETUP
+ * ## in.say.SETUP
  * 
  * Setups a features of nodegame
  * 

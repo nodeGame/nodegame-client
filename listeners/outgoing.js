@@ -1,4 +1,5 @@
-// ## Game outgoing listeners
+// # Outgoing listeners
+// Outgoing listeners are fired when messages are sent
 
 (function (node) {
 
@@ -18,26 +19,8 @@
 		get = action.GET + '.',
 		OUT  = node.OUT;
 	
-///** 
-// * ### out.say.HI
-// * 
-// * Updates the game-state of the game upon connection to a server
-// * 
-// */
-//node.on( OUT + say + 'HI', function() {
-//	// Enter the first state
-//	if (node.game.auto_step) {
-//		node.game.updateState(node.game.next());
-//	}
-//	else {
-//		// The game is ready to step when necessary;
-//		node.game.state.is = node.is.LOADED;
-//		node.socket.sendSTATE(action.SAY, node.game.state);
-//	}
-//});
-
 /**
- * ### out.say.STATE
+ * ## out.say.STATE
  * 
  * Sends out a STATE message to the specified recipient
  * 
@@ -50,7 +33,7 @@ node.on( OUT + say + 'STATE', function (state, to) {
 });	
 
 /**
- * ### out.say.TXT
+ * ## out.say.TXT
  * 
  * Sends out a TXT message to the specified recipient
  */
@@ -59,7 +42,7 @@ node.on( OUT + say + 'TXT', function (text, to) {
 });
 
 /**
- * ### out.say.DATA
+ * ## out.say.DATA
  * 
  * Sends out a DATA message to the specified recipient
  */
@@ -68,7 +51,7 @@ node.on( OUT + say + 'DATA', function (data, to, key) {
 });
 
 /**
- * ### out.set.STATE
+ * ## out.set.STATE
  * 
  * Sends out a STATE message to the specified recipient
  * 
@@ -81,20 +64,20 @@ node.on( OUT + set + 'STATE', function (state, to) {
 });
 
 /**
- * ### out.set.DATA
+ * ## out.set.DATA
  * 
  * Sends out a DATA message to the specified recipient
  * 
  * The sent data will be stored in the memory of the recipient
  * 
- * 	@see Game.memory
+ * @see node.GameDB
  */
 node.on( OUT + set + 'DATA', function (data, to, key) {
 	node.socket.sendDATA(action.SET, data, to, key);
 });
 
 /**
- * ### out.get.DATA
+ * ## out.get.DATA
  * 
  * Issues a DATA request
  * 
