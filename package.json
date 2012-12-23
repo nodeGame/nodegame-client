@@ -15,7 +15,6 @@
     }
   , "dependencies": {
       "commander": "1.0.0",
-      "docker": "0.2.2",
       "socket.io-client": "0.9.2",
       "JSUS": ">= 0.5.1",
       "ya-csv": "0.9.2",
@@ -28,6 +27,7 @@
       "NDDB": ">= 0.4.2"
     }
   , "devDependencies": {
+    "docker": "0.2.2",
     "mocha": ">= 0.3.0",
     "should": ">= 0.5.1"
   }
