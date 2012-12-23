@@ -102,7 +102,13 @@ program
 	.action(function(){
 		console.log('Building documentation for nodegame-client v.' + version);
 		// http://nodejs.org/api.html#_child_processes
-		var dockerDir = J.resolveModuleDir('docker');
+		try{
+			var dockerDir = J.resolveModuleDir('docker');
+		}
+		catch(e) {
+			console.log('module Docker not found. Cannot build doc. Do \'npm install doc\' to fix it.');
+			return false;
+		}
 		var command = dockerDir + 'docker -i ' + rootDir + ' index.js init.node.js nodeGame.js lib/ addons/ examples/ -o ' + rootDir + 'docs/';
 		var child = exec(command, function (error, stdout, stderr) {
 			util.print(stdout);
