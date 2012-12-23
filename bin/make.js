@@ -106,7 +106,7 @@ program
 			var dockerDir = J.resolveModuleDir('docker');
 		}
 		catch(e) {
-			console.log('module Docker not found. Cannot build doc. Do \'npm install doc\' to fix it.');
+			console.log('module Docker not found. Cannot build doc. Do \'npm install docker\' to fix it.');
 			return false;
 		}
 		var command = dockerDir + 'docker -i ' + rootDir + ' index.js init.node.js lib/ modules/ listeners/ addons/ examples/ -o ' + rootDir + 'docs/';
