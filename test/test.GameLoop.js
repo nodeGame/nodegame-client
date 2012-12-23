@@ -177,14 +177,14 @@ describe('GameLoop', function() {
 		
 	});
 	
-	describe('cleanup operations for testing on travis-ci', function() {
-		before(function(){
-			console.log('--------')
-			console.log(node.game.state);
-//			node.game.state = new GameState();
-		});
-		it('testing for travis-ci', function() {
-			console.log(node.game.state)
-		})
-	});
+//	describe('cleanup operations for testing on travis-ci', function() {
+//		before(function(){
+//			console.log('--------')
+//			console.log(node.game.state);
+////			node.game.state = new GameState();
+//		});
+//		it('testing for travis-ci', function() {
+//			console.log(node.game.state)
+//		})
+//	});
 });
