@@ -82,6 +82,8 @@ var items = [
      },          
 ];
 
+var painters_list = ['Jesus', 'Dali', 'Monet', 'Manet'];
+
 
 // Check if pl2 == pl1
 function samePlayer(pl1, pl2) {
@@ -95,26 +97,23 @@ var deleteIfExist = function(file) {
 	if (path.existsSync(file)) {
 		var stats = fs.lstatSync(file);
 		if (stats.isDirectory()) {
-			fs.rmdir(file, function (err) {
-				if (err) throw err;  
-			});
+			fs.rmdirSync(file);
 		}
 		else {
-			fs.unlink(file, function (err) {
-				if (err) throw err;  
-			});
+			fs.unlinkSync(file);
 		}
 		
 	}
 };
 
-var deleteCsvDir = function(dir) {
+var deleteTestDir = function(dir, format) {
 	if (dir[dir.length] !== '/') dir = dir + '/';
 	fs.readdir(dir, function(err, files) {
-	    files.filter(function(file) { return file.substr(-4) == '.csv'; })
+		
+	    files.filter(function(file) { return file.substr(-(format.length + 1)) == '.' + format; })
 	         .forEach(function(file) { deleteIfExist(dir + file) });
 	    
-	    deleteIfExist('./tmp')
+	    deleteIfExist(dir)
 	});
 
 }
@@ -122,9 +121,12 @@ var deleteCsvDir = function(dir) {
 var checkCsvFile = function (check) {
 	check = check || {};
 	var file = check.filename || filename;
-	path.existsSync(file).should.be.true;
 	
-	var reader = csv.createCsvFileReader(filename, {
+	it('file should be found', function(){
+		path.existsSync(file).should.be.true;
+	});
+	
+	var reader = csv.createCsvFileReader(file, {
 	    'separator': ',',
 	    'quote': '"',
 	    'escape': '"',       
@@ -133,6 +135,8 @@ var checkCsvFile = function (check) {
 	
 	var read = [];
 	reader.addListener('data', function(data) {
+//		console.log(data)
+//		console.log('-')
 	    read.push(data);
 	});
 	reader.addListener('end', function(data) {
@@ -141,6 +145,11 @@ var checkCsvFile = function (check) {
 		}
 		
 	    if (check.csv_length) {
+//	    	if (check.csv_length !== read.length) {
+//		    	console.log(read)
+//		    	console.log('--------')
+//	    	}
+
 	    	read.length.should.be.eql(check.csv_length);
 	    }
 	    
@@ -155,6 +164,30 @@ var checkCsvFile = function (check) {
 	    }
 	    
 	});
+};
+
+var checkJSONFile = function (check) {
+	check = check || {};
+	var file = check.filename || filename;
+	
+	it('file should be found', function(){
+		path.existsSync(file).should.be.true;
+	});
+	
+	var db = new NDDB();
+	
+	db.load(file);
+	
+		
+	if (check.nitems) {
+	   db.length.should.be.eql(check.nitems);
+	}
+	    
+	if (check.items) {
+		for (var i = 0; i < check.items.length; i++) {
+			db.exists(check.items[i]).should.be.true;
+	    }
+	}
 };
 
 var stringifyValues = function (o) {
@@ -175,6 +208,9 @@ var createDirIfNotExists = function (dir) {
 };
 
 var filename, headers, csv_length, item;
+
+// STRESS TEST
+for (var i=0; i<1; i++){
 
 describe('FS operations', function() {
 	
@@ -210,60 +246,108 @@ describe('FS operations', function() {
 			deleteIfExist();
 			node.game.memory.importDB(items);
 		});
-		afterEach(function() {
-			deleteIfExist();
+		after(function() {
+			deleteIfExist('./withoutheaders.csv');
+			deleteIfExist('./withheaders.csv');
+			deleteIfExist('./withheadersguessed.csv');
 		});
 		it('should save the memory to a csv file without headers', function() {
-			node.game.memory.toCsv(filename);
+			var myFilename = 'withoutheaders.csv';
+			node.game.memory.toCsv(myFilename);
 			checkCsvFile({
 				csv_length: items.length,
 				items: items,
+				filename: myFilename
 			});
 		});
 		it('should dump the memory with headers defined by user', function() {
 			var headers = ['painter', 'title', 'year', 'portrait'];
-			node.game.memory.toCsv(filename, {headers: headers});
+			var myFilename = 'withheaders.csv';
+			node.game.memory.toCsv(myFilename, {headers: headers});
 			checkCsvFile({
 				csv_length: items.length + 1,
 				headers: headers,
 				items: items,
+				filename: myFilename
 			});
 		});
 		it('should dump the memory with headers (guessed)', function() {
-			node.game.memory.toCsv(filename, {writeHeaders: true});
+			var myFilename = 'withheadersguessed.csv';
+			node.game.memory.toCsv(myFilename, {writeHeaders: true});
 			checkCsvFile({
 				csv_length: items.length + 1,
 				headers: ['0', '1', '2'],
 				items: items,
+				filename: myFilename
 			});
 		});
 		
 	});
 	
-	describe('#node.game.memory.saveAllIndexes()', function() {
-//		before(function() {
-//			createDirIfNotExists('./tmp');
-//			node.game.memory.h('painter', function(p){
-//				return p.painter;
-//			});
-//			node.game.memory.importDB(items);
-//			node.memory.dumpAllIndexes('./tmp');
-//		});
-//		after(function() {
-//			deleteCsvDir('./tmp/');
-//		});
-		it('should create csv files for index \'painter\'', function() {
-//			for (var i=0; i< items.length) {
-//				var item = items[i];
-//				checkCsvFile({
-//					csv_length: items.length,
-//					filename: 
-//					items: node.game.memory.select('painter',first(),
-//		
-//				})
-//			}
-			
+	describe('#node.game.memory.saveAllIndexesToCsv()', function() {
+		before(function() {
+			createDirIfNotExists('./tmp_csv');
+			node.game.memory.h('painter', function(p){
+				return p.painter;
+			});
+			node.game.memory.importDB(items);
+			node.game.memory.saveAllIndexesToCsv('./tmp_csv');
+		});
+		after(function() {
+			deleteTestDir('./tmp_csv/', 'csv');
 		});
 		
+		it('should create csv files for index \'painter\'', function() {
+			var painters = node.game.memory.painter;
+			
+			JSUS.size(painters).should.be.eql(painters_list.length);
+			
+			for (var i=0; i< painters.length; i++) {
+				var p = painters[i].first();
+				checkCsvFile({
+					csv_length: painters[i].length,
+					filename: p.painter + '.csv',
+					items: painters[i].fetch()
+		
+				})
+			}
+			
+		});	
 	});
+	
+	describe('#node.game.memory.saveAllIndexes()', function() {
+		before(function() {
+			createDirIfNotExists('./tmp_json');
+			node.game.memory.h('painter', function(p){
+				return p.painter;
+			});
+			node.game.memory.importDB(items);
+			node.game.memory.saveAllIndexes('./tmp_json');
+		});
+		after(function() {
+			deleteTestDir('./tmp_json/', 'nddb');
+		});
+		
+		it('should create csv files for index \'painter\'', function() {
+			var painters = node.game.memory.painter;
+			
+			JSUS.size(painters).should.be.eql(painters_list.length);
+			
+			for (var i=0; i< painters.length; i++) {
+				var p = painters[i].first();
+				checkJSONFile({
+					nitems: painters[i].length,
+					filename: p.painter + '.nddb',
+					items: painters[i].fetch()
+		
+				})
+			}
+			
+		});	
+	});
+		
+	
 });
+
+// END STRESS TEST
+}
