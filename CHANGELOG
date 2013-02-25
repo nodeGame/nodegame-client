@@ -1,5 +1,25 @@
 # nodegame-client change log
 
+## 0.6.2
+
+  - Docker is optional dev
+  - Fixed bug in GameLoop.size() when no state was added
+  - Fixed possible memory leak in GameLoop limits object
+  - Command copyto copies all files in build directory to another folder in make.js
+
+# 0.6.0
+
+  - Remote setup of clients
+  - setup method to configure all important properties of the game
+  - connect and play methodsare now separated. It is possible 
+	to play without connecting, and connecting without playing
+  - nodegame-client can connect to the server via the Socket interface: direct or sio
+  - GameSession object enhanced
+  - Automated tests on integration server travis-ci
+  - Standardized variable naming: 
+	node.iss -> node.is,
+	node.actions -> node.action
+
 ## 0.4.5
 
   - events.dumpEvents added to configuration object
