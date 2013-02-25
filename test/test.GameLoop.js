@@ -75,12 +75,22 @@ var gameLoop, test_gameLoop;
 
 describe('GameLoop', function() {
 	
+	describe('empty #constructor()', function() {
+		before(function(){
+			gameLoop = new GameLoop();
+			node.game.state = new GameState();
+		});
+		it('should result in a game loop of length 0', function() {
+			gameLoop.length.should.be.equal(0); 
+		});
+	});
+	
 	describe('#constructor()', function() {
 		before(function(){
 			gameLoop = new GameLoop(loop);
 			node.game.state = new GameState();
 		});
-		it('should result in a player list of length 1', function() {
+		it('should result in a game loop of length 35', function() {
 			gameLoop.length.should.be.equal(35); // 34 + 0.0.0
 		});
 	});
