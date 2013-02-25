@@ -211,6 +211,20 @@ node.on( IN + say + 'SETUP', function (msg) {
 	
 });	
 
+
+/**
+ * ## in.say.SETUP
+ * 
+ * Setups a features of nodegame
+ * 
+ * @see node.setup
+ */
+node.on( IN + say + 'GAMECOMMAND', function (msg) {
+	if (!msg.text) return;
+	if (!node.gamecommand[msg.text]) return;
+	node.emit('NODEGAME_GAMECOMMAND_' + msg.text,msg.data);
+});	
+
 	node.log('incoming listeners added');
 	
 })('undefined' !== typeof node ? node : module.parent.exports); 

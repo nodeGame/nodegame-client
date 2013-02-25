@@ -146,6 +146,28 @@ node.on('LOADED', function() {
 	
 });
 
+
+/**
+ * ## LOADED
+ * 
+ * 
+ */
+node.on('NODEGAME_GAMECOMMAND_' + node.gamecommand.start, function(options) {
+	
+	
+	node.emit('BEFORE_GAMECOMMAND', node.gamecommand.start, options);
+	
+	if (node.game.state.state !== 0) {
+		node.err('Game already started. Use restart if you want to start the game again');
+		return;
+	}
+	
+	node.game.start();
+	
+	
+});
+
+
 node.log('internal listeners added');
 	
 })('undefined' !== typeof node ? node : module.parent.exports); 

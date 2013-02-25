@@ -15,7 +15,7 @@
 (function (node) {
 
 // ### version	
-node.version = '0.6.0';
+node.version = '0.6.2';
 
 
 // ## Objects
@@ -87,13 +87,24 @@ node.game = {};
 
 
 /**
- * ### node.memory
+ * ### node.game.memory
  * 
  * Instance of node.GameDB database
  * 
  * @see node.GameDB
  */
 node.game.memory = null;
+
+
+/**
+ * ### node.game.state
+ * 
+ * Keeps track of the state of the game
+ * 
+ * @see node.GameState
+ */
+node.game.state = null;
+
 
 /**
  * ### node.store

@@ -15,7 +15,7 @@
 (function (node) {
 
 // ### version	
-node.version = '0.6.0';
+node.version = '0.6.2';
 
 
 // ## Objects
@@ -74,16 +74,37 @@ node.session 	= {};
  * 
  * @see node.PlayerList.Player
  */
-node.player 	= {};
+node.player = {};
 
 /**
- * ### node.memory
+ * ### node.game
+ * 
+ * Instance of node.Game
+ * 
+ * @see node.Game
+ */
+node.game = {};
+
+
+/**
+ * ### node.game.memory
  * 
  * Instance of node.GameDB database
  * 
  * @see node.GameDB
  */
-node.memory 	= {};
+node.game.memory = null;
+
+
+/**
+ * ### node.game.state
+ * 
+ * Keeps track of the state of the game
+ * 
+ * @see node.GameState
+ */
+node.game.state = null;
+
 
 /**
  * ### node.store
@@ -105,6 +126,16 @@ node.store		= function() {};
  * @see Setup
  */
 node.setup		= function() {};
+
+
+/**
+ * ### node.conf
+ * 
+ * A reference to the current nodegame configuration
+ * 
+ * @see Setup
+ */
+node.conf = {};
 
 /**
  * ### node.support 
@@ -152,12 +183,12 @@ else {
 })('object' === typeof module ? module.exports : (window.node = {}));	
 
 /**
- * # Setup
+ * # Log
  * 
  * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed 
  * 
- * `nodeGame` setup module
+ * `nodeGame` logging module
  * 
  * ---
  * 
@@ -254,12 +285,12 @@ else {
   , 'undefined' != typeof node ? node : module.parent.exports
 );
 /**
- * # Setup
+ * # Variables
  * 
  * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed 
  * 
- * `nodeGame` setup module
+ * `nodeGame` variables and constants module
  * 
  * ---
  * 
@@ -269,98 +300,166 @@ else {
 	
 	// ## Constants
 
-
-	/**
-	 * ### node.actions
-	 * 
-	 * Collection of available nodeGame actions
-	 * 
-	 * The action adds an initial semantic meaning to the
-	 * message. It specify the nature of requests
-	 * "Why the message was sent?"
-	 * 
-	 * Semantics:
-	 * 
-	 * - SET: Store / changes the value of a property in the receiver of the msg
-	 * - GET: Asks the value value of a property to the receiver of the msg
-	 * - SAY: Announces a change of state or other global property in the sender of the msg
-	 * 
-	 */
+/**
+ * ### node.actions
+ * 
+ * Collection of available nodeGame actions
+ * 
+ * The action adds an initial semantic meaning to the
+ * message. It specify the nature of requests
+ * "Why the message was sent?"
+ * 
+ * Semantics:
+ * 
+ * - SET: Store / changes the value of a property in the receiver of the msg
+ * - GET: Asks the value value of a property to the receiver of the msg
+ * - SAY: Announces a change of state or other global property in the sender of the msg
+ * 
+ */
 	node.action = {};
 
 	node.action.SET = 'set'; 	
 	node.action.GET = 'get'; 	
 	node.action.SAY = 'say'; 	
 
-	/**
-	 * ### node.target
-	 * 
-	 * Collection of available nodeGame targets
-	 * 
-	 * The target adds an additional level of semantic 
-	 * for the message, and specifies the nature of the
-	 * information carried in the message. 
-	 * 
-	 * It answers the question: "What is the content of the message?" 
-	 */
+/**
+ * ### node.target
+ * 
+ * Collection of available nodeGame targets
+ * 
+ * The target adds an additional level of semantic 
+ * for the message, and specifies the nature of the
+ * information carried in the message. 
+ * 
+ * It answers the question: "What is the content of the message?" 
+ */
 	node.target = {};
 
-	node.target.HI			= 'HI';			// Client connects
-	node.target.HI_AGAIN	= 'HI_AGAIN'; 	// Client reconnects
 
-	node.target.PCONNECT	= 'PCONNECT'; 		// A new player just connected
-	node.target.PDISCONNECT = 'PDISCONNECT';	// A player just disconnected
+// #### target.DATA
+// Generic identifier for any type of data 
+	node.target.DATA		= 'DATA';		
+	
+// #### target.HI
+// A client is connecting for the first time
+	node.target.HI = 'HI';		
 
-	node.target.MCONNECT	= 'MCONNECT'; 		// A new monitor just connected
-	node.target.MDISCONNECT = 'MDISCONNECT';	// A monitor just disconnected
+// #### target.HI_AGAIN
+// A client re-connects to the server within the same session	
+	node.target.HI_AGAIN = 'HI_AGAIN'; 	
 
-	node.target.PLIST 		= 'PLIST';	// PLIST
-	node.target.MLIST 		= 'MLIST';	// PLIST
+// #### target.PCONNECT
+// A new client just connected to the player endpoint	
+	node.target.PCONNECT = 'PCONNECT';
+	
+// #### target.PDISCONNECT
+// A client that just disconnected from the player endpoint 
+	node.target.PDISCONNECT = 'PDISCONNECT';
 
-	node.target.STATE		= 'STATE';	// STATE
+// #### target.MCONNECT
+// A client that just connected to the admin (monitor) endpoint	
+	node.target.MCONNECT = 'MCONNECT'; 		
 
+// #### target.MDISCONNECT
+// A client just disconnected from the admin (monitor) endpoint 
+	node.target.MDISCONNECT = 'MDISCONNECT';
+
+// #### target.PLIST
+// The list of clients connected to the player endpoint was updated
+	node.target.PLIST = 'PLIST';
+	
+// #### target.MLIST	
+// The list of clients connected to the admin (monitor) endpoint was updated	
+	node.target.MLIST = 'MLIST';
+
+// #### target.STATE
+// A client notifies his own state
+	node.target.STATE = 'STATE';
+	
+// #### target.REDIRECT
+// Redirects a client to a new uri
+	node.target.REDIRECT	= 'REDIRECT'; 
+
+// #### target.SETUP
+// Asks a client update its configuration	
+	node.target.SETUP = 'SETUP'; 
+	
+// #### target.GAMECOMMAND
+// Ask a client to start/pause/stop/resume the game	
+	node.target.GAMECOMMAND = 'GAMECOMMAND'; 	
+	
+
+//#### not used targets (for future development)
+	
 	node.target.TXT 		= 'TXT';	// Text msg
-	node.target.DATA		= 'DATA';	// Contains a data-structure in the data field
-
-	node.target.REDIRECT	= 'REDIRECT'; // redirect a client to a new address
-
-	node.target.ENV		= 'ENV'; // setup global variables
-
-	node.target.SETUP		= 'SETUP'; // general setup
-
-	node.target.GAME		= 'GAME'; // set the game
-
-
-
+	
 	// Still to implement
 	node.target.BYE			= 'BYE';	// Force disconnects
 	node.target.ACK			= 'ACK';	// A reliable msg was received correctly
+
 	node.target.WARN 		= 'WARN';	// To do.
 	node.target.ERR			= 'ERR';	// To do.
 
 
+/**
+ * ### Game commands
+ * 
+ * - node.gamecommand.start
+ * - node.gamecommand.pause
+ * - node.gamecommand.resume
+ * - node.gamecommand.stop
+ */
+	node.gamecommand = {	
+			start: 'start',
+			pause: 'pause',
+			resume: 'resume',
+			stop: 'stop',
+			restart: 'restart',
+			goto_state: 'goto_state'
+	};
+		
 
+	
 
-	/**
-	 * ### Direction
-	 * 
-	 * Distiguish between incoming and outgoing messages
-	 * 
-	 * - node.IN
-	 * - node.OUT
-	 */
-
+/**
+ * ### Direction
+ * 
+ * Distiguishes between incoming and outgoing messages
+ * 
+ * - node.IN
+ * - node.OUT
+ */
 	node.IN		= 'in.';
 	node.OUT	= 'out.';	
 
 
+/**
+ * ### node.is
+ * 
+ * Levels associates to the states of the nodeGame engine
+ * 
+ */	
+	node.is = {};
+
+// #### is.UNKNOWN
+// A game has not been initialized
+	node.is.UNKNOWN = 0;
+
+// #### is.LOADING
+// A game is loading	
+	node.is.LOADING = 10;		
 	
-	node.iss = {};
-	node.iss.UNKNOWN = 0; 		// Game has not been initialized
-	node.iss.LOADING = 10;		// The game is loading
-	node.iss.LOADED  = 25;		// Game is loaded, but the GameWindow could still require some time
-	node.iss.PLAYING = 50;		// Everything is ready
-	node.iss.DONE = 100;		// The player completed the game state
+// #### is.LOADED
+// A game has been loaded, but the GameWindow object could still require some time	
+	node.is.LOADED  = 25;		
+	
+// #### is.PLAYING
+// Everything is ready	
+	node.is.PLAYING = 50;		
+	
+// #### is.DONE
+// The player completed the game state	
+	node.is.DONE = 100;			
 
 })(
 	'undefined' != typeof node ? node : module.exports
@@ -511,7 +610,7 @@ EventEmitter.prototype = {
         
         // Log the event into node.history object, if present
         if (!node.conf || !node.conf.events) {
-        	node.log('node.conf.events object not found. Is everthing all right?', 'WARN');
+        	node.log('node.conf.events object not found. Is everything all right?', 'WARN');
         }
         else {
         	
@@ -795,7 +894,7 @@ function Listener (o) {
  * 	`state`: the higher-level building blocks of a game
  * 	`step`: the sub-unit of a state
  * 	`round`: the number of repetition for a state. Defaults round = 1
- * 	`is`: the *load-lavel* of the game as expressed in `GameState.iss`
+ * 	`is`: the *load-lavel* of the game as expressed in `node.is`
  * 	`paused`: TRUE if the game is paused
  * 
  * 
@@ -814,19 +913,8 @@ var JSUS = node.JSUS;
 // Expose constructor
 exports.GameState = GameState;
 
-/**
- * ### GameState.iss
- *  
- * Numeric representation of the state of the nodeGame engine 
- * the game
- *  
- */
-GameState.iss = {};
-GameState.iss.UNKNOWN = 0; 		// Game has not been initialized
-GameState.iss.LOADING = 10;		// The game is loading
-GameState.iss.LOADED  = 25;		// Game is loaded, but the GameWindow could still require some time
-GameState.iss.PLAYING = 50;		// Everything is ready
-GameState.iss.DONE = 100;		// The player completed the game state
+
+
 
 GameState.defaults = {};
 
@@ -888,12 +976,12 @@ function GameState (gs) {
 /**
  * ### GameState.is
  * 
+ * The state of the nodeGame engine
  * 
- * 
- * 	@see GameState.iss
+ * 	@see node.is
  * 
  */		
-	this.is = 		GameState.iss.UNKNOWN;
+	this.is = node.is.UNKNOWN;
 	
 /**
  * ### GameState.paused
@@ -908,14 +996,14 @@ function GameState (gs) {
 		this.state = 	('undefined' !== typeof tokens[0]) ? Number(tokens[0]) : undefined;
 		this.step = 	('undefined' !== typeof tokens[1]) ? Number(tokens[1]) : undefined;
 		this.round = 	('undefined' !== typeof tokens[2]) ? Number(tokens[2]) : undefined;
-		this.is = 		('undefined' !== typeof tokens[3]) ? Number(tokens[3]) : GameState.iss.UNKNOWN;
+		this.is = 		('undefined' !== typeof tokens[3]) ? Number(tokens[3]) : node.is.UNKNOWN;
 		this.paused = 	(tokens[4] === '1') ? true : false;
 	}
 	else if ('object' === typeof gs) {	
 		this.state = 	gs.state;
 		this.step = 	gs.step;
 		this.round = 	gs.round;
-		this.is = 		(gs.is) ? gs.is : GameState.iss.UNKNOWN;
+		this.is = 		(gs.is) ? gs.is : node.is.UNKNOWN;
 		this.paused = 	(gs.paused) ? gs.paused : false;
 	}
 	
@@ -1372,7 +1460,7 @@ PlayerList.prototype.isStateDone = function (state, extended) {
 		// <!-- console.log('Going to compare ' + gs + ' and ' + state); -->
 		
 		// Player is done for his state
-		if (p.state.is !== GameState.iss.DONE) {
+		if (p.state.is !== node.is.DONE) {
 			return 0;
 		}
 		// The state of the player is actually the one we are interested in
@@ -1984,15 +2072,6 @@ var GameState = node.GameState,
 exports.GameLoop = GameLoop;
 
 /**
- * ### limits
- * 
- * Array containing the boundary limits of the game-loop
- * 
- * @api private
- */
-var limits = [];
-
-/**
  * ## GameLoop constructor
  * 
  * Creates a new instance of GameLoop
@@ -2032,6 +2111,16 @@ var limits = [];
  */
 function GameLoop (loop) {
 	// ### Public variables
+
+/**
+ * ### limits
+ * 
+ * Array containing the internal representation of the boundaries
+ * of each state inside the game-loop
+ * 
+ * @api private
+ */	
+	this.limits = [];	
 	
 /**
  * ### GameLoop.loop
@@ -2056,7 +2145,7 @@ function GameLoop (loop) {
 			var steps = JSUS.size(this.loop[key].state)
 			
 			var round = this.loop[key].rounds || 1;
-			limits.push({rounds: round, steps: steps});
+			this.limits.push({rounds: round, steps: steps});
 		}
 	}
 	
@@ -2065,9 +2154,10 @@ function GameLoop (loop) {
  * 
  * The total number of states + steps in the game-loop
  * 
+ * Warning: may not be working in old browsers. Use #size() instead 
+ * 
  * @see GameLoop.size()
  * 
- * @deprecated
  */
 	if (node.support.getter) {
 		Object.defineProperty(this, 'length', {
@@ -2078,7 +2168,8 @@ function GameLoop (loop) {
 	}
 	else {
 		this.length = null;
-	}	
+	}
+	
 }
 
 // ## GameLoop methods
@@ -2090,6 +2181,7 @@ function GameLoop (loop) {
  * 
  */
 GameLoop.prototype.size = function() {
+	if (!this.limits.length) return 0;
 	return this.steps2Go(new GameState());
 };
 
@@ -2114,8 +2206,8 @@ GameLoop.prototype.exist = function (gameState) {
 		return false;
 	}
 	// States are 1 based, arrays are 0-based => -1
-	if (gameState.round > limits[gameState.state-1]['rounds']) {
-		node.log('Unexisting round: ' + gameState.round + 'Max round: ' + limits[gameState.state]['rounds'], 'WARN');
+	if (gameState.round > this.limits[gameState.state-1]['rounds']) {
+		node.log('Unexisting round: ' + gameState.round + 'Max round: ' + this.limits[gameState.state]['rounds'], 'WARN');
 		return false;
 	}
 		
@@ -2153,7 +2245,7 @@ GameLoop.prototype.next = function (gameState) {
 	
 	var idxLimit = Number(gameState.state)-1; // 0 vs 1 based
 	
-	if (limits[idxLimit]['steps'] > gameState.step){
+	if (this.limits[idxLimit]['steps'] > gameState.step){
 		var newStep = Number(gameState.step)+1;
 		return new GameState({
 			state: gameState.state,
@@ -2162,7 +2254,7 @@ GameLoop.prototype.next = function (gameState) {
 		});
 	}
 	
-	if (limits[idxLimit]['rounds'] > gameState.round){
+	if (this.limits[idxLimit]['rounds'] > gameState.round){
 		var newRound = Number(gameState.round)+1;
 		return new GameState({
 			state: gameState.state,
@@ -2171,7 +2263,7 @@ GameLoop.prototype.next = function (gameState) {
 		});
 	}
 	
-	if (limits.length > gameState.state){		
+	if (this.limits.length > gameState.state){		
 		var newState = Number(gameState.state)+1;
 		return new GameState({
 			state: newState,
@@ -2214,7 +2306,7 @@ GameLoop.prototype.previous = function (gameState) {
 	}
 	else if (gameState.round > 1){
 		var oldRound = Number(gameState.round)-1;
-		var oldStep = limits[idxLimit]['steps'];
+		var oldStep = this.limits[idxLimit]['steps'];
 		return new GameState({
 			state: gameState.state,
 			step: oldStep,
@@ -2222,8 +2314,8 @@ GameLoop.prototype.previous = function (gameState) {
 		});
 	}
 	else if (gameState.state > 1){
-		var oldRound = limits[idxLimit-1]['rounds'];
-		var oldStep = limits[idxLimit-1]['steps'];
+		var oldRound = this.limits[idxLimit-1]['rounds'];
+		var oldStep = this.limits[idxLimit-1]['steps'];
 		var oldState = idxLimit;
 		return new GameState({
 			state: oldState,
@@ -2452,7 +2544,7 @@ function GameMsgGenerator () {}
  */
 GameMsgGenerator.create = function (msg) {
 
-  var base = {
+  var gameMsg = {
 		session: ('undefined' !== typeof msg.session) ? msg.session : node.socket.session, 
 		state: msg.state || node.game.state,
 		action: msg.action || action.SAY,
@@ -2465,7 +2557,7 @@ GameMsgGenerator.create = function (msg) {
 		reliable: msg.reliable || 1
   };
 
-  return new GameMsg(msg);
+  return new GameMsg(gameMsg);
 
 };
 
@@ -2519,7 +2611,7 @@ GameMsgGenerator.createHI = function (player, to, reliable) {
  * 	@see GameState
  */
 GameMsgGenerator.saySTATE = function (state, to, reliable) {
-	return this.createSTATE(GameMsg.SAY, state, to, reliable);
+	return this.createSTATE(action.SAY, state, to, reliable);
 };
 
 /**
@@ -2536,7 +2628,7 @@ GameMsgGenerator.saySTATE = function (state, to, reliable) {
  * 	@see GameState
  */
 GameMsgGenerator.setSTATE = function (state, to, reliable) {
-	return this.createSTATE(GameMsg.SET, state, to, reliable);
+	return this.createSTATE(action.SET, state, to, reliable);
 };
 
 /**
@@ -2553,7 +2645,7 @@ GameMsgGenerator.setSTATE = function (state, to, reliable) {
  * 	@see GameState
  */
 GameMsgGenerator.getSTATE = function (state, to, reliable) {
-	return this.createSTATE(GameMsg.GET, state, to,reliable);
+	return this.createSTATE(action.GET, state, to,reliable);
 };
 
 /**
@@ -2591,7 +2683,7 @@ GameMsgGenerator.createSTATE = function (action, state, to, reliable) {
 //## PLIST messages
 
 /**
- * ### GameMSgGenerator.sayPLIST
+ * ### GameMsgGenerator.sayPLIST
  * 
  * Creates a say.PLIST message
  * 
@@ -3022,6 +3114,8 @@ Socket.prototype.onDisconnect = function() {
 
 Socket.prototype.onMessage = function(msg) {
 	
+	console.log('FIRST MESSAGE')
+	
 	var msg = this.secureParse(msg);
 	if (!msg) return;
 	
@@ -3065,16 +3159,14 @@ Socket.prototype.attachMsgListeners = function() {
 	this.onMessage = this.onMessageFull;
 	
 	node.emit('NODEGAME_READY');
-	// Ready to play
-	//node.emit('out.say.HI');
 };
 
 Socket.prototype.onMessageFull = function(msg) {
 	var msg = this.secureParse(msg);
-	
+		
 	if (msg) { // Parsing successful
 		// TODO: improve
-		if (node.game.isReady && node.game.isReady()) {	
+		if (node.game.isReady && node.game.isReady()) {
 			node.emit(msg.toInEvent(), msg);
 		}
 		else {
@@ -3922,6 +4014,34 @@ function Game (settings) {
  */
 Game.prototype.init = function () {};
 
+
+/**
+ * ### Game.start
+ * 
+ * Starts the game 
+ * 
+ * Calls the init function, sets the state as `node.is.LOADED`
+ * and notifies the server. 
+ * 
+ * Important: it does not use `Game.publishState` because that is
+ * just for change of state after the game has started
+ * 
+ * 
+ * @see node.play
+ * @see Game.publishState
+ * 
+ */
+Game.prototype.start = function() {
+	// INIT the game
+	this.init();
+	this.state.is = node.is.LOADED;
+	
+	node.socket.sendSTATE(node.action.SAY, node.game.state);
+	
+	node.log('game loaded...');
+	node.log('ready.');
+};
+
 /**
  * ### Game.pause
  * 
@@ -4048,7 +4168,7 @@ Game.prototype.updateState = function (state) {
 	
 	if (this.step(state) !== false) {
 		this.paused = false;
-		this.state.is =  GameState.iss.LOADED;
+		this.state.is =  node.is.LOADED;
 		if (this.isReady()) {
 			node.emit('LOADED');
 		}
@@ -4092,7 +4212,7 @@ Game.prototype.step = function (gameState) {
 			// before proceeding to next one
 			node.events.clearState(this.state);
 			
-			gameState.is = GameState.iss.LOADING;
+			gameState.is = node.is.LOADING;
 			this.state = gameState;
 		
 			// This could speed up the loading in other client,
@@ -4110,6 +4230,11 @@ Game.prototype.step = function (gameState) {
  * 
  * Returns TRUE if the nodeGame engine is fully loaded
  * 
+ * As soon as the nodegame-client library is loaded 
+ * `node.game.state` is equal to 0.0.0. In this situation the
+ * game will be considered READY unless the nodegame-window 
+ * says otherwise
+ * 
  * During stepping between functions in the game-loop
  * the flag is temporarily turned to FALSE, and all events 
  * are queued and fired only after nodeGame is ready to 
@@ -4123,11 +4248,11 @@ Game.prototype.step = function (gameState) {
  * 
  */
 Game.prototype.isReady = function() {
-	if (this.state.is < GameState.iss.LOADED) return false;
+	if (this.state.state !== 0 && this.state.is < node.is.LOADED) return false;
 	
 	// Check if there is a gameWindow obj and whether it is loading
 	if (node.window) {	
-		return (node.window.state >= GameState.iss.LOADED) ? true : false;
+		return (node.window.state >= node.is.LOADED) ? true : false;
 	}
 	return true;
 };
@@ -4406,6 +4531,8 @@ SessionManager.prototype.store = function() {
 	
 	node.socket = node.gsc = new Socket();
 	
+	node.game = new Game();
+	
 	
 // ## Methods
 	
@@ -4517,14 +4644,7 @@ SessionManager.prototype.store = function() {
 		
 		node.setup.game(game);
 		
-		// INIT the game
-		node.game.init.call(node.game);
-		
-		node.game.state.is = GameState.iss.LOADED;
-		node.socket.sendSTATE(node.actions.SAY, node.game.state);
-		
-		node.log('game loaded...');
-		node.log('ready.');
+		node.game.start();
 	};
 	
 /**
@@ -4711,8 +4831,6 @@ SessionManager.prototype.store = function() {
 		node.socket.send(msg);
 		return true;
 	};
-			
-
 	
 	node.log(node.version + ' loaded', 'ALWAYS');
 	
@@ -4727,7 +4845,7 @@ SessionManager.prototype.store = function() {
  * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed 
  * 
- * `nodeGame` setup module
+ * `nodeGame` configuration module
  * 
  * ---
  * 
@@ -4740,6 +4858,7 @@ SessionManager.prototype.store = function() {
 var GameMsg = node.GameMsg,
 	GameState = node.GameState,
 	Player = node.Player,
+	Game = node.Game,
 	GameMsgGenerator = node.GameMsgGenerator,
 	J = node.JSUS;
 
@@ -4769,12 +4888,22 @@ var frozen = false;
 			return false;
 		}
 		
+		if (property === 'register') {
+			node.warn('cannot setup property "register"');
+			return false;
+		}
+		
 		if (!node.setup[property]) {
 			node.warn('no such property to configure: ' + property);
 			return false;
 		}
 		
-		node.conf[property] = node.setup[property].call(exports, options);
+		var result = node.setup[property].call(exports, options);
+		
+		if (property !== 'nodegame') {
+			node.conf[property] = result;
+		}
+		
 		return true;
 	};
 	
@@ -4810,7 +4939,7 @@ var frozen = false;
 		for (var i in node.setup) {
 			if (node.setup.hasOwnProperty(i)) {
 				if (i !== 'register' && i !== 'nodegame') {
-					node.setup[i].call(exports, options[i]);
+					node.conf[i] = node.setup[i].call(exports, options[i]);
 				}
 			}
 		}
@@ -4825,6 +4954,7 @@ var frozen = false;
 	});
 	
 	node.setup.register('host', function(conf) {
+		conf = conf || {};
 		// URL
 		if (!conf.host) {
 			if ('undefined' !== typeof window) {
@@ -4878,11 +5008,11 @@ var frozen = false;
 	node.setup.register('events', function(conf){
 		conf = conf || {};
 		if ('undefined' === conf.history) {
-			conf.events.history = false;
+			conf.history = false;
 		}
 		
 		if ('undefined' === conf.dumpEvents) {
-			conf.events.dumpEvents = false;
+			conf.dumpEvents = false;
 		}
 		
 		return conf;
@@ -4896,6 +5026,21 @@ var frozen = false;
  */	
 	node.setup.register('game', function(game) {
 		if (!game) return {};
+		
+		// Trying to parse the string, maybe it
+		// comes from a remote setup
+		if ('string' === typeof game) {
+			game = J.parse(game);
+			
+			if ('function' !== typeof game) {
+				node.err('Error while parsing the game object/string');
+				return false;
+			}
+			
+			// creates the object
+			game = new game();
+		}
+				
 		node.game = new Game(game);
 		node.emit('NODEGAME_GAME_CREATED');
 		return node.game;
@@ -4904,17 +5049,50 @@ var frozen = false;
 	node.setup.register('player', node.createPlayer);
 
 
+/**
+ * ### node.remoteSetup
+ * 
+ * Sends a setup configuration to a connected client
+ * 
+ * @param {string} property The feature to configure
+ * @param {mixed} options The value of the option to configure
+ * @param {string} to The id of the remote client to configure
+ * 
+ * @return{boolean} TRUE, if configuration is successful
+ *
+ * @see node.setup
+ */	
+	node.remoteSetup = function (property, options, to) {
+		if (!property) {
+			node.err('cannot send remote setup: empty property');
+			return false;
+		}
+		if (!to) {
+			node.err('cannot send remote setup: empty recipient');
+			return false;
+		}
+		var msg = node.msg.create({
+			target: node.target.SETUP,
+			to: to,
+			text: property,
+			data: options
+		});
+		
+		return node.socket.send(msg);
+	};
+		
+
 })(
 	'undefined' != typeof node ? node : module.exports
   , 'undefined' != typeof node ? node : module.parent.exports
 );
 /**
- * # Setup
+ * # Alias
  * 
  * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed 
  * 
- * `nodeGame` setup module
+ * `nodeGame` aliasing module
  * 
  * ---
  * 
@@ -5062,7 +5240,7 @@ var GameMsg = node.GameMsg,
  * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed 
  * 
- * `nodeGame` setup module
+ * `nodeGame` random operation module
  * 
  * ---
  * 
@@ -5118,7 +5296,7 @@ node.random = {};
 	'undefined' != typeof node ? node : module.exports
   , 'undefined' != typeof node ? node : module.parent.exports
 );
-// ## Game incoming listeners
+// # Incoming listeners
 // Incoming listeners are fired in response to incoming messages
 (function (node) {
 
@@ -5143,7 +5321,7 @@ node.random = {};
 
 	
 /**
- * ### in.say.PCONNECT
+ * ## in.say.PCONNECT
  * 
  * Adds a new player to the player list from the data contained in the message
  * 
@@ -5158,7 +5336,7 @@ node.random = {};
 	});	
 	
 /**
- * ### in.say.PDISCONNECT
+ * ## in.say.PDISCONNECT
  * 
  * Removes a player from the player list based on the data contained in the message
  * 
@@ -5173,7 +5351,7 @@ node.random = {};
 	});	
 
 /**
- * ### in.say.MCONNECT
+ * ## in.say.MCONNECT
  * 
  * Adds a new monitor to the monitor list from the data contained in the message
  * 
@@ -5187,7 +5365,7 @@ node.random = {};
 	});	
 		
 /**
- * ### in.say.MDISCONNECT
+ * ## in.say.MDISCONNECT
  * 
  * Removes a monitor from the player list based on the data contained in the message
  * 
@@ -5202,7 +5380,7 @@ node.random = {};
 			
 
 /**
- * ### in.say.PLIST
+ * ## in.say.PLIST
  * 
  * Creates a new player-list object from the data contained in the message
  * 
@@ -5216,7 +5394,7 @@ node.on( IN + say + 'PLIST', function (msg) {
 });	
 	
 /**
- * ### in.say.MLIST
+ * ## in.say.MLIST
  * 
  * Creates a new monitor-list object from the data contained in the message
  * 
@@ -5230,7 +5408,7 @@ node.on( IN + say + 'MLIST', function (msg) {
 });	
 	
 /**
- * ### in.get.DATA
+ * ## in.get.DATA
  * 
  * Experimental feature. Undocumented (for now)
  */ 
@@ -5243,7 +5421,7 @@ node.on( IN + get + 'DATA', function (msg) {
 });
 
 /**
- * ### in.set.STATE
+ * ## in.set.STATE
  * 
  * Adds an entry to the memory object 
  * 
@@ -5253,7 +5431,7 @@ node.on( IN + set + 'STATE', function (msg) {
 });
 
 /**
- * ### in.set.DATA
+ * ## in.set.DATA
  * 
  * Adds an entry to the memory object 
  * 
@@ -5263,7 +5441,7 @@ node.on( IN + set + 'DATA', function (msg) {
 });
 
 /**
- * ### in.say.STATE
+ * ## in.say.STATE
  * 
  * Updates the game state or updates a player's state in
  * the player-list object
@@ -5301,7 +5479,7 @@ node.on( IN + set + 'DATA', function (msg) {
 	});
 	
 /**
- * ### in.say.REDIRECT
+ * ## in.say.REDIRECT
  * 
  * Redirects to a new page
  * 
@@ -5319,7 +5497,7 @@ node.on( IN + say + 'REDIRECT', function (msg) {
 
 
 /**
- * ### in.say.SETUP
+ * ## in.say.SETUP
  * 
  * Setups a features of nodegame
  * 
@@ -5331,12 +5509,26 @@ node.on( IN + say + 'SETUP', function (msg) {
 	
 });	
 
-	
+
+/**
+ * ## in.say.SETUP
+ * 
+ * Setups a features of nodegame
+ * 
+ * @see node.setup
+ */
+node.on( IN + say + 'GAMECOMMAND', function (msg) {
+	if (!msg.text) return;
+	if (!node.gamecommand[msg.text]) return;
+	node.emit('NODEGAME_GAMECOMMAND_' + msg.text,msg.data);
+});	
+
 	node.log('incoming listeners added');
 	
 })('undefined' !== typeof node ? node : module.parent.exports); 
 // <!-- ends incoming listener -->
-// ## Game outgoing listeners
+// # Outgoing listeners
+// Outgoing listeners are fired when messages are sent
 
 (function (node) {
 
@@ -5354,28 +5546,10 @@ node.on( IN + say + 'SETUP', function (msg) {
 	var say = action.SAY + '.',
 		set = action.SET + '.',
 		get = action.GET + '.',
-		OUT  = GameMsg.OUT;
+		OUT  = node.OUT;
 	
-///** 
-// * ### out.say.HI
-// * 
-// * Updates the game-state of the game upon connection to a server
-// * 
-// */
-//node.on( OUT + say + 'HI', function() {
-//	// Enter the first state
-//	if (node.game.auto_step) {
-//		node.game.updateState(node.game.next());
-//	}
-//	else {
-//		// The game is ready to step when necessary;
-//		node.game.state.is = GameState.iss.LOADED;
-//		node.socket.sendSTATE(action.SAY, node.game.state);
-//	}
-//});
-
 /**
- * ### out.say.STATE
+ * ## out.say.STATE
  * 
  * Sends out a STATE message to the specified recipient
  * 
@@ -5388,7 +5562,7 @@ node.on( OUT + say + 'STATE', function (state, to) {
 });	
 
 /**
- * ### out.say.TXT
+ * ## out.say.TXT
  * 
  * Sends out a TXT message to the specified recipient
  */
@@ -5397,7 +5571,7 @@ node.on( OUT + say + 'TXT', function (text, to) {
 });
 
 /**
- * ### out.say.DATA
+ * ## out.say.DATA
  * 
  * Sends out a DATA message to the specified recipient
  */
@@ -5406,7 +5580,7 @@ node.on( OUT + say + 'DATA', function (data, to, key) {
 });
 
 /**
- * ### out.set.STATE
+ * ## out.set.STATE
  * 
  * Sends out a STATE message to the specified recipient
  * 
@@ -5419,20 +5593,20 @@ node.on( OUT + set + 'STATE', function (state, to) {
 });
 
 /**
- * ### out.set.DATA
+ * ## out.set.DATA
  * 
  * Sends out a DATA message to the specified recipient
  * 
  * The sent data will be stored in the memory of the recipient
  * 
- * 	@see Game.memory
+ * @see node.GameDB
  */
 node.on( OUT + set + 'DATA', function (data, to, key) {
 	node.socket.sendDATA(action.SET, data, to, key);
 });
 
 /**
- * ### out.get.DATA
+ * ## out.get.DATA
  * 
  * Issues a DATA request
  * 
@@ -5446,7 +5620,7 @@ node.log('outgoing listeners added');
 
 })('undefined' !== typeof node ? node : module.parent.exports); 
 // <!-- ends outgoing listener -->
-// ## Game internal listeners
+// # Internal listeners
 
 // Internal listeners are not directly associated to messages,
 // but they are usually responding to internal nodeGame events, 
@@ -5472,7 +5646,7 @@ node.log('outgoing listeners added');
 		OUT = node.OUT;
 	
 /**
- * ### STATEDONE
+ * ## STATEDONE
  * 
  * Fired when all the players in the player list have their
  * state set to DONE
@@ -5507,7 +5681,7 @@ node.on('STATEDONE', function() {
 });
 
 /**
- * ### DONE
+ * ## DONE
  * 
  * Updates and publishes that the client has successfully terminated a state 
  * 
@@ -5526,7 +5700,7 @@ node.on('DONE', function(p1, p2, p3) {
 	
 	if (done) ok = done.call(node.game, p1, p2, p3);
 	if (!ok) return;
-	node.game.state.is = GameState.iss.DONE;
+	node.game.state.is = node.is.DONE;
 	
 	// Call all the functions that want to do 
 	// something before changing state
@@ -5545,7 +5719,7 @@ node.on('DONE', function(p1, p2, p3) {
 });
 
 /**
- * ### PAUSE
+ * ## PAUSE
  * 
  * Sets the game to PAUSE and publishes the state
  * 
@@ -5556,10 +5730,10 @@ node.on('PAUSE', function(msg) {
 });
 
 /**
- * ### WINDOW_LOADED
+ * ## WINDOW_LOADED
  * 
  * Checks if the game is ready, and if so fires the LOADED event
- * 
+ *
  * @emit BEFORE_LOADING
  * @emit LOADED
  */
@@ -5568,10 +5742,10 @@ node.on('WINDOW_LOADED', function() {
 });
 
 /**
- * ### GAME_LOADED
+ * ## GAME_LOADED
  * 
  * Checks if the window was loaded, and if so fires the LOADED event
- * 
+ *
  * @emit BEFORE_LOADING
  * @emit LOADED
  */
@@ -5580,19 +5754,41 @@ node.on('GAME_LOADED', function() {
 });
 
 /**
- * ### LOADED
+ * ## LOADED
  * 
  * 
  */
 node.on('LOADED', function() {
 	node.emit('BEFORE_LOADING');
-	node.game.state.is =  GameState.iss.PLAYING;
+	node.game.state.is = node.is.PLAYING;
 	//TODO: the number of messages to emit to inform other players
 	// about its own state should be controlled. Observer is 0 
 	//node.game.publishState();
 	node.socket.clearBuffer();
 	
 });
+
+
+/**
+ * ## LOADED
+ * 
+ * 
+ */
+node.on('NODEGAME_GAMECOMMAND_' + node.gamecommand.start, function(options) {
+	
+	
+	node.emit('BEFORE_GAMECOMMAND', node.gamecommand.start, options);
+	
+	if (node.game.state.state !== 0) {
+		node.err('Game already started. Use restart if you want to start the game again');
+		return;
+	}
+	
+	node.game.start();
+	
+	
+});
+
 
 node.log('internal listeners added');
 	

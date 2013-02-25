@@ -85,7 +85,7 @@ node.Player = require('./lib/core/PlayerList').Player;
  * @api public
  */
 
- node.GameMsg = require('./lib/core/GameMsg').GameMsg;
+node.GameMsg = require('./lib/core/GameMsg').GameMsg;
 
 /**
  * ### node.GameLoop
