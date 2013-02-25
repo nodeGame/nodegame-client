@@ -5,6 +5,13 @@
  * 
  */
 
+if (!process.argv || !process.argv.length) {
+	console.log('No input argument. Aborting');
+	return;
+}
+
+var pathToMake = process.argv[1];
+
 /**
  * Module dependencies.
  */
@@ -31,6 +38,44 @@ var buildDir = rootDir + 'build/';
 function list(val) {
 	return val.split(',');
 }
+
+function copyBuildDirTo(targetDir) {
+	
+	if (!targetDir) {
+		console.log('You must specify a target directory for the \'copyto\' command');
+		return;
+	}
+	
+	targetDir = path.resolve(targetDir);
+
+	var stats = fs.lstatSync(targetDir);
+
+	if (!fs.existsSync(targetDir)) {
+		console.log(targetDir + ' does not exists')
+		return false;
+	}
+	
+	if (!stats.isDirectory()) {
+		console.log(targetDir + ' is not a directory');
+		return false;
+	}
+	
+	targetDir = targetDir + '/';
+	
+	console.log('Copying build directory of nodegame-client v.' + version + ' to ' + targetDir);
+	
+	var result = J.copyFromDir(buildDir, targetDir);
+	
+	if (result) {
+		console.log('Done');
+		return true;
+	} 
+	else {
+		console.log('An error has occurred');
+		return false;
+	}
+}
+
 
 program
   .version(version);
@@ -69,15 +114,22 @@ program
 	.option('-C, --clean', 'clean build directory')
 	.option('-A, --analyse', 'analyse build')
 	.option('-o, --output <file>', 'output file (without .js)')
+	.option('-t, --copyto <path>', 'copies the build to the specified path')
 	.action(function(env, options){
 		build(options);
+		
+		if (options.copyto) {
+			copyBuildDirTo(options.copyto);
+		}
 });
 		
 program  
-	.command('multibuild')
+	.command('multibuild [options]')
 	.description('Creates pre-defined nodeGame builds')
-	.action(function(){
+	.option('-t, --copyto <path>', 'copies the build to the specified path')
+	.action(function(env, options){
 		console.log('Multi-build for nodegame-client v.' + version);
+		
 		build({
 			all: true,
 			output: "nodegame-full",
@@ -94,7 +146,19 @@ program
 //		build_support({
 //			all: true,
 //		});
+		
+		if (options.copyto) {
+			copyBuildDirTo(options.copyto);
+		}
 });
+
+program  
+	.command('copyto <path>')
+	.description('Copies all the content of the build directory into the specified target directory')
+	.action(function(path) {
+		copyBuildDirTo(path);
+});
+
 
 program
 	.command('doc')
