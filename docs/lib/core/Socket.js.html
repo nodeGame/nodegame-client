@@ -145,7 +145,8 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
 </div>
@@ -248,9 +249,10 @@ MIT Licensed </p>
   
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;FIRST MESSAGE&#39;</span><span class="p">)</span>
   
-  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">secureParse</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+  <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">secureParse</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
   
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;FIRST MESSAGE parsed correctly&#39;</span><span class="p">)</span>
   <span class="kd">var</span> <span class="nx">sessionObj</span><span class="p">;</span>
   </pre></div>
         </td>
@@ -295,34 +297,18 @@ MIT Licensed </p>
       <span class="k">this</span><span class="p">.</span><span class="nx">sendHI</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">,</span> <span class="s1">&#39;ALL&#39;</span><span class="p">);</span>
     <span class="p">}</span>
     
-
     <span class="k">this</span><span class="p">.</span><span class="nx">attachMsgListeners</span><span class="p">();</span>
 
      <span class="p">}</span> 
 <span class="p">};</span>
 
 <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">attachMsgListeners</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;attaching FULL listeners&#39;</span><span class="p">);</span>
-  
   <span class="k">this</span><span class="p">.</span><span class="nx">onMessage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">onMessageFull</span><span class="p">;</span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_READY&#39;</span><span class="p">);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
-</div>
-<p>Ready to play
-node.emit('out.say.HI');</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">};</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_READY&#39;</span><span class="p">);</span>
+<span class="p">};</span>
 
 <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onMessageFull</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">secureParse</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-  
-  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;onMessage full&#39;</span><span class="p">)</span>
+  <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">secureParse</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
   
   <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Parsing successful</span></pre></div>
         </td>
@@ -330,16 +316,16 @@ node.emit('out.say.HI');</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
 <p>TODO: improve</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;emitting&#39;</span><span class="p">)</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">toInEvent</span><span class="p">(),</span> <span class="nx">msg</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;buffering: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;BUFFERING&#39;</span><span class="p">)</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;buffering: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
       <span class="nx">buffer</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
     <span class="p">}</span>
   <span class="p">}</span>
@@ -352,7 +338,7 @@ node.emit('out.say.HI');</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
 </div>
 <p>Setting global info</p>
         </td>
@@ -362,7 +348,7 @@ node.emit('out.say.HI');</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
 </div>
 <p>Keep serverid = msg.from for now</p>
         </td>
@@ -405,7 +391,8 @@ node.emit('out.say.HI');</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.emit</span>
+      <span class="dox_type">node.emit
+  </span>
     </div>
   </div>
 </div>
@@ -441,15 +428,17 @@ stores the session ids in the session object </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>msg</span>
+      <span class="dox_tag_name">msg</span>
       <span class="dox_type">GameMsg</span>
       <span>A game-msg</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, if session was correctly initialized</span>
+      <span>TRUE, if session was correctly initialized
+
+@see node.createPlayer</span>
     </div>
   </div>
 </div>
@@ -460,7 +449,7 @@ stores the session ids in the session object </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>Store server info</p>
         </td>
@@ -507,9 +496,11 @@ stores the session ids in the session object </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>The</span>
+      <span class="dox_tag_name">The</span>
       <span class="dox_type">GameMsg</span>
-      <span>game message to send</span>
+      <span>game message to send
+
+@see GameMsg</span>
     </div>
   </div>
 </div>
@@ -543,12 +534,12 @@ stores the session ids in the session object </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>from</span>
+      <span class="dox_tag_name">from</span>
       <span class="dox_type">string</span>
       <span>Optional. The message sender. Defaults node.player</span>
     </div>
     <div class="dox_tag_detail">
-      <span>to</span>
+      <span class="dox_tag_name">to</span>
       <span class="dox_type">string</span>
       <span>Optional. The recipient of the message. Defaults 'SERVER'</span>
     </div>
@@ -579,17 +570,17 @@ stores the session ids in the session object </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>action</span>
+      <span class="dox_tag_name">action</span>
       <span class="dox_type">string</span>
       <span>A nodeGame action (e.g. 'get' or 'set')</span>
     </div>
     <div class="dox_tag_detail">
-      <span>state</span>
+      <span class="dox_tag_name">state</span>
       <span class="dox_type">GameState</span>
       <span>The GameState object to send</span>
     </div>
     <div class="dox_tag_detail">
-      <span>to</span>
+      <span class="dox_tag_name">to</span>
       <span class="dox_type">string</span>
       <span>Optional. The recipient of the message.</span>
     </div>
@@ -618,12 +609,12 @@ stores the session ids in the session object </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>text</span>
+      <span class="dox_tag_name">text</span>
       <span class="dox_type">string</span>
       <span>Text to send</span>
     </div>
     <div class="dox_tag_detail">
-      <span>to</span>
+      <span class="dox_tag_name">to</span>
       <span class="dox_type">string</span>
       <span>Optional. The recipient of the message</span>
     </div>
@@ -652,22 +643,22 @@ stores the session ids in the session object </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>action</span>
+      <span class="dox_tag_name">action</span>
       <span class="dox_type">string</span>
       <span>Optional. A nodeGame action (e.g. 'get' or 'set'). Defaults 'say'</span>
     </div>
     <div class="dox_tag_detail">
-      <span>data</span>
+      <span class="dox_tag_name">data</span>
       <span class="dox_type">object</span>
       <span>An object to exchange</span>
     </div>
     <div class="dox_tag_detail">
-      <span>to</span>
+      <span class="dox_tag_name">to</span>
       <span class="dox_type">string</span>
       <span>Optional. The recipient of the message. Defaults 'SERVER'</span>
     </div>
     <div class="dox_tag_detail">
-      <span>text</span>
+      <span class="dox_tag_name">text</span>
       <span class="dox_type">string</span>
       <span>Optional. A descriptive text associated to the message.</span>
     </div>
@@ -686,7 +677,7 @@ stores the session ids in the session object </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>helping methods</p>
         </td>

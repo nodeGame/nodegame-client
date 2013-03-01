@@ -34,6 +34,9 @@
         <a href="#eventemitter.global">EventEmitter.global</a>
       </div>
       <div class="heading h3">
+        <a href="#eventemitter.local">EventEmitter.local</a>
+      </div>
+      <div class="heading h3">
         <a href="#eventemitter.history">EventEmitter.history</a>
       </div>
       <div class="heading h2">
@@ -62,6 +65,9 @@
       </div>
       <div class="heading h1">
         <a href="#eventhistory">EventHistory</a>
+      </div>
+      <div class="heading h3">
+        <a href="#eventhistory.history">EventHistory.history</a>
       </div>
       <div class="heading h1">
         <a href="#listener">Listener</a>
@@ -168,19 +174,17 @@ MIT Licensed</p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="eventemitter.local">
+  <h3>
+    <a href="#eventemitter.local" class="pilcrow">&#182;</a>
+    EventEmitter.local
+  </h3>
 </div>
-<div class="dox">
-  <div class="summary"><ul>
-<li>### EventEmitter.local</li>
-<li>
-<ul><li>Local listeners erased after every state update
-*</li></ul></li>
-</ul>
+
   </div>
-  <div class="body">
+  <div class="body"><p>Local listeners erased after every state update</p>
   </div>
 </div>
         </td>
@@ -200,13 +204,9 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>Database of emitted events</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">NDDB</span>
-<span class="nv">@see</span> <span class="n">EventEmitter</span><span class="o">.</span><span class="n">EventHistory</span>
-<span class="nv">@see</span> <span class="n">EventEmitter</span><span class="o">.</span><span class="n">store</span>
-</code></pre></div>
-
-
+<p>@see NDDB
+  @see EventEmitter.EventHistory
+  @see EventEmitter.store</p>
   </div>
 </div>
         </td>
@@ -249,18 +249,19 @@ whole length of the game</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>type</span>
+      <span class="dox_tag_name">type</span>
       <span class="dox_type">string</span>
       <span>The event name</span>
     </div>
     <div class="dox_tag_detail">
-      <span>listener</span>
+      <span class="dox_tag_name">listener</span>
       <span class="dox_type">function</span>
       <span>The function to fire</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">EventEmitter.addLocal</span>
+      <span class="dox_type">EventEmitter.addLocal
+  </span>
     </div>
   </div>
 </div>
@@ -296,18 +297,20 @@ registered </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>type</span>
+      <span class="dox_tag_name">type</span>
       <span class="dox_type">string</span>
       <span>The event name</span>
     </div>
     <div class="dox_tag_detail">
-      <span>listener</span>
+      <span class="dox_tag_name">listener</span>
       <span class="dox_type">function</span>
       <span>The function to fire</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">EventEmitter.add</span>
+      <span class="dox_type">EventEmitter.add
+
+  </span>
     </div>
   </div>
 </div>
@@ -338,22 +341,28 @@ registered </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>{string|object}</span>
-      <span class="dox_type">event</span>
-      <span>The event name or an object of the type</span>
+      <span class="dox_tag_name">event</span>
+      <span>{string|object} The event name or an object of the type
+
+
+<div class="highlight"><pre><code><span class="p">{</span> <span class="n">type:</span> <span class="s">&#39;myEvent&#39;</span><span class="p">,</span>
+  <span class="n">target:</span> <span class="n">this</span><span class="p">,</span> <span class="p">}</span> <span class="sr">//</span> <span class="n">optional</span>
+</code></pre></div>
+
+</span>
     </div>
     <div class="dox_tag_detail">
-      <span>p1</span>
+      <span class="dox_tag_name">p1</span>
       <span class="dox_type">object</span>
       <span>Optional. A parameter to be passed to the listener</span>
     </div>
     <div class="dox_tag_detail">
-      <span>p2</span>
+      <span class="dox_tag_name">p2</span>
       <span class="dox_type">object</span>
       <span>Optional. A parameter to be passed to the listener</span>
     </div>
     <div class="dox_tag_detail">
-      <span>p3</span>
+      <span class="dox_tag_name">p3</span>
       <span class="dox_type">object</span>
       <span>Optional. A parameter to be passed to the listener</span>
     </div>
@@ -384,11 +393,8 @@ registered </p>
 </div>
 <p>Log the event into node.history object, if present</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;node.conf.events object not found. Is everything all right?&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-          
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">)</span> <span class="p">{</span>
+            
           <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="nx">event</span><span class="o">:</span> <span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span></pre></div>
@@ -476,20 +482,19 @@ registered </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>type</span>
+      <span class="dox_tag_name">type</span>
       <span class="dox_type">string</span>
       <span>The event name</span>
     </div>
     <div class="dox_tag_detail">
-      <span>listener</span>
+      <span class="dox_tag_name">listener</span>
       <span class="dox_type">function</span>
       <span>Optional. The specific function to deregister </span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
-      <span class="dox_type">Boolean</span>
-      <span>TRUE, if the removal is successful</span>
+      <span class="dox_tag_name"></span>
+      <span>Boolean TRUE, if the removal is successful</span>
     </div>
   </div>
 </div>
@@ -617,7 +622,7 @@ registered </p>
 </div>
 
   </div>
-  <div class="body"><p>Prints to console all the registered functions</p>
+  <div class="body"><p>Prints to console all the registered functions </p>
   </div>
 </div>
         </td>
@@ -661,22 +666,20 @@ registered </p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="eventhistory.history">
+  <h3>
+    <a href="#eventhistory.history" class="pilcrow">&#182;</a>
+    EventHistory.history
+  </h3>
 </div>
-<div class="dox">
-  <div class="summary"><ul>
-<li>### EventHistory.history
-<ul><li>
-<ul><li>Database of emitted events</li></ul></li>
-<li>
-<ul><li>@see NDDB</li></ul></li>
-<li>@see EventEmitter.store
-*</li></ul></li>
-</ul>
+
   </div>
-  <div class="body">
+  <div class="body"><p>Database of emitted events</p>
+
+<p>@see NDDB
+  @see EventEmitter.store</p>
   </div>
 </div>
         </td>

@@ -37,7 +37,10 @@
         <a href="#node.memory.dump--node.js-">node.memory.dump (Node.JS)</a>
       </div>
       <div class="heading h3">
-        <a href="#node.memory.dumpallindexes--node.js-">node.memory.dumpAllIndexes (Node.JS)</a>
+        <a href="#node.memory.saveallindexes--node.js-">node.memory.saveAllIndexes (Node.JS)</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.memory.saveallindexestocsv--node.js-">node.memory.saveAllIndexesToCsv (Node.JS)</a>
       </div>
       <div class="heading h2">
         <a href="#helper-function">Helper function</a>
@@ -139,30 +142,32 @@ MIT Licensed </p>
 <p>It accepts a configuration object as third paramter. Available options:</p>
 
 <p><code>
-{ headers: ['A', 'B', 'C'],    // specify the headers directly
-  writeHeaders: false,         // default true,
-  flags: 'w',                 // default, 'a'
-  encoding: 'utf-8',         // default null
-  mode: 0777,                 // default 0666 
+{ headers: ['A', 'B', 'C'],  // specify the headers directly
+  writeHeaders: false,     // default true,
+  flags: 'w',         // default, 'a'
+  encoding: 'utf-8',     // default null
+  mode: 0777,         // default 0666 <br />
 }
-</code>     </p>
+</code>   </p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>path</span>
+      <span class="dox_tag_name">path</span>
       <span class="dox_type">string</span>
       <span>The path to the csv file</span>
     </div>
     <div class="dox_tag_detail">
-      <span>obj</span>
+      <span class="dox_tag_name">obj</span>
       <span class="dox_type">object</span>
       <span>The object to serialze as csv file</span>
     </div>
     <div class="dox_tag_detail">
-      <span>options</span>
+      <span class="dox_tag_name">options</span>
       <span class="dox_type">options</span>
-      <span>Optional. Configuration options</span>
+      <span>Optional. Configuration options
+
+@see <a href="http://nodejs.org/api/fs.html#fs_fs_createwritestream_path_options">node fs api</a></span>
     </div>
   </div>
 </div>
@@ -234,14 +239,16 @@ be specified in the <code>options</code> parameter.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>path</span>
+      <span class="dox_tag_name">path</span>
       <span class="dox_type">string</span>
       <span>The path to the csv file</span>
     </div>
     <div class="dox_tag_detail">
-      <span>options</span>
+      <span class="dox_tag_name">options</span>
       <span class="dox_type">options</span>
-      <span>Optional. Configuration options</span>
+      <span>Optional. Configuration options
+
+@see node.fs.writeCsv</span>
     </div>
   </div>
 </div>
@@ -261,39 +268,86 @@ be specified in the <code>options</code> parameter.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.memory.dumpallindexes--node.js-">
+<div class="pilwrap" id="node.memory.saveallindexes--node.js-">
   <h3>
-    <a href="#node.memory.dumpallindexes--node.js-" class="pilcrow">&#182;</a>
-    node.memory.dumpAllIndexes (Node.JS)
+    <a href="#node.memory.saveallindexes--node.js-" class="pilcrow">&#182;</a>
+    node.memory.saveAllIndexes (Node.JS)
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Serialezes as csv file each of the hashed indexes of the memory object</p>
+  <div class="body"><p>Serializes to JSON files all the hashed indexes of the memory object</p>
 
 <p>Each file is named after the name of the hashed property 
-and the index. E.g. state_3.1.1.csv, or player_18432986411.csv`, etc.</p>
+and the index. E.g. state_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>dir</span>
+      <span class="dox_tag_name">dir</span>
       <span class="dox_type">string</span>
       <span>The path to the folder in which all files will be saved</span>
     </div>
     <div class="dox_tag_detail">
-      <span>options</span>
+      <span class="dox_tag_name">options</span>
       <span class="dox_type">options</span>
       <span>Optional. Configuration options</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.memory.saveAllIndexesToCsv</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.fs.writeCsv
+  </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveAllIndexes</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">dir</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">saveAllIndexes</span><span class="p">(</span><span class="nx">dir</span><span class="p">);</span>
-  <span class="p">};</span>
-  
-  <span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveAllIndexesToCsv</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.memory.saveallindexestocsv--node.js-">
+  <h3>
+    <a href="#node.memory.saveallindexestocsv--node.js-" class="pilcrow">&#182;</a>
+    node.memory.saveAllIndexesToCsv (Node.JS)
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Serializes to CSV files all the hashed indexes of the memory object</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">dir</span>
+      <span class="dox_type">string</span>
+      <span>The path to the folder in which all files will be saved</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">options</span>
+      <span>Optional. Configuration options</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.memory.saveAllIndexes</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.fs.writeCsv
+    </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveAllIndexesToCsv</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">saveAllIndexes</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
   <span class="p">};</span>
   </pre></div>

@@ -27,9 +27,6 @@
       <div class="heading h3">
         <a href="#node.actions">node.actions</a>
       </div>
-      <div class="heading h2">
-        <a href="#semantics">Semantics</a>
-      </div>
       <div class="heading h3">
         <a href="#node.target">node.target</a>
       </div>
@@ -68,6 +65,15 @@
       </div>
       <div class="heading h4">
         <a href="#target.setup">target.SETUP</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.gamecommand">target.GAMECOMMAND</a>
+      </div>
+      <div class="heading h4">
+        <a href="#not-used-targets--for-future-development-">not used targets (for future development)</a>
+      </div>
+      <div class="heading h3">
+        <a href="#game-commands">Game commands</a>
       </div>
       <div class="heading h3">
         <a href="#direction">Direction</a>
@@ -150,14 +156,7 @@ MIT Licensed </p>
 message. It specify the nature of requests
 "Why the message was sent?"</p>
 
-
-<div class="pilwrap" id="semantics">
-  <h2>
-    <a href="#semantics" class="pilcrow">&#182;</a>
-    Semantics
-  </h2>
-</div>
-
+<p>Semantics:</p>
 
 <ul>
 <li>SET: Store / changes the value of a property in the receiver of the msg</li>
@@ -191,7 +190,7 @@ message. It specify the nature of requests
 for the message, and specifies the nature of the
 information carried in the message. </p>
 
-<p>It answers the question: "What is the content of the message?"</p>
+<p>It answers the question: "What is the content of the message?" </p>
   </div>
 </div>
         </td>
@@ -385,19 +384,39 @@ information carried in the message. </p>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+<div class="pilwrap" id="target.gamecommand">
+  <h4>
+    <a href="#target.gamecommand" class="pilcrow">&#182;</a>
+    target.GAMECOMMAND
+  </h4>
 </div>
-<p>TODO change in INFO</p>
+
+
+<p>Ask a client to start/pause/stop/resume the game    </p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">TXT</span>     <span class="o">=</span> <span class="s1">&#39;TXT&#39;</span><span class="p">;</span>  <span class="c1">// Text msg</span>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">GAMECOMMAND</span> <span class="o">=</span> <span class="s1">&#39;GAMECOMMAND&#39;</span><span class="p">;</span>  
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="not-used-targets--for-future-development-">
+  <h4>
+    <a href="#not-used-targets--for-future-development-" class="pilcrow">&#182;</a>
+    not used targets (for future development)
+  </h4>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">TXT</span>     <span class="o">=</span> <span class="s1">&#39;TXT&#39;</span><span class="p">;</span>  <span class="c1">// Text msg</span>
   </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>Still to implement</p>
         </td>
@@ -406,6 +425,39 @@ information carried in the message. </p>
 
   <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">WARN</span>    <span class="o">=</span> <span class="s1">&#39;WARN&#39;</span><span class="p">;</span> <span class="c1">// To do.</span>
   <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ERR</span>     <span class="o">=</span> <span class="s1">&#39;ERR&#39;</span><span class="p">;</span>  <span class="c1">// To do.</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="game-commands">
+  <h3>
+    <a href="#game-commands" class="pilcrow">&#182;</a>
+    Game commands
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><ul>
+<li>node.gamecommand.start</li>
+<li>node.gamecommand.pause</li>
+<li>node.gamecommand.resume</li>
+<li>node.gamecommand.stop</li>
+</ul>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">gamecommand</span> <span class="o">=</span> <span class="p">{</span>  
+      <span class="nx">start</span><span class="o">:</span> <span class="s1">&#39;start&#39;</span><span class="p">,</span>
+      <span class="nx">pause</span><span class="o">:</span> <span class="s1">&#39;pause&#39;</span><span class="p">,</span>
+      <span class="nx">resume</span><span class="o">:</span> <span class="s1">&#39;resume&#39;</span><span class="p">,</span>
+      <span class="nx">stop</span><span class="o">:</span> <span class="s1">&#39;stop&#39;</span><span class="p">,</span>
+      <span class="nx">restart</span><span class="o">:</span> <span class="s1">&#39;restart&#39;</span><span class="p">,</span>
+      <span class="nx">goto_state</span><span class="o">:</span> <span class="s1">&#39;goto_state&#39;</span>
+  <span class="p">};</span>
+    
+
+  </pre></div>
         </td>
       </tr>
       <tr>

@@ -15,7 +15,7 @@
 (function (node) {
 
 // ### version	
-node.version = '0.6.2';
+node.version = '0.6.3';
 
 
 // ## Objects

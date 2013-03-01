@@ -49,7 +49,10 @@
         <a href="#node.game">node.game</a>
       </div>
       <div class="heading h3">
-        <a href="#node.memory">node.memory</a>
+        <a href="#node.game.memory">node.game.memory</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.game.state">node.game.state</a>
       </div>
       <div class="heading h3">
         <a href="#node.store">node.store</a>
@@ -112,7 +115,7 @@ multiplayer games in the browser.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.6.0&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.6.3&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -161,7 +164,8 @@ proper listener functions </p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.EventEmitter</span>
+      <span class="dox_type">node.EventEmitter
+    </span>
     </div>
   </div>
 </div>
@@ -186,7 +190,8 @@ proper listener functions </p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.GameMsgGenerator</span>
+      <span class="dox_type">node.GameMsgGenerator
+    </span>
     </div>
   </div>
 </div>
@@ -211,7 +216,8 @@ proper listener functions </p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.GameSocketClient</span>
+      <span class="dox_type">node.GameSocketClient
+    </span>
     </div>
   </div>
 </div>
@@ -257,7 +263,8 @@ proper listener functions </p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.PlayerList.Player</span>
+      <span class="dox_type">node.PlayerList.Player
+  </span>
     </div>
   </div>
 </div>
@@ -281,7 +288,8 @@ proper listener functions </p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.Game</span>
+      <span class="dox_type">node.Game
+  </span>
     </div>
   </div>
 </div>
@@ -292,10 +300,10 @@ proper listener functions </p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.memory">
+<div class="pilwrap" id="node.game.memory">
   <h3>
-    <a href="#node.memory" class="pilcrow">&#182;</a>
-    node.memory
+    <a href="#node.game.memory" class="pilcrow">&#182;</a>
+    node.game.memory
   </h3>
 </div>
 
@@ -305,12 +313,38 @@ proper listener functions </p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.GameDB</span>
+      <span class="dox_type">node.GameDB
+  </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.game.state">
+  <h3>
+    <a href="#node.game.state" class="pilcrow">&#182;</a>
+    node.game.state
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Keeps track of the state of the game</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.GameState
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -330,7 +364,8 @@ to the browser local database or to a cookie</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">shelf.js</span>
+      <span class="dox_type">shelf.js
+  </span>
     </div>
   </div>
 </div>
@@ -355,7 +390,8 @@ the settings in <code>node.conf</code>.</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Setup</span>
+      <span class="dox_type">Setup
+  </span>
     </div>
   </div>
 </div>
@@ -379,7 +415,8 @@ the settings in <code>node.conf</code>.</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Setup</span>
+      <span class="dox_type">Setup
+  </span>
     </div>
   </div>
 </div>
@@ -423,7 +460,7 @@ the settings in <code>node.conf</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <!-- Node.js -->
         </td>
@@ -476,7 +513,7 @@ the settings in <code>node.conf</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <!-- Browser -->
         </td>

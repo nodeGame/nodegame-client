@@ -88,20 +88,20 @@ MIT Licensed </p>
 
 <p>Representation of the state of a game: </p>
 
-
-<div class="highlight"><pre><code><span class="sb">`state`</span><span class="p">:</span> <span class="n">the</span> <span class="n">higher</span><span class="o">-</span><span class="n">level</span> <span class="n">building</span> <span class="n">blocks</span> <span class="n">of</span> <span class="n">a</span> <span class="n">game</span>
-<span class="sb">`step`</span><span class="p">:</span> <span class="n">the</span> <span class="n">sub</span><span class="o">-</span><span class="n">unit</span> <span class="n">of</span> <span class="n">a</span> <span class="n">state</span>
-<span class="sb">`round`</span><span class="p">:</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">repetition</span> <span class="k">for</span> <span class="n">a</span> <span class="n">state</span><span class="o">.</span> <span class="n">Defaults</span> <span class="n">round</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="sb">`is`</span><span class="p">:</span> <span class="n">the</span> <span class="o">*</span><span class="n">load</span><span class="o">-</span><span class="n">lavel</span><span class="o">*</span> <span class="n">of</span> <span class="n">the</span> <span class="n">game</span> <span class="n">as</span> <span class="n">expressed</span> <span class="n">in</span> <span class="sb">`node.is`</span>
-<span class="sb">`paused`</span><span class="p">:</span> <span class="n">TRUE</span> <span class="k">if</span> <span class="n">the</span> <span class="n">game</span> <span class="n">is</span> <span class="n">paused</span>
-</code></pre></div>
-
-
+<p><code>state</code>: the higher-level building blocks of a game
+  <code>step</code>: the sub-unit of a state
+  <code>round</code>: the number of repetition for a state. Defaults round = 1
+  <code>is</code>: the <em>load-lavel</em> of the game as expressed in <code>node.is</code>
+  <code>paused</code>: TRUE if the game is paused</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">GameLoop</span>
+      <span class="dox_type">GameLoop
+
+---
+
+  </span>
     </div>
   </div>
 </div>
@@ -152,11 +152,7 @@ MIT Licensed </p>
   </div>
   <div class="body"><p>Default hash string for game-states</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameState</span><span class="o">.</span><span class="n">toHash</span>
-</code></pre></div>
-
-
+<p>@see GameState.toHash</p>
   </div>
 </div>
         </td>
@@ -184,10 +180,12 @@ object are set to 0</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gs</span>
+      <span class="dox_tag_name">gs</span>
       <span class="dox_type">object</span>
       <span class="dox_type">string</span>
-      <span>An object literal | hash string representing the game state</span>
+      <span>An object literal | hash string representing the game state
+
+@see GameState.defaults.hash </span>
     </div>
   </div>
 </div>
@@ -221,11 +219,7 @@ object are set to 0</p>
   </div>
   <div class="body"><p>The N-th game-block (state) in the game-loop currently being executed</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameLoop</span>
-</code></pre></div>
-
-
+<p>@see GameLoop</p>
   </div>
 </div>
         </td>
@@ -245,11 +239,7 @@ object are set to 0</p>
   </div>
   <div class="body"><p>The N-th game-block (step) nested in the current state</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameState</span><span class="o">.</span><span class="n">state</span>
-</code></pre></div>
-
-
+<p>@see GameState.state</p>
   </div>
 </div>
         </td>
@@ -267,7 +257,7 @@ object are set to 0</p>
 </div>
 
   </div>
-  <div class="body"><p>The number of times the current state was repeated</p>
+  <div class="body"><p>The number of times the current state was repeated </p>
   </div>
 </div>
         </td>
@@ -288,11 +278,7 @@ object are set to 0</p>
   </div>
   <div class="body"><p>The state of the nodeGame engine</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">is</span>
-</code></pre></div>
-
-
+<p>@see node.is</p>
   </div>
 </div>
         </td>
@@ -352,7 +338,7 @@ object are set to 0</p>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
       <span>out The string representation of the state of the GameState</span>
     </div>
@@ -385,19 +371,20 @@ according to the input string</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>str</span>
+      <span class="dox_tag_name">str</span>
       <span class="dox_type">string</span>
       <span>The hash code</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
       <span>hash The hashed game states</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">GameState.toHash (static)</span>
+      <span class="dox_type">GameState.toHash (static)
+  </span>
     </div>
   </div>
 </div>
@@ -423,28 +410,26 @@ according to the input string. </p>
 
 <p>The following characters are valid to determine the hash string</p>
 
-
-<div class="highlight"><pre><code><span class="o">-</span> <span class="n">S:</span> <span class="n">state</span>
-<span class="o">-</span> <span class="n">s:</span> <span class="n">step</span>
-<span class="o">-</span> <span class="n">r:</span> <span class="n">round</span>
-<span class="o">-</span> <span class="n">i:</span> <span class="n">is</span>
-<span class="o">-</span> <span class="n">P:</span> <span class="n">paused</span>
-</code></pre></div>
-
-
+<ul>
+<li>S: state</li>
+<li>s: step</li>
+<li>r: round</li>
+<li>i: is</li>
+<li>P: paused</li>
+</ul>
 
 <p>E.g. </p>
 
 
-<div class="highlight"><pre><code>        <span class="kd">var</span> <span class="nx">gs</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
-                            <span class="nx">round</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-                            <span class="nx">state</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
-                            <span class="nx">step</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-                            <span class="nx">is</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
-                            <span class="nx">paused</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-        <span class="p">});</span>
+<div class="highlight"><pre><code>    <span class="kd">var</span> <span class="nx">gs</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
+              <span class="nx">round</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+              <span class="nx">state</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+              <span class="nx">step</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+              <span class="nx">is</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
+              <span class="nx">paused</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="p">});</span>
 
-        <span class="nx">gs</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;(R) S.s&#39;</span><span class="p">);</span> <span class="c1">// (1) 2.1</span>
+    <span class="nx">gs</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;(R) S.s&#39;</span><span class="p">);</span> <span class="c1">// (1) 2.1</span>
 </code></pre></div>
 
 
@@ -452,18 +437,18 @@ according to the input string. </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gs</span>
+      <span class="dox_tag_name">gs</span>
       <span class="dox_type">GameState</span>
       <span>The game state to hash</span>
     </div>
     <div class="dox_tag_detail">
-      <span>str</span>
+      <span class="dox_tag_name">str</span>
       <span class="dox_type">string</span>
       <span>The hash code</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
       <span>hash The hashed game states</span>
     </div>
@@ -514,31 +499,33 @@ Refer to <code>GameState.toHash</code> for the semantic of the characters.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gs1</span>
+      <span class="dox_tag_name">gs1</span>
       <span class="dox_type">GameState</span>
       <span class="dox_type">string</span>
       <span>The first GameState object|string to compare</span>
     </div>
     <div class="dox_tag_detail">
-      <span>gs2</span>
+      <span class="dox_tag_name">gs2</span>
       <span class="dox_type">GameState</span>
       <span class="dox_type">string</span>
       <span>The second GameState object|string to compare</span>
     </div>
     <div class="dox_tag_detail">
-      <span>strict</span>
+      <span class="dox_tag_name">strict</span>
       <span class="dox_type">Boolean</span>
       <span>If TRUE, also the <code>is</code> attribute is checked</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">Number</span>
       <span>result The result of the comparison</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">GameState.toHash (static)</span>
+      <span class="dox_type">GameState.toHash (static)
+
+  </span>
     </div>
   </div>
 </div>
@@ -620,13 +607,13 @@ Refer to <code>GameState.toHash</code> for the semantic of the characters.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gs</span>
+      <span class="dox_tag_name">gs</span>
       <span class="dox_type">GameState</span>
-      <span>The object to convert to string    </span>
+      <span>The object to convert to string  </span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
       <span>out The string representation of a GameState object</span>
     </div>

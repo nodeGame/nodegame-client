@@ -127,25 +127,20 @@ after the alias. The alias can be used as a shortcut to register
 to new listeners on the given events.</p>
 
 <p>```javascript
-    node.alias('myAlias', ['in.say.DATA', 'myEvent']);</p>
+  node.alias('myAlias', ['in.say.DATA', 'myEvent']);</p>
 
-
-<div class="highlight"><pre><code><span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="o">.</span><span class="n">myAlias</span><span class="p">(</span><span class="n">function</span><span class="p">(){</span> <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;myEvent or in.say.DATA&#39;</span><span class="p">);</span> <span class="p">};</span>
-</code></pre></div>
-
-
-
-<p>```    </p>
+<p>node.on.myAlias(function(){ console.log('myEvent or in.say.DATA'); };
+```  </p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>alias</span>
+      <span class="dox_tag_name">alias</span>
       <span class="dox_type">string</span>
       <span>The name of alias</span>
     </div>
     <div class="dox_tag_detail">
-      <span>The</span>
+      <span class="dox_tag_name">The</span>
       <span class="dox_type">string</span>
       <span class="dox_type">array</span>
       <span>events under which the listeners will be registered to</span>
@@ -191,7 +186,7 @@ and that it is ready to advance to the next one.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>param</span>
+      <span class="dox_tag_name">param</span>
       <span class="dox_type">mixed</span>
       <span>Optional. An additional parameter passed along</span>
     </div>

@@ -110,12 +110,8 @@ MIT Licensed </p>
 
 <p>Uses GameState.compare to compare the state property of each entry.</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">GameBit</span>
-<span class="nv">@see</span> <span class="n">GameState</span><span class="o">.</span><span class="n">compare</span>
-</code></pre></div>
-
-
+<p>@see GameBit
+  @see GameState.compare</p>
 
 <hr />
   </div>
@@ -178,20 +174,22 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>options</span>
+      <span class="dox_tag_name">options</span>
       <span class="dox_type">object</span>
       <span>Optional. A configuration object</span>
     </div>
     <div class="dox_tag_detail">
-      <span>db</span>
+      <span class="dox_tag_name">db</span>
       <span class="dox_type">array</span>
       <span>Optional. An initial array of items to import into the database</span>
     </div>
     <div class="dox_tag_detail">
-      <span>parent</span>
+      <span class="dox_tag_name">parent</span>
       <span class="dox_type">NDDB</span>
       <span class="dox_type">GameDB</span>
-      <span>Optional. A reference to the parent database</span>
+      <span>Optional. A reference to the parent database
+
+@see NDDB constructor </span>
     </div>
   </div>
 </div>
@@ -265,30 +263,32 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>key</span>
+      <span class="dox_tag_name">key</span>
       <span class="dox_type">string</span>
       <span>An alphanumeric id for the entry</span>
     </div>
     <div class="dox_tag_detail">
-      <span>value</span>
+      <span class="dox_tag_name">value</span>
       <span class="dox_type">mixed</span>
       <span>Optional. The value to store</span>
     </div>
     <div class="dox_tag_detail">
-      <span>player</span>
+      <span class="dox_tag_name">player</span>
       <span class="dox_type">Player</span>
       <span>Optional. The player associated to the entry. Defaults, node.player</span>
     </div>
     <div class="dox_tag_detail">
-      <span>player</span>
+      <span class="dox_tag_name">player</span>
       <span class="dox_type">GameState</span>
       <span>Optional. The state associated to the entry. Defaults, node.game.state</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, if insertion was successful</span>
+      <span>TRUE, if insertion was successful
+
+@see GameBit</span>
     </div>
   </div>
 </div>
@@ -339,7 +339,7 @@ MIT Licensed </p>
 <li>player Player</li>
 <li>key </li>
 <li>value</li>
-<li>time</li>
+<li>time </li>
 </ul>
   </div>
 </div>
@@ -401,7 +401,7 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
       <span>string representation of the instance of GameBit</span>
     </div>
@@ -435,25 +435,30 @@ is used for comparison</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gb1</span>
+      <span class="dox_tag_name">gb1</span>
       <span class="dox_type">GameBit</span>
       <span>The first game-bit to compare</span>
     </div>
     <div class="dox_tag_detail">
-      <span>gb2</span>
+      <span class="dox_tag_name">gb2</span>
       <span class="dox_type">GameBit</span>
       <span>The second game-bit to compare</span>
     </div>
     <div class="dox_tag_detail">
-      <span>strict</span>
+      <span class="dox_tag_name">strict</span>
       <span class="dox_type">boolean</span>
       <span>Optional. If TRUE, compares also the <code>value</code> property</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, if the two objects are equals</span>
+      <span>TRUE, if the two objects are equals
+
+@see GameBit.comparePlayer
+  @see GameBit.compareState
+  @see GameBit.compareKey
+  @see GameBit.compareValue</span>
     </div>
   </div>
 </div>
@@ -493,18 +498,18 @@ is used for comparison</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gb1</span>
+      <span class="dox_tag_name">gb1</span>
       <span class="dox_type">GameBit</span>
       <span>The first game-bit to compare</span>
     </div>
     <div class="dox_tag_detail">
-      <span>gb2</span>
+      <span class="dox_tag_name">gb2</span>
       <span class="dox_type">GameBit</span>
       <span>The second game-bit to compare</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
       <span>The result of the comparison</span>
     </div>
@@ -540,20 +545,22 @@ is used for comparison</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gb1</span>
+      <span class="dox_tag_name">gb1</span>
       <span class="dox_type">GameBit</span>
       <span>The first game-bit to compare</span>
     </div>
     <div class="dox_tag_detail">
-      <span>gb2</span>
+      <span class="dox_tag_name">gb2</span>
       <span class="dox_type">GameBit</span>
       <span>The second game-bit to compare</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
-      <span>The result of the comparison</span>
+      <span>The result of the comparison
+
+@see GameState.compare</span>
     </div>
   </div>
 </div>
@@ -587,18 +594,18 @@ is used for comparison</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gb1</span>
+      <span class="dox_tag_name">gb1</span>
       <span class="dox_type">GameBit</span>
       <span>The first game-bit to compare</span>
     </div>
     <div class="dox_tag_detail">
-      <span>gb2</span>
+      <span class="dox_tag_name">gb2</span>
       <span class="dox_type">GameBit</span>
       <span>The second game-bit to compare</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
       <span>The result of the comparison</span>
     </div>
@@ -643,20 +650,22 @@ for objects. </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gb1</span>
+      <span class="dox_tag_name">gb1</span>
       <span class="dox_type">GameBit</span>
       <span>The first game-bit to compare</span>
     </div>
     <div class="dox_tag_detail">
-      <span>gb2</span>
+      <span class="dox_tag_name">gb2</span>
       <span class="dox_type">GameBit</span>
       <span>The second game-bit to compare</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
-      <span>The result of the comparison</span>
+      <span>The result of the comparison
+
+@see JSUS.equals</span>
     </div>
   </div>
 </div>

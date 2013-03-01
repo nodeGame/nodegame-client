@@ -118,6 +118,8 @@ line, multiplayer games in the browser.</p>
   
   <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Socket</span><span class="p">();</span>
   
+  <span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Game</span><span class="p">();</span>
+  
   </pre></div>
         </td>
       </tr>
@@ -151,24 +153,20 @@ line, multiplayer games in the browser.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>{string}</span>
-      <span class="dox_type">env</span>
-      <span>The name of the environment</span>
+      <span class="dox_tag_name">env</span>
+      <span>{string} The name of the environment</span>
     </div>
     <div class="dox_tag_detail">
-      <span>{function}</span>
-      <span class="dox_type">func</span>
-      <span>The callback function to execute</span>
+      <span class="dox_tag_name">func</span>
+      <span>{function} The callback function to execute</span>
     </div>
     <div class="dox_tag_detail">
-      <span>{object}</span>
-      <span class="dox_type">ctx</span>
-      <span>Optional. The context of execution</span>
+      <span class="dox_tag_name">ctx</span>
+      <span>{object} Optional. The context of execution</span>
     </div>
     <div class="dox_tag_detail">
-      <span>{array}</span>
-      <span class="dox_type">params</span>
-      <span>Optional. An array of additional parameters for the callback</span>
+      <span class="dox_tag_name">params</span>
+      <span>{array} Optional. An array of additional parameters for the callback</span>
     </div>
   </div>
 </div>
@@ -280,12 +278,12 @@ set in other sessions (recovery)
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>conf</span>
+      <span class="dox_tag_name">conf</span>
       <span class="dox_type">object</span>
       <span>A configuration object</span>
     </div>
     <div class="dox_tag_detail">
-      <span>game</span>
+      <span class="dox_tag_name">game</span>
       <span class="dox_type">object</span>
       <span>The game object</span>
     </div>
@@ -293,8 +291,9 @@ set in other sessions (recovery)
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span> 
-    <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_CONNECTED&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">url</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_CONNECTED&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
   <span class="p">};</span>  
 
   </pre></div>
@@ -316,12 +315,12 @@ set in other sessions (recovery)
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>conf</span>
+      <span class="dox_tag_name">conf</span>
       <span class="dox_type">object</span>
       <span>A configuration object</span>
     </div>
     <div class="dox_tag_detail">
-      <span>game</span>
+      <span class="dox_tag_name">game</span>
       <span class="dox_type">object</span>
       <span>The game object</span>
     </div>
@@ -331,23 +330,8 @@ set in other sessions (recovery)
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">play</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>  
     
     <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">game</span><span class="p">(</span><span class="nx">game</span><span class="p">);</span>
-    </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
-</div>
-<p>INIT the game</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
     
-    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">is</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADED</span><span class="p">;</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendSTATE</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>
-    
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;game loaded...&#39;</span><span class="p">);</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;ready.&#39;</span><span class="p">);</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
   <span class="p">};</span>
   </pre></div>
         </td>
@@ -368,7 +352,7 @@ set in other sessions (recovery)
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>rest</span>
+      <span class="dox_tag_name">rest</span>
       <span class="dox_type">boolean</span>
       <span>TRUE, to erase the game memory before update the game state</span>
     </div>
@@ -399,22 +383,22 @@ set in other sessions (recovery)
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>event</span>
+      <span class="dox_tag_name">event</span>
       <span class="dox_type">string</span>
       <span>The name of the event to emit</span>
     </div>
     <div class="dox_tag_detail">
-      <span>p1</span>
+      <span class="dox_tag_name">p1</span>
       <span class="dox_type">object</span>
       <span>Optional. A parameter to be passed to the listener</span>
     </div>
     <div class="dox_tag_detail">
-      <span>p2</span>
+      <span class="dox_tag_name">p2</span>
       <span class="dox_type">object</span>
       <span>Optional. A parameter to be passed to the listener</span>
     </div>
     <div class="dox_tag_detail">
-      <span>p3</span>
+      <span class="dox_tag_name">p3</span>
       <span class="dox_type">object</span>
       <span>Optional. A parameter to be passed to the listener</span>
     </div>
@@ -443,17 +427,17 @@ set in other sessions (recovery)
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>data</span>
+      <span class="dox_tag_name">data</span>
       <span class="dox_type">mixed</span>
       <span>The content of the DATA message</span>
     </div>
     <div class="dox_tag_detail">
-      <span>what</span>
+      <span class="dox_tag_name">what</span>
       <span class="dox_type">string</span>
       <span>The label associated to the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span>whom</span>
+      <span class="dox_tag_name">whom</span>
       <span class="dox_type">string</span>
       <span>Optional. The recipient of the message</span>
     </div>
@@ -482,12 +466,12 @@ set in other sessions (recovery)
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>key</span>
+      <span class="dox_tag_name">key</span>
       <span class="dox_type">string</span>
       <span>An alphanumeric (must not be unique)</span>
     </div>
     <div class="dox_tag_detail">
-      <span>The</span>
+      <span class="dox_tag_name">The</span>
       <span class="dox_type">mixed</span>
       <span>value to store (can be of any type)</span>
     </div>
@@ -500,7 +484,7 @@ set in other sessions (recovery)
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>TODO: parameter to say who will get the msg</p>
         </td>
@@ -525,12 +509,12 @@ set in other sessions (recovery)
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>key</span>
+      <span class="dox_tag_name">key</span>
       <span class="dox_type">string</span>
       <span>The label of the GET message</span>
     </div>
     <div class="dox_tag_detail">
-      <span>func</span>
+      <span class="dox_tag_name">func</span>
       <span class="dox_type">function</span>
       <span>The callback function to handle the return message</span>
     </div>
@@ -575,12 +559,12 @@ to its next stage. </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>event</span>
+      <span class="dox_tag_name">event</span>
       <span class="dox_type">string</span>
       <span>The name of the event</span>
     </div>
     <div class="dox_tag_detail">
-      <span>listener</span>
+      <span class="dox_tag_name">listener</span>
       <span class="dox_type">function</span>
       <span>The callback function</span>
     </div>
@@ -603,7 +587,7 @@ to its next stage. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <p>It is in the init function;</p>
         </td>
@@ -633,12 +617,12 @@ after its first invocation</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>event</span>
+      <span class="dox_tag_name">event</span>
       <span class="dox_type">string</span>
       <span>The name of the event</span>
     </div>
     <div class="dox_tag_detail">
-      <span>listener</span>
+      <span class="dox_tag_name">listener</span>
       <span class="dox_type">function</span>
       <span>The callback function</span>
     </div>
@@ -648,7 +632,8 @@ after its first invocation</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.off</span>
+      <span class="dox_type">node.off
+      </span>
     </div>
   </div>
 </div>
@@ -679,12 +664,12 @@ after its first invocation</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>event</span>
+      <span class="dox_tag_name">event</span>
       <span class="dox_type">string</span>
       <span>The name of the event</span>
     </div>
     <div class="dox_tag_detail">
-      <span>listener</span>
+      <span class="dox_tag_name">listener</span>
       <span class="dox_type">function</span>
       <span>The callback function</span>
     </div>
@@ -694,7 +679,8 @@ after its first invocation</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.EventEmitter.remove</span>
+      <span class="dox_type">node.EventEmitter.remove
+        </span>
     </div>
   </div>
 </div>
@@ -726,12 +712,8 @@ other.</p>
 
 <p>Examples</p>
 
-
-<div class="highlight"><pre><code><span class="sr">//</span> <span class="n">Redirect</span> <span class="n">to</span> <span class="n">http:</span><span class="sr">//m</span><span class="n">ydomain</span><span class="sr">/mygame/missi</span><span class="n">ng_auth</span>
-<span class="n">node</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="s">&#39;missing_auth&#39;</span><span class="p">,</span> <span class="s">&#39;xxx&#39;</span><span class="p">);</span> 
-</code></pre></div>
-
-
+<p>// Redirect to <a href='http://mydomain/mygame/missing_auth'>http://mydomain/mygame/missing_auth</a>
+  node.redirect('missing_auth', 'xxx'); </p>
 
 <p>// Redirect to external urls
  node.redirect('<a href='http://www.google.com'>http://www.google.com</a>');</p>
@@ -739,18 +721,18 @@ other.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>url</span>
+      <span class="dox_tag_name">url</span>
       <span class="dox_type">string</span>
       <span>the url of the redirection</span>
     </div>
     <div class="dox_tag_detail">
-      <span>who</span>
+      <span class="dox_tag_name">who</span>
       <span class="dox_type">string</span>
       <span>A player id or 'ALL'</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
       <span>TRUE, if the redirect message is sent</span>
     </div>

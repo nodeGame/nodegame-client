@@ -73,6 +73,9 @@
         <a href="#game.init">Game.init</a>
       </div>
       <div class="heading h3">
+        <a href="#game.start">Game.start</a>
+      </div>
+      <div class="heading h3">
         <a href="#game.pause">Game.pause</a>
       </div>
       <div class="heading h3">
@@ -188,7 +191,7 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>settings</span>
+      <span class="dox_tag_name">settings</span>
       <span class="dox_type">object</span>
       <span>Optional. A configuration object</span>
     </div>
@@ -228,7 +231,8 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
 </div>
@@ -262,7 +266,8 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
 </div>
@@ -290,8 +295,7 @@ MIT Licensed </p>
 </div>
 
   </div>
-
-<p><div class="body"><p>An object containing the game logic </p>
+  <div class="body"><p>An object containing the game logic </p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -300,10 +304,13 @@ MIT Licensed </p>
     </div>
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
-</div><!-- support for deprecated options loops --></p>
+</div>
+
+<!-- support for deprecated options loops -->
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">gameLoop</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameLoop</span><span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">loop</span> <span class="o">||</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">loops</span><span class="p">);</span>
   <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
@@ -336,7 +343,8 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
 </div>
@@ -373,7 +381,8 @@ MIT Licensed </p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </span>
   </div>
 </div>
@@ -415,7 +424,8 @@ instead.</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Game.isReady();</span>
+      <span class="dox_type">Game.isReady();
+</span>
     </div>
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
@@ -582,11 +592,7 @@ message from the server, or checking the STATE of the other players. </p>
 <p>In the server logic the content of SET messages are
 automatically inserted in this object</p>
 
-
-<div class="highlight"><pre><code><span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">set</span>
-</code></pre></div>
-
-
+<p>@see node.set</p>
   </div>
 </div>
         </td>
@@ -631,6 +637,67 @@ stay valid throughout the game.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="game.start">
+  <h3>
+    <a href="#game.start" class="pilcrow">&#182;</a>
+    Game.start
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Starts the game </p>
+
+<p>Calls the init function, sets the state as <code>node.is.LOADED</code>
+and notifies the server. </p>
+
+<p>Important: it does not use <code>Game.publishState</code> because that is
+just for change of state after the game has started</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.play</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.publishState
+
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>INIT the game</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">updateState</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="s2">&quot;1.1.1&quot;</span><span class="p">));</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<p>this.state.is = node.is.LOADED;
+node.socket.sendSTATE(node.action.SAY, node.game.state);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;game started&#39;</span><span class="p">);</span>
+<span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -696,16 +763,19 @@ in the game-loop before returning the state</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>N</span>
+      <span class="dox_tag_name">N</span>
       <span class="dox_type">number</span>
       <span>Optional. The number of steps to take in the game-loop. Defaults 1</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
       <span class="dox_type">GameState</span>
-      <span>The next state, or FALSE if it does not exist</span>
+      <span>The next state, or FALSE if it does not exist
+
+@see GameState
+  @see Game.gameLoop</span>
     </div>
   </div>
 </div>
@@ -735,16 +805,19 @@ backward in the game-loop before returning the state</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>times</span>
+      <span class="dox_tag_name">times</span>
       <span class="dox_type">number</span>
       <span>Optional. The number of steps to take in the game-loop. Defaults 1</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
       <span class="dox_type">GameState</span>
-      <span>The previous state, or FALSE if it does not exist</span>
+      <span>The previous state, or FALSE if it does not exist
+
+@see GameState
+  @see Game.gameLoop</span>
     </div>
   </div>
 </div>
@@ -776,15 +849,18 @@ forward in the game-loop</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>jump</span>
+      <span class="dox_tag_name">jump</span>
       <span class="dox_type">number</span>
       <span>The number of steps to take in the game-loop</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, if the game succesfully jumped to the desired state</span>
+      <span>TRUE, if the game succesfully jumped to the desired state
+
+@see GameState
+  @see Game.gameLoop</span>
     </div>
   </div>
 </div>
@@ -819,6 +895,11 @@ but the STATECHANGE event is emitted anyway </p>
     <div class="dox_tag_detail">
       <span class="dox_type">GameState</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type"> Game.observer
+  </span>
+    </div>
   </div>
 </div>
         </td>
@@ -828,7 +909,7 @@ but the STATECHANGE event is emitted anyway </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <!-- Important: SAY -->
         </td>
@@ -859,7 +940,7 @@ but the STATECHANGE event is emitted anyway </p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>state</span>
+      <span class="dox_tag_name">state</span>
       <span class="dox_type">GameState</span>
       <span>The state to load and run</span>
     </div>
@@ -868,7 +949,7 @@ but the STATECHANGE event is emitted anyway </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateState</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
   
-  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;New state is going to be &#39;</span> <span class="o">+</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">state</span><span class="p">),</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;New state is going to be &#39;</span> <span class="o">+</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">state</span><span class="p">),</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
   
   <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
@@ -878,13 +959,13 @@ but the STATECHANGE event is emitted anyway </p>
     <span class="p">}</span>
   <span class="p">}</span>   
   <span class="k">else</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Error in stepping&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span></pre></div>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Error in stepping&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>TODO: implement sendERR</p>
         </td>
@@ -910,15 +991,18 @@ specified game-state</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gameState</span>
+      <span class="dox_tag_name">gameState</span>
       <span class="dox_type">GameState</span>
       <span>Optional. The GameState to run</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">Boolean</span>
-      <span>FALSE, if the execution encountered an error</span>
+      <span>FALSE, if the execution encountered an error
+
+@see Game.gameLoop
+  @see GameState</span>
     </div>
   </div>
 </div>
@@ -929,13 +1013,16 @@ specified game-state</p>
   <span class="k">if</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">)</span> <span class="p">{</span>
     
     <span class="kd">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getFunction</span><span class="p">(</span><span class="nx">gameState</span><span class="p">);</span>
+    
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;func found&#39;</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">func</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span>
     </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Experimental: node.window should load the func as well
         if (node.window) {
@@ -952,7 +1039,7 @@ specified game-state</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Local Listeners from previous state are erased 
 before proceeding to next one</p>
@@ -967,7 +1054,7 @@ before proceeding to next one</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>This could speed up the loading in other client,
 but now causes problems of multiple update</p>
@@ -994,6 +1081,11 @@ but now causes problems of multiple update</p>
   </div>
   <div class="body"><p>Returns TRUE if the nodeGame engine is fully loaded</p>
 
+<p>As soon as the nodegame-client library is loaded 
+<code>node.game.state</code> is equal to 0.0.0. In this situation the
+game will be considered READY unless the nodegame-window 
+says otherwise</p>
+
 <p>During stepping between functions in the game-loop
 the flag is temporarily turned to FALSE, and all events 
 are queued and fired only after nodeGame is ready to 
@@ -1006,20 +1098,22 @@ instead.</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Game.ready;</span>
+      <span class="dox_type">Game.ready;
+
+  </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isReady</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">is</span> <span class="o">&lt;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADED</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">state</span> <span class="o">!==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">is</span> <span class="o">&lt;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADED</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
   </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>Check if there is a gameWindow obj and whether it is loading</p>
         </td>

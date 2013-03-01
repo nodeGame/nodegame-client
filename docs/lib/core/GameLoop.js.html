@@ -24,14 +24,14 @@
       <div class="heading h2">
         <a href="#global-scope">Global scope</a>
       </div>
-      <div class="heading h3">
-        <a href="#limits">limits</a>
-      </div>
       <div class="heading h2">
         <a href="#gameloop-constructor">GameLoop constructor</a>
       </div>
       <div class="heading h3">
         <a href="#public-variables">Public variables</a>
+      </div>
+      <div class="heading h3">
+        <a href="#limits">limits</a>
       </div>
       <div class="heading h3">
         <a href="#gameloop.loop">GameLoop.loop</a>
@@ -127,30 +127,6 @@ MIT Licensed </p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="limits">
-  <h3>
-    <a href="#limits" class="pilcrow">&#182;</a>
-    limits
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Array containing the boundary limits of the game-loop</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">limits</span> <span class="o">=</span> <span class="p">[];</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
 <div class="pilwrap" id="gameloop-constructor">
   <h2>
     <a href="#gameloop-constructor" class="pilcrow">&#182;</a>
@@ -163,46 +139,38 @@ MIT Licensed </p>
 
 <p>Takes as input parameter an object like</p>
 
-
-<div class="highlight"><pre><code><span class="p">{</span> <span class="mi">1</span><span class="p">:</span>
-    <span class="p">{</span>
-        <span class="n">state:</span> <span class="n">myFunc</span><span class="p">,</span>
-        <span class="n">rounds:</span> <span class="n">numRounds</span><span class="p">,</span> <span class="sr">//</span> <span class="n">optional</span><span class="p">,</span> <span class="n">defaults</span> <span class="mi">1</span>
-    <span class="p">},</span>
- <span class="mi">2</span><span class="p">:</span>
-    <span class="p">{</span>
-        <span class="n">state:</span> <span class="n">myNestedState</span><span class="p">,</span>
-        <span class="n">rounds:</span> <span class="n">numRounds</span><span class="p">,</span> <span class="sr">//</span> <span class="n">optional</span><span class="p">,</span> <span class="n">defaults</span> <span class="mi">1</span>
-    <span class="p">},</span>  
-    <span class="sr">//</span> <span class="n">any</span> <span class="n">arbitray</span> <span class="n">number</span> <span class="n">of</span> <span class="n">state</span><span class="o">-</span><span class="n">objects</span> <span class="n">is</span> <span class="n">allowed</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
+<p>{ 1:
+   {
+     state: myFunc,
+     rounds: numRounds, // optional, defaults 1
+   },
+  2:
+   {
+     state: myNestedState,
+     rounds: numRounds, // optional, defaults 1
+   }, <br />
+    // any arbitray number of state-objects is allowed
+  }</p>
 
 <p>From the above example, the value of the <code>state</code> property 
 can be a function or a nested state object (with internal steps). 
 For example</p>
 
+<p>myFunc = function() {};</p>
 
-<div class="highlight"><pre><code><span class="n">myFunc</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span> <span class="p">{};</span>
-
-<span class="n">myNestedState</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="mi">1</span><span class="p">:</span> <span class="p">{</span>
-            <span class="n">state:</span> <span class="n">myFunc2</span><span class="p">,</span>
-        <span class="p">}</span>
-        <span class="mi">2</span><span class="p">:</span> <span class="p">{</span>
-            <span class="n">state:</span> <span class="n">myFunc3</span><span class="p">,</span>
-        <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
+<p>myNestedState = {
+      1: {
+        state: myFunc2,
+      }
+      2: {
+        state: myFunc3,
+      }
+  }</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>loop</span>
+      <span class="dox_tag_name">loop</span>
       <span class="dox_type">object</span>
       <span>Optional. An object containing the loop functions</span>
     </div>
@@ -222,7 +190,34 @@ For example</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="limits">
+  <h3>
+    <a href="#limits" class="pilcrow">&#182;</a>
+    limits
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Array containing the internal representation of the boundaries
+of each state inside the game-loop</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">API</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">private
+</span>
+    </span>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">limits</span> <span class="o">=</span> <span class="p">[];</span> 
+  </pre></div>
         </td>
       </tr>
       <tr>
@@ -266,7 +261,7 @@ So such function must be incapsulated in a obj here.</p>
       <span class="kd">var</span> <span class="nx">steps</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">loop</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">state</span><span class="p">)</span>
       
       <span class="kd">var</span> <span class="nx">round</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">loop</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">rounds</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
-      <span class="nx">limits</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="nx">rounds</span><span class="o">:</span> <span class="nx">round</span><span class="p">,</span> <span class="nx">steps</span><span class="o">:</span> <span class="nx">steps</span><span class="p">});</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="nx">rounds</span><span class="o">:</span> <span class="nx">round</span><span class="p">,</span> <span class="nx">steps</span><span class="o">:</span> <span class="nx">steps</span><span class="p">});</span>
     <span class="p">}</span>
   <span class="p">}</span>
   </pre></div>
@@ -284,11 +279,15 @@ So such function must be incapsulated in a obj here.</p>
 
   </div>
   <div class="body"><p>The total number of states + steps in the game-loop</p>
+
+<p>Warning: may not be working in old browsers. Use #size() instead </p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">GameLoop.size()</span>
+      <span class="dox_type">GameLoop.size()
+
+  </span>
     </div>
   </div>
 </div>
@@ -302,7 +301,8 @@ So such function must be incapsulated in a obj here.</p>
   <span class="p">}</span>
   <span class="k">else</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="p">}</span> 
+  <span class="p">}</span>
+  
 <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -335,6 +335,7 @@ So such function must be incapsulated in a obj here.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameLoop</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
   <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps2Go</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameState</span><span class="p">());</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -355,7 +356,7 @@ So such function must be incapsulated in a obj here.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gameState</span>
+      <span class="dox_tag_name">gameState</span>
       <span class="dox_type">GameState</span>
       <span>The game-state to check</span>
     </div>
@@ -384,8 +385,8 @@ So such function must be incapsulated in a obj here.</p>
 </div>
 <p>States are 1 based, arrays are 0-based => -1</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span> <span class="o">&gt;</span> <span class="nx">limits</span><span class="p">[</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;rounds&#39;</span><span class="p">])</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Unexisting round: &#39;</span> <span class="o">+</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span> <span class="o">+</span> <span class="s1">&#39;Max round: &#39;</span> <span class="o">+</span> <span class="nx">limits</span><span class="p">[</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">][</span><span class="s1">&#39;rounds&#39;</span><span class="p">],</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">[</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;rounds&#39;</span><span class="p">])</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Unexisting round: &#39;</span> <span class="o">+</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span> <span class="o">+</span> <span class="s1">&#39;Max round: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">[</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">][</span><span class="s1">&#39;rounds&#39;</span><span class="p">],</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
   <span class="p">}</span>
     
@@ -412,13 +413,13 @@ to compute the next state</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gameState</span>
+      <span class="dox_tag_name">gameState</span>
       <span class="dox_type">GameState</span>
       <span>Optional. The reference game-state. Defaults, node.game.state</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">GameState</span>
       <span class="dox_type">boolean</span>
       <span>The next game-state, or FALSE if it does not exist</span>
@@ -453,7 +454,7 @@ to compute the next state</p>
   
   <span class="kd">var</span> <span class="nx">idxLimit</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// 0 vs 1 based</span>
   
-  <span class="k">if</span> <span class="p">(</span><span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="p">][</span><span class="s1">&#39;steps&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">step</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="p">][</span><span class="s1">&#39;steps&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">step</span><span class="p">){</span>
     <span class="kd">var</span> <span class="nx">newStep</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">step</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
     <span class="k">return</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
       <span class="nx">state</span><span class="o">:</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
@@ -462,7 +463,7 @@ to compute the next state</p>
     <span class="p">});</span>
   <span class="p">}</span>
   
-  <span class="k">if</span> <span class="p">(</span><span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="p">][</span><span class="s1">&#39;rounds&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="p">][</span><span class="s1">&#39;rounds&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span><span class="p">){</span>
     <span class="kd">var</span> <span class="nx">newRound</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
     <span class="k">return</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
       <span class="nx">state</span><span class="o">:</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
@@ -471,7 +472,7 @@ to compute the next state</p>
     <span class="p">});</span>
   <span class="p">}</span>
   
-  <span class="k">if</span> <span class="p">(</span><span class="nx">limits</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">){</span>   
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">){</span>    
     <span class="kd">var</span> <span class="nx">newState</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
     <span class="k">return</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
       <span class="nx">state</span><span class="o">:</span> <span class="nx">newState</span><span class="p">,</span>
@@ -512,13 +513,13 @@ to compute the previous state</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gameState</span>
+      <span class="dox_tag_name">gameState</span>
       <span class="dox_type">GameState</span>
       <span>Optional. The reference game-state. Defaults, node.game.state</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">GameState</span>
       <span class="dox_type">boolean</span>
       <span>The previous game-state, or FALSE if it does not exist</span>
@@ -545,7 +546,7 @@ to compute the previous state</p>
   <span class="p">}</span>
   <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">){</span>
     <span class="kd">var</span> <span class="nx">oldRound</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">oldStep</span> <span class="o">=</span> <span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="p">][</span><span class="s1">&#39;steps&#39;</span><span class="p">];</span>
+    <span class="kd">var</span> <span class="nx">oldStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="p">][</span><span class="s1">&#39;steps&#39;</span><span class="p">];</span>
     <span class="k">return</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
       <span class="nx">state</span><span class="o">:</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
       <span class="nx">step</span><span class="o">:</span> <span class="nx">oldStep</span><span class="p">,</span>
@@ -553,8 +554,8 @@ to compute the previous state</p>
     <span class="p">});</span>
   <span class="p">}</span>
   <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">){</span>
-    <span class="kd">var</span> <span class="nx">oldRound</span> <span class="o">=</span> <span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;rounds&#39;</span><span class="p">];</span>
-    <span class="kd">var</span> <span class="nx">oldStep</span> <span class="o">=</span> <span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;steps&#39;</span><span class="p">];</span>
+    <span class="kd">var</span> <span class="nx">oldRound</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;rounds&#39;</span><span class="p">];</span>
+    <span class="kd">var</span> <span class="nx">oldStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;steps&#39;</span><span class="p">];</span>
     <span class="kd">var</span> <span class="nx">oldState</span> <span class="o">=</span> <span class="nx">idxLimit</span><span class="p">;</span>
     <span class="k">return</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
       <span class="nx">state</span><span class="o">:</span> <span class="nx">oldState</span><span class="p">,</span>
@@ -592,13 +593,13 @@ to compute the previous state</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gameState</span>
+      <span class="dox_tag_name">gameState</span>
       <span class="dox_type">GameState</span>
       <span>Optional. The reference game-state. Defaults, node.game.state</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
       <span class="dox_type">boolean</span>
       <span>The name of the game-state, or FALSE if state does not exists</span>
@@ -629,13 +630,13 @@ to compute the previous state</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gameState</span>
+      <span class="dox_tag_name">gameState</span>
       <span class="dox_type">GameState</span>
       <span>The reference game-state</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
       <span class="dox_type">boolean</span>
       <span>The function of the game-state, or FALSE if state does not exists</span>
@@ -666,13 +667,13 @@ to compute the previous state</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gameState</span>
+      <span class="dox_tag_name">gameState</span>
       <span class="dox_type">GameState</span>
       <span>The reference game-state</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
       <span class="dox_type">boolean</span>
       <span>The state object, or FALSE if state does not exists</span>
@@ -706,18 +707,18 @@ and a positive one jumps forward in the game-loop</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gameState</span>
+      <span class="dox_tag_name">gameState</span>
       <span class="dox_type">GameState</span>
       <span>The reference game-state</span>
     </div>
     <div class="dox_tag_detail">
-      <span>N</span>
+      <span class="dox_tag_name">N</span>
       <span class="dox_type">number</span>
       <span>The number of steps to jump</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">GameState</span>
       <span class="dox_type">boolean</span>
       <span>The "jumped-to" game-state, or FALSE if it does not exist</span>
@@ -758,13 +759,13 @@ for the computation</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gameState</span>
+      <span class="dox_tag_name">gameState</span>
       <span class="dox_type">GameState</span>
       <span>Optional. The reference game-state. Defaults, node.game.state</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
       <span>The total number of steps left</span>
     </div>
@@ -810,15 +811,17 @@ for the computation</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>gameState</span>
+      <span class="dox_tag_name">gameState</span>
       <span class="dox_type">GameState</span>
       <span>The reference game-state</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
-      <span>The state index in the loop, or -1 if it does not exist</span>
+      <span>The state index in the loop, or -1 if it does not exist
+
+@see GameLoop.diff</span>
     </div>
   </div>
 </div>
@@ -850,18 +853,18 @@ in the game-loop.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span>state1</span>
+      <span class="dox_tag_name">state1</span>
       <span class="dox_type">GameState</span>
       <span>The reference game-state</span>
     </div>
     <div class="dox_tag_detail">
-      <span>state2</span>
+      <span class="dox_tag_name">state2</span>
       <span class="dox_type">GameState</span>
       <span>Optional. The second state for comparison. Defaults node.game.state</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span></span>
+      <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
       <span>The state index in the loop, or -1 if it does not exist</span>
     </div>
