@@ -6,6 +6,7 @@
   - Fixed bug in GameLoop.size() when no state was added
   - Fixed possible memory leak in GameLoop limits object
   - Command copyto copies all files in build directory to another folder in make.js
+  - In the configuration object url key is not read anymore, host parameter is optional
 
 # 0.6.0
 

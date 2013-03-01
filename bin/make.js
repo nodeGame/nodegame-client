@@ -48,13 +48,12 @@ function copyBuildDirTo(targetDir) {
 	
 	targetDir = path.resolve(targetDir);
 
-	var stats = fs.lstatSync(targetDir);
-
 	if (!fs.existsSync(targetDir)) {
-		console.log(targetDir + ' does not exists')
+		console.log(targetDir + ' does not exists');
 		return false;
 	}
 	
+	var stats = fs.lstatSync(targetDir);
 	if (!stats.isDirectory()) {
 		console.log(targetDir + ' is not a directory');
 		return false;
