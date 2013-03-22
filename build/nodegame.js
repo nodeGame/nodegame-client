@@ -5354,7 +5354,7 @@ NDDB.prototype.load = function (file, cb) {
 (function (node) {
 
 // ### version	
-node.version = '0.6.2';
+node.version = '0.6.3';
 
 
 // ## Objects
@@ -5948,11 +5948,8 @@ EventEmitter.prototype = {
     	
         
         // Log the event into node.history object, if present
-        if (!node.conf || !node.conf.events) {
-        	node.log('node.conf.events object not found. Is everything all right?', 'WARN');
-        }
-        else {
-        	
+        if (node.conf && node.conf.events) {
+        		
         	if (node.conf.events.history) {
 	        	var o = {
 		        		event: event.type,
@@ -8751,6 +8748,7 @@ SocketIo.prototype.connect = function(url, options) {
 	});
 	
     this.socket.on('disconnect', node.socket.onDisconnect);
+    return true;
 	
 };
 
@@ -9371,7 +9369,7 @@ Game.prototype.init = function () {};
 Game.prototype.start = function() {
 	// INIT the game
 	this.init();
-	this.step(new GameState());
+	this.updateState(new GameState("1.1.1"));
 	
 	//this.state.is = node.is.LOADED;
 	//node.socket.sendSTATE(node.action.SAY, node.game.state);
@@ -9535,15 +9533,7 @@ Game.prototype.step = function (gameState) {
 	if (gameState) {
 		
 		var func = this.gameLoop.getFunction(gameState);
-		
-		// Experimental: node.window should load the func as well
-//			if (node.window) {
-//				var frame = this.gameLoop.getAllParams(gameState).frame;
-//				node.window.loadFrame(frame);
-//			}
-		
-		
-		
+			
 		if (func) {
 			// Local Listeners from previous state are erased 
 			// before proceeding to next one
@@ -9964,8 +9954,9 @@ SessionManager.prototype.store = function() {
  * @param {object} game The game object
  */		
 	node.connect = function (url) {	
-		node.socket.connect(url);
-		node.emit('NODEGAME_CONNECTED');
+		if (node.socket.connect(url)) {
+			node.emit('NODEGAME_CONNECTED');
+		}
 	};	
 
 	
@@ -10357,11 +10348,11 @@ var frozen = false;
 // @see node.EventEmitter
 	node.setup.register('events', function(conf){
 		conf = conf || {};
-		if ('undefined' === conf.history) {
+		if ('undefined' === typeof conf.history) {
 			conf.history = false;
 		}
 		
-		if ('undefined' === conf.dumpEvents) {
+		if ('undefined' === typeof conf.dumpEvents) {
 			conf.dumpEvents = false;
 		}
 		
