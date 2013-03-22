@@ -213,7 +213,7 @@ node.on( IN + say + 'SETUP', function (msg) {
 
 
 /**
- * ## in.say.SETUP
+ * ## in.say.GAMECOMMAND
  * 
  * Setups a features of nodegame
  * 
@@ -223,6 +223,21 @@ node.on( IN + say + 'GAMECOMMAND', function (msg) {
 	if (!msg.text) return;
 	if (!node.gamecommand[msg.text]) return;
 	node.emit('NODEGAME_GAMECOMMAND_' + msg.text,msg.data);
+});	
+
+/**
+ * ## in.say.JOIN
+ * 
+ * Invites the client to leave the current channel and joining another one
+ * 
+ * It differs from `REDIRECT` messages because the client 
+ * does not leave the page, it just switches channel. 
+ * 
+ */
+node.on( IN + say + 'JOIN', function (msg) {
+	if (!msg.text) return;
+	//node.socket.disconnect();
+	node.connect(msg.text);
 });	
 
 	node.log('incoming listeners added');
