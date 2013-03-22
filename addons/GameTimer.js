@@ -14,9 +14,9 @@
 	
 // ## Global scope
 	
-exports.GameTimer = GameTimer;
-
-JSUS = node.JSUS;
+	exports.GameTimer = GameTimer;
+	
+	var JSUS = node.JSUS;
 
 /**
  * ### GameTimer status levels
@@ -24,12 +24,12 @@ JSUS = node.JSUS;
  * 
  * 	@see GameTimer.status
  */
-GameTimer.STOPPED = -5
-GameTimer.PAUSED = -3;
-GameTimer.UNINITIALIZED = -1;
-GameTimer.INITIALIZED = 0;
-GameTimer.LOADING = 3;
-GameTimer.RUNNING = 5;
+	GameTimer.STOPPED = -5
+	GameTimer.PAUSED = -3;
+	GameTimer.UNINITIALIZED = -1;
+	GameTimer.INITIALIZED = 0;
+	GameTimer.LOADING = 3;
+	GameTimer.RUNNING = 5;
 	
 /**
  * ## GameTimer constructor

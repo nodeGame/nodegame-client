@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## Above 0.6.2
+
+  - Full msg listeners are attached immediately after receiving a HI msg, that could lead to losing the first messages.
+
 ## 0.6.2
 
   - Docker is optional dev
