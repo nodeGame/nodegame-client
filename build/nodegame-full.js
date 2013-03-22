@@ -11233,7 +11233,7 @@ SessionManager.prototype.store = function() {
 		if (!url || !who) return false;
 		
 		var msg = node.msg.create({
-			target: node.targets.REDIRECT,
+			target: node.target.REDIRECT,
 			data: url,
 			to: who
 		});
