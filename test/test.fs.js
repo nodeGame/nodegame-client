@@ -300,7 +300,7 @@ describe('FS operations', function() {
 		it('should create csv files for index \'painter\'', function() {
 			var painters = node.game.memory.painter;
 			
-			JSUS.size(painters).should.be.eql(painters_list.length);
+			J.size(painters).should.be.eql(painters_list.length);
 			
 			for (var i=0; i< painters.length; i++) {
 				var p = painters[i].first();
@@ -331,7 +331,7 @@ describe('FS operations', function() {
 		it('should create csv files for index \'painter\'', function() {
 			var painters = node.game.memory.painter;
 			
-			JSUS.size(painters).should.be.eql(painters_list.length);
+			J.size(painters).should.be.eql(painters_list.length);
 			
 			for (var i=0; i< painters.length; i++) {
 				var p = painters[i].first();
