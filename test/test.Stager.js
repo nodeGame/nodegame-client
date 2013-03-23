@@ -1,7 +1,7 @@
 var util = require('util'),
 	should = require('should');
 
-var node = module.exports.node = require('./../index.js');
+var node = module.exports = require('./../index.js');
 
 var PlayerList = node.PlayerList,
 	Player = node.Player,
@@ -78,7 +78,7 @@ describe('Stager', function() {
 			stager = new Stager();
 		});
 		it('should result in a game stages of length 0', function() {
-			stager.length.should.be.equal(0); 
+			stager.size().should.be.equal(0); 
 		});
 	});
 	
@@ -87,7 +87,7 @@ describe('Stager', function() {
 			stager = new Stager(stages);
 		});
 		it('should result in a game stages of length 35', function() {
-			stager.length.should.be.equal(35); // 34 + 0.0.0
+			stager.size().should.be.equal(35); // 34 + 0.0.0
 		});
 	});
 	
