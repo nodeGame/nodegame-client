@@ -94,7 +94,7 @@ function samePlayer(pl1, pl2) {
 
 var deleteIfExist = function(file) {
 	file = file || filename;
-	if (path.existsSync(file)) {
+	if (J.existsSync(file)) {
 		var stats = fs.lstatSync(file);
 		if (stats.isDirectory()) {
 			fs.rmdirSync(file);
@@ -123,7 +123,7 @@ var checkCsvFile = function (check) {
 	var file = check.filename || filename;
 	
 	it('file should be found', function(){
-		path.existsSync(file).should.be.true;
+		J.existsSync(file).should.be.true;
 	});
 	
 	var reader = csv.createCsvFileReader(file, {
@@ -171,7 +171,7 @@ var checkJSONFile = function (check) {
 	var file = check.filename || filename;
 	
 	it('file should be found', function(){
-		path.existsSync(file).should.be.true;
+		J.existsSync(file).should.be.true;
 	});
 	
 	var db = new NDDB();
@@ -199,7 +199,7 @@ var stringifyValues = function (o) {
 };
 
 var createDirIfNotExists = function (dir) {
-	if (!path.existsSync(dir)) {
+	if (!J.existsSync(dir)) {
 		fs.mkdir(dir, 0777, function(err) {
 			if (err) console.log(err);
 			return (err) ? false : true;
@@ -226,7 +226,7 @@ describe('FS operations', function() {
 		});
 		
 		it('should return a player object', function() {
-			path.existsSync(filename).should.be.true;
+			J.existsSync(filename).should.be.true;
 		});
 		
 // We are not generating .csv files now		
