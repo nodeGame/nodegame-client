@@ -39,10 +39,41 @@ function list(val) {
 	return val.split(',');
 }
 
-function copyBuildDirTo(targetDir) {
+function copyDirTo(subDir, targetDir) {
 	
+	var stats, inputDir;
+	
+	
+	// INPUT DIR
+	if (!subDir) {
+		console.log('\'copy\': You must specify a subdirectory of the nodegame-client root folder, or use * to select all');
+		return;
+	}
+	
+	if (subDir === '*') {
+		inputDir = rootDir;
+	}
+	else {
+		inputDir = rootDir + subDir;
+	}
+	
+	inputDir = path.resolve(inputDir);
+
+	if (!fs.existsSync(inputDir)) {
+		console.log(inputDir + ' does not exists');
+		return false;
+	}
+	
+	stats = fs.lstatSync(inputDir);
+	if (!stats.isDirectory()) {
+		console.log(inputDir + ' is not a directory');
+		return false;
+	}
+	inputDir = inputDir + '/';
+	
+	// TARGET DIR
 	if (!targetDir) {
-		console.log('You must specify a target directory for the \'copyto\' command');
+		console.log('\'copy\': You must specify a target directory');
 		return;
 	}
 	
@@ -53,26 +84,27 @@ function copyBuildDirTo(targetDir) {
 		return false;
 	}
 	
-	var stats = fs.lstatSync(targetDir);
+	stats = fs.lstatSync(targetDir);
 	if (!stats.isDirectory()) {
 		console.log(targetDir + ' is not a directory');
 		return false;
 	}
 	
 	targetDir = targetDir + '/';
+
 	
-	console.log('Copying build directory of nodegame-client v.' + version + ' to ' + targetDir);
+	console.log('Copying ' + subDir + ' directory of nodegame-client v.' + version + ' to ' + targetDir);
 	
-	var result = J.copyFromDir(buildDir, targetDir);
-	
-	if (result) {
-		console.log('Done');
-		return true;
-	} 
-	else {
-		console.log('An error has occurred');
-		return false;
-	}
+//	var result = J.copyFromDir(inputDir, targetDir);
+//	
+//	if (result) {
+//		console.log('Done');
+//		return true;
+//	} 
+//	else {
+//		console.log('An error has occurred');
+//		return false;
+//	}
 }
 
 
@@ -113,12 +145,12 @@ program
 	.option('-C, --clean', 'clean build directory')
 	.option('-A, --analyse', 'analyse build')
 	.option('-o, --output <file>', 'output file (without .js)')
-	.option('-t, --copyto <path>', 'copies the build to the specified path')
+	.option('-p, --copy <subdir> <to>', 'copies the build to the specified path')
 	.action(function(env, options){
 		build(options);
 		
-		if (options.copyto) {
-			copyBuildDirTo(options.copyto);
+		if (options.copy) {
+			copyDirTo(options.subdir, options.to);
 		}
 });
 		
@@ -147,15 +179,15 @@ program
 //		});
 		
 		if (options.copyto) {
-			copyBuildDirTo(options.copyto);
+			copyDirTo(options.copyto);
 		}
 });
 
 program  
-	.command('copyto <path>')
+	.command('copy <subdir>, <to>')
 	.description('Copies all the content of the build directory into the specified target directory')
-	.action(function(path) {
-		copyBuildDirTo(path);
+	.action(function(subdir, to) {
+		copyDirTo(subdir, to);
 });
 
 
