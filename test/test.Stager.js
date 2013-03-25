@@ -69,16 +69,26 @@ var stages = [
 ];	
 
 
-var stager, test_stager;
+var stager;
 
 describe('Stager', function() {
 	
-	describe('empty #constructor()', function() {
+//	describe('empty #constructor()', function() {
+//		before(function(){
+//			stager = new Stager();
+//		});
+//		it('should result in a game stages of length 0', function() {
+//			stager.size().should.be.equal(0); 
+//		});
+//	});
+	
+	describe('#add() single entry', function() {
 		before(function(){
 			stager = new Stager();
+			stager.add(creation);
 		});
-		it('should result in a game stages of length 0', function() {
-			stager.size().should.be.equal(0); 
+		it('should result in game stager of length 1', function() {
+			stager.size().should.be.eql(1);
 		});
 	});
 	
@@ -87,14 +97,11 @@ describe('Stager', function() {
 			stager = new Stager(stages);
 		});
 		it('should result in a game stages of length 35', function() {
-			stager.size().should.be.equal(35); // 34 + 0.0.0
+			stager.size().should.be.equal(34); 
 		});
 	});
 	
 	describe('#next()', function() {
-//		it('should return 1.1.1', function() {
-//			GameState.compare(stager.next(),'1.1.1').should.be.equal(0); 
-//		});
 		it('should return 2.1.1', function() {
 			GameState.compare(stager.next('1.1.1'),'2.1.1').should.be.equal(0); 
 		});

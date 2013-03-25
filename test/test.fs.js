@@ -92,28 +92,26 @@ function samePlayer(pl1, pl2) {
 	pl2.id.should.equal(pl1.id);
 };
 
-var deleteIfExist = function(file) {
-	file = file || filename;
-	if (J.existsSync(file)) {
-		var stats = fs.lstatSync(file);
-		if (stats.isDirectory()) {
-			fs.rmdirSync(file);
-		}
-		else {
-			fs.unlinkSync(file);
-		}
-		
-	}
-};
+//var deleteIfExists = function(file) {
+//	file = file || filename;
+//	if (J.existsSync(file)) {
+//		var stats = fs.lstatSync(file);
+//		if (stats.isDirectory()) {
+//			fs.rmdirSync(file);
+//		}
+//		else {
+//			fs.unlinkSync(file);
+//		}
+//		
+//	}
+//};
 
 var deleteTestDir = function(dir, format) {
 	if (dir[dir.length] !== '/') dir = dir + '/';
 	fs.readdir(dir, function(err, files) {
-		
 	    files.filter(function(file) { return file.substr(-(format.length + 1)) == '.' + format; })
-	         .forEach(function(file) { deleteIfExist(dir + file) });
-	    
-	    deleteIfExist(dir)
+	         .forEach(function(file) { J.deleteIfExists(dir + file) });
+	    J.deleteIfExists(dir)
 	});
 
 }
@@ -217,12 +215,12 @@ describe('FS operations', function() {
 	describe('#node.game.pl.save()', function() {
 		before(function() {
 			filename = './pl.nddb';
-			deleteIfExist();
+			J.deleteIfExists(filename);
 			node.game.pl.add(player);
 			node.game.pl.save(filename);
 		});
 		after(function() {
-			deleteIfExist();
+			J.deleteIfExists(filename);
 		});
 		
 		it('should return a player object', function() {
@@ -243,13 +241,13 @@ describe('FS operations', function() {
 	describe('#node.game.memory.toCsv()', function() {
 		before(function() {
 			filename = './memory.csv';
-			deleteIfExist();
+			J.deleteIfExists(filename);
 			node.game.memory.importDB(items);
 		});
 		after(function() {
-			deleteIfExist('./withoutheaders.csv');
-			deleteIfExist('./withheaders.csv');
-			deleteIfExist('./withheadersguessed.csv');
+			J.deleteIfExists('./withoutheaders.csv');
+			J.deleteIfExists('./withheaders.csv');
+			J.deleteIfExists('./withheadersguessed.csv');
 		});
 		it('should save the memory to a csv file without headers', function() {
 			var myFilename = 'withoutheaders.csv';

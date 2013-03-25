@@ -93,7 +93,7 @@ node.GameMsg = require('./lib/core/GameMsg').GameMsg;
  * @api public
  */
 
-node.GameLoop = require('./lib/core/GameLoop').GameLoop;
+node.Stager = require('./lib/core/Stager').Stager;
 
 
 /**
