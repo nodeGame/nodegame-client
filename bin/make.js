@@ -46,7 +46,7 @@ function copyDirTo(subDir, targetDir) {
 	
 	// INPUT DIR
 	if (!subDir) {
-		console.log('\'copy\': You must specify a subdirectory of the nodegame-client root folder, or use * to select all');
+		console.log('You must specify a subdirectory of the nodegame-client root folder, or use * to select all');
 		return;
 	}
 	
@@ -73,7 +73,7 @@ function copyDirTo(subDir, targetDir) {
 	
 	// TARGET DIR
 	if (!targetDir) {
-		console.log('\'copy\': You must specify a target directory');
+		console.log('You must specify a target directory');
 		return;
 	}
 	
@@ -135,19 +135,19 @@ program
 	.option('-C, --clean', 'clean build directory')
 	.option('-A, --analyse', 'analyse build')
 	.option('-o, --output <file>', 'output file (without .js)')
-	.option('-y, --sync <subdir> <path>', 'copies the build to the specified path')
+	.option('-y, --sync <path>', 'syncs the build directory with the specified path')
 	.action(function(env, options){
 		build(options);
 		
 		if (options.sync) {
-			copyDirTo(options.subdir, options.path);
+			copyDirTo('build/', options.sync);
 		}
 });
 		
 program  
 	.command('multibuild [options]')
 	.description('Creates pre-defined nodeGame builds')
-	.option('-y, --sync <subdir> <path>', 'copies the build to the specified path')
+	.option('-y, --sync <path>', 'syncs the build directory with the specified path')
 	.action(function(env, options){
 		console.log('Multi-build for nodegame-client v.' + version);
 		
@@ -169,7 +169,7 @@ program
 //		});
 		
 		if (options.sync) {
-			copyDirTo(options.subdir, options.path);
+			copyDirTo('build/', options.sync);
 		}
 });
 

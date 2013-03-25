@@ -10,29 +10,6 @@ var PlayerList = node.PlayerList,
 
 var Stager = require('./../lib/core/Stager').Stager;
 
-var test_gs = null,
-	gs_321 = new GameState({
-		state: 3,
-		step: 2,
-		round: 1,
-	}),
-	gs_331 = new GameState({
-		state: 3,
-		step: 3,
-		round: 1,
-	}),
-	gs_311 = new GameState({
-		state: 3,
-		step: 1,
-		round: 1,
-	}),
-	gs_111 = new GameState({
-		state: 1,
-		step: 1,
-		round: 1,
-	});
-
-
 var creation 	= { cb: function(){}, name: 'Creation' };
 var evaluation 	= { cb: function(){}, name: 'Evaluation' };
 var exhibition 	= { cb: function(){}, name: 'Exhibition' };
@@ -52,7 +29,8 @@ var stages = [
 		
 		{
 			cb: function(){},
-			name: 'Instructions'
+			name: 'Instructions',
+			timer: 20000
 		},
 		
 		game, 
@@ -102,6 +80,9 @@ describe('Stager', function() {
 	});
 	
 	describe('#next()', function() {
+		it('should return 1.1.1', function() {
+			GameState.compare(stager.next('0.0.0'),'1.1.1').should.be.equal(0); 
+		});
 		it('should return 2.1.1', function() {
 			GameState.compare(stager.next('1.1.1'),'2.1.1').should.be.equal(0); 
 		});
@@ -187,4 +168,21 @@ describe('Stager', function() {
 		});
 		
 	});
+	
+	describe('#get()', function() {
+		it('should return 2.1.1', function() {
+			console.log(stager.get('2.1.1.'))
+			stager.get('2.1.1').should.be.eql(stages[1]);
+		});
+	});
+	
+	describe('#getProperty()', function() {
+		it('should return 2.1.1', function() {
+			console.log(stager.getProperty('2.1.1.', 'timer'))
+			stager.getProperty('2.1.1.', 'timer').should.be.eql(stages[1].timer);
+		});
+	});
+	
+	
+	
 });

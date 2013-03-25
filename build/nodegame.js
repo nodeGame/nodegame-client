@@ -5629,7 +5629,7 @@ else {
 		if ('undefined' === typeof txt) return false;
 		
 		level 	= level || 0;
-		prefix 	= ('undefined' === typeof prefix) 	? 'nG: '
+		prefix 	= ('undefined' === typeof prefix) 	? 'ng> '
 													: prefix;
 		
 		if ('string' === typeof level) {
@@ -6053,7 +6053,7 @@ EventEmitter.prototype = {
         	
         	// <!-- Debug
             if (node.conf.events.dumpEvents) {
-            	node.log('Fired ' + event.type);
+            	node.log('F: ' + event.type);
             }
         }
         
@@ -7618,8 +7618,6 @@ Stager.prototype.create = function(stage) {
 		return;
 	}
 	if ('string' !== typeof stage.name) {
-		console.log('----')
-		console.log(stage)
 		node.warn('Invalid stage name.');
 		return;
 	}
@@ -7638,6 +7636,11 @@ Stager.prototype.create = function(stage) {
 			name: stage.name,
 			cb: stage.cb
 		}];
+	}
+	
+	if (!stage.cb && !stage.steps) {
+		node.warn('A stage must have one valid callback or an array of \'steps\'.');
+		return;
 	}
 	
 	if (!J.isArray(stage.steps)) {
@@ -7675,13 +7678,14 @@ Stager.prototype.size = function() {
 };
 
 /**
- * ### Stager.exist
+ * ### Stager.exists
  * 
  * Returns TRUE, if a gameState exists in the game-loop
  * 
  * @param {GameState|string} gameState The game-state to check
+ * 
  */
-Stager.prototype.exist = function (gameState) {
+Stager.prototype.exists = function (gameState) {
 	if (!gameState) return false;
 	gameState = new GameState(gameState);
 	
@@ -7697,6 +7701,15 @@ Stager.prototype.exist = function (gameState) {
 		
 	return true;
 };
+
+/**
+ * ### Stager.exist
+ * 
+ * Alias for Stager.exists
+ * 
+ * @deprecated
+ */
+Stager.prototype.exist = Stager.prototype.exists; 
 
 /**
  * ### Stager.next
@@ -7849,7 +7862,8 @@ Stager.prototype.previous = function (gameState, N) {
 
 
 Stager.prototype.jumpTo = function (gameState, N) {
-	if (!this.exist(gameState)) return false;
+	gameState = new GameState(gameState);
+	if (gameState.state !== 0 && !this.exist(gameState)) return false;
 	if (!N) return gameState;
 
 	var func = (N > 0) ? next : previous;
@@ -7958,7 +7972,7 @@ Stager.prototype.dist = Stager.prototype.diff = function (state1, state2) {
 Stager.prototype.get = function (gameState) {
 	gameState = new GameState(gameState);
 	if (!this.exist(gameState)) return false;
-	return this.stages[gameState.state].stage[gameState.step];
+	return this.stages[gameState.state-1].steps[gameState.step-1];
 };
 
 /**
@@ -7972,7 +7986,7 @@ Stager.prototype.get = function (gameState) {
 Stager.prototype.getProperty = function (gameState, key) {
 	gameState = new GameState(gameState);
 	if (!this.exist(gameState)) return false;
-	return this.stages[gameState.state].stage[gameState.step][key];
+	return this.stages[gameState.state].steps[gameState.step][key];
 };
 
 
@@ -8946,6 +8960,7 @@ SocketIo.prototype.connect = function(url, options) {
 };
 
 SocketIo.prototype.send = function (msg) {
+	console.log(msg);
 	this.socket.send(msg.stringify());
 };
 
@@ -9532,10 +9547,13 @@ function Game (settings) {
  * 
  * Stage manager 
  * 
+ * retrocompatible with gameLoop
+ * 
  * @see Stager
  * @api private
  */
-	this.stager = new Stager(settings.stages);
+	this.gameLoop = this.stager = new Stager(settings.stages);
+	
 	
 	this.currentStep = new GameState();
 	this.currentStepObj = null;
@@ -9581,7 +9599,7 @@ Game.prototype.init = function () {
  * is terminated
  * 
  */
-Game.prototype.gamover = function () {};
+Game.prototype.gameover = function () {};
 
 /**
  * ### Game.start
@@ -9644,17 +9662,23 @@ Game.prototype.resume = function () {
  * @see Game.execStage
  */
 Game.prototype.step = function() {
-	var cb, err, nextStage;
+	var nextStep;
 	
-	nextState = this.stager.next(this.currentStepObj);
+	nextStep = this.stager.next(this.currentStep);
 	
 	// Reached the last stage
-	if (!nextStage) {
+	if (!nextStep) {
+		console.log(this.stager.size());
+		console.log(this.currentStep);
+		console.log(nextStep);
 		node.emit('GAMEOVER');
 		return this.gameover(); // can throw Errors
 	}
 	
-	return this.execStage(stage);
+	this.currentStep = nextStep;
+	this.currentStepObj = this.stager.get(nextStep);
+	
+	return this.execStage(this.currentStepObj);
 	
 };
 
@@ -9665,14 +9689,13 @@ Game.prototype.step = function() {
  * 
  */
 Game.prototype.execStage = function(stage) {
-	
 	var cb, err, res;
 	
-	cb = this.stager.getFunction(stage); 
+	cb = stage.cb; 
 			
 	// Local Listeners from previous state are erased 
 	// before proceeding to next one
-	node.events.clearState(this.currentStage);
+	node.events.clearState(this.currentStep);
 			
 	this.updateStageState('LOADING');
 	
@@ -9709,12 +9732,12 @@ Game.prototype.execStage = function(stage) {
 
 Game.prototype.updateGameState = function (state) {
 	this.state = state;
-	this.publishUpdate();
+	//this.publishUpdate();
 };
 
 Game.prototype.updateStageState = function (state) {
 	this.stageState = state;
-	this.publishUpdate();
+	//this.publishUpdate();
 };
 
 Game.prototype.publishUpdate = function() {
@@ -9753,6 +9776,71 @@ Game.prototype.isReady = function() {
 		
 	// Check if there is a gameWindow obj and whether it is loading
 	return node.window ? node.window.state >= node.is.LOADED : true;
+};
+
+
+
+// TODO : MAYBE TO REMOVE THEM
+
+/**
+* ### Game.next
+* 
+* Fetches a state from the game-loop N steps ahead
+* 
+* Optionally, a parameter can control the number of steps to take
+* in the game-loop before returning the state
+* 
+* @param {number} N Optional. The number of steps to take in the game-loop. Defaults 1
+* @return {boolean|GameState} The next state, or FALSE if it does not exist
+* 
+* 	@see GameState
+* 	@see Game.gameLoop
+*/
+Game.prototype.next = function (N) {
+	if (!N) return this.gameLoop.next(this.state);
+	return this.gameLoop.jumpTo(this.state, Math.abs(N));
+};
+
+/**
+* ### Game.previous
+* 
+* Fetches a state from the game-loop N steps back
+* 
+* Optionally, a parameter can control the number of steps to take
+* backward in the game-loop before returning the state
+* 
+* @param {number} times Optional. The number of steps to take in the game-loop. Defaults 1
+* @return {boolean|GameState} The previous state, or FALSE if it does not exist
+* 
+* 	@see GameState
+* 	@see Game.gameLoop
+*/
+Game.prototype.previous = function (N) {
+	if (!N) return this.gameLoop.previous(this.state);
+	return this.gameLoop.jumpTo(this.state, -Math.abs(N));
+};
+
+/**
+* ### Game.jumpTo
+* 
+* Moves the game forward or backward in the game-loop
+* 
+* Optionally, a parameter can control the number of steps to take
+* in the game-loop before executing the next function. A negative 
+* value jumps backward in the game-loop, and a positive one jumps
+* forward in the game-loop
+* 
+* @param {number} jump  The number of steps to take in the game-loop
+* @return {boolean} TRUE, if the game succesfully jumped to the desired state
+* 
+* 	@see GameState
+* 	@see Game.gameLoop
+*/
+Game.prototype.jumpTo = function (jump) {
+	if (!jump) return false;
+	var gs = this.gameLoop.jumpTo(this.state, jump);
+	if (!gs) return false;
+	return this.updateState(gs);
 };
 
 // ## Closure
