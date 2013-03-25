@@ -50,7 +50,7 @@ function copyDirTo(subDir, targetDir) {
 		return;
 	}
 	
-	if (subDir === '*') {
+	if (subDir === '.') {
 		inputDir = rootDir;
 	}
 	else {
@@ -59,7 +59,7 @@ function copyDirTo(subDir, targetDir) {
 	
 	inputDir = path.resolve(inputDir);
 
-	if (!fs.existsSync(inputDir)) {
+	if (!J.existsSync(inputDir)) {
 		console.log(inputDir + ' does not exists');
 		return false;
 	}
@@ -79,7 +79,7 @@ function copyDirTo(subDir, targetDir) {
 	
 	targetDir = path.resolve(targetDir);
 
-	if (!fs.existsSync(targetDir)) {
+	if (!J.existsSync(targetDir)) {
 		console.log(targetDir + ' does not exists');
 		return false;
 	}
@@ -92,19 +92,9 @@ function copyDirTo(subDir, targetDir) {
 	
 	targetDir = targetDir + '/';
 
+	console.log('Syncinc ' + subDir + ' directory of nodegame-client v.' + version + ' with ' + targetDir);
 	
-	console.log('Copying ' + subDir + ' directory of nodegame-client v.' + version + ' to ' + targetDir);
-	
-//	var result = J.copyFromDir(inputDir, targetDir);
-//	
-//	if (result) {
-//		console.log('Done');
-//		return true;
-//	} 
-//	else {
-//		console.log('An error has occurred');
-//		return false;
-//	}
+	J.copyDirSyncRecursive(inputDir, targetDir);	
 }
 
 
@@ -145,19 +135,19 @@ program
 	.option('-C, --clean', 'clean build directory')
 	.option('-A, --analyse', 'analyse build')
 	.option('-o, --output <file>', 'output file (without .js)')
-	.option('-p, --copy <subdir> <to>', 'copies the build to the specified path')
+	.option('-y, --sync <subdir> <path>', 'copies the build to the specified path')
 	.action(function(env, options){
 		build(options);
 		
-		if (options.copy) {
-			copyDirTo(options.subdir, options.to);
+		if (options.sync) {
+			copyDirTo(options.subdir, options.path);
 		}
 });
 		
 program  
 	.command('multibuild [options]')
 	.description('Creates pre-defined nodeGame builds')
-	.option('-t, --copyto <path>', 'copies the build to the specified path')
+	.option('-y, --sync <subdir> <path>', 'copies the build to the specified path')
 	.action(function(env, options){
 		console.log('Multi-build for nodegame-client v.' + version);
 		
@@ -178,16 +168,16 @@ program
 //			all: true,
 //		});
 		
-		if (options.copyto) {
-			copyDirTo(options.copyto);
+		if (options.sync) {
+			copyDirTo(options.subdir, options.path);
 		}
 });
 
 program  
-	.command('copy <subdir>, <to>')
-	.description('Copies all the content of the build directory into the specified target directory')
-	.action(function(subdir, to) {
-		copyDirTo(subdir, to);
+	.command('sync <subdir>, <path>')
+	.description('Sync the specified subdirectory of the nodegame-client root tree with another target directory. If \'.\' is used the whole tree will be synced.')
+	.action(function(subdir, path) {
+		copyDirTo(subdir, path);
 });
 
 
