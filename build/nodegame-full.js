@@ -2011,9 +2011,6 @@ ARRAY.transpose = function (array) {
 	return t;
 };
 
-
-
-
 JSUS.extend(ARRAY);
     
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
@@ -3725,6 +3722,44 @@ OBJ.melt = function(keys, values) {
 	return o;
 };
 
+/**
+ * ## OBJ.uniqueKey
+ * 
+ * Creates a random unique key name for a collection
+ * 
+ * User can specify a tentative unique key name, and if already
+ * existing an incremental index will be added as suffix to it. 
+ * 
+ * Notice: the method does not actually creates the key
+ * in the object, but it just returns the name.
+ * 
+ * 
+ * @param {object} obj The collection for which a unique key name will be created
+ * @param {string} name Optional. A tentative key name. Defaults, a 10-digit random number
+ * @param {number} stop Optional. The number of tries before giving up searching
+ * 	for a unique key name. Defaults, 1000000.
+ * 
+ * @return {string|undefined} The unique key name, or undefined if it was not found
+ */
+OBJ.uniqueKey = function(obj, name, stop) {
+	if (!obj) {
+		JSUS.log('Cannot find unique name in undefined object', 'ERR');
+		return;
+	}
+	name = name || '' + Math.floor(Math.random()*10000000000);
+	stop = stop || 1000000;
+	var duplicateCounter = 1;
+	while (obj[name]) {
+		name = name + '' + duplicateCounter;
+		duplicateCounter++;
+		if (duplicateCounter > stop) {
+			return;
+		}
+	}
+	return name;
+}
+
+
 JSUS.extend(OBJ);
     
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
@@ -3996,7 +4031,7 @@ PARSE.stringify = function(o, spaces) {
 };
 
 /**
- * ## PARSE.stringify
+ * ## PARSE.parse
  * 
  * Decodes strings in objects and other values
  * 
@@ -6621,38 +6656,50 @@ else {
 // ## Logging system
 
 /**
- *  ### node.verbosity
- *  
- *  The minimum level for a log entry to be displayed as output.
- *   
- *  Defaults, only errors are displayed.
- *  
- */
-	node.verbosity = 0;
-
-
-/**
  * ### node.verbosity_levels
  * 
  * ALWAYS, ERR, WARN, INFO, DEBUG
  */  
 	node.verbosity_levels = {
-			// <!-- It is not really always... -->
-			ALWAYS: -(Number.MIN_VALUE+1), 
+			ALWAYS: -(Number.MIN_VALUE + 1), 
 			ERR: -1,
 			WARN: 0,
 			INFO: 1,
-			DEBUG: 100
-	};
+			DEBUG: 100,
+			NEVER: Number.MIN_VALUE - 1
+	};	
+	
+/**
+ *  ### node.verbosity
+ *  
+ *  The minimum level for a log entry to be displayed as output
+ *   
+ *  Defaults, only errors are displayed.
+ *  
+ */
+	node.verbosity = node.verbosity_levels.WARN;
 
 
+ 
+/**
+ * ### node.remoteVerbosity
+ *
+ *  The minimum level for a log entry to be reported to the server
+ *   
+ *  Defaults, only errors are displayed.
+ */	
+	node.remoteVerbosity = node.verbosity_levels.WARN;
+		
 /**
  * ### node.log
  * 
  * Default nodeGame standard out, override to redirect
  * 
- * Logs entries are displayed only if their verbosity level is 
- * greater than `node.verbosity`
+ * Logs entries are displayed to the console if their level is 
+ * smaller than `node.verbosity`.
+ * 
+ * Logs entries are forwarded to the server if their level is
+ * smaller than `node.remoteVerbosity`.
  * 
  * @param {string} txt The text to output
  * @param {string|number} level Optional. The verbosity level of this log. Defaults, level = 0
@@ -6663,14 +6710,25 @@ else {
 		if ('undefined' === typeof txt) return false;
 		
 		level 	= level || 0;
-		prefix 	= ('undefined' === typeof prefix) 	? 'nodeGame: '
+		prefix 	= ('undefined' === typeof prefix) 	? 'nG: '
 													: prefix;
+		
 		if ('string' === typeof level) {
 			level = node.verbosity_levels[level];
 		}
 		if (node.verbosity > level) {
 			console.log(prefix + txt);
 		}
+//		if (node.remoteVerbosity > level) {
+//			var remoteMsg = node.msg.create({
+//				target: node.target.LOG,
+//				text: level,
+//				data: txt,
+//				to: 'SERVER'
+//			});
+//			console.log(txt)
+//			node.socket.send(remoteMsg);
+//		}
 	};
 
 /**
@@ -6808,6 +6866,13 @@ else {
 // Ask a client to start/pause/stop/resume the game	
 	node.target.GAMECOMMAND = 'GAMECOMMAND'; 	
 	
+// #### target.JOIN
+// Asks a client to join another channel/subchannel/room
+	node.target.JOIN = 'JOIN';
+
+// #### target.LOG
+// A log entry
+	node.target.LOG = 'LOG';
 
 //#### not used targets (for future development)
 	
@@ -6865,6 +6930,23 @@ else {
 // A game has not been initialized
 	node.is.UNKNOWN = 0;
 
+// #### is.INITIALIZING
+// The engine is loading all the modules	
+	node.is.INITIALIZING = 1;
+
+// #### is.INITIALIZED
+// The engine is fully loaded, but there is still no game	
+	node.is.INITIALIZED = 5;	
+	
+// #### is.GAMELOADED
+// The engine is fully loaded, and a game has been loaded	
+	node.is.GAMELOADED = 10;	
+	
+// #### is.DEAD
+// An unrecoverable error has occurred	
+	node.is.DEAD = -1;		
+	
+// TODO: remove these	
 // #### is.LOADING
 // A game is loading	
 	node.is.LOADING = 10;		
@@ -6879,7 +6961,13 @@ else {
 	
 // #### is.DONE
 // The player completed the game state	
-	node.is.DONE = 100;			
+	node.is.DONE = 100;	
+	
+	
+
+
+	
+	
 
 })(
 	'undefined' != typeof node ? node : module.exports
@@ -8470,7 +8558,7 @@ GameMsg.prototype.toEvent = function () {
   , 'undefined' != typeof node ? node : module.parent.exports
 );
 /**
- * # GameLoop
+ * # Stager
  * 
  * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed 
@@ -8484,49 +8572,23 @@ GameMsg.prototype.toEvent = function () {
 	
 // ## Global scope
 var GameState = node.GameState,
-	JSUS = node.JSUS;
+	J = node.JSUS;
 
-exports.GameLoop = GameLoop;
+exports.Stager = Stager;
 
 /**
- * ## GameLoop constructor
+ * ## Stager constructor
  * 
- * Creates a new instance of GameLoop
+ * Creates a new instance of Stager
  * 
- * Takes as input parameter an object like
+ * Takes as input parameter an object like:
  * 
- *	{ 1:
- *		{
- *			state: myFunc,
- *			rounds: numRounds, // optional, defaults 1
- *		},
- *	 2:
- *		{
- *			state: myNestedState,
- *			rounds: numRounds, // optional, defaults 1
- *		},	
- * 		// any arbitray number of state-objects is allowed
- * 	}
  * 
- * From the above example, the value of the `state` property 
- * can be a function or a nested state object (with internal steps). 
- * For example
  * 
- * 	myFunc = function() {};
- * 
- * 	myNestedState = {
- * 			1: {
- * 				state: myFunc2,
- * 			}
- * 			2: {
- * 				state: myFunc3,
- * 			}
- * 	}
- * 
- * @param {object} loop Optional. An object containing the loop functions
+ * @param {array} stages Optional. An array containing the stages
  * 
  */
-function GameLoop (loop) {
+function Stager(stages) {
 	// ### Public variables
 
 /**
@@ -8540,111 +8602,197 @@ function GameLoop (loop) {
 	this.limits = [];	
 	
 /**
- * ### GameLoop.loop
+ * ### Stager.stages
  * 
- * The transformed loop container
- */
-	this.loop = loop || {};
-
-	for (var key in this.loop) {
-		if (this.loop.hasOwnProperty(key)) {
-			
-			// Transform the loop obj if necessary.
-			// When a state executes only one step,
-			// it is allowed to pass directly the name of the function.
-			// So such function must be incapsulated in a obj here.
-			var loop = this.loop[key].state;
-			if ('function' === typeof loop) {
-				var o = JSUS.clone(this.loop[key]);
-				this.loop[key].state = {1: o};
-			}
-			
-			var steps = JSUS.size(this.loop[key].state)
-			
-			var round = this.loop[key].rounds || 1;
-			this.limits.push({rounds: round, steps: steps});
-		}
-	}
+ * Container for the verified stages
+ */		
+	this.stages = [];
 	
-/**
- * ### GameLoop.length
- * 
- * The total number of states + steps in the game-loop
- * 
- * Warning: may not be working in old browsers. Use #size() instead 
- * 
- * @see GameLoop.size()
- * 
- */
-	if (node.support.getter) {
-		Object.defineProperty(this, 'length', {
-	    	set: function(){},
-	    	get: this.size,
-	    	configurable: true
-		});
-	}
-	else {
-		this.length = null;
+	if (stages) {
+		this.add(stages);
 	}
 	
 }
 
-// ## GameLoop methods
+
+function addMultiple(stage, pos) {
+	var res = true, i;
+	if (!stage.length) {
+		node.warn('Cannot add empty array of stages');
+		return false;
+	}
+	
+	for (i = 0; i < stage.length; i++) {
+		res = res && this.add(stage[i], pos+i);
+	}
+	return res;
+}
+
+// ## Stager methods
+
+/** 
+ * ### GameStage.add
+ * 
+ * Adds one or more entries into the array of stages
+ * 
+ * @param {array|object} stage A stage object or an array of stages
+ * @param {number} Optional. The ordinal position for inserting in array of 
+ * 	stages. Negative values specify the position from the end of the array.
+ * 	Defaults, adds at then of the array.
+ * 	
+ * @return {boolean} TRUE if the operation is completely successful
+ *  
+ */
+Stager.prototype.add = function(stage, pos) {
+	
+	if (J.isArray(stage)) {
+		return addMultiple.call(this, stage, pos);
+	}
+	
+	stage = this.create(stage);
+	
+	if (!stage) return false;
+	
+	pos = pos || this.stages.length;
+	
+	this.limits.splice(pos, 0, {
+		rounds: stage.rounds, 
+		steps: stage.steps.length
+	});
+	
+	this.stages.splice(pos, 0, stage);
+	
+	return true;
+};
+
+function checkStageOrStep(o, type) {
+	if (!o || J.isEmpty(o)) {
+		node.warn('Cannot create empty ' + type + '.');
+		return;
+	}
+	if ('string' !== typeof o.name) {
+		node.warn('Invalid ' + type + ' name.');
+		return;
+	}
+	if (o.name.trim() === '') {
+		node.warn('Empty ' + type + ' name.');
+		return;
+	}
+	
+	return true;
+}
+
+function checkStep(step) {
+	if (!checkStageOrStep(step, 'step')) return false;
+	
+	if ('function' !== typeof step.cb) {
+		node.warn('Step must have a valid callback function');
+		return false;
+	}
+	
+	return true;
+}
+
+Stager.prototype.create = function(stage) {
+	if (!stage || J.isEmpty(stage)) {
+		node.warn('Cannot create empty stage.');
+		return;
+	}
+	if ('string' !== typeof stage.name) {
+		console.log('----')
+		console.log(stage)
+		node.warn('Invalid stage name.');
+		return;
+	}
+	if (stage.name.trim() === '') {
+		node.warn('Stage name cannot be empty.');
+		return;
+	}
+
+	if (stage.steps && stage.cb) {
+		node.warn('Stage cannot contain both attributes \'steps\' and \'cb\'.');
+		return;
+	}
+	
+	if (stage.cb) {
+		stage.steps = [{
+			name: stage.name,
+			cb: stage.cb
+		}];
+	}
+	
+	if (!J.isArray(stage.steps)) {
+		node.warn('Expected array for property \'steps\' of stage object.');
+		return;
+	}
+	
+	var steps = [], i;
+	for (i = 0 ; i < stage.steps.length ; i++) {
+		if (!checkStep(stage.steps[i])) continue;
+		steps.push(stage.steps[i]);
+	}
+	
+	if (steps.length === 0) {
+		node.warn('Stage must have at least one valid step.');
+		return;
+	}
+	
+	return {
+		name: stage.name,
+		steps: steps,
+		rounds: stage.rounds || 1
+	}
+};
 
 /**
- * ### GameLoop.size
+ * ### Stager.size
  * 
  * Returns the total number of states + steps in the game-loop
  * 
  */
-GameLoop.prototype.size = function() {
+Stager.prototype.size = function() {
 	if (!this.limits.length) return 0;
-	return this.steps2Go(new GameState());
+	return this.steps2Go(new GameState({state: 1, step: 1}));
 };
 
 /**
- * ### GameLoop.exist
+ * ### Stager.exist
  * 
  * Returns TRUE, if a gameState exists in the game-loop
  * 
- * @param {GameState} gameState The game-state to check
+ * @param {GameState|string} gameState The game-state to check
  */
-GameLoop.prototype.exist = function (gameState) {
+Stager.prototype.exist = function (gameState) {
 	if (!gameState) return false;
 	gameState = new GameState(gameState);
 	
-	if (typeof(this.loop[gameState.state]) === 'undefined') {
-		node.log('Unexisting state: ' + gameState.state, 'WARN');
-		return false;
-	}
-	
-	if (typeof(this.loop[gameState.state]['state'][gameState.step]) === 'undefined'){
-		node.log('Unexisting step: ' + gameState.step, 'WARN');
-		return false;
-	}
 	// States are 1 based, arrays are 0-based => -1
-	if (gameState.round > this.limits[gameState.state-1]['rounds']) {
-		node.log('Unexisting round: ' + gameState.round + 'Max round: ' + this.limits[gameState.state]['rounds'], 'WARN');
-		return false;
-	}
+	var stageIdx = gameState.state - 1,
+		stepIdx = gameState.step -1,
+		rounds = gameState.rounds;
+	
+	if (!this.stages[stageIdx]) return false;
+	if (!this.stages[stageIdx].steps[stepIdx]) return false;
+	if (rounds > this.stages[stageIdx].rounds) return false;
+	
 		
 	return true;
 };
 
 /**
- * ### GameLoop.next
+ * ### Stager.next
  * 
- * Returns the next state in the loop
+ * Returns the stage next stage
  * 
  * An optional input parameter can control the state from which 
  * to compute the next state
  * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
+ * @param {GameState} gameState The reference game-state
  * @return {GameState|boolean} The next game-state, or FALSE if it does not exist
  * 
  */
-GameLoop.prototype.next = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.game.state;
+ function next(gameState, N) {
+	gameState = new GameState(gameState);
 	
 	// Game has not started yet, do it!
 	if (gameState.state === 0) {
@@ -8656,14 +8804,15 @@ GameLoop.prototype.next = function (gameState) {
 	}
 	
 	if (!this.exist(gameState)) {
-		node.log('No next state of non-existing state: ' + gameState, 'WARN');
 		return false;
 	}
 	
+	// Make sure it is a number because 
+	// it could have been stringified
 	var idxLimit = Number(gameState.state)-1; // 0 vs 1 based
 	
-	if (this.limits[idxLimit]['steps'] > gameState.step){
-		var newStep = Number(gameState.step)+1;
+	if (this.limits[idxLimit].steps > gameState.step) {
+		var newStep = Number(gameState.step) + 1;
 		return new GameState({
 			state: gameState.state,
 			step: newStep,
@@ -8671,8 +8820,8 @@ GameLoop.prototype.next = function (gameState) {
 		});
 	}
 	
-	if (this.limits[idxLimit]['rounds'] > gameState.round){
-		var newRound = Number(gameState.round)+1;
+	if (this.limits[idxLimit].rounds > gameState.round) {
+		var newRound = Number(gameState.round) + 1;
 		return new GameState({
 			state: gameState.state,
 			step: 1,
@@ -8680,8 +8829,8 @@ GameLoop.prototype.next = function (gameState) {
 		});
 	}
 	
-	if (this.limits.length > gameState.state){		
-		var newState = Number(gameState.state)+1;
+	if (this.limits.length > gameState.state) {		
+		var newState = Number(gameState.state) + 1;
 		return new GameState({
 			state: newState,
 			step: 1,
@@ -8694,21 +8843,21 @@ GameLoop.prototype.next = function (gameState) {
 };
 
 /**
- * ### GameLoop.previous
+ * ### Stager.previous
  * 
  * Returns the previous state in the loop
  * 
  * An optional input parameter can control the state from which 
  * to compute the previous state
  * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
+ * @param {GameState} gameState The reference game-state
  * @return {GameState|boolean} The previous game-state, or FALSE if it does not exist
  */
-GameLoop.prototype.previous = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.game.state;
+function previous(gameState) {
+	gameState = new GameState(gameState);
 	
 	if (!this.exist(gameState)) {
-		node.log('No previous state of non-existing state: ' + gameState, 'WARN');
+		return false;
 	}
 	
 	var idxLimit = Number(gameState.state)-1; // 0 vs 1 based
@@ -8723,7 +8872,7 @@ GameLoop.prototype.previous = function (gameState) {
 	}
 	else if (gameState.round > 1){
 		var oldRound = Number(gameState.round)-1;
-		var oldStep = this.limits[idxLimit]['steps'];
+		var oldStep = this.limits[idxLimit].steps;
 		return new GameState({
 			state: gameState.state,
 			step: oldStep,
@@ -8731,8 +8880,8 @@ GameLoop.prototype.previous = function (gameState) {
 		});
 	}
 	else if (gameState.state > 1){
-		var oldRound = this.limits[idxLimit-1]['rounds'];
-		var oldStep = this.limits[idxLimit-1]['steps'];
+		var oldRound = this.limits[idxLimit-1].rounds;
+		var oldStep = this.limits[idxLimit-1].steps;
 		var oldState = idxLimit;
 		return new GameState({
 			state: oldState,
@@ -8746,49 +8895,7 @@ GameLoop.prototype.previous = function (gameState) {
 };
 
 /**
- * ### GameLoop.getName
- * 
- * Returns the name associated with a game-state
- * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
- * @return {string|boolean} The name of the game-state, or FALSE if state does not exists
- */
-GameLoop.prototype.getName = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.game.state;
-	if (!this.exist(gameState)) return false;
-	return this.loop[gameState.state]['state'][gameState.step]['name'];
-};
-
-/**
- * ### GameLoop.getFunction
- * 
- * Returns the function associated with a game-state
- * 
- * @param {GameState} gameState The reference game-state
- * @return {object|boolean} The function of the game-state, or FALSE if state does not exists
- */
-GameLoop.prototype.getFunction = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.game.state;
-	if (!this.exist(gameState)) return false;
-	return this.loop[gameState.state]['state'][gameState.step]['state'];
-};
-
-/**
- * ### GameLoop.getAllParams
- * 
- * Returns all the parameters associated with a game-state
- * 
- * @param {GameState} gameState The reference game-state
- * @return {object|boolean} The state object, or FALSE if state does not exists
- */
-GameLoop.prototype.getAllParams = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.game.state;
-	if (!this.exist(gameState)) return false;
-	return this.loop[gameState.state]['state'][gameState.step];
-};
-
-/**
- * ### GameLoop.jumpTo
+ * ### Stager.jumpTo
  * 
  * Returns a state N steps away from the reference state
  * 
@@ -8799,12 +8906,35 @@ GameLoop.prototype.getAllParams = function (gameState) {
  * @param {number} N The number of steps to jump
  * @return {GameState|boolean} The "jumped-to" game-state, or FALSE if it does not exist
  */
-GameLoop.prototype.jumpTo = function (gameState, N) {
+Stager.prototype.next = function (gameState, N) {
+	N = 'undefined' === typeof N ? 1 : Math.abs(N);
+	return this.jumpTo(gameState, N);
+};
+
+/**
+ * ### Stager.jumpTo
+ * 
+ * Returns a state N steps away from the reference state
+ * 
+ * A negative value for N jumps backward in the game-loop, 
+ * and a positive one jumps forward in the game-loop
+ * 
+ * @param {GameState} gameState The reference game-state
+ * @param {number} N The number of steps to jump
+ * @return {GameState|boolean} The "jumped-to" game-state, or FALSE if it does not exist
+ */
+Stager.prototype.previous = function (gameState, N) {
+	N = 'undefined' === typeof N ? -1 : -Math.abs(N);
+	return this.jumpTo(gameState, N);
+};
+
+
+Stager.prototype.jumpTo = function (gameState, N) {
 	if (!this.exist(gameState)) return false;
 	if (!N) return gameState;
-	
-	var func = (N > 0) ? this.next : this.previous;
-	
+
+	var func = (N > 0) ? next : previous;
+
 	for (var i=0; i < Math.abs(N); i++) {
 		gameState = func.call(this, gameState);
 		if (!gameState) return false;
@@ -8813,18 +8943,18 @@ GameLoop.prototype.jumpTo = function (gameState, N) {
 };
 
 /**
- * ### GameLoop.steps2Go
+ * ### Stager.steps2Go
  * 
  * Computes the total number steps left to the end of the game.
  * 
  * An optional input parameter can control the starting state
  * for the computation
  * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
+ * @param {GameState} gameState The reference game-state.
  * @return {number} The total number of steps left
  */
-GameLoop.prototype.steps2Go = function (gameState) {
-	gameState = (gameState) ? new GameState(gameState) : node.game.state;
+Stager.prototype.steps2Go = function (gameState) {
+	gameState = new GameState(gameState);
 	var count = 0;
 	while (gameState) { 
 		count++;
@@ -8833,19 +8963,14 @@ GameLoop.prototype.steps2Go = function (gameState) {
 	return count;
 };
 
-GameLoop.prototype.toArray = function() {
-	var state = new GameState();
-	var out = [];
-	while (state) { 
-		out.push(state.toString());
-		var state = this.next(state);
-	}
-	return out;
+// TODO: probably to remove
+Stager.prototype.toArray = function() {
+	return this.stages; //
 };
 
 /**
  * 
- * ### GameLoop.indexOf
+ * ### Stager.indexOf
  * 
  * Returns the ordinal position of a state in the game-loop 
  * 
@@ -8854,17 +8979,17 @@ GameLoop.prototype.toArray = function() {
  * @param {GameState} gameState The reference game-state
  * @return {number} The state index in the loop, or -1 if it does not exist
  * 
- * 	@see GameLoop.diff
+ * 	@see Stager.diff
  */
-GameLoop.prototype.indexOf = function (state) {
+Stager.prototype.indexOf = function (state) {
 	if (!state) return -1;
 	return this.diff(state, new GameState());
 };
 
 /**
- * ### GameLoop.diff
+ * ### Stager.diff
  * 
- * Returns the distance in steps between two states in the game-loop 
+ * Returns the distance in steps between two stages in the game-loop 
  * 
  * All steps and rounds in between are counted.
  * 
@@ -8878,7 +9003,7 @@ GameLoop.prototype.indexOf = function (state) {
  * 
  * @TODO: compute also negative distances
  */
-GameLoop.prototype.diff = function (state1, state2) {
+Stager.prototype.dist = Stager.prototype.diff = function (state1, state2) {
 	if (!state1) return false;
 	state1 = new GameState(state1) ;
 	
@@ -8902,6 +9027,75 @@ GameLoop.prototype.diff = function (state1, state2) {
 	return -1;
 };
 	
+
+/**
+ * ### Stager.get
+ * 
+ * Returns the stage associated with the gameState
+ * 
+ * @param {GameState} gameState The reference game-state.
+ * @return {string|boolean} The stage, or FALSE if the requested state does not exists
+ */
+Stager.prototype.get = function (gameState) {
+	gameState = new GameState(gameState);
+	if (!this.exist(gameState)) return false;
+	return this.stages[gameState.state].stage[gameState.step];
+};
+
+/**
+ * ### Stager.getProperty
+ * 
+ * Returns the requested property of the stage associated with a game-state
+ * 
+ * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
+ * @return {string|boolean} The name of the game-state, or FALSE if state does not exists
+ */
+Stager.prototype.getProperty = function (gameState, key) {
+	gameState = new GameState(gameState);
+	if (!this.exist(gameState)) return false;
+	return this.stages[gameState.state].stage[gameState.step][key];
+};
+
+
+/**
+ * ### Stager.getName
+ * 
+ * Returns the name associated with a game-state
+ * 
+ * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
+ * @return {string|boolean} The name of the game-state, or FALSE if state does not exists
+ */
+Stager.prototype.getName = function (gameState) {
+	return this.getProperty(gameState, 'name')
+};
+
+/**
+ * ### Stager.getFunction
+ * 
+ * Returns the function associated with a game-state
+ * 
+ * @param {GameState} gameState The reference game-state
+ * @return {object|boolean} The function of the game-state, or FALSE if state does not exists
+ */
+Stager.prototype.getCb = Stager.prototype.getFunction = function (gameState) {
+	return this.getProperty(gameState, 'state'); // todo change it to cb
+};
+
+
+Stager.prototype.clear = function(confirm) {
+	if (!confirm) {
+		node.warn('Use confirm=true if you really wanna clear current stages');
+		return false;
+	}
+	
+	this.limits = [];
+	this.stages = [];
+	return true;
+}
+
+
+
+
 // ## Closure	
 })(
 	'undefined' != typeof node ? node : module.exports
@@ -9531,16 +9725,16 @@ Socket.prototype.onDisconnect = function() {
 
 Socket.prototype.onMessage = function(msg) {
 	
-	console.log('FIRST MESSAGE')
-	
 	msg = this.secureParse(msg);
 	if (!msg) return;
 	
-	console.log('FIRST MESSAGE parsed correctly')
 	var sessionObj;
 	
 	// Parsing successful
 	if (msg.target === 'HI') {
+		
+		// replace itself: will change onMessage
+		this.attachMsgListeners();
 		
 		this.startSession(msg)
 		
@@ -9565,7 +9759,7 @@ Socket.prototype.onMessage = function(msg) {
 			this.sendHI(node.player, 'ALL');
 		}
 		
-		this.attachMsgListeners();
+		
 
    	 } 
 };
@@ -9605,7 +9799,7 @@ Socket.prototype.secureParse = secureParse = function (msg) {
 	var gameMsg;
 	try {
 		gameMsg = GameMsg.clone(JSON.parse(msg));
-		node.info(gameMsg, 'R: ');
+		node.info('R: ' + gameMsg);
 	}
 	catch(e) {
 		return logSecureParseError('malformed msg received',  e);
@@ -9689,7 +9883,6 @@ Socket.prototype.send = function(msg) {
 	
 	this.socket.send(msg);
 	node.info('S: ' + msg);
-	node.emit('LOG', 'S: ' + msg.toSMS());
 	return true;
 }
 
@@ -10171,8 +10364,8 @@ var GameState = node.GameState,
 	GameDB = node.GameDB,
 	PlayerList = node.PlayerList,
 	Player = node.Player,
-	GameLoop = node.GameLoop,
-	JSUS = node.JSUS;
+	Stager = node.Stager,
+	J = node.JSUS;
 
 var action = node.action;
 
@@ -10184,6 +10377,26 @@ var name,
 	pl,
 	ml;
 	
+Game.levels = {
+		UNINITIALIZED: 0, 	// game created, the init function has not been called
+		INITIALIZING: 1, 	// executing init
+		INITIALIZED: 5, 	// init executed
+		READY:	7,		// stages are set
+		ONGOING: 50,
+		GAMEOVER: 100,		// game complete
+		RUNTIME_ERROR: -1
+	};
+
+Game.stageLevels = {
+	LOADING: 1,
+	LOADED: 2,
+	PLAYING: 50,
+	PAUSING:  55,
+	PAUSED: 60,
+	RESUMING: 65,
+	RESUMED: 70,
+	DONE: 100
+};
 
 /**
  * ## Game constructor
@@ -10195,6 +10408,8 @@ var name,
 function Game (settings) {
 	settings = settings || {};
 
+	this.updateGameState(Game.levels.UNINITIALIZED);
+	
 // ## Private properties
 
 /**
@@ -10233,26 +10448,7 @@ function Game (settings) {
 	else {
 		this.description = description;
 	}
-
-/**
- * ### Game.gameLoop
- * 
- * An object containing the game logic 
- * 
- * @see GameLoop
- * @api private
- */
-	// <!-- support for deprecated options loops -->
-	gameLoop = new GameLoop(settings.loop || settings.loops);
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'gameLoop', {
-			value: gameLoop,
-			enumerable: true
-		});
-	}
-	else {
-		this.gameLoop = gameLoop;
-	}
+	
 	
 /**
  * ### Game.pl
@@ -10395,10 +10591,8 @@ function Game (settings) {
 	this.minPlayers = settings.minPlayers || 1;
 	this.maxPlayers = settings.maxPlayers || 1000;
 	
-	if (settings.init) {
-		this.init = settings.init;
-	}
 
+	
 /**
  * ### Game.memory
  * 
@@ -10412,7 +10606,30 @@ function Game (settings) {
 	this.memory = new GameDB();
 	
 	this.player = null;	
-	this.state = new GameState();
+	this.state = Game.levels
+	
+/**
+ * ### Game.stager
+ * 
+ * Stage manager 
+ * 
+ * @see Stager
+ * @api private
+ */
+	this.stager = new Stager(settings.stages);
+	
+	this.currentStep = new GameState();
+	this.currentStepObj = null;
+	
+	// Update the init function if one is passed
+	if (settings.init) {
+		this.init = function() {
+			this.updateGameState(Game.levels.INITIALIZING);
+			settings.init.call(node.game);
+			this.updateGameState(Game.levels.INITIALIZED);
+		}
+	}
+	
 
 } // <!-- ends constructor -->
 
@@ -10424,12 +10641,28 @@ function Game (settings) {
  * Initialization function
  * 
  * This function is called as soon as the game is instantiated,
- * i.e. at state 0.0.0. All event listeners declared here will
- * stay valid throughout the game.
+ * i.e. at state 0.0.0. 
+ * 
+ * Event listeners defined here stay valid throughout the whole
+ * game, unlike event listeners defined inside a function of the
+ * gameLoop, which are valid only within the specific function.
  * 
  */
-Game.prototype.init = function () {};
+Game.prototype.init = function () {
+	this.updateGameState(Game.levels.INITIALIZING);
+	this.updateGameState(Game.levels.INITIALIZED);
+};
 
+/** 
+ * ### Game.gameover
+ * 
+ * Cleaning up function
+ * 
+ * This function is called after the last stage of the gameLoop
+ * is terminated
+ * 
+ */
+Game.prototype.gamover = function () {};
 
 /**
  * ### Game.start
@@ -10450,10 +10683,7 @@ Game.prototype.init = function () {};
 Game.prototype.start = function() {
 	// INIT the game
 	this.init();
-	this.updateState(new GameState("1.1.1"));
-	
-	//this.state.is = node.is.LOADED;
-	//node.socket.sendSTATE(node.action.SAY, node.game.state);
+	this.step();
 	
 	node.log('game started');
 };
@@ -10480,157 +10710,100 @@ Game.prototype.resume = function () {
 	this.state.paused = false;
 };
 
-/**
- * ### Game.next
- * 
- * Fetches a state from the game-loop N steps ahead
- * 
- * Optionally, a parameter can control the number of steps to take
- * in the game-loop before returning the state
- * 
- * @param {number} N Optional. The number of steps to take in the game-loop. Defaults 1
- * @return {boolean|GameState} The next state, or FALSE if it does not exist
- * 
- * 	@see GameState
- * 	@see Game.gameLoop
- */
-Game.prototype.next = function (N) {
-	if (!N) return this.gameLoop.next(this.state);
-	return this.gameLoop.jumpTo(this.state, Math.abs(N));
-};
 
-/**
- * ### Game.previous
- * 
- * Fetches a state from the game-loop N steps back
- * 
- * Optionally, a parameter can control the number of steps to take
- * backward in the game-loop before returning the state
- * 
- * @param {number} times Optional. The number of steps to take in the game-loop. Defaults 1
- * @return {boolean|GameState} The previous state, or FALSE if it does not exist
- * 
- * 	@see GameState
- * 	@see Game.gameLoop
- */
-Game.prototype.previous = function (N) {
-	if (!N) return this.gameLoop.previous(this.state);
-	return this.gameLoop.jumpTo(this.state, -Math.abs(N));
-};
 
-/**
- * ### Game.jumpTo
- * 
- * Moves the game forward or backward in the game-loop
- * 
- * Optionally, a parameter can control the number of steps to take
- * in the game-loop before executing the next function. A negative 
- * value jumps backward in the game-loop, and a positive one jumps
- * forward in the game-loop
- * 
- * @param {number} jump  The number of steps to take in the game-loop
- * @return {boolean} TRUE, if the game succesfully jumped to the desired state
- * 
- * 	@see GameState
- * 	@see Game.gameLoop
- */
-Game.prototype.jumpTo = function (jump) {
-	if (!jump) return false;
-	var gs = this.gameLoop.jumpTo(this.state, jump);
-	if (!gs) return false;
-	return this.updateState(gs);
-};
-
-/**
- * ### Game.publishState
- * 
- * Notifies internal listeners, the server and other connected clients 
- * of the current game-state
- * 
- * If the *observer* flag is set, external notification is inhibited, 
- * but the STATECHANGE event is emitted anyway 
- * 
- * @emit STATECHANGE
- * 
- * @see GameState
- * @see	Game.observer
- */
-Game.prototype.publishState = function() {
-	// <!-- Important: SAY -->
-	if (!this.observer) {
-		var stateEvent = node.OUT + action.SAY + '.STATE'; 
-		node.emit(stateEvent, this.state, 'ALL');
-	}
-	
-	node.emit('STATECHANGE');
-	
-	node.log('New State = ' + new GameState(this.state), 'DEBUG');
-};
-
-/**
- * ### Game.updateState
- * 
- * Updates the game to the specified game-state
- * 
- * @param {GameState} state The state to load and run
- * 
- * @emit BEFORE_LOADING
- * @emit LOADED
- * @emit TXT
- */
-Game.prototype.updateState = function (state) {
-	
-	node.log('New state is going to be ' + new GameState(state), 'DEBUG');
-	
-	if (this.step(state) !== false) {
-		this.paused = false;
-		this.state.is =  node.is.LOADED;
-		if (this.isReady()) {
-			node.emit('LOADED');
-		}
-	}		
-	else {
-		node.log('Error in stepping', 'ERR');
-		// TODO: implement sendERR
-		node.emit('TXT','State was not updated');
-	}
-};
 
 /**
  * ### Game.step
  * 
- * Retrieves from the game-loop and executes the function for the 
- * specified game-state
+ * Executes the next stage / step 
  * 
- * @param {GameState} gameState Optional. The GameState to run
  * @return {Boolean} FALSE, if the execution encountered an error
  * 
- * 	@see Game.gameLoop
- * 	@see GameState
+ * @see Game.stager
+ * @see Game.currentStage
+ * @see Game.execStage
  */
-Game.prototype.step = function (gameState) {
+Game.prototype.step = function() {
+	var cb, err, nextStage;
 	
-	gameState = gameState || this.next();
-	if (gameState) {
-		
-		var func = this.gameLoop.getFunction(gameState);
-			
-		if (func) {
-			// Local Listeners from previous state are erased 
-			// before proceeding to next one
-			node.events.clearState(this.state);
-			
-			gameState.is = node.is.LOADING;
-			this.state = gameState;
-		
-			// This could speed up the loading in other client,
-			// but now causes problems of multiple update
-			this.publishState();
-					
-			return func.call(node.game);
-		}
+	nextState = this.stager.next(this.currentStepObj);
+	
+	// Reached the last stage
+	if (!nextStage) {
+		node.emit('GAMEOVER');
+		return this.gameover(); // can throw Errors
 	}
-	return false;
+	
+	return this.execStage(stage);
+	
+};
+
+/**
+ * ### Game.execStage
+ * 
+ * Executes the specified stage
+ * 
+ */
+Game.prototype.execStage = function(stage) {
+	
+	var cb, err, res;
+	
+	cb = this.stager.getFunction(stage); 
+			
+	// Local Listeners from previous state are erased 
+	// before proceeding to next one
+	node.events.clearState(this.currentStage);
+			
+	this.updateStageState('LOADING');
+	
+			
+	try {
+		res = cb.call(node.game);
+		this.updateStageState('LOADED');
+		
+		// This does not make sense. Basically it waits for the nodegame window to be loaded too
+		if (this.isReady()) {
+			node.emit('LOADED');
+		}
+		if (res === false) {
+			// A non fatal error occurred
+			// log it
+		}
+		
+		return res;
+		
+	} 
+	catch (e) {
+		err = 'An error occurred while executing a custom callback'; //  
+			
+		node.err(err);
+		
+		if (node.debug) {
+			throw new node.NodeGameRuntimeError();
+		}
+				
+		return true;
+	}
+};
+
+
+Game.prototype.updateGameState = function (state) {
+	this.state = state;
+	this.publishUpdate();
+};
+
+Game.prototype.updateStageState = function (state) {
+	this.stageState = state;
+	this.publishUpdate();
+};
+
+Game.prototype.publishUpdate = function() {
+	// <!-- Important: SAY -->
+	if (!this.observer) {
+		var stateEvent = node.OUT + action.SAY + '.STATE'; 
+		node.emit(stateEvent, this.state, 'ALL'); // SHOULD BE A GAME STATE EVENT
+	}
 };
 
 /**
@@ -10656,13 +10829,11 @@ Game.prototype.step = function (gameState) {
  * 
  */
 Game.prototype.isReady = function() {
-	if (this.state.state !== 0 && this.state.is < node.is.LOADED) return false;
-	
+	if (this.state < Game.levels.READY) return false;
+	if (this.stageState === 1) return false;
+		
 	// Check if there is a gameWindow obj and whether it is loading
-	if (node.window) {	
-		return (node.window.state >= node.is.LOADED) ? true : false;
-	}
-	return true;
+	return node.window ? node.window.state >= node.is.LOADED : true;
 };
 
 // ## Closure
@@ -10928,19 +11099,7 @@ SessionManager.prototype.store = function() {
 		Game = node.Game,
 		Player = node.Player,
 		GameSession = node.GameSession,
-		J = node.JSUS;	
-
-	// <!-- object commented in index.js -->
-	node.events = new EventEmitter();
-
-	node.msg	= node.GameMsgGenerator;	
-	
-	node.session = new GameSession();
-	
-	node.socket = node.gsc = new Socket();
-	
-	node.game = new Game();
-	
+		J = node.JSUS;		
 	
 // ## Methods
 	
@@ -10988,7 +11147,7 @@ SessionManager.prototype.store = function() {
 			var pconf = node.conf.player;
 			for (var key in pconf) {
 				if (pconf.hasOwnProperty(key)) {
-					if (JSUS.in_array(key, ['id', 'sid', 'ip'])) {
+					if (J.inArray(key, ['id', 'sid', 'ip'])) {
 						continue;
 					} 
 					
@@ -11241,7 +11400,21 @@ SessionManager.prototype.store = function() {
 		return true;
 	};
 	
-	node.log(node.version + ' loaded', 'ALWAYS');
+	node.info(node.version + ' loaded');
+	
+	
+	// Creating the objects
+	// <!-- object commented in index.js -->
+	node.events = new EventEmitter();
+
+	node.msg	= node.GameMsgGenerator;	
+	
+	node.session = new GameSession();
+	
+	node.socket = node.gsc = new Socket();
+	
+	node.game = new Game();
+	
 	
 })(
 		this
@@ -11436,6 +11609,28 @@ var frozen = false;
 		if ('undefined' === typeof conf.dumpEvents) {
 			conf.dumpEvents = false;
 		}
+		
+		return conf;
+	});
+	
+// ### node.setup.window
+// Configure the node.window object, if existing
+// @see GameWindow
+	node.setup.register('window', function(conf){
+		if (!node.window) {
+			node.warn('node.window not found, cannot configure it.');
+			return;
+		}
+		conf = conf || {};
+		if ('undefined' === typeof conf.promptOnleave) {
+			conf.promptOnleave = false;
+		}
+		
+		if ('undefined' === typeof conf.noEscape) {
+			conf.noEscape = true;
+		}
+		
+		node.window.init(conf);
 		
 		return conf;
 	});
@@ -11938,7 +12133,7 @@ node.on( IN + say + 'SETUP', function (msg) {
 
 
 /**
- * ## in.say.SETUP
+ * ## in.say.GAMECOMMAND
  * 
  * Setups a features of nodegame
  * 
@@ -11948,6 +12143,21 @@ node.on( IN + say + 'GAMECOMMAND', function (msg) {
 	if (!msg.text) return;
 	if (!node.gamecommand[msg.text]) return;
 	node.emit('NODEGAME_GAMECOMMAND_' + msg.text,msg.data);
+});	
+
+/**
+ * ## in.say.JOIN
+ * 
+ * Invites the client to leave the current channel and joining another one
+ * 
+ * It differs from `REDIRECT` messages because the client 
+ * does not leave the page, it just switches channel. 
+ * 
+ */
+node.on( IN + say + 'JOIN', function (msg) {
+	if (!msg.text) return;
+	//node.socket.disconnect();
+	node.connect(msg.text);
 });	
 
 	node.log('incoming listeners added');
@@ -12237,9 +12447,9 @@ node.log('internal listeners added');
 	
 // ## Global scope
 	
-exports.GameTimer = GameTimer;
-
-JSUS = node.JSUS;
+	exports.GameTimer = GameTimer;
+	
+	var JSUS = node.JSUS;
 
 /**
  * ### GameTimer status levels
@@ -12247,12 +12457,12 @@ JSUS = node.JSUS;
  * 
  * 	@see GameTimer.status
  */
-GameTimer.STOPPED = -5
-GameTimer.PAUSED = -3;
-GameTimer.UNINITIALIZED = -1;
-GameTimer.INITIALIZED = 0;
-GameTimer.LOADING = 3;
-GameTimer.RUNNING = 5;
+	GameTimer.STOPPED = -5
+	GameTimer.PAUSED = -3;
+	GameTimer.UNINITIALIZED = -1;
+	GameTimer.INITIALIZED = 0;
+	GameTimer.LOADING = 3;
+	GameTimer.RUNNING = 5;
 	
 /**
  * ## GameTimer constructor
