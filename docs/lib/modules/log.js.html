@@ -25,10 +25,13 @@
         <a href="#logging-system">Logging system</a>
       </div>
       <div class="heading h3">
+        <a href="#node.verbosity_levels">node.verbosity_levels</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.verbosity">node.verbosity</a>
       </div>
       <div class="heading h3">
-        <a href="#node.verbosity_levels">node.verbosity_levels</a>
+        <a href="#node.remoteverbosity">node.remoteVerbosity</a>
       </div>
       <div class="heading h3">
         <a href="#node.log">node.log</a>
@@ -88,28 +91,6 @@ MIT Licensed </p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.verbosity">
-  <h3>
-    <a href="#node.verbosity" class="pilcrow">&#182;</a>
-    node.verbosity
-  </h3>
-</div>
-
-
-<p>The minimum level for a log entry to be displayed as output.</p>
-
-<p>Defaults, only errors are displayed.</p>
-  </div>
-  <div class="body">
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
 <div class="pilwrap" id="node.verbosity_levels">
   <h3>
     <a href="#node.verbosity_levels" class="pilcrow">&#182;</a>
@@ -122,22 +103,61 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span> <span class="o">=</span> <span class="p">{</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
-</div>
-<!-- It is not really always... -->
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>      <span class="nx">ALWAYS</span><span class="o">:</span> <span class="o">-</span><span class="p">(</span><span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_VALUE</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> 
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">ALWAYS</span><span class="o">:</span> <span class="o">-</span><span class="p">(</span><span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_VALUE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> 
       <span class="nx">ERR</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
       <span class="nx">WARN</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
       <span class="nx">INFO</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-      <span class="nx">DEBUG</span><span class="o">:</span> <span class="mi">100</span>
-  <span class="p">};</span></pre></div>
+      <span class="nx">DEBUG</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+      <span class="nx">NEVER</span><span class="o">:</span> <span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_VALUE</span> <span class="o">-</span> <span class="mi">1</span>
+  <span class="p">};</span>  
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.verbosity">
+  <h3>
+    <a href="#node.verbosity" class="pilcrow">&#182;</a>
+    node.verbosity
+  </h3>
+</div>
+
+
+<p>The minimum level for a log entry to be displayed as output</p>
+
+<p>Defaults, only errors are displayed.</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">WARN</span><span class="p">;</span>
+
+
+ </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.remoteverbosity">
+  <h3>
+    <a href="#node.remoteverbosity" class="pilcrow">&#182;</a>
+    node.remoteVerbosity
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The minimum level for a log entry to be reported to the server</p>
+
+<p>Defaults, only errors are displayed.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">remoteVerbosity</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">WARN</span><span class="p">;</span>
+    </pre></div>
         </td>
       </tr>
       <tr>
@@ -153,8 +173,11 @@ MIT Licensed </p>
   </div>
   <div class="body"><p>Default nodeGame standard out, override to redirect</p>
 
-<p>Logs entries are displayed only if their verbosity level is 
-greater than <code>node.verbosity</code></p>
+<p>Logs entries are displayed to the console if their level is 
+smaller than <code>node.verbosity</code>.</p>
+
+<p>Logs entries are forwarded to the server if their level is
+smaller than <code>node.remoteVerbosity</code>.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -181,15 +204,38 @@ greater than <code>node.verbosity</code></p>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">txt</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     
     <span class="nx">level</span>   <span class="o">=</span> <span class="nx">level</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="nx">prefix</span>  <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">prefix</span><span class="p">)</span>   <span class="o">?</span> <span class="s1">&#39;nodeGame: &#39;</span>
+    <span class="nx">prefix</span>  <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">prefix</span><span class="p">)</span>   <span class="o">?</span> <span class="s1">&#39;ng&gt; &#39;</span>
                           <span class="o">:</span> <span class="nx">prefix</span><span class="p">;</span>
+    
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">level</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
     <span class="p">}</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">&gt;</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">txt</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">};</span></pre></div>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code><span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">remoteVerbosity</span> <span class="o">&gt;</span> <span class="n">level</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">var</span> <span class="n">remoteMsg</span> <span class="o">=</span> <span class="n">node</span><span class="p">.</span><span class="n">msg</span><span class="p">.</span><span class="n">create</span><span class="p">({</span>
+        <span class="nl">target:</span> <span class="n">node</span><span class="p">.</span><span class="n">target</span><span class="p">.</span><span class="n">LOG</span><span class="p">,</span>
+        <span class="nl">text:</span> <span class="n">level</span><span class="p">,</span>
+        <span class="nl">data:</span> <span class="n">txt</span><span class="p">,</span>
+        <span class="nl">to:</span> <span class="err">&#39;</span><span class="n">SERVER</span><span class="err">&#39;</span>
+    <span class="p">});</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+    <span class="n">node</span><span class="p">.</span><span class="n">socket</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">remoteMsg</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>

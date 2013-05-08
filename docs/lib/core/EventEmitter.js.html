@@ -345,8 +345,8 @@ registered </p>
       <span>{string|object} The event name or an object of the type
 
 
-<div class="highlight"><pre><code><span class="p">{</span> <span class="n">type:</span> <span class="s">&#39;myEvent&#39;</span><span class="p">,</span>
-  <span class="n">target:</span> <span class="n">this</span><span class="p">,</span> <span class="p">}</span> <span class="sr">//</span> <span class="n">optional</span>
+<div class="highlight"><pre><code><span class="p">{</span> <span class="n">type</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">myEvent</span><span class="err">&#39;</span><span class="p">,</span>
+  <span class="nl">target:</span> <span class="n">this</span><span class="p">,</span> <span class="p">}</span> <span class="c1">// optional</span>
 </code></pre></div>
 
 </span>
@@ -426,7 +426,7 @@ registered </p>
 <p><!-- Debug</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">dumpEvents</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Fired &#39;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+              <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;F: &#39;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
         

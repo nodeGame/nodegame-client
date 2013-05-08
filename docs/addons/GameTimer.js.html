@@ -131,9 +131,9 @@ MIT Licensed </p>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre>  
-<span class="nx">exports</span><span class="p">.</span><span class="nx">GameTimer</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">;</span>
-
-<span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
+  <span class="nx">exports</span><span class="p">.</span><span class="nx">GameTimer</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">;</span>
+  
+  <span class="kd">var</span> <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -153,12 +153,12 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameTimer</span><span class="p">.</span><span class="nx">STOPPED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span>
-<span class="nx">GameTimer</span><span class="p">.</span><span class="nx">PAUSED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">;</span>
-<span class="nx">GameTimer</span><span class="p">.</span><span class="nx">UNINITIALIZED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-<span class="nx">GameTimer</span><span class="p">.</span><span class="nx">INITIALIZED</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="nx">GameTimer</span><span class="p">.</span><span class="nx">LOADING</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
-<span class="nx">GameTimer</span><span class="p">.</span><span class="nx">RUNNING</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">STOPPED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span>
+  <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">PAUSED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">;</span>
+  <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">UNINITIALIZED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+  <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">INITIALIZED</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">LOADING</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+  <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">RUNNING</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
   </pre></div>
         </td>
       </tr>
@@ -764,16 +764,16 @@ or the current settings, if undefined </p>
     }); </p>
 
 
-<div class="highlight"><pre><code><span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;GAME_TIMER_PAUSE&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">that</span><span class="o">.</span><span class="n">pause</span><span class="p">();</span>
+<div class="highlight"><pre><code><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;GAME_TIMER_PAUSE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">pause</span><span class="p">();</span>
 <span class="p">});</span>
 
-<span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;GAME_TIMER_RESUME&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">that</span><span class="o">.</span><span class="n">resume</span><span class="p">();</span>
+<span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;GAME_TIMER_RESUME&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">resume</span><span class="p">();</span>
 <span class="p">});</span>
 
-<span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;GAME_TIMER_STOP&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">that</span><span class="o">.</span><span class="n">stop</span><span class="p">();</span>
+<span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;GAME_TIMER_STOP&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
 <span class="p">});</span>
 </code></pre></div>
 
@@ -788,9 +788,9 @@ or the current settings, if undefined </p>
   <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code><span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;DONE&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(){</span>
-    <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;TIMER PAUSED&#39;</span><span class="p">);</span>
-    <span class="n">that</span><span class="o">.</span><span class="n">pause</span><span class="p">();</span>
+<div class="highlight"><pre><code><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;TIMER PAUSED&#39;</span><span class="p">);</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">pause</span><span class="p">();</span>
 <span class="p">});</span>
 </code></pre></div>
 

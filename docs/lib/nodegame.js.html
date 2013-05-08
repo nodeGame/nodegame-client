@@ -95,31 +95,12 @@ line, multiplayer games in the browser.</p>
     
   <span class="kd">var</span> <span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">EventEmitter</span><span class="p">,</span>
     <span class="nx">Socket</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Socket</span><span class="p">,</span>
-    <span class="nx">GameState</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span><span class="p">,</span>
+    <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
     <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
     <span class="nx">Game</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">,</span>
     <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
     <span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameSession</span><span class="p">,</span>
-    <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
-</div>
-<!-- object commented in index.js -->
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventEmitter</span><span class="p">();</span>
-
-  <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">;</span>  
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameSession</span><span class="p">();</span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Socket</span><span class="p">();</span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Game</span><span class="p">();</span>
-  
+    <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>    
   </pre></div>
         </td>
       </tr>
@@ -214,7 +195,7 @@ modified during the game. </p>
       <span class="kd">var</span> <span class="nx">pconf</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
       <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">pconf</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">pconf</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;sid&#39;</span><span class="p">,</span> <span class="s1">&#39;ip&#39;</span><span class="p">]))</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">inArray</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;sid&#39;</span><span class="p">,</span> <span class="s1">&#39;ip&#39;</span><span class="p">]))</span> <span class="p">{</span>
             <span class="k">continue</span><span class="p">;</span>
           <span class="p">}</span> 
           </pre></div>
@@ -223,7 +204,7 @@ modified during the game. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
 </div>
 <p>Cannot be overwritten properties previously 
 set in other sessions (recovery)
@@ -361,7 +342,7 @@ set in other sessions (recovery)
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">replay</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">reset</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">reset</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
-    <span class="nx">node</span><span class="p">.</span><span class="kr">goto</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span><span class="nx">state</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">step</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">round</span><span class="o">:</span> <span class="mi">1</span><span class="p">}));</span>
+    <span class="nx">node</span><span class="p">.</span><span class="kr">goto</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameStage</span><span class="p">({</span><span class="nx">state</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">step</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">round</span><span class="o">:</span> <span class="mi">1</span><span class="p">}));</span>
   <span class="p">};</span>  
   
   </pre></div>
@@ -484,7 +465,7 @@ set in other sessions (recovery)
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
 <p>TODO: parameter to say who will get the msg</p>
         </td>
@@ -587,11 +568,11 @@ to its next stage. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
 <p>It is in the init function;</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span> <span class="o">||</span> <span class="p">(</span><span class="nx">GameState</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span> <span class="o">||</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">))</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="k">else</span> <span class="p">{</span>
@@ -743,7 +724,7 @@ other.</p>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">url</span> <span class="o">||</span> <span class="o">!</span><span class="nx">who</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     
     <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-      <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">targets</span><span class="p">.</span><span class="nx">REDIRECT</span><span class="p">,</span>
+      <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">REDIRECT</span><span class="p">,</span>
       <span class="nx">data</span><span class="o">:</span> <span class="nx">url</span><span class="p">,</span>
       <span class="nx">to</span><span class="o">:</span> <span class="nx">who</span>
     <span class="p">});</span>
@@ -751,7 +732,29 @@ other.</p>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
   <span class="p">};</span>
   
-  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">version</span> <span class="o">+</span> <span class="s1">&#39; loaded&#39;</span><span class="p">,</span> <span class="s1">&#39;ALWAYS&#39;</span><span class="p">);</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">version</span> <span class="o">+</span> <span class="s1">&#39; loaded&#39;</span><span class="p">);</span>
+  
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+Creating the objects
+<!-- object commented in index.js -->
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventEmitter</span><span class="p">();</span>
+
+  <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">;</span>  
+  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameSession</span><span class="p">();</span>
+  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Socket</span><span class="p">();</span>
+  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Game</span><span class="p">();</span>
+  
   
 <span class="p">})(</span>
     <span class="k">this</span>
