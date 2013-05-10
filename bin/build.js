@@ -38,6 +38,7 @@ var ng_client = [
  	rootDir + "lib/core/PlayerList.js",
  	rootDir + "lib/core/GameMsg.js",
  	rootDir + "lib/core/Stager.js",
+ 	rootDir + "lib/core/GameLoop.js",
  	rootDir + "lib/core/GameMsgGenerator.js",
  	
  	rootDir + "lib/core/SocketFactory.js",
