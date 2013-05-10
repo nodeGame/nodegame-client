@@ -8,7 +8,7 @@
 	}
 	
 	var GameMsg = node.GameMsg,
-		GameState = node.GameState,
+		GameStage = node.GameStage,
 		PlayerList = node.PlayerList,
 		Player = node.Player,
 		J = node.JSUS;
@@ -34,7 +34,7 @@
 		if (!msg.data) return;
 		node.game.pl.add(new Player(msg.data));
 		node.emit('UPDATED_PLIST');
-		node.game.pl.checkState();
+		node.game.pl.checkStage();
 	});	
 	
 /**
@@ -49,7 +49,7 @@
 		if (!msg.data) return;
 		node.game.pl.remove(msg.data.id);
 		node.emit('UPDATED_PLIST');
-		node.game.pl.checkState();
+		node.game.pl.checkStage();
 	});	
 
 /**
@@ -143,40 +143,34 @@ node.on( IN + set + 'DATA', function (msg) {
 });
 
 /**
- * ## in.say.STATE
+ * ## in.say.STAGE
  * 
- * Updates the game state or updates a player's state in
+ * Updates the game stage or updates a player's state in
  * the player-list object
  *
- * If the message is from the server, it updates the game state,
- * else the state in the player-list object from the player who
+ * If the message is from the server, it updates the game stage,
+ * else the stage in the player-list object from the player who
  * sent the message is updated 
  * 
  *  @emit UPDATED_PLIST
  *  @see Game.pl 
  */
-	node.on( IN + say + 'STATE', function (msg) {
-//		console.log('updateState: ' + msg.from + ' -- ' + new GameState(msg.data), 'DEBUG');
-//		console.log(node.game.pl.count())
-		
-		//console.log(node.socket.serverid + 'AAAAAA');
+	node.on( IN + say + 'STAGE', function (msg) {
+
 		if (node.socket.serverid && msg.from === node.socket.serverid) {
 //			console.log(node.socket.serverid + ' ---><--- ' + msg.from);
 //			console.log('NOT EXISTS');
 		}
 		
-		if (node.game.pl.exist(msg.from)) {
-			//console.log('EXIST')
-			
-			node.game.pl.updatePlayerState(msg.from, msg.data);
+		if (node.game.pl.exist(msg.from)) {			
+			node.game.pl.updatePlayerStage(msg.from, msg.data);
 			node.emit('UPDATED_PLIST');
-			node.game.pl.checkState();
+			node.game.pl.checkStage();
 		}
 		// <!-- Assume this is the server for now
 		// TODO: assign a string-id to the server -->
 		else {
-			//console.log('NOT EXISTS')
-			node.game.updateState(msg.data);
+			node.game.execStage(node.gameLoop.getStep(msg.data));
 		}
 	});
 	

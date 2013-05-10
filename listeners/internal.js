@@ -2,7 +2,7 @@
 
 // Internal listeners are not directly associated to messages,
 // but they are usually responding to internal nodeGame events, 
-// such as progressing in the loading chain, or finishing a game state 
+// such as progressing in the loading chain, or finishing a game stage 
 
 (function (node) {
 
@@ -15,7 +15,8 @@
 		target = node.target;
 	
 	var GameMsg = node.GameMsg,
-		GameState = node.GameState;
+		GameStage = node.GameStage,
+		Game = node.Game;
 	
 	var say = action.SAY + '.',
 		set = action.SET + '.',
@@ -24,14 +25,13 @@
 		OUT = node.OUT;
 	
 /**
- * ## STATEDONE
+ * ## STAGEDONE
  * 
- * Fired when all the players in the player list have their
- * state set to DONE
+ * Fired when all the players in the player list are DONE
  */ 
-node.on('STATEDONE', function() {
+node.on('STAGEDONE', function() {
 	
-	// In single player mode we ignore when all the players have completed the state
+	// In single player mode we ignore when all the players have completed the stage
 	if (node.game.solo_mode) {
 		return;
 	}
@@ -50,7 +50,7 @@ node.on('STATEDONE', function() {
 		else {
 			node.emit(OUT + say + target.TXT, node.game.minPlayers + ' players ready. Game can proceed');
 			node.log(node.game.pl.count() + ' players ready. Game can proceed');
-			node.game.updateState(node.game.next());
+			node.game.step();
 		}
 	}
 	else {
@@ -61,7 +61,7 @@ node.on('STATEDONE', function() {
 /**
  * ## DONE
  * 
- * Updates and publishes that the client has successfully terminated a state 
+ * Updates and publishes that the client has successfully terminated a stage 
  * 
  * If a DONE handler is defined in the game-loop, it will executes it before
  * continuing with further operations. In case it returns FALSE, the update
@@ -72,16 +72,17 @@ node.on('STATEDONE', function() {
  */
 node.on('DONE', function(p1, p2, p3) {
 	
-	// Execute done handler before updatating state
+	// Execute done handler before updating stage
 	var ok = true;
-	var done = node.game.gameLoop.getAllParams(node.game.state).done;
+	
+	var done = node.game.currentStepObj.done;
 	
 	if (done) ok = done.call(node.game, p1, p2, p3);
 	if (!ok) return;
-	node.game.state.is = node.is.DONE;
+	node.game.updateStageLevel(Game.stageLevels.DONE)
 	
 	// Call all the functions that want to do 
-	// something before changing state
+	// something before changing stage
 	node.emit('BEFORE_DONE');
 	
 	if (node.game.auto_wait) {
@@ -89,22 +90,11 @@ node.on('DONE', function(p1, p2, p3) {
 			node.emit('WAITING...');
 		}
 	}
-	node.game.publishState();
+	node.game.publishUpdate();
 	
 	if (node.game.solo_mode) {
-		node.game.updateState(node.game.next());
+		node.game.step();
 	}
-});
-
-/**
- * ## PAUSE
- * 
- * Sets the game to PAUSE and publishes the state
- * 
- */
-node.on('PAUSE', function(msg) {
-	node.game.state.paused = true;
-	node.game.publishState();
 });
 
 /**
@@ -138,10 +128,10 @@ node.on('GAME_LOADED', function() {
  */
 node.on('LOADED', function() {
 	node.emit('BEFORE_LOADING');
-	node.game.state.is = node.is.PLAYING;
+	node.game.updateStageLevel('PLAYING');
 	//TODO: the number of messages to emit to inform other players
-	// about its own state should be controlled. Observer is 0 
-	//node.game.publishState();
+	// about its own stage should be controlled. Observer is 0 
+	//node.game.publishUpdate();
 	node.socket.clearBuffer();
 	
 });
@@ -157,7 +147,7 @@ node.on('NODEGAME_GAMECOMMAND_' + node.gamecommand.start, function(options) {
 	
 	node.emit('BEFORE_GAMECOMMAND', node.gamecommand.start, options);
 	
-	if (node.game.state.state !== 0) {
+	if (node.game.currentStepObj.stage !== 0) {
 		node.err('Game already started. Use restart if you want to start the game again');
 		return;
 	}
