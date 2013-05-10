@@ -34,7 +34,7 @@ var ng_client = [
  	
  // lib
  	rootDir + "lib/core/EventEmitter.js",
- 	rootDir + "lib/core/GameState.js",
+ 	rootDir + "lib/core/GameStage.js",
  	rootDir + "lib/core/PlayerList.js",
  	rootDir + "lib/core/GameMsg.js",
  	rootDir + "lib/core/Stager.js",

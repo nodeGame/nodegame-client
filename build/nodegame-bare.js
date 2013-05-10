@@ -934,18 +934,16 @@ function Listener (o) {
   , 'undefined' != typeof node ? node : module.parent.exports
 );
 /**
- * # GameState
+ * # GameStage
  * 
  * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed 
  * 
- * Representation of the state of a game: 
+ * Representation of the stage of a game: 
  * 
- * 	`state`: the higher-level building blocks of a game
- * 	`step`: the sub-unit of a state
- * 	`round`: the number of repetition for a state. Defaults round = 1
- * 	`is`: the *load-lavel* of the game as expressed in `node.is`
- * 	`paused`: TRUE if the game is paused
+ * 	`stage`: the higher-level building blocks of a game
+ * 	`step`: the sub-unit of a stage
+ * 	`round`: the number of repetition for a stage. Defaults round = 1
  * 
  * 
  * @see GameLoop
@@ -954,223 +952,205 @@ function Listener (o) {
  * 
  */
 
-(function (exports, node) {
+(function(exports, node) {
 	
 // ## Global scope
 	
 var JSUS = node.JSUS;
 
 // Expose constructor
-exports.GameState = GameState;
+exports.GameStage = GameStage;
 
 
 
 
-GameState.defaults = {};
+GameStage.defaults = {};
 
 /**
- * ### GameState.defaults.hash
+ * ### GameStage.defaults.hash
  * 
- * Default hash string for game-states
+ * Default hash string for game-stages
  * 
- * 	@see GameState.toHash
+ * 	@see GameStage.toHash
  */
-GameState.defaults.hash = 'S.s.r.i.p';
+GameStage.defaults.hash = 'S.s.r';
 
 /**
- * ## GameState constructor
+ * ## GameStage constructor
  * 
- * Creates an instance of a GameState 
+ * Creates an instance of a GameStage 
  * 
- * It accepts an object literal or an hash string as defined in `GameState.defaults.hash`.
+ * It accepts an object literal or an hash string as defined in `GameStage.defaults.hash`.
+ *
+ * The stage and step can be either an integer (1-based index) or a string
+ * (valid stage/step name).  The round must be an integer.
  * 
- * If no parameter is passed, all the properties of the GameState 
+ * If no parameter is passed, all the properties of the GameStage 
  * object are set to 0
  * 
- * @param {object|string} gs An object literal | hash string representing the game state
+ * @param {object|string} gs An object literal | hash string representing the game stage
  * 
- * 	@see GameState.defaults.hash 
+ * 	@see GameStage.defaults.hash 
  */
-function GameState (gs) {
+function GameStage(gs) {
 
 // ## Public properties	
 
 /**
- * ### GameState.state
+ * ### GameStage.stage
  * 
- * The N-th game-block (state) in the game-loop currently being executed
+ * The N-th game-block (stage) in the game-loop currently being executed
  * 
  * 	@see GameLoop
  * 
  */	
-	this.state = 	0;
+	this.stage = 0;
 
 /**
- * ### GameState.step
+ * ### GameStage.step
  * 
- * The N-th game-block (step) nested in the current state
+ * The N-th game-block (step) nested in the current stage
  * 
- * 	@see GameState.state
+ * 	@see GameStage.stage
  * 
  */	
-	this.step = 	0;
+	this.step =	1;
 
 /**
- * ### GameState.round
+ * ### GameStage.round
  * 
- * The number of times the current state was repeated 
- * 
- */		
-	this.round = 	0;
-	
-/**
- * ### GameState.is
- * 
- * The state of the nodeGame engine
- * 
- * 	@see node.is
+ * The number of times the current stage was repeated 
  * 
  */		
-	this.is = node.is.UNKNOWN;
-	
-/**
- * ### GameState.paused
- * 
- * TRUE if the game is paused
- * 
- */		
-	this.paused = 	false;
+	this.round = 1;
 	
 	if ('string' === typeof gs) {
-		var tokens = gs.split('.');		
-		this.state = 	('undefined' !== typeof tokens[0]) ? Number(tokens[0]) : undefined;
-		this.step = 	('undefined' !== typeof tokens[1]) ? Number(tokens[1]) : undefined;
-		this.round = 	('undefined' !== typeof tokens[2]) ? Number(tokens[2]) : undefined;
-		this.is = 		('undefined' !== typeof tokens[3]) ? Number(tokens[3]) : node.is.UNKNOWN;
-		this.paused = 	(tokens[4] === '1') ? true : false;
+		var tokens = gs.split('.');
+		var stageNum = parseInt(tokens[0]);
+		var stepNum  = parseInt(tokens[1]);
+		var roundNum = parseInt(tokens[2]);
+
+		if (tokens[0])
+			this.stage = !isNaN(stageNum) ? stageNum : tokens[0];
+
+		if ('undefined' !== typeof tokens[1])
+			this.step  = !isNaN(stepNum)  ? stepNum  : tokens[1];
+
+		if ('undefined' !== typeof tokens[2])
+			this.round = roundNum;
 	}
 	else if ('object' === typeof gs) {	
-		this.state = 	gs.state;
-		this.step = 	gs.step;
-		this.round = 	gs.round;
-		this.is = 		(gs.is) ? gs.is : node.is.UNKNOWN;
-		this.paused = 	(gs.paused) ? gs.paused : false;
+		if ('undefined' !== typeof gs.stage)
+			this.stage = gs.stage;
+
+		if ('undefined' !== typeof gs.step)
+			this.step  = gs.step;
+
+		if ('undefined' !== typeof gs.round)
+			this.round = gs.round;
 	}
 	
 }
 
 /**
- * ## GameState.toString
+ * ## GameStage.toString
  * 
- * Converts the current instance of GameState to a string
+ * Converts the current instance of GameStage to a string
  * 
- * @return {string} out The string representation of the state of the GameState
+ * @return {string} out The string representation of the stage of the GameStage
  */
-GameState.prototype.toString = function () {
-	var out = this.toHash('(r) S.s');
-	if (this.paused) {
-		out += ' [P]';
-	}
+GameStage.prototype.toString = function() {
+	var out = this.toHash('S.s.r');
 	return out;
 };
 
 /**
- * ## GameState.toHash
+ * ## GameStage.toHash
  * 
- * Returns a simplified hash of the state of the GameState,
+ * Returns a simplified hash of the stage of the GameStage,
  * according to the input string
  * 
  * @param {string} str The hash code
- * @return {string} hash The hashed game states
+ * @return {string} hash The hashed game stages
  * 
- * @see GameState.toHash (static)
+ * @see GameStage.toHash (static)
  */
-GameState.prototype.toHash = function (str) {
-	return GameState.toHash(this, str);
+GameStage.prototype.toHash = function(str) {
+	return GameStage.toHash(this, str);
 };
 
 /**
- * ## GameState.toHash (static)
+ * ## GameStage.toHash (static)
  * 
- * Returns a simplified hash of the state of the GameState,
+ * Returns a simplified hash of the stage of the GameStage,
  * according to the input string. 
  * 
  * The following characters are valid to determine the hash string
  * 
- * 	- S: state
+ * 	- S: stage
  * 	- s: step
  * 	- r: round
- * 	- i: is
- * 	- P: paused
  * 
  * E.g. 
  * 
  * ```javascript
- * 		var gs = new GameState({
+ * 		var gs = new GameStage({
  * 							round: 1,
- * 							state: 2,
- * 							step: 1,
- * 							is: 50,
- * 							paused: false,
+ * 							stage: 2,
+ * 							step: 1
  * 		});
  * 
  * 		gs.toHash('(R) S.s'); // (1) 2.1
  * ```
  * 
- * @param {GameState} gs The game state to hash
+ * @param {GameStage} gs The game stage to hash
  * @param {string} str The hash code
- * @return {string} hash The hashed game states
+ * @return {string} hash The hashed game stages
  */
-GameState.toHash = function (gs, str) {
+GameStage.toHash = function(gs, str) {
 	if (!gs || 'object' !== typeof gs) return false;
 	if (!str || !str.length) return gs.toString();
 	
 	var hash = '',
-		symbols = 'Ssrip',
-		properties = ['state', 'step', 'round', 'is', 'paused'];
+		symbols = 'Ssr',
+		properties = ['stage', 'step', 'round'];
 	
 	for (var i = 0; i < str.length; i++) {
 		var idx = symbols.indexOf(str[i]); 
-		hash += (idx < 0) ? str[i] : Number(gs[properties[idx]]);
+		hash += (idx < 0) ? str[i] : gs[properties[idx]];
 	}
 	return hash;
 };
 
 /**
- * ## GameState.compare (static)
+ * ## GameStage.compare (static)
  * 
- * Compares two GameState objects|hash strings and returns
+ * Compares two GameStage objects|hash strings and returns
  * 
- *  - 0 if they represent the same game state
+ *  - 0 if they represent the same game stage
  *  - a positive number if gs1 is ahead of gs2 
  *  - a negative number if gs2 is ahead of gs1 
  * 
- * If the strict parameter is set, also the `is` property is compared,
- * otherwise only `round`, `state`, and `step`
- * 
- * The accepted hash string format is the following: 'S.s.r.i.p'.
- * Refer to `GameState.toHash` for the semantic of the characters.
+ * The accepted hash string format is the following: 'S.s.r'.
+ * Refer to `GameStage.toHash` for the semantic of the characters.
  * 
  * 
- * @param {GameState|string} gs1 The first GameState object|string to compare
- * @param {GameState|string} gs2 The second GameState object|string to compare
- * @param {Boolean} strict If TRUE, also the `is` attribute is checked
+ * @param {GameStage|string} gs1 The first GameStage object|string to compare
+ * @param {GameStage|string} gs2 The second GameStage object|string to compare
  * 
  * @return {Number} result The result of the comparison
  * 
- * @see GameState.toHash (static)
+ * @see GameStage.toHash (static)
  * 
  */
-GameState.compare = function (gs1, gs2, strict) {
+GameStage.compare = function(gs1, gs2) {
 	if (!gs1 && !gs2) return 0;
 	if (!gs2) return 1;
 	if (!gs1) return -1;
 
-	strict = strict || false;
-
 	// Convert the parameters to objects, if an hash string was passed
-	if ('string' === typeof gs1) gs1 = new GameState(gs1);
-	if ('string' === typeof gs2) gs2 = new GameState(gs2);
+	if ('string' === typeof gs1) gs1 = new GameStage(gs1);
+	if ('string' === typeof gs2) gs2 = new GameStage(gs2);
 	
 	
 	// <!--		
@@ -1178,17 +1158,13 @@ GameState.compare = function (gs1, gs2, strict) {
 	//		console.log(gs1,'DEBUG');
 	//		console.log(gs2,'DEBUG');
 	// -->
-	var result = gs1.state - gs2.state;
+	var result = gs1.stage - gs2.stage;
 	
 	if (result === 0 && 'undefined' !== typeof gs1.round) {
 		result = gs1.round - gs2.round;
 		
 		if (result === 0 && 'undefined' !== typeof gs1.step) {
 			result = gs1.step - gs2.step;
-			
-			if (strict && result === 0 && 'undefined' !== typeof gs1.is) {
-				result = gs1.is - gs2.is;
-			}
 		}
 	}
 	
@@ -1200,17 +1176,16 @@ GameState.compare = function (gs1, gs2, strict) {
 };
 
 /**
- * ## GameState.stringify (static)
+ * ## GameStage.stringify (static)
  * 
- * Converts an object GameState-like to its string representation
+ * Converts an object GameStage-like to its string representation
  * 
- * @param {GameState} gs The object to convert to string	
- * @return {string} out The string representation of a GameState object
+ * @param {GameStage} gs The object to convert to string	
+ * @return {string} out The string representation of a GameStage object
  */ 
-GameState.stringify = function (gs) {
+GameStage.stringify = function(gs) {
 	if (!gs) return;
-	var out = new GameState(gs).toHash('(r) S.s_i');
-	if (gs.paused) out += ' [P]';
+	var out = new GameStage(gs).toHash('(r) S.s_i');
 	return out;
 }; 
 
@@ -2104,562 +2079,684 @@ GameMsg.prototype.toEvent = function () {
 );
 /**
  * # Stager
- * 
- * Copyright(c) 2012 Stefano Balietti
- * MIT Licensed 
- * 
- * `nodeGame` container of game-state functions, and parameters
- * 
+ *
+ * `nodeGame` container and builder of the game sequence
+ *
  * ---
- * 
  */
-(function (exports, node) {
-	
-// ## Global scope
-var GameState = node.GameState,
-	J = node.JSUS;
+(function(exports, node) {
 
+// ## Global scope
 exports.Stager = Stager;
+
+var J = node.JSUS;
 
 /**
  * ## Stager constructor
- * 
- * Creates a new instance of Stager
- * 
- * Takes as input parameter an object like:
- * 
- * 
- * 
- * @param {array} stages Optional. An array containing the stages
- * 
+ *
+ * Creates a new empty instance of Stager
  */
-function Stager(stages) {
-	// ### Public variables
-
-/**
- * ### limits
- * 
- * Array containing the internal representation of the boundaries
- * of each state inside the game-loop
- * 
- * @api private
- */	
-	this.limits = [];	
-	
-/**
- * ### Stager.stages
- * 
- * Container for the verified stages
- */		
-	this.stages = [];
-	
-	if (stages) {
-		this.add(stages);
-	}
-	
-}
-
-
-function addMultiple(stage, pos) {
-	var res = true, i;
-	if (!stage.length) {
-		node.warn('Cannot add empty array of stages');
-		return false;
-	}
-	
-	for (i = 0; i < stage.length; i++) {
-		res = res && this.add(stage[i], pos+i);
-	}
-	return res;
+function Stager() {
+	this.clear();
 }
 
 // ## Stager methods
 
-/** 
- * ### GameStage.add
- * 
- * Adds one or more entries into the array of stages
- * 
- * @param {array|object} stage A stage object or an array of stages
- * @param {number} Optional. The ordinal position for inserting in array of 
- * 	stages. Negative values specify the position from the end of the array.
- * 	Defaults, adds at then of the array.
- * 	
- * @return {boolean} TRUE if the operation is completely successful
- *  
+/**
+ * ### Stager.clear
+ *
+ * Resets Stager object to initial state
+ *
+ * Called by the constructor.
  */
-Stager.prototype.add = function(stage, pos) {
-	
-	if (J.isArray(stage)) {
-		return addMultiple.call(this, stage, pos);
-	}
-	
-	stage = this.create(stage);
-	
-	if (!stage) return false;
-	
-	pos = pos || this.stages.length;
-	
-	this.limits.splice(pos, 0, {
-		rounds: stage.rounds, 
-		steps: stage.steps.length
-	});
-	
-	this.stages.splice(pos, 0, stage);
-	
-	return true;
+Stager.prototype.clear = function() {
+	/**
+	 * ### Stager.steps
+	 *
+	 * Step object container
+	 *
+	 * key: step ID,  value: step object
+	 *
+	 * @see Stager.addStep
+	 */
+	this.steps = {};
+
+	/**
+	 * ### Stager.stages
+	 *
+	 * Stage object container
+	 *
+	 * key: stage ID,  value: stage object
+	 *
+	 * Stage aliases are stored the same way, with a reference to the original
+	 * stage object as the value.
+	 *
+	 * @see Stager.addStage
+	 */
+	this.stages = {};
+
+
+	/**
+	 * ### Stager.sequence
+	 *
+	 * Sequence block container
+	 *
+	 * Stores the game plan in 'simple mode'.
+	 *
+	 * @see Stager.gameover
+	 * @see Stager.next
+	 * @see Stager.repeat
+	 * @see Stager.loop
+	 * @see Stager.doLoop
+	 */
+	this.sequence = [];
+
+
+	/**
+	 * ### Stager.generalNextFunction
+	 *
+	 * General next-stage decider function
+	 *
+	 * Returns the id of the next game step.
+	 * Available only when nodegame is executed in _flexible_ mode.
+	 *
+	 * @see Stager.registerGeneralNext
+	 */
+	this.generalNextFunction = null;
+
+	/**
+	 * ### Stager.nextFunctions
+	 *
+	 * Per-stage next-stage decider function
+	 *
+	 * key: stage ID,  value: callback function
+	 *
+	 * Stores functions to be called to yield the id of the next game stage
+	 * for a specific previous stage.
+	 *
+	 * @see Stager.registerNext
+	 */
+	this.nextFunctions = {};
 };
 
-function checkStageOrStep(o, type) {
-	if (!o || J.isEmpty(o)) {
-		node.warn('Cannot create empty ' + type + '.');
+/**
+ * ### Stager.registerGeneralNext
+ *
+ * Sets general callback for next stage decision
+ *
+ * Available only when nodegame is executed in _flexible_ mode.
+ * The callback given here is used to determine the next stage.
+ *
+ * @param {function} func The decider callback.  It should return the name of
+ *  the next stage, 'NODEGAME_GAMEOVER' to end the game or false for sequence end.
+ */
+Stager.prototype.registerGeneralNext = function(func) {
+	if ('function' !== typeof func) {
+		node.warn("registerGeneralNext didn't receive function parameter");
 		return;
 	}
-	if ('string' !== typeof o.name) {
-		node.warn('Invalid ' + type + ' name.');
-		return;
-	}
-	if (o.name.trim() === '') {
-		node.warn('Empty ' + type + ' name.');
-		return;
-	}
-	
-	return true;
+
+	this.generalNextFunction = func;
 }
 
-function checkStep(step) {
-	if (!checkStageOrStep(step, 'step')) return false;
-	
-	if ('function' !== typeof step.cb) {
-		node.warn('Step must have a valid callback function');
+/**
+ * ### Stager.registerNext
+ *
+ * Registers a step-decider callback for a specific stage
+ *
+ * The function overrides the general callback for the specific stage, 
+ * and determines the next stage.
+ * Available only when nodegame is executed in _flexible_ mode.
+ *
+ * @param {string} id The name of the stage after which the decider function will be called
+ * @param {function} func The decider callback.  It should return the name of
+ *  the next stage, 'NODEGAME_GAMEOVER' to end the game or false for sequence end.
+ *  
+ * @see Stager.registerGeneralNext
+ */
+Stager.prototype.registerNext = function(id, func) {
+	if ('function' !== typeof func) {
+		node.warn("registerNext didn't receive function parameter");
+		return;
+	}
+
+	if (!this.stages[id]) {
+		node.warn('registerNext received nonexistent stage id');
+		return;
+	}
+
+	this.nextFunctions[id] = func;
+}
+
+/**
+ * ### Stager.addStep
+ *
+ * Adds a new step
+ *
+ * Registers a new game step object.  This must have at least the following fields:
+ *
+ *  - id (string): The step's name
+ *  - cb (function): The step's callback function
+ *
+ * @param {object} step A valid step object.  Shallowly copied.
+ */
+Stager.prototype.addStep = function(step) {
+	if (!this.checkStepValidity(step)) {
+		node.warn('addStep received invalid step');
 		return false;
 	}
-	
-	return true;
-}
 
-Stager.prototype.create = function(stage) {
-	if (!stage || J.isEmpty(stage)) {
-		node.warn('Cannot create empty stage.');
-		return;
-	}
-	if ('string' !== typeof stage.name) {
-		node.warn('Invalid stage name.');
-		return;
-	}
-	if (stage.name.trim() === '') {
-		node.warn('Stage name cannot be empty.');
-		return;
-	}
-
-	if (stage.steps && stage.cb) {
-		node.warn('Stage cannot contain both attributes \'steps\' and \'cb\'.');
-		return;
-	}
-	
-	if (stage.cb) {
-		stage.steps = [{
-			name: stage.name,
-			cb: stage.cb
-		}];
-	}
-	
-	if (!stage.cb && !stage.steps) {
-		node.warn('A stage must have one valid callback or an array of \'steps\'.');
-		return;
-	}
-	
-	if (!J.isArray(stage.steps)) {
-		node.warn('Expected array for property \'steps\' of stage object.');
-		return;
-	}
-	
-	var steps = [], i;
-	for (i = 0 ; i < stage.steps.length ; i++) {
-		if (!checkStep(stage.steps[i])) continue;
-		steps.push(stage.steps[i]);
-	}
-	
-	if (steps.length === 0) {
-		node.warn('Stage must have at least one valid step.');
-		return;
-	}
-	
-	return {
-		name: stage.name,
-		steps: steps,
-		rounds: stage.rounds || 1
-	}
-};
-
-/**
- * ### Stager.size
- * 
- * Returns the total number of states + steps in the game-loop
- * 
- */
-Stager.prototype.size = function() {
-	if (!this.limits.length) return 0;
-	return this.steps2Go(new GameState({state: 1, step: 1}));
-};
-
-/**
- * ### Stager.exists
- * 
- * Returns TRUE, if a gameState exists in the game-loop
- * 
- * @param {GameState|string} gameState The game-state to check
- * 
- */
-Stager.prototype.exists = function (gameState) {
-	if (!gameState) return false;
-	gameState = new GameState(gameState);
-	
-	// States are 1 based, arrays are 0-based => -1
-	var stageIdx = gameState.state - 1,
-		stepIdx = gameState.step -1,
-		rounds = gameState.rounds;
-	
-	if (!this.stages[stageIdx]) return false;
-	if (!this.stages[stageIdx].steps[stepIdx]) return false;
-	if (rounds > this.stages[stageIdx].rounds) return false;
-	
-		
+	this.steps[step.id] = step;
 	return true;
 };
 
 /**
- * ### Stager.exist
+ * ### Stager.addStage
+ *
+ * Adds a new stage
+ *
+ * Registers a new game stage object. This must have at least the following fields:
+ *
+ *  - id (string): The stage's name
+ *  - steps (array of strings): The names of the steps that belong to this stage.
+ *     These must have been added with the `addStep` method before this call.
+ *
+ * Alternatively, a step object may be given.  Then that step and a stage
+ * containing only that step are added.
+ *
+ * @param {object} stage A valid stage or step object.  Shallowly copied.
+ *
+ * @return {boolean} true on success, false on error
  * 
- * Alias for Stager.exists
- * 
- * @deprecated
+ * @see Stager.addStep
  */
-Stager.prototype.exist = Stager.prototype.exists; 
+Stager.prototype.addStage = function(stage) {
+	// Handle wrapped steps:
+	if (this.checkStepValidity(stage)) {
+		if (!this.addStep(stage)) return false;
+		if (!this.addStage({
+			id: stage.id,
+			steps: [ stage.id ]
+		    })) return false;
+
+		return true;
+	}
+
+	if (!this.checkStageValidity(stage)) {
+		node.warn('addStage received invalid stage');
+		return false;
+	}
+
+	this.stages[stage.id] = stage;
+	return true;
+};
+
+/**
+ * ### Stager.gameover
+ *
+ * Adds gameover block to sequence
+ *
+ * @return {object} this GameStage object
+ */
+Stager.prototype.gameover = function() {
+	this.sequence.push({ type: 'gameover' });
+
+	return this;
+};
 
 /**
  * ### Stager.next
- * 
- * Returns the stage next stage
- * 
- * An optional input parameter can control the state from which 
- * to compute the next state
- * 
- * @param {GameState} gameState The reference game-state
- * @return {GameState|boolean} The next game-state, or FALSE if it does not exist
- * 
+ *
+ * Adds stage block to sequence
+ *
+ * The `id` parameter must have the form 'stageID' or 'stageID AS alias'.
+ * stageID must be a valid stage and it (or alias if given) must be unique
+ * in the sequence.
+ *
+ * @param {string} id A valid stage name with optional alias
+ *
+ * @return {object} this GameStage object on success, null on error
+ *
+ * @see Stager.addStage
  */
- function next(gameState, N) {
-	gameState = new GameState(gameState);
-	
-	// Game has not started yet, do it!
-	if (gameState.state === 0) {
-		return new GameState({
-							 state: 1,
-							 step: 1,
-							 round: 1
-		});
+Stager.prototype.next = function(id) {
+	var stageName = this.handleAlias(id);
+
+	if (stageName === null) {
+		node.warn('next received invalid stage name');
+		return null;
 	}
-	
-	if (!this.exist(gameState)) {
-		return false;
-	}
-	
-	// Make sure it is a number because 
-	// it could have been stringified
-	var idxLimit = Number(gameState.state)-1; // 0 vs 1 based
-	
-	if (this.limits[idxLimit].steps > gameState.step) {
-		var newStep = Number(gameState.step) + 1;
-		return new GameState({
-			state: gameState.state,
-			step: newStep,
-			round: gameState.round
-		});
-	}
-	
-	if (this.limits[idxLimit].rounds > gameState.round) {
-		var newRound = Number(gameState.round) + 1;
-		return new GameState({
-			state: gameState.state,
-			step: 1,
-			round: newRound
-		});
-	}
-	
-	if (this.limits.length > gameState.state) {		
-		var newState = Number(gameState.state) + 1;
-		return new GameState({
-			state: newState,
-			step: 1,
-			round: 1
-		});
-	}
-	
-	// No next state: game over
-	return false; 
+
+	this.sequence.push({
+		type: 'plain',
+		id: stageName
+	});
+
+	return this;
 };
 
 /**
- * ### Stager.previous
- * 
- * Returns the previous state in the loop
- * 
- * An optional input parameter can control the state from which 
- * to compute the previous state
- * 
- * @param {GameState} gameState The reference game-state
- * @return {GameState|boolean} The previous game-state, or FALSE if it does not exist
+ * ### Stager.repeat
+ *
+ * Adds repeated stage block to sequence
+ *
+ * @param {string} id A valid stage name with optional alias
+ * @param {number} nRepeats The number of repetitions
+ *
+ * @return {object} this GameStage object on success, null on error
+ *
+ * @see Stager.addStage
+ * @see Stager.next
  */
-function previous(gameState) {
-	gameState = new GameState(gameState);
-	
-	if (!this.exist(gameState)) {
-		return false;
+Stager.prototype.repeat = function(id, nRepeats) {
+	var stageName = this.handleAlias(id);
+
+	if (stageName === null) {
+		node.warn('repeat received invalid stage name');
+		return null;
 	}
-	
-	var idxLimit = Number(gameState.state)-1; // 0 vs 1 based
-	
-	if (gameState.step > 1){
-		var oldStep = Number(gameState.step)-1;
-		return new GameState({
-			state: gameState.state,
-			step: oldStep,
-			round: gameState.round
-		});
-	}
-	else if (gameState.round > 1){
-		var oldRound = Number(gameState.round)-1;
-		var oldStep = this.limits[idxLimit].steps;
-		return new GameState({
-			state: gameState.state,
-			step: oldStep,
-			round: oldRound
-		});
-	}
-	else if (gameState.state > 1){
-		var oldRound = this.limits[idxLimit-1].rounds;
-		var oldStep = this.limits[idxLimit-1].steps;
-		var oldState = idxLimit;
-		return new GameState({
-			state: oldState,
-			step: oldStep,
-			round: oldRound
-		});
-	}
-	
-	// game init
-	return false; 
+
+	this.sequence.push({
+		type: 'repeat',
+		id: stageName,
+		num: nRepeats
+	});
+
+	return this;
 };
 
 /**
- * ### Stager.jumpTo
- * 
- * Returns a state N steps away from the reference state
- * 
- * A negative value for N jumps backward in the game-loop, 
- * and a positive one jumps forward in the game-loop
- * 
- * @param {GameState} gameState The reference game-state
- * @param {number} N The number of steps to jump
- * @return {GameState|boolean} The "jumped-to" game-state, or FALSE if it does not exist
+ * ### Stager.loop
+ *
+ * Adds looped stage block to sequence
+ *
+ * The given stage will be repeated as long as the `func` callback returns true.
+ * If it returns false on the first time, the stage is never executed.
+ *
+ * @param {string} id A valid stage name with optional alias
+ * @param {function} func Callback returning true for repetition
+ *
+ * @return {object} this GameStage object on success, null on error
+ *
+ * @see Stager.addStage
+ * @see Stager.next
+ * @see Stager.doLoop
  */
-Stager.prototype.next = function (gameState, N) {
-	N = 'undefined' === typeof N ? 1 : Math.abs(N);
-	return this.jumpTo(gameState, N);
-};
+Stager.prototype.loop = function(id, func) {
+	var stageName = this.handleAlias(id);
 
-/**
- * ### Stager.jumpTo
- * 
- * Returns a state N steps away from the reference state
- * 
- * A negative value for N jumps backward in the game-loop, 
- * and a positive one jumps forward in the game-loop
- * 
- * @param {GameState} gameState The reference game-state
- * @param {number} N The number of steps to jump
- * @return {GameState|boolean} The "jumped-to" game-state, or FALSE if it does not exist
- */
-Stager.prototype.previous = function (gameState, N) {
-	N = 'undefined' === typeof N ? -1 : -Math.abs(N);
-	return this.jumpTo(gameState, N);
-};
-
-
-Stager.prototype.jumpTo = function (gameState, N) {
-	gameState = new GameState(gameState);
-	if (gameState.state !== 0 && !this.exist(gameState)) return false;
-	if (!N) return gameState;
-
-	var func = (N > 0) ? next : previous;
-
-	for (var i=0; i < Math.abs(N); i++) {
-		gameState = func.call(this, gameState);
-		if (!gameState) return false;
+	if (stageName === null) {
+		node.warn('loop received invalid stage name');
+		return null;
 	}
-	return gameState;
+
+	this.sequence.push({
+		type: 'loop',
+		id: stageName,
+		cb: func
+	});
+
+	return this;
 };
 
 /**
- * ### Stager.steps2Go
- * 
- * Computes the total number steps left to the end of the game.
- * 
- * An optional input parameter can control the starting state
- * for the computation
- * 
- * @param {GameState} gameState The reference game-state.
- * @return {number} The total number of steps left
+ * ### Stager.doLoop
+ *
+ * Adds alternatively looped stage block to sequence
+ *
+ * The given stage will be repeated once plus as many times as the `func`
+ * callback returns true.
+ *
+ * @param {string} id A valid stage name with optional alias
+ * @param {function} func Callback returning true for repetition
+ *
+ * @return {object} this GameStage object on success, null on error
+ *
+ * @see Stager.addStage
+ * @see Stager.next
+ * @see Stager.loop
  */
-Stager.prototype.steps2Go = function (gameState) {
-	gameState = new GameState(gameState);
-	var count = 0;
-	while (gameState) { 
-		count++;
-		gameState = this.next(gameState);
+Stager.prototype.doLoop = function(id, func) {
+	var stageName = this.handleAlias(id);
+
+	if (stageName === null) {
+		node.warn('doLoop received invalid stage name');
+		return null;
 	}
-	return count;
-};
 
-// TODO: probably to remove
-Stager.prototype.toArray = function() {
-	return this.stages; //
-};
+	this.sequence.push({
+		type: 'doLoop',
+		id: stageName,
+		cb: func
+	});
 
-/**
- * 
- * ### Stager.indexOf
- * 
- * Returns the ordinal position of a state in the game-loop 
- * 
- * All steps and rounds in between are counted.
- * 
- * @param {GameState} gameState The reference game-state
- * @return {number} The state index in the loop, or -1 if it does not exist
- * 
- * 	@see Stager.diff
- */
-Stager.prototype.indexOf = function (state) {
-	if (!state) return -1;
-	return this.diff(state, new GameState());
+	return this;
 };
 
 /**
- * ### Stager.diff
- * 
- * Returns the distance in steps between two stages in the game-loop 
- * 
- * All steps and rounds in between are counted.
- * 
- * It works under the assumption that state1 comes first than state2
- * in the game-loop.
- * 
- * @param {GameState} state1 The reference game-state
- * @param {GameState} state2 Optional. The second state for comparison. Defaults node.game.state
- * 
- * @return {number} The state index in the loop, or -1 if it does not exist
- * 
- * @TODO: compute also negative distances
+ * ### Stager.getSequence
+ *
+ * Returns the sequence of stages
+ *
+ * @param {string} format 'hstages' for an array of human-readable stage descriptions,
+ *  'hsteps' for an array of human-readable step descriptions,
+ *  'o' for the internal JavaScript object
+ *
+ * @return {array|object} The stage sequence in requested format. Null on error.
  */
-Stager.prototype.dist = Stager.prototype.diff = function (state1, state2) {
-	if (!state1) return false;
-	state1 = new GameState(state1) ;
+Stager.prototype.getSequence = function(format) {
+	var result;
+	var seqIdx;
+	var seqObj;
+	var stepPrefix;
+	var gameOver = false;
+
+	switch (format) {
+	case 'hstages':
+		result = [];
+
+		for (seqIdx in this.sequence) {
+			seqObj = this.sequence[seqIdx];
+
+			switch (seqObj.type) {
+			case 'gameover':
+				result.push('[game over]');
+				break;
+
+			case 'plain':
+				result.push(seqObj.id);
+				break;
+
+			case 'repeat':
+				result.push(seqObj.id + ' [x' + seqObj.num + ']');
+				break;
+
+			case 'loop':
+				result.push(seqObj.id + ' [loop]');
+				break;
+
+			case 'doLoop':
+				result.push(seqObj.id + ' [doLoop]');
+				break;
+
+			default:
+				node.warn('unknown sequence object type');
+				break;
+			}
+		}
+		break;
 	
-	if (!state2) {
-		if (!node.game.state) return false;
-		state2 = node.game.state
+	case 'hsteps':
+		result = [];
+
+		for (seqIdx in this.sequence) {
+			seqObj = this.sequence[seqIdx];
+			stepPrefix = seqObj.id + '.';
+
+			switch (seqObj.type) {
+			case 'gameover':
+				result.push('[game over]');
+				break;
+
+			case 'plain':
+				this.stages[seqObj.id].steps.map(function(stepID) {
+					result.push(stepPrefix + stepID);
+				});
+				break;
+
+			case 'repeat':
+				this.stages[seqObj.id].steps.map(function(stepID) {
+					result.push(stepPrefix + stepID + ' [x' + seqObj.num + ']');
+				});
+				break;
+
+			case 'loop':
+				this.stages[seqObj.id].steps.map(function(stepID) {
+					result.push(stepPrefix + stepID + ' [loop]');
+				});
+				break;
+
+			case 'doLoop':
+				this.stages[seqObj.id].steps.map(function(stepID) {
+					result.push(stepPrefix + stepID + ' [doLoop]');
+				});
+				break;
+
+			default:
+				node.warn('unknown sequence object type');
+				break;
+			}
+		}
+		break;
+
+	case 'o':
+		result = this.sequence;
+		break;
+
+	default:
+		node.warn('getSequence got invalid format characters');
+		return null;
+	}
+
+	return result;
+};
+
+/**
+ * ### Stager.getStepsFromStage
+ *
+ * Returns the steps of a stage
+ *
+ * @param {string} id A valid stage name
+ *
+ * @return {array} The steps in the stage
+ */
+Stager.prototype.getStepsFromStage = function(id) {
+	return this.stages[id].steps;
+};
+
+// DEBUG:  Run sequence.  Should be deleted later on.
+Stager.prototype.seqTestRun = function(expertMode, firstStage) {
+	var seqObj;
+	var curStage;
+	var stageNum;
+	
+	console.log('* Commencing sequence test run!');
+
+	if (!expertMode) {
+		for (stageNum in this.sequence) {
+			seqObj = this.sequence[stageNum];
+			console.log('** num: ' + stageNum + ', type: ' + seqObj.type);
+			switch (seqObj.type) {
+			case 'gameover':
+				console.log('* Game Over.');
+				return;
+				break;
+
+			case 'plain':
+				this.stageTestRun(seqObj.id);
+				break;
+
+			case 'repeat':
+				for (var i = 0; i < seqObj.num; i++) {
+					this.stageTestRun(seqObj.id);
+				}
+				break;
+
+			case 'loop':
+				while (seqObj.cb()) {
+					this.stageTestRun(seqObj.id);
+				}
+				break;
+
+			case 'doLoop':
+				do {
+					this.stageTestRun(seqObj.id);
+				} while (seqObj.cb());
+				break;
+
+			default:
+				node.warn('unknown sequence object type');
+				break;
+			}
+		}
 	}
 	else {
-		state2 = new GameState(state2) ;
-	}
-	
-	
-	var idx = 0;
-	while (state2) {
-		if (GameState.compare(state1, state2) === 0){
-			return idx;
+		// Get first stage:
+		if (firstStage) {
+			curStage = firstStage;
 		}
-		state2 = this.next(state2);
-		idx++;
+		else if (this.generalNextFunction) {
+			curStage = this.generalNextFunction();
+		}
+		else {
+			curStage = null;
+		}
+
+		while (curStage) {
+			this.stageTestRun(curStage);
+
+			// Get next stage:
+			if (this.nextFunctions[curStage]) {
+				curStage = this.nextFunctions[curStage]();
+			}
+			else if (this.generalNextFunction) {
+				curStage = this.generalNextFunction();
+			}
+			else {
+				curStage = null;
+			}
+
+			// Check stage validity:
+			if (curStage !== null && !this.stages[curStage]) {
+				node.warn('next-deciding callback yielded invalid stage');
+				curStage = null;
+			}
+		}
 	}
-	return -1;
-};
-	
-
-/**
- * ### Stager.get
- * 
- * Returns the stage associated with the gameState
- * 
- * @param {GameState} gameState The reference game-state.
- * @return {string|boolean} The stage, or FALSE if the requested state does not exists
- */
-Stager.prototype.get = function (gameState) {
-	gameState = new GameState(gameState);
-	if (!this.exist(gameState)) return false;
-	return this.stages[gameState.state-1].steps[gameState.step-1];
 };
 
-/**
- * ### Stager.getProperty
- * 
- * Returns the requested property of the stage associated with a game-state
- * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
- * @return {string|boolean} The name of the game-state, or FALSE if state does not exists
- */
-Stager.prototype.getProperty = function (gameState, key) {
-	gameState = new GameState(gameState);
-	if (!this.exist(gameState)) return false;
-	return this.stages[gameState.state].steps[gameState.step][key];
-};
+// DEBUG:  Run stage.  Should be deleted later on.
+Stager.prototype.stageTestRun = function(stageId) {
+	var steps = this.stages[stageId].steps;
+	var stepId;
 
-
-/**
- * ### Stager.getName
- * 
- * Returns the name associated with a game-state
- * 
- * @param {GameState} gameState Optional. The reference game-state. Defaults, node.game.state
- * @return {string|boolean} The name of the game-state, or FALSE if state does not exists
- */
-Stager.prototype.getName = function (gameState) {
-	return this.getProperty(gameState, 'name')
-};
-
-/**
- * ### Stager.getFunction
- * 
- * Returns the function associated with a game-state
- * 
- * @param {GameState} gameState The reference game-state
- * @return {object|boolean} The function of the game-state, or FALSE if state does not exists
- */
-Stager.prototype.getCb = Stager.prototype.getFunction = function (gameState) {
-	return this.getProperty(gameState, 'state'); // todo change it to cb
-};
-
-
-Stager.prototype.clear = function(confirm) {
-	if (!confirm) {
-		node.warn('Use confirm=true if you really wanna clear current stages');
-		return false;
+	for (var i in steps) {
+		stepId = steps[i];
+		this.steps[stepId].cb();
 	}
-	
-	this.limits = [];
-	this.stages = [];
+};
+
+
+// ## Stager private methods
+
+/**
+ * ### Stager.checkStepValidity
+ *
+ * Returns whether given step is valid
+ *
+ * Checks for existence and type correctness of the fields.
+ *
+ * @param {object} step The step object
+ *
+ * @return {bool} true for valid step objects, false otherwise
+ *
+ * @see Stager.addStep
+ *
+ * @api private
+ */
+Stager.prototype.checkStepValidity = function(step) {
+	if (!step) return false;
+	if ('string' !== typeof step.id) return false;
+	if ('function' !== typeof step.cb) return false;
+
 	return true;
-}
+};
 
+/**
+ * ### Stager.checkStepValidity
+ *
+ * Returns whether given stage is valid
+ *
+ * Checks for existence and type correctness of the fields.
+ * Checks for referenced step existence.
+ * Steps objects are invalid.
+ *
+ * @param {object} stage The stage object
+ *
+ * @return {bool} true for valid stage objects, false otherwise
+ *
+ * @see Stager.addStage
+ *
+ * @api private
+ */
+Stager.prototype.checkStageValidity = function(stage) {
+	if (!stage) return false;
+	if ('string' !== typeof stage.id) return false;
+	if (!stage.steps && !stage.steps.length) return false;
 
+	// Check whether the referenced steps exist:
+	for (var i in stage.steps) {
+		if (!this.steps[stage.steps[i]]) return false;
+	}
 
+	return true;
+};
 
-// ## Closure	
+/**
+ * ### Stager.handleAlias
+ *
+ * Handles stage id and alias strings
+ *
+ * Takes a string like 'stageID' or 'stageID AS alias' and registers the alias,
+ * if existent.
+ * Checks whether parameter is valid and unique.
+ *
+ * @param {string} nameAndAlias The stage-name string
+ *
+ * @return {string} null on error,
+ *  the alias part of the parameter if it exists,
+ *  the stageID part otherwise
+ *
+ * @see Stager.next
+ *
+ * @api private
+ */
+Stager.prototype.handleAlias = function(nameAndAlias) {
+	var tokens = nameAndAlias.split(' AS ');
+	var id = tokens[0].trim();
+	var alias = tokens[1] ? tokens[1].trim() : undefined;
+	var stageName = alias || id;
+	var seqIdx;
+
+	// Check ID validity:
+	if (!this.stages[id]) {
+		node.warn('handleAlias received nonexistent stage id');
+		return null;
+	}
+
+	// Check uniqueness:
+	for (seqIdx in this.sequence) {
+		if (this.sequence[seqIdx].id === stageName) {
+			node.warn('handleAlias received non-unique stage name');
+			return null;
+		}
+	}
+
+	// Add alias:
+	if (alias) {
+		this.stages[alias] = this.stages[id];
+		return alias;
+	}
+
+	return id;
+};
+
+// ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # GameMsgGenerator
  * 
@@ -3919,7 +4016,7 @@ GameBit.compareValue = function (gb1, gb2) {
 	
 // ## Global scope
 	
-var GameState = node.GameState,
+var GameStage = node.GameStage,
 	GameMsg = node.GameMsg,
 	GameDB = node.GameDB,
 	PlayerList = node.PlayerList,
@@ -3968,7 +4065,7 @@ Game.stageLevels = {
 function Game (settings) {
 	settings = settings || {};
 
-	this.updateGameState(Game.levels.UNINITIALIZED);
+	this.updateGameStage(Game.levels.UNINITIALIZED);
 	
 // ## Private properties
 
@@ -4181,15 +4278,15 @@ function Game (settings) {
 	this.gameLoop = this.stager = new Stager(settings.stages);
 	
 	
-	this.currentStep = new GameState();
+	this.currentStep = new GameStage();
 	this.currentStepObj = null;
 	
 	// Update the init function if one is passed
 	if (settings.init) {
 		this.init = function() {
-			this.updateGameState(Game.levels.INITIALIZING);
+			this.updateGameStage(Game.levels.INITIALIZING);
 			settings.init.call(node.game);
-			this.updateGameState(Game.levels.INITIALIZED);
+			this.updateGameStage(Game.levels.INITIALIZED);
 		}
 	}
 	
@@ -4212,8 +4309,8 @@ function Game (settings) {
  * 
  */
 Game.prototype.init = function () {
-	this.updateGameState(Game.levels.INITIALIZING);
-	this.updateGameState(Game.levels.INITIALIZED);
+	this.updateGameStage(Game.levels.INITIALIZING);
+	this.updateGameStage(Game.levels.INITIALIZED);
 };
 
 /** 
@@ -4356,7 +4453,7 @@ Game.prototype.execStage = function(stage) {
 };
 
 
-Game.prototype.updateGameState = function (state) {
+Game.prototype.updateGameStage = function (state) {
 	this.state = state;
 	//this.publishUpdate();
 };
@@ -4417,9 +4514,9 @@ Game.prototype.isReady = function() {
 * in the game-loop before returning the state
 * 
 * @param {number} N Optional. The number of steps to take in the game-loop. Defaults 1
-* @return {boolean|GameState} The next state, or FALSE if it does not exist
+* @return {boolean|GameStage} The next state, or FALSE if it does not exist
 * 
-* 	@see GameState
+* 	@see GameStage
 * 	@see Game.gameLoop
 */
 Game.prototype.next = function (N) {
@@ -4436,9 +4533,9 @@ Game.prototype.next = function (N) {
 * backward in the game-loop before returning the state
 * 
 * @param {number} times Optional. The number of steps to take in the game-loop. Defaults 1
-* @return {boolean|GameState} The previous state, or FALSE if it does not exist
+* @return {boolean|GameStage} The previous state, or FALSE if it does not exist
 * 
-* 	@see GameState
+* 	@see GameStage
 * 	@see Game.gameLoop
 */
 Game.prototype.previous = function (N) {
@@ -4459,7 +4556,7 @@ Game.prototype.previous = function (N) {
 * @param {number} jump  The number of steps to take in the game-loop
 * @return {boolean} TRUE, if the game succesfully jumped to the desired state
 * 
-* 	@see GameState
+* 	@see GameStage
 * 	@see Game.gameLoop
 */
 Game.prototype.jumpTo = function (jump) {
@@ -4474,6 +4571,7 @@ Game.prototype.jumpTo = function (jump) {
 	'undefined' != typeof node ? node : module.exports
   , 'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # GameSession
  * 
@@ -4727,7 +4825,7 @@ SessionManager.prototype.store = function() {
 		
 	var EventEmitter = node.EventEmitter,
 		Socket = node.Socket,
-		GameState = node.GameState,
+		GameStage = node.GameStage,
 		GameMsg = node.GameMsg,
 		Game = node.Game,
 		Player = node.Player,
@@ -4857,7 +4955,7 @@ SessionManager.prototype.store = function() {
  */	
 	node.replay = function (reset) {
 		if (reset) node.game.memory.clear(true);
-		node.goto(new GameState({state: 1, step: 1, round: 1}));
+		node.goto(new GameStage({state: 1, step: 1, round: 1}));
 	};	
 	
 	
@@ -4955,7 +5053,7 @@ SessionManager.prototype.store = function() {
 		}
 		
 		// It is in the init function;
-		if (!node.game || !node.game.state || (GameState.compare(node.game.state, new GameState(), true) === 0 )) {
+		if (!node.game || !node.game.state || (GameStage.compare(node.game.state, new GameStage(), true) === 0 )) {
 			node.events.add(event, listener);
 		}
 		else {
