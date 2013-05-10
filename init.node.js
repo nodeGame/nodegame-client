@@ -88,12 +88,20 @@ node.Player = require('./lib/core/PlayerList').Player;
 node.GameMsg = require('./lib/core/GameMsg').GameMsg;
 
 /**
- * ### node.GameLoop
+ * ### node.Stager
  * 
  * @api public
  */
 
 node.Stager = require('./lib/core/Stager').Stager;
+
+/**
+ * ### node.GameLoop
+ * 
+ * @api public
+ */
+
+node.Stager = require('./lib/core/GameLoop').GameLoop;
 
 
 /**
