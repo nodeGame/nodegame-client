@@ -101,7 +101,7 @@ node.Stager = require('./lib/core/Stager').Stager;
  * @api public
  */
 
-node.Stager = require('./lib/core/GameLoop').GameLoop;
+node.GameLoop = require('./lib/core/GameLoop').GameLoop;
 
 
 /**
