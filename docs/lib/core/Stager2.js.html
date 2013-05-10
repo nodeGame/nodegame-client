@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stager2.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../../', thisFile = 'lib/core/Stager2.js', defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#stager">Stager</a>
+      </div>
+      <div class="heading h2">
+        <a href="#global-scope">Global scope</a>
+      </div>
+      <div class="heading h2">
+        <a href="#stager-constructor">Stager constructor</a>
+      </div>
+      <div class="heading h3">
+        <a href="#public-variables">Public variables</a>
+      </div>
+      <div class="heading h3">
+        <a href="#limits">limits</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.steps">Stager.steps</a>
+      </div>
+      <div class="heading h2">
+        <a href="#stager-methods">Stager methods</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamestage.add">GameStage.add</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.size">Stager.size</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.exists">Stager.exists</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.exist">Stager.exist</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.next">Stager.next</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.previous">Stager.previous</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.jumpto">Stager.jumpTo</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.jumpto">Stager.jumpTo</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.steps2go">Stager.steps2Go</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.indexof">Stager.indexOf</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.diff">Stager.diff</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.getbygamestate">Stager.getByGameState</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.getproperty">Stager.getProperty</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.getname">Stager.getName</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.getfunction">Stager.getFunction</a>
+      </div>
+      <div class="heading h2">
+        <a href="#closure">Closure</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>Stager2.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">step</span><span class="p">;</span>
+  
+  <span class="nx">step</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span> <span class="c1">// returns the first stage if no argument is passed</span>
+  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">execStep</span><span class="p">(</span><span class="nx">step</span><span class="p">);</span> 
+<span class="p">};</span>
+
+<span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">execStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>throws Error</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="p">}</span>
+  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="nx">step</span><span class="p">;</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>execute stage</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>handle errors</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager">
+  <h1>
+    <a href="#stager" class="pilcrow">&#182;</a>
+    Stager
+  </h1>
+</div>
+
+  </div>
+  <div class="body"><p>Copyright(c) 2012 Stefano Balietti
+MIT Licensed </p>
+
+<p><code>nodeGame</code> container of game-state functions, and parameters</p>
+
+<hr />
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="global-scope">
+  <h2>
+    <a href="#global-scope" class="pilcrow">&#182;</a>
+    Global scope
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">GameState</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span><span class="p">,</span>
+  <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>Should take into account four level: Stage, Step, step_round, stage_round</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager-constructor">
+  <h2>
+    <a href="#stager-constructor" class="pilcrow">&#182;</a>
+    Stager constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a new instance of Stager</p>
+
+<p>Takes as input parameter an object like:</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stages</span>
+      <span class="dox_type">array</span>
+      <span>Optional. An array containing the stages</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">Stager</span><span class="p">(</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="public-variables">
+  <h3>
+    <a href="#public-variables" class="pilcrow">&#182;</a>
+    Public variables
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="limits">
+  <h3>
+    <a href="#limits" class="pilcrow">&#182;</a>
+    limits
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Array containing the internal representation of the boundaries
+of each state inside the game-loop</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">API</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">private
+</span>
+    </span>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">limits</span> <span class="o">=</span> <span class="p">[];</span> 
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.steps">
+  <h3>
+    <a href="#stager.steps" class="pilcrow">&#182;</a>
+    Stager.steps
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Container for the verified stages</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">steps</span> <span class="o">=</span> <span class="p">[];</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">steps</span><span class="p">);</span>
+  <span class="p">}</span>
+  
+  
+
+<span class="p">}</span>
+
+
+<span class="kd">function</span> <span class="nx">addMultiple</span><span class="p">(</span><span class="nx">steps</span><span class="p">,</span> <span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Cannot add empty array of steps&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">pos</span><span class="o">+</span><span class="nx">i</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
+<span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="stager-methods">
+  <h2>
+    <a href="#stager-methods" class="pilcrow">&#182;</a>
+    Stager methods
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamestage.add">
+  <h3>
+    <a href="#gamestage.add" class="pilcrow">&#182;</a>
+    GameStage.add
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Adds one or more entries into the array of stages</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">steps</span>
+      <span class="dox_type">array</span>
+      <span class="dox_type">object</span>
+      <span>A GameStep object or an array of steps</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">Optional.</span>
+      <span class="dox_type">number</span>
+      <span>The ordinal position for inserting in array of 
+  steps. Negative values specify the position from the end of the array.
+  Defaults, adds at end of the array.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE if the operation is completely successful</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">step</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">addMultiple</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">pos</span><span class="p">);</span>
+  <span class="p">}</span>
+  
+  <span class="nx">step</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">step</span><span class="p">);</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">step</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  
+  <span class="nx">pos</span> <span class="o">=</span> <span class="nx">pos</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">pos</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">rounds</span><span class="o">:</span> <span class="nx">step</span><span class="p">.</span><span class="nx">rounds</span><span class="p">,</span> 
+    <span class="nx">steps</span><span class="o">:</span> <span class="nx">step</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span>
+  <span class="p">});</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">pos</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">step</span><span class="p">);</span>
+  
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">step</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">addMultipleSteps</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">pos</span><span class="p">);</span>
+  <span class="p">}</span>
+  
+  <span class="nx">step</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">step</span><span class="p">);</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">step</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  
+  <span class="nx">pos</span> <span class="o">=</span> <span class="nx">pos</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">pos</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">rounds</span><span class="o">:</span> <span class="nx">step</span><span class="p">.</span><span class="nx">rounds</span><span class="p">,</span> 
+    <span class="nx">steps</span><span class="o">:</span> <span class="mi">1</span>
+  <span class="p">});</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">pos</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">step</span><span class="p">);</span>
+  
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">createStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">steps</span><span class="p">,</span> <span class="nx">rounds</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> 
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">checkStageOrStep</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span> <span class="o">||</span> <span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">o</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Cannot create empty &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Invalid &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; name.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Empty &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; name.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">checkStep</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">checkStageOrStep</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">))</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Step must have a valid callback function&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">step</span> <span class="o">||</span> <span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">step</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Cannot create empty step.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Invalid step name.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">step</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Step name cannot be empty.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;A step must have one valid callback.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="nx">step</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+    <span class="nx">cb</span><span class="o">:</span> <span class="nx">step</span><span class="p">.</span><span class="nx">cb</span><span class="p">,</span>
+    <span class="nx">rounds</span><span class="o">:</span> <span class="nx">step</span><span class="p">.</span><span class="nx">rounds</span> <span class="o">||</span> <span class="mi">1</span>
+  <span class="p">}</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.size">
+  <h3>
+    <a href="#stager.size" class="pilcrow">&#182;</a>
+    Stager.size
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the total number of states + steps in the game-loop</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps2Go</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span><span class="nx">state</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">step</span><span class="o">:</span> <span class="mi">1</span><span class="p">}));</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.exists">
+  <h3>
+    <a href="#stager.exists" class="pilcrow">&#182;</a>
+    Stager.exists
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns TRUE, if a gameState exists in the game-loop</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gameState</span>
+      <span class="dox_type">GameState</span>
+      <span class="dox_type">string</span>
+      <span>The game-state to check</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">exists</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gameState</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="nx">gameState</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">gameState</span><span class="p">);</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+</div>
+<p>States are 1 based, arrays are 0-based => -1</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">stageIdx</span> <span class="o">=</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">stepIdx</span> <span class="o">=</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">step</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="nx">rounds</span> <span class="o">=</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">rounds</span><span class="p">;</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageIdx</span><span class="p">])</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageIdx</span><span class="p">].</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepIdx</span><span class="p">])</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">rounds</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageIdx</span><span class="p">].</span><span class="nx">rounds</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  
+    
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.exist">
+  <h3>
+    <a href="#stager.exist" class="pilcrow">&#182;</a>
+    Stager.exist
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Alias for Stager.exists</p>
+  </div>
+  <div class="details">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">exist</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">exists</span><span class="p">;</span> </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.next">
+  <h3>
+    <a href="#stager.next" class="pilcrow">&#182;</a>
+    Stager.next
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the stage next stage</p>
+
+<p>An optional input parameter can control the state from which 
+to compute the next state</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gameState</span>
+      <span class="dox_type">GameState</span>
+      <span>The reference game-state</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">GameState</span>
+      <span class="dox_type">boolean</span>
+      <span>The next game-state, or FALSE if it does not exist</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre> <span class="kd">function</span> <span class="nx">next</span><span class="p">(</span><span class="nx">gameState</span><span class="p">,</span> <span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">gameState</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">gameState</span><span class="p">);</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>Game has not started yet, do it!</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
+               <span class="nx">state</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+               <span class="nx">step</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+               <span class="nx">round</span><span class="o">:</span> <span class="mi">1</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">gameState</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>Make sure it is a number because 
+it could have been stringified</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">idxLimit</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// 0 vs 1 based</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="p">].</span><span class="nx">steps</span> <span class="o">&gt;</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">newStep</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">step</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
+      <span class="nx">state</span><span class="o">:</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
+      <span class="nx">step</span><span class="o">:</span> <span class="nx">newStep</span><span class="p">,</span>
+      <span class="nx">round</span><span class="o">:</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="p">].</span><span class="nx">rounds</span> <span class="o">&gt;</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">newRound</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
+      <span class="nx">state</span><span class="o">:</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
+      <span class="nx">step</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="nx">round</span><span class="o">:</span> <span class="nx">newRound</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>   
+    <span class="kd">var</span> <span class="nx">newState</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
+      <span class="nx">state</span><span class="o">:</span> <span class="nx">newState</span><span class="p">,</span>
+      <span class="nx">step</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="nx">round</span><span class="o">:</span> <span class="mi">1</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>No next state: game over</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> 
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.previous">
+  <h3>
+    <a href="#stager.previous" class="pilcrow">&#182;</a>
+    Stager.previous
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the previous state in the loop</p>
+
+<p>An optional input parameter can control the state from which 
+to compute the previous state</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gameState</span>
+      <span class="dox_type">GameState</span>
+      <span>The reference game-state</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">GameState</span>
+      <span class="dox_type">boolean</span>
+      <span>The previous game-state, or FALSE if it does not exist</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">previous</span><span class="p">(</span><span class="nx">gameState</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">gameState</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">gameState</span><span class="p">);</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">gameState</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="kd">var</span> <span class="nx">idxLimit</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// 0 vs 1 based</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">step</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">oldStep</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">step</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
+      <span class="nx">state</span><span class="o">:</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
+      <span class="nx">step</span><span class="o">:</span> <span class="nx">oldStep</span><span class="p">,</span>
+      <span class="nx">round</span><span class="o">:</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">oldRound</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">round</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">oldStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="p">].</span><span class="nx">steps</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
+      <span class="nx">state</span><span class="o">:</span> <span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
+      <span class="nx">step</span><span class="o">:</span> <span class="nx">oldStep</span><span class="p">,</span>
+      <span class="nx">round</span><span class="o">:</span> <span class="nx">oldRound</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">oldRound</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="nx">rounds</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">oldStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">limits</span><span class="p">[</span><span class="nx">idxLimit</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="nx">steps</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">oldState</span> <span class="o">=</span> <span class="nx">idxLimit</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">({</span>
+      <span class="nx">state</span><span class="o">:</span> <span class="nx">oldState</span><span class="p">,</span>
+      <span class="nx">step</span><span class="o">:</span> <span class="nx">oldStep</span><span class="p">,</span>
+      <span class="nx">round</span><span class="o">:</span> <span class="nx">oldRound</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+</div>
+<p>game init</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> 
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.jumpto">
+  <h3>
+    <a href="#stager.jumpto" class="pilcrow">&#182;</a>
+    Stager.jumpTo
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a state N steps away from the reference state</p>
+
+<p>A negative value for N jumps backward in the game-loop, 
+and a positive one jumps forward in the game-loop</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gameState</span>
+      <span class="dox_type">GameState</span>
+      <span>The reference game-state</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">N</span>
+      <span class="dox_type">number</span>
+      <span>The number of steps to jump</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">GameState</span>
+      <span class="dox_type">boolean</span>
+      <span>The "jumped-to" game-state, or FALSE if it does not exist</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">,</span> <span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">N</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">N</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">N</span><span class="p">);</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">jumpTo</span><span class="p">(</span><span class="nx">gameState</span><span class="p">,</span> <span class="nx">N</span><span class="p">);</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.jumpto">
+  <h3>
+    <a href="#stager.jumpto" class="pilcrow">&#182;</a>
+    Stager.jumpTo
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a state N steps away from the reference state</p>
+
+<p>A negative value for N jumps backward in the game-loop, 
+and a positive one jumps forward in the game-loop</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gameState</span>
+      <span class="dox_type">GameState</span>
+      <span>The reference game-state</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">N</span>
+      <span class="dox_type">number</span>
+      <span>The number of steps to jump</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">GameState</span>
+      <span class="dox_type">boolean</span>
+      <span>The "jumped-to" game-state, or FALSE if it does not exist</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">previous</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">,</span> <span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">N</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">N</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="o">-</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">N</span><span class="p">);</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">jumpTo</span><span class="p">(</span><span class="nx">gameState</span><span class="p">,</span> <span class="nx">N</span><span class="p">);</span>
+<span class="p">};</span>
+
+
+<span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">jumpTo</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">,</span> <span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">gameState</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">gameState</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span> <span class="o">!==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">gameState</span><span class="p">))</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">N</span><span class="p">)</span> <span class="k">return</span> <span class="nx">gameState</span><span class="p">;</span>
+
+  <span class="kd">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="p">(</span><span class="nx">N</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">next</span> <span class="o">:</span> <span class="nx">previous</span><span class="p">;</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">N</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">gameState</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">gameState</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gameState</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">gameState</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.steps2go">
+  <h3>
+    <a href="#stager.steps2go" class="pilcrow">&#182;</a>
+    Stager.steps2Go
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Computes the total number steps left to the end of the game.</p>
+
+<p>An optional input parameter can control the starting state
+for the computation</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gameState</span>
+      <span class="dox_type">GameState</span>
+      <span>The reference game-state.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">number</span>
+      <span>The total number of steps left</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">steps2Go</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">gameState</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">gameState</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">)</span> <span class="p">{</span> 
+    <span class="nx">count</span><span class="o">++</span><span class="p">;</span>
+    <span class="nx">gameState</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">gameState</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">count</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+</div>
+<p>TODO: probably to remove</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toArray</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">;</span> <span class="c1">//</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.indexof">
+  <h3>
+    <a href="#stager.indexof" class="pilcrow">&#182;</a>
+    Stager.indexOf
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the ordinal position of a state in the game-loop </p>
+
+<p>All steps and rounds in between are counted.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gameState</span>
+      <span class="dox_type">GameState</span>
+      <span>The reference game-state</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">number</span>
+      <span>The state index in the loop, or -1 if it does not exist
+
+@see Stager.diff</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">indexOf</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">state</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">diff</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">());</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.diff">
+  <h3>
+    <a href="#stager.diff" class="pilcrow">&#182;</a>
+    Stager.diff
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the distance in steps between two stages in the game-loop </p>
+
+<p>All steps and rounds in between are counted.</p>
+
+<p>It works under the assumption that state1 comes first than state2
+in the game-loop.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">state1</span>
+      <span class="dox_type">GameState</span>
+      <span>The reference game-state</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">state2</span>
+      <span class="dox_type">GameState</span>
+      <span>Optional. The second state for comparison. Defaults node.game.state</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">number</span>
+      <span>The state index in the loop, or -1 if it does not exist</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">dist</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">diff</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state1</span><span class="p">,</span> <span class="nx">state2</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">state1</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="nx">state1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">state1</span><span class="p">)</span> <span class="p">;</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">state2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="nx">state2</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">state2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">state2</span><span class="p">)</span> <span class="p">;</span>
+  <span class="p">}</span>
+  
+  
+  <span class="kd">var</span> <span class="nx">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="nx">state2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">GameState</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">state1</span><span class="p">,</span> <span class="nx">state2</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">){</span>
+      <span class="k">return</span> <span class="nx">idx</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">state2</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">state2</span><span class="p">);</span>
+    <span class="nx">idx</span><span class="o">++</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">};</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.getbygamestate">
+  <h3>
+    <a href="#stager.getbygamestate" class="pilcrow">&#182;</a>
+    Stager.getByGameState
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the stage associated with the gameState</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gameState</span>
+      <span class="dox_type">GameState</span>
+      <span>The reference game-state.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">boolean</span>
+      <span>The stage, or FALSE if the requested state does not exists</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getByGameState</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">gameState</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">gameState</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">gameState</span><span class="p">))</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="nx">steps</span><span class="p">[</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">step</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.getproperty">
+  <h3>
+    <a href="#stager.getproperty" class="pilcrow">&#182;</a>
+    Stager.getProperty
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the requested property of the stage associated with a game-state</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gameState</span>
+      <span class="dox_type">GameState</span>
+      <span>Optional. The reference game-state. Defaults, node.game.state</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">boolean</span>
+      <span>The name of the game-state, or FALSE if state does not exists</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getProperty</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">gameState</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">gameState</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">gameState</span><span class="p">))</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">state</span><span class="p">].</span><span class="nx">steps</span><span class="p">[</span><span class="nx">gameState</span><span class="p">.</span><span class="nx">step</span><span class="p">][</span><span class="nx">key</span><span class="p">];</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.getname">
+  <h3>
+    <a href="#stager.getname" class="pilcrow">&#182;</a>
+    Stager.getName
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the name associated with a game-state</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gameState</span>
+      <span class="dox_type">GameState</span>
+      <span>Optional. The reference game-state. Defaults, node.game.state</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">boolean</span>
+      <span>The name of the game-state, or FALSE if state does not exists</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">gameState</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.getfunction">
+  <h3>
+    <a href="#stager.getfunction" class="pilcrow">&#182;</a>
+    Stager.getFunction
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the function associated with a game-state</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gameState</span>
+      <span class="dox_type">GameState</span>
+      <span>The reference game-state</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">boolean</span>
+      <span>The function of the game-state, or FALSE if state does not exists</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCb</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getFunction</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gameState</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">gameState</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">);</span> <span class="c1">// todo change it to cb</span>
+<span class="p">};</span>
+
+
+<span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">confirm</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">confirm</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Use confirm=true if you really wanna clear current stages&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">limits</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">stages</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+</div>
+<p>OLD</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">createStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span> <span class="o">||</span> <span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">stage</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Cannot create empty stage.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Invalid stage name.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Stage name cannot be empty.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">&amp;&amp;</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Stage cannot contain both attributes \&#39;steps\&#39; and \&#39;cb\&#39;.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">=</span> <span class="p">[{</span>
+      <span class="nx">name</span><span class="o">:</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+      <span class="nx">cb</span><span class="o">:</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span>
+    <span class="p">}];</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;A stage must have one valid callback or an array of \&#39;steps\&#39;.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Expected array for property \&#39;steps\&#39; of stage object.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="kd">var</span> <span class="nx">steps</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">i</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">checkStep</span><span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="k">continue</span><span class="p">;</span>
+    <span class="nx">steps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Stage must have at least one valid step.&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+    <span class="nx">steps</span><span class="o">:</span> <span class="nx">steps</span><span class="p">,</span>
+    <span class="nx">rounds</span><span class="o">:</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">rounds</span> <span class="o">||</span> <span class="mi">1</span>
+  <span class="p">}</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="closure">
+  <h2>
+    <a href="#closure" class="pilcrow">&#182;</a>
+    Closure
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
+  <span class="p">,</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

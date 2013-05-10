@@ -52,6 +52,9 @@
         <a href="#node.setup.events">node.setup.events</a>
       </div>
       <div class="heading h3">
+        <a href="#node.setup.window">node.setup.window</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.setup.game">node.setup.game</a>
       </div>
       <div class="heading h3">
@@ -424,13 +427,47 @@ in the browser enviroment. </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">){</span>
     <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">conf</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">}</span>
     
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">dumpEvents</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">dumpEvents</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">conf</span><span class="p">.</span><span class="nx">dumpEvents</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">}</span>
+    
+    <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
+  <span class="p">});</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="node.setup.window">
+  <h3>
+    <a href="#node.setup.window" class="pilcrow">&#182;</a>
+    node.setup.window
+  </h3>
+</div>
+
+
+<p>Configure the node.window object, if existing
+@see GameWindow</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;window&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.window not found, cannot configure it.&#39;</span><span class="p">);</span>
+      <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">conf</span><span class="p">);</span>
     
     <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
   <span class="p">});</span>
@@ -460,7 +497,7 @@ a stringified object (function)</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Trying to parse the string, maybe it
 comes from a remote setup</p>
@@ -480,7 +517,7 @@ comes from a remote setup</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>creates the object</p>
         </td>

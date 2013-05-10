@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GameLoopTest.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../../', thisFile = 'lib/core/GameLoopTest.js', defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>GameLoopTest.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../../index.js&#39;</span><span class="p">);</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+<span class="nx">node</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./Stager&#39;</span><span class="p">).</span><span class="nx">Stager</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">GameLoop</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./GameLoop&#39;</span><span class="p">).</span><span class="nx">GameLoop</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./GameStage&#39;</span><span class="p">).</span><span class="nx">GameStage</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">makeStep</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
+    <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;&#39;s callback!&quot;</span><span class="p">);</span> <span class="p">}</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">randomDecider</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">plot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Stager</span><span class="p">();</span>
+<span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;intro&#39;</span><span class="p">));</span>
+<span class="nx">plot</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;gameStep1&#39;</span><span class="p">));</span>
+<span class="nx">plot</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;gameStep2&#39;</span><span class="p">));</span>
+<span class="nx">plot</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;gameStep3&#39;</span><span class="p">));</span>
+<span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">({</span><span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;mainGame&#39;</span><span class="p">,</span> <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;gameStep1&#39;</span><span class="p">,</span> <span class="s1">&#39;gameStep2&#39;</span><span class="p">,</span> <span class="s1">&#39;gameStep3&#39;</span><span class="p">]});</span>
+<span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;randLoop&#39;</span><span class="p">));</span>
+<span class="nx">plot</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;outroStep1&#39;</span><span class="p">));</span>
+<span class="nx">plot</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;outroStep2&#39;</span><span class="p">));</span>
+<span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">({</span><span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;outro&#39;</span><span class="p">,</span> <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;outroStep1&#39;</span><span class="p">,</span> <span class="s1">&#39;outroStep2&#39;</span><span class="p">]});</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;SIMPLE MODE&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;-----------&#39;</span><span class="p">);</span>
+
+<span class="nx">plot</span>
+  <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;intro AS alias&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">repeat</span><span class="p">(</span><span class="s1">&#39;mainGame&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">loop</span><span class="p">(</span><span class="s1">&#39;randLoop&#39;</span><span class="p">,</span> <span class="nx">randomDecider</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;outro&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">gameover</span><span class="p">();</span>
+
+<span class="nx">gameLoop</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameLoop</span><span class="p">(</span><span class="nx">plot</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="s1">&#39;4.1.1&#39;</span><span class="p">);</span>
+
+<span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">gameLoop</span><span class="p">.</span><span class="nx">jump</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+<span class="k">while</span> <span class="p">(</span><span class="nx">gameStage</span> <span class="k">instanceof</span> <span class="nx">GameStage</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;At &#39;</span> <span class="o">+</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;S.s.r&#39;</span><span class="p">));</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>gameStage = gameLoop.next(gameStage);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">gameLoop</span><span class="p">.</span><span class="nx">previous</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>console.log();
+console.log('EXPERT MODE');
+console.log('-----------');</p>
+  </div>
+  <div class="body"><p>plot.clear();</p>
+
+<p>plot.addStage(makeStep('intro'));
+plot.addStep(makeStep('gameStep1'));
+plot.addStep(makeStep('gameStep2'));
+plot.addStep(makeStep('gameStep3'));
+plot.addStage({id: 'mainGame', steps: ['gameStep1', 'gameStep2', 'gameStep3']});
+plot.addStage(makeStep('randLoop'));
+plot.addStep(makeStep('outroStep1'));
+plot.addStep(makeStep('outroStep2'));
+plot.addStage({id: 'outro', steps: ['outroStep1', 'outroStep2']});</p>
+
+<p>plot.registerGeneralNext(function() {
+  var counter = 0;</p>
+
+<p>return function() {
+    switch (++counter) {
+    case 1:
+      return 'intro';
+    case 2:
+      return 'mainGame';
+    case 3:
+      return 'randLoop';
+    default:
+      return GameLoop.GAMEOVER;
+    }
+  };
+}());</p>
+
+<p>plot.registerNext('randLoop', function() { return randomDecider() ? 'randLoop' : 'outro'; });</p>
+
+<p>gameStage = new GameStage();
+gameLoop = new GameLoop(plot);</p>
+
+<p>while (gameStage instanceof GameStage) {
+  console.log('At ' + gameStage.toHash('S.s'));
+  gameStage = gameLoop.next(gameStage);
+}
+console.log(gameStage);</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

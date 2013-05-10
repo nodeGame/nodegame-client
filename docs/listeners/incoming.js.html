@@ -58,7 +58,10 @@
         <a href="#in.say.setup">in.say.SETUP</a>
       </div>
       <div class="heading h2">
-        <a href="#in.say.setup">in.say.SETUP</a>
+        <a href="#in.say.gamecommand">in.say.GAMECOMMAND</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.join">in.say.JOIN</a>
       </div>
     </div>
   </div>
@@ -526,10 +529,10 @@ TODO: assign a string-id to the server -->
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="in.say.setup">
+<div class="pilwrap" id="in.say.gamecommand">
   <h2>
-    <a href="#in.say.setup" class="pilcrow">&#182;</a>
-    in.say.SETUP
+    <a href="#in.say.gamecommand" class="pilcrow">&#182;</a>
+    in.say.GAMECOMMAND
   </h2>
 </div>
 
@@ -549,6 +552,39 @@ TODO: assign a string-id to the server -->
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">gamecommand</span><span class="p">[</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">])</span> <span class="k">return</span><span class="p">;</span>
   <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_GAMECOMMAND_&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">});</span> </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.join">
+  <h2>
+    <a href="#in.say.join" class="pilcrow">&#182;</a>
+    in.say.JOIN
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Invites the client to leave the current channel and joining another one</p>
+
+<p>It differs from <code>REDIRECT</code> messages because the client 
+does not leave the page, it just switches channel. </p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;JOIN&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+</div>
+<p>node.socket.disconnect();</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
 <span class="p">});</span> 
 
   <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;incoming listeners added&#39;</span><span class="p">);</span>
@@ -559,7 +595,7 @@ TODO: assign a string-id to the server -->
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <!-- ends incoming listener -->
         </td>

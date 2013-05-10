@@ -55,12 +55,12 @@ node.io = require('socket.io-client');
 node.EventEmitter = require('./lib/core/EventEmitter').EventEmitter;
 
 /**
- * ### node.GameState
+ * ### node.GameStage
  * 
  * @api public
  */
 
-node.GameState = require('./lib/core/GameState').GameState;
+node.GameStage = require('./lib/core/GameStage').GameStage;
 
 /**
  * ### node.PlayerList

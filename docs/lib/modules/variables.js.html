@@ -70,6 +70,12 @@
         <a href="#target.gamecommand">target.GAMECOMMAND</a>
       </div>
       <div class="heading h4">
+        <a href="#target.join">target.JOIN</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.log">target.LOG</a>
+      </div>
+      <div class="heading h4">
         <a href="#not-used-targets--for-future-development-">not used targets (for future development)</a>
       </div>
       <div class="heading h3">
@@ -83,6 +89,18 @@
       </div>
       <div class="heading h4">
         <a href="#is.unknown">is.UNKNOWN</a>
+      </div>
+      <div class="heading h4">
+        <a href="#is.initializing">is.INITIALIZING</a>
+      </div>
+      <div class="heading h4">
+        <a href="#is.initialized">is.INITIALIZED</a>
+      </div>
+      <div class="heading h4">
+        <a href="#is.gameloaded">is.GAMELOADED</a>
+      </div>
+      <div class="heading h4">
+        <a href="#is.dead">is.DEAD</a>
       </div>
       <div class="heading h4">
         <a href="#is.loading">is.LOADING</a>
@@ -400,6 +418,36 @@ information carried in the message. </p>
       </tr>
       <tr>
         <td class="docs">
+<div class="pilwrap" id="target.join">
+  <h4>
+    <a href="#target.join" class="pilcrow">&#182;</a>
+    target.JOIN
+  </h4>
+</div>
+
+
+<p>Asks a client to join another channel/subchannel/room</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">JOIN</span> <span class="o">=</span> <span class="s1">&#39;JOIN&#39;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.log">
+  <h4>
+    <a href="#target.log" class="pilcrow">&#182;</a>
+    target.LOG
+  </h4>
+</div>
+
+
+<p>A log entry</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LOG</span> <span class="o">=</span> <span class="s1">&#39;LOG&#39;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
 <div class="pilwrap" id="not-used-targets--for-future-development-">
   <h4>
     <a href="#not-used-targets--for-future-development-" class="pilcrow">&#182;</a>
@@ -416,7 +464,7 @@ information carried in the message. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Still to implement</p>
         </td>
@@ -519,6 +567,71 @@ information carried in the message. </p>
       </tr>
       <tr>
         <td class="docs">
+<div class="pilwrap" id="is.initializing">
+  <h4>
+    <a href="#is.initializing" class="pilcrow">&#182;</a>
+    is.INITIALIZING
+  </h4>
+</div>
+
+
+<p>The engine is loading all the modules    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">INITIALIZING</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="is.initialized">
+  <h4>
+    <a href="#is.initialized" class="pilcrow">&#182;</a>
+    is.INITIALIZED
+  </h4>
+</div>
+
+
+<p>The engine is fully loaded, but there is still no game    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">INITIALIZED</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>  
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="is.gameloaded">
+  <h4>
+    <a href="#is.gameloaded" class="pilcrow">&#182;</a>
+    is.GAMELOADED
+  </h4>
+</div>
+
+
+<p>The engine is fully loaded, and a game has been loaded    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">GAMELOADED</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>  
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="is.dead">
+  <h4>
+    <a href="#is.dead" class="pilcrow">&#182;</a>
+    is.DEAD
+  </h4>
+</div>
+
+
+<p>An unrecoverable error has occurred    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">DEAD</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>    
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><p>TODO: remove these    </p>
+
+
 <div class="pilwrap" id="is.loading">
   <h4>
     <a href="#is.loading" class="pilcrow">&#182;</a>
@@ -577,7 +690,13 @@ information carried in the message. </p>
 
 <p>The player completed the game state    </p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">DONE</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>     
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">DONE</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span> 
+  
+  
+
+
+  
+  
 
 <span class="p">})(</span>
   <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>

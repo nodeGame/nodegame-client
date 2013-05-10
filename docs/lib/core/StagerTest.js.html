@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>StagerTest.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../../', thisFile = 'lib/core/StagerTest.js', defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>StagerTest.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../../index.js&#39;</span><span class="p">);</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+<span class="nx">node</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./Stager&#39;</span><span class="p">).</span><span class="nx">Stager</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">stager</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Stager</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">stepWoop</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;woop&#39;</span><span class="p">,</span>
+  <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;woop woop!&quot;</span><span class="p">);</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">stepBeep</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;beep&#39;</span><span class="p">,</span>
+  <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;beep beep!&quot;</span><span class="p">);</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">stepDurr</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;durr&#39;</span><span class="p">,</span>
+  <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;durr durr!&quot;</span><span class="p">);</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">stepBlah</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;blah&#39;</span><span class="p">,</span>
+  <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;blah blah!&quot;</span><span class="p">);</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">stageMain</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;main&#39;</span><span class="p">,</span>
+  <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;woop&#39;</span><span class="p">,</span> <span class="s1">&#39;beep&#39;</span> <span class="p">]</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>Simple mode test:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;SIMPLE MODE&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;===========&#39;</span><span class="p">);</span>
+<span class="nx">stager</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">stepWoop</span><span class="p">);</span>
+<span class="nx">stager</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">stepBeep</span><span class="p">);</span>
+
+<span class="nx">stager</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stepDurr</span><span class="p">);</span>
+<span class="nx">stager</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stepBlah</span><span class="p">);</span>
+<span class="nx">stager</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stageMain</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">flag</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+<span class="nx">stager</span>
+  <span class="p">.</span><span class="nx">repeat</span><span class="p">(</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">loop</span><span class="p">(</span><span class="s1">&#39;durr&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">counter</span><span class="o">++</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">})</span>
+  <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;blah&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;durr AS durrurrurr&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">gameover</span><span class="p">()</span>
+  <span class="p">;</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Sequence (JS object):&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getSequence</span><span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">));</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Sequence (human readable stages):&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getSequence</span><span class="p">(</span><span class="s1">&#39;hstages&#39;</span><span class="p">));</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Sequence (human readable steps):&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getSequence</span><span class="p">(</span><span class="s1">&#39;hsteps&#39;</span><span class="p">));</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
+
+<span class="nx">stager</span><span class="p">.</span><span class="nx">seqTestRun</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>Expert mode test:</p>
+
+<div class="dox">
+  <div class="summary"><p>console.log();
+console.log('EXPERT MODE');
+console.log('===========');</p>
+  </div>
+  <div class="body"><p>stager.clear();</p>
+
+<p>stager.addStep(stepWoop);
+stager.addStep(stepBeep);</p>
+
+<p>stager.addStage(stepDurr);
+stager.addStage(stepBlah);
+stager.addStage(stageMain);</p>
+
+<p>flag = false;</p>
+
+<p>stager.registerNext('main', function() { return 'blah'; });
+stager.registerGeneralNext(function() {
+  if (!flag) { flag = true; return 'durr'; }
+  return null;
+});</p>
+
+<p>stager.seqTestRun(true, 'main');</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>
