@@ -2796,20 +2796,28 @@ GameLoop.NO_SEQ   = 'NODEGAME_NO_SEQ';
  * If the Stager parameter has an empty sequence, flexibile mode is assumed
  * (used by e.g. GameLoop.next).
  *
- * @param {object} plot The Stager object
+ * @param {object} plot Optional. The Stager object.
  *
  * @see Stager
  */
 function GameLoop(plot) {
-	if (!(plot instanceof Stager)) {
-		node.warn("GameLoop didn't receive a Stager object");
-		return;
-	}
-
-	this.plot = plot;
+	this.plot = plot || null;
 }
 
 // ## GameLoop methods
+
+/**
+ * ### GameLoop.init
+ *
+ * Initializes the GameLoop with a plot
+ *
+ * @param {object} plot The Stager object
+ *
+ * @see Stager
+ */
+GameLoop.prototype.init = function(plot) {
+	this.plot = plot;
+};
 
 /**
  * ### GameLoop.next
