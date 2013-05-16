@@ -1027,8 +1027,13 @@ function GameStage(gs) {
  * 
  */		
 	this.round = 1;
-	
-	if ('string' === typeof gs) {
+
+	if ('undefined' === typeof gs) {
+		this.stage = 0;
+		this.step  = 0;
+		this.round = 0;
+	}
+	else if ('string' === typeof gs) {
 		var tokens = gs.split('.');
 		var stageNum = parseInt(tokens[0]);
 		var stepNum  = parseInt(tokens[1]);
@@ -2791,24 +2796,28 @@ GameLoop.NO_SEQ   = 'NODEGAME_NO_SEQ';
  * If the Stager parameter has an empty sequence, flexibile mode is assumed
  * (used by e.g. GameLoop.next).
  *
- * @param {object} plot The Stager object
+ * @param {object} plot Optional. The Stager object.
  *
  * @see Stager
  */
 function GameLoop(plot) {
-	if (!(plot instanceof Stager)) {
-		node.warn("GameLoop didn't receive a Stager object");
-		return;
-	}
-
-	this.plot = plot;
+	this.plot = plot || null;
 }
 
 // ## GameLoop methods
 
-// TODO:
-// .jumpTo
-// more?
+/**
+ * ### GameLoop.init
+ *
+ * Initializes the GameLoop with a plot
+ *
+ * @param {object} plot The Stager object
+ *
+ * @see Stager
+ */
+GameLoop.prototype.init = function(plot) {
+	this.plot = plot;
+};
 
 /**
  * ### GameLoop.next
