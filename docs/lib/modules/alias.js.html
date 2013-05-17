@@ -46,6 +46,9 @@
         <a href="#node.on.state">node.on.state</a>
       </div>
       <div class="heading h3">
+        <a href="#node.on.stage">node.on.stage</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.on.plist">node.on.plist</a>
       </div>
     </div>
@@ -90,7 +93,6 @@ MIT Licensed </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  
 <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-  <span class="nx">GameState</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span><span class="p">,</span>
   <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
   <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
   <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
@@ -269,6 +271,20 @@ and that it is ready to advance to the next one.</p>
       </tr>
       <tr>
         <td class="docs">
+<div class="pilwrap" id="node.on.stage">
+  <h3>
+    <a href="#node.on.stage" class="pilcrow">&#182;</a>
+    node.on.stage
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STAGE&#39;</span><span class="p">);</span>  
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
 <div class="pilwrap" id="node.on.plist">
   <h3>
     <a href="#node.on.plist" class="pilcrow">&#182;</a>
@@ -304,6 +320,12 @@ and that it is ready to advance to the next one.</p>
   
   <span class="nx">node</span><span class="p">.</span><span class="nx">onSTATE</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;in.set.STATE&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">};</span>
+  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">onSTAGE</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;in.set.STAGE&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
     <span class="p">});</span>
   <span class="p">};</span>

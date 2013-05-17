@@ -221,15 +221,15 @@ smaller than <code>node.remoteVerbosity</code>.</p>
   <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code><span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">remoteVerbosity</span> <span class="o">&gt;</span> <span class="n">level</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">var</span> <span class="n">remoteMsg</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">create</span><span class="p">({</span>
-        <span class="n">target:</span> <span class="n">node</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">LOG</span><span class="p">,</span>
-        <span class="n">text:</span> <span class="n">level</span><span class="p">,</span>
-        <span class="n">data:</span> <span class="n">txt</span><span class="p">,</span>
-        <span class="n">to:</span> <span class="s">&#39;SERVER&#39;</span>
+<div class="highlight"><pre><code><span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">remoteVerbosity</span> <span class="o">&gt;</span> <span class="n">level</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">var</span> <span class="n">remoteMsg</span> <span class="o">=</span> <span class="n">node</span><span class="p">.</span><span class="n">msg</span><span class="p">.</span><span class="n">create</span><span class="p">({</span>
+        <span class="nl">target:</span> <span class="n">node</span><span class="p">.</span><span class="n">target</span><span class="p">.</span><span class="n">LOG</span><span class="p">,</span>
+        <span class="nl">text:</span> <span class="n">level</span><span class="p">,</span>
+        <span class="nl">data:</span> <span class="n">txt</span><span class="p">,</span>
+        <span class="nl">to:</span> <span class="err">&#39;</span><span class="n">SERVER</span><span class="err">&#39;</span>
     <span class="p">});</span>
-    <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
-    <span class="n">node</span><span class="o">.</span><span class="nb">socket</span><span class="o">.</span><span class="nb">send</span><span class="p">(</span><span class="n">remoteMsg</span><span class="p">);</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+    <span class="n">node</span><span class="p">.</span><span class="n">socket</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">remoteMsg</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div>
 

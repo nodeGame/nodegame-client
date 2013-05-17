@@ -43,7 +43,7 @@
         <a href="#public-properties">Public properties</a>
       </div>
       <div class="heading h3">
-        <a href="#gamemsg.state">GameMsg.state</a>
+        <a href="#gamemsg.stage">GameMsg.stage</a>
       </div>
       <div class="heading h3">
         <a href="#gamemsg.action">GameMsg.action</a>
@@ -135,7 +135,7 @@ MIT Licensed </p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">GameState</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span><span class="p">,</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
   <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
 <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">GameMsg</span><span class="p">;</span></pre></div>
@@ -294,21 +294,21 @@ MIT Licensed </p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="gamemsg.state">
+<div class="pilwrap" id="gamemsg.stage">
   <h3>
-    <a href="#gamemsg.state" class="pilcrow">&#182;</a>
-    GameMsg.state
+    <a href="#gamemsg.stage" class="pilcrow">&#182;</a>
+    GameMsg.stage
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>The game-state in which the message was generated</p>
+  <div class="body"><p>The game-stage in which the message was generated</p>
 
-<p>@see GameState</p>
+<p>@see GameStage</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -571,7 +571,7 @@ MIT Licensed </p>
   <span class="kd">var</span> <span class="nx">SPTend</span> <span class="o">=</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
   <span class="kd">var</span> <span class="nx">DLM</span> <span class="o">=</span> <span class="s2">&quot;\&quot;&quot;</span><span class="p">;</span>
   
-  <span class="kd">var</span> <span class="nx">gs</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">gs</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
   
   <span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">created</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
     <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>

@@ -328,21 +328,21 @@ set in other sessions (recovery)
 </div>
 
   </div>
-  <div class="body"><p>Moves the game state to 1.1.1</p>
+  <div class="body"><p>Moves the game stage to 1.1.1</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">rest</span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, to erase the game memory before update the game state</span>
+      <span>TRUE, to erase the game memory before update the game stage</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">replay</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">reset</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">reset</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
-    <span class="nx">node</span><span class="p">.</span><span class="kr">goto</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameStage</span><span class="p">({</span><span class="nx">state</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">step</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">round</span><span class="o">:</span> <span class="mi">1</span><span class="p">}));</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">execStage</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="s2">&quot;1.1.1&quot;</span><span class="p">));</span>
   <span class="p">};</span>  
   
   </pre></div>
@@ -572,7 +572,7 @@ to its next stage. </p>
 </div>
 <p>It is in the init function;</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span> <span class="o">||</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">currentStepObj</span> <span class="o">||</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">currentStepObj</span><span class="p">,</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">))</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="k">else</span> <span class="p">{</span>

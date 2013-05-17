@@ -303,7 +303,8 @@ stage object as the value.</p>
   </div>
   <div class="body"><p>General next-stage decider function</p>
 
-<p>Called to yield the id of the next game stage.</p>
+<p>Returns the id of the next game step.
+Available only when nodegame is executed in <em>flexible</em> mode.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -361,7 +362,7 @@ for a specific previous stage.</p>
   </div>
   <div class="body"><p>Sets general callback for next stage decision</p>
 
-<p>Used in flexible mode.
+<p>Available only when nodegame is executed in <em>flexible</em> mode.
 The callback given here is used to determine the next stage.</p>
   </div>
   <div class="details">
@@ -396,23 +397,29 @@ The callback given here is used to determine the next stage.</p>
 </div>
 
   </div>
-  <div class="body"><p>Sets per-stage callback for next stage decision</p>
+  <div class="body"><p>Registers a step-decider callback for a specific stage</p>
 
-<p>Used in flexible mode.
-The callback given here is used to determine the next stage after a specific stage.</p>
+<p>The function overrides the general callback for the specific stage, 
+and determines the next stage.
+Available only when nodegame is executed in <em>flexible</em> mode.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">id</span>
       <span class="dox_type">string</span>
-      <span>The stage to associate the decider with</span>
+      <span>The name of the stage after which the decider function will be called</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">func</span>
       <span class="dox_type">function</span>
       <span>The decider callback.  It should return the name of
  the next stage, 'NODEGAME_GAMEOVER' to end the game or false for sequence end.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.registerGeneralNext
+  </span>
     </div>
   </div>
 </div>
@@ -486,7 +493,7 @@ The callback given here is used to determine the next stage after a specific sta
   </div>
   <div class="body"><p>Adds a new stage</p>
 
-<p>Registers a new game stage object.  This must have at least the following fields:</p>
+<p>Registers a new game stage object. This must have at least the following fields:</p>
 
 <ul>
 <li>id (string): The stage's name</li>

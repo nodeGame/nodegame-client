@@ -7858,6 +7858,11 @@ PlayerList.array2Groups = function (array) {
 function PlayerList (options, db, parent) {
 	options = options || {};
 	if (!options.log) options.log = node.log;
+	if (!options.update) options.update = {};
+	if ('undefined' === typeof options.update.indexes) {
+		options.update.indexes = true;
+	}
+	
 	NDDB.call(this, options, db, parent);
   
 	this.globalCompare = function (pl1, pl2) {
@@ -7876,6 +7881,17 @@ function PlayerList (options, db, parent) {
 			return 0;
 		}
 	};
+	
+	// TODO : do the checking automatically
+	// We check if the index are not existing already because 
+	// it could be that the constructor is called by the breed function
+	// and in such case we would duplicate them
+	
+	if (!this.id) {
+		this.i('id', function(p) {
+			return p.id;
+		});
+	}
 };
 
 // ## PlayerList methods
@@ -8048,7 +8064,7 @@ PlayerList.prototype.updatePlayerStage = function (id, stage) {
  * @return {Boolean} TRUE, if a player with the specified id was found
  */
 PlayerList.prototype.exist = function (id) {
-	return (this.select('id', '=', id).count() > 0) ? true : false;
+	return 'undefined' !== typeof this.id[id];
 };
 
 /**
@@ -8231,6 +8247,8 @@ PlayerList.prototype.getRandom = function (N) {
  * 	`sid`: The Socket.io session id associated to the player
  * 	`id`: The nodeGame session id associate to the player
  * 	`count`: The id of the player within a PlayerList object
+ * 	`admin`: Whether the player is an admin
+ * 	`disconnected`: Whether the player has disconnected
  * 
  * Others properties are public and can be changed during the game.
  * 
@@ -8322,6 +8340,40 @@ function Player (pl) {
 		this.count = count;
 	}
 	
+/**
+ * ### Player.admin
+ * 
+ * The admin status of the client
+ * 
+ */	
+	var admin = !!pl.admin;
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'admin', {
+			value: admin,
+	    	enumerable: true
+		});
+	}
+	else {
+		this.admin = admin;
+	}
+	
+/**
+ * ### Player.disconnected
+ * 
+ * The connection status of the client
+ * 
+ */	
+	var disconnected = !!pl.disconnected;
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'disconnected', {
+			value: disconnected,
+	    	enumerable: true
+		});
+	}
+	else {
+		this.disconnected = disconnected;
+	}
+	
 // ## Player public properties
 
 /**
@@ -8386,6 +8438,7 @@ Player.prototype.toString = function() {
 	'undefined' != typeof node ? node : module.exports
   , 'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # GameMsg
  * 
@@ -11492,6 +11545,8 @@ Game.prototype.resume = function () {
  * @see Game.stager
  * @see Game.currentStage
  * @see Game.execStage
+ * 
+ * TODO: harmonize return values
  */
 Game.prototype.step = function() {
 	var nextStep;
@@ -11499,16 +11554,14 @@ Game.prototype.step = function() {
 	nextStep = this.stager.next(this.currentStep);
 	
 	if ('string' === typeof nextStep) {
-		// TODO: appropriate checkings
-		// Reached the last stage
-		if (!nextStep) {
-			console.log(this.stager.size());
-			console.log(this.currentStep);
-			console.log(nextStep);
+		
+		if (nextStep === GameLoop.GAMEOVER) {
 			node.emit('GAMEOVER');
 			return this.gameover(); // can throw Errors
 		}
-		// TODO: what to return??
+		
+		// else do nothing
+		return null;
 	}
 	else {
 		// TODO maybe update also in case of string

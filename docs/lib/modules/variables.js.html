@@ -61,6 +61,9 @@
         <a href="#target.state">target.STATE</a>
       </div>
       <div class="heading h4">
+        <a href="#target.stage">target.STAGE</a>
+      </div>
+      <div class="heading h4">
         <a href="#target.redirect">target.REDIRECT</a>
       </div>
       <div class="heading h4">
@@ -371,6 +374,22 @@ information carried in the message. </p>
       </tr>
       <tr>
         <td class="docs">
+<div class="pilwrap" id="target.stage">
+  <h4>
+    <a href="#target.stage" class="pilcrow">&#182;</a>
+    target.STAGE
+  </h4>
+</div>
+
+
+<p>A client notifies his own state</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE</span> <span class="o">=</span> <span class="s1">&#39;STAGE&#39;</span><span class="p">;</span>  
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
 <div class="pilwrap" id="target.redirect">
   <h4>
     <a href="#target.redirect" class="pilcrow">&#182;</a>
@@ -381,7 +400,7 @@ information carried in the message. </p>
 
 <p>Redirects a client to a new uri</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">REDIRECT</span>  <span class="o">=</span> <span class="s1">&#39;REDIRECT&#39;</span><span class="p">;</span> </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">REDIRECT</span> <span class="o">=</span> <span class="s1">&#39;REDIRECT&#39;</span><span class="p">;</span> </pre></div>
         </td>
       </tr>
       <tr>
@@ -464,7 +483,7 @@ information carried in the message. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>Still to implement</p>
         </td>
@@ -501,7 +520,7 @@ information carried in the message. </p>
       <span class="nx">resume</span><span class="o">:</span> <span class="s1">&#39;resume&#39;</span><span class="p">,</span>
       <span class="nx">stop</span><span class="o">:</span> <span class="s1">&#39;stop&#39;</span><span class="p">,</span>
       <span class="nx">restart</span><span class="o">:</span> <span class="s1">&#39;restart&#39;</span><span class="p">,</span>
-      <span class="nx">goto_state</span><span class="o">:</span> <span class="s1">&#39;goto_state&#39;</span>
+      <span class="nx">goto_stage</span><span class="o">:</span> <span class="s1">&#39;goto_stage&#39;</span>
   <span class="p">};</span>
     
 

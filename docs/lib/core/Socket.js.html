@@ -49,7 +49,10 @@
         <a href="#socket.sendhi">Socket.sendHI</a>
       </div>
       <div class="heading h3">
-        <a href="#socket.sendstate">Socket.sendSTATE</a>
+        <a href="#socket.sendstage">Socket.sendSTAGE</a>
+      </div>
+      <div class="heading h3">
+        <a href="#socket.sendstage">Socket.sendSTAGE</a>
       </div>
       <div class="heading h3">
         <a href="#socket.sendtxt">Socket.sendTXT</a>
@@ -102,7 +105,7 @@ MIT Licensed </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  
 <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-  <span class="nx">GameState</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span><span class="p">,</span>
+  <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
   <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
   <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
   <span class="nx">SocketFactory</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">SocketFactory</span><span class="p">;</span>
@@ -239,7 +242,7 @@ MIT Licensed </p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
-<p>Save the current state of the game</p>
+<p>Save the current stage of the game</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">store</span><span class="p">();</span>
   <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;closed&#39;</span><span class="p">);</span>
@@ -563,16 +566,18 @@ stores the session ids in the session object </p>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="socket.sendstate">
+  <div class="summary"><p>@TODO: do we need this??</p>
+
+
+<div class="pilwrap" id="socket.sendstage">
   <h3>
-    <a href="#socket.sendstate" class="pilcrow">&#182;</a>
-    Socket.sendSTATE
+    <a href="#socket.sendstage" class="pilcrow">&#182;</a>
+    Socket.sendSTAGE
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Creates a STATE message and pushes it into the socket</p>
+  <div class="body"><p>Creates a STAGE message and pushes it into the socket</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -582,9 +587,50 @@ stores the session ids in the session object </p>
       <span>A nodeGame action (e.g. 'get' or 'set')</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">state</span>
-      <span class="dox_type">GameState</span>
-      <span>The GameState object to send</span>
+      <span class="dox_tag_name">stage</span>
+      <span class="dox_type">GameStage</span>
+      <span>The GameStage object to send</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">to</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The recipient of the message.</span>
+    </div>
+  </div>
+</div>
+
+<p>Socket.prototype.sendSTATE = function (action, state, to) { <br />
+var msg = node.msg.createSTAGE(action, stage, to);
+this.send(msg);
+};</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socket.sendstage">
+  <h3>
+    <a href="#socket.sendstage" class="pilcrow">&#182;</a>
+    Socket.sendSTAGE
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a STAGE message and pushes it into the socket</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">action</span>
+      <span class="dox_type">string</span>
+      <span>A nodeGame action (e.g. 'get' or 'set')</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stage</span>
+      <span class="dox_type">GameStage</span>
+      <span>The GameStage object to send</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">to</span>
@@ -594,8 +640,14 @@ stores the session ids in the session object </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">sendSTATE</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span> 
-  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">createSTATE</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">sendSTAGE</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span> 
+  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+    <span class="nx">action</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
+    <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="nx">stage</span><span class="p">,</span> 
+    <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span>
+  <span class="p">});</span>
+  
   <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -684,7 +736,7 @@ stores the session ids in the session object </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>helping methods</p>
         </td>
