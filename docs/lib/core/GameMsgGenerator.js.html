@@ -42,18 +42,6 @@
       <div class="heading h2">
         <a href="#state-messages">STATE messages</a>
       </div>
-      <div class="heading h3">
-        <a href="#gamemsggenerator.saystate">GameMSgGenerator.saySTATE</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamemsggenerator.setstate">GameMSgGenerator.setSTATE</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamemsggenerator.getstate">GameMSgGenerator.getSTATE</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamemsggenerator.createstate">GameMSgGenerator.createSTATE</a>
-      </div>
       <div class="heading h2">
         <a href="#plist-messages">PLIST messages</a>
       </div>
@@ -149,7 +137,7 @@ MIT Licensed </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  
 <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-  <span class="nx">GameState</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span><span class="p">,</span>
+  <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
   <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
   <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
@@ -212,7 +200,7 @@ as input parameter</p>
 
   <span class="kd">var</span> <span class="nx">gameMsg</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">session</span><span class="o">:</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span><span class="p">)</span> <span class="o">?</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span> 
-    <span class="nx">state</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">state</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
+    <span class="nx">stage</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">stage</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span>
     <span class="nx">action</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">action</span> <span class="o">||</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
     <span class="nx">target</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
     <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
@@ -288,7 +276,7 @@ as input parameter</p>
   
   <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">(</span> <span class="p">{</span>
                   <span class="nx">session</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span>
-                  <span class="nx">state</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
+                  <span class="nx">stage</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span>
                   <span class="nx">action</span><span class="o">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
                   <span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">HI</span><span class="p">,</span>
                   <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
@@ -315,212 +303,96 @@ as input parameter</p>
         </td>
       </tr>
       <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamemsggenerator.saystate">
-  <h3>
-    <a href="#gamemsggenerator.saystate" class="pilcrow">&#182;</a>
-    GameMSgGenerator.saySTATE
-  </h3>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
+<p>/**
+* ### GameMSgGenerator.saySTATE
+* 
+* Creates a say.STATE message
+* 
+* Notice: stage is different from node.game.stage
+* 
+* @param {GameStage} stage The game-stage to communicate
+* @param {string} to The recipient of the message
+* @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
+* 
+* @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
+* 
+*     @see GameStage
+*/
+GameMsgGenerator.saySTATE = function (stage, to, reliable) {
+return this.createSTATE(action.SAY, stage, to, reliable);
+};</p>
 
-  </div>
-  <div class="body"><p>Creates a say.STATE message</p>
+<p>/**
+* ### GameMSgGenerator.setSTATE
+* 
+* Creates a set.STATE message
+* 
+* @param {GameStage} stage The game-stage to communicate
+* @param {string} to The recipient of the message
+* @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
+* 
+* @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
+* 
+*     @see GameStage
+*/
+GameMsgGenerator.setSTATE = function (stage, to, reliable) {
+return this.createSTATE(action.SET, stage, to, reliable);
+};</p>
 
-<p>Notice: state is different from node.game.state</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">state</span>
-      <span class="dox_type">GameState</span>
-      <span>The game-state to communicate</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
-      <span class="dox_type">string</span>
-      <span>The recipient of the message</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
-      <span class="dox_type">boolean</span>
-      <span>Optional. Experimental. Requires an acknowledgment</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">GameMsg</span>
-      <span class="dox_type">boolean</span>
-      <span>The game message, or FALSE if error in the input parameters is detected
+<p>/**
+* ### GameMSgGenerator.getSTATE
+* 
+* Experimental. Creates a get.STATE message
+* 
+* @param {GameStage} stage The game-stage to communicate
+* @param {string} to The recipient of the message
+* @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
+* 
+* @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
+* 
+*     @see GameStage
+*/
+GameMsgGenerator.getSTATE = function (stage, to, reliable) {
+return this.createSTATE(action.GET, stage, to,reliable);
+};</p>
 
-@see GameState</span>
-    </div>
-  </div>
-</div>
+<p>/**
+* ### GameMSgGenerator.createSTATE
+* 
+* Creates a STATE message
+* 
+* @param {string} action A nodeGame action (e.g. 'get' or 'set')
+* @param {GameStage} stage The game-stage to communicate
+* @param {string} to Optional. The recipient of the message. Defaults, SERVER
+* @param {boolean} reliable Optional. Experimental. Requires an acknowledgment
+* 
+* @return {GameMsg|boolean} The game message, or FALSE if error in the input parameters is detected
+* 
+*     @see GameStage
+*/
+GameMsgGenerator.createSTATE = function (action, stage, to, reliable) {
+if (!action || !stage) return false;
+to = to || 'SERVER';
+reliable = reliable || 1;
+return new GameMsg({
+                    session: node.gsc.session,
+                    stage: node.game.stage,
+                    action: action,
+                    target: target.STATE,
+                    from: node.player.sid,
+                    to: to,
+                    text: 'New State: ' + GameStage.stringify(stage),
+                    data: stage,
+                    priority: null,
+                    reliable: reliable
+});
+};</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">saySTATE</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createSTATE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamemsggenerator.setstate">
-  <h3>
-    <a href="#gamemsggenerator.setstate" class="pilcrow">&#182;</a>
-    GameMSgGenerator.setSTATE
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Creates a set.STATE message</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">state</span>
-      <span class="dox_type">GameState</span>
-      <span>The game-state to communicate</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
-      <span class="dox_type">string</span>
-      <span>The recipient of the message</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
-      <span class="dox_type">boolean</span>
-      <span>Optional. Experimental. Requires an acknowledgment</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">GameMsg</span>
-      <span class="dox_type">boolean</span>
-      <span>The game message, or FALSE if error in the input parameters is detected
-
-@see GameState</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">setSTATE</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createSTATE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamemsggenerator.getstate">
-  <h3>
-    <a href="#gamemsggenerator.getstate" class="pilcrow">&#182;</a>
-    GameMSgGenerator.getSTATE
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Experimental. Creates a get.STATE message</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">state</span>
-      <span class="dox_type">GameState</span>
-      <span>The game-state to communicate</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
-      <span class="dox_type">string</span>
-      <span>The recipient of the message</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
-      <span class="dox_type">boolean</span>
-      <span>Optional. Experimental. Requires an acknowledgment</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">GameMsg</span>
-      <span class="dox_type">boolean</span>
-      <span>The game message, or FALSE if error in the input parameters is detected
-
-@see GameState</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">getSTATE</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createSTATE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span><span class="nx">reliable</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamemsggenerator.createstate">
-  <h3>
-    <a href="#gamemsggenerator.createstate" class="pilcrow">&#182;</a>
-    GameMSgGenerator.createSTATE
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Creates a STATE message</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">action</span>
-      <span class="dox_type">string</span>
-      <span>A nodeGame action (e.g. 'get' or 'set')</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">state</span>
-      <span class="dox_type">GameState</span>
-      <span>The game-state to communicate</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">to</span>
-      <span class="dox_type">string</span>
-      <span>Optional. The recipient of the message. Defaults, SERVER</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">reliable</span>
-      <span class="dox_type">boolean</span>
-      <span>Optional. Experimental. Requires an acknowledgment</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">GameMsg</span>
-      <span class="dox_type">boolean</span>
-      <span>The game message, or FALSE if error in the input parameters is detected
-
-@see GameState</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">createSTATE</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">reliable</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">action</span> <span class="o">||</span> <span class="o">!</span><span class="nx">state</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="nx">to</span> <span class="o">=</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">;</span>
-  <span class="nx">reliable</span> <span class="o">=</span> <span class="nx">reliable</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">({</span>
-            <span class="nx">session</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span>
-            <span class="nx">state</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
-            <span class="nx">action</span><span class="o">:</span> <span class="nx">action</span><span class="p">,</span>
-            <span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">STATE</span><span class="p">,</span>
-            <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
-            <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span><span class="p">,</span>
-            <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;New State: &#39;</span> <span class="o">+</span> <span class="nx">GameState</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">state</span><span class="p">),</span>
-            <span class="nx">data</span><span class="o">:</span> <span class="nx">state</span><span class="p">,</span>
-            <span class="nx">priority</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="nx">reliable</span><span class="o">:</span> <span class="nx">reliable</span>
-  <span class="p">});</span>
-<span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -733,7 +605,7 @@ as input parameter</p>
   
   <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">({</span>
             <span class="nx">session</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span> 
-            <span class="nx">state</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
+            <span class="nx">stage</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span>
             <span class="nx">action</span><span class="o">:</span> <span class="nx">action</span><span class="p">,</span>
             <span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">PLIST</span><span class="p">,</span>
             <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
@@ -807,7 +679,7 @@ as input parameter</p>
   
   <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">({</span>
             <span class="nx">session</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span>
-            <span class="nx">state</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
+            <span class="nx">stage</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span>
             <span class="nx">action</span><span class="o">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
             <span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">TXT</span><span class="p">,</span>
             <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
@@ -1020,7 +892,7 @@ as input parameter</p>
   
   <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">({</span>
             <span class="nx">session</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span> 
-            <span class="nx">state</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
+            <span class="nx">stage</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span>
             <span class="nx">action</span><span class="o">:</span> <span class="nx">action</span><span class="p">,</span>
             <span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
             <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>
@@ -1067,7 +939,7 @@ as input parameter</p>
   
   <span class="kd">var</span> <span class="nx">newgm</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">({</span>
               <span class="nx">session</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span> 
-              <span class="nx">state</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
+              <span class="nx">stage</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span>
               <span class="nx">action</span><span class="o">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
               <span class="nx">target</span><span class="o">:</span> <span class="nx">target</span><span class="p">.</span><span class="nx">ACK</span><span class="p">,</span>
               <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">sid</span><span class="p">,</span>

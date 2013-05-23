@@ -66,7 +66,6 @@ MIT Licensed </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  
 <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-  <span class="nx">GameState</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span><span class="p">,</span>
   <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
   <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
   <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
@@ -118,8 +117,8 @@ MIT Licensed </p>
   <span class="p">});</span>
   
   
-  <span class="k">this</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;game.state&#39;</span><span class="p">,</span> <span class="p">{</span>
-    <span class="nx">set</span><span class="o">:</span> <span class="nx">GameSession</span><span class="p">.</span><span class="nx">restoreState</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;game.currentStepObj&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">set</span><span class="o">:</span> <span class="nx">GameSession</span><span class="p">.</span><span class="nx">restoreStage</span>
   <span class="p">});</span>
   
   <span class="k">this</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;node.env&#39;</span><span class="p">);</span>
@@ -127,7 +126,7 @@ MIT Licensed </p>
 <span class="p">}</span>
 
 
-<span class="nx">GameSession</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restoreState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">GameSession</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restoreStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
     
   <span class="k">try</span> <span class="p">{</span></pre></div>
         </td>
@@ -139,7 +138,7 @@ MIT Licensed </p>
 </div>
 <p>GOTO STATE</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="kr">goto</span><span class="p">(</span><span class="nx">state</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">execStage</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">stage</span><span class="p">));</span>
     
     <span class="kd">var</span> <span class="nx">discard</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LOG&#39;</span><span class="p">,</span> 
                    <span class="s1">&#39;STATECHANGE&#39;</span><span class="p">,</span>
@@ -152,7 +151,7 @@ MIT Licensed </p>
                    <span class="s1">&#39;out.say.STATE&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;out.set.STATE&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;in.say.PLIST&#39;</span><span class="p">,</span>
-                   <span class="s1">&#39;STATEDONE&#39;</span><span class="p">,</span> <span class="c1">// maybe not here</span>
+                   <span class="s1">&#39;STAGEDONE&#39;</span><span class="p">,</span> <span class="c1">// maybe not here</span>
                    <span class="s1">&#39;out.say.HI&#39;</span>                
     <span class="p">];</span>
     </pre></div>
@@ -166,11 +165,11 @@ MIT Licensed </p>
 <p>RE-EMIT EVENTS</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">remit</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="nx">discard</span><span class="p">);</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;game state restored&#39;</span><span class="p">);</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;game stage restored&#39;</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;could not restore game state. An error has occurred: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">);</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;could not restore game stage. An error has occurred: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
   <span class="p">}</span>
 

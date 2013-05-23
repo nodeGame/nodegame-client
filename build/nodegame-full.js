@@ -8734,6 +8734,8 @@ PlayerList.prototype.getRandom = function (N) {
  * 	`sid`: The Socket.io session id associated to the player
  * 	`id`: The nodeGame session id associate to the player
  * 	`count`: The id of the player within a PlayerList object
+ * 	`admin`: Whether the player is an admin
+ * 	`disconnected`: Whether the player has disconnected
  * 
  * Others properties are public and can be changed during the game.
  * 
@@ -8825,6 +8827,40 @@ function Player (pl) {
 		this.count = count;
 	}
 	
+/**
+ * ### Player.admin
+ * 
+ * The admin status of the client
+ * 
+ */	
+	var admin = !!pl.admin;
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'admin', {
+			value: admin,
+	    	enumerable: true
+		});
+	}
+	else {
+		this.admin = admin;
+	}
+	
+/**
+ * ### Player.disconnected
+ * 
+ * The connection status of the client
+ * 
+ */	
+	var disconnected = !!pl.disconnected;
+	if (node.support.defineProperty) {
+		Object.defineProperty(this, 'disconnected', {
+			value: disconnected,
+	    	enumerable: true
+		});
+	}
+	else {
+		this.disconnected = disconnected;
+	}
+	
 // ## Player public properties
 
 /**
@@ -8889,6 +8925,7 @@ Player.prototype.toString = function() {
 	'undefined' != typeof node ? node : module.exports
   , 'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # GameMsg
  * 

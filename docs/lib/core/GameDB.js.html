@@ -104,14 +104,14 @@ MIT Licensed </p>
 
 <ol>
 <li>by player,</li>
-<li>by state,</li>
+<li>by stage,</li>
 <li>by key.</li>
 </ol>
 
-<p>Uses GameState.compare to compare the state property of each entry.</p>
+<p>Uses GameStage.compare to compare the stage property of each entry.</p>
 
 <p>@see GameBit
-  @see GameState.compare</p>
+  @see GameStage.compare</p>
 
 <hr />
   </div>
@@ -133,7 +133,7 @@ MIT Licensed </p>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
   <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">;</span>
   
-<span class="kd">var</span> <span class="nx">GameState</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span><span class="p">;</span></pre></div>
+<span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -212,7 +212,7 @@ MIT Licensed </p>
   
   <span class="nx">NDDB</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">,</span> <span class="nx">parent</span><span class="p">);</span>
   
-  <span class="k">this</span><span class="p">.</span><span class="nx">c</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareState</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">c</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareState</span><span class="p">);</span>
     
   
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
@@ -220,9 +220,9 @@ MIT Licensed </p>
       <span class="k">return</span> <span class="nx">gb</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
     <span class="p">});</span>
   <span class="p">}</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">h</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">GameState</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="nx">gb</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">h</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="nx">gb</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
     <span class="p">});</span>
   <span class="p">}</span>  
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
@@ -279,8 +279,8 @@ MIT Licensed </p>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">player</span>
-      <span class="dox_type">GameState</span>
-      <span>Optional. The state associated to the entry. Defaults, node.game.state</span>
+      <span class="dox_type">GameStage</span>
+      <span>Optional. The stage associated to the entry. Defaults, node.game.stage</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -293,17 +293,17 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">player</span><span class="p">,</span> <span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">player</span><span class="p">,</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">key</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
   
-  <span class="nx">state</span> <span class="o">=</span> <span class="nx">state</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
+  <span class="nx">stage</span> <span class="o">=</span> <span class="nx">stage</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
   <span class="nx">player</span> <span class="o">=</span> <span class="nx">player</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
 
   <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameBit</span><span class="p">({</span>
             <span class="nx">player</span><span class="o">:</span> <span class="nx">player</span><span class="p">,</span> 
             <span class="nx">key</span><span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
             <span class="nx">value</span><span class="o">:</span> <span class="nx">value</span><span class="p">,</span>
-            <span class="nx">state</span><span class="o">:</span> <span class="nx">state</span>
+            <span class="nx">stage</span><span class="o">:</span> <span class="nx">stage</span>
   <span class="p">}));</span>
 
   <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
@@ -335,7 +335,7 @@ MIT Licensed </p>
 <p>A GameBit unit always contains the following properties</p>
 
 <ul>
-<li>state GameState</li>
+<li>stage GameStage</li>
 <li>player Player</li>
 <li>key </li>
 <li>value</li>
@@ -377,7 +377,7 @@ MIT Licensed </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">GameBit</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
   
-  <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">player</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">key</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">key</span><span class="p">;</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
@@ -409,7 +409,7 @@ MIT Licensed </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameBit</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">GameState</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -426,7 +426,7 @@ MIT Licensed </p>
   </div>
   <div class="body"><p>Compares two GameBit objects</p>
 
-<p>Returns TRUE if the attributes of <code>player</code>, <code>state</code>, and <code>key</code>
+<p>Returns TRUE if the attributes of <code>player</code>, <code>stage</code>, and <code>key</code>
 are identical. </p>
 
 <p>If the strict parameter is set, also the <code>value</code> property 
@@ -538,9 +538,9 @@ is used for comparison</p>
 </div>
 
   </div>
-  <div class="body"><p>Sort two game-bits by their state property</p>
+  <div class="body"><p>Sort two game-bits by their stage property</p>
 
-<p>GameState.compare is used for comparison</p>
+<p>GameStage.compare is used for comparison</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -560,13 +560,13 @@ is used for comparison</p>
       <span class="dox_type">number</span>
       <span>The result of the comparison
 
-@see GameState.compare</span>
+@see GameStage.compare</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareState</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gb1</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">GameState</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">gb1</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">gb1</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
