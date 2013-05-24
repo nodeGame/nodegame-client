@@ -52,6 +52,9 @@
         <a href="#gameloop.getstep">GameLoop.getStep</a>
       </div>
       <div class="heading h3">
+        <a href="#gameloop.getname">GameLoop.getName</a>
+      </div>
+      <div class="heading h3">
         <a href="#gameloop.normalizegamestage">GameLoop.normalizeGameStage</a>
       </div>
       <div class="heading h2">
@@ -875,6 +878,29 @@ If a sequence end is reached, returns immediately.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="gameloop.getname">
+  <h3>
+    <a href="#gameloop.getname" class="pilcrow">&#182;</a>
+    GameLoop.getName
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>TODO: To remove once transition is complete</p>
+  </div>
+  <div class="details">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameLoop</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span> 
+  <span class="k">return</span> <span class="nx">s</span> <span class="o">?</span> <span class="nx">s</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="nx">s</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="gameloop.normalizegamestage">
   <h3>
     <a href="#gameloop.normalizegamestage" class="pilcrow">&#182;</a>
@@ -915,7 +941,7 @@ If a sequence end is reached, returns immediately.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>Find stage number:</p>
         </td>
@@ -939,7 +965,7 @@ If a sequence end is reached, returns immediately.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>Get sequence object:</p>
         </td>
@@ -957,7 +983,7 @@ If a sequence end is reached, returns immediately.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Get stage object:</p>
         </td>
@@ -967,7 +993,7 @@ If a sequence end is reached, returns immediately.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>Find step number:</p>
         </td>

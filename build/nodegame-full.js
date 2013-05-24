@@ -1,165 +1,3 @@
-// cycle.js
-// 2011-08-24
-
-/*jslint evil: true, regexp: true */
-
-/*members $ref, apply, call, decycle, hasOwnProperty, length, prototype, push,
-    retrocycle, stringify, test, toString
-*/
-
-if (typeof JSON.decycle !== 'function') {
-    JSON.decycle = function decycle(object) {
-        'use strict';
-
-// Make a deep copy of an object or array, assuring that there is at most
-// one instance of each object or array in the resulting structure. The
-// duplicate references (which might be forming cycles) are replaced with
-// an object of the form
-//      {$ref: PATH}
-// where the PATH is a JSONPath string that locates the first occurance.
-// So,
-//      var a = [];
-//      a[0] = a;
-//      return JSON.stringify(JSON.decycle(a));
-// produces the string '[{"$ref":"$"}]'.
-
-// JSONPath is used to locate the unique object. $ indicates the top level of
-// the object or array. [NUMBER] or [STRING] indicates a child member or
-// property.
-
-        var objects = [],   // Keep a reference to each unique object or array
-            paths = [];     // Keep the path to each unique object or array
-
-        return (function derez(value, path) {
-
-// The derez recurses through the object, producing the deep copy.
-
-            var i,          // The loop counter
-                name,       // Property name
-                nu;         // The new object or array
-
-            switch (typeof value) {
-            case 'object':
-
-// typeof null === 'object', so get out if this value is not really an object.
-
-                if (!value) {
-                    return null;
-                }
-
-// If the value is an object or array, look to see if we have already
-// encountered it. If so, return a $ref/path object. This is a hard way,
-// linear search that will get slower as the number of unique objects grows.
-
-                for (i = 0; i < objects.length; i += 1) {
-                    if (objects[i] === value) {
-                        return {$ref: paths[i]};
-                    }
-                }
-
-// Otherwise, accumulate the unique value and its path.
-
-                objects.push(value);
-                paths.push(path);
-
-// If it is an array, replicate the array.
-
-                if (Object.prototype.toString.apply(value) === '[object Array]') {
-                    nu = [];
-                    for (i = 0; i < value.length; i += 1) {
-                        nu[i] = derez(value[i], path + '[' + i + ']');
-                    }
-                } else {
-
-// If it is an object, replicate the object.
-
-                    nu = {};
-                    for (name in value) {
-                        if (Object.prototype.hasOwnProperty.call(value, name)) {
-                            nu[name] = derez(value[name],
-                                path + '[' + JSON.stringify(name) + ']');
-                        }
-                    }
-                }
-                return nu;
-            case 'number':
-            case 'string':
-            case 'boolean':
-                return value;
-            }
-        }(object, '$'));
-    };
-}
-
-
-if (typeof JSON.retrocycle !== 'function') {
-    JSON.retrocycle = function retrocycle($) {
-        'use strict';
-
-// Restore an object that was reduced by decycle. Members whose values are
-// objects of the form
-//      {$ref: PATH}
-// are replaced with references to the value found by the PATH. This will
-// restore cycles. The object will be mutated.
-
-// The eval function is used to locate the values described by a PATH. The
-// root object is kept in a $ variable. A regular expression is used to
-// assure that the PATH is extremely well formed. The regexp contains nested
-// * quantifiers. That has been known to have extremely bad performance
-// problems on some browsers for very long strings. A PATH is expected to be
-// reasonably short. A PATH is allowed to belong to a very restricted subset of
-// Goessner's JSONPath.
-
-// So,
-//      var s = '[{"$ref":"$"}]';
-//      return JSON.retrocycle(JSON.parse(s));
-// produces an array containing a single element which is the array itself.
-
-        var px =
-            /^\$(?:\[(?:\d+|\"(?:[^\\\"\u0000-\u001f]|\\([\\\"\/bfnrt]|u[0-9a-zA-Z]{4}))*\")\])*$/;
-
-        (function rez(value) {
-
-// The rez function walks recursively through the object looking for $ref
-// properties. When it finds one that has a value that is a path, then it
-// replaces the $ref object with a reference to the value that is found by
-// the path.
-
-            var i, item, name, path;
-
-            if (value && typeof value === 'object') {
-                if (Object.prototype.toString.apply(value) === '[object Array]') {
-                    for (i = 0; i < value.length; i += 1) {
-                        item = value[i];
-                        if (item && typeof item === 'object') {
-                            path = item.$ref;
-                            if (typeof path === 'string' && px.test(path)) {
-                                value[i] = eval(path);
-                            } else {
-                                rez(item);
-                            }
-                        }
-                    }
-                } else {
-                    for (name in value) {
-                        if (typeof value[name] === 'object') {
-                            item = value[name];
-                            if (item) {
-                                path = item.$ref;
-                                if (typeof path === 'string' && px.test(path)) {
-                                    value[name] = eval(path);
-                                } else {
-                                    rez(item);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }($));
-        return $;
-    };
-}
 /**
  * # Shelf.JS 
  * 
@@ -915,6 +753,39 @@ if (!store) {
 	return;
 }
 
+var lock = false;
+
+var queue = [];
+
+function clearQueue() {
+	if (isLocked()) {
+//		console.log('cannot clear queue if lock is active');
+		return false;
+	}
+//	console.log('clearing queue');
+	for (var i=0; i< queue.length; i++) {
+		queue[i].call(queue[i]);
+	}
+}
+
+function locked() {
+	lock = true;
+}
+
+function unlocked() {
+	lock = false;
+}
+
+function isLocked() {
+	return lock;
+}
+
+function addToQueue(cb) {
+	queue.push(cb);
+}
+
+var counter = 0;
+
 store.filename = './shelf.out';
 
 var fs = require('fs'),
@@ -922,50 +793,129 @@ var fs = require('fs'),
 	util = require('util');
 
 // https://github.com/jprichardson/node-fs-extra/blob/master/lib/copy.js
-var copyFile = function(srcFile, destFile, cb) {
-    var fdr, fdw;
-    fdr = fs.createReadStream(srcFile);
-    fdw = fs.createWriteStream(destFile);
-    fdr.on('end', function() {
-      return cb(null);
-    });
-    return fdr.pipe(fdw);
-  };
+//var copyFile = function(srcFile, destFile, cb) {
+//	
+//    var fdr, fdw;
+//    
+//    fdr = fs.createReadStream(srcFile, {
+//    	flags: 'r'
+//    });
+////    fs.flockSync(fdr, 'sh');
+//    
+//    fdw = fs.createWriteStream(destFile, {
+//    	flags: 'w'
+//    });
+//    
+////    fs.flockSync(fdw, 'ex');
+//    		
+//	fdr.on('end', function() {
+////      fs.flockSync(fdr, 'un');
+//    });
+//	
+//    fdw.on('close', function() {
+////        fs.flockSync(fdw, 'un');
+//    	if (cb) cb(null);
+//    });
+//    
+//    fdr.pipe(fdw);
+//};
+
+//var overwrite = function (fileName, items) {
+//console.log('OW: ' + counter++);
+//
+//var file = fileName || store.filename;
+//if (!file) {
+//	store.log('You must specify a valid file.', 'ERR');
+//	return false;
+//}
+//
+//var tmp_copy = path.dirname(file) + '/.' + path.basename(file);
+//
+////console.log('files')
+////console.log(file);
+////console.log(fileName);
+////console.log(tmp_copy)
+//
+//copyFile(file, tmp_copy, function(){
+//	var s = store.stringify(items);
+//	// removing leading { and trailing }
+//	s = s.substr(1, s = s.substr(0, s.legth-1));
+////	console.log('SAVING')
+////	console.log(s)
+//	fs.writeFile(file, s, 'utf-8', function(e) {
+//		console.log('UNLINK ' + counter)
+//		if (e) throw e;
+////		fs.unlinkSync(tmp_copy);
+//		fs.unlink(tmp_copy, function (err) {
+//			if (err) throw err;  
+//		});
+//		return true;
+//	});
+//
+//});
+//
+//};
+
+var BUF_LENGTH = 64 * 1024;
+var _buff = new Buffer(BUF_LENGTH);
+
+var copyFileSync = function(srcFile, destFile) {
+	  var bytesRead, fdr, fdw, pos;
+	  fdr = fs.openSync(srcFile, 'r');
+	  fdw = fs.openSync(destFile, 'w');
+	  bytesRead = 1;
+	  pos = 0;
+	  while (bytesRead > 0) {
+	    bytesRead = fs.readSync(fdr, _buff, 0, BUF_LENGTH, pos);
+	    fs.writeSync(fdw, _buff, 0, bytesRead);
+	    pos += bytesRead;
+	  }
+	  fs.closeSync(fdr);
+	  return fs.closeSync(fdw);
+};
 
 
 var timeout = {};
 
+
+
 var overwrite = function (fileName, items) {
+	
+	if (isLocked()) {
+		addToQueue(this);
+		return false;
+	}
+	
+	locked();
+	
+//	console.log('OW: ' + counter++);
+	
 	var file = fileName || store.filename;
 	if (!file) {
 		store.log('You must specify a valid file.', 'ERR');
 		return false;
 	}
 	
-	var tmp_copy = path.dirname(file) + '.' + path.basename(file);
+	var tmp_copy = path.dirname(file) + '/.' + path.basename(file);
+	copyFileSync(file, tmp_copy);
 	
-//	console.log('files')
-//	console.log(file);
-//	console.log(fileName);
-//	console.log(tmp_copy)
-	
-	copyFile(file, tmp_copy, function(){
-		var s = store.stringify(items);
-		// removing leading { and trailing }
-		s = s.substr(1, s = s.substr(0, s.legth-1));
-//		console.log('SAVING')
-//		console.log(s)
-		fs.writeFile(file, s, 'utf-8', function(e) {
-			if (e) throw e;
-			fs.unlink(tmp_copy, function (err) {
-				if (err) throw err;  
-			});
-			return true;
-		});
+	var s = store.stringify(items);
 
-	});
+	// removing leading { and trailing }
+	s = s.substr(1, s = s.substr(0, s.legth-1));
 	
+	fs.writeFileSync(file, s, 'utf-8');
+	fs.unlinkSync(tmp_copy);
+	
+//	console.log('UNLINK ' + counter);
+	
+	
+	unlocked();
+	
+	clearQueue();
+	return true;	
 };
+
 
 if ('undefined' !== typeof fs.appendFileSync) {
 	// node 0.8
@@ -996,12 +946,9 @@ else {
 		
 
 
-		fs.open(file, 'a', 666, function( e, id ) {
-			fs.write( id, item, null, 'utf8', function(){
-				fs.close(id, function(){});
-			});
-		});
-		
+		var fd = fs.openSync(file, 'a', '0666');
+		fs.writeSync(fd, item, null, 'utf8');
+		fs.closeSync(fd);
 		return true;
 	};
 }
@@ -9226,19 +9173,19 @@ exports.Stager = Stager;
  * Creates a new empty instance of Stager
  */
 function Stager() {
-	this.init();
+	this.clear();
 }
 
 // ## Stager methods
 
 /**
- * ### Stager.init
+ * ### Stager.clear
  *
  * Resets Stager object to initial state
  *
  * Called by the constructor.
  */
-Stager.prototype.init = function() {
+Stager.prototype.clear = function() {
 	/**
 	 * ### Stager.steps
 	 *
@@ -9306,6 +9253,8 @@ Stager.prototype.init = function() {
 	 * @see Stager.registerNext
 	 */
 	this.nextFunctions = {};
+
+    return this;
 };
 
 /**
@@ -9355,7 +9304,7 @@ Stager.prototype.registerNext = function(id, func) {
 	}
 
 	this.nextFunctions[id] = func;
-}
+};
 
 /**
  * ### Stager.addStep
@@ -9406,7 +9355,7 @@ Stager.prototype.addStage = function(stage) {
 		if (!this.addStage({
 			id: stage.id,
 			steps: [ stage.id ]
-		    })) return false;
+		})) return false;
 
 		return true;
 	}
@@ -9421,11 +9370,24 @@ Stager.prototype.addStage = function(stage) {
 };
 
 /**
+ * ### Stager.init
+ *
+ * Resets sequence
+ *
+ * @return {Stager} this object
+ */
+Stager.prototype.init = function() {
+	this.sequence = [];
+
+	return this;
+};
+
+/**
  * ### Stager.gameover
  *
  * Adds gameover block to sequence
  *
- * @return {object} this GameStage object
+ * @return {Stager} this object
  */
 Stager.prototype.gameover = function() {
 	this.sequence.push({ type: 'gameover' });
@@ -9444,7 +9406,7 @@ Stager.prototype.gameover = function() {
  *
  * @param {string} id A valid stage name with optional alias
  *
- * @return {object} this GameStage object on success, null on error
+ * @return {Stager} this object on success, null on error
  *
  * @see Stager.addStage
  */
@@ -9472,7 +9434,7 @@ Stager.prototype.next = function(id) {
  * @param {string} id A valid stage name with optional alias
  * @param {number} nRepeats The number of repetitions
  *
- * @return {object} this GameStage object on success, null on error
+ * @return {Stager} this object on success, null on error
  *
  * @see Stager.addStage
  * @see Stager.next
@@ -9505,7 +9467,7 @@ Stager.prototype.repeat = function(id, nRepeats) {
  * @param {string} id A valid stage name with optional alias
  * @param {function} func Callback returning true for repetition
  *
- * @return {object} this GameStage object on success, null on error
+ * @return {Stager} this object on success, null on error
  *
  * @see Stager.addStage
  * @see Stager.next
@@ -9539,7 +9501,7 @@ Stager.prototype.loop = function(id, func) {
  * @param {string} id A valid stage name with optional alias
  * @param {function} func Callback returning true for repetition
  *
- * @return {object} this GameStage object on success, null on error
+ * @return {Stager} this object on success, null on error
  *
  * @see Stager.addStage
  * @see Stager.next
@@ -9585,32 +9547,34 @@ Stager.prototype.getSequence = function(format) {
 		result = [];
 
 		for (seqIdx in this.sequence) {
-			seqObj = this.sequence[seqIdx];
+			if (this.sequence.hasOwnProperty(seqIdx)) {
+				seqObj = this.sequence[seqIdx];
 
-			switch (seqObj.type) {
-			case 'gameover':
-				result.push('[game over]');
-				break;
+				switch (seqObj.type) {
+				case 'gameover':
+					result.push('[game over]');
+					break;
 
-			case 'plain':
-				result.push(seqObj.id);
-				break;
+				case 'plain':
+					result.push(seqObj.id);
+					break;
 
-			case 'repeat':
-				result.push(seqObj.id + ' [x' + seqObj.num + ']');
-				break;
+				case 'repeat':
+					result.push(seqObj.id + ' [x' + seqObj.num + ']');
+					break;
 
-			case 'loop':
-				result.push(seqObj.id + ' [loop]');
-				break;
+				case 'loop':
+					result.push(seqObj.id + ' [loop]');
+					break;
 
-			case 'doLoop':
-				result.push(seqObj.id + ' [doLoop]');
-				break;
+				case 'doLoop':
+					result.push(seqObj.id + ' [doLoop]');
+					break;
 
-			default:
-				node.warn('unknown sequence object type');
-				break;
+				default:
+					node.warn('unknown sequence object type');
+					break;
+				}
 			}
 		}
 		break;
@@ -9619,41 +9583,43 @@ Stager.prototype.getSequence = function(format) {
 		result = [];
 
 		for (seqIdx in this.sequence) {
-			seqObj = this.sequence[seqIdx];
-			stepPrefix = seqObj.id + '.';
+			if (this.sequence.hasOwnProperty(seqIdx)) {
+				seqObj = this.sequence[seqIdx];
+				stepPrefix = seqObj.id + '.';
 
-			switch (seqObj.type) {
-			case 'gameover':
-				result.push('[game over]');
-				break;
+				switch (seqObj.type) {
+				case 'gameover':
+					result.push('[game over]');
+					break;
 
-			case 'plain':
-				this.stages[seqObj.id].steps.map(function(stepID) {
-					result.push(stepPrefix + stepID);
-				});
-				break;
+				case 'plain':
+					this.stages[seqObj.id].steps.map(function(stepID) {
+						result.push(stepPrefix + stepID);
+					});
+					break;
 
-			case 'repeat':
-				this.stages[seqObj.id].steps.map(function(stepID) {
-					result.push(stepPrefix + stepID + ' [x' + seqObj.num + ']');
-				});
-				break;
+				case 'repeat':
+					this.stages[seqObj.id].steps.map(function(stepID) {
+						result.push(stepPrefix + stepID + ' [x' + seqObj.num + ']');
+					});
+					break;
 
-			case 'loop':
-				this.stages[seqObj.id].steps.map(function(stepID) {
-					result.push(stepPrefix + stepID + ' [loop]');
-				});
-				break;
+				case 'loop':
+					this.stages[seqObj.id].steps.map(function(stepID) {
+						result.push(stepPrefix + stepID + ' [loop]');
+					});
+					break;
 
-			case 'doLoop':
-				this.stages[seqObj.id].steps.map(function(stepID) {
-					result.push(stepPrefix + stepID + ' [doLoop]');
-				});
-				break;
+				case 'doLoop':
+					this.stages[seqObj.id].steps.map(function(stepID) {
+						result.push(stepPrefix + stepID + ' [doLoop]');
+					});
+					break;
 
-			default:
-				node.warn('unknown sequence object type');
-				break;
+				default:
+					node.warn('unknown sequence object type');
+					break;
+				}
 			}
 		}
 		break;
@@ -9693,39 +9659,40 @@ Stager.prototype.seqTestRun = function(expertMode, firstStage) {
 
 	if (!expertMode) {
 		for (stageNum in this.sequence) {
-			seqObj = this.sequence[stageNum];
-			console.log('** num: ' + stageNum + ', type: ' + seqObj.type);
-			switch (seqObj.type) {
-			case 'gameover':
-				console.log('* Game Over.');
-				return;
-				break;
+			if (this.sequence.hasOwnProperty(stageNum)) {
+				seqObj = this.sequence[stageNum];
+				console.log('** num: ' + stageNum + ', type: ' + seqObj.type);
+				switch (seqObj.type) {
+				case 'gameover':
+					console.log('* Game Over.');
+					return;
 
-			case 'plain':
-				this.stageTestRun(seqObj.id);
-				break;
-
-			case 'repeat':
-				for (var i = 0; i < seqObj.num; i++) {
+				case 'plain':
 					this.stageTestRun(seqObj.id);
+					break;
+
+				case 'repeat':
+					for (var i = 0; i < seqObj.num; i++) {
+						this.stageTestRun(seqObj.id);
+					}
+					break;
+
+				case 'loop':
+					while (seqObj.cb()) {
+						this.stageTestRun(seqObj.id);
+					}
+					break;
+
+				case 'doLoop':
+					do {
+						this.stageTestRun(seqObj.id);
+					} while (seqObj.cb());
+					break;
+
+				default:
+					node.warn('unknown sequence object type');
+					break;
 				}
-				break;
-
-			case 'loop':
-				while (seqObj.cb()) {
-					this.stageTestRun(seqObj.id);
-				}
-				break;
-
-			case 'doLoop':
-				do {
-					this.stageTestRun(seqObj.id);
-				} while (seqObj.cb());
-				break;
-
-			default:
-				node.warn('unknown sequence object type');
-				break;
 			}
 		}
 	}
@@ -9770,8 +9737,10 @@ Stager.prototype.stageTestRun = function(stageId) {
 	var stepId;
 
 	for (var i in steps) {
-		stepId = steps[i];
-		this.steps[stepId].cb();
+		if (steps.hasOwnProperty(i)) {
+			stepId = steps[i];
+			this.steps[stepId].cb();
+		}
 	}
 };
 
@@ -9867,7 +9836,8 @@ Stager.prototype.handleAlias = function(nameAndAlias) {
 
 	// Check uniqueness:
 	for (seqIdx in this.sequence) {
-		if (this.sequence[seqIdx].id === stageName) {
+		if (this.sequence.hasOwnProperty(seqIdx) &&
+				this.sequence[seqIdx].id === stageName) {
 			node.warn('handleAlias received non-unique stage name');
 			return null;
 		}
@@ -12474,6 +12444,701 @@ SessionManager.prototype.store = function() {
   , 'undefined' != typeof node ? node : module.parent.exports
 );
 /**
+ * # GroupManager
+ * 
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed 
+ * 
+ * `nodeGame` group manager
+ * 
+ * ---
+ * 
+ */
+(function (exports, node) {
+	
+// ## Global scope
+	var J = node.JSUS;
+
+	exports.GroupManager = GroupManager;
+
+    function GroupManager() {
+        // TODO GroupManager
+    }
+
+    // Here follows previous implementation of GroupManager, called RMatcher - scarcely commented.
+    // RMatcher is not the same as a GroupManager, but does something very useful:
+    // It assigns elements to groups based on a set of preferences
+
+    // elements: what you want in the group
+    // pools: array of array. it is set of preferences (elements from the first array will be used first
+
+    // Groups.rowLimit determines how many unique elements per row
+
+
+
+    exports.RMatcher = RMatcher;
+
+    var J = require('nodegame-client').JSUS;
+
+    function RMatcher (options) {
+
+        this.groups = [];
+
+        this.maxIteration = 10;
+
+        this.doneCounter = 0;
+    }
+
+    RMatcher.prototype.init = function (elements, pools) {
+        for (var i = 0; i < elements.length; i++) {
+            var g = new Group();
+            g.init(elements[i], pools[i]);
+            this.addGroup(g);
+        }
+
+        this.options = {
+            elements: elements,
+            pools: pools
+        };
+    };
+
+    RMatcher.prototype.addGroup = function (group) {
+        if (!group) return;
+        this.groups.push(group);
+    };
+
+    RMatcher.prototype.match = function() {
+        // Do first match
+        for (var i = 0; i < this.groups.length ; i++) {
+            this.groups[i].match();
+            if (this.groups[i].matches.done) {
+                this.doneCounter++;
+//			console.log('is done immediately')
+//			console.log(i);
+//			console.log('is done immediately')
+            }
+        }
+
+        if (!this.allGroupsDone()) {
+            this.assignLeftOvers();
+        }
+
+        if (!this.allGroupsDone()) {
+            this.switchBetweenGroups();
+        }
+
+        return J.map(this.groups, function (g) { return g.matched; });
+    };
+
+    RMatcher.prototype.invertMatched = function() {
+
+        var tmp, elements = [], inverted = [];
+        J.each(this.groups, function(g) {
+            elements = elements.concat(g.elements);
+            tmp = g.invertMatched();
+            for (var i = 0; i < tmp.length; i++) {
+                inverted[i] = (inverted[i] || []).concat(tmp[i]);
+            }
+        });
+
+        return { elements: elements,
+            inverted: inverted
+        };
+    };
+
+
+    RMatcher.prototype.allGroupsDone = function() {
+        return this.doneCounter === this.groups.length;
+    };
+
+    RMatcher.prototype.tryOtherLeftOvers = function (g) {
+        var group, groupId;
+        var order = J.seq(0, (this.groups.length-1));
+        order = J.shuffle(order);
+        for (var i = 0 ; i < order.length ; i++) {
+            groupId = order[i];
+            if (groupId === g) continue;
+            group = this.groups[groupId];
+            leftOver = [];
+            if (group.leftOver.length) {
+                group.leftOver = this.groups[g].matchBatch(group.leftOver);
+
+                if (this.groups[g].matches.done) {
+                    this.doneCounter++;
+//				console.log('is done with leftOver')
+//				console.log(g);
+//				console.log('is done with leftOver')
+                    return true;
+                }
+            }
+
+        }
+    };
+
+    RMatcher.prototype.assignLeftOvers = function() {
+        var g;
+        for ( var i = 0; i < this.groups.length ; i++) {
+            g = this.groups[i];
+            // Group is full
+            if (!g.matches.done) {
+                this.tryOtherLeftOvers(i);
+            }
+
+        }
+    };
+
+    RMatcher.prototype.collectLeftOver = function() {
+        return J.map(this.groups, function(g) { return g.leftOver; });
+    };
+
+
+    RMatcher.prototype.switchFromGroup = function (fromGroup, toGroup, fromRow, leftOvers) {
+        for (var toRow = 0; toRow < fromGroup.elements.length; toRow++) {
+
+            for (var j = 0; j < leftOvers.length; j++) {
+                for (var n = 0; n < leftOvers[j].length; n++) {
+
+                    var x = leftOvers[j][n]; // leftover n from group j
+
+                    if (fromGroup.canSwitchIn(x, toRow)) {
+                        for (var h = 0 ; h < fromGroup.matched[toRow].length; h++) {
+                            var switched = fromGroup.matched[toRow][h];
+
+                            if (toGroup.canAdd(switched, fromRow)) {
+                                fromGroup.matched[toRow][h] = x;
+                                toGroup.addToRow(switched, fromRow);
+                                leftOvers[j].splice(n,1);
+
+                                if (toGroup.matches.done) {
+
+
+//								console.log('is done')
+//								console.log(toGroup);
+//								console.log('is done')
+
+                                    this.doneCounter++;
+                                }
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    /**
+     *
+     * @param {integer} g Group index
+     * @param {integer} row Row index
+     */
+    RMatcher.prototype.trySwitchingBetweenGroups = function (g, row) {
+        var lo = this.collectLeftOver();
+        var toGroup = this.groups[g];
+        var fromGroup;
+        // Tries with all, even with the same group, that is why is (g + 1)
+        for (var i = (g + 1) ; i < (this.groups.length + g + 1) ; i++) {
+            fromGroup = this.groups[i % this.groups.length];
+
+            if (this.switchFromGroup(fromGroup, toGroup, row, lo)) {
+                if (toGroup.matches.done) return;
+            }
+        }
+
+        return false;
+    };
+
+
+
+    RMatcher.prototype.switchBetweenGroups = function() {
+        var g, diff;
+        for ( var i = 0; i < this.groups.length ; i++) {
+            g = this.groups[i];
+            // Group has free elements
+            if (!g.matches.done) {
+                for ( var j = 0; j < g.elements.length; j++) {
+                    diff = g.rowLimit - g.matched[j].length;
+                    if (diff) {
+                        for (var h = 0 ; h < diff; h++) {
+                            this.trySwitchingBetweenGroups(i, j);
+                            if (this.allGroupsDone()) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    };
+
+
+////////////////// GROUP
+
+    function Group() {
+
+        this.elements = [];
+        this.matched = [];
+
+        this.leftOver = [];
+        this.pointer = 0;
+
+        this.matches = {};
+        this.matches.total = 0;
+        this.matches.requested = 0;
+        this.matches.done = false;
+
+        this.rowLimit = 3;
+
+        this.noSelf = true;
+
+        this.pool = [];
+
+        this.shuffle = true;
+        this.stretch = true;
+    }
+
+    Group.prototype.init = function (elements, pool) {
+        this.elements = elements;
+        this.pool = J.clone(pool);
+
+        for (var i = 0; i < this.pool.length; i++) {
+            if (this.stretch) {
+                this.pool[i] = J.stretch(this.pool[i], this.rowLimit);
+            }
+            if (this.shuffle) {
+                this.pool[i] = J.shuffle(this.pool[i]);
+            }
+        }
+
+        if (!elements.length) {
+            this.matches.done = true;
+        }
+        else {
+            for (i = 0 ; i < elements.length ; i++) {
+                this.matched[i] = [];
+            }
+        }
+
+        this.matches.requested = this.elements.length * this.rowLimit;
+    };
+
+
+    /**
+     * The same as canAdd, but does not consider row limit
+     */
+    Group.prototype.canSwitchIn = function (x, row) {
+        // Element already matched
+        if (J.in_array(x, this.matched[row])) return false;
+        // No self
+        if (this.noSelf && this.elements[row] === x) return false;
+
+        return true;
+    };
+
+
+    Group.prototype.canAdd = function (x, row) {
+        // Row limit reached
+        if (this.matched[row].length >= this.rowLimit) return false;
+
+        return this.canSwitchIn(x, row);
+    };
+
+    Group.prototype.shouldSwitch = function (x, fromRow) {
+        if (!this.leftOver.length) return false;
+        if (this.matched.length < 2) return false;
+//	var actualLeftOver = this.leftOver.length;
+        return true;
+
+    };
+
+// If there is a hole, not in the last position, the algorithm fails
+    Group.prototype.switchIt = function () {
+
+        for (var i = 0; i < this.elements.length ; i++) {
+            if (this.matched[i].length < this.rowLimit) {
+                this.completeRow(i);
+            }
+        }
+
+    };
+
+    Group.prototype.completeRow = function (row, leftOver) {
+        leftOver = leftOver || this.leftOver;
+        var clone = leftOver.slice(0);
+        for (var i = 0 ; i < clone.length; i++) {
+            for (var j = 0 ; j < this.elements.length; j++) {
+                if (this.switchItInRow(clone[i], j, row)){
+                    leftOver.splice(i,1);
+                    return true;
+                }
+                this.updatePointer();
+            }
+        }
+        return false;
+    };
+
+
+    Group.prototype.switchItInRow = function (x, toRow, fromRow) {
+        if (!this.canSwitchIn(x, toRow)) {
+            //console.log('cannot switch ' + x + ' ' + toRow)
+            return false;
+        }
+        //console.log('can switch: ' + x + ' ' + toRow + ' from ' + fromRow)
+        // Check if we can insert any of the element of the 'toRow'
+        // inside the 'toRow'
+        for (var i = 0 ; i < this.matched[toRow].length; i++) {
+            var switched = this.matched[toRow][i];
+            if (this.canAdd(switched, fromRow)) {
+                this.matched[toRow][i] = x;
+                this.addToRow(switched, fromRow);
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    Group.prototype.addToRow = function(x, row) {
+        this.matched[row].push(x);
+        this.matches.total++;
+        if (this.matches.total === this.matches.requested) {
+            this.matches.done = true;
+        }
+    };
+
+    Group.prototype.addIt = function(x) {
+        var counter = 0, added = false;
+        while (counter < this.elements.length && !added) {
+            if (this.canAdd(x, this.pointer)) {
+                this.addToRow(x, this.pointer);
+                added = true;
+            }
+            this.updatePointer();
+            counter++;
+        }
+        return added;
+    };
+
+
+    Group.prototype.matchBatch = function (pool) {
+        var leftOver = [];
+        for (var i = 0 ; i < pool.length ; i++) {
+            if (this.matches.done || !this.addIt(pool[i])) {
+                // if we could not add it as a match, it becomes leftover
+                leftOver.push(pool[i]);
+            }
+        }
+        return leftOver;
+    };
+
+    Group.prototype.match = function (pool) {
+        pool = pool || this.pool;
+//	console.log('matching pool');
+//	console.log(pool)
+        if (!J.isArray(pool)) {
+            pool = [pool];
+        }
+        // Loop through the pools: elements in lower
+        // indexes-pools have more chances to be used
+        var leftOver;
+        for (var i = 0 ; i < pool.length ; i++) {
+            leftOver = this.matchBatch(pool[i]);
+            if (leftOver.length) {
+                this.leftOver = this.leftOver.concat(leftOver);
+            }
+        }
+
+        if (this.shouldSwitch()) {
+            this.switchIt();
+        }
+    };
+
+    Group.prototype.updatePointer = function () {
+        this.pointer = (this.pointer + 1) % this.elements.length;
+    };
+
+    Group.prototype.summary = function() {
+        console.log('elements: ', this.elements);
+        console.log('pool: ', this.pool);
+        console.log('left over: ', this.leftOver);
+        console.log('hits: ' + this.matches.total + '/' + this.matches.requested);
+        console.log('matched: ', this.matched);
+    };
+
+    Group.prototype.invertMatched = function () {
+        return J.transpose(this.matched);
+    };
+
+    // Testing functions
+
+    var numbers = [1,2,3,4,5,6,7,8,9];
+
+    function getElements() {
+
+        var out = [],
+            n = J.shuffle(numbers);
+        out.push(n.splice(0, J.randomInt(0,n.length)))
+        out.push(n.splice(0, J.randomInt(0,n.length)))
+        out.push(n)
+
+        return J.shuffle(out);
+    }
+
+
+
+    function getPools() {
+        var n = J.shuffle(numbers);
+        out = [];
+
+        var A = n.splice(0, J.randomInt(0, (n.length / 2)));
+        var B = n.splice(0, J.randomInt(0, (n.length / 2)));
+        var C = n;
+
+        var A_pub = A.splice(0, J.randomInt(0, A.length));
+        A = J.shuffle([A_pub, A]);
+
+        var B_pub = B.splice(0, J.randomInt(0, B.length));
+        B = J.shuffle([B_pub, B]);
+
+        var C_pub = C.splice(0, J.randomInt(0, C.length));
+        C = J.shuffle([C_pub, C]);
+
+        return J.shuffle([A,B,C]);
+    }
+//console.log(getElements())
+//console.log(getPools())
+
+
+
+
+
+    function simulateMatch(N) {
+
+        for (var i = 0 ; i < N ; i++) {
+
+            var rm = new RMatcher(),
+                elements = getElements(),
+                pools = getPools();
+
+//		console.log('NN ' , numbers);
+//		console.log(elements);
+//		console.log(pools)
+            rm.init(elements, pools);
+
+            var matched = rm.match();
+
+            if (!rm.allGroupsDone()) {
+                console.log('ERROR')
+                console.log(rm.options.elements);
+                console.log(rm.options.pools);
+                console.log(matched);
+            }
+
+            for (var j = 0; j < rm.groups.length; j++) {
+                var g = rm.groups[j];
+                for (var h = 0; h < g.elements.length; h++) {
+                    if (g.matched[h].length !== g.rowLimit) {
+                        console.log('Wrong match: ' +  h);
+
+                        console.log(rm.options.elements);
+                        console.log(rm.options.pools);
+                        console.log(matched);
+                    }
+                }
+            }
+        }
+
+    }
+
+//simulateMatch(1000000000);
+
+//var myElements = [ [ 1, 5], [ 6, 9 ], [ 2, 3, 4, 7, 8 ] ];
+//var myPools = [ [ [ ], [ 1,  5, 6, 7] ], [ [4], [ 3, 9] ], [ [], [ 2, 8] ] ];
+
+//4.07A 25
+//4.77C 25
+//4.37B 25
+//5.13B 25 [08 R_16]
+//0.83A 25 [09 R_7]
+//3.93A 25 [09 R_23]
+//1.37A 25 [07 R_21]
+//3.30C 25
+//4.40B 25
+//
+//25
+//
+//389546331863136068
+//B
+//
+//// submissions in r 26
+//
+//3.73A 26 [05 R_25]
+//2.40C 26
+//undefinedC 26 [05 R_25]
+//4.37C 26 [06 R_19]
+//6.07A 26 [06 R_19]
+//undefinedB 26 [06 R_18]
+//4.33C 26 [05 R_25]
+//undefinedC 26 [08 R_19]
+//4.40B 26
+//
+//
+//26
+//
+//19868497151402574894
+//A
+//
+//27
+//
+//5688413461195617580
+//C
+//20961392604176231
+//B
+
+
+
+
+
+//20961392604176200	SUB	A	1351591619837
+//19868497151402600000	SUB	A	1351591620386
+//5688413461195620000	SUB	A	1351591652731
+//2019166870553500000	SUB	B	1351591653043
+//389546331863136000	SUB	B	1351591653803
+//1886985572967670000	SUB	C	1351591654603
+//762387587655923000	SUB	C	1351591654648
+//1757870795266120000	SUB	B	1351591655960
+//766044637969952000	SUB	A	1351591656253
+
+//var myElements = [ [ 3, 5 ], [ 8, 9, 1, 7, 6 ], [ 2, 4 ] ];
+//var myPools = [ [ [ 6 ], [ 9, 7 ] ], [ [], [ 8, 1, 5, 4 ] ], [ [], [ 2, 3 ] ] ];
+
+//var myElements = [ [ '13988427821680113598', '102698780807709949' ],
+//  [],
+//  [ '15501781841528279951' ] ]
+//
+//var myPools = [ [ [ '13988427821680113598', '102698780807709949' ] ],
+//  [ [] ],
+//   [ [ '15501781841528279951' ] ] ]
+//
+//
+//var myRM = new RMatcher();
+//myRM.init(myElements, myPools);
+//
+//var myMatch = myRM.match();
+//
+//
+//for (var j = 0; j < myRM.groups.length; j++) {
+//	var g = myRM.groups[j];
+//	for (var h = 0; h < g.elements.length; h++) {
+//		if (g.matched[h].length !== g.rowLimit) {
+//			console.log('Wrong match: ' + j + '-' + h);
+//
+//			console.log(myRM.options.elements);
+//			console.log(myRM.options.pools);
+////			console.log(matched);
+//		}
+//	}
+//}
+
+//if (!myRM.allGroupsDone()) {
+//	console.log('ERROR')
+//	console.log(myElements);
+//	console.log(myPools);
+//	console.log(myMatch);
+//
+//	console.log('---')
+//	J.each(myRM.groups, function(g) {
+//		console.log(g.pool);
+//	});
+//}
+
+//console.log(myElements);
+//console.log(myPools);
+//console.log('match')
+//console.log(myMatch);
+
+//console.log(myRM.invertMatched());
+//console.log(J.transpose(myMatch));
+//
+//console.log(myRM.doneCounter);
+
+//var poolA = [ [1, 2], [3, 4], ];
+//var elementsA = [7, 1, 2, 4];
+//
+//var poolB = [ [5], [6], ];
+//var elementsB = [3 , 8];
+//
+//var poolC = [ [7, 8, 9] ];
+//var elementsC = [9, 5, 6, ];
+//
+//var A, B, C;
+//
+//A = new Group();
+//A.init(elementsA, poolA);
+//
+//B = new Group();
+//B.init(elementsB, poolB);
+//
+//C = new Group();
+//C.init(elementsC, poolC);
+//
+//
+//rm.addGroup(A);
+//rm.addGroup(B);
+//rm.addGroup(C);
+//
+//rm.match();
+//
+
+//  [ [ [ 2, 1, 4 ], [ 2, 3, 4 ], [ 1, 4, 3 ], [ 1, 2, 3 ] ],
+//  [ [ 5, 6, 9 ], [ 5, 6, 7 ] ],
+//  [ [ 8, 6, 5 ], [ 9, 8, 7 ], [ 9, 7, 8 ] ] ]
+
+
+//console.log(rm.allGroupsDone())
+
+//console.log(g.elements);
+//console.log(g.matched);
+
+
+
+
+
+// ## Closure	
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);
+/**
+ * # RoleMapper
+ * 
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed 
+ * 
+ * `nodeGame` manager of player ids and aliases
+ * 
+ * ---
+ * 
+ */
+(function (exports, node) {
+	
+// ## Global scope
+	var J = node.JSUS;
+
+	exports.RoleMapper = RoleMapper;
+
+    function RoleMapper() {
+        // TODO RoleMapper
+    }
+
+
+// ## Closure
+})(
+	'undefined' != typeof node ? node : module.exports
+  , 'undefined' != typeof node ? node : module.parent.exports
+);
+/**
  * # nodeGame
  * 
  * Social Experiments in the Browser
@@ -14551,6 +15216,11 @@ GameWindow.defaults = {};
 // Default settings
 GameWindow.defaults.promptOnleave = true;
 GameWindow.defaults.noEscape = true;
+GameWindow.defaults.cacheDefaults = {
+	loadCache:       true,
+	storeCacheNow:   false,
+	storeCacheLater: false
+};
 
 
 /**
@@ -14581,11 +15251,41 @@ function GameWindow() {
 	this.root = null;
 	
 	this.conf = {};
-	
+
+// ### GameWindow.state
+// 	
 	this.state = node.is.LOADED;
+
+// ### GameWindow.areLoading
+// Counts the number of frames currently being loaded	
 	this.areLoading = 0; 
+
+// ### GameWindow.cache
+// Cache for loaded iframes
+//	
+// Maps URI to a cache object with the following properties:	
+//  - `contents` (a string describing the innerHTML or null if not cached),
+//  - optionally 'cacheOnClose' (a bool telling whether to cache the frame when
+//    it is replaced by a new one).
+	this.cache = {};
+
+// ### GameWindow.currentURIs
+// Currently loaded URIs in the internal frames
+//	
+// Maps frame names (e.g. 'mainframe') to the URIs they are showing.
+	this.currentURIs = {};
+
 	
-	// Init default behavior
+// ### GameWindow.globalLibs	
+// Array of strings with the path of the libraries to be loaded in every frame
+	this.globalLibs = [];
+	
+// ### GameWindow.frameLibs
+// Like `GameWindow.frameLibs`, but contains libraries to be loaded only
+// in specific frames
+	this.frameLibs = {};
+
+
 	this.init();
 	
 };
@@ -14645,7 +15345,10 @@ GameWindow.prototype.getElementById = function (id) {
 };
 
 /**
- * Returns a collection of elements with the tag name equal to @tag . 
+ * ### GameWindow.getElementsByTagName
+ * 
+ * Returns a list of elements with the given tag name 
+ *  
  * Looks first into the iframe and then into the rest of the page.
  * 
  * @see GameWindow.getElementById
@@ -14727,34 +15430,324 @@ GameWindow.prototype.setup = function (type){
 
 
 /**
- * ## GameWindow.load
+ * ### removeLibraries
+ *
+ * Removes injected scripts from iframe
+ *
+ * Takes out all the script tags with the className "injectedlib"
+ * that were inserted by injectLibraries.
+ * 
+ * @param {object} frameNode The node object of the iframe
+ *
+ * @see injectLibraries
+ * 
+ * @api private
+ */
+function removeLibraries (frameNode) {
+	var contentDocument = frameNode.contentDocument ? frameNode.contentDocument
+	                                                : frameNode.contentWindow.document;
+
+	var scriptNodes, scriptNodeIdx, scriptNode;
+
+	scriptNodes = contentDocument.getElementsByClassName('injectedlib');
+	for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length; ++scriptNodeIdx) {
+		scriptNode = scriptNodes[scriptNodeIdx];
+		scriptNode.parentNode.removeChild(scriptNode);
+	}
+}
+
+
+/**
+ * ### reloadScripts
+ *
+ * Reloads all script nodes in iframe
+ *
+ * Deletes and reinserts all the script tags, effectively reloading the scripts.
+ * The placement of the tags can change, but the order is kept.
+ * 
+ * @param {object} frameNode The node object of the iframe
+ * 
+ * @api private
+ */
+function reloadScripts (frameNode) {
+	var contentDocument = frameNode.contentDocument ? frameNode.contentDocument
+	                                                : frameNode.contentWindow.document;
+
+	var headNode = contentDocument.getElementsByTagName('head')[0];
+	var tag, scriptNodes, scriptNodeIdx, scriptNode;
+	var attrIdx, attr;
+
+	scriptNodes = contentDocument.getElementsByTagName('script');
+	for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length; ++scriptNodeIdx) {
+		// Remove tag:
+		tag = scriptNodes[scriptNodeIdx];
+		tag.parentNode.removeChild(tag);
+
+		// Reinsert tag for reloading:
+		scriptNode = document.createElement('script');
+		if (tag.innerHTML) scriptNode.innerHTML = tag.innerHTML;
+		for (attrIdx = 0; attrIdx < tag.attributes.length; ++attrIdx) {
+			attr = tag.attributes[attrIdx];
+			scriptNode.setAttribute(attr.name) = attr.value;
+		}
+		headNode.appendChild(scriptNode);
+	}
+}
+
+
+/**
+ * ### injectLibraries
+ * 
+ * Injects scripts into the iframe
+ * 
+ * First removes all old injected script tags.
+ * Then injects `<script class="injectedlib" src="...">` lines into given
+ * iframe object, one for every given library.
+ * 
+ * @param {object} frameNode The node object of the iframe
+ * @param {array} libs An array of strings giving the "src" attribute for the `<script>`
+ *                     lines to insert
+ * 
+ * @api private
+ * 
+ */
+function injectLibraries (frameNode, libs) {
+	var contentDocument = frameNode.contentDocument ? frameNode.contentDocument
+	                                                : frameNode.contentWindow.document;
+
+	var headNode = contentDocument.getElementsByTagName('head')[0];
+	var scriptNode;
+	var libIdx, lib;
+
+	for (libIdx = 0; libIdx < libs.length; ++libIdx) {
+		lib = libs[libIdx];
+		scriptNode = document.createElement('script');
+		scriptNode.className = 'injectedlib';
+		scriptNode.src = lib;
+		headNode.appendChild(scriptNode);
+	}
+};
+
+
+/**
+ * ### GameWindow.initLibs
+ *
+ * Specifies the libraries to be loaded automatically in the iframes
+ * 
+ * This method must be called before any calls to GameWindow.load .
+ *
+ * @param {array} globalLibs Array of strings describing absolute library paths that
+ *    should be loaded in every iframe.
+ * @param {object} frameLibs Map from URIs to string arrays (as above) specifying
+ *    libraries that should only be loaded for iframes displaying the given URI.
+ *    This must not contain any elements that are also in globalLibs.
+ *
+ */
+GameWindow.prototype.initLibs = function (globalLibs, frameLibs) {
+	this.globalLibs = globalLibs || [];
+	this.frameLibs = frameLibs || {};
+}
+
+
+/**
+ * ### GameWindow.preCache
+ *
+ * Loads the HTML content of the given URIs into the cache
+ *
+ * @param {array} uris The URIs to cache
+ * @param {function} callback The function to call once the caching is done
+ *
+ */
+GameWindow.prototype.preCache = function(uris, callback) {
+	// Don't preload if no URIs are given:
+	if (!uris || !uris.length) {
+		if(callback) callback();
+		return;
+	}
+
+	var that = this;
+
+	// Keep count of loaded URIs:
+	var loadedCount = 0;
+
+	for (var uriIdx = 0; uriIdx < uris.length; ++uriIdx) {
+		var currentUri = uris[uriIdx];
+
+		// Create an invisible internal frame for the current URI:
+		var iframe = document.createElement('iframe');
+		iframe.style.visibility = 'hidden';
+		var iframeName = 'tmp_iframe_' + uriIdx;
+		iframe.id = iframeName;
+		iframe.name = iframeName;
+		document.body.appendChild(iframe);
+
+		// Register the onload handler:
+		iframe.onload = (function(uri, thisIframe) {
+			return function() {
+				var frameDocumentElement =
+					(thisIframe.contentDocument ? thisIframe.contentDocument : thisIframe.contentWindow.document)
+					.documentElement;
+
+				// Store the contents in the cache:
+				that.cache[uri] = { contents: frameDocumentElement.innerHTML,
+				                    cacheOnClose: false };
+
+				// Remove the internal frame:
+				document.body.removeChild(thisIframe);
+
+				// Increment loaded URIs counter:
+				++ loadedCount;
+				if (loadedCount >= uris.length) {
+					// All requested URIs have been loaded at this point.
+					if (callback) callback();
+				}
+			};
+		})(currentUri, iframe);
+
+		// Start loading the page:
+		window.frames[iframeName].location = currentUri;
+	}
+};
+
+
+/**
+ * ### handleFrameLoad
+ *
+ * Handles iframe contents loading
+ *
+ * A helper method of GameWindow.load .
+ * Puts cached contents into the iframe or caches new contents if requested.
+ * Handles reloading of script tags and injected libraries.
+ * Must be called with `this` set to GameWindow instance.
+ *
+ * @param {uri} uri URI to load
+ * @param {string} frame ID of GameWindow's frame
+ * @param {bool} loadCache whether to load from cache
+ * @param {bool} storeCache whether to store to cache
+ *
+ * @see GameWindow.load
+ *
+ * @api private
+ */
+function handleFrameLoad (uri, frame, loadCache, storeCache) {
+	var frameNode = document.getElementById(frame);
+	var frameDocumentElement =
+		(frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
+		.documentElement;
+
+	if (loadCache) {
+		// Load frame from cache:
+		frameDocumentElement.innerHTML = this.cache[uri].contents;
+	}
+
+	// (Re-)Inject libraries and reload scripts:
+	removeLibraries(frameNode);
+	if (loadCache) {
+		reloadScripts(frameNode);
+	}
+	injectLibraries(frameNode, this.globalLibs.concat(uri in this.frameLibs ? this.frameLibs[uri] : []));
+
+	if (storeCache) {
+		// Store frame in cache:
+		this.cache[uri].contents = frameDocumentElement.innerHTML;
+	}
+}
+
+
+/**
+ * ### GameWindow.load
  * 
  * Loads content from an uri (remote or local) into the iframe, 
  * and after it is loaded executes the callback function. 
  * 
- * The third parameter is the id of the frame in which to load the content. 
- * If it is not specified, the default iframe of the game is assumed.
+ * The third parameter is an options object with the following fields
+ * (any fields left out assume the default setting):
+ *
+ *  - frame (string): The name of the frame in which to load the uri (default: default iframe of the game)
+ *  - cache (object): Caching options.  Fields:
+ *      * loadMode (string): 'reload' (default; reload page without the cache),
+ *                           'cache' (get the page from cache if possible)
+ *      * storeMode (string): 'off' (default; don't cache page),
+ *                            'onLoad' (cache given page after it is loaded)
+ *                            'onClose' (cache given page after it is replaced by a new page)
  * 
  * Warning: Security policies may block this methods, if the 
  * content is coming from another domain.
  * 
  * @param {string} uri The uri to load
  * @param {function} func The callback function to call once the DOM is ready
- * @param {string} frame The name of the frame in which loading the uri
+ * @param {object} opts The options object
  * 
  */
-GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func, frame) {
+GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func, opts) {
 	if (!uri) return;
-	frame =  frame || this.mainframe;
+
+	// Default options:
+	var frame = this.mainframe;
+	var loadCache = GameWindow.defaults.cacheDefaults.loadCache;
+	var storeCacheNow = GameWindow.defaults.cacheDefaults.storeCacheNow;
+	var storeCacheLater = GameWindow.defaults.cacheDefaults.storeCacheLater;
+
+	// Get options:
+	if (opts) {
+		if (opts.frame) frame = opts.frame;
+
+		if (opts.cache) {
+			if (opts.cache.loadMode === 'reload') loadCache = false;
+			else if (opts.cache.loadMode === 'cache') loadCache = true;
+
+			if (opts.cache.storeMode === 'off') {
+				storeCacheNow = false;
+				storeCacheLater = false;
+			}
+			else if (opts.cache.storeMode === 'onLoad') {
+				storeCacheNow = true;
+				storeCacheLater = false;
+			}
+			else if (opts.cache.storeMode === 'onClose') {
+				storeCacheNow = false;
+				storeCacheLater = true;
+			}
+		}
+	}
+
+	// Get the internal frame object:
+	var iframe = document.getElementById(frame);
+	var frameNode;
+	var frameDocumentElement;
+	// Query readiness (so we know whether onload is going to be called):
+	var frameReady = iframe.contentWindow.document.readyState;
+	// ...reduce it to a boolean:
+	frameReady = (frameReady === 'interactive' || frameReady === 'complete');
+
+	// If the last frame requested to be cached on closing, do that:
+	var lastURI = this.currentURIs[frame];
+	if ((lastURI in this.cache) && this.cache[lastURI].cacheOnClose) {
+		frameNode = document.getElementById(frame);
+		frameDocumentElement =
+		  (frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
+		  .documentElement;
+
+		this.cache[lastURI].contents = frameDocumentElement.innerHTML;
+	}
+
+	// Create entry for this URI in cache object and store cacheOnClose flag:
+	if(!(uri in this.cache)) this.cache[uri] = { contents: null, cacheOnClose: false };
+	this.cache[uri].cacheOnClose = storeCacheLater;
+
+	// Disable loadCache if contents aren't cached:
+	if(this.cache[uri].contents === null) loadCache = false;
+
+	// Update frame's currently showing URI:
+	this.currentURIs[frame] = uri;
 	
 	this.state = node.is.LOADING;
-	this.areLoading++; // keep track of nested call to loadFrame
+	this.areLoading++;  // keep track of nested call to loadFrame
 	
-	var that = this;	
+	var that = this;
 			
-	// First add the onload event listener
-	var iframe = document.getElementById(frame);
-	iframe.onload = function () {
+	// Add the onload event listener:
+	iframe.onload = function() {
 		if (that.conf.noEscape) {
 			
 			// TODO: inject the no escape code here
@@ -14762,11 +15755,30 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
 			//that.addJS(iframe.document, node.conf.host + 'javascripts/noescape.js');
 			//that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noescape.js');
 		}
+
+		handleFrameLoad.call(that, uri, frame, loadCache, storeCacheNow);
+
 		that.updateStatus(func, frame);
 	};
 
-	// Then update the frame location
-	window.frames[frame].location = uri;
+	// Cache lookup:
+	if (loadCache) {
+		// Load iframe contents at this point only if the iframe is already "ready"
+		// (see definition of frameReady), otherwise the contents would be cleared
+		// once the iframe becomes ready.  In that case, iframe.onload handles the
+		// filling of the contents.
+		// TODO: Fix code duplication between here and onload function.
+		if (frameReady) {
+			handleFrameLoad.call(this, uri, frame, loadCache, storeCacheNow);
+			
+			// Update status (onload isn't called if frame was already ready):
+			this.updateStatus(func, frame);
+		}
+	}
+	else {
+		// Update the frame location:
+		window.frames[frame].location = uri;
+	}
 	
 	
 	// Adding a reference to nodeGame also in the iframe
@@ -14785,7 +15797,21 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
 					
 };
 
-
+/**
+ * ### GameWindow.updateStatus
+ * 
+ * Cleans up the window state after an iframe has been loaded
+ * 
+ * The methods performs the following operations:
+ * 
+ * 	- executes a given callback function, 
+ * 	- decrements the counter of loading iframes
+ * 	- set the window state as loaded (eventually)
+ * 
+ * @param {function} A callback function
+ * @param {object} The iframe of reference
+ * 
+ */
 GameWindow.prototype.updateStatus = function(func, frame) {
 	// Update the reference to the frame obj
 	this.frame = window.frames[frame].document;
@@ -14796,7 +15822,7 @@ GameWindow.prototype.updateStatus = function(func, frame) {
 	}
 		
 	this.areLoading--;
-	//console.log('ARE LOADING: ' + this.areLoading);
+
 	if (this.areLoading === 0) {
 		this.state = node.is.LOADED;
 		node.emit('WINDOW_LOADED');
@@ -15042,13 +16068,16 @@ GameWindow.prototype.addRecipientSelector = function (root, id) {
 };
 
 /**
-* Adds an ALL and a SERVER option to a specified select element.
-* 
-* @TODO: adds options to control which players/servers to add.
-* 
-* @see GameWindow.populateRecipientSelector
-* 
-*/
+ * ## GameWindow.addStandardRecipients
+ * 
+ * Adds an ALL and a SERVER option to a specified select element.
+ * 
+ * @TODO: adds options to control which players/servers to add.
+ * 
+ * @param {object} toSelector An HTML `<select>` element 
+ * 
+ * @see GameWindow.populateRecipientSelector
+ */
 GameWindow.prototype.addStandardRecipients = function (toSelector) {
 		
 	var opt = document.createElement('option');
@@ -15327,6 +16356,7 @@ if ('undefined' !== typeof window) window.W = node.window;
 	('undefined' !== typeof window) ? window : module.parent.exports.window,
 	('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
+
 // ## Game incoming listeners
 // Incoming listeners are fired in response to incoming messages
 (function (node, window) {
