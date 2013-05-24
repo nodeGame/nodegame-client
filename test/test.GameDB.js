@@ -6,26 +6,26 @@ var node = module.exports.node = require('./../index.js');
 var PlayerList = node.PlayerList,
 	Player = node.Player,
 	GameDB = node.GameDB,
-	GameState = node.GameState;
+	GameStage = node.GameStage;
 
 var test_gs = null,
-	gs_321 = new GameState({
-		state: 3,
+	gs_321 = new GameStage({
+		stage: 3,
 		step: 2,
 		round: 1,
 	}),
-	gs_331 = new GameState({
-		state: 3,
+	gs_331 = new GameStage({
+		stage: 3,
 		step: 3,
 		round: 1,
 	}),
-	gs_311 = new GameState({
-		state: 3,
+	gs_311 = new GameStage({
+		stage: 3,
 		step: 1,
 		round: 1,
 	}),
-	gs_111 = new GameState({
-		state: 1,
+	gs_111 = new GameStage({
+		stage: 1,
 		step: 1,
 		round: 1,
 	});
@@ -36,7 +36,7 @@ var test_player = null,
 		sid: 1,
 		count: 1,
 		name: 'Ste',
-		state: {round: 1},
+		stage: {round: 1},
 		ip:	'1.2.3.4',
 	}),
 	player2 = new Player ({
@@ -44,7 +44,7 @@ var test_player = null,
 		sid: 2,
 		count: 2,
 		name: 'Ste2',
-		state: {round: 1},
+		stage: {round: 1},
 		ip:	'1.2.3.5',
 	}),
 	player3 = new Player ({
@@ -52,7 +52,7 @@ var test_player = null,
 		sid: 3,
 		count: 3,
 		name: 'Ste3',
-		state: {round: 1},
+		stage: {round: 1},
 		ip:	'1.2.3.6',
 	}),
 	player4 = new Player ({
@@ -60,7 +60,7 @@ var test_player = null,
 		sid: 4,
 		count: 4,
 		name: 'Ste4',
-		state: {round: 1},
+		stage: {round: 1},
 		ip:	'1.2.3.7',
 	});
 	
@@ -98,8 +98,8 @@ describe('GameDB', function() {
 		before(function(){
 			test_db = null;
 		});
-		it("db.select('state', '=', '3.2.1') should consist of 4 items", function() {
-			db.select('state', '=', '3.2.1').length.should.equal(4);
+		it("db.select('stage', '=', '3.2.1') should consist of 4 items", function() {
+			db.select('stage', '=', '3.2.1').length.should.equal(4);
 		});
 		it("db.select('player', '=', player4) should consist of 1 item", function() {
 			db.select('player', '=', player4).length.should.equal(1);

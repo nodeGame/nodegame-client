@@ -22,6 +22,9 @@
         <a href="#outgoing-listeners">Outgoing listeners</a>
       </div>
       <div class="heading h2">
+        <a href="#out.say.stage">out.say.STAGE</a>
+      </div>
+      <div class="heading h2">
         <a href="#out.say.state">out.say.STATE</a>
       </div>
       <div class="heading h2">
@@ -74,6 +77,30 @@
     <span class="nx">set</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
     <span class="nx">get</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">GET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
     <span class="nx">OUT</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">OUT</span><span class="p">;</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="out.say.stage">
+  <h2>
+    <a href="#out.say.stage" class="pilcrow">&#182;</a>
+    out.say.STAGE
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Sends out a STAGE message to the specified recipient</p>
+
+<p>TODO: check with the server 
+The message is for informative purpose</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;STAGE&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendSTAGE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
+<span class="p">});</span> 
   </pre></div>
         </td>
       </tr>
@@ -222,7 +249,7 @@ of the sender</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
 <!-- ends outgoing listener -->
         </td>

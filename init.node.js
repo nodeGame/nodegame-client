@@ -156,6 +156,20 @@ node.Game = require('./lib/core/Game').Game;
 
 
 /**
+ * ### node.GroupManager
+ *
+ * @api public
+ */
+node.GroupManager = require('./lib/core/GroupManager').GroupManager;
+
+/**
+ * ### node.GroupManager
+ *
+ * @api public
+ */
+node.RoleMapper = require('./lib/core/RoleMapper').RoleMapper;
+
+/**
  * Expose GameSession
  * 
  * @api public
@@ -175,12 +189,6 @@ node.GameTimer = require('./addons/GameTimer').GameTimer;
 node.TriggerManager = require('./addons/TriggerManager').TriggerManager;
 
 
-/**
- * ### node.GameSession
- * 
- * @api public
- */
-require('./addons/GameSession').GameSession;
 
 
 })('undefined' != typeof node ? node : module.parent.exports);

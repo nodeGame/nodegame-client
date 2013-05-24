@@ -49,6 +49,9 @@ var ng_client = [
  	rootDir + "lib/core/GameDB.js",
  	rootDir + "lib/core/Game.js", 
  	rootDir + "lib/core/Session.js",
+
+    rootDir + "lib/core/GroupManager.js",
+    rootDir + "lib/core/RoleMapper.js",
  		 	
  // nodeGame
  	rootDir + "lib/nodegame.js",
