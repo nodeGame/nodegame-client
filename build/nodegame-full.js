@@ -12099,6 +12099,14 @@ Game.prototype.execStage = function(stage) {
 	}
 };
 
+Game.prototype.getGameState = function () {
+	return this.state;
+};
+
+Game.prototype.getStageLevel = function () {
+    return this.state;
+};
+
 // ERROR, WORKING, etc
 Game.prototype.updateGameState = function (state) {
 	this.state = state;
@@ -12142,9 +12150,12 @@ Game.prototype.publishUpdate = function() {
  * 
  */
 Game.prototype.isReady = function() {
-	if (this.state < Game.levels.READY) return false;
-	if (this.stageStage === 1) return false;
-		
+    console.log(this.getGameState());
+    console.log(this.getStageLevel());
+    return true;
+	if (this.getGameState() < Game.levels.READY) return false;
+	if (this.getStageLevel() === Game.stageLevels.LOADING) return false;
+
 	// Check if there is a gameWindow obj and whether it is loading
 	return node.window ? node.window.state >= node.is.LOADED : true;
 };
