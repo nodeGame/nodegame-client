@@ -34,7 +34,6 @@
 		if (!msg.data) return;
 		node.game.pl.add(new Player(msg.data));
 		node.emit('UPDATED_PLIST');
-		node.game.pl.checkStage();
 	});	
 	
 /**
@@ -49,7 +48,6 @@
 		if (!msg.data) return;
 		node.game.pl.remove(msg.data.id);
 		node.emit('UPDATED_PLIST');
-		node.game.pl.checkStage();
 	});	
 
 /**
