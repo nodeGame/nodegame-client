@@ -9220,27 +9220,25 @@ GameMsg.prototype.toEvent = function () {
 // ## Global scope
 exports.Stager = Stager;
 
-var J = node.JSUS;
-
 /**
  * ## Stager constructor
  *
  * Creates a new empty instance of Stager
  */
 function Stager() {
-	this.clear();
+	this.init();
 }
 
 // ## Stager methods
 
 /**
- * ### Stager.clear
+ * ### Stager.init
  *
  * Resets Stager object to initial state
  *
  * Called by the constructor.
  */
-Stager.prototype.clear = function() {
+Stager.prototype.init = function() {
 	/**
 	 * ### Stager.steps
 	 *
@@ -9328,7 +9326,7 @@ Stager.prototype.registerGeneralNext = function(func) {
 	}
 
 	this.generalNextFunction = func;
-}
+};
 
 /**
  * ### Stager.registerNext
@@ -9827,7 +9825,9 @@ Stager.prototype.checkStageValidity = function(stage) {
 
 	// Check whether the referenced steps exist:
 	for (var i in stage.steps) {
-		if (!this.steps[stage.steps[i]]) return false;
+        if (stage.steps.hasOwnProperty(i)) {
+            if (!this.steps[stage.steps[i]]) return false;
+        }
 	}
 
 	return true;
