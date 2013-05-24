@@ -1958,15 +1958,16 @@ OBJ._obj2Array = function(obj, keyed, level, cur_level) {
     var result = [];
     for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
+        	if (keyed) result.push(key);
             if ('object' === typeof obj[key]) {
                 result = result.concat(OBJ._obj2Array(obj[key], keyed, level, cur_level));
             } else {
-                if (keyed) result.push(key);
                 result.push(obj[key]);
             }
            
         }
-    }        
+    }      
+    
     return result;
 };
 
@@ -1983,7 +1984,7 @@ OBJ._obj2Array = function(obj, keyed, level, cur_level) {
  * gets totally unfolded into an array.
  * 
  * @param {object} obj The object to convert in array
- * @param {number} level Optional. The level of recursion. Defaults undefined
+ * @param {number} level Optional. The level of recursion. Defaults, undefined
  * @return {array} The converted object
  * 
  * 	@see OBJ._obj2Array
@@ -2003,7 +2004,7 @@ OBJ.obj2Array = function (obj, level) {
  * returns it.
  * 
  * @param {object} obj The object to convert in array
- * @param {number} level Optional. The level of recursion. Defaults undefined
+ * @param {number} level Optional. The level of recursion. Defaults, undefined
  * @return {array} The converted object
  * 
  * @see OBJ.obj2Array 
@@ -2676,6 +2677,48 @@ OBJ.uniqueKey = function(obj, name, stop) {
 		}
 	}
 	return name;
+}
+
+/**
+ * ## OBJ.augment
+ * 
+ * Creates an object containing arrays of all the values of 
+ * 
+ * User can specifies the subset of keys from both objects 
+ * that will subject to augmentation. The values of the other keys 
+ * will not be changed
+ * 
+ * Notice: the method modifies the first input paramteer
+ * 
+ * E.g.
+ * 
+ * ```javascript
+ * var a = { a:1, b:2, c:3 };
+ * var b = { a:10, b:2, c:100, d:4 };
+ * OBJ.augment(a, b); // { a: [1, 10], b: [2, 2], c: [3, 100]}
+ * 
+ * OBJ.augment(a, b, ['b', 'c', 'd']); // { a: 1, b: [2, 2], c: [3, 100], d: [4]});
+ * 
+ * ```
+ * 
+ * @param {object} obj1 The object whose properties will be augmented
+ * @param {object} obj2 The augmenting object
+ * @param {array} key Optional. Array of key names common to both objects taken as
+ * 	the set of properties to augment
+ */
+OBJ.augment = function(obj1, obj2, keys) {  
+	var i, k, keys = keys || OBJ.keys(obj1);
+	
+	for (i = 0 ; i < keys.length; i++) {
+		k = keys[i];
+		if ('undefined' !== typeof obj1[k] && Object.prototype.toString.call(obj1[k]) !== '[object Array]') {
+			obj1[k] = [obj1[k]];
+		}
+		if ('undefined' !== obj2[k]) {
+			if (!obj1[k]) obj1[k] = []; 
+			obj1[k].push(obj2[k]);
+		}
+	}
 }
 
 
@@ -6317,9 +6360,10 @@ else {
 	};
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Variables
  * 
@@ -6532,9 +6576,10 @@ else {
 	
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # EventEmitter
  * 
@@ -6664,6 +6709,8 @@ EventEmitter.prototype = {
  * @TODO accepts any number of parameters
  */
     emit: function(event, p1, p2, p3) { // Up to 3 parameters
+		var listeners;
+
     	if (!event) return;
     	
     	if ('string' === typeof event) {
@@ -6703,7 +6750,7 @@ EventEmitter.prototype = {
         
         // Fires global listeners
         if (this.global[event.type] instanceof Array) {
-            var listeners = this.global[event.type];
+            listeners = this.global[event.type];
             for (var i=0, len=listeners.length; i < len; i++){
             	listeners[i].call(this.game, p1, p2, p3);
             }
@@ -6711,7 +6758,7 @@ EventEmitter.prototype = {
         
         // Fires local listeners
         if (this.local[event.type] instanceof Array) {
-            var listeners = this.local[event.type];
+            listeners = this.local[event.type];
             for (var i=0, len=listeners.length; i < len; i++) {
             	listeners[i].call(this.game, p1, p2, p3);
             }
@@ -6798,15 +6845,17 @@ EventEmitter.prototype = {
  * Prints to console all the registered functions 
  */
 	printAll: function() {
+		var i;
+
 		node.log('nodeGame:\tPRINTING ALL LISTENERS', 'DEBUG');
 	    
-		for (var i in this.global){
+		for (i in this.global){
 	    	if (this.global.hasOwnProperty(i)){
 	    		console.log(i + ' ' + i.length);
 	    	}
 	    }
 		
-		for (var i in this.local){
+		for (i in this.local){
 	    	if (this.local.hasOwnProperty(i)){
 	    		console.log(i + ' ' + i.length);
 	    	}
@@ -6920,7 +6969,7 @@ EventHistory.prototype.remit = function(stage, discard, keep) {
  */
 
 function Listener (o) {
-	var o = o || {};
+	o = o || {};
 	
 	// event name
 	this.event = o.event; 					
@@ -6942,14 +6991,15 @@ function Listener (o) {
 	// function will be called with
 	// target as 'this'		
 	this.target = o.target || undefined;	
-};
+}
 	 
 // ## Closure
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # GameStage
  * 
@@ -7048,9 +7098,9 @@ function GameStage(gs) {
 	}
 	else if ('string' === typeof gs) {
 		var tokens = gs.split('.');
-		var stageNum = parseInt(tokens[0]);
-		var stepNum  = parseInt(tokens[1]);
-		var roundNum = parseInt(tokens[2]);
+		var stageNum = parseInt(tokens[0], 10);
+		var stepNum  = parseInt(tokens[1], 10);
+		var roundNum = parseInt(tokens[2], 10);
 
 		if (tokens[0])
 			this.stage = !isNaN(stageNum) ? stageNum : tokens[0];
@@ -7213,8 +7263,8 @@ GameStage.stringify = function(gs) {
 
 // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
@@ -7335,7 +7385,7 @@ function PlayerList (options, db) {
 	// The internal counter that will be used to assing the `count` 
 	// property to each inserted player
 	this.pcounter = this.db.length || 0;
-};
+}
 
 // ## PlayerList methods
 
@@ -7798,8 +7848,8 @@ Player.prototype.toString = function() {
 		
 // ## Closure	
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
@@ -7976,7 +8026,7 @@ function GameMsg (gm) {
  * E.g. between nodeGame servers
  */	
 	this.forward = 0;
-};
+}
 
 /**
  * ### GameMsg.stringify
@@ -8081,9 +8131,10 @@ GameMsg.prototype.toEvent = function () {
 
 // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Stager
  *
@@ -9284,8 +9335,8 @@ GameLoop.prototype.normalizeGameStage = function(gameStage) {
 
 // ## Closure	
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
@@ -9713,9 +9764,10 @@ GameMsgGenerator.createACK = function (gm, to, reliable) {
 
 // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # SocketFactory
  * 
@@ -9748,11 +9800,11 @@ GameMsgGenerator.createACK = function (gm, to, reliable) {
 //    	}
     	
     	if (!test.send) {
-    		console.log('no send')
+    		console.log('no send');
     		return false;
     	}
     	if (!test.connect){
-    		console.log('no connect')
+    		console.log('no connect');
     		return false;
     	}
     	
@@ -9791,9 +9843,10 @@ GameMsgGenerator.createACK = function (gm, to, reliable) {
     
 // ## Closure	
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Socket
  * 
@@ -9923,7 +9976,7 @@ Socket.prototype.onMessage = function(msg) {
 		// replace itself: will change onMessage
 		this.attachMsgListeners();
 		
-		this.startSession(msg)
+		this.startSession(msg);
 		
 		sessionObj = node.store(msg.session);
 		
@@ -9965,7 +10018,7 @@ Socket.prototype.onMessageFull = function(msg) {
 			node.emit(msg.toInEvent(), msg);
 		}
 		else {
-			console.log('BUFFERING')
+			console.log('BUFFERING');
 			node.log('buffering: ' + msg, 'DEBUG');
 			buffer.push(msg);
 		}
@@ -10071,7 +10124,7 @@ Socket.prototype.send = function(msg) {
 	this.socket.send(msg);
 	node.info('S: ' + msg);
 	return true;
-}
+};
 
 
 /**
@@ -10170,16 +10223,17 @@ var logSecureParseError = function (text, e) {
 	node.log(error, 'ERR');
 	node.emit('LOG', 'E: ' + error);
 	return false;
-}
+};
 
 
 
 
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # SocketIo
  * 
@@ -10245,10 +10299,11 @@ node.SocketFactory.register('SocketIo', SocketIo);
 
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
-  , 'undefined' != typeof io ? io : module.parent.exports.io
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports,
+	'undefined' != typeof io ? io : module.parent.exports.io
 );
+
 /**
  * # GameDB
  * 
@@ -10395,7 +10450,7 @@ function GameBit (options) {
 	this.key = options.key;
 	this.value = options.value;
 	this.time = (Date) ? Date.now() : null;
-};
+}
 
 
 /**
@@ -10544,9 +10599,10 @@ GameBit.compareValue = function (gb1, gb2) {
 // ## Closure
 	
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Game
  * 
@@ -10840,7 +10896,7 @@ function Game (settings) {
 			this.updateGameState(Game.levels.INITIALIZING);
 			settings.init.call(node.game);
 			this.updateGameState(Game.levels.INITIALIZED);
-		}
+		};
 	}
 	
 
@@ -11144,8 +11200,8 @@ Game.prototype.jumpTo = function (jump) {
 
 // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
@@ -11310,7 +11366,7 @@ SessionManager.prototype.get = function(path) {
 		 return (this.session[path]) ? this.session[path].get() : undefined;
 	}
 	else {
-		for (var path in this.session) {
+		for (path in this.session) {
 			if (this.session.hasOwnProperty(path)) {
 				session[path] = this.session[path].get();
 			}
@@ -11380,9 +11436,10 @@ SessionManager.prototype.store = function() {
 
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # GroupManager
  * 
@@ -11418,7 +11475,7 @@ SessionManager.prototype.store = function() {
 
     exports.RMatcher = RMatcher;
 
-    var J = require('nodegame-client').JSUS;
+    J = require('nodegame-client').JSUS;
 
     function RMatcher (options) {
 
@@ -11818,9 +11875,9 @@ SessionManager.prototype.store = function() {
 
         var out = [],
             n = J.shuffle(numbers);
-        out.push(n.splice(0, J.randomInt(0,n.length)))
-        out.push(n.splice(0, J.randomInt(0,n.length)))
-        out.push(n)
+        out.push(n.splice(0, J.randomInt(0,n.length)));
+        out.push(n.splice(0, J.randomInt(0,n.length)));
+        out.push(n);
 
         return J.shuffle(out);
     }
@@ -11869,7 +11926,7 @@ SessionManager.prototype.store = function() {
             var matched = rm.match();
 
             if (!rm.allGroupsDone()) {
-                console.log('ERROR')
+                console.log('ERROR');
                 console.log(rm.options.elements);
                 console.log(rm.options.pools);
                 console.log(matched);
@@ -12047,9 +12104,10 @@ SessionManager.prototype.store = function() {
 
 // ## Closure	
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # RoleMapper
  * 
@@ -12075,9 +12133,10 @@ SessionManager.prototype.store = function() {
 
 // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # nodeGame
  * 
@@ -12705,9 +12764,10 @@ var frozen = false;
 		
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Alias
  * 
@@ -12861,9 +12921,10 @@ var GameMsg = node.GameMsg,
 
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Setup
  * 
@@ -12922,9 +12983,10 @@ node.random = {};
 
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 // # Incoming listeners
 // Incoming listeners are fired in response to incoming messages
 (function (node) {
