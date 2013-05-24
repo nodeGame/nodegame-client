@@ -370,6 +370,8 @@ registered </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">emit</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Up to 3 parameters</span>
+    <span class="kd">var</span> <span class="nx">listeners</span><span class="p">;</span>
+
       <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">event</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
       
       <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
@@ -441,7 +443,7 @@ registered </p>
 <p>Fires global listeners</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">]</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">listeners</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">];</span>
+            <span class="nx">listeners</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">];</span>
             <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">len</span><span class="o">=</span><span class="nx">listeners</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
               <span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">);</span>
             <span class="p">}</span>
@@ -457,7 +459,7 @@ registered </p>
 <p>Fires local listeners</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">]</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">listeners</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">];</span>
+            <span class="nx">listeners</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">];</span>
             <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">len</span><span class="o">=</span><span class="nx">listeners</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
               <span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">);</span>
             <span class="p">}</span>
@@ -627,15 +629,17 @@ registered </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">printAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
+
     <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;nodeGame:\tPRINTING ALL LISTENERS&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
       
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">){</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">){</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)){</span>
           <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
         <span class="p">}</span>
       <span class="p">}</span>
     
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">){</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">){</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)){</span>
           <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
         <span class="p">}</span>
@@ -795,7 +799,7 @@ disconnection happened. Let's fire them again </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">Listener</span> <span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="p">{};</span>
+  <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="p">{};</span>
   </pre></div>
         </td>
       </tr>
@@ -865,7 +869,7 @@ still valid. -1 = always valid</p>
 target as 'this'        </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="kc">undefined</span><span class="p">;</span>  
-<span class="p">};</span>
+<span class="p">}</span>
    </pre></div>
         </td>
       </tr>
@@ -880,8 +884,8 @@ target as 'this'        </p>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
-  <span class="p">,</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
         </td>

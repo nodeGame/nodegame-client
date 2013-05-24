@@ -239,7 +239,7 @@ MIT Licensed </p>
      <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">[</span><span class="nx">path</span><span class="p">])</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">[</span><span class="nx">path</span><span class="p">].</span><span class="nx">get</span><span class="p">()</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="k">else</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">path</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">path</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">path</span><span class="p">))</span> <span class="p">{</span>
         <span class="nx">session</span><span class="p">[</span><span class="nx">path</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">[</span><span class="nx">path</span><span class="p">].</span><span class="nx">get</span><span class="p">();</span>
       <span class="p">}</span>
@@ -338,8 +338,8 @@ return false;
 }</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
-  <span class="p">,</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
         </td>

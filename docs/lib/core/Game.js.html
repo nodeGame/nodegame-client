@@ -633,7 +633,7 @@ automatically inserted in this object</p>
       <span class="k">this</span><span class="p">.</span><span class="nx">updateGameState</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">levels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
       <span class="nx">settings</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">updateGameState</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">levels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
-    <span class="p">}</span>
+    <span class="p">};</span>
   <span class="p">}</span>
   
 
@@ -1228,8 +1228,8 @@ forward in the game-loop</p>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
-  <span class="p">,</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
         </td>

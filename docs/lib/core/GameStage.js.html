@@ -265,9 +265,9 @@ object are set to 0</p>
   <span class="p">}</span>
   <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">stageNum</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-    <span class="kd">var</span> <span class="nx">stepNum</span>  <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-    <span class="kd">var</span> <span class="nx">roundNum</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+    <span class="kd">var</span> <span class="nx">stageNum</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">10</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">stepNum</span>  <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">10</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">roundNum</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">10</span><span class="p">);</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="o">!</span><span class="nb">isNaN</span><span class="p">(</span><span class="nx">stageNum</span><span class="p">)</span> <span class="o">?</span> <span class="nx">stageNum</span> <span class="o">:</span> <span class="nx">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
@@ -587,8 +587,8 @@ Refer to <code>GameStage.toHash</code> for the semantic of the characters.</p>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
-  <span class="p">,</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
         </td>

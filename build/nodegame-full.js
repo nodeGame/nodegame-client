@@ -7388,9 +7388,10 @@ else {
 	};
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Variables
  * 
@@ -7603,9 +7604,10 @@ else {
 	
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # EventEmitter
  * 
@@ -7735,6 +7737,8 @@ EventEmitter.prototype = {
  * @TODO accepts any number of parameters
  */
     emit: function(event, p1, p2, p3) { // Up to 3 parameters
+		var listeners;
+
     	if (!event) return;
     	
     	if ('string' === typeof event) {
@@ -7774,7 +7778,7 @@ EventEmitter.prototype = {
         
         // Fires global listeners
         if (this.global[event.type] instanceof Array) {
-            var listeners = this.global[event.type];
+            listeners = this.global[event.type];
             for (var i=0, len=listeners.length; i < len; i++){
             	listeners[i].call(this.game, p1, p2, p3);
             }
@@ -7782,7 +7786,7 @@ EventEmitter.prototype = {
         
         // Fires local listeners
         if (this.local[event.type] instanceof Array) {
-            var listeners = this.local[event.type];
+            listeners = this.local[event.type];
             for (var i=0, len=listeners.length; i < len; i++) {
             	listeners[i].call(this.game, p1, p2, p3);
             }
@@ -7869,15 +7873,17 @@ EventEmitter.prototype = {
  * Prints to console all the registered functions 
  */
 	printAll: function() {
+		var i;
+
 		node.log('nodeGame:\tPRINTING ALL LISTENERS', 'DEBUG');
 	    
-		for (var i in this.global){
+		for (i in this.global){
 	    	if (this.global.hasOwnProperty(i)){
 	    		console.log(i + ' ' + i.length);
 	    	}
 	    }
 		
-		for (var i in this.local){
+		for (i in this.local){
 	    	if (this.local.hasOwnProperty(i)){
 	    		console.log(i + ' ' + i.length);
 	    	}
@@ -7991,7 +7997,7 @@ EventHistory.prototype.remit = function(stage, discard, keep) {
  */
 
 function Listener (o) {
-	var o = o || {};
+	o = o || {};
 	
 	// event name
 	this.event = o.event; 					
@@ -8013,14 +8019,15 @@ function Listener (o) {
 	// function will be called with
 	// target as 'this'		
 	this.target = o.target || undefined;	
-};
+}
 	 
 // ## Closure
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # GameStage
  * 
@@ -8119,9 +8126,9 @@ function GameStage(gs) {
 	}
 	else if ('string' === typeof gs) {
 		var tokens = gs.split('.');
-		var stageNum = parseInt(tokens[0]);
-		var stepNum  = parseInt(tokens[1]);
-		var roundNum = parseInt(tokens[2]);
+		var stageNum = parseInt(tokens[0], 10);
+		var stepNum  = parseInt(tokens[1], 10);
+		var roundNum = parseInt(tokens[2], 10);
 
 		if (tokens[0])
 			this.stage = !isNaN(stageNum) ? stageNum : tokens[0];
@@ -8284,8 +8291,8 @@ GameStage.stringify = function(gs) {
 
 // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
@@ -8406,7 +8413,7 @@ function PlayerList (options, db) {
 	// The internal counter that will be used to assing the `count` 
 	// property to each inserted player
 	this.pcounter = this.db.length || 0;
-};
+}
 
 // ## PlayerList methods
 
@@ -8869,8 +8876,8 @@ Player.prototype.toString = function() {
 		
 // ## Closure	
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
@@ -9047,7 +9054,7 @@ function GameMsg (gm) {
  * E.g. between nodeGame servers
  */	
 	this.forward = 0;
-};
+}
 
 /**
  * ### GameMsg.stringify
@@ -9152,9 +9159,10 @@ GameMsg.prototype.toEvent = function () {
 
 // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Stager
  *
@@ -10355,8 +10363,8 @@ GameLoop.prototype.normalizeGameStage = function(gameStage) {
 
 // ## Closure	
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
@@ -10784,9 +10792,10 @@ GameMsgGenerator.createACK = function (gm, to, reliable) {
 
 // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # SocketFactory
  * 
@@ -10819,11 +10828,11 @@ GameMsgGenerator.createACK = function (gm, to, reliable) {
 //    	}
     	
     	if (!test.send) {
-    		console.log('no send')
+    		console.log('no send');
     		return false;
     	}
     	if (!test.connect){
-    		console.log('no connect')
+    		console.log('no connect');
     		return false;
     	}
     	
@@ -10862,9 +10871,10 @@ GameMsgGenerator.createACK = function (gm, to, reliable) {
     
 // ## Closure	
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Socket
  * 
@@ -10994,7 +11004,7 @@ Socket.prototype.onMessage = function(msg) {
 		// replace itself: will change onMessage
 		this.attachMsgListeners();
 		
-		this.startSession(msg)
+		this.startSession(msg);
 		
 		sessionObj = node.store(msg.session);
 		
@@ -11036,7 +11046,7 @@ Socket.prototype.onMessageFull = function(msg) {
 			node.emit(msg.toInEvent(), msg);
 		}
 		else {
-			console.log('BUFFERING')
+			console.log('BUFFERING');
 			node.log('buffering: ' + msg, 'DEBUG');
 			buffer.push(msg);
 		}
@@ -11142,7 +11152,7 @@ Socket.prototype.send = function(msg) {
 	this.socket.send(msg);
 	node.info('S: ' + msg);
 	return true;
-}
+};
 
 
 /**
@@ -11241,16 +11251,17 @@ var logSecureParseError = function (text, e) {
 	node.log(error, 'ERR');
 	node.emit('LOG', 'E: ' + error);
 	return false;
-}
+};
 
 
 
 
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # SocketIo
  * 
@@ -11316,10 +11327,11 @@ node.SocketFactory.register('SocketIo', SocketIo);
 
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
-  , 'undefined' != typeof io ? io : module.parent.exports.io
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports,
+	'undefined' != typeof io ? io : module.parent.exports.io
 );
+
 /**
  * # GameDB
  * 
@@ -11466,7 +11478,7 @@ function GameBit (options) {
 	this.key = options.key;
 	this.value = options.value;
 	this.time = (Date) ? Date.now() : null;
-};
+}
 
 
 /**
@@ -11615,9 +11627,10 @@ GameBit.compareValue = function (gb1, gb2) {
 // ## Closure
 	
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Game
  * 
@@ -11911,7 +11924,7 @@ function Game (settings) {
 			this.updateGameState(Game.levels.INITIALIZING);
 			settings.init.call(node.game);
 			this.updateGameState(Game.levels.INITIALIZED);
-		}
+		};
 	}
 	
 
@@ -12204,8 +12217,8 @@ Game.prototype.jumpTo = function (jump) {
 
 // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
@@ -12370,7 +12383,7 @@ SessionManager.prototype.get = function(path) {
 		 return (this.session[path]) ? this.session[path].get() : undefined;
 	}
 	else {
-		for (var path in this.session) {
+		for (path in this.session) {
 			if (this.session.hasOwnProperty(path)) {
 				session[path] = this.session[path].get();
 			}
@@ -12440,9 +12453,10 @@ SessionManager.prototype.store = function() {
 
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # GroupManager
  * 
@@ -12478,7 +12492,7 @@ SessionManager.prototype.store = function() {
 
     exports.RMatcher = RMatcher;
 
-    var J = require('nodegame-client').JSUS;
+    J = require('nodegame-client').JSUS;
 
     function RMatcher (options) {
 
@@ -12878,9 +12892,9 @@ SessionManager.prototype.store = function() {
 
         var out = [],
             n = J.shuffle(numbers);
-        out.push(n.splice(0, J.randomInt(0,n.length)))
-        out.push(n.splice(0, J.randomInt(0,n.length)))
-        out.push(n)
+        out.push(n.splice(0, J.randomInt(0,n.length)));
+        out.push(n.splice(0, J.randomInt(0,n.length)));
+        out.push(n);
 
         return J.shuffle(out);
     }
@@ -12929,7 +12943,7 @@ SessionManager.prototype.store = function() {
             var matched = rm.match();
 
             if (!rm.allGroupsDone()) {
-                console.log('ERROR')
+                console.log('ERROR');
                 console.log(rm.options.elements);
                 console.log(rm.options.pools);
                 console.log(matched);
@@ -13107,9 +13121,10 @@ SessionManager.prototype.store = function() {
 
 // ## Closure	
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # RoleMapper
  * 
@@ -13135,9 +13150,10 @@ SessionManager.prototype.store = function() {
 
 // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # nodeGame
  * 
@@ -13765,9 +13781,10 @@ var frozen = false;
 		
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Alias
  * 
@@ -13921,9 +13938,10 @@ var GameMsg = node.GameMsg,
 
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Setup
  * 
@@ -13982,9 +14000,10 @@ node.random = {};
 
 
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
 );
+
 // # Incoming listeners
 // Incoming listeners are fired in response to incoming messages
 (function (node) {
@@ -15197,7 +15216,6 @@ var J = node.JSUS;
 
 var Player = node.Player,
 	PlayerList = node.PlayerList,
-	GameState = node.GameState,
 	GameMsg = node.GameMsg,
 	GameMsgGenerator = node.GameMsgGenerator;
 
@@ -15228,9 +15246,9 @@ GameWindow.defaults.cacheDefaults = {
  * 
  * The constructor performs the following operations:
  * 
- * 		- creates a root div element (this.root)
- * 		- creates an iframe element inside the root element	(this.frame)
- * 		- defines standard event listeners for showing and hiding elements
+ *      - creates a root div element (this.root)
+ *      - creates an iframe element inside the root element (this.frame)
+ *      - defines standard event listeners for showing and hiding elements
  * 
  */
 function GameWindow() {
@@ -15253,17 +15271,17 @@ function GameWindow() {
 	this.conf = {};
 
 // ### GameWindow.state
-// 	
+//
 	this.state = node.is.LOADED;
 
 // ### GameWindow.areLoading
-// Counts the number of frames currently being loaded	
-	this.areLoading = 0; 
+// Counts the number of frames currently being loaded
+	this.areLoading = 0;
 
 // ### GameWindow.cache
 // Cache for loaded iframes
 //	
-// Maps URI to a cache object with the following properties:	
+// Maps URI to a cache object with the following properties:
 //  - `contents` (a string describing the innerHTML or null if not cached),
 //  - optionally 'cacheOnClose' (a bool telling whether to cache the frame when
 //    it is replaced by a new one).
@@ -15276,7 +15294,7 @@ function GameWindow() {
 	this.currentURIs = {};
 
 	
-// ### GameWindow.globalLibs	
+// ### GameWindow.globalLibs
 // Array of strings with the path of the libraries to be loaded in every frame
 	this.globalLibs = [];
 	
@@ -15288,7 +15306,7 @@ function GameWindow() {
 
 	this.init();
 	
-};
+}
 
 // ## GameWindow methods
 
@@ -15299,8 +15317,8 @@ function GameWindow() {
  * 
  * Defaults:
  * 
- * 		- promptOnleave TRUE
- * 		- captures ESC key
+ *      - promptOnleave TRUE
+ *      - captures ESC key
  * 
  * @param {object} options Configuration options
  * 
@@ -15347,7 +15365,7 @@ GameWindow.prototype.getElementById = function (id) {
 /**
  * ### GameWindow.getElementsByTagName
  * 
- * Returns a list of elements with the given tag name 
+ * Returns a list of elements with the given tag name
  *  
  * Looks first into the iframe and then into the rest of the page.
  * 
@@ -15397,17 +15415,17 @@ GameWindow.prototype.setup = function (type){
 		
 	case 'PLAYER':
 		
-		//var maincss		= this.addCSS(this.root, 'style.css');
-		this.header 	= this.generateHeader();
-	    var mainframe 	= this.addIFrame(this.root,'mainframe');
-	    
-		node.game.vs 	= node.widgets.append('VisualState', this.header);
+		//var maincss = this.addCSS(this.root, 'style.css');
+		this.header     = this.generateHeader();
+		var mainframe   = this.addIFrame(this.root,'mainframe');
+
+		node.game.vs    = node.widgets.append('VisualState', this.header);
 		node.game.timer = node.widgets.append('VisualTimer', this.header);
 		//node.game.doneb = node.widgets.append('DoneButton', this.header);
-		node.game.sd 	= node.widgets.append('StateDisplay', this.header);
+		node.game.sd    = node.widgets.append('StateDisplay', this.header);
 
 		node.widgets.append('WaitScreen');
-	    
+
 		// Add default CSS
 		if (node.conf.host) {
 			this.addCSS(document.body, node.conf.host + '/stylesheets/player.css');
@@ -15422,7 +15440,7 @@ GameWindow.prototype.setup = function (type){
 		}
 		
 		window.frames[this.mainframe].src = initPage;
-	    
+
 		break;
 	}
 	
@@ -15488,7 +15506,7 @@ function reloadScripts (frameNode) {
 		if (tag.innerHTML) scriptNode.innerHTML = tag.innerHTML;
 		for (attrIdx = 0; attrIdx < tag.attributes.length; ++attrIdx) {
 			attr = tag.attributes[attrIdx];
-			scriptNode.setAttribute(attr.name) = attr.value;
+			scriptNode.setAttribute(attr.name, attr.value);
 		}
 		headNode.appendChild(scriptNode);
 	}
@@ -15526,7 +15544,7 @@ function injectLibraries (frameNode, libs) {
 		scriptNode.src = lib;
 		headNode.appendChild(scriptNode);
 	}
-};
+}
 
 
 /**
@@ -15546,7 +15564,7 @@ function injectLibraries (frameNode, libs) {
 GameWindow.prototype.initLibs = function (globalLibs, frameLibs) {
 	this.globalLibs = globalLibs || [];
 	this.frameLibs = frameLibs || {};
-}
+};
 
 
 /**
@@ -15725,8 +15743,8 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
 	if ((lastURI in this.cache) && this.cache[lastURI].cacheOnClose) {
 		frameNode = document.getElementById(frame);
 		frameDocumentElement =
-		  (frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
-		  .documentElement;
+			(frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
+			.documentElement;
 
 		this.cache[lastURI].contents = frameDocumentElement.innerHTML;
 	}
@@ -15804,9 +15822,9 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
  * 
  * The methods performs the following operations:
  * 
- * 	- executes a given callback function, 
- * 	- decrements the counter of loading iframes
- * 	- set the window state as loaded (eventually)
+ *  - executes a given callback function, 
+ *  - decrements the counter of loading iframes
+ *  - set the window state as loaded (eventually)
  * 
  * @param {function} A callback function
  * @param {object} The iframe of reference
@@ -15867,8 +15885,8 @@ GameWindow.prototype._writeln = DOM.writeln;
  * @see GameWindow.writeln
  * 
  */
-GameWindow.prototype.write = function (text, root) {		
-	var root = root || this.getScreen();
+GameWindow.prototype.write = function (text, root) {
+	root = root || this.getScreen();
 	if (!root) {
 		node.log('Could not determine where writing', 'ERR');
 		return false;
@@ -15890,7 +15908,7 @@ GameWindow.prototype.write = function (text, root) {
  * 
  */
 GameWindow.prototype.writeln = function (text, root, br) {
-	var root = root || this.getScreen();
+	root = root || this.getScreen();
 	if (!root) {
 		node.log('Could not determine where writing', 'ERR');
 		return false;
@@ -15910,12 +15928,13 @@ GameWindow.prototype.writeln = function (text, root, br) {
  * 
  */
 GameWindow.prototype.toggleInputs = function (id, op) {
+	var container;
 	
 	if ('undefined' !== typeof id) {
-		var container = this.getElementById(id);
+		container = this.getElementById(id);
 	}
 	if ('undefined' === typeof container) {
-		var container = this.frame.body;
+		container = this.frame.body;
 	}
 	
 	var inputTags = ['button', 'select', 'textarea', 'input'];
@@ -15947,9 +15966,9 @@ GameWindow.prototype.toggleInputs = function (id, op) {
  * Creates a div element with the given id and 
  * tries to append it in the following order to:
  * 
- * 		- the specified root element
- * 		- the body element
- * 		- the last element of the document
+ *      - the specified root element
+ *      - the body element
+ *      - the last element of the document
  * 
  * If it fails, it creates a new body element, appends it
  * to the document, and then appends the div element to it.
@@ -15960,7 +15979,7 @@ GameWindow.prototype.toggleInputs = function (id, op) {
  * 
  */
 GameWindow.prototype._generateRoot = function (root, id) {
-	var root = root || document.body || document.lastElementChild;
+	root = root || document.body || document.lastElementChild;
 	if (!root) {
 		this.addElement('body', document);
 		root = document.body;
@@ -16020,7 +16039,7 @@ GameWindow.prototype.addEventButton = function (event, text, root, id, attribute
 	if (!root) {
 //			var root = root || this.frame.body;
 //			root = root.lastElementChild || root;
-		var root = this.getScreen();
+		root = this.getScreen();
 	}
 	var eb = this.getEventButton(event, text, id, attributes);
 	return root.appendChild(eb);
@@ -16085,7 +16104,7 @@ GameWindow.prototype.addStandardRecipients = function (toSelector) {
 	opt.appendChild(document.createTextNode('ALL'));
 	toSelector.appendChild(opt);
 	
-	var opt = document.createElement('option');
+	opt = document.createElement('option');
 	opt.value = 'SERVER';
 	opt.appendChild(document.createTextNode('SERVER'));
 	toSelector.appendChild(opt);
@@ -16283,7 +16302,7 @@ GameWindow.prototype.restoreEscape = function (windowObj) {
 GameWindow.prototype.promptOnleave = function (windowObj, text) {
 	windowObj = windowObj || window;
 	text = ('undefined' === typeof text) ? this.conf.textOnleave : text; 
-	windowObj.onbeforeunload = function(e) {	  
+	windowObj.onbeforeunload = function(e) {
 		  e = e || window.event;
 		  // For IE<8 and Firefox prior to version 4
 		  if (e) {
@@ -16318,10 +16337,10 @@ GameWindow.prototype.restoreOnleave = function (windowObj) {
  * 
  * In the following order the screen can be:
  * 
- * 		- the body element of the iframe 
- * 		- the document element of the iframe 
- * 		- the body element of the document 
- * 		- the last child element of the document
+ *      - the body element of the iframe 
+ *      - the document element of the iframe 
+ *      - the body element of the document 
+ *      - the last child element of the document
  * 
  */
 GameWindow.prototype.getScreen = function() {
@@ -16332,7 +16351,7 @@ GameWindow.prototype.getScreen = function() {
 	else {
 		el = document.body || document.lastElementChild;
 	}
-	return 	el;
+	return el;
 };
 
 /**
@@ -16669,7 +16688,7 @@ HTMLRenderer.prototype.addDefaultPipeline = function() {
 			return el.content;
 		}
 	});
-}
+};
 
 
 /**
@@ -16759,6 +16778,7 @@ function Entity (e) {
 	('undefined' !== typeof window) ? window : module.parent.exports.window, // window
 	('undefined' !== typeof node) ? node : module.parent.exports.node // node
 );
+
 (function(exports, node){
 	
 	var JSUS = node.JSUS;
