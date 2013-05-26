@@ -195,12 +195,21 @@ node.on( IN + say + 'REDIRECT', function (msg) {
  * 
  * Setups a features of nodegame
  * 
+ * Unstrigifies the payload before calling `node.setup`
+ *
  * @see node.setup
+ * @see JSUS.parse
  */
 node.on( IN + say + 'SETUP', function (msg) {
-	if (!msg.text) return;
-	node.setup(msg.text, msg.data);
-	
+    if (!msg.text) return;
+    var feature = msg.text,
+        payload = JSUS.parse(msg.data);
+    
+    if (!payload) {
+	node.err('error while parsing incoming remote setup message');
+	return false;
+    }
+    node.setup(feature, payload);	
 });	
 
 
