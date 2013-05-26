@@ -12048,7 +12048,21 @@ Game.prototype.resume = function () {
 };
 
 
-
+/**
+ * ### Game.shouldStep
+ * 
+ * Execute the next stage / step, if allowed
+ * 
+ * @return {Boolean} FALSE, if the execution encountered an error
+ * 
+ * @see Game.step
+ * 
+ * TODO: real check, always steps now
+ */
+Game.prototype.shouldStep = function() {
+    // Check the stager
+    return this.step();
+};
 
 /**
  * ### Game.step
@@ -12066,7 +12080,7 @@ Game.prototype.resume = function () {
 Game.prototype.step = function() {
     var nextStep;
     nextStep = this.stager.next(this.currentStep);
-    
+    console.log('NEXT', nextStep);
     if ('string' === typeof nextStep) {
 	
 	if (nextStep === GameLoop.GAMEOVER) {
@@ -14540,29 +14554,27 @@ node.on('STAGEDONE', function() {
  */
 node.on('DONE', function(p1, p2, p3) {
 	
-	// Execute done handler before updating stage
-	var ok = true;
+    // Execute done handler before updating stage
+    var ok = true,
+       done = node.game.currentStepObj.done;
+    
+    if (done) ok = done.call(node.game, p1, p2, p3);
+    if (!ok) return;
+    node.game.updateStageLevel(Game.stageLevels.DONE)
 	
-	var done = node.game.currentStepObj.done;
+    // Call all the functions that want to do 
+    // something before changing stage
+    node.emit('BEFORE_DONE');
 	
-	if (done) ok = done.call(node.game, p1, p2, p3);
-	if (!ok) return;
-	node.game.updateStageLevel(Game.stageLevels.DONE)
-	
-	// Call all the functions that want to do 
-	// something before changing stage
-	node.emit('BEFORE_DONE');
-	
-	if (node.game.auto_wait) {
-		if (node.window) {	
-			node.emit('WAITING...');
-		}
+    if (node.game.auto_wait) {
+	if (node.window) {	
+	    node.emit('WAITING...');
 	}
-	node.game.publishUpdate();
+    }
+    node.game.publishUpdate();
 	
-	if (node.game.solo_mode) {
-		node.game.step();
-	}
+    // Step forward, if allowed
+    node.game.shouldStep();
 });
 
 /**
