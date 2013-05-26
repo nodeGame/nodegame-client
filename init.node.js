@@ -47,6 +47,15 @@ node.NDDB = require('NDDB').NDDB;
 node.io = require('socket.io-client');
 
 /**
+ * ### node.ErrorManager
+ * 
+ * @api public
+ */
+
+node.EventEmitter = require('./lib/core/ErrorManager').ErrorManager;
+
+
+/**
  * ### node.EventEmitter
  * 
  * @api public
