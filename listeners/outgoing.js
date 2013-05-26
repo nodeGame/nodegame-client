@@ -41,8 +41,8 @@ node.on( OUT + say + 'STAGE', function (stage, to) {
  * The message is for informative purpose
  * 
  */
-node.on( OUT + say + 'STATE', function (state, to) {
-	node.socket.sendSTATE(action.SAY, state, to);
+node.on( OUT + say + 'STAGE', function (stage, to) {
+	node.socket.sendSTAGE(action.SAY, stage, to);
 });	
 
 /**
@@ -64,16 +64,16 @@ node.on( OUT + say + 'DATA', function (data, to, key) {
 });
 
 /**
- * ## out.set.STATE
+ * ## out.set.STAGE
  * 
- * Sends out a STATE message to the specified recipient
+ * Sends out a STAGE message to the specified recipient
  * 
  * TODO: check with the server 
- * The receiver will update its representation of the state
+ * The receiver will update its representation of the stage
  * of the sender
  */
-node.on( OUT + set + 'STATE', function (state, to) {
-	node.socket.sendSTATE(action.SET, state, to);
+node.on( OUT + set + 'STAGE', function (stage, to) {
+	node.socket.sendSTAGE(action.SET, stage, to);
 });
 
 /**

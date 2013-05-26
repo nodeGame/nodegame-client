@@ -221,9 +221,11 @@ node.on( IN + say + 'SETUP', function (msg) {
  * @see node.setup
  */
 node.on( IN + say + 'GAMECOMMAND', function (msg) {
-	if (!msg.text) return;
-	if (!node.gamecommand[msg.text]) return;
-	node.emit('NODEGAME_GAMECOMMAND_' + msg.text,msg.data);
+    if (!msg.text || !node.gamecommand[msg.text]) {
+	node.err('unknown game command received: ' + msg.text);
+	return;
+    }
+    node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
 });	
 
 /**
@@ -236,9 +238,9 @@ node.on( IN + say + 'GAMECOMMAND', function (msg) {
  * 
  */
 node.on( IN + say + 'JOIN', function (msg) {
-	if (!msg.text) return;
-	//node.socket.disconnect();
-	node.connect(msg.text);
+    if (!msg.text) return;
+    //node.socket.disconnect();
+    node.connect(msg.text);
 });	
 
 	node.log('incoming listeners added');

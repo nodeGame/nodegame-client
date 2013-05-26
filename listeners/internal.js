@@ -138,23 +138,19 @@ node.on('LOADED', function() {
 
 
 /**
- * ## LOADED
- * 
+ * ## NODEGAME_GAMECOMMAND: start
  * 
  */
 node.on('NODEGAME_GAMECOMMAND_' + node.gamecommand.start, function(options) {
 	
+    node.emit('BEFORE_GAMECOMMAND', node.gamecommand.start, options);
 	
-	node.emit('BEFORE_GAMECOMMAND', node.gamecommand.start, options);
+    if (node.game.currentStepObj && node.game.currentStepObj.stage !== 0) {
+	node.err('Game already started. Use restart if you want to start the game again');
+	return;
+    }
 	
-	if (node.game.currentStepObj.stage !== 0) {
-		node.err('Game already started. Use restart if you want to start the game again');
-		return;
-	}
-	
-	node.game.start();
-	
-	
+    node.game.start();	
 });
 
 
