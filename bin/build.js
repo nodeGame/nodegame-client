@@ -25,56 +25,57 @@ var distDir =  rootDir + 'build/';
 
 // nodegame-client
 var ng_client = [
- 	rootDir + "index.js",
+    rootDir + "index.js",
  	
  // modules
- 	rootDir + "lib/modules/log.js",
- 	rootDir + "lib/modules/variables.js",
+    rootDir + "lib/modules/log.js",
+    rootDir + "lib/modules/variables.js",
 
  	
  // lib
- 	rootDir + "lib/core/EventEmitter.js",
- 	rootDir + "lib/core/GameStage.js",
- 	rootDir + "lib/core/PlayerList.js",
- 	rootDir + "lib/core/GameMsg.js",
- 	rootDir + "lib/core/Stager.js",
- 	rootDir + "lib/core/GameLoop.js",
- 	rootDir + "lib/core/GameMsgGenerator.js",
+    rootDir + "lib/core/ErrorManager.js",
+    rootDir + "lib/core/EventEmitter.js",
+    rootDir + "lib/core/GameStage.js",
+    rootDir + "lib/core/PlayerList.js",
+    rootDir + "lib/core/GameMsg.js",
+    rootDir + "lib/core/Stager.js",
+    rootDir + "lib/core/GameLoop.js",
+    rootDir + "lib/core/GameMsgGenerator.js",
  	
- 	rootDir + "lib/core/SocketFactory.js",
- 	rootDir + "lib/core/Socket.js",
- 	
- 	rootDir + "lib/sockets/SocketIo.js",
- 	
- 	rootDir + "lib/core/GameDB.js",
- 	rootDir + "lib/core/Game.js", 
- 	rootDir + "lib/core/Session.js",
-
+    rootDir + "lib/core/SocketFactory.js",
+    rootDir + "lib/core/Socket.js",
+    
+    rootDir + "lib/sockets/SocketIo.js",
+    
+    rootDir + "lib/core/GameDB.js",
+    rootDir + "lib/core/Game.js", 
+    rootDir + "lib/core/Session.js",
+    
     rootDir + "lib/core/GroupManager.js",
     rootDir + "lib/core/RoleMapper.js",
  		 	
  // nodeGame
- 	rootDir + "lib/nodegame.js",
+    rootDir + "lib/nodegame.js",
  	
  	
 // modules
- 	rootDir + "lib/modules/setup.js",
- 	rootDir + "lib/modules/alias.js",
- 	rootDir + "lib/modules/random.js",
+    rootDir + "lib/modules/setup.js",
+    rootDir + "lib/modules/alias.js",
+    rootDir + "lib/modules/random.js",
  	
- // listeners
+// listeners
  	
- 	rootDir + "listeners/incoming.js",
- 	rootDir + "listeners/outgoing.js",
- 	rootDir + "listeners/internal.js",
+    rootDir + "listeners/incoming.js",
+    rootDir + "listeners/outgoing.js",
+    rootDir + "listeners/internal.js",
 ];
 
 // ng-addons
 var ng_addons = [           
- 	rootDir + "addons/GameTimer.js",
- 	rootDir + "addons/TriggerManager.js",
-// 	rootDir + "addons/GameSession.js",
-// 	rootDir + "addons/WaitingRoom.js",
+    rootDir + "addons/GameTimer.js",
+    rootDir + "addons/TriggerManager.js",
+    // 	rootDir + "addons/GameSession.js",
+    // 	rootDir + "addons/WaitingRoom.js",
 ];
 
 // jsus
