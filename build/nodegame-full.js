@@ -7601,6 +7601,13 @@ else {
 	return NodeGameRuntimeError;
     }).call(this);
 
+    if (!J.isNodeJS()) {
+	window.onerror = function(message, url, linenumber) {
+	    console.log(message, url, linenumber);
+	    return true;
+	};
+    }
+
     exports.NodeGameRuntimeError = NodeGameRuntimeError;
 
 // ## Closure	
