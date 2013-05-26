@@ -13700,29 +13700,25 @@ var frozen = false;
 // ### node.setup.game
 // Creates the `node.game` object
 // The input parameter can be either an object (function) or 
-// a stringified object (function)
+// a stringified object (function), and it will be passed as 
+// the configuration object to the contructor of `node.Game`
 	node.setup.register('game', function(game) {
-		if (!game) return {};
+	    if (!game) return {};
 		
-		// Trying to parse the string, maybe it
-		// comes from a remote setup
-		if ('string' === typeof game) {
-			game = J.parse(game);
-			
-			if ('function' !== typeof game) {
-				node.err('Error while parsing the game object/string');
-				return false;
-			}
-		}
+	    // Trying to parse the string, maybe it
+	    // comes from a remote setup
+	    if ('string' === typeof game) {
+		game = J.parse(game);			
+	    }
 		
-		if ('function' === typeof game) {
-			// creates the object
-			game = new game();
-		}
-		
-		node.game = new Game(game);
-		node.emit('NODEGAME_GAME_CREATED');
-		return node.game;
+	    if ('function' === typeof game) {
+		// creates the object
+		game = new game();
+	    }
+	    
+	    node.game = new Game(game);
+	    node.emit('NODEGAME_GAME_CREATED');
+	    return node.game;
 	});
 		
 // ### node.setup.player
@@ -13746,22 +13742,32 @@ var frozen = false;
  * @see node.setup
  */	
 	node.remoteSetup = function (property, options, to) {
-		if (!property) {
-			node.err('cannot send remote setup: empty property');
-			return false;
-		}
-		if (!to) {
-			node.err('cannot send remote setup: empty recipient');
-			return false;
-		}
-		var msg = node.msg.create({
-			target: node.target.SETUP,
-			to: to,
-			text: property,
-			data: options
-		});
+	    var msg, payload;
+
+	    if (!property) {
+		node.err('cannot send remote setup: empty property');
+		return false;
+	    }
+	    if (!to) {
+		node.err('cannot send remote setup: empty recipient');
+		return false;
+	    }
+	    
+	    payload = J.stringify(options);
+	    
+	    if (!payload) {
+		node.err('an error occurred while stringifying payload for remote setup');
+		return false;
+	    }
+	    
+	    msg = node.msg.create({
+		target: node.target.SETUP,
+		to: to,
+		text: property,
+		data: payload
+	    });
 		
-		return node.socket.send(msg);
+	    return node.socket.send(msg);
 	};
 		
 
@@ -14193,12 +14199,21 @@ node.on( IN + say + 'REDIRECT', function (msg) {
  * 
  * Setups a features of nodegame
  * 
+ * Unstrigifies the payload before calling `node.setup`
+ *
  * @see node.setup
+ * @see JSUS.parse
  */
 node.on( IN + say + 'SETUP', function (msg) {
-	if (!msg.text) return;
-	node.setup(msg.text, msg.data);
-	
+    if (!msg.text) return;
+    var feature = msg.text,
+        payload = JSUS.parse(msg.data);
+    
+    if (!payload) {
+	node.err('error while parsing incoming remote setup message');
+	return false;
+    }
+    node.setup(feature, payload);	
 });	
 
 
