@@ -9340,6 +9340,7 @@ GameLoop.prototype.stepsToNextStage = function(gameStage) {
     var stageObj, stepNo;
 
     gameStage = new GameStage(gameStage);
+    if (gameStage.stage === 0) return 1;
     stageObj = this.getStage(gameStage);
     if (!stageObj) return null;
 
