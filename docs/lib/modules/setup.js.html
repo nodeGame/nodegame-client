@@ -486,10 +486,11 @@ in the browser enviroment. </p>
 
 <p>Creates the <code>node.game</code> object
 The input parameter can be either an object (function) or 
-a stringified object (function)</p>
+a stringified object (function), and it will be passed as 
+the configuration object to the contructor of <code>node.Game</code></p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;game&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">game</span><span class="p">)</span> <span class="k">return</span> <span class="p">{};</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">game</span><span class="p">)</span> <span class="k">return</span> <span class="p">{};</span>
     </pre></div>
         </td>
       </tr>
@@ -501,16 +502,11 @@ a stringified object (function)</p>
 <p>Trying to parse the string, maybe it
 comes from a remote setup</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">game</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">game</span><span class="p">);</span>
-      
-      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Error while parsing the game object/string&#39;</span><span class="p">);</span>
-        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">game</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">game</span><span class="p">);</span>     
       <span class="p">}</span>
-    <span class="p">}</span>
     
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span></pre></div>
+      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -520,12 +516,12 @@ comes from a remote setup</p>
 </div>
 <p>creates the object</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>      <span class="nx">game</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">game</span><span class="p">();</span>
-    <span class="p">}</span>
-    
-    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Game</span><span class="p">(</span><span class="nx">game</span><span class="p">);</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_GAME_CREATED&#39;</span><span class="p">);</span>
-    <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">game</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">game</span><span class="p">();</span>
+      <span class="p">}</span>
+      
+      <span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Game</span><span class="p">(</span><span class="nx">game</span><span class="p">);</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_GAME_CREATED&#39;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
   <span class="p">});</span>
     </pre></div>
         </td>
@@ -586,22 +582,32 @@ comes from a remote setup</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">remoteSetup</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">property</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot send remote setup: empty property&#39;</span><span class="p">);</span>
-      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot send remote setup: empty recipient&#39;</span><span class="p">);</span>
-      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-      <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">SETUP</span><span class="p">,</span>
-      <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span><span class="p">,</span>
-      <span class="nx">text</span><span class="o">:</span> <span class="nx">property</span><span class="p">,</span>
-      <span class="nx">data</span><span class="o">:</span> <span class="nx">options</span>
-    <span class="p">});</span>
+      <span class="kd">var</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">payload</span><span class="p">;</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot send remote setup: empty property&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot send remote setup: empty recipient&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="p">}</span>
+      
+      <span class="nx">payload</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+      
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">payload</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;an error occurred while stringifying payload for remote setup&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="p">}</span>
+      
+      <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+    <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">SETUP</span><span class="p">,</span>
+    <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span><span class="p">,</span>
+    <span class="nx">text</span><span class="o">:</span> <span class="nx">property</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="nx">payload</span>
+      <span class="p">});</span>
     
-    <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+      <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
   <span class="p">};</span>
     
 

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>stepper.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../../', thisFile = 'lib/modules/stepper.js', defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#stager">Stager</a>
+      </div>
+      <div class="heading h3">
+        <a href="#sync_all">SYNC_ALL</a>
+      </div>
+      <div class="heading h3">
+        <a href="#solo">SOLO</a>
+      </div>
+      <div class="heading h3">
+        <a href="#sync_stage">SYNC_STAGE</a>
+      </div>
+      <div class="heading h2">
+        <a href="#closure">Closure</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager">
+  <h1>
+    <a href="#stager" class="pilcrow">&#182;</a>
+    Stager
+  </h1>
+</div>
+
+  </div>
+  <div class="body"><p><code>nodeGame</code> container and builder of the game sequence</p>
+
+<hr />
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+
+    <span class="kd">var</span> <span class="nx">levels</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">DONE</span> <span class="o">=</span> <span class="nx">levels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>Storage for socket rules</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">rules</span> <span class="o">=</span> <span class="p">{};</span>
+
+    <span class="kd">function</span> <span class="nx">getRules</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">rules</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">get</span><span class="p">(</span> <span class="nx">id</span> <span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">rules</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">register</span><span class="p">(</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">cb</span> <span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;stepper rule id cannot be undefined&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;stepping rule is not a function&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">rules</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">;</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">addDefaultRules</span><span class="p">()</span> <span class="p">{</span>
+        </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="sync_all">
+  <h3>
+    <a href="#sync_all" class="pilcrow">&#182;</a>
+    SYNC_ALL
+  </h3>
+</div>
+
+
+<p>Player waits that all the clients have terminated the 
+current step before going to the next</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">rules</span><span class="p">[</span><span class="s1">&#39;SYNC_ALL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">DONE</span> <span class="o">&amp;&amp;</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">isStageDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
+        <span class="p">};</span>
+        </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="solo">
+  <h3>
+    <a href="#solo" class="pilcrow">&#182;</a>
+    SOLO
+  </h3>
+</div>
+
+
+<p>Player proceeds to the next step as soon as the current one
+is DONE, regardless to the situation of other players</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">rules</span><span class="p">[</span><span class="s1">&#39;SOLO&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">DONE</span><span class="p">;</span>
+        <span class="p">};</span>
+    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="sync_stage">
+  <h3>
+    <a href="#sync_stage" class="pilcrow">&#182;</a>
+    SYNC_STAGE
+  </h3>
+</div>
+
+
+<p>Player can advance freely within the steps of one stage,
+but has to wait before going to the next one</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">rules</span><span class="p">[</span><span class="s1">&#39;SYNC_STAGE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">myStageLevel</span> <span class="o">!==</span> <span class="nx">DONE</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>TODO complete, once GameLoop has new methods
+if next one is going to be a new stage wait </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">clear</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">rules</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>expose the methods</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">getRules</span><span class="o">:</span> <span class="nx">getRules</span><span class="p">,</span>
+      <span class="nx">get</span><span class="o">:</span> <span class="nx">get</span><span class="p">,</span>
+      <span class="nx">register</span><span class="o">:</span> <span class="nx">register</span><span class="p">,</span>
+        <span class="nx">clear</span><span class="o">:</span> <span class="nx">clear</span><span class="p">,</span>
+        <span class="nx">addDefaultRules</span><span class="o">:</span> <span class="nx">addDefaultRules</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="closure">
+  <h2>
+    <a href="#closure" class="pilcrow">&#182;</a>
+    Closure
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

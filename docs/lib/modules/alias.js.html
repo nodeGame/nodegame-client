@@ -51,6 +51,9 @@
       <div class="heading h3">
         <a href="#node.on.plist">node.on.plist</a>
       </div>
+      <div class="heading h3">
+        <a href="#node.on.pconnect">node.on.pconnect</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -142,25 +145,31 @@ to new listeners on the given events.</p>
       <span>The name of alias</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">The</span>
+      <span class="dox_tag_name">events</span>
       <span class="dox_type">string</span>
       <span class="dox_type">array</span>
-      <span>events under which the listeners will be registered to</span>
+      <span>The event/s under which the listeners will be registered to</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">cb</span>
+      <span class="dox_type">function</span>
+      <span>Optional. If set the return value will be passed as parameter
+  of the emitted event</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">alias</span><span class="p">,</span> <span class="nx">events</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">alias</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">alias</span> <span class="o">||</span> <span class="o">!</span><span class="nx">events</span><span class="p">)</span> <span class="p">{</span> 
       <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;undefined alias or events&#39;</span><span class="p">);</span> 
       <span class="k">return</span><span class="p">;</span> 
     <span class="p">}</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">events</span><span class="p">))</span> <span class="nx">events</span> <span class="o">=</span> <span class="p">[</span><span class="nx">events</span><span class="p">];</span>
     
-    <span class="nx">J</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="nx">J</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">){</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">[</span><span class="nx">alias</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">){</span>
-          <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
+          <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">cb</span> <span class="o">?</span> <span class="nx">cb</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="o">:</span> <span class="nx">msg</span><span class="p">);</span>
         <span class="p">});</span>
       <span class="p">};</span>
     <span class="p">});</span>
@@ -195,9 +204,9 @@ and that it is ready to advance to the next one.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">DONE</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">param</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s2">&quot;DONE&quot;</span><span class="p">,</span> <span class="nx">param</span><span class="p">);</span>
-  <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">DONE</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">param</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s2">&quot;DONE&quot;</span><span class="p">,</span> <span class="nx">param</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -221,9 +230,9 @@ and that it is ready to advance to the next one.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">TXT</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;out.say.TXT&#39;</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
-  <span class="p">};</span>      
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">TXT</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;out.say.TXT&#39;</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
+    <span class="p">};</span>      
   </pre></div>
         </td>
       </tr>
@@ -237,7 +246,7 @@ and that it is ready to advance to the next one.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.TXT&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.TXT&#39;</span><span class="p">);</span>
   </pre></div>
         </td>
       </tr>
@@ -251,7 +260,7 @@ and that it is ready to advance to the next one.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.DATA&#39;</span><span class="p">]);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.DATA&#39;</span><span class="p">]);</span>
   </pre></div>
         </td>
       </tr>
@@ -265,7 +274,7 @@ and that it is ready to advance to the next one.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STATE&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STATE&#39;</span><span class="p">);</span>
   </pre></div>
         </td>
       </tr>
@@ -279,7 +288,7 @@ and that it is ready to advance to the next one.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STAGE&#39;</span><span class="p">);</span>  
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STAGE&#39;</span><span class="p">);</span>  
   </pre></div>
         </td>
       </tr>
@@ -293,7 +302,22 @@ and that it is ready to advance to the next one.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;plist&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.set.PLIST&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PLIST&#39;</span><span class="p">]);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;plist&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.set.PLIST&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PLIST&#39;</span><span class="p">]);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="node.on.pconnect">
+  <h3>
+    <a href="#node.on.pconnect" class="pilcrow">&#182;</a>
+    node.on.pconnect
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;pconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+    <span class="p">});</span>
     
   <span class="nx">node</span><span class="p">.</span><span class="nx">onTXT</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">func</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>

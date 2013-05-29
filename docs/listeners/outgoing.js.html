@@ -34,7 +34,7 @@
         <a href="#out.say.data">out.say.DATA</a>
       </div>
       <div class="heading h2">
-        <a href="#out.set.state">out.set.STATE</a>
+        <a href="#out.set.stage">out.set.STAGE</a>
       </div>
       <div class="heading h2">
         <a href="#out.set.data">out.set.DATA</a>
@@ -122,8 +122,8 @@ The message is for informative purpose</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;STATE&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendSTATE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;STAGE&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendSTAGE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
 <span class="p">});</span> </pre></div>
         </td>
       </tr>
@@ -170,24 +170,24 @@ The message is for informative purpose</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="out.set.state">
+<div class="pilwrap" id="out.set.stage">
   <h2>
-    <a href="#out.set.state" class="pilcrow">&#182;</a>
-    out.set.STATE
+    <a href="#out.set.stage" class="pilcrow">&#182;</a>
+    out.set.STAGE
   </h2>
 </div>
 
   </div>
-  <div class="body"><p>Sends out a STATE message to the specified recipient</p>
+  <div class="body"><p>Sends out a STAGE message to the specified recipient</p>
 
 <p>TODO: check with the server 
-The receiver will update its representation of the state
+The receiver will update its representation of the stage
 of the sender</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">set</span> <span class="o">+</span> <span class="s1">&#39;STATE&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendSTATE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">set</span> <span class="o">+</span> <span class="s1">&#39;STAGE&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendSTAGE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
 <span class="p">});</span></pre></div>
         </td>
       </tr>

@@ -63,6 +63,9 @@
       <div class="heading h3">
         <a href="#node.redirect">node.redirect</a>
       </div>
+      <div class="heading h3">
+        <a href="#node.remotecommand">node.remoteCommand</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -93,14 +96,14 @@ line, multiplayer games in the browser.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
     
-  <span class="kd">var</span> <span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">EventEmitter</span><span class="p">,</span>
-    <span class="nx">Socket</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Socket</span><span class="p">,</span>
-    <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
-    <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-    <span class="nx">Game</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">,</span>
-    <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
-    <span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameSession</span><span class="p">,</span>
-    <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>    
+    <span class="kd">var</span> <span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">EventEmitter</span><span class="p">,</span>
+  <span class="nx">Socket</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Socket</span><span class="p">,</span>
+  <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
+  <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
+  <span class="nx">Game</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">,</span>
+  <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
+  <span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameSession</span><span class="p">,</span>
+  <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>    
   </pre></div>
         </td>
       </tr>
@@ -308,12 +311,10 @@ set in other sessions (recovery)
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">play</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>  
-    
-    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">game</span><span class="p">(</span><span class="nx">game</span><span class="p">);</span>
-    
-    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
-  <span class="p">};</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">play</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">game</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">game</span><span class="p">(</span><span class="nx">game</span><span class="p">);</span>  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+    <span class="p">};</span>
   </pre></div>
         </td>
       </tr>
@@ -730,7 +731,58 @@ other.</p>
     <span class="p">});</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="p">};</span>
+  <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.remotecommand">
+  <h3>
+    <a href="#node.remotecommand" class="pilcrow">&#182;</a>
+    node.remoteCommand
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Executes a game command on a client</p>
+
+<p>Works only if it is a monitor client to send
+the message, i.e. players cannot send game commands 
+to each others</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">command</span>
+      <span class="dox_type">string</span>
+      <span>The command to execute</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">to</span>
+      <span class="dox_type">string</span>
+      <span>The id of the player to command</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if the game command is sent</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">command</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">command</span> <span class="o">||</span> <span class="o">!</span><span class="nx">to</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    
+  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+      <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">GAMECOMMAND</span><span class="p">,</span>
+      <span class="nx">text</span><span class="o">:</span> <span class="nx">command</span><span class="p">,</span>
+      <span class="nx">data</span><span class="o">:</span> <span class="nx">options</span><span class="p">,</span>
+      <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span>
+  <span class="p">});</span>
+  <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+    <span class="p">};</span>
   
   <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">version</span> <span class="o">+</span> <span class="s1">&#39; loaded&#39;</span><span class="p">);</span>
   
@@ -740,7 +792,7 @@ other.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 Creating the objects
 <!-- object commented in index.js -->

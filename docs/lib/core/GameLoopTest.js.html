@@ -81,10 +81,12 @@
 <span class="nx">gameLoop</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameLoop</span><span class="p">();</span>
 <span class="nx">gameLoop</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">plot</span><span class="p">);</span>
 
-<span class="kd">var</span> <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="s1">&#39;4&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
 
 <span class="k">while</span> <span class="p">(</span><span class="nx">gameStage</span> <span class="k">instanceof</span> <span class="nx">GameStage</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;At &#39;</span> <span class="o">+</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;S.s.r&#39;</span><span class="p">));</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;At &#39;</span> <span class="o">+</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;S.s.r&#39;</span><span class="p">)</span> <span class="o">+</span>
+            <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">).</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span>
+            <span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">).</span><span class="nx">id</span><span class="p">);</span>
   <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">gameLoop</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
 <span class="p">}</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span></pre></div>

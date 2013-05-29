@@ -24,6 +24,12 @@
       <div class="heading h2">
         <a href="#global-scope">Global scope</a>
       </div>
+      <div class="heading h3">
+        <a href="#nodegameruntimeerror">NodeGameRuntimeError</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegamestagecallbackerror">NodeGameStageCallbackError</a>
+      </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
       </div>
@@ -67,45 +73,74 @@ MIT Licensed </p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
-  <span class="kd">var</span> <span class="nx">NodeGameRuntimeError</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">NodeGameRuntimeError</span><span class="p">,</span> <span class="nx">err</span><span class="p">;</span>
-    <span class="nx">NodeGameRuntimeError</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="kd">function</span> <span class="nx">NodeGameRuntimeError</span><span class="p">()</span> <span class="p">{</span>
-          <span class="kd">var</span> <span class="nx">err</span><span class="p">;</span>
-          <span class="nx">err</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
-          <span class="nx">err</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;NodeGameRuntimeError&quot;</span><span class="p">;</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">stack</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="nx">err</span><span class="p">.</span><span class="nx">stack</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="nx">NodeGameRuntimeError</span><span class="p">;</span>
-    <span class="p">})();</span>
-    <span class="nx">err</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
-    <span class="nx">err</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;NodeGameRuntimeError&quot;</span><span class="p">;</span>
-    <span class="nx">NodeGameRuntimeError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">err</span><span class="p">;</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
-    <span class="k">return</span> <span class="nx">NodeGameRuntimeError</span><span class="p">;</span>
-  <span class="p">}).</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span> <span class="o">=</span> <span class="nx">NodeGameRuntimeError</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameStageCallbackError</span> <span class="o">=</span> <span class="nx">NodeGameStageCallbackError</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameruntimeerror">
+  <h3>
+    <a href="#nodegameruntimeerror" class="pilcrow">&#182;</a>
+    NodeGameRuntimeError
+  </h3>
+</div>
 
-
-
-      
-      <span class="kd">var</span> <span class="nx">ex</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">();</span>
-      
-      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s2">&quot;ERR&quot;</span><span class="p">);</span>
-      
-      <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="nx">ex</span><span class="p">;</span>
-      <span class="p">}</span>
-      <span class="k">else</span> <span class="p">{</span>
-        
-      <span class="p">}</span>
+  </div>
+  <div class="body"><p>An error occurred during the execution of nodeGame</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameRuntimeError</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nb">Error</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
     <span class="p">}</span>
-  <span class="p">}</span>
-  
-  </pre></div>
+
+    <span class="nx">NodeGameRuntimeError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
+    <span class="nx">NodeGameRuntimeError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">NodeGameRuntimeError</span><span class="p">;</span>
+    <span class="nx">NodeGameRuntimeError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;NodeGameRuntimeError&#39;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegamestagecallbackerror">
+  <h3>
+    <a href="#nodegamestagecallbackerror" class="pilcrow">&#182;</a>
+    NodeGameStageCallbackError
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>An error occurred during the execution of one of the stage callbacks</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameStageCallbackError</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nb">Error</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">NodeGameStageCallbackError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
+    <span class="nx">NodeGameStageCallbackError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">NodeGameStageCallbackError</span><span class="p">;</span>
+    <span class="nx">NodeGameStageCallbackError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;NodeGameStageCallbackError&#39;</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isNodeJS</span><span class="p">())</span> <span class="p">{</span>
+  <span class="nx">process</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;uncaughtException&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Caught exception: &#39;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">);</span>
+  <span class="p">});</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+  <span class="nb">window</span><span class="p">.</span><span class="nx">onerror</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">linenumber</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="nx">url</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">linenumber</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
+      <span class="k">return</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">debug</span><span class="p">;</span>
+  <span class="p">};</span>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -119,7 +154,7 @@ MIT Licensed </p>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
   <span class="p">,</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
