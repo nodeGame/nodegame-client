@@ -46,28 +46,28 @@
 <span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
 
 <span class="kd">var</span> <span class="nx">stepWoop</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;woop&#39;</span><span class="p">,</span>
-  <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;woop woop!&quot;</span><span class="p">);</span> <span class="p">}</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;woop&#39;</span><span class="p">,</span>
+    <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;woop woop!&quot;</span><span class="p">);</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="kd">var</span> <span class="nx">stepBeep</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;beep&#39;</span><span class="p">,</span>
-  <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;beep beep!&quot;</span><span class="p">);</span> <span class="p">}</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;beep&#39;</span><span class="p">,</span>
+    <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;beep beep!&quot;</span><span class="p">);</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="kd">var</span> <span class="nx">stepDurr</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;durr&#39;</span><span class="p">,</span>
-  <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;durr durr!&quot;</span><span class="p">);</span> <span class="p">}</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;durr&#39;</span><span class="p">,</span>
+    <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;durr durr!&quot;</span><span class="p">);</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="kd">var</span> <span class="nx">stepBlah</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;blah&#39;</span><span class="p">,</span>
-  <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;blah blah!&quot;</span><span class="p">);</span> <span class="p">}</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;blah&#39;</span><span class="p">,</span>
+    <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;blah blah!&quot;</span><span class="p">);</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="kd">var</span> <span class="nx">stageMain</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;main&#39;</span><span class="p">,</span>
-  <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;woop&#39;</span><span class="p">,</span> <span class="s1">&#39;beep&#39;</span> <span class="p">]</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;main&#39;</span><span class="p">,</span>
+    <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;woop&#39;</span><span class="p">,</span> <span class="s1">&#39;beep&#39;</span> <span class="p">]</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -92,15 +92,15 @@
 <span class="kd">var</span> <span class="nx">flag</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
 <span class="nx">stager</span>
-  <span class="p">.</span><span class="nx">repeat</span><span class="p">(</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">loop</span><span class="p">(</span><span class="s1">&#39;durr&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">counter</span><span class="o">++</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-      <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">})</span>
-  <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;blah&#39;</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;durr AS durrurrurr&#39;</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">gameover</span><span class="p">()</span>
-  <span class="p">;</span>
+    <span class="p">.</span><span class="nx">repeat</span><span class="p">(</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">loop</span><span class="p">(</span><span class="s1">&#39;durr&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">counter</span><span class="o">++</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">})</span>
+    <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;blah&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;durr AS durrurrurr&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">gameover</span><span class="p">()</span>
+    <span class="p">;</span>
 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Sequence (JS object):&#39;</span><span class="p">);</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getSequence</span><span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">));</span>
@@ -142,8 +142,8 @@ stager.addStage(stageMain);</p>
 
 <p>stager.registerNext('main', function() { return 'blah'; });
 stager.registerGeneralNext(function() {
-  if (!flag) { flag = true; return 'durr'; }
-  return null;
+    if (!flag) { flag = true; return 'durr'; }
+    return null;
 });</p>
 
 <p>stager.seqTestRun(true, 'main');</p>

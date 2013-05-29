@@ -46,14 +46,14 @@
 <span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./GameStage&#39;</span><span class="p">).</span><span class="nx">GameStage</span><span class="p">;</span>
 
 <span class="kd">function</span> <span class="nx">makeStep</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="p">{</span>
-    <span class="nx">id</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
-    <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;&#39;s callback!&quot;</span><span class="p">);</span> <span class="p">}</span>
-  <span class="p">};</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">id</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
+        <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;&#39;s callback!&quot;</span><span class="p">);</span> <span class="p">}</span>
+    <span class="p">};</span>
 <span class="p">}</span>
 
 <span class="kd">function</span> <span class="nx">randomDecider</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="nx">plot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Stager</span><span class="p">();</span>
@@ -72,11 +72,11 @@
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;-----------&#39;</span><span class="p">);</span>
 
 <span class="nx">plot</span>
-  <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;intro AS alias&#39;</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">repeat</span><span class="p">(</span><span class="s1">&#39;mainGame&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">loop</span><span class="p">(</span><span class="s1">&#39;randLoop&#39;</span><span class="p">,</span> <span class="nx">randomDecider</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;outro&#39;</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">gameover</span><span class="p">();</span>
+    <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;intro AS alias&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">repeat</span><span class="p">(</span><span class="s1">&#39;mainGame&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">loop</span><span class="p">(</span><span class="s1">&#39;randLoop&#39;</span><span class="p">,</span> <span class="nx">randomDecider</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;outro&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">gameover</span><span class="p">();</span>
 
 <span class="nx">gameLoop</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameLoop</span><span class="p">();</span>
 <span class="nx">gameLoop</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">plot</span><span class="p">);</span>
@@ -84,10 +84,10 @@
 <span class="kd">var</span> <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">);</span>
 
 <span class="k">while</span> <span class="p">(</span><span class="nx">gameStage</span> <span class="k">instanceof</span> <span class="nx">GameStage</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;At &#39;</span> <span class="o">+</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;S.s.r&#39;</span><span class="p">)</span> <span class="o">+</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;At &#39;</span> <span class="o">+</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;S.s.r&#39;</span><span class="p">)</span> <span class="o">+</span>
             <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">).</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span>
             <span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">).</span><span class="nx">id</span><span class="p">);</span>
-  <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">gameLoop</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
+    <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">gameLoop</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
 <span class="p">}</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span></pre></div>
         </td>
@@ -115,21 +115,26 @@ plot.addStep(makeStep('outroStep2'));
 plot.addStage({id: 'outro', steps: ['outroStep1', 'outroStep2']});</p>
 
 <p>plot.registerGeneralNext(function() {
-  var counter = 0;</p>
+    var counter = 0;</p>
 
-<p>return function() {
-    switch (++counter) {
-    case 1:
-      return 'intro';
-    case 2:
-      return 'mainGame';
-    case 3:
-      return 'randLoop';
-    default:
-      return GameLoop.GAMEOVER;
-    }
-  };
-}());</p>
+
+<div class="highlight"><pre><code><span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="o">++</span><span class="nx">counter</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+        <span class="k">return</span> <span class="s1">&#39;intro&#39;</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+        <span class="k">return</span> <span class="s1">&#39;mainGame&#39;</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mi">3</span><span class="o">:</span>
+        <span class="k">return</span> <span class="s1">&#39;randLoop&#39;</span><span class="p">;</span>
+    <span class="k">default</span><span class="o">:</span>
+        <span class="k">return</span> <span class="nx">GameLoop</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+
+
+
+<p>}());</p>
 
 <p>plot.registerNext('randLoop', function() { return randomDecider() ? 'randLoop' : 'outro'; });</p>
 
@@ -137,8 +142,8 @@ plot.addStage({id: 'outro', steps: ['outroStep1', 'outroStep2']});</p>
 gameLoop = new GameLoop(plot);</p>
 
 <p>while (gameStage instanceof GameStage) {
-  console.log('At ' + gameStage.toHash('S.s'));
-  gameStage = gameLoop.next(gameStage);
+    console.log('At ' + gameStage.toHash('S.s'));
+    gameStage = gameLoop.next(gameStage);
 }
 console.log(gameStage);</p>
   </div>
