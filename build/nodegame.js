@@ -8345,14 +8345,14 @@ Stager.prototype.registerGeneralNext = function(func) {
  *
  * Registers a step-decider callback for a specific stage
  *
- * The function overrides the general callback for the specific stage, 
+ * The function overrides the general callback for the specific stage,
  * and determines the next stage.
  * Available only when nodegame is executed in _flexible_ mode.
  *
  * @param {string} id The name of the stage after which the decider function will be called
  * @param {function} func The decider callback.  It should return the name of
  *  the next stage, 'NODEGAME_GAMEOVER' to end the game or false for sequence end.
- *  
+ *
  * @see Stager.registerGeneralNext
  */
 Stager.prototype.registerNext = function(id, func) {
@@ -8434,7 +8434,7 @@ Stager.prototype.addStep = function(step) {
  * @param {object} stage A valid stage or step object.  Shallowly copied.
  *
  * @return {boolean} true on success, false on error
- * 
+ *
  * @see Stager.addStep
  */
 Stager.prototype.addStage = function(stage) {
@@ -8978,7 +8978,7 @@ GameLoop.NO_SEQ   = 'NODEGAME_NO_SEQ';
  * If the Stager parameter has an empty sequence, flexibile mode is assumed
  * (used by e.g. GameLoop.next).
  *
- * @param {object} plot Optional. The Stager object.
+ * @param {Stager} plot Optional. The Stager object.
  *
  * @see Stager
  */
@@ -8993,7 +8993,7 @@ function GameLoop(plot) {
  *
  * Initializes the GameLoop with a plot
  *
- * @param {object} plot The Stager object
+ * @param {Stager} plot The Stager object
  *
  * @see Stager
  */
@@ -9008,10 +9008,10 @@ GameLoop.prototype.init = function(plot) {
  *
  * If the step in `curStage` is an integer and out of bounds, that bound is assumed.
  *
- * @param {object} curStage Optional. The GameStage object from which to get
+ * @param {GameStage} curStage Optional. The GameStage object from which to get
  *  the next one. Defaults to returning the first stage.
  *
- * @return {object} The GameStage describing the next stage
+ * @return {GameStage} The GameStage describing the next stage
  *
  * @see GameStage
  */
@@ -9180,9 +9180,9 @@ GameLoop.prototype.next = function(curStage) {
  * Works only in simple mode.
  * Behaves on loops the same as `GameLoop.next`, with round=1 always.
  *
- * @param {object} curStage The GameStage object from which to get the previous one
+ * @param {GameStage} curStage The GameStage object from which to get the previous one
  *
- * @return {object} The GameStage describing the previous stage
+ * @return {GameStage} The GameStage describing the previous stage
  *
  * @see GameStage
  */
@@ -9293,10 +9293,10 @@ GameLoop.prototype.previous = function(curStage) {
  * Uses `GameLoop.previous` and `GameLoop.next` for stepping.
  * If a sequence end is reached, returns immediately.
  *
- * @param {object} curStage The GameStage object from which to get the offset one
+ * @param {GameStage} curStage The GameStage object from which to get the offset one
  * @param {number} delta The offset. Negative number for backward stepping.
  *
- * @return {object} The GameStage describing the distant stage
+ * @return {GameStage} The GameStage describing the distant stage
  *
  * @see GameStage
  * @see GameLoop.previous
@@ -9325,6 +9325,64 @@ GameLoop.prototype.jump = function(curStage, delta) {
     }
 
     return curStage;
+};
+
+/**
+ * ### GameLoop.stepsToNextStage
+ *
+ * Returns the number of steps until the beginning of the next stage
+ *
+ * @param {object|string} gameStage The GameStage object, or its string representation
+ *
+ * @return {number|null} The number of steps to go, minimum 1. Null on error.
+ */
+GameLoop.prototype.stepsToNextStage = function(gameStage) {
+    var stageObj, stepNo;
+
+    gameStage = new GameStage(gameStage);
+    stageObj = this.getStage(gameStage);
+    if (!stageObj) return null;
+
+    if ('number' === typeof gameStage.step) {
+        stepNo = gameStage.step;
+    }
+    else {
+        stepNo = stageObj.steps.indexOf(gameStage.step) + 1;
+        // If indexOf returned -1, stepNo is 0 which will be caught below.
+    }
+
+    if (stepNo < 1 || stepNo > stageObj.steps.length) return null;
+
+    return 1 + stageObj.steps.length - stepNo;
+};
+
+/**
+ * ### GameLoop.stepsToPreviousStage
+ *
+ * Returns the number of steps back until the end of the previous stage
+ *
+ * @param {object|string} gameStage The GameStage object, or its string representation
+ *
+ * @return {number|null} The number of steps to go, minimum 1. Null on error.
+ */
+GameLoop.prototype.stepsToPreviousStage = function(gameStage) {
+    var stageObj, stepNo;
+
+    gameStage = new GameStage(gameStage);
+    stageObj = this.getStage(gameStage);
+    if (!stageObj) return null;
+
+    if ('number' === typeof gameStage.step) {
+        stepNo = gameStage.step;
+    }
+    else {
+        stepNo = stageObj.steps.indexOf(gameStage.step) + 1;
+        // If indexOf returned -1, stepNo is 0 which will be caught below.
+    }
+
+    if (stepNo < 1 || stepNo > stageObj.steps.length) return null;
+
+    return stepNo;
 };
 
 /**
@@ -9391,13 +9449,13 @@ GameLoop.prototype.getStep = function(gameStage) {
  * @return {function|null} The step-rule function. Null on error.
  */
 GameLoop.prototype.getStepRule = function(gameStage) {
-    var stage = this.getStage(gameStage),
-        step  = this.getStep(gameStage);
+    var stageObj = this.getStage(gameStage),
+        stepObj  = this.getStep(gameStage);
 
-    if (!stage || !step) return null;
+    if (!stageObj || !stepObj) return null;
 
-    if ('function' === typeof  step.steprule) return  step.steprule;
-    if ('function' === typeof stage.steprule) return stage.steprule;
+    if ('function' === typeof  stepObj.steprule) return  stepObj.steprule;
+    if ('function' === typeof stageObj.steprule) return stageObj.steprule;
     return this.plot.getDefaultStepRule();
 };
 
@@ -9427,9 +9485,9 @@ GameLoop.prototype.getAllParams = GameLoop.prototype.getStep;
  *
  * Works only in simple mode.
  *
- * @param {object} gameStage The GameStage object
+ * @param {GameStage} gameStage The GameStage object
  *
- * @return {object} The normalized GameStage object; null on error
+ * @return {GameStage} The normalized GameStage object; null on error
  *
  * @api private
  */
