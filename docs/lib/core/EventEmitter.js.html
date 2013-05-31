@@ -103,8 +103,7 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -117,8 +116,7 @@ MIT Licensed</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
-<span class="kd">var</span> <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">;</span>
 
 <span class="nx">exports</span><span class="p">.</span><span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">EventEmitter</span><span class="p">;</span></pre></div>
         </td>
@@ -151,7 +149,7 @@ MIT Licensed</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -169,8 +167,7 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">global</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_listeners</span> <span class="o">=</span> <span class="p">{};</span>
-    </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">global</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_listeners</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -203,10 +200,22 @@ MIT Licensed</p>
 
   </div>
   <div class="body"><p>Database of emitted events</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitter.EventHistory</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitter.store
 
-<p>@see NDDB
-  @see EventEmitter.EventHistory
-  @see EventEmitter.store</p>
+  </span>
+    </div>
   </div>
 </div>
         </td>
@@ -226,8 +235,7 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
 
-    <span class="nx">constructor</span><span class="o">:</span> <span class="nx">EventEmitter</span><span class="p">,</span>
-  </pre></div>
+    <span class="nx">constructor</span><span class="o">:</span> <span class="nx">EventEmitter</span><span class="p">,</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -267,14 +275,13 @@ whole length of the game</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">type</span> <span class="o">||</span> <span class="o">!</span><span class="nx">listener</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">[</span><span class="nx">type</span><span class="p">]){</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
-      <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">type</span> <span class="o">||</span> <span class="o">!</span><span class="nx">listener</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">[</span><span class="nx">type</span><span class="p">]){</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="p">}</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Added Listener: &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">listener</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">listener</span><span class="p">);</span>
-    <span class="p">},</span>
-    </pre></div>
+    <span class="p">},</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -290,9 +297,9 @@ whole length of the game</p>
   </div>
   <div class="body"><p>Registers a local listener for an event</p>
 
-<p>Listeners registered with this method are valid <em>only</em> 
+<p>Listeners registered with this method are valid <em>only</em>
 for the same game stage (step) in which they have been
-registered </p>
+registered</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -316,11 +323,11 @@ registered </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">addLocal</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">type</span> <span class="o">||</span> <span class="o">!</span><span class="nx">listener</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">[</span><span class="nx">type</span><span class="p">]){</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">type</span> <span class="o">||</span> <span class="o">!</span><span class="nx">listener</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">[</span><span class="nx">type</span><span class="p">]){</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="p">}</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Added Local Listener: &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">listener</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Added Local Listener: &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">listener</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">listener</span><span class="p">);</span>
     <span class="p">},</span></pre></div>
         </td>
@@ -345,8 +352,8 @@ registered </p>
       <span>{string|object} The event name or an object of the type
 
 
-<div class="highlight"><pre><code><span class="p">{</span> <span class="n">type</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">myEvent</span><span class="err">&#39;</span><span class="p">,</span>
-  <span class="nl">target:</span> <span class="n">this</span><span class="p">,</span> <span class="p">}</span> <span class="c1">// optional</span>
+<div class="highlight"><pre><code> <span class="p">{</span> <span class="n">type</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">myEvent</span><span class="err">&#39;</span><span class="p">,</span>
+   <span class="nl">target:</span> <span class="n">this</span><span class="p">,</span> <span class="p">}</span> <span class="c1">// optional</span>
 </code></pre></div>
 
 </span>
@@ -370,22 +377,20 @@ registered </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">emit</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Up to 3 parameters</span>
-    <span class="kd">var</span> <span class="nx">listeners</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">listeners</span><span class="p">;</span>
 
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">event</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-      
-      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">event</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">event</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nx">event</span> <span class="p">};</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">){</span>
             <span class="nx">event</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="p">}</span>
-        
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">//falsy</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Event object missing &#39;type&#39; property.&quot;</span><span class="p">);</span>
-        <span class="p">}</span>
-      
-        </pre></div>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -396,10 +401,10 @@ registered </p>
 <p>Log the event into node.history object, if present</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">)</span> <span class="p">{</span>
-            
-          <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">event</span><span class="o">:</span> <span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span></pre></div>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="nx">event</span><span class="o">:</span> <span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -409,15 +414,14 @@ registered </p>
 </div>
 <p>target: node.game,</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="nx">stage</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span>
-                <span class="nx">p1</span><span class="o">:</span> <span class="nx">p1</span><span class="p">,</span>
-                <span class="nx">p2</span><span class="o">:</span> <span class="nx">p2</span><span class="p">,</span>
-                <span class="nx">p3</span><span class="o">:</span> <span class="nx">p3</span>
-              <span class="p">};</span>
-            
-            <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
-          <span class="p">}</span>
-          </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>                    <span class="nx">stage</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span>
+                    <span class="nx">p1</span><span class="o">:</span> <span class="nx">p1</span><span class="p">,</span>
+                    <span class="nx">p2</span><span class="o">:</span> <span class="nx">p2</span><span class="p">,</span>
+                    <span class="nx">p3</span><span class="o">:</span> <span class="nx">p3</span>
+                <span class="p">};</span>
+
+                <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+            <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -428,11 +432,9 @@ registered </p>
 <p><!-- Debug</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">dumpEvents</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;F: &#39;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;F: &#39;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
             <span class="p">}</span>
-        <span class="p">}</span>
-        
-        </pre></div>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -445,10 +447,9 @@ registered </p>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">]</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">listeners</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">];</span>
             <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">len</span><span class="o">=</span><span class="nx">listeners</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
-              <span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">);</span>
+                <span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">);</span>
             <span class="p">}</span>
-        <span class="p">}</span>
-        </pre></div>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -461,10 +462,10 @@ registered </p>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">]</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">listeners</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">];</span>
             <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">len</span><span class="o">=</span><span class="nx">listeners</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">);</span>
+                <span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
-       
+
     <span class="p">},</span></pre></div>
         </td>
       </tr>
@@ -491,7 +492,7 @@ registered </p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">listener</span>
       <span class="dox_type">function</span>
-      <span>Optional. The specific function to deregister </span>
+      <span>Optional. The specific function to deregister</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -501,9 +502,9 @@ registered </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">remove</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-  
-    <span class="kd">function</span> <span class="nx">removeFromList</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">,</span> <span class="nx">list</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">remove</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">function</span> <span class="nx">removeFromList</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">,</span> <span class="nx">list</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -513,10 +514,9 @@ registered </p>
 </div>
 <!-- console.log('Trying to remove ' + type + ' ' + listener); -->
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        
-          <span class="k">if</span> <span class="p">(</span><span class="nx">list</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-              <span class="k">delete</span> <span class="nx">list</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">list</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">delete</span> <span class="nx">list</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -526,12 +526,12 @@ registered </p>
 </div>
 <p>console.log('Removed listener ' + type);</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>              <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="p">}</span>
-            
-              <span class="kd">var</span> <span class="nx">listeners</span> <span class="o">=</span> <span class="nx">list</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
-              <span class="kd">var</span> <span class="nx">len</span><span class="o">=</span><span class="nx">listeners</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-              <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>                    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="kd">var</span> <span class="nx">listeners</span> <span class="o">=</span> <span class="nx">list</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
+                <span class="kd">var</span> <span class="nx">len</span><span class="o">=</span><span class="nx">listeners</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -541,24 +541,22 @@ registered </p>
 </div>
 <p>console.log(listeners[i]);</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                
-                  <span class="k">if</span> <span class="p">(</span><span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-                      <span class="nx">listeners</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-                      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Removed listener &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">listener</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
-                      <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-                  <span class="p">}</span>
-              <span class="p">}</span>
-          <span class="p">}</span>
-          
-          <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="kd">var</span> <span class="nx">r1</span> <span class="o">=</span> <span class="nx">removeFromList</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">r2</span> <span class="o">=</span> <span class="nx">removeFromList</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">);</span>
-  
-    <span class="k">return</span> <span class="nx">r1</span> <span class="o">||</span> <span class="nx">r2</span><span class="p">;</span>
-  <span class="p">},</span>
-    </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>                    <span class="k">if</span> <span class="p">(</span><span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">listeners</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+                        <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Removed listener &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">listener</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
+                        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kd">var</span> <span class="nx">r1</span> <span class="o">=</span> <span class="nx">removeFromList</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">r2</span> <span class="o">=</span> <span class="nx">removeFromList</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">r1</span> <span class="o">||</span> <span class="nx">r2</span><span class="p">;</span>
+    <span class="p">},</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -578,11 +576,10 @@ registered </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">clearStage</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">clearLocal</span><span class="p">();</span>
-    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="p">},</span>
-    </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">clearStage</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">clearLocal</span><span class="p">();</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">},</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -600,17 +597,16 @@ registered </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">clearLocal</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cleaning Local Listeners&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-    
-    <span class="k">this</span><span class="p">.</span><span class="nx">local</span> <span class="o">=</span> <span class="p">{};</span>
-  <span class="p">},</span>
-    </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">clearLocal</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cleaning Local Listeners&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">local</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="p">},</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -624,29 +620,29 @@ registered </p>
 </div>
 
   </div>
-  <div class="body"><p>Prints to console all the registered functions </p>
+  <div class="body"><p>Prints to console all the registered functions</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">printAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">printAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
 
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;nodeGame:\tPRINTING ALL LISTENERS&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
-      
-    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">){</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)){</span>
-          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;nodeGame:\tPRINTING ALL LISTENERS&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">){</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">global</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)){</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+            <span class="p">}</span>
         <span class="p">}</span>
-      <span class="p">}</span>
-    
-    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">){</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)){</span>
-          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">){</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)){</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+            <span class="p">}</span>
         <span class="p">}</span>
-      <span class="p">}</span>
-      
-  <span class="p">}</span>
-  
+
+    <span class="p">}</span>
+
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -665,8 +661,7 @@ registered </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">EventHistory</span><span class="p">()</span> <span class="p">{</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">EventHistory</span><span class="p">()</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -681,55 +676,63 @@ registered </p>
 
   </div>
   <div class="body"><p>Database of emitted events</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitter.store
 
-<p>@see NDDB
-  @see EventEmitter.store</p>
+  </span>
+    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
-      
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
+
     <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">h</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">e</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">stage</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">e</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">?</span> <span class="nx">e</span><span class="p">.</span><span class="nx">stage</span>
-                            <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
-      <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">e</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">stage</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">e</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">?</span> <span class="nx">e</span><span class="p">.</span><span class="nx">stage</span>
+                                                  <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
     <span class="p">});</span>
-      
+
 <span class="p">}</span>
 
 <span class="nx">EventHistory</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">discard</span><span class="p">,</span> <span class="nx">keep</span><span class="p">)</span> <span class="p">{</span>
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">count</span><span class="p">())</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;no event history was found to remit&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="p">}</span>
-      
-  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;remitting &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; events&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
-      
-  <span class="kd">var</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">db</span><span class="p">;</span>
-  
-  <span class="k">if</span> <span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-    
-    <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
-    
-    <span class="nx">hash</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">session</span><span class="p">.</span><span class="nx">stage</span><span class="p">).</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span> 
-    
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;no old events to re-emit were found during session recovery&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
-      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> 
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">count</span><span class="p">())</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;no event history was found to remit&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">}</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">stage</span><span class="p">[</span><span class="nx">hash</span><span class="p">]){</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;the current stage &#39;</span> <span class="o">+</span> <span class="nx">hash</span> <span class="o">+</span> <span class="s1">&#39; has no events to re-emit&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
-      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> 
+
+    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;remitting &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; events&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
+
+    <span class="kd">var</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">db</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
+
+        <span class="nx">hash</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">session</span><span class="p">.</span><span class="nx">stage</span><span class="p">).</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;no old events to re-emit were found during session recovery&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">stage</span><span class="p">[</span><span class="nx">hash</span><span class="p">]){</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;the current stage &#39;</span> <span class="o">+</span> <span class="nx">hash</span> <span class="o">+</span> <span class="s1">&#39; has no events to re-emit&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">db</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">stage</span><span class="p">[</span><span class="nx">hash</span><span class="p">];</span>
     <span class="p">}</span>
-    
-    <span class="nx">db</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">stage</span><span class="p">[</span><span class="nx">hash</span><span class="p">];</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="nx">db</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">;</span>
-  <span class="p">}</span>
-  </pre></div>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">db</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -739,22 +742,21 @@ registered </p>
 </div>
 <p>cleaning up the events to remit</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
-  <span class="k">if</span> <span class="p">(</span><span class="nx">discard</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="nx">discard</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
-  <span class="p">}</span>
-  
-  <span class="k">if</span> <span class="p">(</span><span class="nx">keep</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">db</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="nx">keep</span><span class="p">);</span>
-  <span class="p">}</span>
-    
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">db</span><span class="p">.</span><span class="nx">count</span><span class="p">()){</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;no valid events to re-emit after cleanup&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  <span class="kd">var</span> <span class="nx">remit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;re-emitting &#39;</span> <span class="o">+</span> <span class="nx">db</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; events&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">discard</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="nx">discard</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">keep</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">db</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="nx">keep</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">db</span><span class="p">.</span><span class="nx">count</span><span class="p">()){</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;no valid events to re-emit after cleanup&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">var</span> <span class="nx">remit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;re-emitting &#39;</span> <span class="o">+</span> <span class="nx">db</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; events&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -762,24 +764,24 @@ registered </p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
-<p>We have events that were fired at the stage when 
-disconnection happened. Let's fire them again </p>
+<p>We have events that were fired at the stage when
+disconnection happened. Let's fire them again</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">event</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">p1</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">p2</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">p3</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">};</span>
-  
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
-    <span class="nx">remit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-      <span class="nx">remit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-  
-  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">db</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">event</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">p1</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">p2</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">p3</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">};</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
+        <span class="nx">remit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+            <span class="nx">remit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -799,8 +801,7 @@ disconnection happened. Let's fire them again </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">Listener</span> <span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="p">{};</span>
-  </pre></div>
+    <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -810,8 +811,7 @@ disconnection happened. Let's fire them again </p>
 </div>
 <p>event name</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">event</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">event</span><span class="p">;</span>           
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">event</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">event</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -821,8 +821,7 @@ disconnection happened. Let's fire them again </p>
 </div>
 <p>callback function</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">listener</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">listener</span><span class="p">;</span>       
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">listener</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">listener</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -832,8 +831,7 @@ disconnection happened. Let's fire them again </p>
 </div>
 <p>events with higher priority are executed first</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">priority</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">priority</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>  
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">priority</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">priority</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -844,8 +842,7 @@ disconnection happened. Let's fire them again </p>
 <p>the stage in which the listener is
 allowed to be executed</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">stage</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>  
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">stage</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -853,11 +850,10 @@ allowed to be executed</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
-<p>for how many extra steps is the event 
+<p>for how many extra steps is the event
 still valid. -1 = always valid</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">ttl</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">.</span><span class="nx">ttl</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">ttl</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> 
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">ttl</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">.</span><span class="nx">ttl</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">ttl</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -866,11 +862,10 @@ still valid. -1 = always valid</p>
   <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>function will be called with
-target as 'this'        </p>
+target as 'this'</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="kc">undefined</span><span class="p">;</span>  
-<span class="p">}</span>
-   </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="kc">undefined</span><span class="p">;</span>
+<span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -884,8 +879,8 @@ target as 'this'        </p>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
         </td>

@@ -7610,17 +7610,17 @@ else {
 
 /**
  * # Stager
- * 
+ *
  * Copyright(c) 2012 Stefano Balietti
- * MIT Licensed 
- * 
+ * MIT Licensed
+ *
  * `nodeGame` container of game-state functions, and parameters
- * 
+ *
  * ---
- * 
+ *
  */
 (function (exports, node) {
-	
+
 // ## Global scope
     var J = node.JSUS;
 
@@ -7629,14 +7629,14 @@ else {
     exports.NodeGameRuntimeError = NodeGameRuntimeError;
     exports.NodeGameStageCallbackError = NodeGameStageCallbackError;
 
-    /* 
+    /*
      * ### NodeGameRuntimeError
-     * 
+     *
      * An error occurred during the execution of nodeGame
      */
     function NodeGameRuntimeError() {
-	Error.apply(this, arguments);
-	this.stack = (new Error()).stack;
+        Error.apply(this, arguments);
+        this.stack = (new Error()).stack;
     }
 
     NodeGameRuntimeError.prototype = new Error();
@@ -7644,14 +7644,14 @@ else {
     NodeGameRuntimeError.prototype.name = 'NodeGameRuntimeError';
 
 
-    /* 
+    /*
      * ### NodeGameStageCallbackError
-     * 
+     *
      * An error occurred during the execution of one of the stage callbacks
      */
     function NodeGameStageCallbackError() {
-	Error.apply(this, arguments);
-	this.stack = (new Error()).stack;
+        Error.apply(this, arguments);
+        this.stack = (new Error()).stack;
     }
 
     NodeGameStageCallbackError.prototype = new Error();
@@ -7659,79 +7659,80 @@ else {
     NodeGameStageCallbackError.prototype.name = 'NodeGameStageCallbackError';
 
     if (J.isNodeJS()) {
-	process.on('uncaughtException', function (err) {
-	    console.log('Caught exception: ' + err);
-	});
+        process.on('uncaughtException', function (err) {
+            console.log('Caught exception: ' + err);
+        });
     }
     else {
-	window.onerror = function(msg, url, linenumber) {
-	    node.err(url + ' ' + linenumber + ': ' + msg);
-	    return !node.debug;
-	};
+        window.onerror = function(msg, url, linenumber) {
+            node.err(url + ' ' + linenumber + ': ' + msg);
+            return !node.debug;
+        };
     }
 
-// ## Closure	
+// ## Closure
 })(
-    'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # EventEmitter
- * 
+ *
  * Event emitter engine for `nodeGame`
- * 
+ *
  * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed
- * 
+ *
  * Keeps a register of events and function listeners.
- * 
+ *
  * ---
- *  
+ *
  */
 (function (exports, node) {
-	
-// ## Global scope	
-	
+
+// ## Global scope
+
 var NDDB = node.NDDB;
 
 exports.EventEmitter = EventEmitter;
 
 /**
  * ## EventEmitter constructor
- * 
+ *
  * Creates a new instance of EventEmitter
  */
 function EventEmitter() {
 
-// ## Public properties	
-	
+// ## Public properties
+
 /**
  * ### EventEmitter.global
- * 
- * 
+ *
+ *
  * Global listeners always active during the game
- * 
- */	
+ *
+ */
     this.global = this._listeners = {};
-    
+
  /**
   * ### EventEmitter.local
-  * 
+  *
   * Local listeners erased after every stage update
-  * 
-  */   
+  *
+  */
     this.local = this._localListeners = {};
 
 /**
  * ### EventEmitter.history
- * 
+ *
  * Database of emitted events
- * 
- * 	@see NDDB
- * 	@see EventEmitter.EventHistory
- * 	@see EventEmitter.store
- * 
- */      
+ *
+ * @see NDDB
+ * @see EventEmitter.EventHistory
+ * @see EventEmitter.store
+ *
+ */
     this.history = new EventHistory();
 }
 
@@ -7740,384 +7741,384 @@ function EventEmitter() {
 EventEmitter.prototype = {
 
     constructor: EventEmitter,
-	
+
 /**
  * ### EventEmitter.add
- * 
+ *
  * Registers a global listener for an event
- * 
+ *
  * Listeners registered with this method are valid for the
  * whole length of the game
- * 
+ *
  * @param {string} type The event name
  * @param {function} listener The function to fire
- * 
+ *
  * @see EventEmitter.addLocal
  */
     add: function (type, listener) {
-    	if (!type || !listener) return;
-    	if ('undefined' === typeof this.global[type]){
-    		this.global[type] = [];
-    	}
+        if (!type || !listener) return;
+        if ('undefined' === typeof this.global[type]){
+            this.global[type] = [];
+        }
         node.log('Added Listener: ' + type + ' ' + listener, 'DEBUG');
         this.global[type].push(listener);
     },
-    
+
 /**
  * ### EventEmitter.addLocal
- * 
+ *
  * Registers a local listener for an event
- * 
- * Listeners registered with this method are valid *only* 
+ *
+ * Listeners registered with this method are valid *only*
  * for the same game stage (step) in which they have been
- * registered 
- * 
+ * registered
+ *
  * @param {string} type The event name
  * @param {function} listener The function to fire
- * 
+ *
  * @see EventEmitter.add
- * 
+ *
  */
     addLocal: function (type, listener) {
-    	if (!type || !listener) return;
-    	if ('undefined' === typeof this.local[type]){
+        if (!type || !listener) return;
+        if ('undefined' === typeof this.local[type]){
             this.local[type] = [];
         }
-    	node.log('Added Local Listener: ' + type + ' ' + listener, 'DEBUG');
+        node.log('Added Local Listener: ' + type + ' ' + listener, 'DEBUG');
         this.local[type].push(listener);
     },
 
 /**
  * ### EventEmitter.emit
- * 
+ *
  * Fires all the listeners associated with an event
- * 
+ *
  * @param event {string|object} The event name or an object of the type
- * 
- * 		{ type: 'myEvent',
- * 		  target: this, } // optional
- * 
+ *
+ *      { type: 'myEvent',
+ *        target: this, } // optional
+ *
  * @param {object} p1 Optional. A parameter to be passed to the listener
  * @param {object} p2 Optional. A parameter to be passed to the listener
  * @param {object} p3 Optional. A parameter to be passed to the listener
- * 
+ *
  * @TODO accepts any number of parameters
  */
     emit: function(event, p1, p2, p3) { // Up to 3 parameters
-		var listeners;
+        var listeners;
 
-    	if (!event) return;
-    	
-    	if ('string' === typeof event) {
+        if (!event) return;
+
+        if ('string' === typeof event) {
             event = { type: event };
         }
         if (!event.target){
             event.target = this;
         }
-        
+
         if (!event.type) {  //falsy
             throw new Error("Event object missing 'type' property.");
         }
-    	
-        
+
+
         // Log the event into node.history object, if present
         if (node.conf && node.conf.events) {
-        		
-        	if (node.conf.events.history) {
-	        	var o = {
-		        		event: event.type,
-		        		//target: node.game,
-		        		stage: node.game.stage,
-		        		p1: p1,
-		        		p2: p2,
-		        		p3: p3
-		        	};
-	        	
-	        	this.history.insert(o);
-        	}
-        	
-        	// <!-- Debug
+
+            if (node.conf.events.history) {
+                var o = {
+                    event: event.type,
+                    //target: node.game,
+                    stage: node.game.stage,
+                    p1: p1,
+                    p2: p2,
+                    p3: p3
+                };
+
+                this.history.insert(o);
+            }
+
+            // <!-- Debug
             if (node.conf.events.dumpEvents) {
-            	node.log('F: ' + event.type);
+                node.log('F: ' + event.type);
             }
         }
-        
-        
+
+
         // Fires global listeners
         if (this.global[event.type] instanceof Array) {
             listeners = this.global[event.type];
             for (var i=0, len=listeners.length; i < len; i++){
-            	listeners[i].call(this.game, p1, p2, p3);
+                listeners[i].call(this.game, p1, p2, p3);
             }
         }
-        
+
         // Fires local listeners
         if (this.local[event.type] instanceof Array) {
             listeners = this.local[event.type];
             for (var i=0, len=listeners.length; i < len; i++) {
-            	listeners[i].call(this.game, p1, p2, p3);
+                listeners[i].call(this.game, p1, p2, p3);
             }
         }
-       
+
     },
 
 /**
  * ### EventEmitter.remove
- * 
+ *
  * Deregisters one or multiple event listeners
- * 
+ *
  * @param {string} type The event name
- * @param {function} listener Optional. The specific function to deregister 
- * 
+ * @param {function} listener Optional. The specific function to deregister
+ *
  * @return Boolean TRUE, if the removal is successful
  */
-	remove: function(type, listener) {
-	
-		function removeFromList(type, listener, list) {
-	    	//<!-- console.log('Trying to remove ' + type + ' ' + listener); -->
-	    	
-	        if (list[type] instanceof Array) {
-	        	if (!listener) {
-	        		delete list[type];
-	        		//console.log('Removed listener ' + type);
-	        		return true;
-	        	}
-	        	
-	            var listeners = list[type];
-	            var len=listeners.length;
-	            for (var i=0; i < len; i++) {
-	            	//console.log(listeners[i]);
-	            	
-	                if (listeners[i] == listener) {
-	                    listeners.splice(i, 1);
-	                    node.log('Removed listener ' + type + ' ' + listener, 'DEBUG');
-	                    return true;
-	                }
-	            }
-	        }
-	        
-	        return false;
-		}
-		
-		var r1 = removeFromList(type, listener, this.global);
-		var r2 = removeFromList(type, listener, this.local);
-	
-		return r1 || r2;
-	},
-    
+    remove: function(type, listener) {
+
+        function removeFromList(type, listener, list) {
+            //<!-- console.log('Trying to remove ' + type + ' ' + listener); -->
+
+            if (list[type] instanceof Array) {
+                if (!listener) {
+                    delete list[type];
+                    //console.log('Removed listener ' + type);
+                    return true;
+                }
+
+                var listeners = list[type];
+                var len=listeners.length;
+                for (var i=0; i < len; i++) {
+                    //console.log(listeners[i]);
+
+                    if (listeners[i] == listener) {
+                        listeners.splice(i, 1);
+                        node.log('Removed listener ' + type + ' ' + listener, 'DEBUG');
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        var r1 = removeFromList(type, listener, this.global);
+        var r2 = removeFromList(type, listener, this.local);
+
+        return r1 || r2;
+    },
+
 /**
  * ### EventEmitter.clearStage
- * 
+ *
  * Undocumented (for now)
- * 
+ *
  * @TODO: This method wraps up clearLocalListeners. To re-design.
- */ 
-	clearStage: function(stage) {
-		this.clearLocal();
-		return true;
-	},
-    
+ */
+    clearStage: function(stage) {
+        this.clearLocal();
+        return true;
+    },
+
 /**
  * ### EventEmitter.clearLocalListeners
- * 
+ *
  * Removes all entries from the local listeners register
- * 
+ *
  */
-	clearLocal: function() {
-		node.log('Cleaning Local Listeners', 'DEBUG');
-		for (var key in this.local) {
-			if (this.local.hasOwnProperty(key)) {
-				this.remove(key, this.local[key]);
-			}
-		}
-		
-		this.local = {};
-	},
-    
+    clearLocal: function() {
+        node.log('Cleaning Local Listeners', 'DEBUG');
+        for (var key in this.local) {
+            if (this.local.hasOwnProperty(key)) {
+                this.remove(key, this.local[key]);
+            }
+        }
+
+        this.local = {};
+    },
+
 /**
  * ### EventEmitter.printAll
- * 
- * Prints to console all the registered functions 
+ *
+ * Prints to console all the registered functions
  */
-	printAll: function() {
-		var i;
+    printAll: function() {
+        var i;
 
-		node.log('nodeGame:\tPRINTING ALL LISTENERS', 'DEBUG');
-	    
-		for (i in this.global){
-	    	if (this.global.hasOwnProperty(i)){
-	    		console.log(i + ' ' + i.length);
-	    	}
-	    }
-		
-		for (i in this.local){
-	    	if (this.local.hasOwnProperty(i)){
-	    		console.log(i + ' ' + i.length);
-	    	}
-	    }
-	    
-	}
-	
+        node.log('nodeGame:\tPRINTING ALL LISTENERS', 'DEBUG');
+
+        for (i in this.global){
+            if (this.global.hasOwnProperty(i)){
+                console.log(i + ' ' + i.length);
+            }
+        }
+
+        for (i in this.local){
+            if (this.local.hasOwnProperty(i)){
+                console.log(i + ' ' + i.length);
+            }
+        }
+
+    }
+
 };
 
 
 /**
  * # EventHistory
- * 
+ *
  */
 function EventHistory() {
-	
-	/**
-	 * ### EventHistory.history
-	 * 
-	 * Database of emitted events
-	 * 
-	 * 	@see NDDB
-	 * 	@see EventEmitter.store
-	 * 
-	 */      
-	this.history = new NDDB();
-	    
+
+    /**
+     * ### EventHistory.history
+     *
+     * Database of emitted events
+     *
+     * @see NDDB
+     * @see EventEmitter.store
+     *
+     */
+    this.history = new NDDB();
+
     this.history.h('stage', function(e) {
-    	if (!e) return;
-    	var stage = ('object' === typeof e.stage) ? e.stage
-    											  : node.game.stage;
-    	return node.GameStage.toHash(stage, 'S.s.r');
+        if (!e) return;
+        var stage = ('object' === typeof e.stage) ? e.stage
+                                                  : node.game.stage;
+        return node.GameStage.toHash(stage, 'S.s.r');
     });
-	    
+
 }
 
 EventHistory.prototype.remit = function(stage, discard, keep) {
 
-	if (!this.history.count()) {
-		node.log('no event history was found to remit', 'WARN');
-		return false;
-	}
-			
-	node.log('remitting ' + node.events.history.count() + ' events', 'DEBUG');
-			
-	var hash, db;
-	
-	if (stage) {
-		
-		this.history.rebuildIndexes();
-		
-		hash = new GameStage(session.stage).toHash('S.s.r'); 
-		
-		if (!this.history.stage) {
-			node.log('no old events to re-emit were found during session recovery', 'DEBUG');
-			return false; 
-		}
-		if (!this.history.stage[hash]){
-			node.log('the current stage ' + hash + ' has no events to re-emit', 'DEBUG');
-			return false; 
-		}
-		
-		db = this.history.stage[hash];
-	}
-	else {
-		db = this.history;
-	}
-	
-	// cleaning up the events to remit
-	
-	if (discard) {
-		db.select('event', 'in', discard).remove();
-	}
-	
-	if (keep) {
-		db = db.select('event', 'in', keep);
-	}
-		
-	if (!db.count()){
-		node.log('no valid events to re-emit after cleanup', 'DEBUG');
-		return false;
-	}
-	
-	var remit = function () {
-		node.log('re-emitting ' + db.count() + ' events', 'DEBUG');
-		// We have events that were fired at the stage when 
-		// disconnection happened. Let's fire them again 
-		db.each(function(e) {
-			node.emit(e.event, e.p1, e.p2, e.p3);
-		});
-	};
-	
-	if (node.game.isReady()) {
-		remit.call(node.game);
-	}
-	else {
-		node.on('LOADED', function(){
-			remit.call(node.game);
-		});
-	}
-	
-	return true;
+    if (!this.history.count()) {
+        node.log('no event history was found to remit', 'WARN');
+        return false;
+    }
+
+    node.log('remitting ' + node.events.history.count() + ' events', 'DEBUG');
+
+    var hash, db;
+
+    if (stage) {
+
+        this.history.rebuildIndexes();
+
+        hash = new GameStage(session.stage).toHash('S.s.r');
+
+        if (!this.history.stage) {
+            node.log('no old events to re-emit were found during session recovery', 'DEBUG');
+            return false;
+        }
+        if (!this.history.stage[hash]){
+            node.log('the current stage ' + hash + ' has no events to re-emit', 'DEBUG');
+            return false;
+        }
+
+        db = this.history.stage[hash];
+    }
+    else {
+        db = this.history;
+    }
+
+    // cleaning up the events to remit
+
+    if (discard) {
+        db.select('event', 'in', discard).remove();
+    }
+
+    if (keep) {
+        db = db.select('event', 'in', keep);
+    }
+
+    if (!db.count()){
+        node.log('no valid events to re-emit after cleanup', 'DEBUG');
+        return false;
+    }
+
+    var remit = function () {
+        node.log('re-emitting ' + db.count() + ' events', 'DEBUG');
+        // We have events that were fired at the stage when
+        // disconnection happened. Let's fire them again
+        db.each(function(e) {
+            node.emit(e.event, e.p1, e.p2, e.p3);
+        });
+    };
+
+    if (node.game.isReady()) {
+        remit.call(node.game);
+    }
+    else {
+        node.on('LOADED', function(){
+            remit.call(node.game);
+        });
+    }
+
+    return true;
 };
 
 
 
 /**
  * # Listener
- * 
+ *
  * Undocumented (for now)
  */
 
 function Listener (o) {
-	o = o || {};
-	
-	// event name
-	this.event = o.event; 					
-	
-	// callback function
-	this.listener = o.listener; 			
-	
-	// events with higher priority are executed first
-	this.priority = o.priority || 0; 	
-	
-	// the stage in which the listener is
-	// allowed to be executed
-	this.stage = o.stage || node.game.stage; 	
-	
-	// for how many extra steps is the event 
-	// still valid. -1 = always valid
-	this.ttl = ('undefined' !== typeof o.ttl) ? o.ttl : -1; 
-	
-	// function will be called with
-	// target as 'this'		
-	this.target = o.target || undefined;	
+    o = o || {};
+
+    // event name
+    this.event = o.event;
+
+    // callback function
+    this.listener = o.listener;
+
+    // events with higher priority are executed first
+    this.priority = o.priority || 0;
+
+    // the stage in which the listener is
+    // allowed to be executed
+    this.stage = o.stage || node.game.stage;
+
+    // for how many extra steps is the event
+    // still valid. -1 = always valid
+    this.ttl = ('undefined' !== typeof o.ttl) ? o.ttl : -1;
+
+    // function will be called with
+    // target as 'this'
+    this.target = o.target || undefined;
 }
-	 
+
 // ## Closure
 
 })(
-	'undefined' != typeof node ? node : module.exports,
-	'undefined' != typeof node ? node : module.parent.exports
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
  * # GameStage
- * 
+ *
  * Copyright(c) 2012 Stefano Balietti
- * MIT Licensed 
- * 
- * Representation of the stage of a game: 
- * 
- * 	`stage`: the higher-level building blocks of a game
- * 	`step`: the sub-unit of a stage
- * 	`round`: the number of repetition for a stage. Defaults round = 1
- * 
- * 
+ * MIT Licensed
+ *
+ * Representation of the stage of a game:
+ *
+ *  `stage`: the higher-level building blocks of a game
+ *  `step`: the sub-unit of a stage
+ *  `round`: the number of repetition for a stage. Defaults round = 1
+ *
+ *
  * @see GameLoop
- * 
+ *
  * ---
- * 
+ *
  */
 
 (function(exports, node) {
-	
+
 // ## Global scope
-	
+
 var JSUS = node.JSUS;
 
 // Expose constructor
@@ -8130,236 +8131,236 @@ GameStage.defaults = {};
 
 /**
  * ### GameStage.defaults.hash
- * 
+ *
  * Default hash string for game-stages
- * 
- * 	@see GameStage.toHash
+ *
+ *  @see GameStage.toHash
  */
 GameStage.defaults.hash = 'S.s.r';
 
 /**
  * ## GameStage constructor
- * 
- * Creates an instance of a GameStage 
- * 
+ *
+ * Creates an instance of a GameStage
+ *
  * It accepts an object literal or an hash string as defined in `GameStage.defaults.hash`.
  *
  * The stage and step can be either an integer (1-based index) or a string
  * (valid stage/step name).  The round must be an integer.
- * 
- * If no parameter is passed, all the properties of the GameStage 
+ *
+ * If no parameter is passed, all the properties of the GameStage
  * object are set to 0
- * 
+ *
  * @param {object|string} gs An object literal | hash string representing the game stage
- * 
- * 	@see GameStage.defaults.hash 
+ *
+ * @see GameStage.defaults.hash
  */
 function GameStage(gs) {
 
-// ## Public properties	
+// ## Public properties
 
 /**
  * ### GameStage.stage
- * 
+ *
  * The N-th game-block (stage) in the game-loop currently being executed
- * 
- * 	@see GameLoop
- * 
- */	
-	this.stage = 0;
+ *
+ * @see GameLoop
+ *
+ */
+    this.stage = 0;
 
 /**
  * ### GameStage.step
- * 
+ *
  * The N-th game-block (step) nested in the current stage
- * 
- * 	@see GameStage.stage
- * 
- */	
-	this.step =	1;
+ *
+ *  @see GameStage.stage
+ *
+ */
+    this.step = 1;
 
 /**
  * ### GameStage.round
- * 
- * The number of times the current stage was repeated 
- * 
- */		
-	this.round = 1;
+ *
+ * The number of times the current stage was repeated
+ *
+ */
+    this.round = 1;
 
-	if (!gs || 'undefined' === typeof gs) {
-	    this.stage = 0;
-	    this.step  = 0;
-	    this.round = 0;
-	}
-	else if ('string' === typeof gs) {
-	    var tokens = gs.split('.');
-	    var stageNum = parseInt(tokens[0], 10);
-	    var stepNum  = parseInt(tokens[1], 10);
-	    var roundNum = parseInt(tokens[2], 10);
-	    
-	    if (tokens[0])
-		this.stage = !isNaN(stageNum) ? stageNum : tokens[0];
-	    
-	    if ('undefined' !== typeof tokens[1])
-		this.step  = !isNaN(stepNum)  ? stepNum  : tokens[1];
+    if (!gs || 'undefined' === typeof gs) {
+        this.stage = 0;
+        this.step  = 0;
+        this.round = 0;
+    }
+    else if ('string' === typeof gs) {
+        var tokens = gs.split('.');
+        var stageNum = parseInt(tokens[0], 10);
+        var stepNum  = parseInt(tokens[1], 10);
+        var roundNum = parseInt(tokens[2], 10);
 
-	    if ('undefined' !== typeof tokens[2])
-		this.round = roundNum;
-	}
-	else if ('object' === typeof gs) {	
-	    if ('undefined' !== typeof gs.stage)
-		this.stage = gs.stage;
-	    
-	    if ('undefined' !== typeof gs.step)
-			this.step  = gs.step;
-	    
-	    if ('undefined' !== typeof gs.round)
-		this.round = gs.round;
-	}
-	
+        if (tokens[0])
+            this.stage = !isNaN(stageNum) ? stageNum : tokens[0];
+
+        if ('undefined' !== typeof tokens[1])
+            this.step  = !isNaN(stepNum)  ? stepNum  : tokens[1];
+
+        if ('undefined' !== typeof tokens[2])
+            this.round = roundNum;
+    }
+    else if ('object' === typeof gs) {
+        if ('undefined' !== typeof gs.stage)
+            this.stage = gs.stage;
+
+        if ('undefined' !== typeof gs.step)
+            this.step  = gs.step;
+
+        if ('undefined' !== typeof gs.round)
+            this.round = gs.round;
+    }
+
 }
 
 /**
  * ## GameStage.toString
- * 
+ *
  * Converts the current instance of GameStage to a string
- * 
+ *
  * @return {string} out The string representation of the stage of the GameStage
  */
 GameStage.prototype.toString = function() {
-	var out = this.toHash('S.s.r');
-	return out;
+    var out = this.toHash('S.s.r');
+    return out;
 };
 
 /**
  * ## GameStage.toHash
- * 
+ *
  * Returns a simplified hash of the stage of the GameStage,
  * according to the input string
- * 
+ *
  * @param {string} str The hash code
  * @return {string} hash The hashed game stages
- * 
+ *
  * @see GameStage.toHash (static)
  */
 GameStage.prototype.toHash = function(str) {
-	return GameStage.toHash(this, str);
+    return GameStage.toHash(this, str);
 };
 
 /**
  * ## GameStage.toHash (static)
- * 
+ *
  * Returns a simplified hash of the stage of the GameStage,
- * according to the input string. 
- * 
+ * according to the input string.
+ *
  * The following characters are valid to determine the hash string
- * 
- * 	- S: stage
- * 	- s: step
- * 	- r: round
- * 
- * E.g. 
- * 
+ *
+ *  - S: stage
+ *  - s: step
+ *  - r: round
+ *
+ * E.g.
+ *
  * ```javascript
- * 		var gs = new GameStage({
- * 							round: 1,
- * 							stage: 2,
- * 							step: 1
- * 		});
- * 
- * 		gs.toHash('(R) S.s'); // (1) 2.1
+ *      var gs = new GameStage({
+ *          round: 1,
+ *          stage: 2,
+ *          step: 1
+ *      });
+ *
+ *      gs.toHash('(R) S.s'); // (1) 2.1
  * ```
- * 
+ *
  * @param {GameStage} gs The game stage to hash
  * @param {string} str The hash code
  * @return {string} hash The hashed game stages
  */
 GameStage.toHash = function(gs, str) {
-	if (!gs || 'object' !== typeof gs) return false;
-	if (!str || !str.length) return gs.toString();
-	
-	var hash = '',
-		symbols = 'Ssr',
-		properties = ['stage', 'step', 'round'];
-	
-	for (var i = 0; i < str.length; i++) {
-		var idx = symbols.indexOf(str[i]); 
-		hash += (idx < 0) ? str[i] : gs[properties[idx]];
-	}
-	return hash;
+    if (!gs || 'object' !== typeof gs) return false;
+    if (!str || !str.length) return gs.toString();
+
+    var hash = '',
+        symbols = 'Ssr',
+        properties = ['stage', 'step', 'round'];
+
+    for (var i = 0; i < str.length; i++) {
+        var idx = symbols.indexOf(str[i]);
+        hash += (idx < 0) ? str[i] : gs[properties[idx]];
+    }
+    return hash;
 };
 
 /**
  * ## GameStage.compare (static)
- * 
+ *
  * Compares two GameStage objects|hash strings and returns
- * 
+ *
  *  - 0 if they represent the same game stage
- *  - a positive number if gs1 is ahead of gs2 
- *  - a negative number if gs2 is ahead of gs1 
- * 
+ *  - a positive number if gs1 is ahead of gs2
+ *  - a negative number if gs2 is ahead of gs1
+ *
  * The accepted hash string format is the following: 'S.s.r'.
  * Refer to `GameStage.toHash` for the semantic of the characters.
- * 
- * 
+ *
+ *
  * @param {GameStage|string} gs1 The first GameStage object|string to compare
  * @param {GameStage|string} gs2 The second GameStage object|string to compare
- * 
+ *
  * @return {Number} result The result of the comparison
- * 
+ *
  * @see GameStage.toHash (static)
- * 
+ *
  */
 GameStage.compare = function(gs1, gs2) {
-	if (!gs1 && !gs2) return 0;
-	if (!gs2) return 1;
-	if (!gs1) return -1;
+    if (!gs1 && !gs2) return 0;
+    if (!gs2) return 1;
+    if (!gs1) return -1;
 
-	// Convert the parameters to objects, if an hash string was passed
-	if ('string' === typeof gs1) gs1 = new GameStage(gs1);
-	if ('string' === typeof gs2) gs2 = new GameStage(gs2);
-	
-	
-	// <!--		
-	//		console.log('COMPARAING GSs','DEBUG')
-	//		console.log(gs1,'DEBUG');
-	//		console.log(gs2,'DEBUG');
-	// -->
-	var result = gs1.stage - gs2.stage;
-	
-	if (result === 0 && 'undefined' !== typeof gs1.round) {
-		result = gs1.round - gs2.round;
-		
-		if (result === 0 && 'undefined' !== typeof gs1.step) {
-			result = gs1.step - gs2.step;
-		}
-	}
-	
-	
-//	<!-- console.log('EQUAL? ' + result); -->
+    // Convert the parameters to objects, if an hash string was passed
+    if ('string' === typeof gs1) gs1 = new GameStage(gs1);
+    if ('string' === typeof gs2) gs2 = new GameStage(gs2);
 
-	
-	return result;
+
+    // <!--
+    //      console.log('COMPARAING GSs','DEBUG')
+    //      console.log(gs1,'DEBUG');
+    //      console.log(gs2,'DEBUG');
+    // -->
+    var result = gs1.stage - gs2.stage;
+
+    if (result === 0 && 'undefined' !== typeof gs1.round) {
+        result = gs1.round - gs2.round;
+
+        if (result === 0 && 'undefined' !== typeof gs1.step) {
+            result = gs1.step - gs2.step;
+        }
+    }
+
+
+//  <!-- console.log('EQUAL? ' + result); -->
+
+
+    return result;
 };
 
 /**
  * ## GameStage.stringify (static)
- * 
+ *
  * Converts an object GameStage-like to its string representation
- * 
- * @param {GameStage} gs The object to convert to string	
+ *
+ * @param {GameStage} gs The object to convert to string
  * @return {string} out The string representation of a GameStage object
- */ 
+ */
 GameStage.stringify = function(gs) {
-	if (!gs) return;
-	var out = new GameStage(gs).toHash('(r) S.s_i');
-	return out;
-}; 
+    if (!gs) return;
+    var out = new GameStage(gs).toHash('(r) S.s_i');
+    return out;
+};
 
 // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports,
-	'undefined' != typeof node ? node : module.parent.exports
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
@@ -9248,7 +9249,7 @@ exports.Stager = Stager;
  * Creates a new empty instance of Stager
  */
 function Stager() {
-	this.clear();
+    this.clear();
 }
 
 // ## Stager methods
@@ -9261,73 +9262,89 @@ function Stager() {
  * Called by the constructor.
  */
 Stager.prototype.clear = function() {
-	/**
-	 * ### Stager.steps
-	 *
-	 * Step object container
-	 *
-	 * key: step ID,  value: step object
-	 *
-	 * @see Stager.addStep
-	 */
-	this.steps = {};
+    /**
+     * ### Stager.steps
+     *
+     * Step object container
+     *
+     * key: step ID,  value: step object
+     *
+     * @see Stager.addStep
+     */
+    this.steps = {};
 
-	/**
-	 * ### Stager.stages
-	 *
-	 * Stage object container
-	 *
-	 * key: stage ID,  value: stage object
-	 *
-	 * Stage aliases are stored the same way, with a reference to the original
-	 * stage object as the value.
-	 *
-	 * @see Stager.addStage
-	 */
-	this.stages = {};
-
-
-	/**
-	 * ### Stager.sequence
-	 *
-	 * Sequence block container
-	 *
-	 * Stores the game plan in 'simple mode'.
-	 *
-	 * @see Stager.gameover
-	 * @see Stager.next
-	 * @see Stager.repeat
-	 * @see Stager.loop
-	 * @see Stager.doLoop
-	 */
-	this.sequence = [];
+    /**
+     * ### Stager.stages
+     *
+     * Stage object container
+     *
+     * key: stage ID,  value: stage object
+     *
+     * Stage aliases are stored the same way, with a reference to the original
+     * stage object as the value.
+     *
+     * @see Stager.addStage
+     */
+    this.stages = {};
 
 
-	/**
-	 * ### Stager.generalNextFunction
-	 *
-	 * General next-stage decider function
-	 *
-	 * Returns the id of the next game step.
-	 * Available only when nodegame is executed in _flexible_ mode.
-	 *
-	 * @see Stager.registerGeneralNext
-	 */
-	this.generalNextFunction = null;
+    /**
+     * ### Stager.sequence
+     *
+     * Sequence block container
+     *
+     * Stores the game plan in 'simple mode'.
+     *
+     * @see Stager.gameover
+     * @see Stager.next
+     * @see Stager.repeat
+     * @see Stager.loop
+     * @see Stager.doLoop
+     */
+    this.sequence = [];
 
-	/**
-	 * ### Stager.nextFunctions
-	 *
-	 * Per-stage next-stage decider function
-	 *
-	 * key: stage ID,  value: callback function
-	 *
-	 * Stores functions to be called to yield the id of the next game stage
-	 * for a specific previous stage.
-	 *
-	 * @see Stager.registerNext
-	 */
-	this.nextFunctions = {};
+
+    /**
+     * ### Stager.generalNextFunction
+     *
+     * General next-stage decider function
+     *
+     * Returns the id of the next game step.
+     * Available only when nodegame is executed in _flexible_ mode.
+     *
+     * @see Stager.registerGeneralNext
+     */
+    this.generalNextFunction = null;
+
+    /**
+     * ### Stager.nextFunctions
+     *
+     * Per-stage next-stage decider function
+     *
+     * key: stage ID,  value: callback function
+     *
+     * Stores functions to be called to yield the id of the next game stage
+     * for a specific previous stage.
+     *
+     * @see Stager.registerNext
+     */
+    this.nextFunctions = {};
+
+
+    /**
+     * ### Stager.defaultStepRule
+     *
+     * Default step-rule function
+     *
+     * This function decides whether it is possible to proceed to the next
+     * step/stage. If a step/stage object defines a `steprule` property,
+     * then that function is used instead.
+     *
+     * @see Stager.setDefaultStepRule
+     * @see Stager.getDefaultStepRule
+     * @see GameLoop.getStepRule
+     */
+    this.setDefaultStepRule();
 
     return this;
 };
@@ -9344,12 +9361,12 @@ Stager.prototype.clear = function() {
  *  the next stage, 'NODEGAME_GAMEOVER' to end the game or false for sequence end.
  */
 Stager.prototype.registerGeneralNext = function(func) {
-	if ('function' !== typeof func) {
-		node.warn("registerGeneralNext didn't receive function parameter");
-		return;
-	}
+    if ('function' !== typeof func) {
+        node.warn("registerGeneralNext didn't receive function parameter");
+        return;
+    }
 
-	this.generalNextFunction = func;
+    this.generalNextFunction = func;
 };
 
 /**
@@ -9357,28 +9374,54 @@ Stager.prototype.registerGeneralNext = function(func) {
  *
  * Registers a step-decider callback for a specific stage
  *
- * The function overrides the general callback for the specific stage, 
+ * The function overrides the general callback for the specific stage,
  * and determines the next stage.
  * Available only when nodegame is executed in _flexible_ mode.
  *
  * @param {string} id The name of the stage after which the decider function will be called
  * @param {function} func The decider callback.  It should return the name of
  *  the next stage, 'NODEGAME_GAMEOVER' to end the game or false for sequence end.
- *  
+ *
  * @see Stager.registerGeneralNext
  */
 Stager.prototype.registerNext = function(id, func) {
-	if ('function' !== typeof func) {
-		node.warn("registerNext didn't receive function parameter");
-		return;
-	}
+    if ('function' !== typeof func) {
+        node.warn("registerNext didn't receive function parameter");
+        return;
+    }
 
-	if (!this.stages[id]) {
-		node.warn('registerNext received nonexistent stage id');
-		return;
-	}
+    if (!this.stages[id]) {
+        node.warn('registerNext received nonexistent stage id');
+        return;
+    }
 
-	this.nextFunctions[id] = func;
+    this.nextFunctions[id] = func;
+};
+
+/**
+ * ### Stager.setDefaultStepRule
+ *
+ * Sets the default step-rule function
+ *
+ * @param {function} steprule Optional. The step-rule function.
+ *   If not given, the initial default is restored.
+ *
+ * @see Stager.defaultStepRule
+ */
+Stager.prototype.setDefaultStepRule = function(steprule) {
+    this.defaultStepRule = steprule ?
+        steprule : function() { return true; };
+};
+
+/**
+ * ### Stager.getDefaultStepRule
+ *
+ * Returns the default step-rule function
+ *
+ * @return {function} The default step-rule function
+ */
+Stager.prototype.getDefaultStepRule = function() {
+    return this.defaultStepRule;
 };
 
 /**
@@ -9394,13 +9437,13 @@ Stager.prototype.registerNext = function(id, func) {
  * @param {object} step A valid step object.  Shallowly copied.
  */
 Stager.prototype.addStep = function(step) {
-	if (!this.checkStepValidity(step)) {
-		node.warn('addStep received invalid step');
-		return false;
-	}
+    if (!this.checkStepValidity(step)) {
+        node.warn('addStep received invalid step');
+        return false;
+    }
 
-	this.steps[step.id] = step;
-	return true;
+    this.steps[step.id] = step;
+    return true;
 };
 
 /**
@@ -9420,28 +9463,28 @@ Stager.prototype.addStep = function(step) {
  * @param {object} stage A valid stage or step object.  Shallowly copied.
  *
  * @return {boolean} true on success, false on error
- * 
+ *
  * @see Stager.addStep
  */
 Stager.prototype.addStage = function(stage) {
-	// Handle wrapped steps:
-	if (this.checkStepValidity(stage)) {
-		if (!this.addStep(stage)) return false;
-		if (!this.addStage({
-			id: stage.id,
-			steps: [ stage.id ]
-		})) return false;
+    // Handle wrapped steps:
+    if (this.checkStepValidity(stage)) {
+        if (!this.addStep(stage)) return false;
+        if (!this.addStage({
+            id: stage.id,
+            steps: [ stage.id ]
+        })) return false;
 
-		return true;
-	}
+        return true;
+    }
 
-	if (!this.checkStageValidity(stage)) {
-		node.warn('addStage received invalid stage');
-		return false;
-	}
+    if (!this.checkStageValidity(stage)) {
+        node.warn('addStage received invalid stage');
+        return false;
+    }
 
-	this.stages[stage.id] = stage;
-	return true;
+    this.stages[stage.id] = stage;
+    return true;
 };
 
 /**
@@ -9452,9 +9495,9 @@ Stager.prototype.addStage = function(stage) {
  * @return {Stager} this object
  */
 Stager.prototype.init = function() {
-	this.sequence = [];
+    this.sequence = [];
 
-	return this;
+    return this;
 };
 
 /**
@@ -9465,9 +9508,9 @@ Stager.prototype.init = function() {
  * @return {Stager} this object
  */
 Stager.prototype.gameover = function() {
-	this.sequence.push({ type: 'gameover' });
+    this.sequence.push({ type: 'gameover' });
 
-	return this;
+    return this;
 };
 
 /**
@@ -9481,24 +9524,24 @@ Stager.prototype.gameover = function() {
  *
  * @param {string} id A valid stage name with optional alias
  *
- * @return {Stager} this object on success, null on error
+ * @return {Stager|null} this object on success, null on error
  *
  * @see Stager.addStage
  */
 Stager.prototype.next = function(id) {
-	var stageName = this.handleAlias(id);
+    var stageName = this.handleAlias(id);
 
-	if (stageName === null) {
-		node.warn('next received invalid stage name');
-		return null;
-	}
+    if (stageName === null) {
+        node.warn('next received invalid stage name');
+        return null;
+    }
 
-	this.sequence.push({
-		type: 'plain',
-		id: stageName
-	});
+    this.sequence.push({
+        type: 'plain',
+        id: stageName
+    });
 
-	return this;
+    return this;
 };
 
 /**
@@ -9509,26 +9552,26 @@ Stager.prototype.next = function(id) {
  * @param {string} id A valid stage name with optional alias
  * @param {number} nRepeats The number of repetitions
  *
- * @return {Stager} this object on success, null on error
+ * @return {Stager|null} this object on success, null on error
  *
  * @see Stager.addStage
  * @see Stager.next
  */
 Stager.prototype.repeat = function(id, nRepeats) {
-	var stageName = this.handleAlias(id);
+    var stageName = this.handleAlias(id);
 
-	if (stageName === null) {
-		node.warn('repeat received invalid stage name');
-		return null;
-	}
+    if (stageName === null) {
+        node.warn('repeat received invalid stage name');
+        return null;
+    }
 
-	this.sequence.push({
-		type: 'repeat',
-		id: stageName,
-		num: nRepeats
-	});
+    this.sequence.push({
+        type: 'repeat',
+        id: stageName,
+        num: nRepeats
+    });
 
-	return this;
+    return this;
 };
 
 /**
@@ -9542,27 +9585,27 @@ Stager.prototype.repeat = function(id, nRepeats) {
  * @param {string} id A valid stage name with optional alias
  * @param {function} func Callback returning true for repetition
  *
- * @return {Stager} this object on success, null on error
+ * @return {Stager|null} this object on success, null on error
  *
  * @see Stager.addStage
  * @see Stager.next
  * @see Stager.doLoop
  */
 Stager.prototype.loop = function(id, func) {
-	var stageName = this.handleAlias(id);
+    var stageName = this.handleAlias(id);
 
-	if (stageName === null) {
-		node.warn('loop received invalid stage name');
-		return null;
-	}
+    if (stageName === null) {
+        node.warn('loop received invalid stage name');
+        return null;
+    }
 
-	this.sequence.push({
-		type: 'loop',
-		id: stageName,
-		cb: func
-	});
+    this.sequence.push({
+        type: 'loop',
+        id: stageName,
+        cb: func
+    });
 
-	return this;
+    return this;
 };
 
 /**
@@ -9576,27 +9619,27 @@ Stager.prototype.loop = function(id, func) {
  * @param {string} id A valid stage name with optional alias
  * @param {function} func Callback returning true for repetition
  *
- * @return {Stager} this object on success, null on error
+ * @return {Stager|null} this object on success, null on error
  *
  * @see Stager.addStage
  * @see Stager.next
  * @see Stager.loop
  */
 Stager.prototype.doLoop = function(id, func) {
-	var stageName = this.handleAlias(id);
+    var stageName = this.handleAlias(id);
 
-	if (stageName === null) {
-		node.warn('doLoop received invalid stage name');
-		return null;
-	}
+    if (stageName === null) {
+        node.warn('doLoop received invalid stage name');
+        return null;
+    }
 
-	this.sequence.push({
-		type: 'doLoop',
-		id: stageName,
-		cb: func
-	});
+    this.sequence.push({
+        type: 'doLoop',
+        id: stageName,
+        cb: func
+    });
 
-	return this;
+    return this;
 };
 
 /**
@@ -9608,107 +9651,107 @@ Stager.prototype.doLoop = function(id, func) {
  *  'hsteps' for an array of human-readable step descriptions,
  *  'o' for the internal JavaScript object
  *
- * @return {array|object} The stage sequence in requested format. Null on error.
+ * @return {array|object|null} The stage sequence in requested format. Null on error.
  */
 Stager.prototype.getSequence = function(format) {
-	var result;
-	var seqIdx;
-	var seqObj;
-	var stepPrefix;
-	var gameOver = false;
+    var result;
+    var seqIdx;
+    var seqObj;
+    var stepPrefix;
+    var gameOver = false;
 
-	switch (format) {
-	case 'hstages':
-		result = [];
+    switch (format) {
+    case 'hstages':
+        result = [];
 
-		for (seqIdx in this.sequence) {
-			if (this.sequence.hasOwnProperty(seqIdx)) {
-				seqObj = this.sequence[seqIdx];
+        for (seqIdx in this.sequence) {
+            if (this.sequence.hasOwnProperty(seqIdx)) {
+                seqObj = this.sequence[seqIdx];
 
-				switch (seqObj.type) {
-				case 'gameover':
-					result.push('[game over]');
-					break;
+                switch (seqObj.type) {
+                case 'gameover':
+                    result.push('[game over]');
+                    break;
 
-				case 'plain':
-					result.push(seqObj.id);
-					break;
+                case 'plain':
+                    result.push(seqObj.id);
+                    break;
 
-				case 'repeat':
-					result.push(seqObj.id + ' [x' + seqObj.num + ']');
-					break;
+                case 'repeat':
+                    result.push(seqObj.id + ' [x' + seqObj.num + ']');
+                    break;
 
-				case 'loop':
-					result.push(seqObj.id + ' [loop]');
-					break;
+                case 'loop':
+                    result.push(seqObj.id + ' [loop]');
+                    break;
 
-				case 'doLoop':
-					result.push(seqObj.id + ' [doLoop]');
-					break;
+                case 'doLoop':
+                    result.push(seqObj.id + ' [doLoop]');
+                    break;
 
-				default:
-					node.warn('unknown sequence object type');
-					break;
-				}
-			}
-		}
-		break;
-	
-	case 'hsteps':
-		result = [];
+                default:
+                    node.warn('unknown sequence object type');
+                    break;
+                }
+            }
+        }
+        break;
 
-		for (seqIdx in this.sequence) {
-			if (this.sequence.hasOwnProperty(seqIdx)) {
-				seqObj = this.sequence[seqIdx];
-				stepPrefix = seqObj.id + '.';
+    case 'hsteps':
+        result = [];
 
-				switch (seqObj.type) {
-				case 'gameover':
-					result.push('[game over]');
-					break;
+        for (seqIdx in this.sequence) {
+            if (this.sequence.hasOwnProperty(seqIdx)) {
+                seqObj = this.sequence[seqIdx];
+                stepPrefix = seqObj.id + '.';
 
-				case 'plain':
-					this.stages[seqObj.id].steps.map(function(stepID) {
-						result.push(stepPrefix + stepID);
-					});
-					break;
+                switch (seqObj.type) {
+                case 'gameover':
+                    result.push('[game over]');
+                    break;
 
-				case 'repeat':
-					this.stages[seqObj.id].steps.map(function(stepID) {
-						result.push(stepPrefix + stepID + ' [x' + seqObj.num + ']');
-					});
-					break;
+                case 'plain':
+                    this.stages[seqObj.id].steps.map(function(stepID) {
+                        result.push(stepPrefix + stepID);
+                    });
+                    break;
 
-				case 'loop':
-					this.stages[seqObj.id].steps.map(function(stepID) {
-						result.push(stepPrefix + stepID + ' [loop]');
-					});
-					break;
+                case 'repeat':
+                    this.stages[seqObj.id].steps.map(function(stepID) {
+                        result.push(stepPrefix + stepID + ' [x' + seqObj.num + ']');
+                    });
+                    break;
 
-				case 'doLoop':
-					this.stages[seqObj.id].steps.map(function(stepID) {
-						result.push(stepPrefix + stepID + ' [doLoop]');
-					});
-					break;
+                case 'loop':
+                    this.stages[seqObj.id].steps.map(function(stepID) {
+                        result.push(stepPrefix + stepID + ' [loop]');
+                    });
+                    break;
 
-				default:
-					node.warn('unknown sequence object type');
-					break;
-				}
-			}
-		}
-		break;
+                case 'doLoop':
+                    this.stages[seqObj.id].steps.map(function(stepID) {
+                        result.push(stepPrefix + stepID + ' [doLoop]');
+                    });
+                    break;
 
-	case 'o':
-		result = this.sequence;
-		break;
+                default:
+                    node.warn('unknown sequence object type');
+                    break;
+                }
+            }
+        }
+        break;
 
-	default:
-		node.warn('getSequence got invalid format characters');
-		return null;
-	}
+    case 'o':
+        result = this.sequence;
+        break;
 
-	return result;
+    default:
+        node.warn('getSequence got invalid format characters');
+        return null;
+    }
+
+    return result;
 };
 
 /**
@@ -9718,105 +9761,106 @@ Stager.prototype.getSequence = function(format) {
  *
  * @param {string} id A valid stage name
  *
- * @return {array} The steps in the stage
+ * @return {array|null} The steps in the stage. Null on invalid stage.
  */
 Stager.prototype.getStepsFromStage = function(id) {
-	return this.stages[id].steps;
+    if (!this.stages[id]) return null;
+    return this.stages[id].steps;
 };
 
 // DEBUG:  Run sequence.  Should be deleted later on.
 Stager.prototype.seqTestRun = function(expertMode, firstStage) {
-	var seqObj;
-	var curStage;
-	var stageNum;
-	
-	console.log('* Commencing sequence test run!');
+    var seqObj;
+    var curStage;
+    var stageNum;
 
-	if (!expertMode) {
-		for (stageNum in this.sequence) {
-			if (this.sequence.hasOwnProperty(stageNum)) {
-				seqObj = this.sequence[stageNum];
-				console.log('** num: ' + stageNum + ', type: ' + seqObj.type);
-				switch (seqObj.type) {
-				case 'gameover':
-					console.log('* Game Over.');
-					return;
+    console.log('* Commencing sequence test run!');
 
-				case 'plain':
-					this.stageTestRun(seqObj.id);
-					break;
+    if (!expertMode) {
+        for (stageNum in this.sequence) {
+            if (this.sequence.hasOwnProperty(stageNum)) {
+                seqObj = this.sequence[stageNum];
+                console.log('** num: ' + stageNum + ', type: ' + seqObj.type);
+                switch (seqObj.type) {
+                case 'gameover':
+                    console.log('* Game Over.');
+                    return;
 
-				case 'repeat':
-					for (var i = 0; i < seqObj.num; i++) {
-						this.stageTestRun(seqObj.id);
-					}
-					break;
+                case 'plain':
+                    this.stageTestRun(seqObj.id);
+                    break;
 
-				case 'loop':
-					while (seqObj.cb()) {
-						this.stageTestRun(seqObj.id);
-					}
-					break;
+                case 'repeat':
+                    for (var i = 0; i < seqObj.num; i++) {
+                        this.stageTestRun(seqObj.id);
+                    }
+                    break;
 
-				case 'doLoop':
-					do {
-						this.stageTestRun(seqObj.id);
-					} while (seqObj.cb());
-					break;
+                case 'loop':
+                    while (seqObj.cb()) {
+                        this.stageTestRun(seqObj.id);
+                    }
+                    break;
 
-				default:
-					node.warn('unknown sequence object type');
-					break;
-				}
-			}
-		}
-	}
-	else {
-		// Get first stage:
-		if (firstStage) {
-			curStage = firstStage;
-		}
-		else if (this.generalNextFunction) {
-			curStage = this.generalNextFunction();
-		}
-		else {
-			curStage = null;
-		}
+                case 'doLoop':
+                    do {
+                        this.stageTestRun(seqObj.id);
+                    } while (seqObj.cb());
+                    break;
 
-		while (curStage) {
-			this.stageTestRun(curStage);
+                default:
+                    node.warn('unknown sequence object type');
+                    break;
+                }
+            }
+        }
+    }
+    else {
+        // Get first stage:
+        if (firstStage) {
+            curStage = firstStage;
+        }
+        else if (this.generalNextFunction) {
+            curStage = this.generalNextFunction();
+        }
+        else {
+            curStage = null;
+        }
 
-			// Get next stage:
-			if (this.nextFunctions[curStage]) {
-				curStage = this.nextFunctions[curStage]();
-			}
-			else if (this.generalNextFunction) {
-				curStage = this.generalNextFunction();
-			}
-			else {
-				curStage = null;
-			}
+        while (curStage) {
+            this.stageTestRun(curStage);
 
-			// Check stage validity:
-			if (curStage !== null && !this.stages[curStage]) {
-				node.warn('next-deciding callback yielded invalid stage');
-				curStage = null;
-			}
-		}
-	}
+            // Get next stage:
+            if (this.nextFunctions[curStage]) {
+                curStage = this.nextFunctions[curStage]();
+            }
+            else if (this.generalNextFunction) {
+                curStage = this.generalNextFunction();
+            }
+            else {
+                curStage = null;
+            }
+
+            // Check stage validity:
+            if (curStage !== null && !this.stages[curStage]) {
+                node.warn('next-deciding callback yielded invalid stage');
+                curStage = null;
+            }
+        }
+    }
 };
 
 // DEBUG:  Run stage.  Should be deleted later on.
 Stager.prototype.stageTestRun = function(stageId) {
-	var steps = this.stages[stageId].steps;
-	var stepId;
+    var steps = this.stages[stageId].steps;
+    var stepId;
 
-	for (var i in steps) {
-		if (steps.hasOwnProperty(i)) {
-			stepId = steps[i];
-			this.steps[stepId].cb();
-		}
-	}
+    for (var i in steps) {
+        if (steps.hasOwnProperty(i)) {
+            stepId = steps[i];
+            this.steps[stepId].cb();
+        }
+    }
 };
 
 
@@ -9838,11 +9882,11 @@ Stager.prototype.stageTestRun = function(stageId) {
  * @api private
  */
 Stager.prototype.checkStepValidity = function(step) {
-	if (!step) return false;
-	if ('string' !== typeof step.id) return false;
-	if ('function' !== typeof step.cb) return false;
+    if (!step) return false;
+    if ('string' !== typeof step.id) return false;
+    if ('function' !== typeof step.cb) return false;
 
-	return true;
+    return true;
 };
 
 /**
@@ -9863,18 +9907,18 @@ Stager.prototype.checkStepValidity = function(step) {
  * @api private
  */
 Stager.prototype.checkStageValidity = function(stage) {
-	if (!stage) return false;
-	if ('string' !== typeof stage.id) return false;
-	if (!stage.steps && !stage.steps.length) return false;
+    if (!stage) return false;
+    if ('string' !== typeof stage.id) return false;
+    if (!stage.steps && !stage.steps.length) return false;
 
-	// Check whether the referenced steps exist:
-	for (var i in stage.steps) {
+    // Check whether the referenced steps exist:
+    for (var i in stage.steps) {
         if (stage.steps.hasOwnProperty(i)) {
             if (!this.steps[stage.steps[i]]) return false;
         }
-	}
+    }
 
-	return true;
+    return true;
 };
 
 /**
@@ -9888,7 +9932,7 @@ Stager.prototype.checkStageValidity = function(stage) {
  *
  * @param {string} nameAndAlias The stage-name string
  *
- * @return {string} null on error,
+ * @return {string|null} null on error,
  *  the alias part of the parameter if it exists,
  *  the stageID part otherwise
  *
@@ -9897,40 +9941,40 @@ Stager.prototype.checkStageValidity = function(stage) {
  * @api private
  */
 Stager.prototype.handleAlias = function(nameAndAlias) {
-	var tokens = nameAndAlias.split(' AS ');
-	var id = tokens[0].trim();
-	var alias = tokens[1] ? tokens[1].trim() : undefined;
-	var stageName = alias || id;
-	var seqIdx;
+    var tokens = nameAndAlias.split(' AS ');
+    var id = tokens[0].trim();
+    var alias = tokens[1] ? tokens[1].trim() : undefined;
+    var stageName = alias || id;
+    var seqIdx;
 
-	// Check ID validity:
-	if (!this.stages[id]) {
-		node.warn('handleAlias received nonexistent stage id');
-		return null;
-	}
+    // Check ID validity:
+    if (!this.stages[id]) {
+        node.warn('handleAlias received nonexistent stage id');
+        return null;
+    }
 
-	// Check uniqueness:
-	for (seqIdx in this.sequence) {
-		if (this.sequence.hasOwnProperty(seqIdx) &&
-				this.sequence[seqIdx].id === stageName) {
-			node.warn('handleAlias received non-unique stage name');
-			return null;
-		}
-	}
+    // Check uniqueness:
+    for (seqIdx in this.sequence) {
+        if (this.sequence.hasOwnProperty(seqIdx) &&
+                this.sequence[seqIdx].id === stageName) {
+            node.warn('handleAlias received non-unique stage name');
+            return null;
+        }
+    }
 
-	// Add alias:
-	if (alias) {
-		this.stages[alias] = this.stages[id];
-		return alias;
-	}
+    // Add alias:
+    if (alias) {
+        this.stages[alias] = this.stages[id];
+        return alias;
+    }
 
-	return id;
+    return id;
 };
 
 // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports,
-	'undefined' != typeof node ? node : module.parent.exports
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
@@ -9963,12 +10007,12 @@ GameLoop.NO_SEQ   = 'NODEGAME_NO_SEQ';
  * If the Stager parameter has an empty sequence, flexibile mode is assumed
  * (used by e.g. GameLoop.next).
  *
- * @param {object} plot Optional. The Stager object.
+ * @param {Stager} plot Optional. The Stager object.
  *
  * @see Stager
  */
 function GameLoop(plot) {
-	this.plot = plot || null;
+    this.plot = plot || null;
 }
 
 // ## GameLoop methods
@@ -9978,12 +10022,12 @@ function GameLoop(plot) {
  *
  * Initializes the GameLoop with a plot
  *
- * @param {object} plot The Stager object
+ * @param {Stager} plot The Stager object
  *
  * @see Stager
  */
 GameLoop.prototype.init = function(plot) {
-	this.plot = plot;
+    this.plot = plot;
 };
 
 /**
@@ -9993,168 +10037,168 @@ GameLoop.prototype.init = function(plot) {
  *
  * If the step in `curStage` is an integer and out of bounds, that bound is assumed.
  *
- * @param {object} curStage Optional. The GameStage object from which to get
+ * @param {GameStage} curStage Optional. The GameStage object from which to get
  *  the next one. Defaults to returning the first stage.
  *
- * @return {object} The GameStage describing the next stage
+ * @return {GameStage} The GameStage describing the next stage
  *
  * @see GameStage
  */
 GameLoop.prototype.next = function(curStage) {
-	// GameLoop was not correctly initialized
-	if (!this.plot) return GameLoop.NO_SEQ;
-	
-	// Find out flexibility mode:
-	var flexibleMode = this.plot.sequence.length === 0;
+    // GameLoop was not correctly initialized
+    if (!this.plot) return GameLoop.NO_SEQ;
 
-	var seqIdx, seqObj = null, stageObj;
-	var stageNo, stepNo;
-	var normStage = null;
-	var nextStage = null;
+    // Find out flexibility mode:
+    var flexibleMode = this.plot.sequence.length === 0;
 
-	curStage = new GameStage(curStage);
+    var seqIdx, seqObj = null, stageObj;
+    var stageNo, stepNo;
+    var normStage = null;
+    var nextStage = null;
 
-	if (flexibleMode) {
-		if (curStage.stage === 0) {
-			// Get first stage:
-			if (this.plot.generalNextFunction) {
-				nextStage = this.plot.generalNextFunction();
-			}
+    curStage = new GameStage(curStage);
 
-			if (nextStage) {
-				return new GameStage({
-					stage: nextStage,
-					step:  1,
-					round: 1
-				});
-			}
+    if (flexibleMode) {
+        if (curStage.stage === 0) {
+            // Get first stage:
+            if (this.plot.generalNextFunction) {
+                nextStage = this.plot.generalNextFunction();
+            }
 
-			return GameLoop.END_SEQ;
-		}
+            if (nextStage) {
+                return new GameStage({
+                    stage: nextStage,
+                    step:  1,
+                    round: 1
+                });
+            }
 
-		// Get stage object:
-		stageObj = this.plot.stages[curStage.stage];
+            return GameLoop.END_SEQ;
+        }
 
-		if ('undefined' === typeof stageObj) {
-			node.warn('next received nonexistent stage: ' + curStage.stage);
-			return null;
-		}
+        // Get stage object:
+        stageObj = this.plot.stages[curStage.stage];
 
-		// Find step number:
-		if ('number' === typeof curStage.step) {
-			stepNo = curStage.step;
-		}
-		else {
-			stepNo = stageObj.steps.indexOf(curStage.step) + 1;
-		}
-		if (stepNo < 1) {
-			node.warn('next received nonexistent step: ' +
-					stageObj.id + '.' + curStage.step);
-			return null;
-		}
+        if ('undefined' === typeof stageObj) {
+            node.warn('next received nonexistent stage: ' + curStage.stage);
+            return null;
+        }
 
-		// Handle stepping:
-		if (stepNo + 1 <= stageObj.steps.length) {
-			return new GameStage({
-				stage: stageObj.id,
-				step:  stepNo + 1,
-				round: 1
-			});
-		}
+        // Find step number:
+        if ('number' === typeof curStage.step) {
+            stepNo = curStage.step;
+        }
+        else {
+            stepNo = stageObj.steps.indexOf(curStage.step) + 1;
+        }
+        if (stepNo < 1) {
+            node.warn('next received nonexistent step: ' +
+                    stageObj.id + '.' + curStage.step);
+            return null;
+        }
 
-		// Get next stage:
-		if (this.plot.nextFunctions[stageObj.id]) {
-			nextStage = this.plot.nextFunctions[stageObj.id]();
-		}
-		else if (this.plot.generalNextFunction) {
-			nextStage = this.plot.generalNextFunction();
-		}
+        // Handle stepping:
+        if (stepNo + 1 <= stageObj.steps.length) {
+            return new GameStage({
+                stage: stageObj.id,
+                step:  stepNo + 1,
+                round: 1
+            });
+        }
 
-		if (nextStage === GameLoop.GAMEOVER)  {
-			return GameLoop.GAMEOVER;
-		}
-		else if (nextStage) {
-			return new GameStage({
-				stage: nextStage,
-				step:  1,
-				round: 1
-			});
-		}
+        // Get next stage:
+        if (this.plot.nextFunctions[stageObj.id]) {
+            nextStage = this.plot.nextFunctions[stageObj.id]();
+        }
+        else if (this.plot.generalNextFunction) {
+            nextStage = this.plot.generalNextFunction();
+        }
 
-		return GameLoop.END_SEQ;
-	}
-	else {
-		if (curStage.stage === 0) {
-			return new GameStage({
-				stage: 1,
-				step:  1,
-				round: 1
-			});
-		}
+        if (nextStage === GameLoop.GAMEOVER)  {
+            return GameLoop.GAMEOVER;
+        }
+        else if (nextStage) {
+            return new GameStage({
+                stage: nextStage,
+                step:  1,
+                round: 1
+            });
+        }
 
-		// Get normalized GameStage:
-		normStage = this.normalizeGameStage(curStage);
-		if (normStage === null) {
-			node.warn('next received invalid stage: ' + curStage);
-			return null;
-		}
-		stageNo  = normStage.stage;
-		stepNo   = normStage.step;
-		seqObj   = this.plot.sequence[stageNo - 1];
-		if (seqObj.type === 'gameover') return GameLoop.GAMEOVER;
-		stageObj = this.plot.stages[seqObj.id];
+        return GameLoop.END_SEQ;
+    }
+    else {
+        if (curStage.stage === 0) {
+            return new GameStage({
+                stage: 1,
+                step:  1,
+                round: 1
+            });
+        }
 
-		// Handle stepping:
-		if (stepNo + 1 <= stageObj.steps.length) {
-			return new GameStage({
-				stage: stageNo,
-				step:  stepNo + 1,
-				round: normStage.round
-			});
-		}
+        // Get normalized GameStage:
+        normStage = this.normalizeGameStage(curStage);
+        if (normStage === null) {
+            node.warn('next received invalid stage: ' + curStage);
+            return null;
+        }
+        stageNo  = normStage.stage;
+        stepNo   = normStage.step;
+        seqObj   = this.plot.sequence[stageNo - 1];
+        if (seqObj.type === 'gameover') return GameLoop.GAMEOVER;
+        stageObj = this.plot.stages[seqObj.id];
 
-		// Handle repeat block:
-		if (seqObj.type === 'repeat' && normStage.round + 1 <= seqObj.num) {
-			return new GameStage({
-				stage: stageNo,
-				step:  1,
-				round: normStage.round + 1
-			});
-		}
+        // Handle stepping:
+        if (stepNo + 1 <= stageObj.steps.length) {
+            return new GameStage({
+                stage: stageNo,
+                step:  stepNo + 1,
+                round: normStage.round
+            });
+        }
 
-		// Handle looping blocks:
-		if ((seqObj.type === 'doLoop' || seqObj.type === 'loop') && seqObj.cb()) {
-			return new GameStage({
-				stage: stageNo,
-				step:  1,
-				round: normStage.round + 1
-			});
-		}
+        // Handle repeat block:
+        if (seqObj.type === 'repeat' && normStage.round + 1 <= seqObj.num) {
+            return new GameStage({
+                stage: stageNo,
+                step:  1,
+                round: normStage.round + 1
+            });
+        }
 
-		// Go to next stage:
-		if (stageNo < this.plot.sequence.length) {
-			// Skip over loops if their callbacks return false:
-			while (this.plot.sequence[stageNo].type === 'loop' &&
-			       !this.plot.sequence[stageNo].cb()) {
-				stageNo++;
-				if (stageNo >= this.plot.sequence.length) return GameLoop.END_SEQ;
-			}
+        // Handle looping blocks:
+        if ((seqObj.type === 'doLoop' || seqObj.type === 'loop') && seqObj.cb()) {
+            return new GameStage({
+                stage: stageNo,
+                step:  1,
+                round: normStage.round + 1
+            });
+        }
+
+        // Go to next stage:
+        if (stageNo < this.plot.sequence.length) {
+            // Skip over loops if their callbacks return false:
+            while (this.plot.sequence[stageNo].type === 'loop' &&
+                    !this.plot.sequence[stageNo].cb()) {
+                stageNo++;
+                if (stageNo >= this.plot.sequence.length) return GameLoop.END_SEQ;
+            }
 
             // Handle gameover:
             if (this.plot.sequence[stageNo].type === 'gameover') {
                 return GameLoop.GAMEOVER;
             }
 
-			return new GameStage({
-				stage: stageNo + 1,
-				step:  1,
-				round: 1
-			});
-		}
+            return new GameStage({
+                stage: stageNo + 1,
+                step:  1,
+                round: 1
+            });
+        }
 
-		// No more stages remaining:
-		return GameLoop.END_SEQ;
-	}
+        // No more stages remaining:
+        return GameLoop.END_SEQ;
+    }
 };
 
 /**
@@ -10165,108 +10209,108 @@ GameLoop.prototype.next = function(curStage) {
  * Works only in simple mode.
  * Behaves on loops the same as `GameLoop.next`, with round=1 always.
  *
- * @param {object} curStage The GameStage object from which to get the previous one
+ * @param {GameStage} curStage The GameStage object from which to get the previous one
  *
- * @return {object} The GameStage describing the previous stage
+ * @return {GameStage} The GameStage describing the previous stage
  *
  * @see GameStage
  */
 GameLoop.prototype.previous = function(curStage) {
-	// GameLoop was not correctly initialized
-	if (!this.plot) return GameLoop.NO_SEQ;
-	
-	var normStage;
-	var seqIdx, seqObj = null, stageObj = null;
-	var prevSeqObj;
-	var stageNo, stepNo, prevStepNo;
+    // GameLoop was not correctly initialized
+    if (!this.plot) return GameLoop.NO_SEQ;
 
-	curStage = new GameStage(curStage);
+    var normStage;
+    var seqIdx, seqObj = null, stageObj = null;
+    var prevSeqObj;
+    var stageNo, stepNo, prevStepNo;
 
-	// Get normalized GameStage:
-	normStage = this.normalizeGameStage(curStage);
-	if (normStage === null) {
-		node.warn('previous received invalid stage: ' + curStage);
-		return null;
-	}
-	stageNo  = normStage.stage;
-	stepNo   = normStage.step;
-	seqObj   = this.plot.sequence[stageNo - 1];
+    curStage = new GameStage(curStage);
 
-	// Handle stepping:
-	if (stepNo > 1) {
-		return new GameStage({
-			stage: stageNo,
-			step:  stepNo - 1,
-			round: curStage.round
-		});
-	}
+    // Get normalized GameStage:
+    normStage = this.normalizeGameStage(curStage);
+    if (normStage === null) {
+        node.warn('previous received invalid stage: ' + curStage);
+        return null;
+    }
+    stageNo  = normStage.stage;
+    stepNo   = normStage.step;
+    seqObj   = this.plot.sequence[stageNo - 1];
 
-	if ('undefined' !== typeof seqObj.id) {
-		stageObj = this.plot.stages[seqObj.id];
-		// Handle rounds:
-		if (curStage.round > 1) {
-			return new GameStage({
-				stage: stageNo,
-				step:  stageObj.steps.length,
-				round: curStage.round - 1
-			});
-		}
+    // Handle stepping:
+    if (stepNo > 1) {
+        return new GameStage({
+            stage: stageNo,
+            step:  stepNo - 1,
+            round: curStage.round
+        });
+    }
 
-		// Handle looping blocks:
-		if ((seqObj.type === 'doLoop' || seqObj.type === 'loop') && seqObj.cb()) {
-			return new GameStage({
-				stage: stageNo,
-				step:  stageObj.steps.length,
-				round: 1
-			});
-		}
-	}
+    if ('undefined' !== typeof seqObj.id) {
+        stageObj = this.plot.stages[seqObj.id];
+        // Handle rounds:
+        if (curStage.round > 1) {
+            return new GameStage({
+                stage: stageNo,
+                step:  stageObj.steps.length,
+                round: curStage.round - 1
+            });
+        }
 
-	// Handle beginning:
-	if (stageNo <= 1) {
-		return new GameStage({
-			stage: 0,
-			step:  0,
-			round: 0
-		});
-	}
+        // Handle looping blocks:
+        if ((seqObj.type === 'doLoop' || seqObj.type === 'loop') && seqObj.cb()) {
+            return new GameStage({
+                stage: stageNo,
+                step:  stageObj.steps.length,
+                round: 1
+            });
+        }
+    }
 
-	// Go to previous stage:
-	// Skip over loops if their callbacks return false:
-	while (this.plot.sequence[stageNo - 2].type === 'loop' &&
-		   !this.plot.sequence[stageNo - 2].cb()) {
-		stageNo--;
+    // Handle beginning:
+    if (stageNo <= 1) {
+        return new GameStage({
+            stage: 0,
+            step:  0,
+            round: 0
+        });
+    }
 
-		if (stageNo <= 1) {
-			return new GameStage({
-				stage: 0,
-				step:  0,
-				round: 0
-			});
-		}
-	}
+    // Go to previous stage:
+    // Skip over loops if their callbacks return false:
+    while (this.plot.sequence[stageNo - 2].type === 'loop' &&
+            !this.plot.sequence[stageNo - 2].cb()) {
+        stageNo--;
 
-	// Get previous sequence object:
-	prevSeqObj = this.plot.sequence[stageNo - 2];
+        if (stageNo <= 1) {
+            return new GameStage({
+                stage: 0,
+                step:  0,
+                round: 0
+            });
+        }
+    }
 
-	// Get number of steps in previous stage:
-	prevStepNo = this.plot.stages[prevSeqObj.id].steps.length;
+    // Get previous sequence object:
+    prevSeqObj = this.plot.sequence[stageNo - 2];
 
-	// Handle repeat block:
-	if (prevSeqObj.type === 'repeat') {
-		return new GameStage({
-			stage: stageNo - 1,
-			step:  prevStepNo,
-			round: prevSeqObj.num
-		});
-	}
+    // Get number of steps in previous stage:
+    prevStepNo = this.plot.stages[prevSeqObj.id].steps.length;
 
-	// Handle normal blocks:
-	return new GameStage({
-		stage: stageNo - 1,
-		step:  prevStepNo,
-		round: 1
-	});
+    // Handle repeat block:
+    if (prevSeqObj.type === 'repeat') {
+        return new GameStage({
+            stage: stageNo - 1,
+            step:  prevStepNo,
+            round: prevSeqObj.num
+        });
+    }
+
+    // Handle normal blocks:
+    return new GameStage({
+        stage: stageNo - 1,
+        step:  prevStepNo,
+        round: 1
+    });
 };
 
 /**
@@ -10278,38 +10322,97 @@ GameLoop.prototype.previous = function(curStage) {
  * Uses `GameLoop.previous` and `GameLoop.next` for stepping.
  * If a sequence end is reached, returns immediately.
  *
- * @param {object} curStage The GameStage object from which to get the offset one
+ * @param {GameStage} curStage The GameStage object from which to get the offset one
  * @param {number} delta The offset. Negative number for backward stepping.
  *
- * @return {object} The GameStage describing the distant stage
+ * @return {GameStage} The GameStage describing the distant stage
  *
  * @see GameStage
  * @see GameLoop.previous
  * @see GameLoop.next
  */
 GameLoop.prototype.jump = function(curStage, delta) {
-	if (delta < 0) {
-		while (delta < 0) {
-			curStage = this.previous(curStage);
-			delta++;
+    if (delta < 0) {
+        while (delta < 0) {
+            curStage = this.previous(curStage);
+            delta++;
 
-			if (!(curStage instanceof GameStage) || curStage.stage === 0) {
-				return curStage;
-			}
-		}
-	}
-	else {
-		while (delta > 0) {
-			curStage = this.next(curStage);
-			delta--;
+            if (!(curStage instanceof GameStage) || curStage.stage === 0) {
+                return curStage;
+            }
+        }
+    }
+    else {
+        while (delta > 0) {
+            curStage = this.next(curStage);
+            delta--;
 
-			if (!(curStage instanceof GameStage)) {
-				return curStage;
-			}
-		}
-	}
+            if (!(curStage instanceof GameStage)) {
+                return curStage;
+            }
+        }
+    }
 
-	return curStage;
+    return curStage;
+};
+
+/**
+ * ### GameLoop.stepsToNextStage
+ *
+ * Returns the number of steps until the beginning of the next stage
+ *
+ * @param {object|string} gameStage The GameStage object, or its string representation
+ *
+ * @return {number|null} The number of steps to go, minimum 1. Null on error.
+ */
+GameLoop.prototype.stepsToNextStage = function(gameStage) {
+    var stageObj, stepNo;
+
+    gameStage = new GameStage(gameStage);
+    if (gameStage.stage === 0) return 1;
+    stageObj = this.getStage(gameStage);
+    if (!stageObj) return null;
+
+    if ('number' === typeof gameStage.step) {
+        stepNo = gameStage.step;
+    }
+    else {
+        stepNo = stageObj.steps.indexOf(gameStage.step) + 1;
+        // If indexOf returned -1, stepNo is 0 which will be caught below.
+    }
+
+    if (stepNo < 1 || stepNo > stageObj.steps.length) return null;
+
+    return 1 + stageObj.steps.length - stepNo;
+};
+
+/**
+ * ### GameLoop.stepsToPreviousStage
+ *
+ * Returns the number of steps back until the end of the previous stage
+ *
+ * @param {object|string} gameStage The GameStage object, or its string representation
+ *
+ * @return {number|null} The number of steps to go, minimum 1. Null on error.
+ */
+GameLoop.prototype.stepsToPreviousStage = function(gameStage) {
+    var stageObj, stepNo;
+
+    gameStage = new GameStage(gameStage);
+    stageObj = this.getStage(gameStage);
+    if (!stageObj) return null;
+
+    if ('number' === typeof gameStage.step) {
+        stepNo = gameStage.step;
+    }
+    else {
+        stepNo = stageObj.steps.indexOf(gameStage.step) + 1;
+        // If indexOf returned -1, stepNo is 0 which will be caught below.
+    }
+
+    if (stepNo < 1 || stepNo > stageObj.steps.length) return null;
+
+    return stepNo;
 };
 
 /**
@@ -10319,19 +10422,19 @@ GameLoop.prototype.jump = function(curStage, delta) {
  *
  * @param {object|string} gameStage The GameStage object, or its string representation
  *
- * @return {object|null} The corresponding stage object, or null value 
- * 	if the step was not found
+ * @return {object|null} The corresponding stage object, or null value
+ *  if the step was not found
  */
 GameLoop.prototype.getStage = function(gameStage) {
     if (!this.plot) return null;
     var stageObj;
     gameStage = new GameStage(gameStage);
     if ('number' === typeof gameStage.stage) {
-	stageObj = this.plot.sequence[gameStage.stage - 1];
-	return stageObj ? this.plot.stages[stageObj.id] : null;
+        stageObj = this.plot.sequence[gameStage.stage - 1];
+        return stageObj ? this.plot.stages[stageObj.id] : null;
     }
     else {
-	return this.plot.stages[gameStage.stage];
+        return this.plot.stages[gameStage.stage] || null;
     }
 };
 
@@ -10342,38 +10445,69 @@ GameLoop.prototype.getStage = function(gameStage) {
  *
  * @param {object|string} gameStage The GameStage object, or its string representation
  *
- * @return {object|null} The corresponding step object, or null value 
- * 	if the step was not found
+ * @return {object|null} The corresponding step object, or null value
+ *  if the step was not found
  */
 GameLoop.prototype.getStep = function(gameStage) {
     if (!this.plot) return null;
-    var stageObj, 
-        gameStage = new GameStage(gameStage);
+    var stageObj;
+    gameStage = new GameStage(gameStage);
     if ('number' === typeof gameStage.step) {
-	stageObj = this.getStage(gameStage);
-	return stageObj ? this.plot.steps[stageObj.steps[gameStage.step - 1]] : null;
+        stageObj = this.getStage(gameStage);
+        return stageObj ? this.plot.steps[stageObj.steps[gameStage.step - 1]] : null;
     }
     else {
-	return this.plot.steps[gameStage.step];
+        return this.plot.steps[gameStage.step] || null;
     }
+};
+
+/**
+ * ### GameLoop.getStepRule
+ *
+ * Returns the step-rule function corresponding to a GameStage
+ *
+ * The order of lookup is:
+ *
+ * 1. `steprule` property of the step object
+ *
+ * 2. `steprule` property of the stage object
+ *
+ * 3. default step-rule of the Stager object
+ *
+ * @param {object|string} gameStage The GameStage object, or its string representation
+ *
+ * @return {function|null} The step-rule function. Null on error.
+ */
+GameLoop.prototype.getStepRule = function(gameStage) {
+    var stageObj = this.getStage(gameStage),
+        stepObj  = this.getStep(gameStage);
+
+    if (!stageObj || !stepObj) return null;
+
+    if ('function' === typeof  stepObj.steprule) return  stepObj.steprule;
+    if ('function' === typeof stageObj.steprule) return stageObj.steprule;
+
+    // TODO: Use first line once possible (serialization issue):
+    //return this.plot.getDefaultStepRule();
+    return this.plot.defaultStepRule;
 };
 
 /**
  * ### GameLoop.getName
- * 
+ *
  * TODO: To remove once transition is complete
- * @deprecated 
+ * @deprecated
  */
 GameLoop.prototype.getName = function(gameStage) {
-	var s = this.getStep(gameStage); 
-	return s ? s.name : s;
+    var s = this.getStep(gameStage);
+    return s ? s.name : s;
 };
 
 /**
  * ### GameLoop.getAllParams
- * 
+ *
  * TODO: To remove once transition is complete
- * @deprecated 
+ * @deprecated
  */
 GameLoop.prototype.getAllParams = GameLoop.prototype.getStep;
 
@@ -10384,70 +10518,70 @@ GameLoop.prototype.getAllParams = GameLoop.prototype.getStep;
  *
  * Works only in simple mode.
  *
- * @param {object} gameStage The GameStage object
+ * @param {GameStage} gameStage The GameStage object
  *
- * @return {object} The normalized GameStage object; null on error
+ * @return {GameStage} The normalized GameStage object; null on error
  *
  * @api private
  */
 GameLoop.prototype.normalizeGameStage = function(gameStage) {
-	var stageNo, stepNo, seqIdx, seqObj;
+    var stageNo, stepNo, seqIdx, seqObj;
 
-	// Find stage number:
-	if ('number' === typeof gameStage.stage) {
-		stageNo = gameStage.stage;
-	}
-	else {
-		for (seqIdx = 0; seqIdx < this.plot.sequence.length; seqIdx++) {
-			if (this.plot.sequence[seqIdx].id === gameStage.stage) {
-				break;
-			}
-		}
-		stageNo = seqIdx + 1;
-	}
-	if (stageNo < 1 || stageNo > this.plot.sequence.length) {
-		node.warn('normalizeGameStage received nonexistent stage: ' + gameStage.stage);
-		return null;
-	}
+    // Find stage number:
+    if ('number' === typeof gameStage.stage) {
+        stageNo = gameStage.stage;
+    }
+    else {
+        for (seqIdx = 0; seqIdx < this.plot.sequence.length; seqIdx++) {
+            if (this.plot.sequence[seqIdx].id === gameStage.stage) {
+                break;
+            }
+        }
+        stageNo = seqIdx + 1;
+    }
+    if (stageNo < 1 || stageNo > this.plot.sequence.length) {
+        node.warn('normalizeGameStage received nonexistent stage: ' + gameStage.stage);
+        return null;
+    }
 
-	// Get sequence object:
-	seqObj = this.plot.sequence[stageNo - 1];
+    // Get sequence object:
+    seqObj = this.plot.sequence[stageNo - 1];
 
-	if (seqObj.type === 'gameover') {
-		return new GameStage({
-			stage: stageNo,
-			step:  1,
-			round: gameStage.round
-		});
-	}
+    if (seqObj.type === 'gameover') {
+        return new GameStage({
+            stage: stageNo,
+            step:  1,
+            round: gameStage.round
+        });
+    }
 
-	// Get stage object:
-	stageObj = this.plot.stages[seqObj.id];
+    // Get stage object:
+    stageObj = this.plot.stages[seqObj.id];
 
-	// Find step number:
-	if ('number' === typeof gameStage.step) {
-		stepNo = gameStage.step;
-	}
-	else {
-		stepNo = stageObj.steps.indexOf(gameStage.step) + 1;
-	}
-	if (stepNo < 1) {
-		node.warn('normalizeGameStage received nonexistent step: ' +
-				stageObj.id + '.' + gameStage.step);
-		return null;
-	}
+    // Find step number:
+    if ('number' === typeof gameStage.step) {
+        stepNo = gameStage.step;
+    }
+    else {
+        stepNo = stageObj.steps.indexOf(gameStage.step) + 1;
+    }
+    if (stepNo < 1) {
+        node.warn('normalizeGameStage received nonexistent step: ' +
+                stageObj.id + '.' + gameStage.step);
+        return null;
+    }
 
-	return new GameStage({
-		stage: stageNo,
-		step:  stepNo,
-		round: gameStage.round
-	});
+    return new GameStage({
+        stage: stageNo,
+        step:  stepNo,
+        round: gameStage.round
+    });
 };
 
-// ## Closure	
+// ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports,
-	'undefined' != typeof node ? node : module.parent.exports
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
@@ -12000,7 +12134,7 @@ function Game (settings) {
 
     // TODO: check how to init
     this.currentStep = new GameStage();
-    this.currentStepObj = new GameStage();
+    this.currentStepObj = null;
     
     // Update the init function if one is passed
     if (settings.init) {
@@ -12101,15 +12235,23 @@ Game.prototype.resume = function () {
  * 
  * Execute the next stage / step, if allowed
  * 
- * @return {Boolean} FALSE, if the execution encountered an error
+ * @return {boolean|null} FALSE, if the execution encounters an error 
+ *   NULL, if stepping is disallowed
  * 
  * @see Game.step
- * 
- * TODO: real check, always steps now
  */
 Game.prototype.shouldStep = function() {
     // Check the stager
-    return this.step();
+    var stepRule = this.stager.getStepRule(this.getGameStage());
+
+    if ('function' !== typeof stepRule) return false;
+
+    if (stepRule(this.getGameStage(), this.getStageLevel(), this.pl, this)) {
+        return this.step();
+    }
+    else {
+        return null;
+    }
 };
 
 /**
@@ -12210,6 +12352,10 @@ Game.prototype.getStageLevel = function () {
 
 Game.prototype.getStep = function () {
     return this.currentStepObj;
+};
+
+Game.prototype.getGameStage = function () {
+    return this.currentStep;
 };
 
 // ERROR, WORKING, etc

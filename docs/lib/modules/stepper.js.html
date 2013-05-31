@@ -150,8 +150,7 @@ is DONE, regardless to the situation of other players</p>
 <p>Player can advance freely within the steps of one stage,
 but has to wait before going to the next one</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">rules</span><span class="p">[</span><span class="s1">&#39;SYNC_STAGE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">myStageLevel</span> <span class="o">!==</span> <span class="nx">DONE</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">rules</span><span class="p">[</span><span class="s1">&#39;SYNC_STAGE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -159,10 +158,12 @@ but has to wait before going to the next one</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
-<p>TODO complete, once GameLoop has new methods
-if next one is going to be a new stage wait </p>
+<p>if next step is going to be a new stage, wait for others</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="p">};</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">DONE</span> <span class="o">&amp;&amp;</span>
+                <span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">stepsToNextStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">||</span>
+                 <span class="nx">pl</span><span class="p">.</span><span class="nx">isStageDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">));</span>
+        <span class="p">};</span>
     <span class="p">}</span>
 
     <span class="kd">function</span> <span class="nx">clear</span><span class="p">()</span> <span class="p">{</span>
