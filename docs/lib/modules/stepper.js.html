@@ -56,11 +56,7 @@
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-
-
-    <span class="kd">var</span> <span class="nx">levels</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">DONE</span> <span class="o">=</span> <span class="nx">levels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -71,6 +67,8 @@
 <p>Storage for socket rules</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">rules</span> <span class="o">=</span> <span class="p">{};</span>
+
+    <span class="nx">addDefaultRules</span><span class="p">();</span>
 
     <span class="kd">function</span> <span class="nx">getRules</span><span class="p">()</span> <span class="p">{</span>
       <span class="k">return</span> <span class="nx">rules</span><span class="p">;</span>
@@ -113,7 +111,10 @@
 current step before going to the next</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">rules</span><span class="p">[</span><span class="s1">&#39;SYNC_ALL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">DONE</span> <span class="o">&amp;&amp;</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">isStageDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;SYNC_ALL&#39;</span><span class="p">);</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">pl</span><span class="p">.</span><span class="nx">isStageDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
         <span class="p">};</span>
         </pre></div>
         </td>
@@ -132,7 +133,7 @@ current step before going to the next</p>
 is DONE, regardless to the situation of other players</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">rules</span><span class="p">[</span><span class="s1">&#39;SOLO&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">DONE</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">;</span>
         <span class="p">};</span>
     </pre></div>
         </td>
@@ -160,7 +161,7 @@ but has to wait before going to the next one</p>
 </div>
 <p>if next step is going to be a new stage, wait for others</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">DONE</span> <span class="o">&amp;&amp;</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">;</span>
                 <span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">stepsToNextStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">||</span>
                  <span class="nx">pl</span><span class="p">.</span><span class="nx">isStageDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">));</span>
         <span class="p">};</span>
@@ -178,7 +179,7 @@ but has to wait before going to the next one</p>
 </div>
 <p>expose the methods</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="p">{</span>
       <span class="nx">getRules</span><span class="o">:</span> <span class="nx">getRules</span><span class="p">,</span>
       <span class="nx">get</span><span class="o">:</span> <span class="nx">get</span><span class="p">,</span>
       <span class="nx">register</span><span class="o">:</span> <span class="nx">register</span><span class="p">,</span>

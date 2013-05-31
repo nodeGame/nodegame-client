@@ -187,6 +187,7 @@ MIT Licensed </p>
   <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">UNINITIALIZED</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
   <span class="nx">LOADING</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
   <span class="nx">LOADED</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
   <span class="nx">PLAYING</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
@@ -225,6 +226,7 @@ MIT Licensed </p>
   <span class="nx">settings</span> <span class="o">=</span> <span class="nx">settings</span> <span class="o">||</span> <span class="p">{};</span>
 
   <span class="k">this</span><span class="p">.</span><span class="nx">updateGameState</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">levels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">updateStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">);</span>
   </pre></div>
         </td>
       </tr>
@@ -1037,7 +1039,7 @@ log it</p>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStageLevel</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stageState</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStep</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>

@@ -62,6 +62,7 @@ var ng_client = [
     rootDir + "lib/modules/setup.js",
     rootDir + "lib/modules/alias.js",
     rootDir + "lib/modules/random.js",
+    rootDir + "lib/modules/stepper.js",
  	
 // listeners
  	
