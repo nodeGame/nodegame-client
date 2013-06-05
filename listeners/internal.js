@@ -126,7 +126,7 @@ node.on('GAME_LOADED', function() {
  */
 node.on('LOADED', function() {
 	node.emit('BEFORE_LOADING');
-	node.game.updateStageLevel(node.Game.PLAYING);
+	node.game.updateStageLevel(Game.stageLevels.PLAYING);
 	//TODO: the number of messages to emit to inform other players
 	// about its own stage should be controlled. Observer is 0 
 	//node.game.publishUpdate();

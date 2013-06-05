@@ -186,7 +186,6 @@ node.on( IN + set + 'DATA', function (msg) {
  *  @see Game.pl 
  */
 	node.on( IN + say + 'STAGE_LEVEL', function (msg) {
-
 		if (node.socket.serverid && msg.from === node.socket.serverid) {
 //			console.log(node.socket.serverid + ' ---><--- ' + msg.from);
 //			console.log('NOT EXISTS');

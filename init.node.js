@@ -52,7 +52,7 @@ node.io = require('socket.io-client');
  * @api public
  */
 
-node.EventEmitter = require('./lib/core/ErrorManager').ErrorManager;
+node.ErrorManager = require('./lib/core/ErrorManager').ErrorManager;
 
 
 /**

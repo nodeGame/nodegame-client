@@ -5963,26 +5963,22 @@ NDDB.prototype.fetchKeyArray = function (key) {
 NDDB.prototype.groupBy = function (key) {
     if (!key) return this.db;
     
-    var groups = [];
-    var outs = [];
-    for (var i=0; i < this.db.length; i++) {
-        var el = J.getNestedValue(key, this.db[i]);
+    var groups = [], outs = [], i, el, out;
+    for (i = 0 ; i < this.db.length ; i++) {
+        el = J.getNestedValue(key, this.db[i]);
         if ('undefined' === typeof el) continue;
         // Creates a new group and add entries to it
         if (!J.in_array(el, groups)) {
             groups.push(el);
-            var out = this.filter(function (elem) {
+            out = this.filter(function (elem) {
                 if (J.equals(J.getNestedValue(key, elem), el)) {
                     return this;
                 }
-            });
-            
+            });   
             // Reset nddb_pointer in subgroups
             out.nddb_pointer = 0;
-            
             outs.push(out);
         }
-        
     }
     return outs;
 };    
@@ -6990,7 +6986,7 @@ NDDBIndex.prototype.size = function () {
  * @see NDDBIndex.update
  */
 NDDBIndex.prototype.get = function (idx) {
-	if (!this.resolve[idx]) return false
+	if ('undefined' === typeof this.resolve[idx]) return false;
     return this.nddb.db[this.resolve[idx]];
 };
 
@@ -7631,9 +7627,9 @@ else {
 
     node.debug = false;
 
-    exports.NodeGameRuntimeError = NodeGameRuntimeError;
-    exports.NodeGameStageCallbackError = NodeGameStageCallbackError;
-    exports.NodeGameMisconfiguredGameError = NodeGameMisconfiguredGameError;
+    node.NodeGameRuntimeError = NodeGameRuntimeError;
+    node.NodeGameStageCallbackError = NodeGameStageCallbackError;
+    node.NodeGameMisconfiguredGameError = NodeGameMisconfiguredGameError;
 
     /*
      * ### NodeGameRuntimeError
@@ -7681,7 +7677,8 @@ else {
 
     if (J.isNodeJS()) {
         process.on('uncaughtException', function (err) {
-            console.log('Caught exception: ' + err);
+            debugger;
+            node.err('Caught exception: ' + err.msg);
             if (node.debug) {
                 throw err;
             }
@@ -12495,20 +12492,20 @@ Game.prototype.step = function() {
     nextStep = this.stager.next(this.currentStep);
     console.log('NEXT', nextStep);
     if ('string' === typeof nextStep) {
-	
-	if (nextStep === GameLoop.GAMEOVER) {
-	    node.emit('GAMEOVER');
-	    return this.gameover(); // can throw Errors
-	}
-	
-	// else do nothing
-	return null;
+
+        if (nextStep === GameLoop.GAMEOVER) {
+            node.emit('GAMEOVER');
+            return this.gameover(); // can throw Errors
+        }
+
+        // else do nothing
+        return null;
     }
     else {
-	// TODO maybe update also in case of string
-	this.currentStep = nextStep;
-	this.currentStepObj = this.stager.getStep(nextStep);
-	return this.execStage(this.currentStepObj);
+        // TODO maybe update also in case of string
+        this.currentStep = nextStep;
+        this.currentStepObj = this.stager.getStep(nextStep);
+        return this.execStage(this.currentStepObj);
     }
 };
 
@@ -12522,47 +12519,39 @@ Game.prototype.step = function() {
  */
 Game.prototype.execStage = function(stage) {
     var cb, res;
-	
+
     cb = stage.cb; 
-			
+
     // Local Listeners from previous stage are erased 
     // before proceeding to next one
     node.events.clearStage(this.currentStep);
-			
-    this.updateStageLevel('LOADING');
-    
-    
+
+    this.updateStageLevel(Game.stageLevels.LOADING);
+
+
     try {
-	res = cb.call(node.game);
-	this.updateStageLevel('LOADED');
-	
-	// This does not make sense. Basically it waits for the nodegame window to be loaded too
-	if (this.isReady()) {
-	    node.emit('LOADED');
-	}
-	if (res === false) {
-			// A non fatal error occurred
-	    // log it
-	}
-	
-	return res;
-	
+        res = cb.call(node.game);
     } 
     catch (e) {
-	var err, ex;
-	err = 'An error occurred while executing a custom callback'; //  
-	
-	node.err(err);
-	
-	if (node.debug) {
-	    ex = node.NodeGameRuntimeError;
-	    console.log(ex);
-	    console.log(ex.trace);
-	    throw ex;
-	}
-	
-	return true;
+        var err;
+        err = 'An error occurred while executing a custom callback';
+
+        node.err(err);
+
+        throw new node.NodeGameRuntimeError(e);
     }
+
+    this.updateStageLevel(Game.stageLevels.LOADED);
+    // This does not make sense. Basically it waits for the nodegame window to be loaded too
+    if (this.isReady()) {
+        node.emit('LOADED');
+    }
+    if (res === false) {
+        // A non fatal error occurred
+        // log it
+    }
+
+    return res;
 };
 
 Game.prototype.getGameState = function () {
@@ -12583,12 +12572,22 @@ Game.prototype.getGameStage = function () {
 
 // ERROR, WORKING, etc
 Game.prototype.updateGameState = function (state) {
+    if ('number' !== typeof state) {
+        throw new node.NodeGameMisconfiguredGameError(
+                'updateGameState called with invalid parameter: ' + state);
+    }
+
 	this.state = state;
 	//this.publishUpdate();
 };
 
 // PLAYING, DONE, etc.
-Game.prototype.updateStageLevel= function (state) {
+Game.prototype.updateStageLevel = function (state) {
+    if ('number' !== typeof state) {
+        throw new node.NodeGameMisconfiguredGameError(
+                'updateStageLevel called with invalid parameter: ' + state);
+    }
+
 	this.stageState = state;
 
     // Publish update:
@@ -14829,7 +14828,6 @@ node.on( IN + set + 'DATA', function (msg) {
  *  @see Game.pl 
  */
 	node.on( IN + say + 'STAGE_LEVEL', function (msg) {
-
 		if (node.socket.serverid && msg.from === node.socket.serverid) {
 //			console.log(node.socket.serverid + ' ---><--- ' + msg.from);
 //			console.log('NOT EXISTS');
@@ -15146,7 +15144,7 @@ node.on('GAME_LOADED', function() {
  */
 node.on('LOADED', function() {
 	node.emit('BEFORE_LOADING');
-	node.game.updateStageLevel('PLAYING');
+	node.game.updateStageLevel(Game.stageLevels.PLAYING);
 	//TODO: the number of messages to emit to inform other players
 	// about its own stage should be controlled. Observer is 0 
 	//node.game.publishUpdate();
@@ -15176,6 +15174,7 @@ node.log('internal listeners added');
 	
 })('undefined' !== typeof node ? node : module.parent.exports); 
 // <!-- ends outgoing listener -->
+
 /**
  * # GameTimer
  * 
