@@ -7397,7 +7397,7 @@ else {
  * # Variables
  * 
  * Copyright(c) 2012 Stefano Balietti
- * MIT Licensed 
+ * MIT Licensed
  * 
  * `nodeGame` variables and constants module
  * 
@@ -7427,58 +7427,58 @@ else {
  */
 	node.action = {};
 
-	node.action.SET = 'set'; 	
-	node.action.GET = 'get'; 	
-	node.action.SAY = 'say'; 	
+	node.action.SET = 'set';
+	node.action.GET = 'get';
+	node.action.SAY = 'say';
 
 /**
  * ### node.target
  * 
  * Collection of available nodeGame targets
  * 
- * The target adds an additional level of semantic 
+ * The target adds an additional level of semantic
  * for the message, and specifies the nature of the
- * information carried in the message. 
+ * information carried in the message.
  * 
- * It answers the question: "What is the content of the message?" 
+ * It answers the question: "What is the content of the message?"
  */
 	node.target = {};
 
 
 // #### target.DATA
-// Generic identifier for any type of data 
-	node.target.DATA		= 'DATA';		
+// Generic identifier for any type of data
+	node.target.DATA = 'DATA';
 	
 // #### target.HI
 // A client is connecting for the first time
-	node.target.HI = 'HI';		
+	node.target.HI = 'HI';
 
 // #### target.HI_AGAIN
-// A client re-connects to the server within the same session	
-	node.target.HI_AGAIN = 'HI_AGAIN'; 	
+// A client re-connects to the server within the same session
+	node.target.HI_AGAIN = 'HI_AGAIN';
 
 // #### target.PCONNECT
-// A new client just connected to the player endpoint	
+// A new client just connected to the player endpoint
 	node.target.PCONNECT = 'PCONNECT';
 	
 // #### target.PDISCONNECT
-// A client that just disconnected from the player endpoint 
+// A client that just disconnected from the player endpoint
 	node.target.PDISCONNECT = 'PDISCONNECT';
 
 // #### target.MCONNECT
-// A client that just connected to the admin (monitor) endpoint	
-	node.target.MCONNECT = 'MCONNECT'; 		
+// A client that just connected to the admin (monitor) endpoint
+	node.target.MCONNECT = 'MCONNECT';
 
 // #### target.MDISCONNECT
-// A client just disconnected from the admin (monitor) endpoint 
+// A client just disconnected from the admin (monitor) endpoint
 	node.target.MDISCONNECT = 'MDISCONNECT';
 
 // #### target.PLIST
 // The list of clients connected to the player endpoint was updated
 	node.target.PLIST = 'PLIST';
 	
-// #### target.MLIST	
-// The list of clients connected to the admin (monitor) endpoint was updated	
+// #### target.MLIST
+// The list of clients connected to the admin (monitor) endpoint was updated
 	node.target.MLIST = 'MLIST';
 
 // #### target.STATE
@@ -7486,20 +7486,24 @@ else {
 	node.target.STATE = 'STATE';
 	
 // #### target.STAGE
-// A client notifies his own state
-	node.target.STAGE = 'STAGE';	
+// A client notifies his own stage
+	node.target.STAGE = 'STAGE';
+	
+// #### target.STAGE_LEVEL
+// A client notifies his own stage level
+	node.target.STAGE_LEVEL = 'STAGE_LEVEL';
 	
 // #### target.REDIRECT
 // Redirects a client to a new uri
-	node.target.REDIRECT = 'REDIRECT'; 
+	node.target.REDIRECT = 'REDIRECT';
 
 // #### target.SETUP
-// Asks a client update its configuration	
-	node.target.SETUP = 'SETUP'; 
+// Asks a client update its configuration
+	node.target.SETUP = 'SETUP';
 	
 // #### target.GAMECOMMAND
-// Ask a client to start/pause/stop/resume the game	
-	node.target.GAMECOMMAND = 'GAMECOMMAND'; 	
+// Ask a client to start/pause/stop/resume the game
+	node.target.GAMECOMMAND = 'GAMECOMMAND';
 	
 // #### target.JOIN
 // Asks a client to join another channel/subchannel/room
@@ -7529,7 +7533,7 @@ else {
  * - node.gamecommand.resume
  * - node.gamecommand.stop
  */
-	node.gamecommand = {	
+	node.gamecommand = {
 			start: 'start',
 			pause: 'pause',
 			resume: 'resume',
@@ -7550,7 +7554,7 @@ else {
  * - node.OUT
  */
 	node.IN		= 'in.';
-	node.OUT	= 'out.';	
+	node.OUT	= 'out.';
 
 
 /**
@@ -7566,37 +7570,37 @@ else {
 	node.is.UNKNOWN = 0;
 
 // #### is.INITIALIZING
-// The engine is loading all the modules	
+// The engine is loading all the modules
 	node.is.INITIALIZING = 1;
 
 // #### is.INITIALIZED
-// The engine is fully loaded, but there is still no game	
-	node.is.INITIALIZED = 5;	
+// The engine is fully loaded, but there is still no game
+	node.is.INITIALIZED = 5;
 	
 // #### is.GAMELOADED
-// The engine is fully loaded, and a game has been loaded	
-	node.is.GAMELOADED = 10;	
+// The engine is fully loaded, and a game has been loaded
+	node.is.GAMELOADED = 10;
 	
 // #### is.DEAD
-// An unrecoverable error has occurred	
-	node.is.DEAD = -1;		
+// An unrecoverable error has occurred
+	node.is.DEAD = -1;
 	
-// TODO: remove these	
+// TODO: remove these
 // #### is.LOADING
-// A game is loading	
-	node.is.LOADING = 10;		
+// A game is loading
+	node.is.LOADING = 10;
 	
 // #### is.LOADED
-// A game has been loaded, but the GameWindow object could still require some time	
-	node.is.LOADED  = 25;		
+// A game has been loaded, but the GameWindow object could still require some time
+	node.is.LOADED  = 25;
 	
 // #### is.PLAYING
-// Everything is ready	
-	node.is.PLAYING = 50;		
+// Everything is ready
+	node.is.PLAYING = 50;
 	
 // #### is.DONE
-// The player completed the game state	
-	node.is.DONE = 100;	
+// The player completed the game state
+	node.is.DONE = 100;
 	
 	
 
@@ -7678,6 +7682,9 @@ else {
     if (J.isNodeJS()) {
         process.on('uncaughtException', function (err) {
             console.log('Caught exception: ' + err);
+            if (node.debug) {
+                throw err;
+            }
         });
     }
     else {
@@ -8601,7 +8608,7 @@ PlayerList.prototype.exist = function (id) {
 PlayerList.prototype.updatePlayerStage = function (id, stage) {
 	
 	if (!this.exist(id)) {
-		node.warm('Attempt to access a non-existing player from the the player list ' + player.id);
+		node.warn('Attempt to access a non-existing player from the the player list ' + id);
 		return false;	
 	}
 	
@@ -8613,6 +8620,31 @@ PlayerList.prototype.updatePlayerStage = function (id, stage) {
 	return this.id.update(id, {
 		stage: stage
 	});
+};
+
+/**
+ * ### PlayerList.updatePlayerStageLevel
+ *
+ * Updates the value of the `stageLevel` object of a player
+ *
+ * @param {number} id The id of the player
+ * @param {number} stageLevel The new stageLevel
+ * @return {object|boolean} The updated player object, or FALSE is an error occurred
+ */
+PlayerList.prototype.updatePlayerStageLevel = function (id, stageLevel) {
+    if (!this.exist(id)) {
+        node.warn('Attempt to access a non-existing player from the the player list ' + id);
+        return false;
+    }
+
+    if ('undefined' === typeof stageLevel) {
+        node.warn('Attempt to assign to a player an undefined stage');
+        return false;
+    }
+
+    return this.id.update(id, {
+        stageLevel: stageLevel
+    });
 };
 
 /**
@@ -8632,8 +8664,12 @@ PlayerList.prototype.updatePlayerStage = function (id, stage) {
  * @return {boolean} TRUE, if all checked players have terminated the stage
  */
 PlayerList.prototype.isStageDone = function (stage) {
+    var p;
+
 	if (!stage) return false;
 	for (var i = 0; i < this.db.length; i++) {
+        p = this.db[i];
+
 		// Player is at another stage
 		if (GameStage.compare(stage, p.stage, false) !== 0) {
 			continue;
@@ -12554,14 +12590,20 @@ Game.prototype.updateGameState = function (state) {
 // PLAYING, DONE, etc.
 Game.prototype.updateStageLevel= function (state) {
 	this.stageState = state;
-	//this.publishUpdate();
+
+    // Publish update:
+    node.socket.send(node.msg.create({
+        target: node.target.STAGE_LEVEL,
+        data: state,
+        to: 'ALL'
+    }));
 };
 
 Game.prototype.publishUpdate = function() {
 	// <!-- Important: SAY -->
 	if (!this.observer) {
 		var stateEvent = node.OUT + action.SAY + '.STATE'; 
-		node.emit(stateEvent, this.state, 'ALL'); // SHOULD BE A GAME STATE EVENT
+		node.emit(stateEvent, this.state, 'ALL');
 	}
 };
 
@@ -14561,6 +14603,12 @@ node.random = {};
         rules['SOLO'] = function(stage, myStageLevel, pl, game) {
             return myStageLevel === node.Game.stageLevels.DONE;
         };
+
+        // ### WAIT
+        // Player waits for explicit step command
+        rules['WAIT'] = function(stage, myStageLevel, pl, game) {
+            return false;
+        };
     
         // ### SYNC_STAGE
         // Player can advance freely within the steps of one stage,
@@ -14758,12 +14806,45 @@ node.on( IN + set + 'DATA', function (msg) {
 		if (node.game.pl.exist(msg.from)) {			
 			node.game.pl.updatePlayerStage(msg.from, msg.data);
 			node.emit('UPDATED_PLIST');
-			node.game.pl.checkStage();
+			//node.game.pl.checkStage();
+            node.game.shouldStep();
 		}
 		// <!-- Assume this is the server for now
 		// TODO: assign a string-id to the server -->
 		else {
-			node.game.execStage(node.gameLoop.getStep(msg.data));
+			node.game.execStage(node.game.stager.getStep(msg.data));
+		}
+	});
+
+/**
+ * ## in.say.STAGE_LEVEL
+ * 
+ * Updates a player's stage level in the player-list object
+ *
+ * If the message is from the server, it updates the game stage,
+ * else the stage in the player-list object from the player who
+ * sent the message is updated 
+ * 
+ *  @emit UPDATED_PLIST
+ *  @see Game.pl 
+ */
+	node.on( IN + say + 'STAGE_LEVEL', function (msg) {
+
+		if (node.socket.serverid && msg.from === node.socket.serverid) {
+//			console.log(node.socket.serverid + ' ---><--- ' + msg.from);
+//			console.log('NOT EXISTS');
+		}
+		
+		if (node.game.pl.exist(msg.from)) {
+			node.game.pl.updatePlayerStageLevel(msg.from, msg.data);
+			node.emit('UPDATED_PLIST');
+			//node.game.pl.checkStage();
+            node.game.shouldStep();
+		}
+		// <!-- Assume this is the server for now
+		// TODO: assign a string-id to the server -->
+		else {
+			//node.game.updateStageLevel(msg.data);
 		}
 	});
 	
@@ -14842,6 +14923,7 @@ node.on( IN + say + 'JOIN', function (msg) {
 	
 })('undefined' !== typeof node ? node : module.parent.exports); 
 // <!-- ends incoming listener -->
+
 // # Outgoing listeners
 // Outgoing listeners are fired when messages are sent
 
@@ -14876,19 +14958,6 @@ node.on( OUT + say + 'STAGE', function (stage, to) {
 	node.socket.sendSTAGE(action.SAY, stage, to);
 });	
 	
-/**
- * ## out.say.STATE
- * 
- * Sends out a STATE message to the specified recipient
- * 
- * TODO: check with the server 
- * The message is for informative purpose
- * 
- */
-node.on( OUT + say + 'STAGE', function (stage, to) {
-	node.socket.sendSTAGE(action.SAY, stage, to);
-});	
-
 /**
  * ## out.say.TXT
  * 
@@ -14948,6 +15017,7 @@ node.log('outgoing listeners added');
 
 })('undefined' !== typeof node ? node : module.parent.exports); 
 // <!-- ends outgoing listener -->
+
 // # Internal listeners
 
 // Internal listeners are not directly associated to messages,

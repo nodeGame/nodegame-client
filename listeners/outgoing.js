@@ -33,19 +33,6 @@ node.on( OUT + say + 'STAGE', function (stage, to) {
 });	
 	
 /**
- * ## out.say.STATE
- * 
- * Sends out a STATE message to the specified recipient
- * 
- * TODO: check with the server 
- * The message is for informative purpose
- * 
- */
-node.on( OUT + say + 'STAGE', function (stage, to) {
-	node.socket.sendSTAGE(action.SAY, stage, to);
-});	
-
-/**
  * ## out.say.TXT
  * 
  * Sends out a TXT message to the specified recipient

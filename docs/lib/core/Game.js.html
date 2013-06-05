@@ -1088,9 +1088,14 @@ log it</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
-<p>this.publishUpdate();</p>
+<p>Publish update:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">};</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+        <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE_LEVEL</span><span class="p">,</span>
+        <span class="nx">data</span><span class="o">:</span> <span class="nx">state</span><span class="p">,</span>
+        <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;ALL&#39;</span>
+    <span class="p">}));</span>
+<span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">publishUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
         </td>
@@ -1104,7 +1109,7 @@ log it</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">stateEvent</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">OUT</span> <span class="o">+</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">+</span> <span class="s1">&#39;.STATE&#39;</span><span class="p">;</span> 
-    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">stateEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="s1">&#39;ALL&#39;</span><span class="p">);</span> <span class="c1">// SHOULD BE A GAME STATE EVENT</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">stateEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="s1">&#39;ALL&#39;</span><span class="p">);</span>
   <span class="p">}</span>
 <span class="p">};</span></pre></div>
         </td>

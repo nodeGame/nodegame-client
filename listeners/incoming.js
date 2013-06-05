@@ -163,12 +163,45 @@ node.on( IN + set + 'DATA', function (msg) {
 		if (node.game.pl.exist(msg.from)) {			
 			node.game.pl.updatePlayerStage(msg.from, msg.data);
 			node.emit('UPDATED_PLIST');
-			node.game.pl.checkStage();
+			//node.game.pl.checkStage();
+            node.game.shouldStep();
 		}
 		// <!-- Assume this is the server for now
 		// TODO: assign a string-id to the server -->
 		else {
-			node.game.execStage(node.gameLoop.getStep(msg.data));
+			node.game.execStage(node.game.stager.getStep(msg.data));
+		}
+	});
+
+/**
+ * ## in.say.STAGE_LEVEL
+ * 
+ * Updates a player's stage level in the player-list object
+ *
+ * If the message is from the server, it updates the game stage,
+ * else the stage in the player-list object from the player who
+ * sent the message is updated 
+ * 
+ *  @emit UPDATED_PLIST
+ *  @see Game.pl 
+ */
+	node.on( IN + say + 'STAGE_LEVEL', function (msg) {
+
+		if (node.socket.serverid && msg.from === node.socket.serverid) {
+//			console.log(node.socket.serverid + ' ---><--- ' + msg.from);
+//			console.log('NOT EXISTS');
+		}
+		
+		if (node.game.pl.exist(msg.from)) {
+			node.game.pl.updatePlayerStageLevel(msg.from, msg.data);
+			node.emit('UPDATED_PLIST');
+			//node.game.pl.checkStage();
+            node.game.shouldStep();
+		}
+		// <!-- Assume this is the server for now
+		// TODO: assign a string-id to the server -->
+		else {
+			//node.game.updateStageLevel(msg.data);
 		}
 	});
 	
