@@ -112,6 +112,22 @@
 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Sequence (human readable steps):&#39;</span><span class="p">);</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getSequence</span><span class="p">(</span><span class="s1">&#39;hsteps&#39;</span><span class="p">));</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>Testing state getter/setter:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;State:&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getState</span><span class="p">());</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
+<span class="nx">stager</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getState</span><span class="p">());</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;State (after get+set):&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getState</span><span class="p">());</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
 
 <span class="nx">stager</span><span class="p">.</span><span class="nx">seqTestRun</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span></pre></div>
@@ -120,7 +136,7 @@
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
 </div>
 <p>Expert mode test:</p>
 
@@ -145,6 +161,15 @@ stager.registerGeneralNext(function() {
     if (!flag) { flag = true; return 'durr'; }
     return null;
 });</p>
+
+<p>// Testing state getter/setter:
+console.log('State:');
+console.log(stager.getState());
+console.log();
+stager.setState(stager.getState());
+console.log('State (after get+set):');
+console.log(stager.getState());
+console.log();</p>
 
 <p>stager.seqTestRun(true, 'main');</p>
   </div>
