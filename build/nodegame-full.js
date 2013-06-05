@@ -7629,6 +7629,7 @@ else {
 
     exports.NodeGameRuntimeError = NodeGameRuntimeError;
     exports.NodeGameStageCallbackError = NodeGameStageCallbackError;
+    exports.NodeGameMisconfiguredGameError = NodeGameMisconfiguredGameError;
 
     /*
      * ### NodeGameRuntimeError
@@ -7658,6 +7659,21 @@ else {
     NodeGameStageCallbackError.prototype = new Error();
     NodeGameStageCallbackError.prototype.constructor = NodeGameStageCallbackError;
     NodeGameStageCallbackError.prototype.name = 'NodeGameStageCallbackError';
+
+
+    /*
+     * ### NodeGameMisconfiguredGameError
+     *
+     * An error occurred during the configuration of the Game
+     */
+    function NodeGameMisconfiguredGameError() {
+        Error.apply(this, arguments);
+        this.stack = (new Error()).stack;
+    }
+
+    NodeGameMisconfiguredGameError.prototype = new Error();
+    NodeGameMisconfiguredGameError.prototype.constructor = NodeGameMisconfiguredGameError;
+    NodeGameMisconfiguredGameError.prototype.name = 'NodeGameMisconfiguredGameError';
 
     if (J.isNodeJS()) {
         process.on('uncaughtException', function (err) {
@@ -8609,7 +8625,7 @@ PlayerList.prototype.updatePlayerStage = function (id, stage) {
  * 
  * Players at other stages are ignored.
  * 
- * If no player is found at the desired stage, it returns FALSE.
+ * If no player is found at the desired stage, it returns TRUE.
  * 
  * @param {GameStage} stage The GameStage of reference
  * @param {boolean} extended Optional. If TRUE, all players are checked. Defaults, FALSE.
@@ -8617,8 +8633,7 @@ PlayerList.prototype.updatePlayerStage = function (id, stage) {
  */
 PlayerList.prototype.isStageDone = function (stage) {
 	if (!stage) return false;
-	var pfound = false;
-	for (var i = 0; i < this.db.length ;  i++) {
+	for (var i = 0; i < this.db.length; i++) {
 		// Player is at another stage
 		if (GameStage.compare(stage, p.stage, false) !== 0) {
 			continue;
@@ -8627,11 +8642,8 @@ PlayerList.prototype.isStageDone = function (stage) {
 		if (p.stageLevel !== node.Game.stageLevels.DONE) {
 			return false;
 		}
-		else {
-			pfound = true;
-		}
 	}
-	return pfound;
+	return true;
 };
 
 ///**
@@ -9247,10 +9259,20 @@ exports.Stager = Stager;
 /**
  * ## Stager constructor
  *
- * Creates a new empty instance of Stager
+ * Creates a new instance of Stager
+ *
+ * @param {object} stateObj Optional. State to initialize the new Stager
+ *  object with. See `Stager.setState`.
+ *
+ * @see Stager.setState
  */
-function Stager() {
-    this.clear();
+function Stager(stateObj) {
+    if (stateObj) {
+        this.setState(stateObj);
+    }
+    else {
+        this.clear();
+    }
 }
 
 // ## Stager methods
@@ -9358,16 +9380,20 @@ Stager.prototype.clear = function() {
  * Available only when nodegame is executed in _flexible_ mode.
  * The callback given here is used to determine the next stage.
  *
- * @param {function} func The decider callback.  It should return the name of
+ * @param {function|null} func The decider callback.  It should return the name of
  *  the next stage, 'NODEGAME_GAMEOVER' to end the game or false for sequence end.
+ *  Null can be given to signify non-existence.
+ *
+ * @return {boolean} TRUE on success, FALSE on error
  */
 Stager.prototype.registerGeneralNext = function(func) {
-    if ('function' !== typeof func) {
+    if (null !== func && 'function' !== typeof func) {
         node.warn("registerGeneralNext didn't receive function parameter");
-        return;
+        return false;
     }
 
     this.generalNextFunction = func;
+    return true;
 };
 
 /**
@@ -9383,20 +9409,23 @@ Stager.prototype.registerGeneralNext = function(func) {
  * @param {function} func The decider callback.  It should return the name of
  *  the next stage, 'NODEGAME_GAMEOVER' to end the game or false for sequence end.
  *
+ * @return {boolean} TRUE on success, FALSE on error
+ *
  * @see Stager.registerGeneralNext
  */
 Stager.prototype.registerNext = function(id, func) {
     if ('function' !== typeof func) {
         node.warn("registerNext didn't receive function parameter");
-        return;
+        return false;
     }
 
     if (!this.stages[id]) {
         node.warn('registerNext received nonexistent stage id');
-        return;
+        return false;
     }
 
     this.nextFunctions[id] = func;
+    return true;
 };
 
 /**
@@ -9408,10 +9437,24 @@ Stager.prototype.registerNext = function(id, func) {
  *   If not given, the initial default is restored.
  *
  * @see Stager.defaultStepRule
+ *
+ * @return {boolean} TRUE on success, FALSE on error
  */
 Stager.prototype.setDefaultStepRule = function(steprule) {
-    this.defaultStepRule = steprule ?
-        steprule : function() { return true; };
+    if (steprule) {
+        if ('function' !== typeof steprule) {
+            node.warn("setDefaultStepRule didn't receive function parameter");
+            return false;
+        }
+
+        this.defaultStepRule = steprule;
+    }
+    else {
+        // Initial default:
+        this.defaultStepRule = function() { return true; };
+    }
+
+    return true;
 };
 
 /**
@@ -9436,6 +9479,8 @@ Stager.prototype.getDefaultStepRule = function() {
  *  - cb (function): The step's callback function
  *
  * @param {object} step A valid step object.  Shallowly copied.
+ *
+ * @return {boolean} TRUE on success, FALSE on error
  */
 Stager.prototype.addStep = function(step) {
     if (!this.checkStepValidity(step)) {
@@ -9463,7 +9508,7 @@ Stager.prototype.addStep = function(step) {
  *
  * @param {object} stage A valid stage or step object.  Shallowly copied.
  *
- * @return {boolean} true on success, false on error
+ * @return {boolean} TRUE on success, FALSE on error
  *
  * @see Stager.addStep
  */
@@ -9767,6 +9812,145 @@ Stager.prototype.getSequence = function(format) {
 Stager.prototype.getStepsFromStage = function(id) {
     if (!this.stages[id]) return null;
     return this.stages[id].steps;
+};
+
+/**
+ * ### Stager.setState
+ *
+ * Sets the internal state of the Stager
+ *
+ * The passed state object can have the following fields:
+ * steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule
+ * All fields are optional.
+ *
+ * This function calls the corresponding functions to set these fields, and
+ * performs error checking.
+ *
+ * Throws `NodeGameMisconfiguredGameError` if the given state is invalid.
+ *
+ * @param {object} stateObj The Stager's state
+ *
+ * @see Stager.getState
+ */
+Stager.prototype.setState = function(stateObj) {
+    var idx;
+    var stageObj;
+    var seqObj;
+
+    // Clear previous state:
+    this.clear();
+
+    // Add steps:
+    for (idx in stateObj.steps) {
+        if (stateObj.steps.hasOwnProperty(idx)) {
+            if (!this.addStep(stateObj.steps[idx])) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+        }
+    }
+
+    // Add stages:
+    // first, handle all non-aliases (key of `stages` entry is same as `id` field of its value)
+    for (idx in stateObj.stages) {
+        stageObj = stateObj.stages[idx];
+        if (stateObj.stages.hasOwnProperty(idx) && stageObj.id === idx) {
+            if (!this.addStage(stageObj)) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+        }
+    }
+    // second, handle all aliases (key of `stages` entry is different from `id` field of its value)
+    for (idx in stateObj.stages) {
+        stageObj = stateObj.stages[idx];
+        if (stateObj.stages.hasOwnProperty(idx) && stageObj.id !== idx) {
+            this.stages[idx] = this.stages[stageObj.id];
+        }
+    }
+
+    // Add sequence blocks:
+    for (idx = 0; idx < stateObj.sequence.length; idx++) {
+        seqObj = stateObj.sequence[idx];
+
+        switch (seqObj.type) {
+        case 'gameover':
+            this.gameover();
+            break;
+
+        case 'plain':
+            if (!this.next(seqObj.id)) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+            break;
+
+        case 'repeat':
+            if (!this.repeat(seqObj.id, seqObj.num)) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+            break;
+
+        case 'loop':
+            if (!this.loop(seqObj.id, seqObj.cb)) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+            break;
+
+        case 'doLoop':
+            if (!this.doLoop(seqObj.id, seqObj.cb)) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+            break;
+
+        default:
+            // Unknown type:
+            throw new node.NodeGameMisconfiguredGameError();
+        }
+    }
+
+    // Set general next-decider:
+    if (stateObj.hasOwnProperty('generalNextFunction')) {
+        if (!this.registerGeneralNext(stateObj.generalNextFunction)) {
+            throw new node.NodeGameMisconfiguredGameError();
+        }
+    }
+
+    // Set specific next-deciders:
+    for (idx in stateObj.nextFunctions) {
+        if (stateObj.nextFunctions.hasOwnProperty(idx)) {
+            if (!this.registerNext(idx, stateObj.nextFunctions[idx])) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+        }
+    }
+
+    // Set default step-rule:
+    if (stateObj.hasOwnProperty('defaultStepRule')) {
+        if (!this.setDefaultStepRule(stateObj.defaultStepRule)) {
+            throw new node.NodeGameMisconfiguredGameError();
+        }
+    }
+};
+
+/**
+ * ### Stager.getState
+ *
+ * Returns the internal state of the Stager
+ *
+ * Fields of returned object:
+ * steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule
+ *
+ * @return {object} The Stager's state
+ *
+ * @see Stager.setState
+ */
+Stager.prototype.getState = function() {
+    return {
+        steps:               this.steps,
+        stages:              this.stages,
+        sequence:            this.sequence,
+        generalNextFunction: this.generalNextFunction,
+        nextFunctions:       this.nextFunctions,
+        defaultStepRule:     this.defaultStepRule
+    };
 };
 
 // DEBUG:  Run sequence.  Should be deleted later on.

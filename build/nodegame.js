@@ -7597,7 +7597,7 @@ PlayerList.prototype.updatePlayerStage = function (id, stage) {
  * 
  * Players at other stages are ignored.
  * 
- * If no player is found at the desired stage, it returns FALSE.
+ * If no player is found at the desired stage, it returns TRUE.
  * 
  * @param {GameStage} stage The GameStage of reference
  * @param {boolean} extended Optional. If TRUE, all players are checked. Defaults, FALSE.
@@ -7605,8 +7605,7 @@ PlayerList.prototype.updatePlayerStage = function (id, stage) {
  */
 PlayerList.prototype.isStageDone = function (stage) {
 	if (!stage) return false;
-	var pfound = false;
-	for (var i = 0; i < this.db.length ;  i++) {
+	for (var i = 0; i < this.db.length; i++) {
 		// Player is at another stage
 		if (GameStage.compare(stage, p.stage, false) !== 0) {
 			continue;
@@ -7615,11 +7614,8 @@ PlayerList.prototype.isStageDone = function (stage) {
 		if (p.stageLevel !== node.Game.stageLevels.DONE) {
 			return false;
 		}
-		else {
-			pfound = true;
-		}
 	}
-	return pfound;
+	return true;
 };
 
 ///**
@@ -13536,6 +13532,12 @@ node.random = {};
         // is DONE, regardless to the situation of other players
         rules['SOLO'] = function(stage, myStageLevel, pl, game) {
             return myStageLevel === node.Game.stageLevels.DONE;
+        };
+
+        // ### WAIT
+        // Player waits for explicit step command
+        rules['WAIT'] = function(stage, myStageLevel, pl, game) {
+            return false;
         };
     
         // ### SYNC_STAGE
