@@ -12243,7 +12243,7 @@ function Game (settings) {
 	}
 
 /**
- * ### Game.pl
+ * ### Game.ml
  * 
  * The list of monitor clients connected to the game
  * 
@@ -12378,16 +12378,14 @@ function Game (settings) {
 
 	
 /**
- * ### Game.stager
+ * ### Game.gameLoop
  * 
- * Stage manager 
+ * The Game Loop
  * 
- * retrocompatible with gameLoop
- * 
- * @see Stager
+ * @see GameLoop
  * @api private
  */
-    this.gameLoop = this.stager = new GameLoop(settings.stages);
+    this.gameLoop = new GameLoop(settings.stages);
 	
 
     // TODO: check how to init
@@ -12496,7 +12494,7 @@ Game.prototype.resume = function () {
  */
 Game.prototype.shouldStep = function() {
     // Check the stager
-    var stepRule = this.stager.getStepRule(this.getCurrentGameStage());
+    var stepRule = this.gameLoop.getStepRule(this.getCurrentGameStage());
 
     if ('function' !== typeof stepRule) return false;
 
@@ -12523,7 +12521,7 @@ Game.prototype.shouldStep = function() {
  */
 Game.prototype.step = function() {
     var nextStep;
-    nextStep = this.stager.next(this.getCurrentGameStage());
+    nextStep = this.gameLoop.next(this.getCurrentGameStage());
     console.log('NEXT', nextStep);
     if ('string' === typeof nextStep) {
 
@@ -12596,7 +12594,7 @@ Game.prototype.getStageLevel = function () {
 };
 
 Game.prototype.getCurrentStep = function () {
-    return this.stager.getStep(this.getCurrentGameStage());
+    return this.gameLoop.getStep(this.getCurrentGameStage());
 };
 
 Game.prototype.getCurrentGameStage = function () {
@@ -12687,7 +12685,7 @@ Game.prototype._isReadyToStep = function(stage, stager, pl) {
 };
 
 Game.prototype.isReadyToStep = function() {
-    return this._isReadyToStep(this.getCurrentStage(), this.stager, this.pl);
+    return this._isReadyToStep(this.getCurrentStage(), this.gameLoop, this.pl);
 };
 
 
@@ -12700,7 +12698,7 @@ Game.prototype._getStepperCallback = function(stage, stager) {
 };
 
 Game.prototype.getStepperCallback = function() {
-    return this._getStepperCallback(this.getCurrentStage(), this.stager);
+    return this._getStepperCallback(this.getCurrentStage(), this.gameLoop);
 };
 
 // TODO : MAYBE TO REMOVE THEM
@@ -14665,7 +14663,7 @@ node.random = {};
         rules['SYNC_STAGE'] = function(stage, myStageLevel, pl, game) {
             // if next step is going to be a new stage, wait for others
             return myStageLevel === node.Game.stageLevels.DONE;
-                (game.stager.stepsToNextStage(stage) > 1 ||
+                (game.gameLoop.stepsToNextStage(stage) > 1 ||
                  pl.isStageDone(stage));
         };
     }
@@ -14861,7 +14859,7 @@ node.on( IN + set + 'DATA', function (msg) {
 		// <!-- Assume this is the server for now
 		// TODO: assign a string-id to the server -->
 		else {
-			node.game.execStage(node.game.stager.getStep(msg.data));
+			node.game.execStage(node.game.gameLoop.getStep(msg.data));
 		}
 	});
 

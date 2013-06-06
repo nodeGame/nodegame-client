@@ -169,7 +169,7 @@ node.on( IN + set + 'DATA', function (msg) {
 		// <!-- Assume this is the server for now
 		// TODO: assign a string-id to the server -->
 		else {
-			node.game.execStage(node.game.stager.getStep(msg.data));
+			node.game.execStage(node.game.gameLoop.getStep(msg.data));
 		}
 	});
 
