@@ -118,7 +118,10 @@ MIT Licensed </p>
   
   
   <span class="k">this</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;game.currentStepObj&#39;</span><span class="p">,</span> <span class="p">{</span>
-    <span class="nx">set</span><span class="o">:</span> <span class="nx">GameSession</span><span class="p">.</span><span class="nx">restoreStage</span>
+    <span class="nx">set</span><span class="o">:</span> <span class="nx">GameSession</span><span class="p">.</span><span class="nx">restoreStage</span><span class="p">,</span>
+        <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentStep</span><span class="p">();</span>
+        <span class="p">}</span>
   <span class="p">});</span>
   
   <span class="k">this</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;node.env&#39;</span><span class="p">);</span>
@@ -164,7 +167,7 @@ MIT Licensed </p>
 </div>
 <p>RE-EMIT EVENTS</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">remit</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="nx">discard</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">remit</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">(),</span> <span class="nx">discard</span><span class="p">);</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;game stage restored&#39;</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
   <span class="p">}</span>

@@ -74,11 +74,11 @@ node.on('DONE', function(p1, p2, p3) {
 	
     // Execute done handler before updating stage
     var ok = true,
-       done = node.game.currentStepObj.done;
+       done = node.game.getCurrentStep().done;
     
     if (done) ok = done.call(node.game, p1, p2, p3);
     if (!ok) return;
-    node.game.updateStageLevel(Game.stageLevels.DONE)
+    node.game.setStageLevel(Game.stageLevels.DONE)
 	
     // Call all the functions that want to do 
     // something before changing stage
@@ -126,7 +126,7 @@ node.on('GAME_LOADED', function() {
  */
 node.on('LOADED', function() {
 	node.emit('BEFORE_LOADING');
-	node.game.updateStageLevel(Game.stageLevels.PLAYING);
+	node.game.setStageLevel(Game.stageLevels.PLAYING);
 	//TODO: the number of messages to emit to inform other players
 	// about its own stage should be controlled. Observer is 0 
 	//node.game.publishUpdate();
@@ -143,7 +143,7 @@ node.on('NODEGAME_GAMECOMMAND_' + node.gamecommand.start, function(options) {
 	
     node.emit('BEFORE_GAMECOMMAND', node.gamecommand.start, options);
 	
-    if (node.game.currentStepObj && node.game.currentStepObj.stage !== 0) {
+    if (node.game.getCurrentStep() && node.game.getCurrentStep().stage !== 0) {
 	node.err('Game already started. Use restart if you want to start the game again');
 	return;
     }

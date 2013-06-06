@@ -2893,6 +2893,13 @@ function PARSE(){};
  */
 PARSE.stringify_prefix = '!?_';
 
+PARSE.marker_func = PARSE.stringify_prefix + 'function';
+PARSE.marker_null = PARSE.stringify_prefix + 'null';
+PARSE.marker_und = PARSE.stringify_prefix + 'undefined';
+PARSE.marker_nan = PARSE.stringify_prefix + 'NaN';
+PARSE.marker_inf = PARSE.stringify_prefix + 'Infinity';
+PARSE.marker_minus_inf = PARSE.stringify_prefix + '-Infinity';
+
 /**
  * ## PARSE.getQueryString
  * 
@@ -2935,22 +2942,22 @@ PARSE.getQueryString = function (variable) {
  * 
  */
 PARSE.tokenize = function (str, separators, modifiers) {
-	if (!str) return;
-	if (!separators || !separators.length) return [str];
-	modifiers = modifiers || {};
+    if (!str) return;
+    if (!separators || !separators.length) return [str];
+    modifiers = modifiers || {};
+    
+    var pattern = '[';
+    
+    JSUS.each(separators, function(s) {
+	if (s === ' ') s = '\\s';
 	
-	var pattern = '[';
-	
-	JSUS.each(separators, function(s) {
-		if (s === ' ') s = '\\s';
-		
-		pattern += s;
-	});
-	
-	pattern += ']+';
-	
-	var regex = new RegExp(pattern);
-	return str.split(regex, modifiers.limit);
+	pattern += s;
+    });
+    
+    pattern += ']+';
+    
+    var regex = new RegExp(pattern);
+    return str.split(regex, modifiers.limit);
 };
 
 /**
@@ -2972,24 +2979,49 @@ PARSE.tokenize = function (str, separators, modifiers) {
  * @see PARSE.stringify_prefix
  */
 PARSE.stringify = function(o, spaces) {
-	return JSON.stringify(o, function(key, value){
-		var type = typeof value;
-		
-		if ('function' === type) {
-			return PARSE.stringify_prefix + value.toString()
-		}
-		
-		if ('undefined' === type) {
-			return PARSE.stringify_prefix + 'undefined';
-		}
-		
-		if (value === null) {
-			return PARSE.stringify_prefix + 'null';
-		}
-		
-		return value;
-		
-	}, spaces);
+    return JSON.stringify(o, function(key, value){
+	var type = typeof value;
+	if ('function' === type) {
+	    return PARSE.stringify_prefix + value.toString()
+	}
+	
+	if ('undefined' === type) return PARSE.marker_und;
+	if (value === null) return PARSE.marker_null;
+        if ('number' === type && isNaN(value)) return PARSE.marker_nan;
+	if (value == Number.POSITIVE_INFINITY) return PARSE.marker_inf;
+	if (value == Number.NEGATIVE_INFINITY) return PARSE.marker_minus_inf;
+	
+	return value;
+	
+    }, spaces);
+};
+
+/**
+ * ## PARSE.stringifyAll
+ * 
+ * Copies all the properties of the prototype before stringifying
+ *
+ * Notice: The original object is modified!
+ * 
+ * @param {mixed} o The value to stringify
+ * @param {number} spaces Optional the number of indentation spaces. Defaults, 0
+ * 
+ * @return {string} The stringified result
+ * 
+ * @see PARSE.stringify
+ */
+PARSE.stringifyAll = function(o, spaces) {
+    for (var i in o) {
+	if (!o.hasOwnProperty(i)) {
+	    if ('object' === typeof o[i]) {
+		o[i] = PARSE.stringifyAll(o[i]);
+	    }
+	    else {
+		o[i] = o[i];
+	    }
+	}
+    }
+    return PARSE.stringify(o);
 };
 
 /**
@@ -3008,59 +3040,65 @@ PARSE.stringify = function(o, spaces) {
  */
 PARSE.parse = function(str) {
 	
-	var marker_func = PARSE.stringify_prefix + 'function',
-		marker_null = PARSE.stringify_prefix + 'null',
-		marker_und	= PARSE.stringify_prefix + 'undefined';
+    var len_prefix = PARSE.stringify_prefix.length,
+        len_func = PARSE.marker_func.length,
+        len_null = PARSE.marker_null.length,
+        len_und = PARSE.marker_und.length,
+        len_nan = PARSE.marker_nan.length,
+        len_inf = PARSE.marker_inf.length,
+        len_inf = PARSE.marker_minus_inf.length;
+       
 	
-	var len_prefix 	= PARSE.stringify_prefix.length,
-		len_func 	= marker_func.length,
-		len_null 	= marker_null.length,
-		len_und 	= marker_und.length;	
+    var o = JSON.parse(str);
+    return walker(o);
 	
-	var o = JSON.parse(str);
-	return walker(o);
-	
-	function walker(o) {
-		var tmp;
+    function walker(o) {
+	if ('object' !== typeof o) return reviver(o);
 		
-		if ('object' !== typeof o) {
-			return reviver(o);
+	for (var i in o) {
+	    if (o.hasOwnProperty(i)) {
+		if ('object' === typeof o[i]) {
+		    walker(o[i]);
 		}
-		
-		for (var i in o) {
-			if (o.hasOwnProperty(i)) {
-				if ('object' === typeof o[i]) {
-					walker(o[i]);
-				}
-				else {
-					o[i] = reviver(o[i]);
-				}
-			}
+		else {
+		    o[i] = reviver(o[i]);
 		}
-		
-		return o;
+	    }
 	}
 	
-	function reviver(value) {
-		var type = typeof value;
-		
-		if (type === 'string') {
-			if (value.substring(0, len_prefix) !== PARSE.stringify_prefix) {
-				return value;
-			}
-			else if (value.substring(0, len_func) === marker_func) {
-				return eval('('+value.substring(len_prefix)+')');
-			}
-			else if (value.substring(0, len_null) === marker_null) {
-				return null;
-			}
-			else if (value.substring(0, len_und) === marker_und) {
-				return undefined;
-			}
-		}	
-		
+	return o;
+    }
+	
+    function reviver(value) {
+	var type = typeof value;
+	
+	if (type === 'string') {
+	    if (value.substring(0, len_prefix) !== PARSE.stringify_prefix) {
 		return value;
-	};
+	    }
+	    else if (value.substring(0, len_func) === PARSE.marker_func) {
+		return eval('('+value.substring(len_prefix)+')');
+	    }
+	    else if (value.substring(0, len_null) === PARSE.marker_null) {
+		return null;
+	    }
+	    else if (value.substring(0, len_und) === PARSE.marker_und) {
+		return undefined;
+	    }
+
+	    else if (value.substring(0, len_nan) === PARSE.marker_nan) {
+		return NaN;
+	    }
+	    else if (value.substring(0, len_inf) === PARSE.marker_inf) {
+		return Infinity;
+	    }
+	    else if (value.substring(0, len_inf) === PARSE.marker_minus_inf) {
+		return -Infinity;
+	    }
+
+	}		
+	return value;
+    };
 }
 
 
@@ -4935,26 +4973,22 @@ NDDB.prototype.fetchKeyArray = function (key) {
 NDDB.prototype.groupBy = function (key) {
     if (!key) return this.db;
     
-    var groups = [];
-    var outs = [];
-    for (var i=0; i < this.db.length; i++) {
-        var el = J.getNestedValue(key, this.db[i]);
+    var groups = [], outs = [], i, el, out;
+    for (i = 0 ; i < this.db.length ; i++) {
+        el = J.getNestedValue(key, this.db[i]);
         if ('undefined' === typeof el) continue;
         // Creates a new group and add entries to it
         if (!J.in_array(el, groups)) {
             groups.push(el);
-            var out = this.filter(function (elem) {
+            out = this.filter(function (elem) {
                 if (J.equals(J.getNestedValue(key, elem), el)) {
                     return this;
                 }
-            });
-            
+            });   
             // Reset nddb_pointer in subgroups
             out.nddb_pointer = 0;
-            
             outs.push(out);
         }
-        
     }
     return outs;
 };    
@@ -5962,7 +5996,7 @@ NDDBIndex.prototype.size = function () {
  * @see NDDBIndex.update
  */
 NDDBIndex.prototype.get = function (idx) {
-	if (!this.resolve[idx]) return false
+	if ('undefined' === typeof this.resolve[idx]) return false;
     return this.nddb.db[this.resolve[idx]];
 };
 
@@ -6369,7 +6403,7 @@ else {
  * # Variables
  * 
  * Copyright(c) 2012 Stefano Balietti
- * MIT Licensed 
+ * MIT Licensed
  * 
  * `nodeGame` variables and constants module
  * 
@@ -6399,58 +6433,58 @@ else {
  */
 	node.action = {};
 
-	node.action.SET = 'set'; 	
-	node.action.GET = 'get'; 	
-	node.action.SAY = 'say'; 	
+	node.action.SET = 'set';
+	node.action.GET = 'get';
+	node.action.SAY = 'say';
 
 /**
  * ### node.target
  * 
  * Collection of available nodeGame targets
  * 
- * The target adds an additional level of semantic 
+ * The target adds an additional level of semantic
  * for the message, and specifies the nature of the
- * information carried in the message. 
+ * information carried in the message.
  * 
- * It answers the question: "What is the content of the message?" 
+ * It answers the question: "What is the content of the message?"
  */
 	node.target = {};
 
 
 // #### target.DATA
-// Generic identifier for any type of data 
-	node.target.DATA		= 'DATA';		
+// Generic identifier for any type of data
+	node.target.DATA = 'DATA';
 	
 // #### target.HI
 // A client is connecting for the first time
-	node.target.HI = 'HI';		
+	node.target.HI = 'HI';
 
 // #### target.HI_AGAIN
-// A client re-connects to the server within the same session	
-	node.target.HI_AGAIN = 'HI_AGAIN'; 	
+// A client re-connects to the server within the same session
+	node.target.HI_AGAIN = 'HI_AGAIN';
 
 // #### target.PCONNECT
-// A new client just connected to the player endpoint	
+// A new client just connected to the player endpoint
 	node.target.PCONNECT = 'PCONNECT';
 	
 // #### target.PDISCONNECT
-// A client that just disconnected from the player endpoint 
+// A client that just disconnected from the player endpoint
 	node.target.PDISCONNECT = 'PDISCONNECT';
 
 // #### target.MCONNECT
-// A client that just connected to the admin (monitor) endpoint	
-	node.target.MCONNECT = 'MCONNECT'; 		
+// A client that just connected to the admin (monitor) endpoint
+	node.target.MCONNECT = 'MCONNECT';
 
 // #### target.MDISCONNECT
-// A client just disconnected from the admin (monitor) endpoint 
+// A client just disconnected from the admin (monitor) endpoint
 	node.target.MDISCONNECT = 'MDISCONNECT';
 
 // #### target.PLIST
 // The list of clients connected to the player endpoint was updated
 	node.target.PLIST = 'PLIST';
 	
-// #### target.MLIST	
-// The list of clients connected to the admin (monitor) endpoint was updated	
+// #### target.MLIST
+// The list of clients connected to the admin (monitor) endpoint was updated
 	node.target.MLIST = 'MLIST';
 
 // #### target.STATE
@@ -6458,20 +6492,24 @@ else {
 	node.target.STATE = 'STATE';
 	
 // #### target.STAGE
-// A client notifies his own state
-	node.target.STAGE = 'STAGE';	
+// A client notifies his own stage
+	node.target.STAGE = 'STAGE';
+	
+// #### target.STAGE_LEVEL
+// A client notifies his own stage level
+	node.target.STAGE_LEVEL = 'STAGE_LEVEL';
 	
 // #### target.REDIRECT
 // Redirects a client to a new uri
-	node.target.REDIRECT = 'REDIRECT'; 
+	node.target.REDIRECT = 'REDIRECT';
 
 // #### target.SETUP
-// Asks a client update its configuration	
-	node.target.SETUP = 'SETUP'; 
+// Asks a client update its configuration
+	node.target.SETUP = 'SETUP';
 	
 // #### target.GAMECOMMAND
-// Ask a client to start/pause/stop/resume the game	
-	node.target.GAMECOMMAND = 'GAMECOMMAND'; 	
+// Ask a client to start/pause/stop/resume the game
+	node.target.GAMECOMMAND = 'GAMECOMMAND';
 	
 // #### target.JOIN
 // Asks a client to join another channel/subchannel/room
@@ -6501,7 +6539,7 @@ else {
  * - node.gamecommand.resume
  * - node.gamecommand.stop
  */
-	node.gamecommand = {	
+	node.gamecommand = {
 			start: 'start',
 			pause: 'pause',
 			resume: 'resume',
@@ -6522,7 +6560,7 @@ else {
  * - node.OUT
  */
 	node.IN		= 'in.';
-	node.OUT	= 'out.';	
+	node.OUT	= 'out.';
 
 
 /**
@@ -6538,37 +6576,37 @@ else {
 	node.is.UNKNOWN = 0;
 
 // #### is.INITIALIZING
-// The engine is loading all the modules	
+// The engine is loading all the modules
 	node.is.INITIALIZING = 1;
 
 // #### is.INITIALIZED
-// The engine is fully loaded, but there is still no game	
-	node.is.INITIALIZED = 5;	
+// The engine is fully loaded, but there is still no game
+	node.is.INITIALIZED = 5;
 	
 // #### is.GAMELOADED
-// The engine is fully loaded, and a game has been loaded	
-	node.is.GAMELOADED = 10;	
+// The engine is fully loaded, and a game has been loaded
+	node.is.GAMELOADED = 10;
 	
 // #### is.DEAD
-// An unrecoverable error has occurred	
-	node.is.DEAD = -1;		
+// An unrecoverable error has occurred
+	node.is.DEAD = -1;
 	
-// TODO: remove these	
+// TODO: remove these
 // #### is.LOADING
-// A game is loading	
-	node.is.LOADING = 10;		
+// A game is loading
+	node.is.LOADING = 10;
 	
 // #### is.LOADED
-// A game has been loaded, but the GameWindow object could still require some time	
-	node.is.LOADED  = 25;		
+// A game has been loaded, but the GameWindow object could still require some time
+	node.is.LOADED  = 25;
 	
 // #### is.PLAYING
-// Everything is ready	
-	node.is.PLAYING = 50;		
+// Everything is ready
+	node.is.PLAYING = 50;
 	
 // #### is.DONE
-// The player completed the game state	
-	node.is.DONE = 100;	
+// The player completed the game state
+	node.is.DONE = 100;
 	
 	
 
@@ -6599,9 +6637,9 @@ else {
 
     node.debug = false;
 
-    exports.NodeGameRuntimeError = NodeGameRuntimeError;
-    exports.NodeGameStageCallbackError = NodeGameStageCallbackError;
-    exports.NodeGameMisconfiguredGameError = NodeGameMisconfiguredGameError;
+    node.NodeGameRuntimeError = NodeGameRuntimeError;
+    node.NodeGameStageCallbackError = NodeGameStageCallbackError;
+    node.NodeGameMisconfiguredGameError = NodeGameMisconfiguredGameError;
 
     /*
      * ### NodeGameRuntimeError
@@ -6649,7 +6687,11 @@ else {
 
     if (J.isNodeJS()) {
         process.on('uncaughtException', function (err) {
-            console.log('Caught exception: ' + err);
+            debugger;
+            node.err('Caught exception: ' + err.msg);
+            if (node.debug) {
+                throw err;
+            }
         });
     }
     else {
@@ -7573,7 +7615,7 @@ PlayerList.prototype.exist = function (id) {
 PlayerList.prototype.updatePlayerStage = function (id, stage) {
 	
 	if (!this.exist(id)) {
-		node.warm('Attempt to access a non-existing player from the the player list ' + player.id);
+		node.warn('Attempt to access a non-existing player from the the player list ' + id);
 		return false;	
 	}
 	
@@ -7585,6 +7627,31 @@ PlayerList.prototype.updatePlayerStage = function (id, stage) {
 	return this.id.update(id, {
 		stage: stage
 	});
+};
+
+/**
+ * ### PlayerList.updatePlayerStageLevel
+ *
+ * Updates the value of the `stageLevel` object of a player
+ *
+ * @param {number} id The id of the player
+ * @param {number} stageLevel The new stageLevel
+ * @return {object|boolean} The updated player object, or FALSE is an error occurred
+ */
+PlayerList.prototype.updatePlayerStageLevel = function (id, stageLevel) {
+    if (!this.exist(id)) {
+        node.warn('Attempt to access a non-existing player from the the player list ' + id);
+        return false;
+    }
+
+    if ('undefined' === typeof stageLevel) {
+        node.warn('Attempt to assign to a player an undefined stage');
+        return false;
+    }
+
+    return this.id.update(id, {
+        stageLevel: stageLevel
+    });
 };
 
 /**
@@ -7604,8 +7671,12 @@ PlayerList.prototype.updatePlayerStage = function (id, stage) {
  * @return {boolean} TRUE, if all checked players have terminated the stage
  */
 PlayerList.prototype.isStageDone = function (stage) {
+    var p;
+
 	if (!stage) return false;
 	for (var i = 0; i < this.db.length; i++) {
+        p = this.db[i];
+
 		// Player is at another stage
 		if (GameStage.compare(stage, p.stage, false) !== 0) {
 			continue;
@@ -11305,9 +11376,6 @@ function Game (settings) {
     }
     
     
-    this.player = null;	
-    
-    
     this.paused = false;
 	
 } // <!-- ends constructor -->
@@ -11431,20 +11499,20 @@ Game.prototype.step = function() {
     nextStep = this.stager.next(this.currentStep);
     console.log('NEXT', nextStep);
     if ('string' === typeof nextStep) {
-	
-	if (nextStep === GameLoop.GAMEOVER) {
-	    node.emit('GAMEOVER');
-	    return this.gameover(); // can throw Errors
-	}
-	
-	// else do nothing
-	return null;
+
+        if (nextStep === GameLoop.GAMEOVER) {
+            node.emit('GAMEOVER');
+            return this.gameover(); // can throw Errors
+        }
+
+        // else do nothing
+        return null;
     }
     else {
-	// TODO maybe update also in case of string
-	this.currentStep = nextStep;
-	this.currentStepObj = this.stager.getStep(nextStep);
-	return this.execStage(this.currentStepObj);
+        // TODO maybe update also in case of string
+        this.currentStep = nextStep;
+        this.currentStepObj = this.stager.getStep(nextStep);
+        return this.execStage(this.currentStepObj);
     }
 };
 
@@ -11458,47 +11526,39 @@ Game.prototype.step = function() {
  */
 Game.prototype.execStage = function(stage) {
     var cb, res;
-	
+
     cb = stage.cb; 
-			
+
     // Local Listeners from previous stage are erased 
     // before proceeding to next one
     node.events.clearStage(this.currentStep);
-			
-    this.updateStageLevel('LOADING');
-    
-    
+
+    this.updateStageLevel(Game.stageLevels.LOADING);
+
+
     try {
-	res = cb.call(node.game);
-	this.updateStageLevel('LOADED');
-	
-	// This does not make sense. Basically it waits for the nodegame window to be loaded too
-	if (this.isReady()) {
-	    node.emit('LOADED');
-	}
-	if (res === false) {
-			// A non fatal error occurred
-	    // log it
-	}
-	
-	return res;
-	
+        res = cb.call(node.game);
     } 
     catch (e) {
-	var err, ex;
-	err = 'An error occurred while executing a custom callback'; //  
-	
-	node.err(err);
-	
-	if (node.debug) {
-	    ex = node.NodeGameRuntimeError;
-	    console.log(ex);
-	    console.log(ex.trace);
-	    throw ex;
-	}
-	
-	return true;
+        var err;
+        err = 'An error occurred while executing a custom callback';
+
+        node.err(err);
+
+        throw new node.NodeGameRuntimeError(e);
     }
+
+    this.updateStageLevel(Game.stageLevels.LOADED);
+    // This does not make sense. Basically it waits for the nodegame window to be loaded too
+    if (this.isReady()) {
+        node.emit('LOADED');
+    }
+    if (res === false) {
+        // A non fatal error occurred
+        // log it
+    }
+
+    return res;
 };
 
 Game.prototype.getGameState = function () {
@@ -11519,21 +11579,39 @@ Game.prototype.getGameStage = function () {
 
 // ERROR, WORKING, etc
 Game.prototype.updateGameState = function (state) {
+    if ('number' !== typeof state) {
+        throw new node.NodeGameMisconfiguredGameError(
+                'updateGameState called with invalid parameter: ' + state);
+    }
+
 	this.state = state;
 	//this.publishUpdate();
 };
 
 // PLAYING, DONE, etc.
-Game.prototype.updateStageLevel= function (state) {
-	this.stageState = state;
-	//this.publishUpdate();
+Game.prototype.updateStageLevel = function (state) {
+    if ('number' !== typeof state) {
+        throw new node.NodeGameMisconfiguredGameError(
+                'updateStageLevel called with invalid parameter: ' + state);
+    }
+
+    this.stageState = state;
+
+    // Publish update:
+    if (!this.observer) {
+        node.socket.send(node.msg.create({
+            target: node.target.STAGE_LEVEL,
+            data: state,
+            to: 'ALL'
+        }));
+    }
 };
 
 Game.prototype.publishUpdate = function() {
 	// <!-- Important: SAY -->
 	if (!this.observer) {
 		var stateEvent = node.OUT + action.SAY + '.STATE'; 
-		node.emit(stateEvent, this.state, 'ALL'); // SHOULD BE A GAME STATE EVENT
+		node.emit(stateEvent, this.state, 'ALL');
 	}
 };
 
@@ -11611,10 +11689,12 @@ Game.prototype.getStepperCallback = function() {
 * 	@see GameStage
 * 	@see Game.gameLoop
 */
+/*
 Game.prototype.next = function (N) {
 	if (!N) return this.gameLoop.next(this.state);
 	return this.gameLoop.jump(this.state, Math.abs(N));
 };
+*/
 
 /**
 * ### Game.previous
@@ -11630,10 +11710,12 @@ Game.prototype.next = function (N) {
 * 	@see GameStage
 * 	@see Game.gameLoop
 */
+/*
 Game.prototype.previous = function (N) {
 	if (!N) return this.gameLoop.previous(this.state);
 	return this.gameLoop.jump(this.state, -Math.abs(N));
 };
+*/
 
 
 /**
@@ -11652,12 +11734,14 @@ Game.prototype.previous = function (N) {
 * 	@see GameStage
 * 	@see Game.gameLoop
 */
+/*
 Game.prototype.jumpTo = function (jump) {
 	if (!jump) return false;
 	var gs = this.gameLoop.jump(this.state, jump);
 	if (!gs) return false;
 	return this.updateStage(gs);
 };
+*/
 
 // ## Closure
 })(
@@ -13178,24 +13262,25 @@ var frozen = false;
 // The input parameter can be either an object (function) or 
 // a stringified object (function), and it will be passed as 
 // the configuration object to the contructor of `node.Game`
-	node.setup.register('game', function(game) {
-	    if (!game) return {};
-		
-	    // Trying to parse the string, maybe it
-	    // comes from a remote setup
-	    if ('string' === typeof game) {
-		game = J.parse(game);			
-	    }
-		
-	    if ('function' === typeof game) {
-		// creates the object
-		game = new game();
-	    }
-	    
-	    node.game = new Game(game);
-	    node.emit('NODEGAME_GAME_CREATED');
-	    return node.game;
-	});
+    node.setup.register('game', function(gameState) {
+        // TODO
+        if (!gameState) return {};
+
+        // Trying to parse the string, maybe it
+        // comes from a remote setup
+        if ('string' === typeof gameState) {
+            gameState = J.parse(gameState);			
+        }
+
+        if ('function' === typeof gameState) {
+            // creates the object
+            gameState = new gameState();
+        }
+
+        node.game = new Game(gameState);
+        node.emit('NODEGAME_GAME_CREATED');
+        return node.game;
+    });
 		
 // ### node.setup.player
 // Creates the `node.player` object
@@ -13216,36 +13301,37 @@ var frozen = false;
  * @return{boolean} TRUE, if configuration is successful
  *
  * @see node.setup
+ * @see JSUS.stringifyAll
  */	
-	node.remoteSetup = function (property, options, to) {
-	    var msg, payload;
+    node.remoteSetup = function (property, options, to) {
+        var msg, payload;
 
-	    if (!property) {
-		node.err('cannot send remote setup: empty property');
-		return false;
-	    }
-	    if (!to) {
-		node.err('cannot send remote setup: empty recipient');
-		return false;
-	    }
-	    
-	    payload = J.stringify(options);
-	    
-	    if (!payload) {
-		node.err('an error occurred while stringifying payload for remote setup');
-		return false;
-	    }
-	    
-	    msg = node.msg.create({
-		target: node.target.SETUP,
-		to: to,
-		text: property,
-		data: payload
-	    });
-		
-	    return node.socket.send(msg);
-	};
-		
+        if (!property) {
+            node.err('cannot send remote setup: empty property');
+            return false;
+        }
+        if (!to) {
+            node.err('cannot send remote setup: empty recipient');
+            return false;
+        }
+
+        payload = J.stringifyAll(options);
+
+        if (!payload) {
+            node.err('an error occurred while stringifying payload for remote setup');
+            return false;
+        }
+
+        msg = node.msg.create({
+            target: node.target.SETUP,
+            to: to,
+            text: property,
+            data: payload
+        });
+
+        return node.socket.send(msg);
+    };
+
 
 })(
 	'undefined' != typeof node ? node : module.exports,
@@ -13736,12 +13822,44 @@ node.on( IN + set + 'DATA', function (msg) {
 		if (node.game.pl.exist(msg.from)) {			
 			node.game.pl.updatePlayerStage(msg.from, msg.data);
 			node.emit('UPDATED_PLIST');
-			node.game.pl.checkStage();
+			//node.game.pl.checkStage();
+            node.game.shouldStep();
 		}
 		// <!-- Assume this is the server for now
 		// TODO: assign a string-id to the server -->
 		else {
-			node.game.execStage(node.gameLoop.getStep(msg.data));
+			node.game.execStage(node.game.stager.getStep(msg.data));
+		}
+	});
+
+/**
+ * ## in.say.STAGE_LEVEL
+ * 
+ * Updates a player's stage level in the player-list object
+ *
+ * If the message is from the server, it updates the game stage,
+ * else the stage in the player-list object from the player who
+ * sent the message is updated 
+ * 
+ *  @emit UPDATED_PLIST
+ *  @see Game.pl 
+ */
+	node.on( IN + say + 'STAGE_LEVEL', function (msg) {
+		if (node.socket.serverid && msg.from === node.socket.serverid) {
+//			console.log(node.socket.serverid + ' ---><--- ' + msg.from);
+//			console.log('NOT EXISTS');
+		}
+		
+		if (node.game.pl.exist(msg.from)) {
+			node.game.pl.updatePlayerStageLevel(msg.from, msg.data);
+			node.emit('UPDATED_PLIST');
+			//node.game.pl.checkStage();
+            node.game.shouldStep();
+		}
+		// <!-- Assume this is the server for now
+		// TODO: assign a string-id to the server -->
+		else {
+			//node.game.updateStageLevel(msg.data);
 		}
 	});
 	
@@ -13820,6 +13938,7 @@ node.on( IN + say + 'JOIN', function (msg) {
 	
 })('undefined' !== typeof node ? node : module.parent.exports); 
 // <!-- ends incoming listener -->
+
 // # Outgoing listeners
 // Outgoing listeners are fired when messages are sent
 
@@ -13854,19 +13973,6 @@ node.on( OUT + say + 'STAGE', function (stage, to) {
 	node.socket.sendSTAGE(action.SAY, stage, to);
 });	
 	
-/**
- * ## out.say.STATE
- * 
- * Sends out a STATE message to the specified recipient
- * 
- * TODO: check with the server 
- * The message is for informative purpose
- * 
- */
-node.on( OUT + say + 'STAGE', function (stage, to) {
-	node.socket.sendSTAGE(action.SAY, stage, to);
-});	
-
 /**
  * ## out.say.TXT
  * 
@@ -13926,6 +14032,7 @@ node.log('outgoing listeners added');
 
 })('undefined' !== typeof node ? node : module.parent.exports); 
 // <!-- ends outgoing listener -->
+
 // # Internal listeners
 
 // Internal listeners are not directly associated to messages,
@@ -14054,7 +14161,7 @@ node.on('GAME_LOADED', function() {
  */
 node.on('LOADED', function() {
 	node.emit('BEFORE_LOADING');
-	node.game.updateStageLevel('PLAYING');
+	node.game.updateStageLevel(Game.stageLevels.PLAYING);
 	//TODO: the number of messages to emit to inform other players
 	// about its own stage should be controlled. Observer is 0 
 	//node.game.publishUpdate();
@@ -14084,6 +14191,7 @@ node.log('internal listeners added');
 	
 })('undefined' !== typeof node ? node : module.parent.exports); 
 // <!-- ends outgoing listener -->
+
 /**
  * # GameTimer
  * 
