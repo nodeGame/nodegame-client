@@ -191,11 +191,11 @@ process is stopped. </p>
 <p>Execute done handler before updating stage</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">ok</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
-       <span class="nx">done</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">currentStepObj</span><span class="p">.</span><span class="nx">done</span><span class="p">;</span>
+       <span class="nx">done</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentStep</span><span class="p">().</span><span class="nx">done</span><span class="p">;</span>
     
     <span class="k">if</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="nx">ok</span> <span class="o">=</span> <span class="nx">done</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ok</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">updateStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span>
   </pre></div>
         </td>
       </tr>
@@ -290,7 +290,7 @@ something before changing stage</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;BEFORE_LOADING&#39;</span><span class="p">);</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">updateStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">PLAYING</span><span class="p">);</span></pre></div>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">PLAYING</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -326,7 +326,7 @@ node.game.publishUpdate();</p>
   
     <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;BEFORE_GAMECOMMAND&#39;</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gamecommand</span><span class="p">.</span><span class="nx">start</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
   
-    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">currentStepObj</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">currentStepObj</span><span class="p">.</span><span class="nx">stage</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentStep</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentStep</span><span class="p">().</span><span class="nx">stage</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Game already started. Use restart if you want to start the game again&#39;</span><span class="p">);</span>
   <span class="k">return</span><span class="p">;</span>
     <span class="p">}</span>

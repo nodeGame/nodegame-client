@@ -176,7 +176,7 @@ MIT Licensed </p>
   <span class="nx">pl</span><span class="p">,</span>
   <span class="nx">ml</span><span class="p">;</span>
   
-<span class="nx">Game</span><span class="p">.</span><span class="nx">levels</span> <span class="o">=</span> <span class="p">{</span>
+<span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">UNINITIALIZED</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>   <span class="c1">// game created, the init function has not been called</span>
     <span class="nx">INITIALIZING</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1">// executing init</span>
     <span class="nx">INITIALIZED</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span>   <span class="c1">// init executed</span>
@@ -225,8 +225,8 @@ MIT Licensed </p>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">Game</span> <span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">settings</span> <span class="o">=</span> <span class="nx">settings</span> <span class="o">||</span> <span class="p">{};</span>
 
-  <span class="k">this</span><span class="p">.</span><span class="nx">updateGameState</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">levels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">updateStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">);</span>
   </pre></div>
         </td>
       </tr>
@@ -629,8 +629,7 @@ automatically inserted in this object</p>
 </div>
 <p>TODO: check how to init</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">currentStep</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">();</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">currentStepObj</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameStage</span><span class="p">());</span>
     </pre></div>
         </td>
       </tr>
@@ -643,9 +642,9 @@ automatically inserted in this object</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">init</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">updateGameState</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">levels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
       <span class="nx">settings</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">updateGameState</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">levels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
   <span class="p">};</span>
     <span class="p">}</span>
     
@@ -691,8 +690,8 @@ gameLoop, which are valid only within the specific function.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">updateGameState</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">levels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">updateGameState</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">levels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -850,11 +849,11 @@ just for change of state after the game has started</p>
 </div>
 <p>Check the stager</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">stepRule</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getStepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getGameStage</span><span class="p">());</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">stepRule</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getStepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stepRule</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">stepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getGameStage</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">pl</span><span class="p">,</span> <span class="k">this</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">stepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">pl</span><span class="p">,</span> <span class="k">this</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
     <span class="p">}</span>
     <span class="k">else</span> <span class="p">{</span>
@@ -903,7 +902,7 @@ TODO: harmonize return values
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">nextStep</span><span class="p">;</span>
-    <span class="nx">nextStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentStep</span><span class="p">);</span>
+    <span class="nx">nextStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;NEXT&#39;</span><span class="p">,</span> <span class="nx">nextStep</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">nextStep</span><span class="p">)</span> <span class="p">{</span>
 
@@ -932,9 +931,8 @@ TODO: harmonize return values
 </div>
 <p>TODO maybe update also in case of string</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">currentStep</span> <span class="o">=</span> <span class="nx">nextStep</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">currentStepObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">execStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentStepObj</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">execStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentStep</span><span class="p">());</span>
     <span class="p">}</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -975,9 +973,9 @@ TODO: harmonize return values
 <p>Local Listeners from previous stage are erased 
 before proceeding to next one</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">clearStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentStep</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">clearStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
 
-    <span class="k">this</span><span class="p">.</span><span class="nx">updateStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">LOADING</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">LOADING</span><span class="p">);</span>
 
 
     <span class="k">try</span> <span class="p">{</span>
@@ -992,7 +990,7 @@ before proceeding to next one</p>
         <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="k">this</span><span class="p">.</span><span class="nx">updateStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">LOADED</span><span class="p">);</span></pre></div>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">LOADED</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1021,20 +1019,20 @@ log it</p>
     <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getGameState</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
+<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStateLevel</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStageLevel</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stageState</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stageLevel</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStep</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">currentStepObj</span><span class="p">;</span>
+<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentStep</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
 <span class="p">};</span>
 
-<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getGameStage</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">currentStep</span><span class="p">;</span>
+<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentGameStage</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">currentGameStage</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1045,13 +1043,13 @@ log it</p>
 </div>
 <p>ERROR, WORKING, etc</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateGameState</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setStateLevel</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">stateLevel</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stateLevel</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
-                <span class="s1">&#39;updateGameState called with invalid parameter: &#39;</span> <span class="o">+</span> <span class="nx">state</span><span class="p">);</span>
+                <span class="s1">&#39;setStateLevel called with invalid parameter: &#39;</span> <span class="o">+</span> <span class="nx">stateLevel</span><span class="p">);</span>
     <span class="p">}</span>
 
-  <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">state</span><span class="p">;</span></pre></div>
+  <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">=</span> <span class="nx">stateLevel</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1071,13 +1069,13 @@ log it</p>
 </div>
 <p>PLAYING, DONE, etc.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateStageLevel</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setStageLevel</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
-                <span class="s1">&#39;updateStageLevel called with invalid parameter: &#39;</span> <span class="o">+</span> <span class="nx">state</span><span class="p">);</span>
+                <span class="s1">&#39;setStageLevel called with invalid parameter: &#39;</span> <span class="o">+</span> <span class="nx">stageLevel</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="k">this</span><span class="p">.</span><span class="nx">stageState</span> <span class="o">=</span> <span class="nx">state</span><span class="p">;</span></pre></div>
+    <span class="k">this</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">stageLevel</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1090,10 +1088,14 @@ log it</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
             <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE_LEVEL</span><span class="p">,</span>
-            <span class="nx">data</span><span class="o">:</span> <span class="nx">state</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="nx">stageLevel</span><span class="p">,</span>
             <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;ALL&#39;</span>
         <span class="p">}));</span>
     <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setCurrentGameStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">currentGameStage</span> <span class="o">=</span> <span class="nx">gameStage</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">publishUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
@@ -1108,7 +1110,7 @@ log it</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">stateEvent</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">OUT</span> <span class="o">+</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">+</span> <span class="s1">&#39;.STATE&#39;</span><span class="p">;</span> 
-    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">stateEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="s1">&#39;ALL&#39;</span><span class="p">);</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">stateEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">(),</span> <span class="s1">&#39;ALL&#39;</span><span class="p">);</span>
   <span class="p">}</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -1151,10 +1153,10 @@ instead.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isReady</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getGameState</span><span class="p">());</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">());</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">());</span>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getGameState</span><span class="p">()</span> <span class="o">&lt;</span> <span class="nx">Game</span><span class="p">.</span><span class="nx">levels</span><span class="p">.</span><span class="nx">READY</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">()</span> <span class="o">&lt;</span> <span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">READY</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
   <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">()</span> <span class="o">===</span> <span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">LOADING</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -1177,7 +1179,7 @@ instead.</p>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isReadyToStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_isReadyToStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentStep</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">pl</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_isReadyToStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentStage</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">pl</span><span class="p">);</span>
 <span class="p">};</span>
 
 
@@ -1206,7 +1208,7 @@ Is there a local function?</p>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStepperCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStepperCallback</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentStep</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStepperCallback</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentStage</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
