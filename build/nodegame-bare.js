@@ -161,6 +161,7 @@ if ('object' === typeof module && 'function' === typeof require) {
     require('./lib/modules/setup.js');
 	require('./lib/modules/alias.js');
 	require('./lib/modules/random.js');
+	require('./lib/modules/stepper.js');
     
     // ### Loading Sockets
     require('./lib/sockets/SocketIo.js');
@@ -312,7 +313,7 @@ else {
  * # Variables
  * 
  * Copyright(c) 2012 Stefano Balietti
- * MIT Licensed 
+ * MIT Licensed
  * 
  * `nodeGame` variables and constants module
  * 
@@ -342,58 +343,58 @@ else {
  */
 	node.action = {};
 
-	node.action.SET = 'set'; 	
-	node.action.GET = 'get'; 	
-	node.action.SAY = 'say'; 	
+	node.action.SET = 'set';
+	node.action.GET = 'get';
+	node.action.SAY = 'say';
 
 /**
  * ### node.target
  * 
  * Collection of available nodeGame targets
  * 
- * The target adds an additional level of semantic 
+ * The target adds an additional level of semantic
  * for the message, and specifies the nature of the
- * information carried in the message. 
+ * information carried in the message.
  * 
- * It answers the question: "What is the content of the message?" 
+ * It answers the question: "What is the content of the message?"
  */
 	node.target = {};
 
 
 // #### target.DATA
-// Generic identifier for any type of data 
-	node.target.DATA		= 'DATA';		
+// Generic identifier for any type of data
+	node.target.DATA = 'DATA';
 	
 // #### target.HI
 // A client is connecting for the first time
-	node.target.HI = 'HI';		
+	node.target.HI = 'HI';
 
 // #### target.HI_AGAIN
-// A client re-connects to the server within the same session	
-	node.target.HI_AGAIN = 'HI_AGAIN'; 	
+// A client re-connects to the server within the same session
+	node.target.HI_AGAIN = 'HI_AGAIN';
 
 // #### target.PCONNECT
-// A new client just connected to the player endpoint	
+// A new client just connected to the player endpoint
 	node.target.PCONNECT = 'PCONNECT';
 	
 // #### target.PDISCONNECT
-// A client that just disconnected from the player endpoint 
+// A client that just disconnected from the player endpoint
 	node.target.PDISCONNECT = 'PDISCONNECT';
 
 // #### target.MCONNECT
-// A client that just connected to the admin (monitor) endpoint	
-	node.target.MCONNECT = 'MCONNECT'; 		
+// A client that just connected to the admin (monitor) endpoint
+	node.target.MCONNECT = 'MCONNECT';
 
 // #### target.MDISCONNECT
-// A client just disconnected from the admin (monitor) endpoint 
+// A client just disconnected from the admin (monitor) endpoint
 	node.target.MDISCONNECT = 'MDISCONNECT';
 
 // #### target.PLIST
 // The list of clients connected to the player endpoint was updated
 	node.target.PLIST = 'PLIST';
 	
-// #### target.MLIST	
-// The list of clients connected to the admin (monitor) endpoint was updated	
+// #### target.MLIST
+// The list of clients connected to the admin (monitor) endpoint was updated
 	node.target.MLIST = 'MLIST';
 
 // #### target.STATE
@@ -401,20 +402,24 @@ else {
 	node.target.STATE = 'STATE';
 	
 // #### target.STAGE
-// A client notifies his own state
-	node.target.STAGE = 'STAGE';	
+// A client notifies his own stage
+	node.target.STAGE = 'STAGE';
+	
+// #### target.STAGE_LEVEL
+// A client notifies his own stage level
+	node.target.STAGE_LEVEL = 'STAGE_LEVEL';
 	
 // #### target.REDIRECT
 // Redirects a client to a new uri
-	node.target.REDIRECT = 'REDIRECT'; 
+	node.target.REDIRECT = 'REDIRECT';
 
 // #### target.SETUP
-// Asks a client update its configuration	
-	node.target.SETUP = 'SETUP'; 
+// Asks a client update its configuration
+	node.target.SETUP = 'SETUP';
 	
 // #### target.GAMECOMMAND
-// Ask a client to start/pause/stop/resume the game	
-	node.target.GAMECOMMAND = 'GAMECOMMAND'; 	
+// Ask a client to start/pause/stop/resume the game
+	node.target.GAMECOMMAND = 'GAMECOMMAND';
 	
 // #### target.JOIN
 // Asks a client to join another channel/subchannel/room
@@ -444,7 +449,7 @@ else {
  * - node.gamecommand.resume
  * - node.gamecommand.stop
  */
-	node.gamecommand = {	
+	node.gamecommand = {
 			start: 'start',
 			pause: 'pause',
 			resume: 'resume',
@@ -465,7 +470,7 @@ else {
  * - node.OUT
  */
 	node.IN		= 'in.';
-	node.OUT	= 'out.';	
+	node.OUT	= 'out.';
 
 
 /**
@@ -481,37 +486,37 @@ else {
 	node.is.UNKNOWN = 0;
 
 // #### is.INITIALIZING
-// The engine is loading all the modules	
+// The engine is loading all the modules
 	node.is.INITIALIZING = 1;
 
 // #### is.INITIALIZED
-// The engine is fully loaded, but there is still no game	
-	node.is.INITIALIZED = 5;	
+// The engine is fully loaded, but there is still no game
+	node.is.INITIALIZED = 5;
 	
 // #### is.GAMELOADED
-// The engine is fully loaded, and a game has been loaded	
-	node.is.GAMELOADED = 10;	
+// The engine is fully loaded, and a game has been loaded
+	node.is.GAMELOADED = 10;
 	
 // #### is.DEAD
-// An unrecoverable error has occurred	
-	node.is.DEAD = -1;		
+// An unrecoverable error has occurred
+	node.is.DEAD = -1;
 	
-// TODO: remove these	
+// TODO: remove these
 // #### is.LOADING
-// A game is loading	
-	node.is.LOADING = 10;		
+// A game is loading
+	node.is.LOADING = 10;
 	
 // #### is.LOADED
-// A game has been loaded, but the GameWindow object could still require some time	
-	node.is.LOADED  = 25;		
+// A game has been loaded, but the GameWindow object could still require some time
+	node.is.LOADED  = 25;
 	
 // #### is.PLAYING
-// Everything is ready	
-	node.is.PLAYING = 50;		
+// Everything is ready
+	node.is.PLAYING = 50;
 	
 // #### is.DONE
-// The player completed the game state	
-	node.is.DONE = 100;	
+// The player completed the game state
+	node.is.DONE = 100;
 	
 	
 
@@ -542,8 +547,9 @@ else {
 
     node.debug = false;
 
-    exports.NodeGameRuntimeError = NodeGameRuntimeError;
-    exports.NodeGameStageCallbackError = NodeGameStageCallbackError;
+    node.NodeGameRuntimeError = NodeGameRuntimeError;
+    node.NodeGameStageCallbackError = NodeGameStageCallbackError;
+    node.NodeGameMisconfiguredGameError = NodeGameMisconfiguredGameError;
 
     /*
      * ### NodeGameRuntimeError
@@ -574,9 +580,28 @@ else {
     NodeGameStageCallbackError.prototype.constructor = NodeGameStageCallbackError;
     NodeGameStageCallbackError.prototype.name = 'NodeGameStageCallbackError';
 
+
+    /*
+     * ### NodeGameMisconfiguredGameError
+     *
+     * An error occurred during the configuration of the Game
+     */
+    function NodeGameMisconfiguredGameError() {
+        Error.apply(this, arguments);
+        this.stack = (new Error()).stack;
+    }
+
+    NodeGameMisconfiguredGameError.prototype = new Error();
+    NodeGameMisconfiguredGameError.prototype.constructor = NodeGameMisconfiguredGameError;
+    NodeGameMisconfiguredGameError.prototype.name = 'NodeGameMisconfiguredGameError';
+
     if (J.isNodeJS()) {
         process.on('uncaughtException', function (err) {
-            console.log('Caught exception: ' + err);
+            debugger;
+            node.err('Caught exception: ' + err.msg);
+            if (node.debug) {
+                throw err;
+            }
         });
     }
     else {
@@ -1500,7 +1525,7 @@ PlayerList.prototype.exist = function (id) {
 PlayerList.prototype.updatePlayerStage = function (id, stage) {
 	
 	if (!this.exist(id)) {
-		node.warm('Attempt to access a non-existing player from the the player list ' + player.id);
+		node.warn('Attempt to access a non-existing player from the the player list ' + id);
 		return false;	
 	}
 	
@@ -1515,6 +1540,31 @@ PlayerList.prototype.updatePlayerStage = function (id, stage) {
 };
 
 /**
+ * ### PlayerList.updatePlayerStageLevel
+ *
+ * Updates the value of the `stageLevel` object of a player
+ *
+ * @param {number} id The id of the player
+ * @param {number} stageLevel The new stageLevel
+ * @return {object|boolean} The updated player object, or FALSE is an error occurred
+ */
+PlayerList.prototype.updatePlayerStageLevel = function (id, stageLevel) {
+    if (!this.exist(id)) {
+        node.warn('Attempt to access a non-existing player from the the player list ' + id);
+        return false;
+    }
+
+    if ('undefined' === typeof stageLevel) {
+        node.warn('Attempt to assign to a player an undefined stage');
+        return false;
+    }
+
+    return this.id.update(id, {
+        stageLevel: stageLevel
+    });
+};
+
+/**
  * ### PlayerList.isStageDone
  * 
  * Checks whether all players have terminated the specified stage
@@ -1524,16 +1574,19 @@ PlayerList.prototype.updatePlayerStage = function (id, stage) {
  * 
  * Players at other stages are ignored.
  * 
- * If no player is found at the desired stage, it returns FALSE.
+ * If no player is found at the desired stage, it returns TRUE.
  * 
  * @param {GameStage} stage The GameStage of reference
  * @param {boolean} extended Optional. If TRUE, all players are checked. Defaults, FALSE.
  * @return {boolean} TRUE, if all checked players have terminated the stage
  */
 PlayerList.prototype.isStageDone = function (stage) {
+    var p;
+
 	if (!stage) return false;
-	var pfound = false;
-	for (var i = 0; i < this.db.length ;  i++) {
+	for (var i = 0; i < this.db.length; i++) {
+        p = this.db[i];
+
 		// Player is at another stage
 		if (GameStage.compare(stage, p.stage, false) !== 0) {
 			continue;
@@ -1542,11 +1595,8 @@ PlayerList.prototype.isStageDone = function (stage) {
 		if (p.stageLevel !== node.Game.stageLevels.DONE) {
 			return false;
 		}
-		else {
-			pfound = true;
-		}
 	}
-	return pfound;
+	return true;
 };
 
 ///**
@@ -2162,10 +2212,20 @@ exports.Stager = Stager;
 /**
  * ## Stager constructor
  *
- * Creates a new empty instance of Stager
+ * Creates a new instance of Stager
+ *
+ * @param {object} stateObj Optional. State to initialize the new Stager
+ *  object with. See `Stager.setState`.
+ *
+ * @see Stager.setState
  */
-function Stager() {
-    this.clear();
+function Stager(stateObj) {
+    if (stateObj) {
+        this.setState(stateObj);
+    }
+    else {
+        this.clear();
+    }
 }
 
 // ## Stager methods
@@ -2273,16 +2333,20 @@ Stager.prototype.clear = function() {
  * Available only when nodegame is executed in _flexible_ mode.
  * The callback given here is used to determine the next stage.
  *
- * @param {function} func The decider callback.  It should return the name of
+ * @param {function|null} func The decider callback.  It should return the name of
  *  the next stage, 'NODEGAME_GAMEOVER' to end the game or false for sequence end.
+ *  Null can be given to signify non-existence.
+ *
+ * @return {boolean} TRUE on success, FALSE on error
  */
 Stager.prototype.registerGeneralNext = function(func) {
-    if ('function' !== typeof func) {
+    if (null !== func && 'function' !== typeof func) {
         node.warn("registerGeneralNext didn't receive function parameter");
-        return;
+        return false;
     }
 
     this.generalNextFunction = func;
+    return true;
 };
 
 /**
@@ -2298,20 +2362,23 @@ Stager.prototype.registerGeneralNext = function(func) {
  * @param {function} func The decider callback.  It should return the name of
  *  the next stage, 'NODEGAME_GAMEOVER' to end the game or false for sequence end.
  *
+ * @return {boolean} TRUE on success, FALSE on error
+ *
  * @see Stager.registerGeneralNext
  */
 Stager.prototype.registerNext = function(id, func) {
     if ('function' !== typeof func) {
         node.warn("registerNext didn't receive function parameter");
-        return;
+        return false;
     }
 
     if (!this.stages[id]) {
         node.warn('registerNext received nonexistent stage id');
-        return;
+        return false;
     }
 
     this.nextFunctions[id] = func;
+    return true;
 };
 
 /**
@@ -2323,10 +2390,24 @@ Stager.prototype.registerNext = function(id, func) {
  *   If not given, the initial default is restored.
  *
  * @see Stager.defaultStepRule
+ *
+ * @return {boolean} TRUE on success, FALSE on error
  */
 Stager.prototype.setDefaultStepRule = function(steprule) {
-    this.defaultStepRule = steprule ?
-        steprule : function() { return true; };
+    if (steprule) {
+        if ('function' !== typeof steprule) {
+            node.warn("setDefaultStepRule didn't receive function parameter");
+            return false;
+        }
+
+        this.defaultStepRule = steprule;
+    }
+    else {
+        // Initial default:
+        this.defaultStepRule = function() { return true; };
+    }
+
+    return true;
 };
 
 /**
@@ -2351,6 +2432,8 @@ Stager.prototype.getDefaultStepRule = function() {
  *  - cb (function): The step's callback function
  *
  * @param {object} step A valid step object.  Shallowly copied.
+ *
+ * @return {boolean} TRUE on success, FALSE on error
  */
 Stager.prototype.addStep = function(step) {
     if (!this.checkStepValidity(step)) {
@@ -2378,7 +2461,7 @@ Stager.prototype.addStep = function(step) {
  *
  * @param {object} stage A valid stage or step object.  Shallowly copied.
  *
- * @return {boolean} true on success, false on error
+ * @return {boolean} TRUE on success, FALSE on error
  *
  * @see Stager.addStep
  */
@@ -2682,6 +2765,145 @@ Stager.prototype.getSequence = function(format) {
 Stager.prototype.getStepsFromStage = function(id) {
     if (!this.stages[id]) return null;
     return this.stages[id].steps;
+};
+
+/**
+ * ### Stager.setState
+ *
+ * Sets the internal state of the Stager
+ *
+ * The passed state object can have the following fields:
+ * steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule
+ * All fields are optional.
+ *
+ * This function calls the corresponding functions to set these fields, and
+ * performs error checking.
+ *
+ * Throws `NodeGameMisconfiguredGameError` if the given state is invalid.
+ *
+ * @param {object} stateObj The Stager's state
+ *
+ * @see Stager.getState
+ */
+Stager.prototype.setState = function(stateObj) {
+    var idx;
+    var stageObj;
+    var seqObj;
+
+    // Clear previous state:
+    this.clear();
+
+    // Add steps:
+    for (idx in stateObj.steps) {
+        if (stateObj.steps.hasOwnProperty(idx)) {
+            if (!this.addStep(stateObj.steps[idx])) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+        }
+    }
+
+    // Add stages:
+    // first, handle all non-aliases (key of `stages` entry is same as `id` field of its value)
+    for (idx in stateObj.stages) {
+        stageObj = stateObj.stages[idx];
+        if (stateObj.stages.hasOwnProperty(idx) && stageObj.id === idx) {
+            if (!this.addStage(stageObj)) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+        }
+    }
+    // second, handle all aliases (key of `stages` entry is different from `id` field of its value)
+    for (idx in stateObj.stages) {
+        stageObj = stateObj.stages[idx];
+        if (stateObj.stages.hasOwnProperty(idx) && stageObj.id !== idx) {
+            this.stages[idx] = this.stages[stageObj.id];
+        }
+    }
+
+    // Add sequence blocks:
+    for (idx = 0; idx < stateObj.sequence.length; idx++) {
+        seqObj = stateObj.sequence[idx];
+
+        switch (seqObj.type) {
+        case 'gameover':
+            this.gameover();
+            break;
+
+        case 'plain':
+            if (!this.next(seqObj.id)) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+            break;
+
+        case 'repeat':
+            if (!this.repeat(seqObj.id, seqObj.num)) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+            break;
+
+        case 'loop':
+            if (!this.loop(seqObj.id, seqObj.cb)) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+            break;
+
+        case 'doLoop':
+            if (!this.doLoop(seqObj.id, seqObj.cb)) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+            break;
+
+        default:
+            // Unknown type:
+            throw new node.NodeGameMisconfiguredGameError();
+        }
+    }
+
+    // Set general next-decider:
+    if (stateObj.hasOwnProperty('generalNextFunction')) {
+        if (!this.registerGeneralNext(stateObj.generalNextFunction)) {
+            throw new node.NodeGameMisconfiguredGameError();
+        }
+    }
+
+    // Set specific next-deciders:
+    for (idx in stateObj.nextFunctions) {
+        if (stateObj.nextFunctions.hasOwnProperty(idx)) {
+            if (!this.registerNext(idx, stateObj.nextFunctions[idx])) {
+                throw new node.NodeGameMisconfiguredGameError();
+            }
+        }
+    }
+
+    // Set default step-rule:
+    if (stateObj.hasOwnProperty('defaultStepRule')) {
+        if (!this.setDefaultStepRule(stateObj.defaultStepRule)) {
+            throw new node.NodeGameMisconfiguredGameError();
+        }
+    }
+};
+
+/**
+ * ### Stager.getState
+ *
+ * Returns the internal state of the Stager
+ *
+ * Fields of returned object:
+ * steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule
+ *
+ * @return {object} The Stager's state
+ *
+ * @see Stager.setState
+ */
+Stager.prototype.getState = function() {
+    return {
+        steps:               this.steps,
+        stages:              this.stages,
+        sequence:            this.sequence,
+        generalNextFunction: this.generalNextFunction,
+        nextFunctions:       this.nextFunctions,
+        defaultStepRule:     this.defaultStepRule
+    };
 };
 
 // DEBUG:  Run sequence.  Should be deleted later on.
@@ -4799,13 +5021,7 @@ var action = node.action;
 
 exports.Game = Game;
 
-var name,
-	description,
-	gameLoop,
-	pl,
-	ml;
-	
-Game.levels = {
+Game.stateLevels = {
 		UNINITIALIZED: 0, 	// game created, the init function has not been called
 		INITIALIZING: 1, 	// executing init
 		INITIALIZED: 5, 	// init executed
@@ -4816,6 +5032,7 @@ Game.levels = {
 	};
 
 Game.stageLevels = {
+    UNINITIALIZED: 0,
 	LOADING: 1,
 	LOADED: 2,
 	PLAYING: 50,
@@ -4834,239 +5051,182 @@ Game.stageLevels = {
  * @param {object} settings Optional. A configuration object
  */
 function Game (settings) {
-	settings = settings || {};
+    settings = settings || {};
 
-	this.updateGameState(Game.levels.UNINITIALIZED);
-	
-// ## Private properties
+    this.setStateLevel(Game.stateLevels.UNINITIALIZED);
+    this.setStageLevel(Game.stageLevels.UNINITIALIZED);
 
-/**
- * ### Game.name
- * 
- * The name of the game
- * 
- * @api private
- */
-	name = settings.name || 'A nodeGame game';
-	
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'name', {
-			value: name,
-			enumerable: true
-		});
-	}
-	else {
-		this.name = name;
-	}
+    // ## Private properties
 
-/**
- * ### Game.description
- * 
- * A text describing the game
- * 
- * @api private
- */
-	description = settings.description || 'No Description';
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'description', {
-			value: description,
-			enumerable: true
-		});
-	}
-	else {
-		this.description = description;
-	}
-	
-	
-/**
- * ### Game.pl
- * 
- * The list of players connected to the game
- * 
- * The list may be empty, depending on the server settings
- * 
- * @api private
- */
-	pl = new PlayerList();
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'pl', {
-			value: pl,
-			enumerable: true,
-			configurable: true,
-			writable: true
-		});
-	}
-	else {
-		this.pl = pl;
-	}
+    /**
+     * ### Game.metadata
+     * 
+     * The game's metadata
+     *
+     * Contains following properties:
+     * name, description, version, session
+     * 
+     * @api private
+     */
+    this.metadata = {
+        name:        settings.name || 'A nodeGame game',
+        description: settings.description || 'No Description',
+        version:     settings.version || '0',
+        session:     settings.session || '0'
+    }
 
-/**
- * ### Game.pl
- * 
- * The list of monitor clients connected to the game
- * 
- * The list may be empty, depending on the server settings
- * 
- * @api private
- */
-	ml = new PlayerList();
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'ml', {
-			value: ml,
-			enumerable: true,
-			configurable: true,
-			writable: true
-		});
-	}
-	else {
-		this.ml = ml;
-	}
-	
-/**
- * ### Game.ready
- * 
- * If TRUE, the nodeGame engine is fully loaded
- * 
- * Shortcut to game.isReady
- * 
- * If the browser does not support the method object setters,
- * this property is disabled, and Game.isReady() should be used
- * instead.
- * 
- * @see Game.isReady();
- * 
- * @api private
- * @deprecated
- * 
- */
-	if (node.support.getter) {
-		Object.defineProperty(this, 'ready', {
-			set: function(){},
-			get: this.isReady,
-			enumerable: true
-		});
-	}
-	else {
-		this.ready = null;
-	}
+    /**
+     * ### Game.pl
+     * 
+     * The list of players connected to the game
+     * 
+     * The list may be empty, depending on the server settings
+     * 
+     * @api private
+     */
+    this.pl = new PlayerList();
+
+    /**
+     * ### Game.ml
+     * 
+     * The list of monitor clients connected to the game
+     * 
+     * The list may be empty, depending on the server settings
+     * 
+     * @api private
+     */
+    this.ml = new PlayerList();
+
+    /**
+     * ### Game.ready
+     * 
+     * If TRUE, the nodeGame engine is fully loaded
+     * 
+     * Shortcut to game.isReady
+     * 
+     * If the browser does not support the method object setters,
+     * this property is disabled, and Game.isReady() should be used
+     * instead.
+     * 
+     * @see Game.isReady();
+     * 
+     * @api private
+     * @deprecated
+     * 
+     */
+    this.ready = null;
 
 
 
-// ## Public properties
+    // ## Public properties
 
-/**
- * ### Game.observer
- * 
- * If TRUE, silently observes the game. Defaults, FALSE
- * 
- * An nodeGame observer will not send any automatic notification
- * to the server, but it will just *observe* the game played by
- * other clients.
- * 
- */
-	this.observer = ('undefined' !== typeof settings.observer) ? settings.observer 
-		   													: false;
+    /**
+     * ### Game.observer
+     * 
+     * If TRUE, silently observes the game. Defaults, FALSE
+     * 
+     * An nodeGame observer will not send any automatic notification
+     * to the server, but it will just *observe* the game played by
+     * other clients.
+     * 
+     */
+    this.observer = ('undefined' !== typeof settings.observer) ? settings.observer 
+        : false;
 
-/**
- * ### Game.auto_step
- * 
- * If TRUE, automatically advances to the next state if all the players 
- * have completed the same state
- * 
- * After a successful STAGEDONE event is fired, the client will automatically 
- * goes to the next function in the game-loop without waiting for a STATE
- * message from the server. 
- * 
- * Depending on the configuration settings, it can still perform additional
- * checkings (e.g.wheter the mininum number of players is connected) 
- * before stepping to the next state.
- * 
- * Defaults: true
- * 
- */
-	this.auto_step = ('undefined' !== typeof settings.auto_step) ? settings.auto_step 
-															 : true;
+    /**
+     * ### Game.auto_step
+     * 
+     * If TRUE, automatically advances to the next state if all the players 
+     * have completed the same state
+     * 
+     * After a successful STAGEDONE event is fired, the client will automatically 
+     * goes to the next function in the game-loop without waiting for a STATE
+     * message from the server. 
+     * 
+     * Depending on the configuration settings, it can still perform additional
+     * checkings (e.g.wheter the mininum number of players is connected) 
+     * before stepping to the next state.
+     * 
+     * Defaults: true
+     * 
+     */
+    this.auto_step = ('undefined' !== typeof settings.auto_step) ? settings.auto_step 
+        : true;
 
-/**
- * ### Game.auto_wait
- * 
- * If TRUE, fires a WAITING... event immediately after a successful DONE event
- * 
- * Under default settings, the WAITING... event temporarily prevents the user
- * to access the screen and displays a message to the player.
- * 
- * Defaults: FALSE
- * 
- */
-	this.auto_wait = ('undefined' !== typeof settings.auto_wait) ? settings.auto_wait 
-																 : false; 
+    /**
+     * ### Game.auto_wait
+     * 
+     * If TRUE, fires a WAITING... event immediately after a successful DONE event
+     * 
+     * Under default settings, the WAITING... event temporarily prevents the user
+     * to access the screen and displays a message to the player.
+     * 
+     * Defaults: FALSE
+     * 
+     */
+    this.auto_wait = ('undefined' !== typeof settings.auto_wait) ? settings.auto_wait 
+        : false; 
 
-/**
- * ### Game.solo_mode
- * 
- * If TRUE, automatically advances to the next state upon completion of a state
- * 
- * After a successful DONE event is fired, the client will automatically 
- * goes to the next function in the game-loop without waiting for a STATE
- * message from the server, or checking the STATE of the other players. 
- * 
- * Defaults: FALSE
- * 
- */
-	this.solo_mode = ('undefined' !== typeof settings.solo_mode) ? settings.solo_mode 
-															 : false;	
-	// TODO: check this
-	this.minPlayers = settings.minPlayers || 1;
-	this.maxPlayers = settings.maxPlayers || 1000;
-	
+    /**
+     * ### Game.solo_mode
+     * 
+     * If TRUE, automatically advances to the next state upon completion of a state
+     * 
+     * After a successful DONE event is fired, the client will automatically 
+     * goes to the next function in the game-loop without waiting for a STATE
+     * message from the server, or checking the STATE of the other players. 
+     * 
+     * Defaults: FALSE
+     * 
+     */
+    this.solo_mode = ('undefined' !== typeof settings.solo_mode) ? settings.solo_mode 
+        : false;	
+    // TODO: check this
+    this.minPlayers = settings.minPlayers || 1;
+    this.maxPlayers = settings.maxPlayers || 1000;
 
-	
-/**
- * ### Game.memory
- * 
- * A storage database for the game
- * 
- * In the server logic the content of SET messages are
- * automatically inserted in this object
- * 
- * 	@see node.set
- */
-	this.memory = new GameDB();
-	
 
-	
-/**
- * ### Game.stager
- * 
- * Stage manager 
- * 
- * retrocompatible with gameLoop
- * 
- * @see Stager
- * @api private
- */
-    this.gameLoop = this.stager = new GameLoop(settings.stages);
-	
+
+    /**
+     * ### Game.memory
+     * 
+     * A storage database for the game
+     * 
+     * In the server logic the content of SET messages are
+     * automatically inserted in this object
+     * 
+     * 	@see node.set
+     */
+    this.memory = new GameDB();
+
+
+
+    /**
+     * ### Game.gameLoop
+     * 
+     * The Game Loop
+     * 
+     * @see GameLoop
+     * @api private
+     */
+    this.gameLoop = new GameLoop(settings.stages);
+
 
     // TODO: check how to init
-    this.currentStep = new GameStage();
-    this.currentStepObj = null;
-    
+    this.setCurrentGameStage(new GameStage());
+
     // Update the init function if one is passed
     if (settings.init) {
-	this.init = function() {
-		this.updateGameState(Game.levels.INITIALIZING);
-	    settings.init.call(node.game);
-	    this.updateGameState(Game.levels.INITIALIZED);
-	};
+        this.init = function() {
+            this.setStateLevel(Game.stateLevels.INITIALIZING);
+            settings.init.call(node.game);
+            this.setStateLevel(Game.stateLevels.INITIALIZED);
+        };
     }
-    
-    
-    this.player = null;	
-    
-    
+
+
     this.paused = false;
-	
+
 } // <!-- ends constructor -->
 
 // ## Game methods
@@ -5085,8 +5245,8 @@ function Game (settings) {
  * 
  */
 Game.prototype.init = function () {
-	this.updateGameState(Game.levels.INITIALIZING);
-	this.updateGameState(Game.levels.INITIALIZED);
+	this.setStateLevel(Game.stateLevels.INITIALIZING);
+	this.setStateLevel(Game.stateLevels.INITIALIZED);
 };
 
 /** 
@@ -5158,11 +5318,11 @@ Game.prototype.resume = function () {
  */
 Game.prototype.shouldStep = function() {
     // Check the stager
-    var stepRule = this.stager.getStepRule(this.getGameStage());
+    var stepRule = this.gameLoop.getStepRule(this.getCurrentGameStage());
 
     if ('function' !== typeof stepRule) return false;
 
-    if (stepRule(this.getGameStage(), this.getStageLevel(), this.pl, this)) {
+    if (stepRule(this.getCurrentGameStage(), this.getStageLevel(), this.pl, this)) {
         return this.step();
     }
     else {
@@ -5185,23 +5345,22 @@ Game.prototype.shouldStep = function() {
  */
 Game.prototype.step = function() {
     var nextStep;
-    nextStep = this.stager.next(this.currentStep);
+    nextStep = this.gameLoop.next(this.getCurrentGameStage());
     console.log('NEXT', nextStep);
     if ('string' === typeof nextStep) {
-	
-	if (nextStep === GameLoop.GAMEOVER) {
-	    node.emit('GAMEOVER');
-	    return this.gameover(); // can throw Errors
-	}
-	
-	// else do nothing
-	return null;
+
+        if (nextStep === GameLoop.GAMEOVER) {
+            node.emit('GAMEOVER');
+            return this.gameover(); // can throw Errors
+        }
+
+        // else do nothing
+        return null;
     }
     else {
-	// TODO maybe update also in case of string
-	this.currentStep = nextStep;
-	this.currentStepObj = this.stager.getStep(nextStep);
-	return this.execStage(this.currentStepObj);
+        // TODO maybe update also in case of string
+        this.setCurrentGameStage(nextStep);
+        return this.execStage(this.getCurrentStep());
     }
 };
 
@@ -5215,82 +5374,96 @@ Game.prototype.step = function() {
  */
 Game.prototype.execStage = function(stage) {
     var cb, res;
-	
+
     cb = stage.cb; 
-			
+
     // Local Listeners from previous stage are erased 
     // before proceeding to next one
-    node.events.clearStage(this.currentStep);
-			
-    this.updateStageLevel('LOADING');
-    
-    
+    node.events.clearStage(this.getCurrentGameStage());
+
+    this.setStageLevel(Game.stageLevels.LOADING);
+
+
     try {
-	res = cb.call(node.game);
-	this.updateStageLevel('LOADED');
-	
-	// This does not make sense. Basically it waits for the nodegame window to be loaded too
-	if (this.isReady()) {
-	    node.emit('LOADED');
-	}
-	if (res === false) {
-			// A non fatal error occurred
-	    // log it
-	}
-	
-	return res;
-	
+        res = cb.call(node.game);
     } 
     catch (e) {
-	var err, ex;
-	err = 'An error occurred while executing a custom callback'; //  
-	
-	node.err(err);
-	
-	if (node.debug) {
-	    ex = node.NodeGameRuntimeError;
-	    console.log(ex);
-	    console.log(ex.trace);
-	    throw ex;
-	}
-	
-	return true;
+        var err;
+        err = 'An error occurred while executing a custom callback';
+
+        node.err(err);
+
+        throw new node.NodeGameRuntimeError(e);
     }
+
+    this.setStageLevel(Game.stageLevels.LOADED);
+    // This does not make sense. Basically it waits for the nodegame window to be loaded too
+    if (this.isReady()) {
+        node.emit('LOADED');
+    }
+    if (res === false) {
+        // A non fatal error occurred
+        // log it
+    }
+
+    return res;
 };
 
-Game.prototype.getGameState = function () {
-    return this.state;
+Game.prototype.getStateLevel = function () {
+    return this.stateLevel;
 };
 
 Game.prototype.getStageLevel = function () {
-    return this.state;
+    return this.stageLevel;
 };
 
-Game.prototype.getStep = function () {
-    return this.currentStepObj;
+Game.prototype.getCurrentStep = function () {
+    return this.gameLoop.getStep(this.getCurrentGameStage());
 };
 
-Game.prototype.getGameStage = function () {
-    return this.currentStep;
+Game.prototype.getCurrentGameStage = function () {
+    return this.currentGameStage;
 };
 
 // ERROR, WORKING, etc
-Game.prototype.updateGameState = function (state) {
-	this.state = state;
+Game.prototype.setStateLevel = function (stateLevel) {
+    if ('number' !== typeof stateLevel) {
+        throw new node.NodeGameMisconfiguredGameError(
+                'setStateLevel called with invalid parameter: ' + stateLevel);
+    }
+
+	this.stateLevel = stateLevel;
 	//this.publishUpdate();
 };
 
 // PLAYING, DONE, etc.
-Game.prototype.updateStageLevel= function (state) {
-	this.stageState = state;
-	//this.publishUpdate();
+Game.prototype.setStageLevel = function (stageLevel) {
+    if ('number' !== typeof stageLevel) {
+        throw new node.NodeGameMisconfiguredGameError(
+                'setStageLevel called with invalid parameter: ' + stageLevel);
+    }
+
+    this.stageLevel = stageLevel;
+
+    // Publish update:
+    if (!this.observer) {
+        node.socket.send(node.msg.create({
+            target: node.target.STAGE_LEVEL,
+            data: stageLevel,
+            to: 'ALL'
+        }));
+    }
+};
+
+Game.prototype.setCurrentGameStage = function(gameStage) {
+    this.currentGameStage = gameStage;
 };
 
 Game.prototype.publishUpdate = function() {
 	// <!-- Important: SAY -->
 	if (!this.observer) {
 		var stateEvent = node.OUT + action.SAY + '.STATE'; 
-		node.emit(stateEvent, this.state, 'ALL'); // SHOULD BE A GAME STATE EVENT
+		node.emit(stateEvent, this.getStateLevel(), 'ALL');
 	}
 };
 
@@ -5317,10 +5490,10 @@ Game.prototype.publishUpdate = function() {
  * 
  */
 Game.prototype.isReady = function() {
-    console.log(this.getGameState());
+    console.log(this.getStateLevel());
     console.log(this.getStageLevel());
     return true;
-	if (this.getGameState() < Game.levels.READY) return false;
+	if (this.getStateLevel() < Game.stateLevels.READY) return false;
 	if (this.getStageLevel() === Game.stageLevels.LOADING) return false;
 
 	// Check if there is a gameWindow obj and whether it is loading
@@ -5336,7 +5509,7 @@ Game.prototype._isReadyToStep = function(stage, stager, pl) {
 };
 
 Game.prototype.isReadyToStep = function() {
-    return this._isReadyToStep(this.currentStep, this.stager, this.pl);
+    return this._isReadyToStep(this.getCurrentStage(), this.gameLoop, this.pl);
 };
 
 
@@ -5349,7 +5522,7 @@ Game.prototype._getStepperCallback = function(stage, stager) {
 };
 
 Game.prototype.getStepperCallback = function() {
-    return this._getStepperCallback(this.currentStep, this.stager);
+    return this._getStepperCallback(this.getCurrentStage(), this.gameLoop);
 };
 
 // TODO : MAYBE TO REMOVE THEM
@@ -5368,10 +5541,12 @@ Game.prototype.getStepperCallback = function() {
 * 	@see GameStage
 * 	@see Game.gameLoop
 */
+/*
 Game.prototype.next = function (N) {
 	if (!N) return this.gameLoop.next(this.state);
 	return this.gameLoop.jump(this.state, Math.abs(N));
 };
+*/
 
 /**
 * ### Game.previous
@@ -5387,10 +5562,12 @@ Game.prototype.next = function (N) {
 * 	@see GameStage
 * 	@see Game.gameLoop
 */
+/*
 Game.prototype.previous = function (N) {
 	if (!N) return this.gameLoop.previous(this.state);
 	return this.gameLoop.jump(this.state, -Math.abs(N));
 };
+*/
 
 
 /**
@@ -5409,12 +5586,14 @@ Game.prototype.previous = function (N) {
 * 	@see GameStage
 * 	@see Game.gameLoop
 */
+/*
 Game.prototype.jumpTo = function (jump) {
 	if (!jump) return false;
 	var gs = this.gameLoop.jump(this.state, jump);
 	if (!gs) return false;
 	return this.updateStage(gs);
 };
+*/
 
 // ## Closure
 })(
@@ -5484,7 +5663,10 @@ function GameSession() {
 	
 	
 	this.register('game.currentStepObj', {
-		set: GameSession.restoreStage
+		set: GameSession.restoreStage,
+        get: function() {
+            return node.game.getCurrentStep();
+        }
 	});
 	
 	this.register('node.env');
@@ -5514,7 +5696,7 @@ GameSession.prototype.restoreStage = function(stage) {
 		];
 		
 		// RE-EMIT EVENTS
-		node.events.history.remit(node.game.state, discard);
+		node.events.history.remit(node.game.getStateLevel(), discard);
 		node.info('game stage restored');
 		return true;
 	}
@@ -6377,7 +6559,7 @@ SessionManager.prototype.store = function() {
 	
 	
 /**
- * ### nove.env
+ * ### node.env
  * 
  * Executes a block of code conditionally to nodeGame environment variables  
  * 
@@ -6592,7 +6774,7 @@ SessionManager.prototype.store = function() {
 		}
 		
 		// It is in the init function;
-		if (!node.game || !node.game.currentStepObj || (GameStage.compare(node.game.currentStepObj, new GameStage(), true) === 0 )) {
+		if (!node.game || !node.game.getCurrentStep() || (GameStage.compare(node.game.getCurrentStep(), new GameStage(), true) === 0 )) {
 			node.events.add(event, listener);
 		}
 		else {
@@ -6935,24 +7117,25 @@ var frozen = false;
 // The input parameter can be either an object (function) or 
 // a stringified object (function), and it will be passed as 
 // the configuration object to the contructor of `node.Game`
-	node.setup.register('game', function(game) {
-	    if (!game) return {};
-		
-	    // Trying to parse the string, maybe it
-	    // comes from a remote setup
-	    if ('string' === typeof game) {
-		game = J.parse(game);			
-	    }
-		
-	    if ('function' === typeof game) {
-		// creates the object
-		game = new game();
-	    }
-	    
-	    node.game = new Game(game);
-	    node.emit('NODEGAME_GAME_CREATED');
-	    return node.game;
-	});
+    node.setup.register('game', function(gameState) {
+        // TODO
+        if (!gameState) return {};
+
+        // Trying to parse the string, maybe it
+        // comes from a remote setup
+        if ('string' === typeof gameState) {
+            gameState = J.parse(gameState);			
+        }
+
+        if ('function' === typeof gameState) {
+            // creates the object
+            gameState = new gameState();
+        }
+
+        node.game = new Game(gameState);
+        node.emit('NODEGAME_GAME_CREATED');
+        return node.game;
+    });
 		
 // ### node.setup.player
 // Creates the `node.player` object
@@ -6973,36 +7156,37 @@ var frozen = false;
  * @return{boolean} TRUE, if configuration is successful
  *
  * @see node.setup
+ * @see JSUS.stringifyAll
  */	
-	node.remoteSetup = function (property, options, to) {
-	    var msg, payload;
+    node.remoteSetup = function (property, options, to) {
+        var msg, payload;
 
-	    if (!property) {
-		node.err('cannot send remote setup: empty property');
-		return false;
-	    }
-	    if (!to) {
-		node.err('cannot send remote setup: empty recipient');
-		return false;
-	    }
-	    
-	    payload = J.stringify(options);
-	    
-	    if (!payload) {
-		node.err('an error occurred while stringifying payload for remote setup');
-		return false;
-	    }
-	    
-	    msg = node.msg.create({
-		target: node.target.SETUP,
-		to: to,
-		text: property,
-		data: payload
-	    });
-		
-	    return node.socket.send(msg);
-	};
-		
+        if (!property) {
+            node.err('cannot send remote setup: empty property');
+            return false;
+        }
+        if (!to) {
+            node.err('cannot send remote setup: empty recipient');
+            return false;
+        }
+
+        payload = J.stringifyAll(options);
+
+        if (!payload) {
+            node.err('an error occurred while stringifying payload for remote setup');
+            return false;
+        }
+
+        msg = node.msg.create({
+            target: node.target.SETUP,
+            to: to,
+            text: property,
+            data: payload
+        });
+
+        return node.socket.send(msg);
+    };
+
 
 })(
 	'undefined' != typeof node ? node : module.exports,
@@ -7235,6 +7419,99 @@ node.random = {};
 	'undefined' != typeof node ? node : module.parent.exports
 );
 
+/**
+ * # Stager
+ *
+ * `nodeGame` container and builder of the game sequence
+ *
+ * ---
+ */
+(function(exports, node) {
+
+    // Storage for socket rules
+    var rules = {};
+
+    addDefaultRules();
+
+    function getRules() {
+    	return rules;
+    }
+
+    function get( id ) {
+    	return rules[id];
+    }
+
+    function register( id, cb ) {
+    	if ('undefined' === typeof id) {
+            node.err('stepper rule id cannot be undefined');
+        }
+
+        else if ('function' !== typeof cb) {
+            node.err('stepping rule is not a function');
+        }
+
+        else {
+            rules[id] = cb;
+        }
+
+    }
+
+    function addDefaultRules() {
+        
+        // ### SYNC_ALL
+        // Player waits that all the clients have terminated the 
+        // current step before going to the next
+        rules['SYNC_ALL'] = function(stage, myStageLevel, pl, game) {
+            console.log('SYNC_ALL');
+            console.log(arguments);
+            return myStageLevel === node.Game.stageLevels.DONE &&
+                pl.isStageDone(stage);
+        };
+        
+        // ### SOLO
+        // Player proceeds to the next step as soon as the current one
+        // is DONE, regardless to the situation of other players
+        rules['SOLO'] = function(stage, myStageLevel, pl, game) {
+            return myStageLevel === node.Game.stageLevels.DONE;
+        };
+
+        // ### WAIT
+        // Player waits for explicit step command
+        rules['WAIT'] = function(stage, myStageLevel, pl, game) {
+            return false;
+        };
+    
+        // ### SYNC_STAGE
+        // Player can advance freely within the steps of one stage,
+        // but has to wait before going to the next one
+        rules['SYNC_STAGE'] = function(stage, myStageLevel, pl, game) {
+            // if next step is going to be a new stage, wait for others
+            return myStageLevel === node.Game.stageLevels.DONE;
+                (game.gameLoop.stepsToNextStage(stage) > 1 ||
+                 pl.isStageDone(stage));
+        };
+    }
+
+    function clear() {
+        rules = {};
+    }
+
+    // expose the methods
+    node.stepRules = {
+    	getRules: getRules,
+    	get: get,
+    	register: register,
+        clear: clear,
+        addDefaultRules: addDefaultRules
+    };
+
+
+// ## Closure
+})(
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
+);
+
 // # Incoming listeners
 // Incoming listeners are fired in response to incoming messages
 (function (node) {
@@ -7400,12 +7677,44 @@ node.on( IN + set + 'DATA', function (msg) {
 		if (node.game.pl.exist(msg.from)) {			
 			node.game.pl.updatePlayerStage(msg.from, msg.data);
 			node.emit('UPDATED_PLIST');
-			node.game.pl.checkStage();
+			//node.game.pl.checkStage();
+            node.game.shouldStep();
 		}
 		// <!-- Assume this is the server for now
 		// TODO: assign a string-id to the server -->
 		else {
-			node.game.execStage(node.gameLoop.getStep(msg.data));
+			node.game.execStage(node.game.gameLoop.getStep(msg.data));
+		}
+	});
+
+/**
+ * ## in.say.STAGE_LEVEL
+ * 
+ * Updates a player's stage level in the player-list object
+ *
+ * If the message is from the server, it updates the game stage,
+ * else the stage in the player-list object from the player who
+ * sent the message is updated 
+ * 
+ *  @emit UPDATED_PLIST
+ *  @see Game.pl 
+ */
+	node.on( IN + say + 'STAGE_LEVEL', function (msg) {
+		if (node.socket.serverid && msg.from === node.socket.serverid) {
+//			console.log(node.socket.serverid + ' ---><--- ' + msg.from);
+//			console.log('NOT EXISTS');
+		}
+		
+		if (node.game.pl.exist(msg.from)) {
+			node.game.pl.updatePlayerStageLevel(msg.from, msg.data);
+			node.emit('UPDATED_PLIST');
+			//node.game.pl.checkStage();
+            node.game.shouldStep();
+		}
+		// <!-- Assume this is the server for now
+		// TODO: assign a string-id to the server -->
+		else {
+			//node.game.setStageLevel(msg.data);
 		}
 	});
 	
@@ -7484,6 +7793,7 @@ node.on( IN + say + 'JOIN', function (msg) {
 	
 })('undefined' !== typeof node ? node : module.parent.exports); 
 // <!-- ends incoming listener -->
+
 // # Outgoing listeners
 // Outgoing listeners are fired when messages are sent
 
@@ -7518,19 +7828,6 @@ node.on( OUT + say + 'STAGE', function (stage, to) {
 	node.socket.sendSTAGE(action.SAY, stage, to);
 });	
 	
-/**
- * ## out.say.STATE
- * 
- * Sends out a STATE message to the specified recipient
- * 
- * TODO: check with the server 
- * The message is for informative purpose
- * 
- */
-node.on( OUT + say + 'STAGE', function (stage, to) {
-	node.socket.sendSTAGE(action.SAY, stage, to);
-});	
-
 /**
  * ## out.say.TXT
  * 
@@ -7590,6 +7887,7 @@ node.log('outgoing listeners added');
 
 })('undefined' !== typeof node ? node : module.parent.exports); 
 // <!-- ends outgoing listener -->
+
 // # Internal listeners
 
 // Internal listeners are not directly associated to messages,
@@ -7666,11 +7964,11 @@ node.on('DONE', function(p1, p2, p3) {
 	
     // Execute done handler before updating stage
     var ok = true,
-       done = node.game.currentStepObj.done;
+       done = node.game.getCurrentStep().done;
     
     if (done) ok = done.call(node.game, p1, p2, p3);
     if (!ok) return;
-    node.game.updateStageLevel(Game.stageLevels.DONE)
+    node.game.setStageLevel(Game.stageLevels.DONE)
 	
     // Call all the functions that want to do 
     // something before changing stage
@@ -7718,7 +8016,7 @@ node.on('GAME_LOADED', function() {
  */
 node.on('LOADED', function() {
 	node.emit('BEFORE_LOADING');
-	node.game.updateStageLevel('PLAYING');
+	node.game.setStageLevel(Game.stageLevels.PLAYING);
 	//TODO: the number of messages to emit to inform other players
 	// about its own stage should be controlled. Observer is 0 
 	//node.game.publishUpdate();
@@ -7735,7 +8033,7 @@ node.on('NODEGAME_GAMECOMMAND_' + node.gamecommand.start, function(options) {
 	
     node.emit('BEFORE_GAMECOMMAND', node.gamecommand.start, options);
 	
-    if (node.game.currentStepObj && node.game.currentStepObj.stage !== 0) {
+    if (node.game.getCurrentStep() && node.game.getCurrentStep().stage !== 0) {
 	node.err('Game already started. Use restart if you want to start the game again');
 	return;
     }

@@ -49,7 +49,7 @@
 					player: node.player,
 					memory: node.game.memory,
 					state: 	node.game.state,
-					game: 	node.game.name,
+					game: 	node.game.metadata.name,
 					history: undefined
 			};
 			

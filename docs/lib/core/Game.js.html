@@ -31,16 +31,13 @@
         <a href="#private-properties">Private properties</a>
       </div>
       <div class="heading h3">
-        <a href="#game.name">Game.name</a>
-      </div>
-      <div class="heading h3">
-        <a href="#game.description">Game.description</a>
+        <a href="#game.metadata">Game.metadata</a>
       </div>
       <div class="heading h3">
         <a href="#game.pl">Game.pl</a>
       </div>
       <div class="heading h3">
-        <a href="#game.pl">Game.pl</a>
+        <a href="#game.ml">Game.ml</a>
       </div>
       <div class="heading h3">
         <a href="#game.ready">Game.ready</a>
@@ -64,7 +61,7 @@
         <a href="#game.memory">Game.memory</a>
       </div>
       <div class="heading h3">
-        <a href="#game.stager">Game.stager</a>
+        <a href="#game.gameloop">Game.gameLoop</a>
       </div>
       <div class="heading h2">
         <a href="#game-methods">Game methods</a>
@@ -92,6 +89,9 @@
       </div>
       <div class="heading h3">
         <a href="#game.execstage">Game.execStage</a>
+      </div>
+      <div class="heading h3">
+        <a href="#game.getglobal">Game.getGlobal</a>
       </div>
       <div class="heading h3">
         <a href="#game.isready">Game.isReady</a>
@@ -126,7 +126,7 @@
 
   </div>
   <div class="body"><p>Copyright(c) 2012 Stefano Balietti
-MIT Licensed </p>
+MIT Licensed</p>
 
 <p>Wrapper class for a <code>GameLoop</code> object and functions to control the game flow</p>
 
@@ -135,16 +135,14 @@ MIT Licensed </p>
 <ul>
 <li>incoming,</li>
 <li>outgoing,</li>
-<li>internal </li>
+<li>internal</li>
 </ul>
 
 <hr />
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
-<span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -158,44 +156,38 @@ MIT Licensed </p>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
-  <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-  <span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameDB</span><span class="p">,</span>
-  <span class="nx">GameLoop</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameLoop</span><span class="p">,</span>
-  <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">,</span>
-  <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
-  <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span><span class="p">,</span>
-  <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+    <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
+    <span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameDB</span><span class="p">,</span>
+    <span class="nx">GameLoop</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameLoop</span><span class="p">,</span>
+    <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">,</span>
+    <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
+    <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span><span class="p">,</span>
+    <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
 <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">;</span>
 
 <span class="nx">exports</span><span class="p">.</span><span class="nx">Game</span> <span class="o">=</span> <span class="nx">Game</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">name</span><span class="p">,</span>
-  <span class="nx">description</span><span class="p">,</span>
-  <span class="nx">gameLoop</span><span class="p">,</span>
-  <span class="nx">pl</span><span class="p">,</span>
-  <span class="nx">ml</span><span class="p">;</span>
-  
 <span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">UNINITIALIZED</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>   <span class="c1">// game created, the init function has not been called</span>
-    <span class="nx">INITIALIZING</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1">// executing init</span>
-    <span class="nx">INITIALIZED</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span>   <span class="c1">// init executed</span>
-    <span class="nx">READY</span><span class="o">:</span>  <span class="mi">7</span><span class="p">,</span>    <span class="c1">// stages are set</span>
-    <span class="nx">ONGOING</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
-    <span class="nx">GAMEOVER</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span>    <span class="c1">// game complete</span>
+    <span class="nx">UNINITIALIZED</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1">// game created, the init function has not been called</span>
+    <span class="nx">INITIALIZING</span><span class="o">:</span>  <span class="mi">1</span><span class="p">,</span>  <span class="c1">// executing init</span>
+    <span class="nx">INITIALIZED</span><span class="o">:</span>   <span class="mi">5</span><span class="p">,</span>  <span class="c1">// init executed</span>
+    <span class="nx">READY</span><span class="o">:</span>         <span class="mi">7</span><span class="p">,</span>  <span class="c1">// stages are set</span>
+    <span class="nx">ONGOING</span><span class="o">:</span>      <span class="mi">50</span><span class="p">,</span>
+    <span class="nx">GAMEOVER</span><span class="o">:</span>    <span class="mi">100</span><span class="p">,</span>  <span class="c1">// game complete</span>
     <span class="nx">RUNTIME_ERROR</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span>
-  <span class="p">};</span>
+<span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">UNINITIALIZED</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-  <span class="nx">LOADING</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="nx">LOADED</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
-  <span class="nx">PLAYING</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
-  <span class="nx">PAUSING</span><span class="o">:</span>  <span class="mi">55</span><span class="p">,</span>
-  <span class="nx">PAUSED</span><span class="o">:</span> <span class="mi">60</span><span class="p">,</span>
-  <span class="nx">RESUMING</span><span class="o">:</span> <span class="mi">65</span><span class="p">,</span>
-  <span class="nx">RESUMED</span><span class="o">:</span> <span class="mi">70</span><span class="p">,</span>
-  <span class="nx">DONE</span><span class="o">:</span> <span class="mi">100</span>
+    <span class="nx">LOADING</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">LOADED</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nx">PLAYING</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="nx">PAUSING</span><span class="o">:</span>  <span class="mi">55</span><span class="p">,</span>
+    <span class="nx">PAUSED</span><span class="o">:</span> <span class="mi">60</span><span class="p">,</span>
+    <span class="nx">RESUMING</span><span class="o">:</span> <span class="mi">65</span><span class="p">,</span>
+    <span class="nx">RESUMED</span><span class="o">:</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="nx">DONE</span><span class="o">:</span> <span class="mi">100</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -222,12 +214,11 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">Game</span> <span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">settings</span> <span class="o">=</span> <span class="nx">settings</span> <span class="o">||</span> <span class="p">{};</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">Game</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">settings</span> <span class="o">=</span> <span class="nx">settings</span> <span class="o">||</span> <span class="p">{};</span>
 
-  <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">);</span>
-  </pre></div>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -246,15 +237,18 @@ MIT Licensed </p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="game.name">
+<div class="pilwrap" id="game.metadata">
   <h3>
-    <a href="#game.name" class="pilcrow">&#182;</a>
-    Game.name
+    <a href="#game.metadata" class="pilcrow">&#182;</a>
+    Game.metadata
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>The name of the game</p>
+  <div class="body"><p>The game's metadata</p>
+
+<p>Contains following properties:
+name, description, version, session</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">API</div>
@@ -265,53 +259,12 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">name</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;A nodeGame game&#39;</span><span class="p">;</span>
-  
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">value</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
-      <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
-  <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="game.description">
-  <h3>
-    <a href="#game.description" class="pilcrow">&#182;</a>
-    Game.description
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>A text describing the game</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">private
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">description</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">description</span> <span class="o">||</span> <span class="s1">&#39;No Description&#39;</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">value</span><span class="o">:</span> <span class="nx">description</span><span class="p">,</span>
-      <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">description</span> <span class="o">=</span> <span class="nx">description</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">metadata</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">name</span><span class="o">:</span>        <span class="nx">settings</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;A nodeGame game&#39;</span><span class="p">,</span>
+        <span class="nx">description</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">description</span> <span class="o">||</span> <span class="s1">&#39;No Description&#39;</span><span class="p">,</span>
+        <span class="nx">version</span><span class="o">:</span>     <span class="nx">settings</span><span class="p">.</span><span class="nx">version</span> <span class="o">||</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+        <span class="nx">session</span><span class="o">:</span>     <span class="nx">settings</span><span class="p">.</span><span class="nx">session</span> <span class="o">||</span> <span class="s1">&#39;0&#39;</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -338,27 +291,16 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">pl</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlayerList</span><span class="p">();</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;pl&#39;</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">value</span><span class="o">:</span> <span class="nx">pl</span><span class="p">,</span>
-      <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-      <span class="nx">configurable</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-      <span class="nx">writable</span><span class="o">:</span> <span class="kc">true</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">pl</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">;</span>
-  <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">pl</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlayerList</span><span class="p">();</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="game.pl">
+<div class="pilwrap" id="game.ml">
   <h3>
-    <a href="#game.pl" class="pilcrow">&#182;</a>
-    Game.pl
+    <a href="#game.ml" class="pilcrow">&#182;</a>
+    Game.ml
   </h3>
 </div>
 
@@ -376,19 +318,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">ml</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlayerList</span><span class="p">();</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;ml&#39;</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">value</span><span class="o">:</span> <span class="nx">ml</span><span class="p">,</span>
-      <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-      <span class="nx">configurable</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-      <span class="nx">writable</span><span class="o">:</span> <span class="kc">true</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">ml</span> <span class="o">=</span> <span class="nx">ml</span><span class="p">;</span>
-  <span class="p">}</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">ml</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlayerList</span><span class="p">();</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -423,16 +353,7 @@ instead.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">getter</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;ready&#39;</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){},</span>
-      <span class="nx">get</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">isReady</span><span class="p">,</span>
-      <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">ready</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">ready</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -467,8 +388,8 @@ other clients.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">observer</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">observer</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">observer</span> 
-                                <span class="o">:</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">observer</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">observer</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">observer</span>
+        <span class="o">:</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -482,23 +403,23 @@ other clients.</p>
 </div>
 
   </div>
-  <div class="body"><p>If TRUE, automatically advances to the next state if all the players 
+  <div class="body"><p>If TRUE, automatically advances to the next state if all the players
 have completed the same state</p>
 
-<p>After a successful STAGEDONE event is fired, the client will automatically 
+<p>After a successful STAGEDONE event is fired, the client will automatically
 goes to the next function in the game-loop without waiting for a STATE
-message from the server. </p>
+message from the server.</p>
 
 <p>Depending on the configuration settings, it can still perform additional
-checkings (e.g.wheter the mininum number of players is connected) 
+checkings (e.g.wheter the mininum number of players is connected)
 before stepping to the next state.</p>
 
 <p>Defaults: true</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">auto_step</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_step</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_step</span> 
-                               <span class="o">:</span> <span class="kc">true</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">auto_step</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_step</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_step</span>
+        <span class="o">:</span> <span class="kc">true</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -521,8 +442,8 @@ to access the screen and displays a message to the player.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">auto_wait</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_wait</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_wait</span> 
-                                 <span class="o">:</span> <span class="kc">false</span><span class="p">;</span> </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">auto_wait</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_wait</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_wait</span>
+        <span class="o">:</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -538,30 +459,27 @@ to access the screen and displays a message to the player.</p>
   </div>
   <div class="body"><p>If TRUE, automatically advances to the next state upon completion of a state</p>
 
-<p>After a successful DONE event is fired, the client will automatically 
+<p>After a successful DONE event is fired, the client will automatically
 goes to the next function in the game-loop without waiting for a STATE
-message from the server, or checking the STATE of the other players. </p>
+message from the server, or checking the STATE of the other players.</p>
 
 <p>Defaults: FALSE</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">solo_mode</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">solo_mode</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">solo_mode</span> 
-                               <span class="o">:</span> <span class="kc">false</span><span class="p">;</span> </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">solo_mode</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">solo_mode</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">solo_mode</span>
+        <span class="o">:</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>TODO: check this</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">minPlayers</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">minPlayers</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">maxPlayers</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">maxPlayers</span> <span class="o">||</span> <span class="mi">1000</span><span class="p">;</span>
-  
-
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">minPlayers</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">minPlayers</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">maxPlayers</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">maxPlayers</span> <span class="o">||</span> <span class="mi">1000</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -579,36 +497,36 @@ message from the server, or checking the STATE of the other players. </p>
 
 <p>In the server logic the content of SET messages are
 automatically inserted in this object</p>
-
-<p>@see node.set</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.set
+  </span>
+    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">memory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameDB</span><span class="p">();</span>
-  
-
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">memory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameDB</span><span class="p">();</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="game.stager">
+<div class="pilwrap" id="game.gameloop">
   <h3>
-    <a href="#game.stager" class="pilcrow">&#182;</a>
-    Game.stager
+    <a href="#game.gameloop" class="pilcrow">&#182;</a>
+    Game.gameLoop
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Stage manager </p>
-
-<p>retrocompatible with gameLoop</p>
+  <div class="body"><p>The Game Loop</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Stager</span>
+      <span class="dox_type">GameLoop</span>
     </div>
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
@@ -618,8 +536,17 @@ automatically inserted in this object</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameLoop</span><span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">stages</span><span class="p">);</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameLoop</span><span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">stages</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>TODO: check how to init</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameStage</span><span class="p">());</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -627,30 +554,19 @@ automatically inserted in this object</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
-<p>TODO: check how to init</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameStage</span><span class="p">());</span>
-    </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
-</div>
 <p>Update the init function if one is passed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">init</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
-      <span class="nx">settings</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
-  <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
+            <span class="nx">settings</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
+        <span class="p">};</span>
     <span class="p">}</span>
-    
-    
+
+
     <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-  
+
 <span class="p">}</span> <span class="c1">// &lt;!-- ends constructor --&gt;</span></pre></div>
         </td>
       </tr>
@@ -681,7 +597,7 @@ automatically inserted in this object</p>
   <div class="body"><p>Initialization function</p>
 
 <p>This function is called as soon as the game is instantiated,
-i.e. at stage 0.0.0. </p>
+i.e. at stage 0.0.0.</p>
 
 <p>Event listeners defined here stay valid throughout the whole
 game, unlike event listeners defined inside a function of the
@@ -689,9 +605,9 @@ gameLoop, which are valid only within the specific function.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -713,7 +629,7 @@ is terminated</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">gameover</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">gameover</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -727,7 +643,7 @@ is terminated</p>
 </div>
 
   </div>
-  <div class="body"><p>Starts the game </p>
+  <div class="body"><p>Starts the game</p>
 
 <p>Calls the init function, and steps.</p>
 
@@ -754,14 +670,14 @@ just for change of state after the game has started</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>INIT the game</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;game started&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
+
+    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;game started&#39;</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -782,8 +698,8 @@ just for change of state after the game has started</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pause</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pause</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -804,8 +720,8 @@ just for change of state after the game has started</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">resume</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">resume</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -828,7 +744,7 @@ just for change of state after the game has started</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
       <span class="dox_type">null</span>
-      <span>FALSE, if the execution encounters an error 
+      <span>FALSE, if the execution encounters an error
   NULL, if stepping is disallowed</span>
     </div>
     <div class="dox_tag_title">See</div>
@@ -845,11 +761,11 @@ just for change of state after the game has started</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Check the stager</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">stepRule</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getStepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">stepRule</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stepRule</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
 
@@ -873,7 +789,7 @@ just for change of state after the game has started</p>
 </div>
 
   </div>
-  <div class="body"><p>Executes the next stage / step </p>
+  <div class="body"><p>Executes the next stage / step</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
@@ -902,7 +818,7 @@ TODO: harmonize return values
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">nextStep</span><span class="p">;</span>
-    <span class="nx">nextStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
+    <span class="nx">nextStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;NEXT&#39;</span><span class="p">,</span> <span class="nx">nextStep</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">nextStep</span><span class="p">)</span> <span class="p">{</span>
 
@@ -915,7 +831,7 @@ TODO: harmonize return values
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>else do nothing</p>
         </td>
@@ -927,7 +843,7 @@ TODO: harmonize return values
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>TODO maybe update also in case of string</p>
         </td>
@@ -962,15 +878,15 @@ TODO: harmonize return values
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">execStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
 
-    <span class="nx">cb</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">;</span> </pre></div>
+    <span class="nx">cb</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
-<p>Local Listeners from previous stage are erased 
+<p>Local Listeners from previous stage are erased
 before proceeding to next one</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">clearStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
@@ -980,7 +896,7 @@ before proceeding to next one</p>
 
     <span class="k">try</span> <span class="p">{</span>
         <span class="nx">res</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-    <span class="p">}</span> 
+    <span class="p">}</span>
     <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">err</span><span class="p">;</span>
         <span class="nx">err</span> <span class="o">=</span> <span class="s1">&#39;An error occurred while executing a custom callback&#39;</span><span class="p">;</span>
@@ -996,7 +912,7 @@ before proceeding to next one</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>This does not make sense. Basically it waits for the nodegame window to be loaded too</p>
         </td>
@@ -1009,7 +925,7 @@ before proceeding to next one</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>A non fatal error occurred
 log it</p>
@@ -1019,19 +935,19 @@ log it</p>
     <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStateLevel</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStateLevel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStageLevel</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStageLevel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stageLevel</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentStep</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
+<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
 <span class="p">};</span>
 
-<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentGameStage</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentGameStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">currentGameStage</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -1039,23 +955,23 @@ log it</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>ERROR, WORKING, etc</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setStateLevel</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">stateLevel</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setStateLevel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stateLevel</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stateLevel</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
                 <span class="s1">&#39;setStateLevel called with invalid parameter: &#39;</span> <span class="o">+</span> <span class="nx">stateLevel</span><span class="p">);</span>
     <span class="p">}</span>
 
-  <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">=</span> <span class="nx">stateLevel</span><span class="p">;</span></pre></div>
+    <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">=</span> <span class="nx">stateLevel</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>this.publishUpdate();</p>
         </td>
@@ -1065,11 +981,11 @@ log it</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>PLAYING, DONE, etc.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setStageLevel</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setStageLevel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
                 <span class="s1">&#39;setStageLevel called with invalid parameter: &#39;</span> <span class="o">+</span> <span class="nx">stageLevel</span><span class="p">);</span>
@@ -1081,7 +997,7 @@ log it</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>Publish update:</p>
         </td>
@@ -1095,7 +1011,7 @@ log it</p>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setCurrentGameStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">currentGameStage</span> <span class="o">=</span> <span class="nx">gameStage</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">currentGameStage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">publishUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
@@ -1104,14 +1020,119 @@ log it</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <!-- Important: SAY -->
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">stateEvent</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">OUT</span> <span class="o">+</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">+</span> <span class="s1">&#39;.STATE&#39;</span><span class="p">;</span> 
-    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">stateEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">(),</span> <span class="s1">&#39;ALL&#39;</span><span class="p">);</span>
-  <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">stateEvent</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">OUT</span> <span class="o">+</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">+</span> <span class="s1">&#39;.STATE&#39;</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">stateEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">(),</span> <span class="s1">&#39;ALL&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="game.getglobal">
+  <h3>
+    <a href="#game.getglobal" class="pilcrow">&#182;</a>
+    Game.getGlobal
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Looks up the value of a global variable</p>
+
+<p>Looks for definitions of a global variable in</p>
+
+<ol>
+<li><p>the current step object,</p></li>
+<li><p>the current stage object,</p></li>
+<li><p>the defaults, defined in the Stager.</p></li>
+</ol>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">global</span>
+      <span class="dox_type">string</span>
+      <span>The name of the global variable</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">null</span>
+      <span>The value of the global variable if found,
+  NULL otherwise.</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getGlobal</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">globalVar</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">curGameStage</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">stepObj</span><span class="p">,</span> <span class="nx">stageObj</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">stepGlobals</span><span class="p">,</span> <span class="nx">stageGlobals</span><span class="p">,</span> <span class="nx">defaultGlobals</span><span class="p">;</span>
+
+    <span class="nx">curGameStage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+</div>
+<p>Look in current step:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">stepObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">curGameStage</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">stepObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">stepGlobals</span> <span class="o">=</span> <span class="nx">stepObj</span><span class="p">.</span><span class="nx">globals</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stepGlobals</span> <span class="o">&amp;&amp;</span> <span class="nx">stepGlobals</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">globalVar</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">stepGlobals</span><span class="p">[</span><span class="nx">globalVar</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+</div>
+<p>Look in current stage:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">stageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">curGameStage</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">stageObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">stageGlobals</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">globals</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stageGlobals</span> <span class="o">&amp;&amp;</span> <span class="nx">stageGlobals</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">globalVar</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">stageGlobals</span><span class="p">[</span><span class="nx">globalVar</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+</div>
+<p>Look in Stager's defaults:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">plot</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">defaultGlobals</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getDefaultGlobals</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">defaultGlobals</span> <span class="o">&amp;&amp;</span> <span class="nx">defaultGlobals</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">globalVar</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">defaultGlobals</span><span class="p">[</span><span class="nx">globalVar</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+</div>
+<p>Not found:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1128,14 +1149,14 @@ log it</p>
   </div>
   <div class="body"><p>Returns TRUE if the nodeGame engine is fully loaded</p>
 
-<p>As soon as the nodegame-client library is loaded 
+<p>As soon as the nodegame-client library is loaded
 <code>node.game.state</code> is equal to 0.0.0. In this situation the
-game will be considered READY unless the nodegame-window 
+game will be considered READY unless the nodegame-window
 says otherwise</p>
 
 <p>During stepping between functions in the game-loop
-the flag is temporarily turned to FALSE, and all events 
-are queued and fired only after nodeGame is ready to 
+the flag is temporarily turned to FALSE, and all events
+are queued and fired only after nodeGame is ready to
 handle them again.</p>
 
 <p>If the browser does not support the method object setters,
@@ -1156,18 +1177,18 @@ instead.</p>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">());</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">());</span>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">()</span> <span class="o">&lt;</span> <span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">READY</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">()</span> <span class="o">===</span> <span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">LOADING</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">()</span> <span class="o">&lt;</span> <span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">READY</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">()</span> <span class="o">===</span> <span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">LOADING</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>Check if there is a gameWindow obj and whether it is loading</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">state</span> <span class="o">&gt;=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADED</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">state</span> <span class="o">&gt;=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADED</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
 <span class="p">};</span>
 
 
@@ -1179,7 +1200,7 @@ instead.</p>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isReadyToStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_isReadyToStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentStage</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">pl</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_isReadyToStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentStage</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">pl</span><span class="p">);</span>
 <span class="p">};</span>
 
 
@@ -1189,7 +1210,7 @@ instead.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>Take default mode
 Is there a local function?</p>
@@ -1200,7 +1221,7 @@ Is there a local function?</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>Always go to the next when done for now</p>
         </td>
@@ -1208,14 +1229,14 @@ Is there a local function?</p>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStepperCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStepperCallback</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentStage</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStepperCallback</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentStage</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>TODO : MAYBE TO REMOVE THEM</p>
         </td>
@@ -1250,18 +1271,24 @@ in the game-loop before returning the state</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
       <span class="dox_type">GameStage</span>
-      <span>The next state, or FALSE if it does not exist
-
-@see GameStage
-  @see Game.gameLoop</span>
+      <span>The next state, or FALSE if it does not exist</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameStage</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.gameLoop
+  </span>
     </div>
   </div>
 </div>
 
 <div class="dox">
-  <div class="summary"><p>Game.prototype.next = function (N) {
-  if (!N) return this.gameLoop.next(this.state);
-  return this.gameLoop.jump(this.state, Math.abs(N));
+  <div class="summary"><p>Game.prototype.next = function(N) {
+    if (!N) return this.gameLoop.next(this.state);
+    return this.gameLoop.jump(this.state, Math.abs(N));
 };</p>
   </div>
   <div class="body">
@@ -1299,18 +1326,24 @@ backward in the game-loop before returning the state</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
       <span class="dox_type">GameStage</span>
-      <span>The previous state, or FALSE if it does not exist
-
-@see GameStage
-  @see Game.gameLoop</span>
+      <span>The previous state, or FALSE if it does not exist</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameStage</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.gameLoop
+  </span>
     </div>
   </div>
 </div>
 
 <div class="dox">
-  <div class="summary"><p>Game.prototype.previous = function (N) {
-  if (!N) return this.gameLoop.previous(this.state);
-  return this.gameLoop.jump(this.state, -Math.abs(N));
+  <div class="summary"><p>Game.prototype.previous = function(N) {
+    if (!N) return this.gameLoop.previous(this.state);
+    return this.gameLoop.jump(this.state, -Math.abs(N));
 };</p>
   </div>
   <div class="body">
@@ -1334,7 +1367,7 @@ backward in the game-loop before returning the state</p>
   <div class="body"><p>Moves the game forward or backward in the game-loop</p>
 
 <p>Optionally, a parameter can control the number of steps to take
-in the game-loop before executing the next function. A negative 
+in the game-loop before executing the next function. A negative
 value jumps backward in the game-loop, and a positive one jumps
 forward in the game-loop</p>
   </div>
@@ -1349,20 +1382,26 @@ forward in the game-loop</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, if the game succesfully jumped to the desired state
-
-@see GameStage
-  @see Game.gameLoop</span>
+      <span>TRUE, if the game succesfully jumped to the desired state</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameStage</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.gameLoop
+  </span>
     </div>
   </div>
 </div>
 
 <div class="dox">
-  <div class="summary"><p>Game.prototype.jumpTo = function (jump) {
-  if (!jump) return false;
-  var gs = this.gameLoop.jump(this.state, jump);
-  if (!gs) return false;
-  return this.updateStage(gs);
+  <div class="summary"><p>Game.prototype.jumpTo = function(jump) {
+    if (!jump) return false;
+    var gs = this.gameLoop.jump(this.state, jump);
+    if (!gs) return false;
+    return this.updateStage(gs);
 };</p>
   </div>
   <div class="body">
@@ -1383,8 +1422,8 @@ forward in the game-loop</p>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
         </td>
