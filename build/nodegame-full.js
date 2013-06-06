@@ -7978,6 +7978,7 @@ EventEmitter.prototype.remove = function(type, listener) {
 	}
     };	
 
+
     EventEmitterManager.prototype.emit = function() {
 	var i, event;
 	event = arguments[0];
