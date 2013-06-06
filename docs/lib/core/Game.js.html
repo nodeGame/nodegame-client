@@ -650,9 +650,6 @@ automatically inserted in this object</p>
     <span class="p">}</span>
     
     
-    <span class="k">this</span><span class="p">.</span><span class="nx">player</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span> 
-    
-    
     <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
   
 <span class="p">}</span> <span class="c1">// &lt;!-- ends constructor --&gt;</span></pre></div>
@@ -909,12 +906,11 @@ TODO: harmonize return values
     <span class="nx">nextStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentStep</span><span class="p">);</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;NEXT&#39;</span><span class="p">,</span> <span class="nx">nextStep</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">nextStep</span><span class="p">)</span> <span class="p">{</span>
-  
-  <span class="k">if</span> <span class="p">(</span><span class="nx">nextStep</span> <span class="o">===</span> <span class="nx">GameLoop</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;GAMEOVER&#39;</span><span class="p">);</span>
-      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameover</span><span class="p">();</span> <span class="c1">// can throw Errors</span>
-  <span class="p">}</span>
-  </pre></div>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">nextStep</span> <span class="o">===</span> <span class="nx">GameLoop</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;GAMEOVER&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameover</span><span class="p">();</span> <span class="c1">// can throw Errors</span>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -924,7 +920,7 @@ TODO: harmonize return values
 </div>
 <p>else do nothing</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">else</span> <span class="p">{</span></pre></div>
         </td>
@@ -936,9 +932,9 @@ TODO: harmonize return values
 </div>
 <p>TODO maybe update also in case of string</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">currentStep</span> <span class="o">=</span> <span class="nx">nextStep</span><span class="p">;</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">currentStepObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">execStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentStepObj</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">currentStep</span> <span class="o">=</span> <span class="nx">nextStep</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">currentStepObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">execStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentStepObj</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -967,9 +963,8 @@ TODO: harmonize return values
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">execStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
-  
-    <span class="nx">cb</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">;</span> 
-      </pre></div>
+
+    <span class="nx">cb</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">;</span> </pre></div>
         </td>
       </tr>
       <tr>
@@ -981,14 +976,23 @@ TODO: harmonize return values
 before proceeding to next one</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">clearStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentStep</span><span class="p">);</span>
-      
-    <span class="k">this</span><span class="p">.</span><span class="nx">updateStageLevel</span><span class="p">(</span><span class="s1">&#39;LOADING&#39;</span><span class="p">);</span>
-    
-    
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">updateStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">LOADING</span><span class="p">);</span>
+
+
     <span class="k">try</span> <span class="p">{</span>
-  <span class="nx">res</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">updateStageLevel</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
-  </pre></div>
+        <span class="nx">res</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+    <span class="p">}</span> 
+    <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">err</span><span class="p">;</span>
+        <span class="nx">err</span> <span class="o">=</span> <span class="s1">&#39;An error occurred while executing a custom callback&#39;</span><span class="p">;</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">updateStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">LOADED</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -998,10 +1002,10 @@ before proceeding to next one</p>
 </div>
 <p>This does not make sense. Basically it waits for the nodegame window to be loaded too</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1012,26 +1016,9 @@ before proceeding to next one</p>
 <p>A non fatal error occurred
 log it</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="p">}</span>
-  
-  <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
-  
-    <span class="p">}</span> 
-    <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">ex</span><span class="p">;</span>
-  <span class="nx">err</span> <span class="o">=</span> <span class="s1">&#39;An error occurred while executing a custom callback&#39;</span><span class="p">;</span> <span class="c1">//  </span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-  
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">ex</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span><span class="p">;</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">ex</span><span class="p">);</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">ex</span><span class="p">.</span><span class="nx">trace</span><span class="p">);</span>
-      <span class="k">throw</span> <span class="nx">ex</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getGameState</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
@@ -1059,6 +1046,11 @@ log it</p>
 <p>ERROR, WORKING, etc</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateGameState</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                <span class="s1">&#39;updateGameState called with invalid parameter: &#39;</span> <span class="o">+</span> <span class="nx">state</span><span class="p">);</span>
+    <span class="p">}</span>
+
   <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">state</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -1079,8 +1071,13 @@ log it</p>
 </div>
 <p>PLAYING, DONE, etc.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateStageLevel</span><span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">stageState</span> <span class="o">=</span> <span class="nx">state</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateStageLevel</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                <span class="s1">&#39;updateStageLevel called with invalid parameter: &#39;</span> <span class="o">+</span> <span class="nx">state</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">stageState</span> <span class="o">=</span> <span class="nx">state</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1090,11 +1087,13 @@ log it</p>
 </div>
 <p>Publish update:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-        <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE_LEVEL</span><span class="p">,</span>
-        <span class="nx">data</span><span class="o">:</span> <span class="nx">state</span><span class="p">,</span>
-        <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;ALL&#39;</span>
-    <span class="p">}));</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE_LEVEL</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="nx">state</span><span class="p">,</span>
+            <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;ALL&#39;</span>
+        <span class="p">}));</span>
+    <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">publishUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
@@ -1256,11 +1255,18 @@ in the game-loop before returning the state</p>
     </div>
   </div>
 </div>
+
+<div class="dox">
+  <div class="summary"><p>Game.prototype.next = function (N) {
+  if (!N) return this.gameLoop.next(this.state);
+  return this.gameLoop.jump(this.state, Math.abs(N));
+};</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">N</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">jump</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">N</span><span class="p">));</span>
-<span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -1298,11 +1304,18 @@ backward in the game-loop before returning the state</p>
     </div>
   </div>
 </div>
+
+<div class="dox">
+  <div class="summary"><p>Game.prototype.previous = function (N) {
+  if (!N) return this.gameLoop.previous(this.state);
+  return this.gameLoop.jump(this.state, -Math.abs(N));
+};</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">previous</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">N</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">previous</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">jump</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="o">-</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">N</span><span class="p">));</span>
-<span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -1341,13 +1354,20 @@ forward in the game-loop</p>
     </div>
   </div>
 </div>
+
+<div class="dox">
+  <div class="summary"><p>Game.prototype.jumpTo = function (jump) {
+  if (!jump) return false;
+  var gs = this.gameLoop.jump(this.state, jump);
+  if (!gs) return false;
+  return this.updateStage(gs);
+};</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">jumpTo</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">jump</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">jump</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">gs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">jump</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="nx">jump</span><span class="p">);</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gs</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">updateStage</span><span class="p">(</span><span class="nx">gs</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>

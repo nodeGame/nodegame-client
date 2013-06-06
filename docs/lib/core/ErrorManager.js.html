@@ -79,9 +79,9 @@ MIT Licensed</p>
 
     <span class="nx">node</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span> <span class="o">=</span> <span class="nx">NodeGameRuntimeError</span><span class="p">;</span>
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameStageCallbackError</span> <span class="o">=</span> <span class="nx">NodeGameStageCallbackError</span><span class="p">;</span>
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span> <span class="o">=</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">;</span></pre></div>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span> <span class="o">=</span> <span class="nx">NodeGameRuntimeError</span><span class="p">;</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameStageCallbackError</span> <span class="o">=</span> <span class="nx">NodeGameStageCallbackError</span><span class="p">;</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span> <span class="o">=</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -160,7 +160,8 @@ MIT Licensed</p>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isNodeJS</span><span class="p">())</span> <span class="p">{</span>
         <span class="nx">process</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;uncaughtException&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Caught exception: &#39;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">);</span>
+            <span class="kr">debugger</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Caught exception: &#39;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">.</span><span class="nx">msg</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
             <span class="p">}</span>
