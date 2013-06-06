@@ -56,6 +56,14 @@ node.ErrorManager = require('./lib/core/ErrorManager').ErrorManager;
 
 
 /**
+ * ### node.EEManager
+ * 
+ * @api public
+ */
+
+node.EventEmitterManager = require('./lib/core/EventEmitter').EventEmitterManager;
+
+/**
  * ### node.EventEmitter
  * 
  * @api public
