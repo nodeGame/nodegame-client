@@ -55,6 +55,9 @@
         <a href="#node.on">node.on</a>
       </div>
       <div class="heading h3">
+        <a href="#node.getcurrenteventemitter">node.getCurrentEventEmitter</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.once">node.once</a>
       </div>
       <div class="heading h3">
@@ -96,7 +99,8 @@ line, multiplayer games in the browser.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
     
-    <span class="kd">var</span> <span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">EventEmitter</span><span class="p">,</span>
+    <span class="kd">var</span> <span class="nx">EventEmitterManager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">EventEmitterManager</span><span class="p">,</span>
+        <span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">EventEmitter</span><span class="p">,</span>
   <span class="nx">Socket</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Socket</span><span class="p">,</span>
   <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
   <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
@@ -155,12 +159,12 @@ line, multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">env</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">env</span> <span class="o">||</span> <span class="o">!</span><span class="nx">func</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="nx">env</span><span class="p">])</span> <span class="k">return</span><span class="p">;</span>
-    <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">ctx</span> <span class="o">||</span> <span class="nx">node</span><span class="p">;</span>
-    <span class="nx">params</span> <span class="o">=</span> <span class="nx">params</span> <span class="o">||</span> <span class="p">[];</span>
-    <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">params</span><span class="p">);</span>
-  <span class="p">};</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">env</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">env</span> <span class="o">||</span> <span class="o">!</span><span class="nx">func</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="nx">env</span><span class="p">])</span> <span class="k">return</span><span class="p">;</span>
+  <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">ctx</span> <span class="o">||</span> <span class="nx">node</span><span class="p">;</span>
+  <span class="nx">params</span> <span class="o">=</span> <span class="nx">params</span> <span class="o">||</span> <span class="p">[];</span>
+  <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">params</span><span class="p">);</span>
+    <span class="p">};</span>
   
     </pre></div>
         </td>
@@ -190,18 +194,18 @@ modified during the game. </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-    
-    <span class="nx">player</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Player</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>      
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+  
+  <span class="nx">player</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Player</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>      
       <span class="kd">var</span> <span class="nx">pconf</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
       <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">pconf</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">pconf</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">inArray</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;sid&#39;</span><span class="p">,</span> <span class="s1">&#39;ip&#39;</span><span class="p">]))</span> <span class="p">{</span>
-            <span class="k">continue</span><span class="p">;</span>
-          <span class="p">}</span> 
-          </pre></div>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">pconf</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">inArray</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;sid&#39;</span><span class="p">,</span> <span class="s1">&#39;ip&#39;</span><span class="p">]))</span> <span class="p">{</span>
+      <span class="k">continue</span><span class="p">;</span>
+        <span class="p">}</span> 
+        </pre></div>
         </td>
       </tr>
       <tr>
@@ -215,34 +219,34 @@ set in other sessions (recovery)
                         continue;
                     }</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>          <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">value</span><span class="o">:</span> <span class="nx">pconf</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span>
-                <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-            <span class="p">});</span>
-          <span class="p">}</span>
-          <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">player</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">pconf</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-    
-    
-    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="p">{</span>
-          <span class="nx">value</span><span class="o">:</span> <span class="nx">player</span><span class="p">,</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="p">{</span>
+          <span class="nx">value</span><span class="o">:</span> <span class="nx">pconf</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span>
           <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
       <span class="p">});</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">player</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">pconf</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+        <span class="p">}</span>
     <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+  
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="nx">player</span><span class="p">,</span>
+    <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
+      <span class="p">});</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">player</span> <span class="o">=</span> <span class="nx">player</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PLAYER_CREATED&#39;</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
-    
-    <span class="k">return</span> <span class="nx">player</span><span class="p">;</span>
-  <span class="p">};</span>  
+  <span class="p">}</span>
+  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PLAYER_CREATED&#39;</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
+  
+  <span class="k">return</span> <span class="nx">player</span><span class="p">;</span>
+    <span class="p">};</span>  
   </pre></div>
         </td>
       </tr>
@@ -274,11 +278,11 @@ set in other sessions (recovery)
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span> 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">url</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span> 
+  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">url</span><span class="p">))</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_CONNECTED&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">};</span>  
+  <span class="p">}</span>
+    <span class="p">};</span>  
 
   </pre></div>
         </td>
@@ -341,10 +345,10 @@ set in other sessions (recovery)
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">replay</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">reset</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">reset</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">execStage</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="s2">&quot;1.1.1&quot;</span><span class="p">));</span>
-  <span class="p">};</span>  
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">replay</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">reset</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">reset</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">execStage</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="s2">&quot;1.1.1&quot;</span><span class="p">));</span>
+    <span class="p">};</span>  
   
   </pre></div>
         </td>
@@ -387,9 +391,9 @@ set in other sessions (recovery)
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">)</span> <span class="p">{</span>  
-    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">);</span>
-  <span class="p">};</span>  
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> 
+  <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">};</span>  
   </pre></div>
         </td>
       </tr>
@@ -414,21 +418,45 @@ set in other sessions (recovery)
       <span>The content of the DATA message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">what</span>
+      <span class="dox_tag_name">text</span>
       <span class="dox_type">string</span>
       <span>The label associated to the message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">whom</span>
+      <span class="dox_tag_name">to</span>
       <span class="dox_type">string</span>
-      <span>Optional. The recipient of the message</span>
+      <span>Optional. The recipient of the message. Defaults, 'SERVER'</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">say</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">what</span><span class="p">,</span> <span class="nx">whom</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;out.say.DATA&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">whom</span><span class="p">,</span> <span class="nx">what</span><span class="p">);</span>
-  <span class="p">};</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">say</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">msg</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot say empty message&#39;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+      <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
+      <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
+      <span class="nx">text</span><span class="o">:</span> <span class="nx">text</span><span class="p">,</span>
+      <span class="nx">data</span><span class="o">:</span> <span class="nx">data</span>
+  <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>@TODO when refactoring is finished, emit this event.
+By default there nothing should happen, but people could listen to it
+node.emit('out.say.DATA', msg);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+    <span class="p">};</span>
   </pre></div>
         </td>
       </tr>
@@ -460,18 +488,35 @@ set in other sessions (recovery)
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">set</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">set</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">msg</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot set undefined key&#39;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+      <span class="nx">action</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span>
+      <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
+      <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
+      <span class="nx">reliable</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="nx">text</span><span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
+      <span class="nx">data</span><span class="o">:</span> <span class="nx">value</span>
+  <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
-<p>TODO: parameter to say who will get the msg</p>
+<p>@TODO when refactoring is finished, emit this event.
+By default there nothing should happen, but people could listen to it
+node.emit('out.set.DATA', msg);</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;out.set.DATA&#39;</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">key</span><span class="p">);</span>
-  <span class="p">};</span>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+    <span class="p">};</span>
   </pre></div>
         </td>
       </tr>
@@ -496,27 +541,59 @@ set in other sessions (recovery)
       <span>The label of the GET message</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">func</span>
+      <span class="dox_tag_name">cb</span>
       <span class="dox_type">function</span>
-      <span>The callback function to handle the return message</span>
+      <span>The callback function to handle the return message
+
+Experimental. Undocumented (for now)</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">key</span> <span class="o">||</span> <span class="o">!</span><span class="nx">func</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-    
-    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;out.get.DATA&#39;</span><span class="p">,</span> <span class="nx">key</span><span class="p">);</span>
-    
-    <span class="kd">var</span> <span class="nx">listener</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">g</span><span class="p">,</span> <span class="nx">ee</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot get empty key&#39;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.get requires a valid callback function&#39;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+      <span class="nx">action</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span>
+      <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
+      <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
+      <span class="nx">reliable</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="nx">text</span><span class="o">:</span> <span class="nx">key</span>
+  <span class="p">});</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>@TODO when refactoring is finished, emit this event.
+By default there nothing should happen, but people could listen to it
+node.events.emit('out.get.DATA', msg);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  
+  <span class="nx">ee</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span><span class="p">();</span>
+
+  <span class="kd">function</span> <span class="nx">g</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
+    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
       <span class="p">}</span>
-    <span class="p">};</span>
-    
-    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
-  <span class="p">};</span></pre></div>
+  <span class="p">};</span>
+  
+  <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -553,33 +630,90 @@ to its next stage. </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span> 
-      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;undefined event&#39;</span><span class="p">);</span> 
-      <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span> 
-      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;callback must be of time function&#39;</span><span class="p">);</span> 
-      <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-    </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">ee</span><span class="p">;</span>
+  <span class="nx">ee</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span><span class="p">();</span>
+  <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.getcurrenteventemitter">
+  <h3>
+    <a href="#node.getcurrenteventemitter" class="pilcrow">&#182;</a>
+    node.getCurrentEventEmitter
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the last active event emitter obj</p>
+
+<p>TODO: finish the method</p>
+
+<p>TODO: add proper doc</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">The</span>
+      <span class="dox_type">EventEmitter</span>
+      <span>current event emitter obj</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+  <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
-<p>It is in the init function;</p>
+<p>NodeGame default listeners</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentStep</span><span class="p">()</span> <span class="o">||</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentStep</span><span class="p">(),</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">))</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">addLocal</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentStep</span><span class="p">())</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">;</span>
+  <span class="p">}</span> </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>It is a game init function</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">((</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentStep</span><span class="p">(),</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
+  <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>TODO return the stage ee</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>It is a game step function</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">step</span><span class="p">;</span>
+  <span class="p">}</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -620,13 +754,13 @@ after its first invocation</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">event</span> <span class="o">||</span> <span class="o">!</span><span class="nx">listener</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">event</span> <span class="o">||</span> <span class="o">!</span><span class="nx">listener</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">};</span>
+  <span class="p">});</span>
+    <span class="p">};</span>
   </pre></div>
         </td>
       </tr>
@@ -667,11 +801,9 @@ after its first invocation</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">off</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">removeListener</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">func</span><span class="p">);</span>
-  <span class="p">};</span>
-
-  
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">off</span>  <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">func</span><span class="p">);</span>
+    <span class="p">};</span>  
   </pre></div>
         </td>
       </tr>
@@ -721,17 +853,24 @@ other.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">redirect</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">who</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">url</span> <span class="o">||</span> <span class="o">!</span><span class="nx">who</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    
-    <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">redirect</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">who</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">msg</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;redirect requires a valid string&#39;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">who</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;redirect requires a valid recipient&#39;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>   
+  <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
       <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">REDIRECT</span><span class="p">,</span>
       <span class="nx">data</span><span class="o">:</span> <span class="nx">url</span><span class="p">,</span>
       <span class="nx">to</span><span class="o">:</span> <span class="nx">who</span>
-    <span class="p">});</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="p">};</span></pre></div>
+  <span class="p">});</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -773,9 +912,17 @@ to each others</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">command</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">command</span> <span class="o">||</span> <span class="o">!</span><span class="nx">to</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">msg</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">command</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;remoteCommand requires a valid command&#39;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">who</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;remoteCommand requires a valid recipient&#39;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>  
     
-  <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+  <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
       <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">GAMECOMMAND</span><span class="p">,</span>
       <span class="nx">text</span><span class="o">:</span> <span class="nx">command</span><span class="p">,</span>
       <span class="nx">data</span><span class="o">:</span> <span class="nx">options</span><span class="p">,</span>
@@ -784,7 +931,7 @@ to each others</p>
   <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
     <span class="p">};</span>
   
-  <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">version</span> <span class="o">+</span> <span class="s1">&#39; loaded&#39;</span><span class="p">);</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">version</span> <span class="o">+</span> <span class="s1">&#39; loaded&#39;</span><span class="p">);</span>
   
   </pre></div>
         </td>
@@ -792,25 +939,25 @@ to each others</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 Creating the objects
 <!-- object commented in index.js -->
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventEmitter</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventEmitterManager</span><span class="p">();</span>
 
-  <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">;</span>  
+    <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">;</span> 
   
-  <span class="nx">node</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameSession</span><span class="p">();</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameSession</span><span class="p">();</span>
   
-  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Socket</span><span class="p">();</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Socket</span><span class="p">();</span>
   
-  <span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Game</span><span class="p">();</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Game</span><span class="p">();</span>
   
   
 <span class="p">})(</span>
     <span class="k">this</span>
-  <span class="p">,</span>   <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+ <span class="p">,</span>  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
         </td>

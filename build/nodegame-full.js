@@ -2986,15 +2986,16 @@ OBJ._obj2Array = function(obj, keyed, level, cur_level) {
     var result = [];
     for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
+        	if (keyed) result.push(key);
             if ('object' === typeof obj[key]) {
                 result = result.concat(OBJ._obj2Array(obj[key], keyed, level, cur_level));
             } else {
-                if (keyed) result.push(key);
                 result.push(obj[key]);
             }
            
         }
-    }        
+    }      
+    
     return result;
 };
 
@@ -3011,7 +3012,7 @@ OBJ._obj2Array = function(obj, keyed, level, cur_level) {
  * gets totally unfolded into an array.
  * 
  * @param {object} obj The object to convert in array
- * @param {number} level Optional. The level of recursion. Defaults undefined
+ * @param {number} level Optional. The level of recursion. Defaults, undefined
  * @return {array} The converted object
  * 
  * 	@see OBJ._obj2Array
@@ -3031,7 +3032,7 @@ OBJ.obj2Array = function (obj, level) {
  * returns it.
  * 
  * @param {object} obj The object to convert in array
- * @param {number} level Optional. The level of recursion. Defaults undefined
+ * @param {number} level Optional. The level of recursion. Defaults, undefined
  * @return {array} The converted object
  * 
  * @see OBJ.obj2Array 
@@ -3706,6 +3707,48 @@ OBJ.uniqueKey = function(obj, name, stop) {
 	return name;
 }
 
+/**
+ * ## OBJ.augment
+ * 
+ * Creates an object containing arrays of all the values of 
+ * 
+ * User can specifies the subset of keys from both objects 
+ * that will subject to augmentation. The values of the other keys 
+ * will not be changed
+ * 
+ * Notice: the method modifies the first input paramteer
+ * 
+ * E.g.
+ * 
+ * ```javascript
+ * var a = { a:1, b:2, c:3 };
+ * var b = { a:10, b:2, c:100, d:4 };
+ * OBJ.augment(a, b); // { a: [1, 10], b: [2, 2], c: [3, 100]}
+ * 
+ * OBJ.augment(a, b, ['b', 'c', 'd']); // { a: 1, b: [2, 2], c: [3, 100], d: [4]});
+ * 
+ * ```
+ * 
+ * @param {object} obj1 The object whose properties will be augmented
+ * @param {object} obj2 The augmenting object
+ * @param {array} key Optional. Array of key names common to both objects taken as
+ * 	the set of properties to augment
+ */
+OBJ.augment = function(obj1, obj2, keys) {  
+	var i, k, keys = keys || OBJ.keys(obj1);
+	
+	for (i = 0 ; i < keys.length; i++) {
+		k = keys[i];
+		if ('undefined' !== typeof obj1[k] && Object.prototype.toString.call(obj1[k]) !== '[object Array]') {
+			obj1[k] = [obj1[k]];
+		}
+		if ('undefined' !== obj2[k]) {
+			if (!obj1[k]) obj1[k] = []; 
+			obj1[k].push(obj2[k]);
+		}
+	}
+}
+
 
 JSUS.extend(OBJ);
     
@@ -3878,6 +3921,13 @@ function PARSE(){};
  */
 PARSE.stringify_prefix = '!?_';
 
+PARSE.marker_func = PARSE.stringify_prefix + 'function';
+PARSE.marker_null = PARSE.stringify_prefix + 'null';
+PARSE.marker_und = PARSE.stringify_prefix + 'undefined';
+PARSE.marker_nan = PARSE.stringify_prefix + 'NaN';
+PARSE.marker_inf = PARSE.stringify_prefix + 'Infinity';
+PARSE.marker_minus_inf = PARSE.stringify_prefix + '-Infinity';
+
 /**
  * ## PARSE.getQueryString
  * 
@@ -3920,22 +3970,22 @@ PARSE.getQueryString = function (variable) {
  * 
  */
 PARSE.tokenize = function (str, separators, modifiers) {
-	if (!str) return;
-	if (!separators || !separators.length) return [str];
-	modifiers = modifiers || {};
+    if (!str) return;
+    if (!separators || !separators.length) return [str];
+    modifiers = modifiers || {};
+    
+    var pattern = '[';
+    
+    JSUS.each(separators, function(s) {
+	if (s === ' ') s = '\\s';
 	
-	var pattern = '[';
-	
-	JSUS.each(separators, function(s) {
-		if (s === ' ') s = '\\s';
-		
-		pattern += s;
-	});
-	
-	pattern += ']+';
-	
-	var regex = new RegExp(pattern);
-	return str.split(regex, modifiers.limit);
+	pattern += s;
+    });
+    
+    pattern += ']+';
+    
+    var regex = new RegExp(pattern);
+    return str.split(regex, modifiers.limit);
 };
 
 /**
@@ -3957,24 +4007,49 @@ PARSE.tokenize = function (str, separators, modifiers) {
  * @see PARSE.stringify_prefix
  */
 PARSE.stringify = function(o, spaces) {
-	return JSON.stringify(o, function(key, value){
-		var type = typeof value;
-		
-		if ('function' === type) {
-			return PARSE.stringify_prefix + value.toString()
-		}
-		
-		if ('undefined' === type) {
-			return PARSE.stringify_prefix + 'undefined';
-		}
-		
-		if (value === null) {
-			return PARSE.stringify_prefix + 'null';
-		}
-		
-		return value;
-		
-	}, spaces);
+    return JSON.stringify(o, function(key, value){
+	var type = typeof value;
+	if ('function' === type) {
+	    return PARSE.stringify_prefix + value.toString()
+	}
+	
+	if ('undefined' === type) return PARSE.marker_und;
+	if (value === null) return PARSE.marker_null;
+        if ('number' === type && isNaN(value)) return PARSE.marker_nan;
+	if (value == Number.POSITIVE_INFINITY) return PARSE.marker_inf;
+	if (value == Number.NEGATIVE_INFINITY) return PARSE.marker_minus_inf;
+	
+	return value;
+	
+    }, spaces);
+};
+
+/**
+ * ## PARSE.stringifyAll
+ * 
+ * Copies all the properties of the prototype before stringifying
+ *
+ * Notice: The original object is modified!
+ * 
+ * @param {mixed} o The value to stringify
+ * @param {number} spaces Optional the number of indentation spaces. Defaults, 0
+ * 
+ * @return {string} The stringified result
+ * 
+ * @see PARSE.stringify
+ */
+PARSE.stringifyAll = function(o, spaces) {
+    for (var i in o) {
+	if (!o.hasOwnProperty(i)) {
+	    if ('object' === typeof o[i]) {
+		o[i] = PARSE.stringifyAll(o[i]);
+	    }
+	    else {
+		o[i] = o[i];
+	    }
+	}
+    }
+    return PARSE.stringify(o);
 };
 
 /**
@@ -3993,59 +4068,65 @@ PARSE.stringify = function(o, spaces) {
  */
 PARSE.parse = function(str) {
 	
-	var marker_func = PARSE.stringify_prefix + 'function',
-		marker_null = PARSE.stringify_prefix + 'null',
-		marker_und	= PARSE.stringify_prefix + 'undefined';
+    var len_prefix = PARSE.stringify_prefix.length,
+        len_func = PARSE.marker_func.length,
+        len_null = PARSE.marker_null.length,
+        len_und = PARSE.marker_und.length,
+        len_nan = PARSE.marker_nan.length,
+        len_inf = PARSE.marker_inf.length,
+        len_inf = PARSE.marker_minus_inf.length;
+       
 	
-	var len_prefix 	= PARSE.stringify_prefix.length,
-		len_func 	= marker_func.length,
-		len_null 	= marker_null.length,
-		len_und 	= marker_und.length;	
+    var o = JSON.parse(str);
+    return walker(o);
 	
-	var o = JSON.parse(str);
-	return walker(o);
-	
-	function walker(o) {
-		var tmp;
+    function walker(o) {
+	if ('object' !== typeof o) return reviver(o);
 		
-		if ('object' !== typeof o) {
-			return reviver(o);
+	for (var i in o) {
+	    if (o.hasOwnProperty(i)) {
+		if ('object' === typeof o[i]) {
+		    walker(o[i]);
 		}
-		
-		for (var i in o) {
-			if (o.hasOwnProperty(i)) {
-				if ('object' === typeof o[i]) {
-					walker(o[i]);
-				}
-				else {
-					o[i] = reviver(o[i]);
-				}
-			}
+		else {
+		    o[i] = reviver(o[i]);
 		}
-		
-		return o;
+	    }
 	}
 	
-	function reviver(value) {
-		var type = typeof value;
-		
-		if (type === 'string') {
-			if (value.substring(0, len_prefix) !== PARSE.stringify_prefix) {
-				return value;
-			}
-			else if (value.substring(0, len_func) === marker_func) {
-				return eval('('+value.substring(len_prefix)+')');
-			}
-			else if (value.substring(0, len_null) === marker_null) {
-				return null;
-			}
-			else if (value.substring(0, len_und) === marker_und) {
-				return undefined;
-			}
-		}	
-		
+	return o;
+    }
+	
+    function reviver(value) {
+	var type = typeof value;
+	
+	if (type === 'string') {
+	    if (value.substring(0, len_prefix) !== PARSE.stringify_prefix) {
 		return value;
-	};
+	    }
+	    else if (value.substring(0, len_func) === PARSE.marker_func) {
+		return eval('('+value.substring(len_prefix)+')');
+	    }
+	    else if (value.substring(0, len_null) === PARSE.marker_null) {
+		return null;
+	    }
+	    else if (value.substring(0, len_und) === PARSE.marker_und) {
+		return undefined;
+	    }
+
+	    else if (value.substring(0, len_nan) === PARSE.marker_nan) {
+		return NaN;
+	    }
+	    else if (value.substring(0, len_inf) === PARSE.marker_inf) {
+		return Infinity;
+	    }
+	    else if (value.substring(0, len_inf) === PARSE.marker_minus_inf) {
+		return -Infinity;
+	    }
+
+	}		
+	return value;
+    };
 }
 
 
@@ -5920,26 +6001,22 @@ NDDB.prototype.fetchKeyArray = function (key) {
 NDDB.prototype.groupBy = function (key) {
     if (!key) return this.db;
     
-    var groups = [];
-    var outs = [];
-    for (var i=0; i < this.db.length; i++) {
-        var el = J.getNestedValue(key, this.db[i]);
+    var groups = [], outs = [], i, el, out;
+    for (i = 0 ; i < this.db.length ; i++) {
+        el = J.getNestedValue(key, this.db[i]);
         if ('undefined' === typeof el) continue;
         // Creates a new group and add entries to it
         if (!J.in_array(el, groups)) {
             groups.push(el);
-            var out = this.filter(function (elem) {
+            out = this.filter(function (elem) {
                 if (J.equals(J.getNestedValue(key, elem), el)) {
                     return this;
                 }
-            });
-            
+            });   
             // Reset nddb_pointer in subgroups
             out.nddb_pointer = 0;
-            
             outs.push(out);
         }
-        
     }
     return outs;
 };    
@@ -6947,7 +7024,7 @@ NDDBIndex.prototype.size = function () {
  * @see NDDBIndex.update
  */
 NDDBIndex.prototype.get = function (idx) {
-	if (!this.resolve[idx]) return false
+	if ('undefined' === typeof this.resolve[idx]) return false;
     return this.nddb.db[this.resolve[idx]];
 };
 
@@ -10591,6 +10668,8 @@ GameLoop.prototype.next = function(curStage) {
             nextStage = this.plot.generalNextFunction();
         }
 
+        // If next-deciding function returns GameLoop.GAMEOVER,
+        // consider it game over.
         if (nextStage === GameLoop.GAMEOVER)  {
             return GameLoop.GAMEOVER;
         }
@@ -12477,8 +12556,10 @@ Game.stateLevels = {
 
 Game.stageLevels = {
     UNINITIALIZED: 0,
-    LOADING: 1,
-    LOADED: 2,
+    INITIALIZING: 1,  // executing init
+    INITIALIZED: 5,  // init executed
+    LOADING: 30,
+    LOADED: 40,
     PLAYING: 50,
     PAUSING:  55,
     PAUSED: 60,
@@ -12759,9 +12840,9 @@ Game.prototype.step = function() {
     var nextStep, curStep;
     curStep = this.getCurrentGameStage();
     nextStep = this.gameLoop.next(curStep);
-    
+
     // Listeners from previous step are cleared in any case
-    node.events.step.clear();
+    node.events.ee.step.clear();
 
     if ('string' === typeof nextStep) {
 
@@ -12775,22 +12856,25 @@ Game.prototype.step = function() {
     }
     else {
 
-	
-	// If we enter a new stage we need to update a few things
-	if (curStep.stage !== nextStep.stage) {
-	    // clear the previous stage listeners
-	    node.events.stage.clear();
-	    
-	    // TODO execute the init function of the stage, if any
-	    // TODO load the listeners for the stage, if any
-	}
+        // If we enter a new stage we need to update a few things
+        // TODO: Also when same stage is repeated.
+        if (curStep.stage !== nextStep.stage) {
+            // clear the previous stage listeners
+            node.events.ee.stage.clear();
+
+            // TODO execute the init function of the stage, if any (this = node.game), update sta?eLevels
+            // TODO load the listeners for the stage, if any
+            // for ev in ons:
+            //   node.events.ee.stage.on(ev, ons[ev])
+            // analoguous with steps
+        }
 
         // TODO maybe update also in case of string
         this.setCurrentGameStage(nextStep);
 
-	// TODO execute the init function of the stage, if any
-	// TODO load the listeners for the step, if any
-	// TODO what else to load?
+        // TODO execute the init function of the step, if any
+        // TODO load the listeners for the step, if any
+        // TODO what else to load?
 
         return this.execStage(this.getCurrentStep());
     }
@@ -16268,7 +16352,6 @@ var J = node.JSUS;
 
 var Player = node.Player,
 	PlayerList = node.PlayerList,
-	GameState = node.GameState,
 	GameMsg = node.GameMsg,
 	GameMsgGenerator = node.GameMsgGenerator;
 
@@ -16287,6 +16370,11 @@ GameWindow.defaults = {};
 // Default settings
 GameWindow.defaults.promptOnleave = true;
 GameWindow.defaults.noEscape = true;
+GameWindow.defaults.cacheDefaults = {
+	loadCache:       true,
+	storeCacheNow:   false,
+	storeCacheLater: false
+};
 
 
 /**
@@ -16294,9 +16382,9 @@ GameWindow.defaults.noEscape = true;
  * 
  * The constructor performs the following operations:
  * 
- * 		- creates a root div element (this.root)
- * 		- creates an iframe element inside the root element	(this.frame)
- * 		- defines standard event listeners for showing and hiding elements
+ *      - creates a root div element (this.root)
+ *      - creates an iframe element inside the root element (this.frame)
+ *      - defines standard event listeners for showing and hiding elements
  * 
  */
 function GameWindow() {
@@ -16317,14 +16405,44 @@ function GameWindow() {
 	this.root = null;
 	
 	this.conf = {};
-	
+
+// ### GameWindow.state
+//
 	this.state = node.is.LOADED;
-	this.areLoading = 0; 
+
+// ### GameWindow.areLoading
+// Counts the number of frames currently being loaded
+	this.areLoading = 0;
+
+// ### GameWindow.cache
+// Cache for loaded iframes
+//	
+// Maps URI to a cache object with the following properties:
+//  - `contents` (a string describing the innerHTML or null if not cached),
+//  - optionally 'cacheOnClose' (a bool telling whether to cache the frame when
+//    it is replaced by a new one).
+	this.cache = {};
+
+// ### GameWindow.currentURIs
+// Currently loaded URIs in the internal frames
+//	
+// Maps frame names (e.g. 'mainframe') to the URIs they are showing.
+	this.currentURIs = {};
+
 	
-	// Init default behavior
+// ### GameWindow.globalLibs
+// Array of strings with the path of the libraries to be loaded in every frame
+	this.globalLibs = [];
+	
+// ### GameWindow.frameLibs
+// Like `GameWindow.frameLibs`, but contains libraries to be loaded only
+// in specific frames
+	this.frameLibs = {};
+
+
 	this.init();
 	
-};
+}
 
 // ## GameWindow methods
 
@@ -16335,8 +16453,8 @@ function GameWindow() {
  * 
  * Defaults:
  * 
- * 		- promptOnleave TRUE
- * 		- captures ESC key
+ *      - promptOnleave TRUE
+ *      - captures ESC key
  * 
  * @param {object} options Configuration options
  * 
@@ -16381,7 +16499,10 @@ GameWindow.prototype.getElementById = function (id) {
 };
 
 /**
- * Returns a collection of elements with the tag name equal to @tag . 
+ * ### GameWindow.getElementsByTagName
+ * 
+ * Returns a list of elements with the given tag name
+ *  
  * Looks first into the iframe and then into the rest of the page.
  * 
  * @see GameWindow.getElementById
@@ -16430,17 +16551,17 @@ GameWindow.prototype.setup = function (type){
 		
 	case 'PLAYER':
 		
-		//var maincss		= this.addCSS(this.root, 'style.css');
-		this.header 	= this.generateHeader();
-	    var mainframe 	= this.addIFrame(this.root,'mainframe');
-	    
-		node.game.vs 	= node.widgets.append('VisualState', this.header);
+		//var maincss = this.addCSS(this.root, 'style.css');
+		this.header     = this.generateHeader();
+		var mainframe   = this.addIFrame(this.root,'mainframe');
+
+		node.game.vs    = node.widgets.append('VisualState', this.header);
 		node.game.timer = node.widgets.append('VisualTimer', this.header);
 		//node.game.doneb = node.widgets.append('DoneButton', this.header);
-		node.game.sd 	= node.widgets.append('StateDisplay', this.header);
+		node.game.sd    = node.widgets.append('StateDisplay', this.header);
 
 		node.widgets.append('WaitScreen');
-	    
+
 		// Add default CSS
 		if (node.conf.host) {
 			this.addCSS(document.body, node.conf.host + '/stylesheets/player.css');
@@ -16455,7 +16576,7 @@ GameWindow.prototype.setup = function (type){
 		}
 		
 		window.frames[this.mainframe].src = initPage;
-	    
+
 		break;
 	}
 	
@@ -16463,34 +16584,324 @@ GameWindow.prototype.setup = function (type){
 
 
 /**
- * ## GameWindow.load
+ * ### removeLibraries
+ *
+ * Removes injected scripts from iframe
+ *
+ * Takes out all the script tags with the className "injectedlib"
+ * that were inserted by injectLibraries.
+ * 
+ * @param {object} frameNode The node object of the iframe
+ *
+ * @see injectLibraries
+ * 
+ * @api private
+ */
+function removeLibraries (frameNode) {
+	var contentDocument = frameNode.contentDocument ? frameNode.contentDocument
+	                                                : frameNode.contentWindow.document;
+
+	var scriptNodes, scriptNodeIdx, scriptNode;
+
+	scriptNodes = contentDocument.getElementsByClassName('injectedlib');
+	for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length; ++scriptNodeIdx) {
+		scriptNode = scriptNodes[scriptNodeIdx];
+		scriptNode.parentNode.removeChild(scriptNode);
+	}
+}
+
+
+/**
+ * ### reloadScripts
+ *
+ * Reloads all script nodes in iframe
+ *
+ * Deletes and reinserts all the script tags, effectively reloading the scripts.
+ * The placement of the tags can change, but the order is kept.
+ * 
+ * @param {object} frameNode The node object of the iframe
+ * 
+ * @api private
+ */
+function reloadScripts (frameNode) {
+	var contentDocument = frameNode.contentDocument ? frameNode.contentDocument
+	                                                : frameNode.contentWindow.document;
+
+	var headNode = contentDocument.getElementsByTagName('head')[0];
+	var tag, scriptNodes, scriptNodeIdx, scriptNode;
+	var attrIdx, attr;
+
+	scriptNodes = contentDocument.getElementsByTagName('script');
+	for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length; ++scriptNodeIdx) {
+		// Remove tag:
+		tag = scriptNodes[scriptNodeIdx];
+		tag.parentNode.removeChild(tag);
+
+		// Reinsert tag for reloading:
+		scriptNode = document.createElement('script');
+		if (tag.innerHTML) scriptNode.innerHTML = tag.innerHTML;
+		for (attrIdx = 0; attrIdx < tag.attributes.length; ++attrIdx) {
+			attr = tag.attributes[attrIdx];
+			scriptNode.setAttribute(attr.name, attr.value);
+		}
+		headNode.appendChild(scriptNode);
+	}
+}
+
+
+/**
+ * ### injectLibraries
+ * 
+ * Injects scripts into the iframe
+ * 
+ * First removes all old injected script tags.
+ * Then injects `<script class="injectedlib" src="...">` lines into given
+ * iframe object, one for every given library.
+ * 
+ * @param {object} frameNode The node object of the iframe
+ * @param {array} libs An array of strings giving the "src" attribute for the `<script>`
+ *                     lines to insert
+ * 
+ * @api private
+ * 
+ */
+function injectLibraries (frameNode, libs) {
+	var contentDocument = frameNode.contentDocument ? frameNode.contentDocument
+	                                                : frameNode.contentWindow.document;
+
+	var headNode = contentDocument.getElementsByTagName('head')[0];
+	var scriptNode;
+	var libIdx, lib;
+
+	for (libIdx = 0; libIdx < libs.length; ++libIdx) {
+		lib = libs[libIdx];
+		scriptNode = document.createElement('script');
+		scriptNode.className = 'injectedlib';
+		scriptNode.src = lib;
+		headNode.appendChild(scriptNode);
+	}
+}
+
+
+/**
+ * ### GameWindow.initLibs
+ *
+ * Specifies the libraries to be loaded automatically in the iframes
+ * 
+ * This method must be called before any calls to GameWindow.load .
+ *
+ * @param {array} globalLibs Array of strings describing absolute library paths that
+ *    should be loaded in every iframe.
+ * @param {object} frameLibs Map from URIs to string arrays (as above) specifying
+ *    libraries that should only be loaded for iframes displaying the given URI.
+ *    This must not contain any elements that are also in globalLibs.
+ *
+ */
+GameWindow.prototype.initLibs = function (globalLibs, frameLibs) {
+	this.globalLibs = globalLibs || [];
+	this.frameLibs = frameLibs || {};
+};
+
+
+/**
+ * ### GameWindow.preCache
+ *
+ * Loads the HTML content of the given URIs into the cache
+ *
+ * @param {array} uris The URIs to cache
+ * @param {function} callback The function to call once the caching is done
+ *
+ */
+GameWindow.prototype.preCache = function(uris, callback) {
+	// Don't preload if no URIs are given:
+	if (!uris || !uris.length) {
+		if(callback) callback();
+		return;
+	}
+
+	var that = this;
+
+	// Keep count of loaded URIs:
+	var loadedCount = 0;
+
+	for (var uriIdx = 0; uriIdx < uris.length; ++uriIdx) {
+		var currentUri = uris[uriIdx];
+
+		// Create an invisible internal frame for the current URI:
+		var iframe = document.createElement('iframe');
+		iframe.style.visibility = 'hidden';
+		var iframeName = 'tmp_iframe_' + uriIdx;
+		iframe.id = iframeName;
+		iframe.name = iframeName;
+		document.body.appendChild(iframe);
+
+		// Register the onload handler:
+		iframe.onload = (function(uri, thisIframe) {
+			return function() {
+				var frameDocumentElement =
+					(thisIframe.contentDocument ? thisIframe.contentDocument : thisIframe.contentWindow.document)
+					.documentElement;
+
+				// Store the contents in the cache:
+				that.cache[uri] = { contents: frameDocumentElement.innerHTML,
+				                    cacheOnClose: false };
+
+				// Remove the internal frame:
+				document.body.removeChild(thisIframe);
+
+				// Increment loaded URIs counter:
+				++ loadedCount;
+				if (loadedCount >= uris.length) {
+					// All requested URIs have been loaded at this point.
+					if (callback) callback();
+				}
+			};
+		})(currentUri, iframe);
+
+		// Start loading the page:
+		window.frames[iframeName].location = currentUri;
+	}
+};
+
+
+/**
+ * ### handleFrameLoad
+ *
+ * Handles iframe contents loading
+ *
+ * A helper method of GameWindow.load .
+ * Puts cached contents into the iframe or caches new contents if requested.
+ * Handles reloading of script tags and injected libraries.
+ * Must be called with `this` set to GameWindow instance.
+ *
+ * @param {uri} uri URI to load
+ * @param {string} frame ID of GameWindow's frame
+ * @param {bool} loadCache whether to load from cache
+ * @param {bool} storeCache whether to store to cache
+ *
+ * @see GameWindow.load
+ *
+ * @api private
+ */
+function handleFrameLoad (uri, frame, loadCache, storeCache) {
+	var frameNode = document.getElementById(frame);
+	var frameDocumentElement =
+		(frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
+		.documentElement;
+
+	if (loadCache) {
+		// Load frame from cache:
+		frameDocumentElement.innerHTML = this.cache[uri].contents;
+	}
+
+	// (Re-)Inject libraries and reload scripts:
+	removeLibraries(frameNode);
+	if (loadCache) {
+		reloadScripts(frameNode);
+	}
+	injectLibraries(frameNode, this.globalLibs.concat(uri in this.frameLibs ? this.frameLibs[uri] : []));
+
+	if (storeCache) {
+		// Store frame in cache:
+		this.cache[uri].contents = frameDocumentElement.innerHTML;
+	}
+}
+
+
+/**
+ * ### GameWindow.load
  * 
  * Loads content from an uri (remote or local) into the iframe, 
  * and after it is loaded executes the callback function. 
  * 
- * The third parameter is the id of the frame in which to load the content. 
- * If it is not specified, the default iframe of the game is assumed.
+ * The third parameter is an options object with the following fields
+ * (any fields left out assume the default setting):
+ *
+ *  - frame (string): The name of the frame in which to load the uri (default: default iframe of the game)
+ *  - cache (object): Caching options.  Fields:
+ *      * loadMode (string): 'reload' (default; reload page without the cache),
+ *                           'cache' (get the page from cache if possible)
+ *      * storeMode (string): 'off' (default; don't cache page),
+ *                            'onLoad' (cache given page after it is loaded)
+ *                            'onClose' (cache given page after it is replaced by a new page)
  * 
  * Warning: Security policies may block this methods, if the 
  * content is coming from another domain.
  * 
  * @param {string} uri The uri to load
  * @param {function} func The callback function to call once the DOM is ready
- * @param {string} frame The name of the frame in which loading the uri
+ * @param {object} opts The options object
  * 
  */
-GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func, frame) {
+GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func, opts) {
 	if (!uri) return;
-	frame =  frame || this.mainframe;
+
+	// Default options:
+	var frame = this.mainframe;
+	var loadCache = GameWindow.defaults.cacheDefaults.loadCache;
+	var storeCacheNow = GameWindow.defaults.cacheDefaults.storeCacheNow;
+	var storeCacheLater = GameWindow.defaults.cacheDefaults.storeCacheLater;
+
+	// Get options:
+	if (opts) {
+		if (opts.frame) frame = opts.frame;
+
+		if (opts.cache) {
+			if (opts.cache.loadMode === 'reload') loadCache = false;
+			else if (opts.cache.loadMode === 'cache') loadCache = true;
+
+			if (opts.cache.storeMode === 'off') {
+				storeCacheNow = false;
+				storeCacheLater = false;
+			}
+			else if (opts.cache.storeMode === 'onLoad') {
+				storeCacheNow = true;
+				storeCacheLater = false;
+			}
+			else if (opts.cache.storeMode === 'onClose') {
+				storeCacheNow = false;
+				storeCacheLater = true;
+			}
+		}
+	}
+
+	// Get the internal frame object:
+	var iframe = document.getElementById(frame);
+	var frameNode;
+	var frameDocumentElement;
+	// Query readiness (so we know whether onload is going to be called):
+	var frameReady = iframe.contentWindow.document.readyState;
+	// ...reduce it to a boolean:
+	frameReady = (frameReady === 'interactive' || frameReady === 'complete');
+
+	// If the last frame requested to be cached on closing, do that:
+	var lastURI = this.currentURIs[frame];
+	if ((lastURI in this.cache) && this.cache[lastURI].cacheOnClose) {
+		frameNode = document.getElementById(frame);
+		frameDocumentElement =
+			(frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
+			.documentElement;
+
+		this.cache[lastURI].contents = frameDocumentElement.innerHTML;
+	}
+
+	// Create entry for this URI in cache object and store cacheOnClose flag:
+	if(!(uri in this.cache)) this.cache[uri] = { contents: null, cacheOnClose: false };
+	this.cache[uri].cacheOnClose = storeCacheLater;
+
+	// Disable loadCache if contents aren't cached:
+	if(this.cache[uri].contents === null) loadCache = false;
+
+	// Update frame's currently showing URI:
+	this.currentURIs[frame] = uri;
 	
 	this.state = node.is.LOADING;
-	this.areLoading++; // keep track of nested call to loadFrame
+	this.areLoading++;  // keep track of nested call to loadFrame
 	
-	var that = this;	
+	var that = this;
 			
-	// First add the onload event listener
-	var iframe = document.getElementById(frame);
-	iframe.onload = function () {
+	// Add the onload event listener:
+	iframe.onload = function() {
 		if (that.conf.noEscape) {
 			
 			// TODO: inject the no escape code here
@@ -16498,11 +16909,30 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
 			//that.addJS(iframe.document, node.conf.host + 'javascripts/noescape.js');
 			//that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noescape.js');
 		}
+
+		handleFrameLoad.call(that, uri, frame, loadCache, storeCacheNow);
+
 		that.updateStatus(func, frame);
 	};
 
-	// Then update the frame location
-	window.frames[frame].location = uri;
+	// Cache lookup:
+	if (loadCache) {
+		// Load iframe contents at this point only if the iframe is already "ready"
+		// (see definition of frameReady), otherwise the contents would be cleared
+		// once the iframe becomes ready.  In that case, iframe.onload handles the
+		// filling of the contents.
+		// TODO: Fix code duplication between here and onload function.
+		if (frameReady) {
+			handleFrameLoad.call(this, uri, frame, loadCache, storeCacheNow);
+			
+			// Update status (onload isn't called if frame was already ready):
+			this.updateStatus(func, frame);
+		}
+	}
+	else {
+		// Update the frame location:
+		window.frames[frame].location = uri;
+	}
 	
 	
 	// Adding a reference to nodeGame also in the iframe
@@ -16521,7 +16951,21 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
 					
 };
 
-
+/**
+ * ### GameWindow.updateStatus
+ * 
+ * Cleans up the window state after an iframe has been loaded
+ * 
+ * The methods performs the following operations:
+ * 
+ *  - executes a given callback function, 
+ *  - decrements the counter of loading iframes
+ *  - set the window state as loaded (eventually)
+ * 
+ * @param {function} A callback function
+ * @param {object} The iframe of reference
+ * 
+ */
 GameWindow.prototype.updateStatus = function(func, frame) {
 	// Update the reference to the frame obj
 	this.frame = window.frames[frame].document;
@@ -16532,7 +16976,7 @@ GameWindow.prototype.updateStatus = function(func, frame) {
 	}
 		
 	this.areLoading--;
-	//console.log('ARE LOADING: ' + this.areLoading);
+
 	if (this.areLoading === 0) {
 		this.state = node.is.LOADED;
 		node.emit('WINDOW_LOADED');
@@ -16577,8 +17021,8 @@ GameWindow.prototype._writeln = DOM.writeln;
  * @see GameWindow.writeln
  * 
  */
-GameWindow.prototype.write = function (text, root) {		
-	var root = root || this.getScreen();
+GameWindow.prototype.write = function (text, root) {
+	root = root || this.getScreen();
 	if (!root) {
 		node.log('Could not determine where writing', 'ERR');
 		return false;
@@ -16600,7 +17044,7 @@ GameWindow.prototype.write = function (text, root) {
  * 
  */
 GameWindow.prototype.writeln = function (text, root, br) {
-	var root = root || this.getScreen();
+	root = root || this.getScreen();
 	if (!root) {
 		node.log('Could not determine where writing', 'ERR');
 		return false;
@@ -16620,12 +17064,13 @@ GameWindow.prototype.writeln = function (text, root, br) {
  * 
  */
 GameWindow.prototype.toggleInputs = function (id, op) {
+	var container;
 	
 	if ('undefined' !== typeof id) {
-		var container = this.getElementById(id);
+		container = this.getElementById(id);
 	}
 	if ('undefined' === typeof container) {
-		var container = this.frame.body;
+		container = this.frame.body;
 	}
 	
 	var inputTags = ['button', 'select', 'textarea', 'input'];
@@ -16657,9 +17102,9 @@ GameWindow.prototype.toggleInputs = function (id, op) {
  * Creates a div element with the given id and 
  * tries to append it in the following order to:
  * 
- * 		- the specified root element
- * 		- the body element
- * 		- the last element of the document
+ *      - the specified root element
+ *      - the body element
+ *      - the last element of the document
  * 
  * If it fails, it creates a new body element, appends it
  * to the document, and then appends the div element to it.
@@ -16670,7 +17115,7 @@ GameWindow.prototype.toggleInputs = function (id, op) {
  * 
  */
 GameWindow.prototype._generateRoot = function (root, id) {
-	var root = root || document.body || document.lastElementChild;
+	root = root || document.body || document.lastElementChild;
 	if (!root) {
 		this.addElement('body', document);
 		root = document.body;
@@ -16730,7 +17175,7 @@ GameWindow.prototype.addEventButton = function (event, text, root, id, attribute
 	if (!root) {
 //			var root = root || this.frame.body;
 //			root = root.lastElementChild || root;
-		var root = this.getScreen();
+		root = this.getScreen();
 	}
 	var eb = this.getEventButton(event, text, id, attributes);
 	return root.appendChild(eb);
@@ -16778,13 +17223,16 @@ GameWindow.prototype.addRecipientSelector = function (root, id) {
 };
 
 /**
-* Adds an ALL and a SERVER option to a specified select element.
-* 
-* @TODO: adds options to control which players/servers to add.
-* 
-* @see GameWindow.populateRecipientSelector
-* 
-*/
+ * ## GameWindow.addStandardRecipients
+ * 
+ * Adds an ALL and a SERVER option to a specified select element.
+ * 
+ * @TODO: adds options to control which players/servers to add.
+ * 
+ * @param {object} toSelector An HTML `<select>` element 
+ * 
+ * @see GameWindow.populateRecipientSelector
+ */
 GameWindow.prototype.addStandardRecipients = function (toSelector) {
 		
 	var opt = document.createElement('option');
@@ -16792,7 +17240,7 @@ GameWindow.prototype.addStandardRecipients = function (toSelector) {
 	opt.appendChild(document.createTextNode('ALL'));
 	toSelector.appendChild(opt);
 	
-	var opt = document.createElement('option');
+	opt = document.createElement('option');
 	opt.value = 'SERVER';
 	opt.appendChild(document.createTextNode('SERVER'));
 	toSelector.appendChild(opt);
@@ -16990,7 +17438,7 @@ GameWindow.prototype.restoreEscape = function (windowObj) {
 GameWindow.prototype.promptOnleave = function (windowObj, text) {
 	windowObj = windowObj || window;
 	text = ('undefined' === typeof text) ? this.conf.textOnleave : text; 
-	windowObj.onbeforeunload = function(e) {	  
+	windowObj.onbeforeunload = function(e) {
 		  e = e || window.event;
 		  // For IE<8 and Firefox prior to version 4
 		  if (e) {
@@ -17025,10 +17473,10 @@ GameWindow.prototype.restoreOnleave = function (windowObj) {
  * 
  * In the following order the screen can be:
  * 
- * 		- the body element of the iframe 
- * 		- the document element of the iframe 
- * 		- the body element of the document 
- * 		- the last child element of the document
+ *      - the body element of the iframe 
+ *      - the document element of the iframe 
+ *      - the body element of the document 
+ *      - the last child element of the document
  * 
  */
 GameWindow.prototype.getScreen = function() {
@@ -17039,7 +17487,7 @@ GameWindow.prototype.getScreen = function() {
 	else {
 		el = document.body || document.lastElementChild;
 	}
-	return 	el;
+	return el;
 };
 
 /**
@@ -17063,6 +17511,7 @@ if ('undefined' !== typeof window) window.W = node.window;
 	('undefined' !== typeof window) ? window : module.parent.exports.window,
 	('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
+
 // ## Game incoming listeners
 // Incoming listeners are fired in response to incoming messages
 (function (node, window) {
@@ -17375,7 +17824,7 @@ HTMLRenderer.prototype.addDefaultPipeline = function() {
 			return el.content;
 		}
 	});
-}
+};
 
 
 /**
@@ -17465,6 +17914,7 @@ function Entity (e) {
 	('undefined' !== typeof window) ? window : module.parent.exports.window, // window
 	('undefined' !== typeof node) ? node : module.parent.exports.node // node
 );
+
 (function(exports, node){
 	
 	var JSUS = node.JSUS;
@@ -18486,486 +18936,482 @@ node.widgets = new Widgets();
 })(node);
 (function (node) {
 	
+	node.widgets.register('VisualState', VisualState);
 	
-	node.widgets.register('D3', D3);
-	node.widgets.register('D3ts', D3ts);
+	var JSUS = node.JSUS,
+		Table = node.window.Table;
 	
-	D3.prototype.__proto__ = node.Widget.prototype;
-	D3.prototype.constructor = D3;
-
 // ## Defaults
 	
-	D3.defaults = {};
-	D3.defaults.id = 'D3';
-	D3.defaults.fieldset = {
-		legend: 'D3 plot'
-	};
-
+	VisualState.defaults = {};
+	VisualState.defaults.id = 'visualstate';
+	VisualState.defaults.fieldset = { 
+		legend: 'State',
+		id: 'visualstate_fieldset'
+	};	
 	
 // ## Meta-data
 	
-	D3.name = 'D3';
-	D3.version = '0.1';
-	D3.description = 'Real time plots for nodeGame with d3.js';
+	VisualState.name = 'Visual State';
+	VisualState.version = '0.2.1';
+	VisualState.description = 'Visually display current, previous and next state of the game.';
 	
 // ## Dependencies
 	
-	D3.dependencies = {
-		d3: {},	
-		JSUS: {}
+	VisualState.dependencies = {
+		JSUS: {},
+		Table: {}
 	};
 	
-	function D3 (options) {
-		this.id = options.id || D3.id;
-		this.event = options.event || 'D3';
-		this.svg = null;
+	
+	function VisualState (options) {
+		this.id = options.id;
 		
-		var that = this;
-		node.on(this.event, function (value) {
-			that.tick.call(that, value); 
-		});
+		this.root = null;		// the parent element
+		this.table = new Table();
 	}
 	
-	D3.prototype.append = function (root) {
-		this.root = root;
-		this.svg = d3.select(root).append("svg");
+	VisualState.prototype.getRoot = function () {
+		return this.root;
+	};
+	
+	VisualState.prototype.append = function (root, ids) {
+		var that = this;
+		var PREF = this.id + '_';
+		root.appendChild(this.table.table);
+		this.writeState();
 		return root;
 	};
-	
-	D3.prototype.tick = function () {};
-	
-// # D3ts
-	
-	
-// ## Meta-data
-	
-	D3ts.id = 'D3ts';
-	D3ts.name = 'D3ts';
-	D3ts.version = '0.1';
-	D3ts.description = 'Time series plot for nodeGame with d3.js';
-	
-// ## Dependencies	
-	D3ts.dependencies = {
-		D3: {},	
-		JSUS: {}
+		
+	VisualState.prototype.listeners = function () {
+		var that = this;
+		node.on('STATECHANGE', function() {
+			that.writeState();
+		}); 
 	};
 	
-	D3ts.prototype.__proto__ = D3.prototype;
-	D3ts.prototype.constructor = D3ts;
-	
-	D3ts.defaults = {};
-	
-	D3ts.defaults.width = 400;
-	D3ts.defaults.height = 200;
-	
-	D3ts.defaults.margin = {
-    	top: 10, 
-    	right: 10, 
-    	bottom: 20, 
-    	left: 40 
-	};
-	
-	D3ts.defaults.domain = {
-		x: [0, 10],
-		y: [0, 1]
-	};
-	
-    D3ts.defaults.range = {
-    	x: [0, D3ts.defaults.width],
-    	y: [D3ts.defaults.height, 0]
-    };
-	
-	function D3ts (options) {
-		D3.call(this, options);
+	VisualState.prototype.writeState = function () {
+		var state, pr, nx, tmp;
+		var miss = '-';
 		
-		
-		var o = this.options = JSUS.merge(D3ts.defaults, options);
-		
-		var n = this.n = o.n;
-		
-	    this.data = [0];
-	    
-	    this.margin = o.margin;
-	    
-		var width = this.width = o.width - this.margin.left - this.margin.right;
-		var height = this.height = o.height - this.margin.top - this.margin.bottom;
-
-		// identity function
-		var x = this.x = d3.scale.linear()
-		    .domain(o.domain.x)
-		    .range(o.range.x);
-
-		var y = this.y = d3.scale.linear()
-		    .domain(o.domain.y)
-		    .range(o.range.y);
-
-		// line generator
-		this.line = d3.svg.line()
-		    .x(function(d, i) { return x(i); })
-		    .y(function(d, i) { return y(d); });
-	}
-	
-	D3ts.prototype.init = function (options) {
-		//D3.init.call(this, options);
-		
-		console.log('init!');
-		var x = this.x,
-			y = this.y,
-			height = this.height,
-			width = this.width,
-			margin = this.margin;
-		
-		
-		// Create the SVG and place it in the middle
-		this.svg.attr("width", width + margin.left + margin.right)
-		    .attr("height", height + margin.top + margin.bottom)
-		  .append("g")
-		    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-		// Line does not go out the axis
-		this.svg.append("defs").append("clipPath")
-		    .attr("id", "clip")
-		  .append("rect")
-		    .attr("width", width)
-		    .attr("height", height);
-
-		// X axis
-		this.svg.append("g")
-		    .attr("class", "x axis")
-		    .attr("transform", "translate(0," + height + ")")
-		    .call(d3.svg.axis().scale(x).orient("bottom"));
-
-		// Y axis
-		this.svg.append("g")
-		    .attr("class", "y axis")
-		    .call(d3.svg.axis().scale(y).orient("left"));
-
-		this.path = this.svg.append("g")
-		    .attr("clip-path", "url(#clip)")
-		  .append("path")
-		    .data([this.data])
-		    .attr("class", "line")
-		    .attr("d", this.line);		
-	};
-	
-	D3ts.prototype.tick = function (value) {
-		this.alreadyInit = this.alreadyInit || false;
-		if (!this.alreadyInit) {
-			this.init();
-			this.alreadyInit = true;
+		if (node.game && node.game.state) {
+			tmp = node.game.gameLoop.getStep(node.game.state);
+			state = (tmp) ? tmp.name : miss;
+			tmp = node.game.gameLoop.getStep(node.game.previous());
+			pr = (tmp) ? tmp.name : miss;
+			tmp = node.game.gameLoop.getStep(node.game.next());
+			nx = (tmp) ? tmp.name : miss;
 		}
-		
-		var x = this.x;
-		
-		console.log('tick!');
-	
-		// push a new data point onto the back
-		this.data.push(value);
-
-		// redraw the line, and slide it to the left
-		this.path
-	    	.attr("d", this.line)
-	    	.attr("transform", null);
-
-		// pop the old data point off the front
-		if (this.data.length > this.n) {
-		
-	  		this.path
-	  			.transition()
-	  			.duration(500)
-	  			.ease("linear")
-	  			.attr("transform", "translate(" + x(-1) + ")");
-	  		
-	  		this.data.shift();
-	  	  
+		else {
+			state = 'Uninitialized';
+			pr = miss;
+			nx = miss;
 		}
+		this.table.clear(true);
+
+		this.table.addRow(['Previous: ', pr]);
+		this.table.addRow(['Current: ', state]);
+		this.table.addRow(['Next: ', nx]);
+	
+		var t = this.table.select('y', '=', 2);
+		t.addClass('strong');
+		t.select('x','=',0).addClass('underline');
+		this.table.parse();
 	};
 	
 })(node);
 (function (node) {
 	
-	node.widgets.register('NDDBBrowser', NDDBBrowser);
+	node.widgets.register('Chat', Chat);
 	
-	var JSUS = node.JSUS,
-		NDDB = node.NDDB,
-		TriggerManager = node.TriggerManager;
+	var J = node.JSUS,
+		W = node.window;	
 
 // ## Defaults
 	
-	NDDBBrowser.defaults = {};
-	NDDBBrowser.defaults.id = 'nddbbrowser';
-	NDDBBrowser.defaults.fieldset = false;
-	
+	Chat.defaults = {};
+	Chat.defaults.id = 'chat';
+	Chat.defaults.fieldset = { legend: 'Chat' };	
+	Chat.defaults.mode = 'MANY_TO_MANY'; 
+	Chat.defaults.textarea_id = 'chat_textarea';
+	Chat.defaults.chat_id = 'chat_chat';
+	Chat.defaults.chat_event = 'CHAT';
+	Chat.defaults.submit_id = 'chat_submit';
+	Chat.defaults.submit_text = 'chat';
+
+			
 // ## Meta-data
 	
-	NDDBBrowser.name = 'NDDBBrowser';
-	NDDBBrowser.version = '0.1.2';
-	NDDBBrowser.description = 'Provides a very simple interface to control a NDDB istance.';
-	
-// ## Dependencies
-	
-	NDDBBrowser.dependencies = {
-		JSUS: {},
-		NDDB: {},
-		TriggerManager: {}
+	// ### Chat.modes
+	// 	MANY_TO_MANY: everybody can see all the messages, and it possible
+	//    to send private messages
+	//  MANY_TO_ONE: everybody can see all the messages, private messages can
+	//    be received, but not sent
+	//  ONE_TO_ONE: everybody sees only personal messages, private messages can
+	//    be received, but not sent. All messages are sent to the SERVER
+	//  RECEIVER_ONLY: messages can only be received, but not sent
+	Chat.modes = { 
+			MANY_TO_MANY: 'MANY_TO_MANY',
+			MANY_TO_ONE: 'MANY_TO_ONE',
+			ONE_TO_ONE: 'ONE_TO_ONE',
+			RECEIVER_ONLY: 'RECEIVER_ONLY'
 	};
 	
-	function NDDBBrowser (options) {
-		this.options = options;
-		this.nddb = null;
+	Chat.name = 'Chat';
+	Chat.version = '0.4';
+	Chat.description = 'Offers a uni / bi-directional communication interface between players, or between players and the experimenter.';
+
+// ## Dependencies
+	
+	Chat.dependencies = {
+		JSUS: {}
+	};
+	
+	function Chat (options) {
+		this.id = options.id || Chat.id;
+		this.mode = options.mode || Chat.defaults.mode;
 		
-		this.commandsDiv = document.createElement('div');
-		this.id = options.id;
-		if ('undefined' !== typeof this.id) {
-			this.commandsDiv.id = this.id;
+		this.root = null;
+		
+		this.textarea_id = options.textarea_id || Chat.defaults.textarea_id;
+		this.chat_id = options.chat_id || Chat.defaults.chat_id;
+		this.submit_id = options.submit_id || Chat.defaults.submit_id;
+		
+		this.chat_event = options.chat_event || Chat.defaults.chat_event;
+		this.submit_text = options.submit_text || Chat.defaults.submit_text;
+
+		this.submit = W.getEventButton(this.chat_event, this.submit_text, this.submit_id);
+		this.textarea = W.getElement('textarea', this.textarea_id);
+		this.chat = W.getElement('div', this.chat_id);
+		
+		if ('undefined' !== typeof options.displayName) {
+			this.displayName = options.displayName;
 		}
 		
-		this.info = null;
+		switch(this.mode) {
+		
+		case Chat.modes.RECEIVER_ONLY:
+			this.recipient = {value: 'SERVER'};
+			break;
+		case Chat.modes.MANY_TO_ONE:
+			this.recipient = {value: 'ALL'};
+			break;
+		case Chat.modes.ONE_TO_ONE:
+			this.recipient = {value: 'SERVER'};
+			break;
+		default:
+			this.recipient = W.getRecipientSelector();
+		}
+	}
+	
+	
+	Chat.prototype.append = function (root) {
+		this.root = root;
+		root.appendChild(this.chat);
+		
+		if (this.mode !== Chat.modes.RECEIVER_ONLY) {	
+			W.writeln('', root);
+			root.appendChild(this.textarea);
+			W.writeln('', root);
+			root.appendChild(this.submit);
+			if (this.mode === Chat.modes.MANY_TO_MANY) {
+				root.appendChild(this.recipient);
+			}
+		}
+		return root;
+	};
+	
+	Chat.prototype.getRoot = function () {
+		return this.root;
+	};
+	
+	Chat.prototype.displayName = function(from) {
+		return from;
+	};
+	
+	Chat.prototype.readTA = function () {
+		var txt = this.textarea.value;
+		this.textarea.value = '';
+		return txt;
+	};
+	
+	Chat.prototype.writeTA = function (string, args) {
+		J.sprintf(string, args, this.chat);
+	    W.writeln('', this.chat);
+	    this.chat.scrollTop = this.chat.scrollHeight;
+	};
+	
+	Chat.prototype.listeners = function() {
+		var that = this;	
+		    
+	    node.on(this.chat_event, function () {
+	      var msg = that.readTA();
+	      if (!msg) return;
+	      
+	      var to = that.recipient.value;
+	      var args = {
+		        '%s': {
+		          'class': 'chat_me'
+		        },
+		        '%msg': {
+		          'class': 'chat_msg'
+		        },
+		        '!txt': msg
+	      };
+	      that.writeTA('%sMe%s: %msg!txt%msg', args);
+	      node.say(msg.trim(), that.chat_event, to);
+	    });
+		  
+		if (this.mode === Chat.modes.MANY_TO_MANY) {
+		    node.on('UPDATED_PLIST', function() {
+			      W.populateRecipientSelector(that.recipient, node.game.pl.fetch());
+		    });
+		}
+
+	    node.onDATA(this.chat_event, function (msg) {
+	    	if (msg.from === node.player.id || msg.from === node.player.sid) {
+	    		return;
+	    	}
+	    	
+	    	if (this.mode === Chat.modes.ONE_TO_ONE) { 
+		    	if (msg.from === this.recipient.value) {
+		    		return;
+		    	}
+	    	}
+	    	
+	    	
+	    	var from = that.displayName(msg.from);
+	    	var args = {
+		        '%s': {
+		          'class': 'chat_others'
+		        },
+		        '%msg': {
+		          'class': 'chat_msg'
+		        },
+		        '!txt': msg.data,
+	            '!from': from
+	      };
+	    	
+	      that.writeTA('%s!from%s: %msg!txt%msg', args);
+	    });
+	};
+	
+})(node);
+(function (node) {
+
+	// TODO: needs major refactoring
+	
+	var GameStage = node.GameStage,
+		PlayerList = node.PlayerList,
+		Table = node.window.Table,
+		HTMLRenderer = node.window.HTMLRenderer;
+	
+	node.widgets.register('DynamicTable', DynamicTable);
+	
+	
+	DynamicTable.prototype = new Table();
+	DynamicTable.prototype.constructor = Table;	
+	
+	
+	DynamicTable.id = 'dynamictable';
+	DynamicTable.name = 'Dynamic Table';
+	DynamicTable.version = '0.3.1';
+	
+	DynamicTable.dependencies = {
+		Table: {},
+		JSUS: {},
+		HTMLRenderer: {}
+	};
+	
+	function DynamicTable (options, data) {
+		//JSUS.extend(node.window.Table,this);
+		Table.call(this, options, data);
+		this.options = options;
+		this.id = options.id;
+		this.name = options.name || 'Dynamic Table';
+		this.fieldset = { legend: this.name,
+							id: this.id + '_fieldset'
+		};
+		
+		this.root = null;
+		this.bindings = {};
 		this.init(this.options);
 	}
 	
-	NDDBBrowser.prototype.init = function (options) {
-		
-		function addButtons() {
-			var id = this.id;
-			node.window.addEventButton(id + '_GO_TO_FIRST', '<<', this.commandsDiv, 'go_to_first');
-			node.window.addEventButton(id + '_GO_TO_PREVIOUS', '<', this.commandsDiv, 'go_to_previous');
-			node.window.addEventButton(id + '_GO_TO_NEXT', '>', this.commandsDiv, 'go_to_next');
-			node.window.addEventButton(id + '_GO_TO_LAST', '>>', this.commandsDiv, 'go_to_last');
-			node.window.addBreak(this.commandsDiv);
-		}
-		function addInfoBar() {
-			var span = this.commandsDiv.appendChild(document.createElement('span'));
-			return span;
-		}
-		
-		
-		addButtons.call(this);
-		this.info = addInfoBar.call(this);
-		
-		this.tm = new TriggerManager();
-		this.tm.init(options.triggers);
-		this.nddb = options.nddb || new NDDB({auto_update_pointer: true});
+	DynamicTable.prototype.init = function (options) {
+		this.options = options;
+		this.name = options.name || this.name;
+		this.auto_update = ('undefined' !== typeof options.auto_update) ? options.auto_update : true;
+		this.replace = options.replace || false;
+		this.htmlRenderer = new HTMLRenderer({renderers: options.renderers});
+		this.c('state', GameStage.compare);
+		this.setLeft([]);
+		this.parse(true);
 	};
-	
-	NDDBBrowser.prototype.append = function (root) {
+		
+	DynamicTable.prototype.bind = function (event, bindings) {
+		if (!event || !bindings) return;
+		var that = this;
+
+		node.on(event, function(msg) {
+			
+			if (bindings.x || bindings.y) {
+				// Cell
+				var func;
+				if (that.replace) {
+					func = function (x, y) {
+						var found = that.get(x,y);
+						if (found.length !== 0) {
+							for (var ci=0; ci < found.length; ci++) {
+								bindings.cell.call(that, msg, found[ci]);
+							}
+						}
+						else {
+							var cell = bindings.cell.call(that, msg, new Table.Cell({x: x, y: y}));
+							that.add(cell);
+						}
+					};
+				}
+				else {
+					func = function (x, y) {
+						var cell = bindings.cell.call(that, msg, new Table.Cell({x: x, y: y}));
+						that.add(cell, x, y);
+					};
+				}
+				
+				var x = bindings.x.call(that, msg);
+				var y = bindings.y.call(that, msg);
+				
+				if (x && y) {
+					
+					x = (x instanceof Array) ? x : [x];
+					y = (y instanceof Array) ? y : [y];
+					
+//					console.log('Bindings found:');
+//					console.log(x);
+//					console.log(y);
+					
+					for (var xi=0; xi < x.length; xi++) {
+						for (var yi=0; yi < y.length; yi++) {
+							// Replace or Add
+							func.call(that, x[xi], y[yi]);
+						}
+					}
+				}
+				// End Cell
+			}
+			
+			// Header
+			if (bindings.header) {
+				var h = bindings.header.call(that, msg);
+				h = (h instanceof Array) ? h : [h];
+				that.setHeader(h);
+			}
+			
+			// Left
+			if (bindings.left) {
+				var l = bindings.left.call(that, msg);
+				if (!JSUS.in_array(l, that.left)) {
+					that.header.push(l);
+				}
+			}
+			
+			// Auto Update?
+			if (that.auto_update) {
+				that.parse();
+			}
+		});
+		
+	};
+
+	DynamicTable.prototype.append = function (root) {
 		this.root = root;
-		root.appendChild(this.commandsDiv);
+		root.appendChild(this.table);
 		return root;
 	};
 	
-	NDDBBrowser.prototype.getRoot = function (root) {
-		return this.commandsDiv;
-	};
-	
-	NDDBBrowser.prototype.add = function (o) {
-		return this.nddb.insert(o);
-	};
-	
-	NDDBBrowser.prototype.sort = function (key) {
-		return this.nddb.sort(key);
-	};
-	
-	NDDBBrowser.prototype.addTrigger = function (trigger) {
-		return this.tm.addTrigger(trigger);
-	};
-	
-	NDDBBrowser.prototype.removeTrigger = function (trigger) {
-		return this.tm.removeTrigger(trigger);
-	};
-	
-	NDDBBrowser.prototype.resetTriggers = function () {
-		return this.tm.resetTriggers();
-	};
-	
-	NDDBBrowser.prototype.listeners = function() {
-		var that = this;
-		var id = this.id;
-		
-		function notification (el, text) {
-			if (el) {
-				node.emit(id + '_GOT', el);
-				this.writeInfo((this.nddb.nddb_pointer + 1) + '/' + this.nddb.length);
-			}
-			else {
-				this.writeInfo('No element found');
-			}
-		}
-		
-		node.on(id + '_GO_TO_FIRST', function() {
-			var el = that.tm.pullTriggers(that.nddb.first());
-			notification.call(that, el);
-		});
-		
-		node.on(id + '_GO_TO_PREVIOUS', function() {
-			var el = that.tm.pullTriggers(that.nddb.previous());
-			notification.call(that, el);
-		});
-		
-		node.on(id + '_GO_TO_NEXT', function() {
-			var el = that.tm.pullTriggers(that.nddb.next());
-			notification.call(that, el);
-		});
+	DynamicTable.prototype.listeners = function () {}; 
 
-		node.on(id + '_GO_TO_LAST', function() {
-			var el = that.tm.pullTriggers(that.nddb.last());
-			notification.call(that, el);
-			
-		});
-	};
-	
-	NDDBBrowser.prototype.writeInfo = function (text) {
-		if (this.infoTimeout) clearTimeout(this.infoTimeout);
-		this.info.innerHTML = text;
-		var that = this;
-		this.infoTimeout = setTimeout(function(){
-			that.info.innerHTML = '';
-		}, 2000);
-	};
-	
-	
 })(node);
 (function (node) {
+
+	var Table = node.window.Table,
+		GameStage = node.GameStage;
 	
-	node.widgets.register('DataBar', DataBar);
-	
-// ## Defaults
-	DataBar.defaults = {};
-	DataBar.defaults.id = 'databar';
-	DataBar.defaults.fieldset = {	
-		legend: 'Send DATA to players'
-	};
-	
-// ## Meta-data
-	DataBar.name = 'Data Bar';
-	DataBar.version = '0.3';
-	DataBar.description = 'Adds a input field to send DATA messages to the players';
-		
-	function DataBar (options) {
-		this.bar = null;
-		this.root = null;
-		this.recipient = null;
-	}
-	
-	
-	DataBar.prototype.append = function (root) {
-		
-		var sendButton, textInput, dataInput;
-		
-		sendButton = W.addButton(root);
-		W.writeln('Text');
-		textInput = W.addTextInput(root, 'data-bar-text');
-		W.writeln('Data');
-		dataInput = W.addTextInput(root, 'data-bar-data');
-		
-		this.recipient = W.addRecipientSelector(root);
-		
-		var that = this;
-		
-		sendButton.onclick = function() {
-			
-			var to, data, text;
-			
-			to = that.recipient.value;
-			text = textInput.value;
-			data = dataInput.value;
-			
-			node.log('Parsed Data: ' + JSON.stringify(data));
-			
-			node.say(data, text, to);
-		};
-		
-		node.on('UPDATED_PLIST', function() {
-			node.window.populateRecipientSelector(that.recipient, node.game.pl);
-		});
-		
-		return root;
-		
-	};
-	
-})(node);
-(function (node) {
-	
-	node.widgets.register('ServerInfoDisplay', ServerInfoDisplay);	
+	node.widgets.register('StateDisplay', StateDisplay);	
 
 // ## Defaults
 	
-	ServerInfoDisplay.defaults = {};
-	ServerInfoDisplay.defaults.id = 'serverinfodisplay';
-	ServerInfoDisplay.defaults.fieldset = {
-			legend: 'Server Info',
-			id: 'serverinfo_fieldset'
-	};		
+	StateDisplay.defaults = {};
+	StateDisplay.defaults.id = 'statedisplay';
+	StateDisplay.defaults.fieldset = { legend: 'State Display' };		
 	
 // ## Meta-data
 	
-	ServerInfoDisplay.name = 'Server Info Display';
-	ServerInfoDisplay.version = '0.3';
+	StateDisplay.name = 'State Display';
+	StateDisplay.version = '0.4.2';
+	StateDisplay.description = 'Display basic information about player\'s status.';
 	
-	function ServerInfoDisplay (options) {	
+	function StateDisplay (options) {
+		
 		this.id = options.id;
-		
-		
+				
 		this.root = null;
-		this.div = document.createElement('div');
-		this.table = null; //new node.window.Table();
-		this.button = null;
-		
+		this.table = new Table();
 	}
 	
-	ServerInfoDisplay.prototype.init = function (options) {
+	// TODO: Write a proper INIT method
+	StateDisplay.prototype.init = function () {};
+	
+	StateDisplay.prototype.getRoot = function () {
+		return this.root;
+	};
+	
+	
+	StateDisplay.prototype.append = function (root) {
 		var that = this;
-		if (!this.div) {
-			this.div = document.createElement('div');
-		}
-		this.div.innerHTML = 'Waiting for the reply from Server...';
-		if (!this.table) {
-			this.table = new node.window.Table(options);
-		}
-		this.table.clear(true);
-		this.button = document.createElement('button');
-		this.button.value = 'Refresh';
-		this.button.appendChild(document.createTextNode('Refresh'));
-		this.button.onclick = function(){
-			that.getInfo();
-		};
-		this.root.appendChild(this.button);
-		this.getInfo();
-	};
-	
-	ServerInfoDisplay.prototype.append = function (root) {
-		this.root = root;
-		root.appendChild(this.div);
-		return root;
-	};
-	
-	ServerInfoDisplay.prototype.getInfo = function() {
-		var that = this;
-		node.get('INFO', function (info) {
-			node.window.removeChildrenFromNode(that.div);
-			that.div.appendChild(that.processInfo(info));
-		});
-	};
-	
-	ServerInfoDisplay.prototype.processInfo = function(info) {
-		this.table.clear(true);
-		for (var key in info) {
-			if (info.hasOwnProperty(key)){
-				this.table.addRow([key,info[key]]);
+		var PREF = this.id + '_';
+		
+		var idFieldset = PREF + 'fieldset';
+		var idPlayer = PREF + 'player';
+		var idState = PREF + 'state'; 
+			
+		var checkPlayerName = setInterval(function(idState,idPlayer) {
+			if (node.player && node.player.id) {
+				clearInterval(checkPlayerName);
+				that.updateAll();
 			}
-		}
-		return this.table.parse();
+		}, 100);
+	
+		root.appendChild(this.table.table);
+		this.root = root;
+		return root;
+		
 	};
 	
-	ServerInfoDisplay.prototype.listeners = function () {
+	StateDisplay.prototype.updateAll = function() {
+		var state = node.game ? new GameStage(node.game.state) : new GameStage(),
+			id = node.player ? node.player.id : '-',
+			name = node.player && node.player.name ? node.player.name : '-';
+			
+		this.table.clear(true);
+		this.table.addRow(['Name: ', name]);
+		this.table.addRow(['State: ', state.toString()]);
+		this.table.addRow(['Id: ', id]);
+		this.table.parse();
+		
+	};
+	
+	StateDisplay.prototype.listeners = function () {
 		var that = this;
-		node.on('NODEGAME_READY', function(){
-			that.init();
-		});
+		
+		node.on('STATECHANGE', function() {
+			that.updateAll();
+		}); 
 	}; 
 	
 })(node);
+
 (function (node) {
 	
 
@@ -19283,307 +19729,6 @@ node.widgets = new Widgets();
 })(node);
 (function (node) {
 	
-	node.widgets.register('VisualState', VisualState);
-	
-	var JSUS = node.JSUS,
-		Table = node.window.Table;
-	
-// ## Defaults
-	
-	VisualState.defaults = {};
-	VisualState.defaults.id = 'visualstate';
-	VisualState.defaults.fieldset = { 
-		legend: 'State',
-		id: 'visualstate_fieldset'
-	};	
-	
-// ## Meta-data
-	
-	VisualState.name = 'Visual State';
-	VisualState.version = '0.2.1';
-	VisualState.description = 'Visually display current, previous and next state of the game.';
-	
-// ## Dependencies
-	
-	VisualState.dependencies = {
-		JSUS: {},
-		Table: {}
-	};
-	
-	
-	function VisualState (options) {
-		this.id = options.id;
-		
-		this.root = null;		// the parent element
-		this.table = new Table();
-	}
-	
-	VisualState.prototype.getRoot = function () {
-		return this.root;
-	};
-	
-	VisualState.prototype.append = function (root, ids) {
-		var that = this;
-		var PREF = this.id + '_';
-		root.appendChild(this.table.table);
-		this.writeState();
-		return root;
-	};
-		
-	VisualState.prototype.listeners = function () {
-		var that = this;
-		node.on('STATECHANGE', function() {
-			that.writeState();
-		}); 
-	};
-	
-	VisualState.prototype.writeState = function () {
-		var state, pr, nx, tmp;
-		var miss = '-';
-		
-		if (node.game && node.game.state) {
-			tmp = node.game.gameLoop.getStep(node.game.state);
-			state = (tmp) ? tmp.name : miss;
-			tmp = node.game.gameLoop.getStep(node.game.previous());
-			pr = (tmp) ? tmp.name : miss;
-			tmp = node.game.gameLoop.getStep(node.game.next());
-			nx = (tmp) ? tmp.name : miss;
-		}
-		else {
-			state = 'Uninitialized';
-			pr = miss;
-			nx = miss;
-		}
-		this.table.clear(true);
-
-		this.table.addRow(['Previous: ', pr]);
-		this.table.addRow(['Current: ', state]);
-		this.table.addRow(['Next: ', nx]);
-	
-		var t = this.table.select('y', '=', 2);
-		t.addClass('strong');
-		t.select('x','=',0).addClass('underline');
-		this.table.parse();
-	};
-	
-})(node);
-(function (node) {
-
-	var Table = node.window.Table,
-		GameStage = node.GameStage;
-	
-	node.widgets.register('StateDisplay', StateDisplay);	
-
-// ## Defaults
-	
-	StateDisplay.defaults = {};
-	StateDisplay.defaults.id = 'statedisplay';
-	StateDisplay.defaults.fieldset = { legend: 'State Display' };		
-	
-// ## Meta-data
-	
-	StateDisplay.name = 'State Display';
-	StateDisplay.version = '0.4.2';
-	StateDisplay.description = 'Display basic information about player\'s status.';
-	
-	function StateDisplay (options) {
-		
-		this.id = options.id;
-				
-		this.root = null;
-		this.table = new Table();
-	}
-	
-	// TODO: Write a proper INIT method
-	StateDisplay.prototype.init = function () {};
-	
-	StateDisplay.prototype.getRoot = function () {
-		return this.root;
-	};
-	
-	
-	StateDisplay.prototype.append = function (root) {
-		var that = this;
-		var PREF = this.id + '_';
-		
-		var idFieldset = PREF + 'fieldset';
-		var idPlayer = PREF + 'player';
-		var idState = PREF + 'state'; 
-			
-		var checkPlayerName = setInterval(function(idState,idPlayer) {
-			if (node.player && node.player.id) {
-				clearInterval(checkPlayerName);
-				that.updateAll();
-			}
-		}, 100);
-	
-		root.appendChild(this.table.table);
-		this.root = root;
-		return root;
-		
-	};
-	
-	StateDisplay.prototype.updateAll = function() {
-		var state = node.game ? new GameStage(node.game.state) : new GameStage(),
-			id = node.player ? node.player.id : '-',
-			name = node.player && node.player.name ? node.player.name : '-';
-			
-		this.table.clear(true);
-		this.table.addRow(['Name: ', name]);
-		this.table.addRow(['State: ', state.toString()]);
-		this.table.addRow(['Id: ', id]);
-		this.table.parse();
-		
-	};
-	
-	StateDisplay.prototype.listeners = function () {
-		var that = this;
-		
-		node.on('STATECHANGE', function() {
-			that.updateAll();
-		}); 
-	}; 
-	
-})(node);
-
-(function (node) {
-
-	// TODO: needs major refactoring
-	
-	var GameStage = node.GameStage,
-		PlayerList = node.PlayerList,
-		Table = node.window.Table,
-		HTMLRenderer = node.window.HTMLRenderer;
-	
-	node.widgets.register('DynamicTable', DynamicTable);
-	
-	
-	DynamicTable.prototype = new Table();
-	DynamicTable.prototype.constructor = Table;	
-	
-	
-	DynamicTable.id = 'dynamictable';
-	DynamicTable.name = 'Dynamic Table';
-	DynamicTable.version = '0.3.1';
-	
-	DynamicTable.dependencies = {
-		Table: {},
-		JSUS: {},
-		HTMLRenderer: {}
-	};
-	
-	function DynamicTable (options, data) {
-		//JSUS.extend(node.window.Table,this);
-		Table.call(this, options, data);
-		this.options = options;
-		this.id = options.id;
-		this.name = options.name || 'Dynamic Table';
-		this.fieldset = { legend: this.name,
-							id: this.id + '_fieldset'
-		};
-		
-		this.root = null;
-		this.bindings = {};
-		this.init(this.options);
-	}
-	
-	DynamicTable.prototype.init = function (options) {
-		this.options = options;
-		this.name = options.name || this.name;
-		this.auto_update = ('undefined' !== typeof options.auto_update) ? options.auto_update : true;
-		this.replace = options.replace || false;
-		this.htmlRenderer = new HTMLRenderer({renderers: options.renderers});
-		this.c('state', GameStage.compare);
-		this.setLeft([]);
-		this.parse(true);
-	};
-		
-	DynamicTable.prototype.bind = function (event, bindings) {
-		if (!event || !bindings) return;
-		var that = this;
-
-		node.on(event, function(msg) {
-			
-			if (bindings.x || bindings.y) {
-				// Cell
-				var func;
-				if (that.replace) {
-					func = function (x, y) {
-						var found = that.get(x,y);
-						if (found.length !== 0) {
-							for (var ci=0; ci < found.length; ci++) {
-								bindings.cell.call(that, msg, found[ci]);
-							}
-						}
-						else {
-							var cell = bindings.cell.call(that, msg, new Table.Cell({x: x, y: y}));
-							that.add(cell);
-						}
-					};
-				}
-				else {
-					func = function (x, y) {
-						var cell = bindings.cell.call(that, msg, new Table.Cell({x: x, y: y}));
-						that.add(cell, x, y);
-					};
-				}
-				
-				var x = bindings.x.call(that, msg);
-				var y = bindings.y.call(that, msg);
-				
-				if (x && y) {
-					
-					x = (x instanceof Array) ? x : [x];
-					y = (y instanceof Array) ? y : [y];
-					
-//					console.log('Bindings found:');
-//					console.log(x);
-//					console.log(y);
-					
-					for (var xi=0; xi < x.length; xi++) {
-						for (var yi=0; yi < y.length; yi++) {
-							// Replace or Add
-							func.call(that, x[xi], y[yi]);
-						}
-					}
-				}
-				// End Cell
-			}
-			
-			// Header
-			if (bindings.header) {
-				var h = bindings.header.call(that, msg);
-				h = (h instanceof Array) ? h : [h];
-				that.setHeader(h);
-			}
-			
-			// Left
-			if (bindings.left) {
-				var l = bindings.left.call(that, msg);
-				if (!JSUS.in_array(l, that.left)) {
-					that.header.push(l);
-				}
-			}
-			
-			// Auto Update?
-			if (that.auto_update) {
-				that.parse();
-			}
-		});
-		
-	};
-
-	DynamicTable.prototype.append = function (root) {
-		this.root = root;
-		root.appendChild(this.table);
-		return root;
-	};
-	
-	DynamicTable.prototype.listeners = function () {}; 
-
-})(node);
-(function (node) {
-	
 	node.widgets.register('GameBoard', GameBoard);
 	
 	var PlayerList = node.PlayerList;
@@ -19705,6 +19850,358 @@ node.widgets = new Widgets();
 		
 		
 		this.status.innerHTML = 'Connected players: ' + node.game.pl.length;
+	};
+	
+})(node);
+(function (node) {
+
+	var GameStage = node.GameStage,
+		PlayerList = node.PlayerList;
+	
+	
+	node.widgets.register('GameTable', GameTable);
+	
+// ## Defaults
+	
+	GameTable.defaults = {};
+	GameTable.defaults.id = 'gametable';
+	GameTable.defaults.fieldset = { 
+			legend: 'Game Table',
+			id: 'gametable_fieldset'
+	};
+	
+// ## Meta-data
+	
+	GameTable.name = 'Game Table';
+	GameTable.version = '0.2';
+	
+// ## Dependencies
+	
+	GameTable.dependencies = {
+		JSUS: {}
+	};
+	
+	function GameTable (options) {
+		this.options = options;
+		this.id = options.id;
+		this.name = options.name || GameTable.name;
+				
+		this.root = null;
+		this.gtbl = null;
+		this.plist = null;
+		
+		this.init(this.options);
+	}
+	
+	GameTable.prototype.init = function (options) {
+		
+		if (!this.plist) this.plist = new PlayerList();
+		
+		this.gtbl = new node.window.Table({
+											auto_update: true,
+											id: options.id || this.id,
+											render: options.render
+		}, node.game.memory.db);
+		
+		
+		this.gtbl.c('state', GameStage.compare);
+		
+		this.gtbl.setLeft([]);
+		
+		this.gtbl.parse(true);
+	};
+	
+
+	GameTable.prototype.addRenderer = function (func) {
+		return this.gtbl.addRenderer(func);
+	};
+	
+	GameTable.prototype.resetRender = function () {
+		return this.gtbl.resetRenderer();
+	};
+	
+	GameTable.prototype.removeRenderer = function (func) {
+		return this.gtbl.removeRenderer(func);
+	};
+	
+	GameTable.prototype.append = function (root) {
+		this.root = root;
+		root.appendChild(this.gtbl.table);
+		return root;
+	};
+	
+	GameTable.prototype.listeners = function () {
+		var that = this;
+		
+		node.onPLIST(function(msg) {	
+			if (!msg.data.length) return;
+			
+			//var diff = JSUS.arrayDiff(msg.data,that.plist.db);
+			var plist = new PlayerList({}, msg.data);
+			var diff = plist.diff(that.plist);
+			if (diff) {
+//				console.log('New Players found');
+//				console.log(diff);
+				diff.forEach(function(el){that.addPlayer(el);});
+			}
+
+			that.gtbl.parse(true);
+		});
+		
+		node.on('in.set.DATA', function (msg) {
+
+			that.addLeft(msg.state, msg.from);
+			var x = that.player2x(msg.from);
+			var y = that.state2y(node.game.state, msg.text);
+			
+			that.gtbl.add(msg.data, x, y);
+			that.gtbl.parse(true);
+		});
+	}; 
+	
+	GameTable.prototype.addPlayer = function (player) {
+		this.plist.add(player);
+		var header = this.plist.map(function(el){return el.name;});
+		this.gtbl.setHeader(header);
+	};
+	
+	GameTable.prototype.addLeft = function (state, player) {
+		if (!state) return;
+		state = new GameStage(state);
+		if (!JSUS.in_array({content:state.toString(), type: 'left'}, this.gtbl.left)){
+			this.gtbl.add2Left(state.toString());
+		}
+		// Is it a new display associated to the same state?
+		else {
+			var y = this.state2y(state);
+			var x = this.player2x(player);
+			if (this.gtbl.select('y','=',y).select('x','=',x).count() > 1) {
+				this.gtbl.add2Left(state.toString());
+			}
+		}
+			
+	};
+	
+	GameTable.prototype.player2x = function (player) {
+		if (!player) return false;
+		return this.plist.select('id', '=', player).first().count;
+	};
+	
+	GameTable.prototype.x2Player = function (x) {
+		if (!x) return false;
+		return this.plist.select('count', '=', x).first().count;
+	};
+	
+	GameTable.prototype.state2y = function (state) {
+		if (!state) return false;
+		return node.game.gameLoop.indexOf(state);
+	};
+	
+	GameTable.prototype.y2State = function (y) {
+		if (!y) return false;
+		return node.game.gameLoop.jumpTo(new GameStage(),y);
+	};
+	
+	
+
+})(node);
+
+(function (node) {
+	
+	
+	node.widgets.register('D3', D3);
+	node.widgets.register('D3ts', D3ts);
+	
+	D3.prototype.__proto__ = node.Widget.prototype;
+	D3.prototype.constructor = D3;
+
+// ## Defaults
+	
+	D3.defaults = {};
+	D3.defaults.id = 'D3';
+	D3.defaults.fieldset = {
+		legend: 'D3 plot'
+	};
+
+	
+// ## Meta-data
+	
+	D3.name = 'D3';
+	D3.version = '0.1';
+	D3.description = 'Real time plots for nodeGame with d3.js';
+	
+// ## Dependencies
+	
+	D3.dependencies = {
+		d3: {},	
+		JSUS: {}
+	};
+	
+	function D3 (options) {
+		this.id = options.id || D3.id;
+		this.event = options.event || 'D3';
+		this.svg = null;
+		
+		var that = this;
+		node.on(this.event, function (value) {
+			that.tick.call(that, value); 
+		});
+	}
+	
+	D3.prototype.append = function (root) {
+		this.root = root;
+		this.svg = d3.select(root).append("svg");
+		return root;
+	};
+	
+	D3.prototype.tick = function () {};
+	
+// # D3ts
+	
+	
+// ## Meta-data
+	
+	D3ts.id = 'D3ts';
+	D3ts.name = 'D3ts';
+	D3ts.version = '0.1';
+	D3ts.description = 'Time series plot for nodeGame with d3.js';
+	
+// ## Dependencies	
+	D3ts.dependencies = {
+		D3: {},	
+		JSUS: {}
+	};
+	
+	D3ts.prototype.__proto__ = D3.prototype;
+	D3ts.prototype.constructor = D3ts;
+	
+	D3ts.defaults = {};
+	
+	D3ts.defaults.width = 400;
+	D3ts.defaults.height = 200;
+	
+	D3ts.defaults.margin = {
+    	top: 10, 
+    	right: 10, 
+    	bottom: 20, 
+    	left: 40 
+	};
+	
+	D3ts.defaults.domain = {
+		x: [0, 10],
+		y: [0, 1]
+	};
+	
+    D3ts.defaults.range = {
+    	x: [0, D3ts.defaults.width],
+    	y: [D3ts.defaults.height, 0]
+    };
+	
+	function D3ts (options) {
+		D3.call(this, options);
+		
+		
+		var o = this.options = JSUS.merge(D3ts.defaults, options);
+		
+		var n = this.n = o.n;
+		
+	    this.data = [0];
+	    
+	    this.margin = o.margin;
+	    
+		var width = this.width = o.width - this.margin.left - this.margin.right;
+		var height = this.height = o.height - this.margin.top - this.margin.bottom;
+
+		// identity function
+		var x = this.x = d3.scale.linear()
+		    .domain(o.domain.x)
+		    .range(o.range.x);
+
+		var y = this.y = d3.scale.linear()
+		    .domain(o.domain.y)
+		    .range(o.range.y);
+
+		// line generator
+		this.line = d3.svg.line()
+		    .x(function(d, i) { return x(i); })
+		    .y(function(d, i) { return y(d); });
+	}
+	
+	D3ts.prototype.init = function (options) {
+		//D3.init.call(this, options);
+		
+		console.log('init!');
+		var x = this.x,
+			y = this.y,
+			height = this.height,
+			width = this.width,
+			margin = this.margin;
+		
+		
+		// Create the SVG and place it in the middle
+		this.svg.attr("width", width + margin.left + margin.right)
+		    .attr("height", height + margin.top + margin.bottom)
+		  .append("g")
+		    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+		// Line does not go out the axis
+		this.svg.append("defs").append("clipPath")
+		    .attr("id", "clip")
+		  .append("rect")
+		    .attr("width", width)
+		    .attr("height", height);
+
+		// X axis
+		this.svg.append("g")
+		    .attr("class", "x axis")
+		    .attr("transform", "translate(0," + height + ")")
+		    .call(d3.svg.axis().scale(x).orient("bottom"));
+
+		// Y axis
+		this.svg.append("g")
+		    .attr("class", "y axis")
+		    .call(d3.svg.axis().scale(y).orient("left"));
+
+		this.path = this.svg.append("g")
+		    .attr("clip-path", "url(#clip)")
+		  .append("path")
+		    .data([this.data])
+		    .attr("class", "line")
+		    .attr("d", this.line);		
+	};
+	
+	D3ts.prototype.tick = function (value) {
+		this.alreadyInit = this.alreadyInit || false;
+		if (!this.alreadyInit) {
+			this.init();
+			this.alreadyInit = true;
+		}
+		
+		var x = this.x;
+		
+		console.log('tick!');
+	
+		// push a new data point onto the back
+		this.data.push(value);
+
+		// redraw the line, and slide it to the left
+		this.path
+	    	.attr("d", this.line)
+	    	.attr("transform", null);
+
+		// pop the old data point off the front
+		if (this.data.length > this.n) {
+		
+	  		this.path
+	  			.transition()
+	  			.duration(500)
+	  			.ease("linear")
+	  			.attr("transform", "translate(" + x(-1) + ")");
+	  		
+	  		this.data.shift();
+	  	  
+		}
 	};
 	
 })(node);
@@ -20352,101 +20849,446 @@ node.widgets = new Widgets();
 
 })(node);
 (function (node) {
-
-	var JSUS = node.JSUS;
-
-	node.widgets.register('EventButton', EventButton);
+	
+	
+	// TODO: Introduce rules for update: other vs self
+	
+	node.widgets.register('NextPreviousState', NextPreviousState);
 	
 // ## Defaults
 	
-	EventButton.defaults = {};
-	EventButton.defaults.id = 'eventbutton';
-	EventButton.defaults.fieldset = false;	
+	NextPreviousState.defaults = {};
+	NextPreviousState.defaults.id = 'nextprevious';
+	NextPreviousState.defaults.fieldset = { legend: 'Rew-Fwd' };		
 	
-// ## Meta-data	
+// ## Meta-data
 	
-	EventButton.name = 'Event Button';
-	EventButton.version = '0.2';
+	NextPreviousState.name = 'Next,Previous State';
+	NextPreviousState.version = '0.3.2';
+	NextPreviousState.description = 'Adds two buttons to push forward or rewind the state of the game by one step.';
+		
+	function NextPreviousState(options) {
+		this.id = options.id;
+	}
+	
+	NextPreviousState.prototype.getRoot = function () {
+		return this.root;
+	};
+	
+	NextPreviousState.prototype.append = function (root) {
+		var idRew = this.id + '_button';
+		var idFwd = this.id + '_button';
+		
+		var rew = node.window.addButton(root, idRew, '<<');
+		var fwd = node.window.addButton(root, idFwd, '>>');
+		
+		
+		var that = this;
+	
+		var updateState = function (state) {
+			if (state) {
+				var stateEvent = node.IN + node.action.SAY + '.STATE';
+				var stateMsg = node.msg.createSTATE(stateEvent, state);
+				// Self Update
+				node.emit(stateEvent, stateMsg);
+				
+				// Update Others
+				stateEvent = node.OUT + node.action.SAY + '.STATE';
+				node.emit(stateEvent, state, 'ALL');
+			}
+			else {
+				node.log('No next/previous state. Not sent', 'ERR');
+			}
+		};
+		
+		fwd.onclick = function() {
+			updateState(node.game.next());
+		};
+			
+		rew.onclick = function() {
+			updateState(node.game.previous());
+		};
+		
+		this.root = root;
+		return root;
+	};
+	
+})(node);
+(function (node) {
+	
+	node.widgets.register('ServerInfoDisplay', ServerInfoDisplay);	
+
+// ## Defaults
+	
+	ServerInfoDisplay.defaults = {};
+	ServerInfoDisplay.defaults.id = 'serverinfodisplay';
+	ServerInfoDisplay.defaults.fieldset = {
+			legend: 'Server Info',
+			id: 'serverinfo_fieldset'
+	};		
+	
+// ## Meta-data
+	
+	ServerInfoDisplay.name = 'Server Info Display';
+	ServerInfoDisplay.version = '0.3';
+	
+	function ServerInfoDisplay (options) {	
+		this.id = options.id;
+		
+		
+		this.root = null;
+		this.div = document.createElement('div');
+		this.table = null; //new node.window.Table();
+		this.button = null;
+		
+	}
+	
+	ServerInfoDisplay.prototype.init = function (options) {
+		var that = this;
+		if (!this.div) {
+			this.div = document.createElement('div');
+		}
+		this.div.innerHTML = 'Waiting for the reply from Server...';
+		if (!this.table) {
+			this.table = new node.window.Table(options);
+		}
+		this.table.clear(true);
+		this.button = document.createElement('button');
+		this.button.value = 'Refresh';
+		this.button.appendChild(document.createTextNode('Refresh'));
+		this.button.onclick = function(){
+			that.getInfo();
+		};
+		this.root.appendChild(this.button);
+		this.getInfo();
+	};
+	
+	ServerInfoDisplay.prototype.append = function (root) {
+		this.root = root;
+		root.appendChild(this.div);
+		return root;
+	};
+	
+	ServerInfoDisplay.prototype.getInfo = function() {
+		var that = this;
+		node.get('INFO', function (info) {
+			node.window.removeChildrenFromNode(that.div);
+			that.div.appendChild(that.processInfo(info));
+		});
+	};
+	
+	ServerInfoDisplay.prototype.processInfo = function(info) {
+		this.table.clear(true);
+		for (var key in info) {
+			if (info.hasOwnProperty(key)){
+				this.table.addRow([key,info[key]]);
+			}
+		}
+		return this.table.parse();
+	};
+	
+	ServerInfoDisplay.prototype.listeners = function () {
+		var that = this;
+		node.on('NODEGAME_READY', function(){
+			that.init();
+		});
+	}; 
+	
+})(node);
+(function (node) {
+	
+	node.widgets.register('VisualTimer', VisualTimer);
+	
+	var JSUS = node.JSUS;
+
+// ## Defaults
+	
+	VisualTimer.defaults = {};
+	VisualTimer.defaults.id = 'visualtimer';
+	VisualTimer.defaults.fieldset = {
+			legend: 'Time left',
+			id: 'visualtimer_fieldset'
+	};		
+	
+// ## Meta-data
+	
+	VisualTimer.name = 'Visual Timer';
+	VisualTimer.version = '0.3.3';
+	VisualTimer.description = 'Display a timer for the game. Timer can trigger events. Only for countdown smaller than 1h.';
 	
 // ## Dependencies
 	
-	EventButton.dependencies = {
+	VisualTimer.dependencies = {
+		GameTimer : {},
 		JSUS: {}
 	};
 	
-	function EventButton (options) {
+	function VisualTimer (options) {
 		this.options = options;
 		this.id = options.id;
 
+		this.gameTimer = null;
+		
+		this.timerDiv = null;	// the DIV in which to display the timer
 		this.root = null;		// the parent element
-		this.text = 'Send';
-		this.button = document.createElement('button');
-		this.callback = null;
+		
 		this.init(this.options);
 	}
 	
-	EventButton.prototype.init = function (options) {
+	VisualTimer.prototype.init = function (options) {
 		options = options || this.options;
-		this.button.id = options.id || this.id;
-		var text = options.text || this.text;
-		while (this.button.hasChildNodes()) {
-			this.button.removeChild(this.button.firstChild);
-		}
-		this.button.appendChild(document.createTextNode(text));
-		this.event = options.event || this.event;
-		this.callback = options.callback || this.callback;
 		var that = this;
-		if (this.event) {
-			// Emit Event only if callback is successful
-			this.button.onclick = function() {
-				var ok = true;
-				if (this.callback){
-					ok = options.callback.call(node.game);
+		(function initHooks() {
+			if (options.hooks) {
+				if (!options.hooks instanceof Array) {
+					options.hooks = [options.hooks];
 				}
-				if (ok) node.emit(that.event);
-			};
+			}
+			else {
+				options.hooks = [];
+			}
+			
+			options.hooks.push({hook: that.updateDisplay,
+								ctx: that
+			});
+		})();
+		
+		
+		this.gameTimer = (options.gameTimer) || new node.GameTimer();
+		
+		if (this.gameTimer) {
+			this.gameTimer.init(options);
+		}
+		else {
+			node.log('GameTimer object could not be initialized. VisualTimer will not work properly.', 'ERR');
 		}
 		
-//		// Emit DONE only if callback is successful
-//		this.button.onclick = function() {
-//			var ok = true;
-//			if (options.exec) ok = options.exec.call(node.game);
-//			if (ok) node.emit(that.event);
-//		}
+		if (this.timerDiv) {
+			this.timerDiv.className = options.className || '';
+		}
+		
 	};
 	
-	EventButton.prototype.append = function (root) {
+	VisualTimer.prototype.getRoot = function () {
+		return this.root;
+	};
+	
+	VisualTimer.prototype.append = function (root) {
 		this.root = root;
-		root.appendChild(this.button);
+		this.timerDiv = node.window.addDiv(root, this.id + '_div');
+		this.updateDisplay();
 		return root;	
 	};
 	
-	EventButton.prototype.listeners = function () {};
-		
-// # Done Button
-	
-	node.widgets.register('DoneButton', DoneButton);
-	
-	DoneButton.prototype.__proto__ = EventButton.prototype;
-	DoneButton.prototype.constructor = DoneButton;
-
-// ## Meta-data
-	
-	DoneButton.id = 'donebutton';
-	DoneButton.version = '0.1';
-	DoneButton.name = 'Done Button';
-	
-// ## Dependencies
-	
-	DoneButton.dependencies = {
-		EventButton: {}
+	VisualTimer.prototype.updateDisplay = function () {
+		if (!this.gameTimer.milliseconds || this.gameTimer.milliseconds === 0) {
+			this.timerDiv.innerHTML = '00:00';
+			return;
+		}
+		var time = this.gameTimer.milliseconds - this.gameTimer.timePassed;
+		time = JSUS.parseMilliseconds(time);
+		var minutes = (time[2] < 10) ? '' + '0' + time[2] : time[2];
+		var seconds = (time[3] < 10) ? '' + '0' + time[3] : time[3];
+		this.timerDiv.innerHTML = minutes + ':' + seconds;
 	};
 	
-	function DoneButton (options) {
-		options.event = 'DONE';
-		options.text = options.text || 'Done!';
-		EventButton.call(this, options);
+	VisualTimer.prototype.start = function() {
+		this.updateDisplay();
+		this.gameTimer.start();
+	};
+	
+	VisualTimer.prototype.restart = function (options) {
+		this.init(options);
+		this.start();
+	};
+	
+	VisualTimer.prototype.stop = function (options) {
+		this.gameTimer.stop();
+	};
+	
+	VisualTimer.prototype.resume = function (options) {
+		this.gameTimer.resume();
+	};
+		
+	VisualTimer.prototype.listeners = function () {
+		var that = this;
+		node.on('LOADED', function() {
+		    var stepObj = node.game.getCurrentStep();
+		    if (!stepObj) return;
+		    var timer = stepObj.timer;
+			if (timer) {
+				timer = JSUS.clone(timer);
+				that.timerDiv.className = '';
+				var options = {},
+					typeoftimer = typeof timer; 
+				switch (typeoftimer) {
+				
+					case 'number':
+						options.milliseconds = timer;
+						break;
+					case 'object':
+						options = timer;
+						break;
+					case 'function':
+						options.milliseconds = timer
+						break;
+					case 'string':
+						options.milliseconds = Number(timer);
+						break;
+				};
+			
+				if (!options.milliseconds) return;
+			
+				if ('function' === typeof options.milliseconds) {
+					options.milliseconds = options.milliseconds.call(node.game);
+				}
+				
+				if (!options.timeup) {
+					options.timeup = 'DONE';
+				}
+				
+				that.gameTimer.init(options);
+				that.start();
+			}
+		});
+		
+		node.on('DONE', function() {
+			// TODO: This should be enabled again
+			that.gameTimer.stop();
+			that.timerDiv.className = 'strike';
+		});
+	};
+	
+})(node);
+
+(function (node) {
+
+	node.widgets.register('GameSummary', GameSummary);
+	
+
+// ## Defaults
+	
+	GameSummary.defaults = {};
+	GameSummary.defaults.id = 'gamesummary';
+	GameSummary.defaults.fieldset = { legend: 'Game Summary' };
+	
+// ## Meta-data
+	
+	GameSummary.name = 'Game Summary';
+	GameSummary.version = '0.3';
+	GameSummary.description = 'Show the general configuration options of the game.';
+	
+	function GameSummary (options) {
+		this.summaryDiv = null;
 	}
+	
+	GameSummary.prototype.append = function (root) {
+		this.root = root;
+		this.summaryDiv = node.window.addDiv(root);
+		this.writeSummary();
+		return root;
+	};
+	
+	GameSummary.prototype.writeSummary = function (idState, idSummary) {
+		var gName = document.createTextNode('Name: ' + node.game.metadata.name),
+			gDescr = document.createTextNode('Descr: ' + node.game.metadata.description),
+			gMinP = document.createTextNode('Min Pl.: ' + node.game.minPlayers),
+			gMaxP = document.createTextNode('Max Pl.: ' + node.game.maxPlayers);
+		
+		this.summaryDiv.appendChild(gName);
+		this.summaryDiv.appendChild(document.createElement('br'));
+		this.summaryDiv.appendChild(gDescr);
+		this.summaryDiv.appendChild(document.createElement('br'));
+		this.summaryDiv.appendChild(gMinP);
+		this.summaryDiv.appendChild(document.createElement('br'));
+		this.summaryDiv.appendChild(gMaxP);
+		
+		node.window.addDiv(this.root, this.summaryDiv, idSummary);
+	};
+
+})(node);
+
+(function (node) {
+	
+	node.widgets.register('MoneyTalks', MoneyTalks);
+	
+	var JSUS = node.JSUS;
+	
+// ## Defaults
+	
+	MoneyTalks.defaults = {};
+	MoneyTalks.defaults.id = 'moneytalks';
+	MoneyTalks.defaults.fieldset = {legend: 'Earnings'};
+	
+// ## Meta-data
+	
+	MoneyTalks.name = 'Money talks';
+	MoneyTalks.version = '0.1.0';
+	MoneyTalks.description = 'Display the earnings of a player.';
+
+// ## Dependencies
+	
+	MoneyTalks.dependencies = {
+		JSUS: {}
+	};
+	
+	
+	function MoneyTalks (options) {
+		this.id = options.id || MoneyTalks.defaults.id;
+				
+		this.root = null;		// the parent element
+		
+		this.spanCurrency = document.createElement('span');
+		this.spanMoney = document.createElement('span');
+		
+		this.currency = 'EUR';
+		this.money = 0;
+		this.precision = 2;
+		this.init(options);
+	}
+	
+	
+	MoneyTalks.prototype.init = function (options) {
+		this.currency = options.currency || this.currency;
+		this.money = options.money || this.money;
+		this.precision = options.precision || this.precision;
+		
+		this.spanCurrency.id = options.idCurrency || this.spanCurrency.id || 'moneytalks_currency';
+		this.spanMoney.id = options.idMoney || this.spanMoney.id || 'moneytalks_money';
+		
+		this.spanCurrency.innerHTML = this.currency;
+		this.spanMoney.innerHTML = this.money;
+	};
+	
+	MoneyTalks.prototype.getRoot = function () {
+		return this.root;
+	};
+	
+	MoneyTalks.prototype.append = function (root, ids) {
+		var PREF = this.id + '_';
+		root.appendChild(this.spanMoney);
+		root.appendChild(this.spanCurrency);
+		return root;
+	};
+		
+	MoneyTalks.prototype.listeners = function () {
+		var that = this;
+		node.on('MONEYTALKS', function(amount) {
+			that.update(amount);
+		}); 
+	};
+	
+	MoneyTalks.prototype.update = function (amount) {
+		if ('number' !== typeof amount) {
+			// Try to parse strings
+			amount = parseInt(amount);
+			if (isNaN(n) || !isFinite(n)) {
+				return;
+			}
+		}
+		this.money += amount;
+		this.spanMoney.innerHTML = this.money.toFixed(this.precision);
+	};
 	
 })(node);
 (function (node) {
@@ -21085,131 +21927,174 @@ node.widgets = new Widgets();
 })(node);
 (function (node) {
 
-	node.widgets.register('GameSummary', GameSummary);
-	
-
-// ## Defaults
-	
-	GameSummary.defaults = {};
-	GameSummary.defaults.id = 'gamesummary';
-	GameSummary.defaults.fieldset = { legend: 'Game Summary' };
-	
-// ## Meta-data
-	
-	GameSummary.name = 'Game Summary';
-	GameSummary.version = '0.3';
-	GameSummary.description = 'Show the general configuration options of the game.';
-	
-	function GameSummary (options) {
-		this.summaryDiv = null;
-	}
-	
-	GameSummary.prototype.append = function (root) {
-		this.root = root;
-		this.summaryDiv = node.window.addDiv(root);
-		this.writeSummary();
-		return root;
-	};
-	
-	GameSummary.prototype.writeSummary = function (idState, idSummary) {
-		var gName = document.createTextNode('Name: ' + node.game.metadata.name),
-			gDescr = document.createTextNode('Descr: ' + node.game.metadata.description),
-			gMinP = document.createTextNode('Min Pl.: ' + node.game.minPlayers),
-			gMaxP = document.createTextNode('Max Pl.: ' + node.game.maxPlayers);
-		
-		this.summaryDiv.appendChild(gName);
-		this.summaryDiv.appendChild(document.createElement('br'));
-		this.summaryDiv.appendChild(gDescr);
-		this.summaryDiv.appendChild(document.createElement('br'));
-		this.summaryDiv.appendChild(gMinP);
-		this.summaryDiv.appendChild(document.createElement('br'));
-		this.summaryDiv.appendChild(gMaxP);
-		
-		node.window.addDiv(this.root, this.summaryDiv, idSummary);
-	};
-
-})(node);
-
-(function (node) {
-	
-	node.widgets.register('MoneyTalks', MoneyTalks);
-	
 	var JSUS = node.JSUS;
+
+	node.widgets.register('EventButton', EventButton);
 	
 // ## Defaults
 	
-	MoneyTalks.defaults = {};
-	MoneyTalks.defaults.id = 'moneytalks';
-	MoneyTalks.defaults.fieldset = {legend: 'Earnings'};
+	EventButton.defaults = {};
+	EventButton.defaults.id = 'eventbutton';
+	EventButton.defaults.fieldset = false;	
 	
-// ## Meta-data
+// ## Meta-data	
 	
-	MoneyTalks.name = 'Money talks';
-	MoneyTalks.version = '0.1.0';
-	MoneyTalks.description = 'Display the earnings of a player.';
-
+	EventButton.name = 'Event Button';
+	EventButton.version = '0.2';
+	
 // ## Dependencies
 	
-	MoneyTalks.dependencies = {
+	EventButton.dependencies = {
 		JSUS: {}
 	};
 	
-	
-	function MoneyTalks (options) {
-		this.id = options.id || MoneyTalks.defaults.id;
-				
+	function EventButton (options) {
+		this.options = options;
+		this.id = options.id;
+
 		this.root = null;		// the parent element
-		
-		this.spanCurrency = document.createElement('span');
-		this.spanMoney = document.createElement('span');
-		
-		this.currency = 'EUR';
-		this.money = 0;
-		this.precision = 2;
-		this.init(options);
+		this.text = 'Send';
+		this.button = document.createElement('button');
+		this.callback = null;
+		this.init(this.options);
 	}
 	
-	
-	MoneyTalks.prototype.init = function (options) {
-		this.currency = options.currency || this.currency;
-		this.money = options.money || this.money;
-		this.precision = options.precision || this.precision;
-		
-		this.spanCurrency.id = options.idCurrency || this.spanCurrency.id || 'moneytalks_currency';
-		this.spanMoney.id = options.idMoney || this.spanMoney.id || 'moneytalks_money';
-		
-		this.spanCurrency.innerHTML = this.currency;
-		this.spanMoney.innerHTML = this.money;
-	};
-	
-	MoneyTalks.prototype.getRoot = function () {
-		return this.root;
-	};
-	
-	MoneyTalks.prototype.append = function (root, ids) {
-		var PREF = this.id + '_';
-		root.appendChild(this.spanMoney);
-		root.appendChild(this.spanCurrency);
-		return root;
-	};
-		
-	MoneyTalks.prototype.listeners = function () {
-		var that = this;
-		node.on('MONEYTALKS', function(amount) {
-			that.update(amount);
-		}); 
-	};
-	
-	MoneyTalks.prototype.update = function (amount) {
-		if ('number' !== typeof amount) {
-			// Try to parse strings
-			amount = parseInt(amount);
-			if (isNaN(n) || !isFinite(n)) {
-				return;
-			}
+	EventButton.prototype.init = function (options) {
+		options = options || this.options;
+		this.button.id = options.id || this.id;
+		var text = options.text || this.text;
+		while (this.button.hasChildNodes()) {
+			this.button.removeChild(this.button.firstChild);
 		}
-		this.money += amount;
-		this.spanMoney.innerHTML = this.money.toFixed(this.precision);
+		this.button.appendChild(document.createTextNode(text));
+		this.event = options.event || this.event;
+		this.callback = options.callback || this.callback;
+		var that = this;
+		if (this.event) {
+			// Emit Event only if callback is successful
+			this.button.onclick = function() {
+				var ok = true;
+				if (this.callback){
+					ok = options.callback.call(node.game);
+				}
+				if (ok) node.emit(that.event);
+			};
+		}
+		
+//		// Emit DONE only if callback is successful
+//		this.button.onclick = function() {
+//			var ok = true;
+//			if (options.exec) ok = options.exec.call(node.game);
+//			if (ok) node.emit(that.event);
+//		}
+	};
+	
+	EventButton.prototype.append = function (root) {
+		this.root = root;
+		root.appendChild(this.button);
+		return root;	
+	};
+	
+	EventButton.prototype.listeners = function () {};
+		
+// # Done Button
+	
+	node.widgets.register('DoneButton', DoneButton);
+	
+	DoneButton.prototype.__proto__ = EventButton.prototype;
+	DoneButton.prototype.constructor = DoneButton;
+
+// ## Meta-data
+	
+	DoneButton.id = 'donebutton';
+	DoneButton.version = '0.1';
+	DoneButton.name = 'Done Button';
+	
+// ## Dependencies
+	
+	DoneButton.dependencies = {
+		EventButton: {}
+	};
+	
+	function DoneButton (options) {
+		options.event = 'DONE';
+		options.text = options.text || 'Done!';
+		EventButton.call(this, options);
+	}
+	
+})(node);
+(function (node) {
+	
+	node.widgets.register('Wall', Wall);
+	
+	var JSUS = node.JSUS;
+
+// ## Defaults
+	
+	Wall.defaults = {};
+	Wall.defaults.id = 'wall';
+	Wall.defaults.fieldset = { legend: 'Game Log' };		
+	
+// ## Meta-data
+	
+
+	Wall.name = 'Wall';
+	Wall.version = '0.3';
+	Wall.description = 'Intercepts all LOG events and prints them ';
+	Wall.description += 'into a DIV element with an ordinal number and a timestamp.';
+
+// ## Dependencies
+	
+	Wall.dependencies = {
+		JSUS: {}
+	};
+	
+	function Wall (options) {
+		this.id = options.id || Wall.id;
+		this.name = options.name || this.name;
+		this.buffer = [];
+		this.counter = 0;
+
+		this.wall = node.window.getElement('pre', this.id);
+	}
+	
+	Wall.prototype.init = function (options) {
+		options = options || {};
+		this.counter = options.counter || this.counter;
+	};
+	
+	Wall.prototype.append = function (root) {
+		return root.appendChild(this.wall);
+	};
+	
+	Wall.prototype.getRoot = function () {
+		return this.wall;
+	};
+	
+	Wall.prototype.listeners = function() {
+		var that = this;	
+		node.on('LOG', function (msg) {
+			that.debuffer();
+			that.write(msg);
+		});
+	}; 
+	
+	Wall.prototype.write = function (text) {
+		if (document.readyState !== 'complete') {
+			this.buffer.push(s);
+		} else {
+			var mark = this.counter++ + ') ' + JSUS.getTime() + ' ';
+			this.wall.innerHTML = mark + text + "\n" + this.wall.innerHTML;
+		}
+	};
+
+	Wall.prototype.debuffer = function () {
+		if (document.readyState === 'complete' && this.buffer.length > 0) {
+			for (var i=0; i < this.buffer.length; i++) {
+				this.write(this.buffer[i]);
+			}
+			this.buffer = [];
+		}
 	};
 	
 })(node);
@@ -21370,643 +22255,6 @@ node.widgets = new Widgets();
 })(node);
 (function (node) {
 	
-	node.widgets.register('Chat', Chat);
-	
-	var J = node.JSUS,
-		W = node.window;	
-
-// ## Defaults
-	
-	Chat.defaults = {};
-	Chat.defaults.id = 'chat';
-	Chat.defaults.fieldset = { legend: 'Chat' };	
-	Chat.defaults.mode = 'MANY_TO_MANY'; 
-	Chat.defaults.textarea_id = 'chat_textarea';
-	Chat.defaults.chat_id = 'chat_chat';
-	Chat.defaults.chat_event = 'CHAT';
-	Chat.defaults.submit_id = 'chat_submit';
-	Chat.defaults.submit_text = 'chat';
-
-			
-// ## Meta-data
-	
-	// ### Chat.modes
-	// 	MANY_TO_MANY: everybody can see all the messages, and it possible
-	//    to send private messages
-	//  MANY_TO_ONE: everybody can see all the messages, private messages can
-	//    be received, but not sent
-	//  ONE_TO_ONE: everybody sees only personal messages, private messages can
-	//    be received, but not sent. All messages are sent to the SERVER
-	//  RECEIVER_ONLY: messages can only be received, but not sent
-	Chat.modes = { 
-			MANY_TO_MANY: 'MANY_TO_MANY',
-			MANY_TO_ONE: 'MANY_TO_ONE',
-			ONE_TO_ONE: 'ONE_TO_ONE',
-			RECEIVER_ONLY: 'RECEIVER_ONLY'
-	};
-	
-	Chat.name = 'Chat';
-	Chat.version = '0.4';
-	Chat.description = 'Offers a uni / bi-directional communication interface between players, or between players and the experimenter.';
-
-// ## Dependencies
-	
-	Chat.dependencies = {
-		JSUS: {}
-	};
-	
-	function Chat (options) {
-		this.id = options.id || Chat.id;
-		this.mode = options.mode || Chat.defaults.mode;
-		
-		this.root = null;
-		
-		this.textarea_id = options.textarea_id || Chat.defaults.textarea_id;
-		this.chat_id = options.chat_id || Chat.defaults.chat_id;
-		this.submit_id = options.submit_id || Chat.defaults.submit_id;
-		
-		this.chat_event = options.chat_event || Chat.defaults.chat_event;
-		this.submit_text = options.submit_text || Chat.defaults.submit_text;
-
-		this.submit = W.getEventButton(this.chat_event, this.submit_text, this.submit_id);
-		this.textarea = W.getElement('textarea', this.textarea_id);
-		this.chat = W.getElement('div', this.chat_id);
-		
-		if ('undefined' !== typeof options.displayName) {
-			this.displayName = options.displayName;
-		}
-		
-		switch(this.mode) {
-		
-		case Chat.modes.RECEIVER_ONLY:
-			this.recipient = {value: 'SERVER'};
-			break;
-		case Chat.modes.MANY_TO_ONE:
-			this.recipient = {value: 'ALL'};
-			break;
-		case Chat.modes.ONE_TO_ONE:
-			this.recipient = {value: 'SERVER'};
-			break;
-		default:
-			this.recipient = W.getRecipientSelector();
-		}
-	}
-	
-	
-	Chat.prototype.append = function (root) {
-		this.root = root;
-		root.appendChild(this.chat);
-		
-		if (this.mode !== Chat.modes.RECEIVER_ONLY) {	
-			W.writeln('', root);
-			root.appendChild(this.textarea);
-			W.writeln('', root);
-			root.appendChild(this.submit);
-			if (this.mode === Chat.modes.MANY_TO_MANY) {
-				root.appendChild(this.recipient);
-			}
-		}
-		return root;
-	};
-	
-	Chat.prototype.getRoot = function () {
-		return this.root;
-	};
-	
-	Chat.prototype.displayName = function(from) {
-		return from;
-	};
-	
-	Chat.prototype.readTA = function () {
-		var txt = this.textarea.value;
-		this.textarea.value = '';
-		return txt;
-	};
-	
-	Chat.prototype.writeTA = function (string, args) {
-		J.sprintf(string, args, this.chat);
-	    W.writeln('', this.chat);
-	    this.chat.scrollTop = this.chat.scrollHeight;
-	};
-	
-	Chat.prototype.listeners = function() {
-		var that = this;	
-		    
-	    node.on(this.chat_event, function () {
-	      var msg = that.readTA();
-	      if (!msg) return;
-	      
-	      var to = that.recipient.value;
-	      var args = {
-		        '%s': {
-		          'class': 'chat_me'
-		        },
-		        '%msg': {
-		          'class': 'chat_msg'
-		        },
-		        '!txt': msg
-	      };
-	      that.writeTA('%sMe%s: %msg!txt%msg', args);
-	      node.say(msg.trim(), that.chat_event, to);
-	    });
-		  
-		if (this.mode === Chat.modes.MANY_TO_MANY) {
-		    node.on('UPDATED_PLIST', function() {
-			      W.populateRecipientSelector(that.recipient, node.game.pl.fetch());
-		    });
-		}
-
-	    node.onDATA(this.chat_event, function (msg) {
-	    	if (msg.from === node.player.id || msg.from === node.player.sid) {
-	    		return;
-	    	}
-	    	
-	    	if (this.mode === Chat.modes.ONE_TO_ONE) { 
-		    	if (msg.from === this.recipient.value) {
-		    		return;
-		    	}
-	    	}
-	    	
-	    	
-	    	var from = that.displayName(msg.from);
-	    	var args = {
-		        '%s': {
-		          'class': 'chat_others'
-		        },
-		        '%msg': {
-		          'class': 'chat_msg'
-		        },
-		        '!txt': msg.data,
-	            '!from': from
-	      };
-	    	
-	      that.writeTA('%s!from%s: %msg!txt%msg', args);
-	    });
-	};
-	
-})(node);
-(function (node) {
-	
-	node.widgets.register('VisualTimer', VisualTimer);
-	
-	var JSUS = node.JSUS;
-
-// ## Defaults
-	
-	VisualTimer.defaults = {};
-	VisualTimer.defaults.id = 'visualtimer';
-	VisualTimer.defaults.fieldset = {
-			legend: 'Time left',
-			id: 'visualtimer_fieldset'
-	};		
-	
-// ## Meta-data
-	
-	VisualTimer.name = 'Visual Timer';
-	VisualTimer.version = '0.3.3';
-	VisualTimer.description = 'Display a timer for the game. Timer can trigger events. Only for countdown smaller than 1h.';
-	
-// ## Dependencies
-	
-	VisualTimer.dependencies = {
-		GameTimer : {},
-		JSUS: {}
-	};
-	
-	function VisualTimer (options) {
-		this.options = options;
-		this.id = options.id;
-
-		this.gameTimer = null;
-		
-		this.timerDiv = null;	// the DIV in which to display the timer
-		this.root = null;		// the parent element
-		
-		this.init(this.options);
-	}
-	
-	VisualTimer.prototype.init = function (options) {
-		options = options || this.options;
-		var that = this;
-		(function initHooks() {
-			if (options.hooks) {
-				if (!options.hooks instanceof Array) {
-					options.hooks = [options.hooks];
-				}
-			}
-			else {
-				options.hooks = [];
-			}
-			
-			options.hooks.push({hook: that.updateDisplay,
-								ctx: that
-			});
-		})();
-		
-		
-		this.gameTimer = (options.gameTimer) || new node.GameTimer();
-		
-		if (this.gameTimer) {
-			this.gameTimer.init(options);
-		}
-		else {
-			node.log('GameTimer object could not be initialized. VisualTimer will not work properly.', 'ERR');
-		}
-		
-		if (this.timerDiv) {
-			this.timerDiv.className = options.className || '';
-		}
-		
-	};
-	
-	VisualTimer.prototype.getRoot = function () {
-		return this.root;
-	};
-	
-	VisualTimer.prototype.append = function (root) {
-		this.root = root;
-		this.timerDiv = node.window.addDiv(root, this.id + '_div');
-		this.updateDisplay();
-		return root;	
-	};
-	
-	VisualTimer.prototype.updateDisplay = function () {
-		if (!this.gameTimer.milliseconds || this.gameTimer.milliseconds === 0) {
-			this.timerDiv.innerHTML = '00:00';
-			return;
-		}
-		var time = this.gameTimer.milliseconds - this.gameTimer.timePassed;
-		time = JSUS.parseMilliseconds(time);
-		var minutes = (time[2] < 10) ? '' + '0' + time[2] : time[2];
-		var seconds = (time[3] < 10) ? '' + '0' + time[3] : time[3];
-		this.timerDiv.innerHTML = minutes + ':' + seconds;
-	};
-	
-	VisualTimer.prototype.start = function() {
-		this.updateDisplay();
-		this.gameTimer.start();
-	};
-	
-	VisualTimer.prototype.restart = function (options) {
-		this.init(options);
-		this.start();
-	};
-	
-	VisualTimer.prototype.stop = function (options) {
-		this.gameTimer.stop();
-	};
-	
-	VisualTimer.prototype.resume = function (options) {
-		this.gameTimer.resume();
-	};
-		
-	VisualTimer.prototype.listeners = function () {
-		var that = this;
-		node.on('LOADED', function() {
-		    var stepObj = node.game.getCurrentStep();
-		    if (!stepObj) return;
-		    var timer = stepObj.timer;
-			if (timer) {
-				timer = JSUS.clone(timer);
-				that.timerDiv.className = '';
-				var options = {},
-					typeoftimer = typeof timer; 
-				switch (typeoftimer) {
-				
-					case 'number':
-						options.milliseconds = timer;
-						break;
-					case 'object':
-						options = timer;
-						break;
-					case 'function':
-						options.milliseconds = timer
-						break;
-					case 'string':
-						options.milliseconds = Number(timer);
-						break;
-				};
-			
-				if (!options.milliseconds) return;
-			
-				if ('function' === typeof options.milliseconds) {
-					options.milliseconds = options.milliseconds.call(node.game);
-				}
-				
-				if (!options.timeup) {
-					options.timeup = 'DONE';
-				}
-				
-				that.gameTimer.init(options);
-				that.start();
-			}
-		});
-		
-		node.on('DONE', function() {
-			// TODO: This should be enabled again
-			that.gameTimer.stop();
-			that.timerDiv.className = 'strike';
-		});
-	};
-	
-})(node);
-
-(function (node) {
-	
-	
-	// TODO: Introduce rules for update: other vs self
-	
-	node.widgets.register('NextPreviousState', NextPreviousState);
-	
-// ## Defaults
-	
-	NextPreviousState.defaults = {};
-	NextPreviousState.defaults.id = 'nextprevious';
-	NextPreviousState.defaults.fieldset = { legend: 'Rew-Fwd' };		
-	
-// ## Meta-data
-	
-	NextPreviousState.name = 'Next,Previous State';
-	NextPreviousState.version = '0.3.2';
-	NextPreviousState.description = 'Adds two buttons to push forward or rewind the state of the game by one step.';
-		
-	function NextPreviousState(options) {
-		this.id = options.id;
-	}
-	
-	NextPreviousState.prototype.getRoot = function () {
-		return this.root;
-	};
-	
-	NextPreviousState.prototype.append = function (root) {
-		var idRew = this.id + '_button';
-		var idFwd = this.id + '_button';
-		
-		var rew = node.window.addButton(root, idRew, '<<');
-		var fwd = node.window.addButton(root, idFwd, '>>');
-		
-		
-		var that = this;
-	
-		var updateState = function (state) {
-			if (state) {
-				var stateEvent = node.IN + node.action.SAY + '.STATE';
-				var stateMsg = node.msg.createSTATE(stateEvent, state);
-				// Self Update
-				node.emit(stateEvent, stateMsg);
-				
-				// Update Others
-				stateEvent = node.OUT + node.action.SAY + '.STATE';
-				node.emit(stateEvent, state, 'ALL');
-			}
-			else {
-				node.log('No next/previous state. Not sent', 'ERR');
-			}
-		};
-		
-		fwd.onclick = function() {
-			updateState(node.game.next());
-		};
-			
-		rew.onclick = function() {
-			updateState(node.game.previous());
-		};
-		
-		this.root = root;
-		return root;
-	};
-	
-})(node);
-(function (node) {
-	
-	node.widgets.register('Wall', Wall);
-	
-	var JSUS = node.JSUS;
-
-// ## Defaults
-	
-	Wall.defaults = {};
-	Wall.defaults.id = 'wall';
-	Wall.defaults.fieldset = { legend: 'Game Log' };		
-	
-// ## Meta-data
-	
-
-	Wall.name = 'Wall';
-	Wall.version = '0.3';
-	Wall.description = 'Intercepts all LOG events and prints them ';
-	Wall.description += 'into a DIV element with an ordinal number and a timestamp.';
-
-// ## Dependencies
-	
-	Wall.dependencies = {
-		JSUS: {}
-	};
-	
-	function Wall (options) {
-		this.id = options.id || Wall.id;
-		this.name = options.name || this.name;
-		this.buffer = [];
-		this.counter = 0;
-
-		this.wall = node.window.getElement('pre', this.id);
-	}
-	
-	Wall.prototype.init = function (options) {
-		options = options || {};
-		this.counter = options.counter || this.counter;
-	};
-	
-	Wall.prototype.append = function (root) {
-		return root.appendChild(this.wall);
-	};
-	
-	Wall.prototype.getRoot = function () {
-		return this.wall;
-	};
-	
-	Wall.prototype.listeners = function() {
-		var that = this;	
-		node.on('LOG', function (msg) {
-			that.debuffer();
-			that.write(msg);
-		});
-	}; 
-	
-	Wall.prototype.write = function (text) {
-		if (document.readyState !== 'complete') {
-			this.buffer.push(s);
-		} else {
-			var mark = this.counter++ + ') ' + JSUS.getTime() + ' ';
-			this.wall.innerHTML = mark + text + "\n" + this.wall.innerHTML;
-		}
-	};
-
-	Wall.prototype.debuffer = function () {
-		if (document.readyState === 'complete' && this.buffer.length > 0) {
-			for (var i=0; i < this.buffer.length; i++) {
-				this.write(this.buffer[i]);
-			}
-			this.buffer = [];
-		}
-	};
-	
-})(node);
-(function (node) {
-
-	var GameStage = node.GameStage,
-		PlayerList = node.PlayerList;
-	
-	
-	node.widgets.register('GameTable', GameTable);
-	
-// ## Defaults
-	
-	GameTable.defaults = {};
-	GameTable.defaults.id = 'gametable';
-	GameTable.defaults.fieldset = { 
-			legend: 'Game Table',
-			id: 'gametable_fieldset'
-	};
-	
-// ## Meta-data
-	
-	GameTable.name = 'Game Table';
-	GameTable.version = '0.2';
-	
-// ## Dependencies
-	
-	GameTable.dependencies = {
-		JSUS: {}
-	};
-	
-	function GameTable (options) {
-		this.options = options;
-		this.id = options.id;
-		this.name = options.name || GameTable.name;
-				
-		this.root = null;
-		this.gtbl = null;
-		this.plist = null;
-		
-		this.init(this.options);
-	}
-	
-	GameTable.prototype.init = function (options) {
-		
-		if (!this.plist) this.plist = new PlayerList();
-		
-		this.gtbl = new node.window.Table({
-											auto_update: true,
-											id: options.id || this.id,
-											render: options.render
-		}, node.game.memory.db);
-		
-		
-		this.gtbl.c('state', GameStage.compare);
-		
-		this.gtbl.setLeft([]);
-		
-		this.gtbl.parse(true);
-	};
-	
-
-	GameTable.prototype.addRenderer = function (func) {
-		return this.gtbl.addRenderer(func);
-	};
-	
-	GameTable.prototype.resetRender = function () {
-		return this.gtbl.resetRenderer();
-	};
-	
-	GameTable.prototype.removeRenderer = function (func) {
-		return this.gtbl.removeRenderer(func);
-	};
-	
-	GameTable.prototype.append = function (root) {
-		this.root = root;
-		root.appendChild(this.gtbl.table);
-		return root;
-	};
-	
-	GameTable.prototype.listeners = function () {
-		var that = this;
-		
-		node.onPLIST(function(msg) {	
-			if (!msg.data.length) return;
-			
-			//var diff = JSUS.arrayDiff(msg.data,that.plist.db);
-			var plist = new PlayerList({}, msg.data);
-			var diff = plist.diff(that.plist);
-			if (diff) {
-//				console.log('New Players found');
-//				console.log(diff);
-				diff.forEach(function(el){that.addPlayer(el);});
-			}
-
-			that.gtbl.parse(true);
-		});
-		
-		node.on('in.set.DATA', function (msg) {
-
-			that.addLeft(msg.state, msg.from);
-			var x = that.player2x(msg.from);
-			var y = that.state2y(node.game.state, msg.text);
-			
-			that.gtbl.add(msg.data, x, y);
-			that.gtbl.parse(true);
-		});
-	}; 
-	
-	GameTable.prototype.addPlayer = function (player) {
-		this.plist.add(player);
-		var header = this.plist.map(function(el){return el.name;});
-		this.gtbl.setHeader(header);
-	};
-	
-	GameTable.prototype.addLeft = function (state, player) {
-		if (!state) return;
-		state = new GameStage(state);
-		if (!JSUS.in_array({content:state.toString(), type: 'left'}, this.gtbl.left)){
-			this.gtbl.add2Left(state.toString());
-		}
-		// Is it a new display associated to the same state?
-		else {
-			var y = this.state2y(state);
-			var x = this.player2x(player);
-			if (this.gtbl.select('y','=',y).select('x','=',x).count() > 1) {
-				this.gtbl.add2Left(state.toString());
-			}
-		}
-			
-	};
-	
-	GameTable.prototype.player2x = function (player) {
-		if (!player) return false;
-		return this.plist.select('id', '=', player).first().count;
-	};
-	
-	GameTable.prototype.x2Player = function (x) {
-		if (!x) return false;
-		return this.plist.select('count', '=', x).first().count;
-	};
-	
-	GameTable.prototype.state2y = function (state) {
-		if (!state) return false;
-		return node.game.gameLoop.indexOf(state);
-	};
-	
-	GameTable.prototype.y2State = function (y) {
-		if (!y) return false;
-		return node.game.gameLoop.jumpTo(new GameStage(),y);
-	};
-	
-	
-
-})(node);
-
-(function (node) {
-	
 	// TODO: Introduce rules for update: other vs self
 	
 	node.widgets.register('StateBar', StateBar);	
@@ -22094,6 +22342,208 @@ node.widgets = new Widgets();
 		
 		this.root = root;
 		return root;
+	};
+	
+})(node);
+(function (node) {
+	
+	node.widgets.register('NDDBBrowser', NDDBBrowser);
+	
+	var JSUS = node.JSUS,
+		NDDB = node.NDDB,
+		TriggerManager = node.TriggerManager;
+
+// ## Defaults
+	
+	NDDBBrowser.defaults = {};
+	NDDBBrowser.defaults.id = 'nddbbrowser';
+	NDDBBrowser.defaults.fieldset = false;
+	
+// ## Meta-data
+	
+	NDDBBrowser.name = 'NDDBBrowser';
+	NDDBBrowser.version = '0.1.2';
+	NDDBBrowser.description = 'Provides a very simple interface to control a NDDB istance.';
+	
+// ## Dependencies
+	
+	NDDBBrowser.dependencies = {
+		JSUS: {},
+		NDDB: {},
+		TriggerManager: {}
+	};
+	
+	function NDDBBrowser (options) {
+		this.options = options;
+		this.nddb = null;
+		
+		this.commandsDiv = document.createElement('div');
+		this.id = options.id;
+		if ('undefined' !== typeof this.id) {
+			this.commandsDiv.id = this.id;
+		}
+		
+		this.info = null;
+		this.init(this.options);
+	}
+	
+	NDDBBrowser.prototype.init = function (options) {
+		
+		function addButtons() {
+			var id = this.id;
+			node.window.addEventButton(id + '_GO_TO_FIRST', '<<', this.commandsDiv, 'go_to_first');
+			node.window.addEventButton(id + '_GO_TO_PREVIOUS', '<', this.commandsDiv, 'go_to_previous');
+			node.window.addEventButton(id + '_GO_TO_NEXT', '>', this.commandsDiv, 'go_to_next');
+			node.window.addEventButton(id + '_GO_TO_LAST', '>>', this.commandsDiv, 'go_to_last');
+			node.window.addBreak(this.commandsDiv);
+		}
+		function addInfoBar() {
+			var span = this.commandsDiv.appendChild(document.createElement('span'));
+			return span;
+		}
+		
+		
+		addButtons.call(this);
+		this.info = addInfoBar.call(this);
+		
+		this.tm = new TriggerManager();
+		this.tm.init(options.triggers);
+		this.nddb = options.nddb || new NDDB({auto_update_pointer: true});
+	};
+	
+	NDDBBrowser.prototype.append = function (root) {
+		this.root = root;
+		root.appendChild(this.commandsDiv);
+		return root;
+	};
+	
+	NDDBBrowser.prototype.getRoot = function (root) {
+		return this.commandsDiv;
+	};
+	
+	NDDBBrowser.prototype.add = function (o) {
+		return this.nddb.insert(o);
+	};
+	
+	NDDBBrowser.prototype.sort = function (key) {
+		return this.nddb.sort(key);
+	};
+	
+	NDDBBrowser.prototype.addTrigger = function (trigger) {
+		return this.tm.addTrigger(trigger);
+	};
+	
+	NDDBBrowser.prototype.removeTrigger = function (trigger) {
+		return this.tm.removeTrigger(trigger);
+	};
+	
+	NDDBBrowser.prototype.resetTriggers = function () {
+		return this.tm.resetTriggers();
+	};
+	
+	NDDBBrowser.prototype.listeners = function() {
+		var that = this;
+		var id = this.id;
+		
+		function notification (el, text) {
+			if (el) {
+				node.emit(id + '_GOT', el);
+				this.writeInfo((this.nddb.nddb_pointer + 1) + '/' + this.nddb.length);
+			}
+			else {
+				this.writeInfo('No element found');
+			}
+		}
+		
+		node.on(id + '_GO_TO_FIRST', function() {
+			var el = that.tm.pullTriggers(that.nddb.first());
+			notification.call(that, el);
+		});
+		
+		node.on(id + '_GO_TO_PREVIOUS', function() {
+			var el = that.tm.pullTriggers(that.nddb.previous());
+			notification.call(that, el);
+		});
+		
+		node.on(id + '_GO_TO_NEXT', function() {
+			var el = that.tm.pullTriggers(that.nddb.next());
+			notification.call(that, el);
+		});
+
+		node.on(id + '_GO_TO_LAST', function() {
+			var el = that.tm.pullTriggers(that.nddb.last());
+			notification.call(that, el);
+			
+		});
+	};
+	
+	NDDBBrowser.prototype.writeInfo = function (text) {
+		if (this.infoTimeout) clearTimeout(this.infoTimeout);
+		this.info.innerHTML = text;
+		var that = this;
+		this.infoTimeout = setTimeout(function(){
+			that.info.innerHTML = '';
+		}, 2000);
+	};
+	
+	
+})(node);
+(function (node) {
+	
+	node.widgets.register('DataBar', DataBar);
+	
+// ## Defaults
+	DataBar.defaults = {};
+	DataBar.defaults.id = 'databar';
+	DataBar.defaults.fieldset = {	
+		legend: 'Send DATA to players'
+	};
+	
+// ## Meta-data
+	DataBar.name = 'Data Bar';
+	DataBar.version = '0.3';
+	DataBar.description = 'Adds a input field to send DATA messages to the players';
+		
+	function DataBar (options) {
+		this.bar = null;
+		this.root = null;
+		this.recipient = null;
+	}
+	
+	
+	DataBar.prototype.append = function (root) {
+		
+		var sendButton, textInput, dataInput;
+		
+		sendButton = W.addButton(root);
+		W.writeln('Text');
+		textInput = W.addTextInput(root, 'data-bar-text');
+		W.writeln('Data');
+		dataInput = W.addTextInput(root, 'data-bar-data');
+		
+		this.recipient = W.addRecipientSelector(root);
+		
+		var that = this;
+		
+		sendButton.onclick = function() {
+			
+			var to, data, text;
+			
+			to = that.recipient.value;
+			text = textInput.value;
+			data = dataInput.value;
+			
+			node.log('Parsed Data: ' + JSON.stringify(data));
+			
+			node.say(data, text, to);
+		};
+		
+		node.on('UPDATED_PLIST', function() {
+			node.window.populateRecipientSelector(that.recipient, node.game.pl);
+		});
+		
+		return root;
+		
 	};
 	
 })(node);
