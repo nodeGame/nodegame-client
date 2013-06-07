@@ -58,6 +58,12 @@
         <a href="#stager.defaultproperties">Stager.defaultProperties</a>
       </div>
       <div class="heading h3">
+        <a href="#stager.oninit">Stager.onInit</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.ongameover">Stager.onGameover</a>
+      </div>
+      <div class="heading h3">
         <a href="#stager.registergeneralnext">Stager.registerGeneralNext</a>
       </div>
       <div class="heading h3">
@@ -80,6 +86,18 @@
       </div>
       <div class="heading h3">
         <a href="#stager.getdefaultproperties">Stager.getDefaultProperties</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.setoninit">Stager.setOnInit</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.getoninit">Stager.getOnInit</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.setongameover">Stager.setOnGameover</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.getongameover">Stager.getOnGameover</a>
       </div>
       <div class="heading h3">
         <a href="#stager.addstep">Stager.addStep</a>
@@ -499,7 +517,53 @@ overridable by more specific version in step and stage objects.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">defaultProperties</span> <span class="o">=</span> <span class="p">{};</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">defaultProperties</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.oninit">
+  <h3>
+    <a href="#stager.oninit" class="pilcrow">&#182;</a>
+    Stager.onInit
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Initialization function</p>
+
+<p>This function is called as soon as the game is instantiated,
+i.e. at stage 0.0.0.</p>
+
+<p>Event listeners defined here stay valid throughout the whole
+game, unlike event listeners defined inside a function of the
+gameLoop, which are valid only within the specific function.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">onInit</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.ongameover">
+  <h3>
+    <a href="#stager.ongameover" class="pilcrow">&#182;</a>
+    Stager.onGameover
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Cleaning up function</p>
+
+<p>This function is called after the last stage of the gameLoop
+is terminated.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">onGameover</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
     <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
@@ -541,7 +605,7 @@ The callback given here is used to determine the next stage.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">registerGeneralNext</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">!==</span> <span class="nx">func</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">func</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;registerGeneralNext didn&#39;t receive function parameter&quot;</span><span class="p">);</span>
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">}</span>
@@ -661,7 +725,7 @@ Available only when nodegame is executed in <em>flexible</em> mode.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>Initial default:</p>
         </td>
@@ -875,6 +939,170 @@ Available only when nodegame is executed in <em>flexible</em> mode.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="stager.setoninit">
+  <h3>
+    <a href="#stager.setoninit" class="pilcrow">&#182;</a>
+    Stager.setOnInit
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets onInit function</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">func</span>
+      <span class="dox_type">function</span>
+      <span class="dox_type">null</span>
+      <span>The onInit function.
+ NULL can be given to signify non-existence.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE on success, FALSE on error</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.onInit
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setOnInit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">func</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;setOnInit didn&#39;t receive function parameter&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">onInit</span> <span class="o">=</span> <span class="nx">func</span><span class="p">;</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.getoninit">
+  <h3>
+    <a href="#stager.getoninit" class="pilcrow">&#182;</a>
+    Stager.getOnInit
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Gets onInit function</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">function</span>
+      <span class="dox_type">null</span>
+      <span>The onInit function.
+ NULL signifies non-existence.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.onInit
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getOnInit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">onInit</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.setongameover">
+  <h3>
+    <a href="#stager.setongameover" class="pilcrow">&#182;</a>
+    Stager.setOnGameover
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets onGameover function</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">func</span>
+      <span class="dox_type">function</span>
+      <span class="dox_type">null</span>
+      <span>The onGameover function.
+ NULL can be given to signify non-existence.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE on success, FALSE on error</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.onGameover
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setOnGameover</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">func</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;setOnGameover didn&#39;t receive function parameter&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">onGameover</span> <span class="o">=</span> <span class="nx">func</span><span class="p">;</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.getongameover">
+  <h3>
+    <a href="#stager.getongameover" class="pilcrow">&#182;</a>
+    Stager.getOnGameover
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Gets onGameover function</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">function</span>
+      <span class="dox_type">null</span>
+      <span>The onGameover function.
+ NULL signifies non-existence.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.onGameover
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getOnGameover</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">onGameover</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="stager.addstep">
   <h3>
     <a href="#stager.addstep" class="pilcrow">&#182;</a>
@@ -970,7 +1198,7 @@ containing only that step are added.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Handle wrapped steps:</p>
         </td>
@@ -1510,7 +1738,8 @@ callback returns TRUE.</p>
   <div class="body"><p>Sets the internal state of the Stager</p>
 
 <p>The passed state object can have the following fields:
-steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule
+steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule,
+defaultGlobals, defaultProperties, onInit, onGameover.
 All fields are optional.</p>
 
 <p>This function calls the corresponding functions to set these fields, and
@@ -1542,24 +1771,30 @@ performs error checking.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Clear previous state:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stateObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                <span class="s1">&#39;setState got invalid stateObj&#39;</span><span class="p">);</span>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>Add steps:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idx</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">idx</span><span class="p">]))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid steps&#39;</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
@@ -1568,7 +1803,7 @@ performs error checking.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>Add stages:
 first, handle all non-aliases (key of <code>stages</code> entry is same as <code>id</code> field of its value)</p>
@@ -1577,7 +1812,8 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
         <span class="nx">stageObj</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">stages</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idx</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stageObj</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid stages&#39;</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
@@ -1586,7 +1822,7 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>second, handle all aliases (key of <code>stages</code> entry is different from <code>id</code> field of its value)</p>
         </td>
@@ -1601,7 +1837,7 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Add sequence blocks:</p>
         </td>
@@ -1615,25 +1851,29 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
 
         <span class="k">case</span> <span class="s1">&#39;plain&#39;</span><span class="o">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid sequence&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
 
         <span class="k">case</span> <span class="s1">&#39;repeat&#39;</span><span class="o">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">repeat</span><span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">num</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid sequence&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
 
         <span class="k">case</span> <span class="s1">&#39;loop&#39;</span><span class="o">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">loop</span><span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">cb</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid sequence&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
 
         <span class="k">case</span> <span class="s1">&#39;doLoop&#39;</span><span class="o">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">doLoop</span><span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">cb</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid sequence&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
 
@@ -1643,11 +1883,12 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>Unknown type:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid sequence&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
         </td>
@@ -1655,13 +1896,14 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>Set general next-decider:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;generalNextFunction&#39;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">registerGeneralNext</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">generalNextFunction</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid general next-decider&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
         </td>
@@ -1669,14 +1911,15 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>Set specific next-deciders:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">nextFunctions</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">nextFunctions</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idx</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">registerNext</span><span class="p">(</span><span class="nx">idx</span><span class="p">,</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">nextFunctions</span><span class="p">[</span><span class="nx">idx</span><span class="p">]))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid specific next-deciders&#39;</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
@@ -1685,13 +1928,14 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>Set default step-rule:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultStepRule&#39;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setDefaultStepRule</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultStepRule</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid default step-rule&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
         </td>
@@ -1699,13 +1943,14 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Set default globals:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultGlobals&#39;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setDefaultGlobals</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultGlobals</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid default globals&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
         </td>
@@ -1713,13 +1958,44 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>Set default properties:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultProperties&#39;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setDefaultProperties</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultProperties</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid default properties&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+</div>
+<p>Set onInit:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;onInit&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setOnInit</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">onInit</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid onInit&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+</div>
+<p>Set onGameover:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;onGameover&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setOnGameover</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">onGameover</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid onGameover&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span></pre></div>
@@ -1740,7 +2016,7 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
 
 <p>Fields of returned object:
 steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule,
-defaultGlobals, defaultProperties</p>
+defaultGlobals, defaultProperties, onInit, onGameover.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
@@ -1766,7 +2042,9 @@ defaultGlobals, defaultProperties</p>
         <span class="nx">nextFunctions</span><span class="o">:</span>       <span class="k">this</span><span class="p">.</span><span class="nx">nextFunctions</span><span class="p">,</span>
         <span class="nx">defaultStepRule</span><span class="o">:</span>     <span class="k">this</span><span class="p">.</span><span class="nx">defaultStepRule</span><span class="p">,</span>
         <span class="nx">defaultGlobals</span><span class="o">:</span>      <span class="k">this</span><span class="p">.</span><span class="nx">defaultGlobals</span><span class="p">,</span>
-        <span class="nx">defaultProperties</span><span class="o">:</span>   <span class="k">this</span><span class="p">.</span><span class="nx">defaultProperties</span>
+        <span class="nx">defaultProperties</span><span class="o">:</span>   <span class="k">this</span><span class="p">.</span><span class="nx">defaultProperties</span><span class="p">,</span>
+        <span class="nx">onInit</span><span class="o">:</span>              <span class="k">this</span><span class="p">.</span><span class="nx">onInit</span><span class="p">,</span>
+        <span class="nx">onGameover</span><span class="o">:</span>          <span class="k">this</span><span class="p">.</span><span class="nx">onGameover</span>
     <span class="p">};</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -1774,7 +2052,7 @@ defaultGlobals, defaultProperties</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>DEBUG:  Run sequence.  Should be deleted later on.</p>
         </td>
@@ -1830,7 +2108,7 @@ defaultGlobals, defaultProperties</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>Get first stage:</p>
         </td>
@@ -1851,7 +2129,7 @@ defaultGlobals, defaultProperties</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>Get next stage:</p>
         </td>
@@ -1869,7 +2147,7 @@ defaultGlobals, defaultProperties</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
 </div>
 <p>Check stage validity:</p>
         </td>
@@ -1885,7 +2163,7 @@ defaultGlobals, defaultProperties</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
 </div>
 <p>DEBUG:  Run stage.  Should be deleted later on.</p>
         </td>
@@ -2017,7 +2295,7 @@ Steps objects are invalid.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
 <p>Check whether the referenced steps exist:</p>
         </td>
@@ -2088,7 +2366,7 @@ Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
 <p>Check ID validity:</p>
         </td>
@@ -2101,7 +2379,7 @@ Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
 </div>
 <p>Check uniqueness:</p>
         </td>
@@ -2117,7 +2395,7 @@ Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
 <p>Add alias:</p>
         </td>
