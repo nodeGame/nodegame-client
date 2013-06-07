@@ -7947,33 +7947,152 @@ EventEmitter.prototype.remove = function(type, listener) {
  *
  */
     function EventEmitterManager() {
-	this._ee = {};
+	this.ee = {};
+	this.createEE('ng');
+	this.createEE('game');
+	this.createEE('stage');
+	this.createEE('step');
+	
+	this.createEEGroup('game', 'step', 'stage', 'game');
+	this.createEEGroup('stage', 'stage', 'game');
     };
 
+    EventEmitterManager.prototype.createEEGroup = function(groupName) {
+	var len, that, args;
+	len = arguments.length, that = this;
+	
+	if (!len) {
+	    throw new Error('EEGroup needs a name and valid members');
+	}
+	if (len === 1) {
+	    throw new Error('EEGroup needs at least one member');
+	}
+	
+	// Checking if each ee exist
+	for (i = 1; i < len; i++) {
+	    if ('string' !== typeof arguments[i]) {
+		throw new TypeError('EventEmitter name must be a string');
+	    }
+	    if (!this.ee[arguments[i]]) {
+		throw new Error('non-existing EventEmitter in group ' + groupName + ': ' + arguments[i]);
+	    }
+	}
+	
+	// copying the args obj into an array;
+	args = new Array(len - 1);
+	for (i = 1; i < len; i++) {
+	    args[i - 1] = arguments[i];
+	}
+
+	switch (len) {
+	    // fast cases
+	case 2:
+	    this[groupName] = this.ee[args[0]];
+	    break;
+	case 3:
+	    this[groupName] = {
+		emit: function() {
+		    that.ee[args[0]].emit.apply(node.game, arguments);
+		    that.ee[args[1]].emit.apply(node.game, arguments);
+		},
+		on: this.ee[args[0]].on,
+		once: this.ee[args[1]].once,
+		clear: function() {
+		    debugger;
+		    that.ee[args[0]].clear();
+		    that.ee[args[1]].clear();
+		},
+		remove: function() {
+		    that.ee[args[0]].remove.apply(node.game, arguments);
+		    that.ee[args[1]].remove.apply(node.game, arguments);
+		},
+		printAll: function() {
+		    that.ee[args[0]].printAll();
+		    that.ee[args[1]].printAll();
+		}
+	    };
+	    break;
+	case 4:
+	    this[groupName] = {
+		emit: function() {
+		    that.ee[args[0]].emit.apply(node.game, arguments);
+		    that.ee[args[1]].emit.apply(node.game, arguments);
+		    that.ee[args[2]].emit.apply(node.game, arguments);
+		},
+		on: this.ee[args[0]].on,
+		once: this.ee[args[1]].once,
+		clear: function() {
+		    that.ee[args[0]].clear();
+		    that.ee[args[1]].clear();
+		    that.ee[args[2]].clear();
+		},
+		remove: function() {
+		    that.ee[args[0]].remove.apply(node.game, arguments);
+		    that.ee[args[1]].remove.apply(node.game, arguments);
+		    that.ee[args[2]].remove.apply(node.game, arguments);
+		},
+		printAll: function() {
+		    that.ee[args[0]].printAll();
+		    that.ee[args[1]].printAll();
+		    that.ee[args[2]].printAll();
+		}
+	    };
+	    break;
+	default:
+	    // slower
+	    len = args.len;
+	    this[groupName] = {
+		emit: function() {
+		    for (i = 0; i < len; i++) {
+			that.ee[args[i]].emit.apply(node.game, arguments);
+		    }
+		},
+		on: this.ee[args[0]].on,
+		once: this.ee[args[1]].once,
+		clear: function() {
+		    for (i = 0; i < len; i++) {
+			that.ee[args[i]].clear();
+		    }
+		   
+		},
+		remove: function() {
+		     for (i = 0; i < len; i++) {
+			that.ee[args[i]].remove.apply(node.game, arguments);
+		     }
+		},
+		printAll: function() {
+		    for (i = 0; i < len; i++) {
+			that.ee[args[i]].printAll();
+		    }
+		}
+	    };
+	}
+	return this[groupName];
+    };
+
+
     EventEmitterManager.prototype.createEE = function(name) {
-	// convenient reference
-	this[name] = new EventEmitter(name);
-	// collector
-	this._ee[name] = this[name];
-	return this[name];
+	this.ee[name] = new EventEmitter(name);
+	this[name] = this.ee[name];
+	return this.ee[name];
     };
 
     EventEmitterManager.prototype.destroyEE = function(name) {
 	var ee;
-	ee = this._ee[name];
+	ee = this.ee[name];
 	if (!ee) {
 	    node.warn('cannot destroy undefined EventEmitter');
 	    return false;
 	}
 	delete this[name];
-	delete this._ee[name];
+	delete this.ee[name];
     };
 
         
     EventEmitterManager.prototype.clear = function() {
-	for (i in this._ee) {
-	    if (this._ee.hasOwnProperty(i)) {
-		this._ee[i].clear();
+	for (i in this.ee) {
+	    if (this.ee.hasOwnProperty(i)) {
+		this.ee[i].clear();
 	    }
 	}
     };	
@@ -7987,9 +8106,9 @@ EventEmitter.prototype.remove = function(type, listener) {
 	    return false;
 	}
 
-	for (i in this._ee) {
-	    if (this._ee.hasOwnProperty(i)) {
-		this._ee[i].emit.apply(arguments);
+	for (i in this.ee) {
+	    if (this.ee.hasOwnProperty(i)) {
+		this.ee[i].emit.apply(node.game, arguments);
 	    }
 	}
     };
@@ -8007,9 +8126,9 @@ EventEmitter.prototype.remove = function(type, listener) {
 	    return false;
 	}
 	
-	for (i in this._ee) {
-	    if (this._ee.hasOwnProperty(i)) {
-		this._ee[i].remove(event, listener);
+	for (i in this.ee) {
+	    if (this.ee.hasOwnProperty(i)) {
+		this.ee[i].remove(event, listener);
 	    }
 	}
     };
@@ -12284,26 +12403,7 @@ function Game(settings) {
     this.observer = ('undefined' !== typeof settings.observer) ? settings.observer
         : false;
 
-    /**
-     * ### Game.auto_step
-     *
-     * If TRUE, automatically advances to the next state if all the players
-     * have completed the same state
-     *
-     * After a successful STAGEDONE event is fired, the client will automatically
-     * goes to the next function in the game-loop without waiting for a STATE
-     * message from the server.
-     *
-     * Depending on the configuration settings, it can still perform additional
-     * checkings (e.g.wheter the mininum number of players is connected)
-     * before stepping to the next state.
-     *
-     * Defaults: true
-     *
-     */
-    this.auto_step = ('undefined' !== typeof settings.auto_step) ? settings.auto_step
-        : true;
-
+  
     /**
      * ### Game.auto_wait
      *
@@ -12318,20 +12418,7 @@ function Game(settings) {
     this.auto_wait = ('undefined' !== typeof settings.auto_wait) ? settings.auto_wait
         : false;
 
-    /**
-     * ### Game.solo_mode
-     *
-     * If TRUE, automatically advances to the next state upon completion of a state
-     *
-     * After a successful DONE event is fired, the client will automatically
-     * goes to the next function in the game-loop without waiting for a STATE
-     * message from the server, or checking the STATE of the other players.
-     *
-     * Defaults: FALSE
-     *
-     */
-    this.solo_mode = ('undefined' !== typeof settings.solo_mode) ? settings.solo_mode
-        : false;
+  
 
 
     // TODO: check this
@@ -13912,7 +13999,7 @@ SessionManager.prototype.store = function() {
  * @param {object} p3 Optional. A parameter to be passed to the listener
  */	
     node.emit = function () {	
-	node.events.emit.apply(arguments);
+	node.events.emit.apply(node.game, arguments);
     };	
 	
 /**
@@ -14196,13 +14283,6 @@ SessionManager.prototype.store = function() {
     // Creating the objects
     // <!-- object commented in index.js -->
     node.events = new EventEmitterManager();
-    // Creating nodeGame engine EventEmitter
-    node.events.createEE('ng');
-    // Game 
-    node.events.createEE('game');
-    node.events.createEE('stage');
-    node.events.createEE('step');
-    
 
     node.msg = node.GameMsgGenerator;	
 	
