@@ -1678,6 +1678,34 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setDefaultStepRule</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultStepRule</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
         <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+</div>
+<p>Set default globals:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultGlobals&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setDefaultGlobals</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultGlobals</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+</div>
+<p>Set default properties:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultProperties&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setDefaultProperties</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultProperties</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -1696,7 +1724,8 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
   <div class="body"><p>Returns the internal state of the Stager</p>
 
 <p>Fields of returned object:
-steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule</p>
+steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule,
+defaultGlobals, defaultProperties</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
@@ -1720,7 +1749,9 @@ steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule</p>
         <span class="nx">sequence</span><span class="o">:</span>            <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">,</span>
         <span class="nx">generalNextFunction</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">generalNextFunction</span><span class="p">,</span>
         <span class="nx">nextFunctions</span><span class="o">:</span>       <span class="k">this</span><span class="p">.</span><span class="nx">nextFunctions</span><span class="p">,</span>
-        <span class="nx">defaultStepRule</span><span class="o">:</span>     <span class="k">this</span><span class="p">.</span><span class="nx">defaultStepRule</span>
+        <span class="nx">defaultStepRule</span><span class="o">:</span>     <span class="k">this</span><span class="p">.</span><span class="nx">defaultStepRule</span><span class="p">,</span>
+        <span class="nx">defaultGlobals</span><span class="o">:</span>      <span class="k">this</span><span class="p">.</span><span class="nx">defaultGlobals</span><span class="p">,</span>
+        <span class="nx">defaultProperties</span><span class="o">:</span>   <span class="k">this</span><span class="p">.</span><span class="nx">defaultProperties</span>
     <span class="p">};</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -1728,7 +1759,7 @@ steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>DEBUG:  Run sequence.  Should be deleted later on.</p>
         </td>
@@ -1784,7 +1815,7 @@ steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>Get first stage:</p>
         </td>
@@ -1805,7 +1836,7 @@ steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>Get next stage:</p>
         </td>
@@ -1823,7 +1854,7 @@ steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Check stage validity:</p>
         </td>
@@ -1839,7 +1870,7 @@ steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>DEBUG:  Run stage.  Should be deleted later on.</p>
         </td>
@@ -1971,7 +2002,7 @@ Steps objects are invalid.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>Check whether the referenced steps exist:</p>
         </td>
@@ -2042,7 +2073,7 @@ Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>Check ID validity:</p>
         </td>
@@ -2055,7 +2086,7 @@ Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
 </div>
 <p>Check uniqueness:</p>
         </td>
@@ -2071,7 +2102,7 @@ Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
 </div>
 <p>Add alias:</p>
         </td>

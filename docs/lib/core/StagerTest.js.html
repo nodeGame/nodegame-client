@@ -47,12 +47,14 @@
 
 <span class="kd">var</span> <span class="nx">stepWoop</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;woop&#39;</span><span class="p">,</span>
-    <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;woop woop!&quot;</span><span class="p">);</span> <span class="p">}</span>
+    <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;woop woop!&quot;</span><span class="p">);</span> <span class="p">},</span>
+    <span class="nx">globals</span><span class="o">:</span> <span class="p">{</span> <span class="nx">GLOB</span><span class="o">:</span> <span class="mi">42</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="kd">var</span> <span class="nx">stepBeep</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;beep&#39;</span><span class="p">,</span>
-    <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;beep beep!&quot;</span><span class="p">);</span> <span class="p">}</span>
+    <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;beep beep!&quot;</span><span class="p">);</span> <span class="p">},</span>
+    <span class="nx">myProp</span><span class="o">:</span> <span class="mi">23</span>
 <span class="p">};</span>
 
 <span class="kd">var</span> <span class="nx">stepDurr</span> <span class="o">=</span> <span class="p">{</span>
@@ -87,6 +89,8 @@
 <span class="nx">stager</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stepDurr</span><span class="p">);</span>
 <span class="nx">stager</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stepBlah</span><span class="p">);</span>
 <span class="nx">stager</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stageMain</span><span class="p">);</span>
+<span class="nx">stager</span><span class="p">.</span><span class="nx">setDefaultGlobals</span><span class="p">({</span><span class="nx">GLOB</span><span class="o">:</span> <span class="mf">3.14</span><span class="p">});</span>
+<span class="nx">stager</span><span class="p">.</span><span class="nx">setDefaultProperties</span><span class="p">({</span><span class="nx">myProp</span><span class="o">:</span> <span class="mi">1</span><span class="p">});</span>
 
 <span class="kd">var</span> <span class="nx">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 <span class="kd">var</span> <span class="nx">flag</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
