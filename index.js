@@ -103,7 +103,7 @@ node.game.memory = null;
  * 
  * @see node.GameState
  */
-node.game.state = null;
+node.game.stateLevel = null;
 
 
 /**
@@ -114,7 +114,7 @@ node.game.state = null;
  * 
  * @see shelf.js
  */
-node.store		= function() {};
+node.store = function() {};
 
 
 /**
@@ -125,7 +125,7 @@ node.store		= function() {};
  * 
  * @see Setup
  */
-node.setup		= function() {};
+node.setup = function() {};
 
 
 /**
@@ -142,7 +142,7 @@ node.conf = {};
  * 
  * A collection of features that are supported by the current browser
  */
-node.support	= {};
+node.support = {};
 
 
 // ## Dependencies 
@@ -151,17 +151,17 @@ node.support	= {};
 if ('object' === typeof module && 'function' === typeof require) {
 	// <!-- Node.js -->
 	
-	require('./lib/modules/log.js');
-	require('./lib/modules/variables.js');
-	
-	require('./init.node.js');
+    require('./lib/modules/log.js');
+    require('./lib/modules/variables.js');
+    
+    require('./init.node.js');
     require('./lib/nodegame.js');
-
+    
     require('./lib/modules/fs.js');
     require('./lib/modules/setup.js');
-	require('./lib/modules/alias.js');
-	require('./lib/modules/random.js');
-	require('./lib/modules/stepper.js');
+    require('./lib/modules/alias.js');
+    require('./lib/modules/random.js');
+    require('./lib/modules/stepper.js');
     
     // ### Loading Sockets
     require('./lib/sockets/SocketIo.js');
@@ -173,12 +173,12 @@ if ('object' === typeof module && 'function' === typeof require) {
     require('./listeners/outgoing.js');
 }
 else {
-	// <!-- Browser -->
-	if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
-	if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
-	if ('undefined' !== typeof store) node.store = store;
-	
-	node.support = JSUS.compatibility();
+    // <!-- Browser -->
+    if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
+    if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
+    if ('undefined' !== typeof store) node.store = store;
+    
+    node.support = JSUS.compatibility();
 }
 	
 })('object' === typeof module ? module.exports : (window.node = {}));	
