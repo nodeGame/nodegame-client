@@ -9653,6 +9653,31 @@ Stager.prototype.clear = function() {
      */
     this.defaultProperties = {};
 
+
+    /**
+     * ### Stager.onInit
+     *
+     * Initialization function
+     *
+     * This function is called as soon as the game is instantiated,
+     * i.e. at stage 0.0.0.
+     *
+     * Event listeners defined here stay valid throughout the whole
+     * game, unlike event listeners defined inside a function of the
+     * gameLoop, which are valid only within the specific function.
+     */
+    this.onInit = null;
+
+    /**
+     * ### Stager.onGameover
+     *
+     * Cleaning up function
+     *
+     * This function is called after the last stage of the gameLoop
+     * is terminated.
+     */
+    this.onGameover = null;
+
     return this;
 };
 
@@ -9671,7 +9696,7 @@ Stager.prototype.clear = function() {
  * @return {boolean} TRUE on success, FALSE on error
  */
 Stager.prototype.registerGeneralNext = function(func) {
-    if (null !== func && 'function' !== typeof func) {
+    if (func !== null && 'function' !== typeof func) {
         node.warn("registerGeneralNext didn't receive function parameter");
         return false;
     }
@@ -9822,6 +9847,78 @@ Stager.prototype.setDefaultProperties = function(defaultProperties) {
  */
 Stager.prototype.getDefaultProperties = function() {
     return this.defaultProperties;
+};
+
+/**
+ * ### Stager.setOnInit
+ *
+ * Sets onInit function
+ *
+ * @param {function|null} func The onInit function.
+ *  NULL can be given to signify non-existence.
+ *
+ * @return {boolean} TRUE on success, FALSE on error
+ *
+ * @see Stager.onInit
+ */
+Stager.prototype.setOnInit = function(func) {
+    if (func !== null && 'function' !== typeof func) {
+        node.warn("setOnInit didn't receive function parameter");
+        return false;
+    }
+
+    this.onInit = func;
+    return true;
+};
+
+/**
+ * ### Stager.getOnInit
+ *
+ * Gets onInit function
+ *
+ * @return {function|null} The onInit function.
+ *  NULL signifies non-existence.
+ *
+ * @see Stager.onInit
+ */
+Stager.prototype.getOnInit = function(func) {
+    return this.onInit;
+};
+
+/**
+ * ### Stager.setOnGameover
+ *
+ * Sets onGameover function
+ *
+ * @param {function|null} func The onGameover function.
+ *  NULL can be given to signify non-existence.
+ *
+ * @return {boolean} TRUE on success, FALSE on error
+ *
+ * @see Stager.onGameover
+ */
+Stager.prototype.setOnGameover = function(func) {
+    if (func !== null && 'function' !== typeof func) {
+        node.warn("setOnGameover didn't receive function parameter");
+        return false;
+    }
+
+    this.onGameover = func;
+    return true;
+};
+
+/**
+ * ### Stager.getOnGameover
+ *
+ * Gets onGameover function
+ *
+ * @return {function|null} The onGameover function.
+ *  NULL signifies non-existence.
+ *
+ * @see Stager.onGameover
+ */
+Stager.prototype.getOnGameover = function(func) {
+    return this.onGameover;
 };
 
 /**
@@ -10313,6 +10410,20 @@ Stager.prototype.setState = function(stateObj) {
             throw new node.NodeGameMisconfiguredGameError();
         }
     }
+
+    // Set onInit:
+    if (stateObj.hasOwnProperty('onInit')) {
+        if (!this.setOnInit(stateObj.onInit)) {
+            throw new node.NodeGameMisconfiguredGameError();
+        }
+    }
+
+    // Set onGameover:
+    if (stateObj.hasOwnProperty('onGameover')) {
+        if (!this.setOnGameover(stateObj.onGameover)) {
+            throw new node.NodeGameMisconfiguredGameError();
+        }
+    }
 };
 
 /**
@@ -10322,7 +10433,7 @@ Stager.prototype.setState = function(stateObj) {
  *
  * Fields of returned object:
  * steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule,
- * defaultGlobals, defaultProperties
+ * defaultGlobals, defaultProperties, onInit, onGameover
  *
  * @return {object} The Stager's state
  *
@@ -10337,7 +10448,9 @@ Stager.prototype.getState = function() {
         nextFunctions:       this.nextFunctions,
         defaultStepRule:     this.defaultStepRule,
         defaultGlobals:      this.defaultGlobals,
-        defaultProperties:   this.defaultProperties
+        defaultProperties:   this.defaultProperties,
+        onInit:              this.onInit,
+        onGameover:          this.onGameover
     };
 };
 
@@ -12751,12 +12864,15 @@ function Game(settings) {
     // TODO: check how to init
     this.setCurrentGameStage(new GameStage());
 
+
+    // TODO:  Remove once possible:
+    this.init = function() { this.gameLoop.plot.onInit.apply(node.game, arguments); };
+    this.gameover = function() { this.gameLoop.plot.onGameover.apply(node.game, arguments); };
+
     // Update the init function if one is passed
     if (settings.init) {
         this.init = function() {
-            this.setStateLevel(Game.stateLevels.INITIALIZING);
             settings.init.call(node.game);
-            this.setStateLevel(Game.stateLevels.INITIALIZED);
         };
     }
 
@@ -12766,35 +12882,6 @@ function Game(settings) {
 } // <!-- ends constructor -->
 
 // ## Game methods
-
-/**
- * ### Game.init
- *
- * Initialization function
- *
- * This function is called as soon as the game is instantiated,
- * i.e. at stage 0.0.0.
- *
- * Event listeners defined here stay valid throughout the whole
- * game, unlike event listeners defined inside a function of the
- * gameLoop, which are valid only within the specific function.
- *
- */
-Game.prototype.init = function() {
-    this.setStateLevel(Game.stateLevels.INITIALIZING);
-    this.setStateLevel(Game.stateLevels.INITIALIZED);
-};
-
-/**
- * ### Game.gameover
- *
- * Cleaning up function
- *
- * This function is called after the last stage of the gameLoop
- * is terminated
- *
- */
-Game.prototype.gameover = function() {};
 
 /**
  * ### Game.start
@@ -12812,8 +12899,22 @@ Game.prototype.gameover = function() {};
  *
  */
 Game.prototype.start = function() {
+    var onInit;
+
+    if (this.getStateLevel() > Game.stateLevels.UNINITIALIZED) {
+        node.warn('start called while game already running');
+        return;
+    }
+
     // INIT the game
-    this.init();
+    onInit = this.gameLoop.plot.getOnInit();
+    if (onInit) {
+        this.setStateLevel(Game.stateLevels.INITIALIZING);
+        onInit.call(node.game);
+    }
+    this.setStateLevel(Game.stateLevels.INITIALIZED);
+
+    this.setCurrentGameStage(new GameStage());
     this.step();
 
     node.log('game started');
@@ -12882,6 +12983,7 @@ Game.prototype.shouldStep = function() {
 Game.prototype.step = function() {
     var nextStep, curStep;
     var nextStepObj, nextStageObj;
+    var onGameover;
     var ev;
 
     curStep = this.getCurrentGameStage();
@@ -12893,7 +12995,17 @@ Game.prototype.step = function() {
     if ('string' === typeof nextStep) {
         if (nextStep === GameLoop.GAMEOVER) {
             node.emit('GAMEOVER');
-            return this.gameover(); // can throw Errors
+
+            // Call gameover callback, if it exists:
+            onGameover = this.gameLoop.plot.getOnGameover();
+            if (onGameover) {
+                // Can throw errors:
+                return onGameover.call(node.game);
+            }
+            else {
+                // TODO: Is this correct?
+                return null;
+            }
         }
 
         // else do nothing
@@ -14245,8 +14357,8 @@ SessionManager.prototype.store = function() {
  * @param {object} game The game object
  */	
     node.play = function(game) {	
-	if (game) node.setup.game(game);	
-	node.game.start();
+        if (game) node.setup.game(game);	
+        node.game.start();
     };
 	
 /**
@@ -14257,8 +14369,8 @@ SessionManager.prototype.store = function() {
  * @param {boolean} rest TRUE, to erase the game memory before update the game stage
  */	
     node.replay = function (reset) {
-	if (reset) node.game.memory.clear(true);
-	node.game.execStage(node.gameLoop.getStep("1.1.1"));
+        if (reset) node.game.memory.clear(true);
+        node.game.execStep(node.gameLoop.getStep("1.1.1"));
     };	
 	
 	
