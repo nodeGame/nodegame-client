@@ -528,8 +528,8 @@ The callback given here is used to determine the next stage.</p>
       <span class="dox_type">function</span>
       <span class="dox_type">null</span>
       <span>The decider callback.  It should return the name of
- the next stage, 'NODEGAME_GAMEOVER' to end the game or false for sequence end.
- Null can be given to signify non-existence.</span>
+ the next stage, 'NODEGAME_GAMEOVER' to end the game or FALSE for sequence end.
+ NULL can be given to signify non-existence.</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -579,7 +579,7 @@ Available only when nodegame is executed in <em>flexible</em> mode.</p>
       <span class="dox_tag_name">func</span>
       <span class="dox_type">function</span>
       <span>The decider callback.  It should return the name of
- the next stage, 'NODEGAME_GAMEOVER' to end the game or false for sequence end.</span>
+ the next stage, 'NODEGAME_GAMEOVER' to end the game or FALSE for sequence end.</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -1083,7 +1083,7 @@ in the sequence.</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">Stager</span>
       <span class="dox_type">null</span>
-      <span>this object on success, null on error</span>
+      <span>this object on success, NULL on error</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -1140,7 +1140,7 @@ in the sequence.</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">Stager</span>
       <span class="dox_type">null</span>
-      <span>this object on success, null on error</span>
+      <span>this object on success, NULL on error</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -1159,6 +1159,11 @@ in the sequence.</p>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">stageName</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;repeat received invalid stage name&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">nRepeats</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;repeat received invalid number of repetitions&#39;</span><span class="p">);</span>
         <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span>
 
@@ -1185,8 +1190,8 @@ in the sequence.</p>
   </div>
   <div class="body"><p>Adds looped stage block to sequence</p>
 
-<p>The given stage will be repeated as long as the <code>func</code> callback returns true.
-If it returns false on the first time, the stage is never executed.</p>
+<p>The given stage will be repeated as long as the <code>func</code> callback returns TRUE.
+If it returns FALSE on the first time, the stage is never executed.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1198,14 +1203,14 @@ If it returns false on the first time, the stage is never executed.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">func</span>
       <span class="dox_type">function</span>
-      <span>Callback returning true for repetition</span>
+      <span>Callback returning TRUE for repetition</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">Stager</span>
       <span class="dox_type">null</span>
-      <span>this object on success, null on error</span>
+      <span>this object on success, NULL on error</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -1228,6 +1233,11 @@ If it returns false on the first time, the stage is never executed.</p>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">stageName</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;loop received invalid stage name&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;loop received invalid callback&#39;</span><span class="p">);</span>
         <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span>
 
@@ -1255,7 +1265,7 @@ If it returns false on the first time, the stage is never executed.</p>
   <div class="body"><p>Adds alternatively looped stage block to sequence</p>
 
 <p>The given stage will be repeated once plus as many times as the <code>func</code>
-callback returns true.</p>
+callback returns TRUE.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1267,14 +1277,14 @@ callback returns true.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">func</span>
       <span class="dox_type">function</span>
-      <span>Callback returning true for repetition</span>
+      <span>Callback returning TRUE for repetition</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">Stager</span>
       <span class="dox_type">null</span>
-      <span>this object on success, null on error</span>
+      <span>this object on success, NULL on error</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -1297,6 +1307,11 @@ callback returns true.</p>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">stageName</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;doLoop received invalid stage name&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;doLoop received invalid callback&#39;</span><span class="p">);</span>
         <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span>
 
@@ -1338,7 +1353,7 @@ callback returns true.</p>
       <span class="dox_type">array</span>
       <span class="dox_type">object</span>
       <span class="dox_type">null</span>
-      <span>The stage sequence in requested format. Null on error.</span>
+      <span>The stage sequence in requested format. NULL on error.</span>
     </div>
   </div>
 </div>
@@ -1381,7 +1396,7 @@ callback returns true.</p>
 
                 <span class="k">default</span><span class="o">:</span>
                     <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;unknown sequence object type&#39;</span><span class="p">);</span>
-                    <span class="k">break</span><span class="p">;</span>
+                    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1426,7 +1441,7 @@ callback returns true.</p>
 
                 <span class="k">default</span><span class="o">:</span>
                     <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;unknown sequence object type&#39;</span><span class="p">);</span>
-                    <span class="k">break</span><span class="p">;</span>
+                    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1470,7 +1485,7 @@ callback returns true.</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">array</span>
       <span class="dox_type">null</span>
-      <span>The steps in the stage. Null on invalid stage.</span>
+      <span>The steps in the stage. NULL on invalid stage.</span>
     </div>
   </div>
 </div>
@@ -1926,7 +1941,7 @@ defaultGlobals, defaultProperties</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">bool</span>
-      <span>true for valid step objects, false otherwise</span>
+      <span>TRUE for valid step objects, FALSE otherwise</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -1978,7 +1993,7 @@ Steps objects are invalid.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">bool</span>
-      <span>true for valid stage objects, false otherwise</span>
+      <span>TRUE for valid stage objects, FALSE otherwise</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -2045,7 +2060,7 @@ Checks whether parameter is valid and unique.</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
       <span class="dox_type">null</span>
-      <span>null on error,
+      <span>NULL on error,
  the alias part of the parameter if it exists,
  the stageID part otherwise</span>
     </div>
