@@ -9560,9 +9560,22 @@ Stager.prototype.clear = function() {
      * overridable by more specific version in step and stage objects.
      *
      * @see Stager.setDefaultGlobals
-     * @see Game.getGlobal
+     * @see GameLoop.getGlobal
      */
     this.defaultGlobals = {};
+
+    /**
+     * ### Stager.defaultProperties
+     *
+     * Defaults of properties
+     *
+     * This map holds the default values of properties. These values are
+     * overridable by more specific version in step and stage objects.
+     *
+     * @see Stager.setDefaultProperties
+     * @see GameLoop.getProperty
+     */
+    this.defaultProperties = {};
 
     return this;
 };
@@ -9670,11 +9683,19 @@ Stager.prototype.getDefaultStepRule = function() {
  *
  * @param {object} defaultGlobals The map of default global variables
  *
+ * @return {boolean} TRUE on success, FALSE on error
+ *
  * @see Stager.defaultGlobals
- * @see Game.getGlobal
+ * @see GameLoop.getGlobal
  */
 Stager.prototype.setDefaultGlobals = function(defaultGlobals) {
+    if (!defaultGlobals || 'object' !== typeof defaultGlobals) {
+        node.warn("setDefaultGlobals didn't receive object parameter");
+        return false;
+    }
+
     this.defaultGlobals = defaultGlobals;
+    return true;
 };
 
 /**
@@ -9685,10 +9706,46 @@ Stager.prototype.setDefaultGlobals = function(defaultGlobals) {
  * @return {object} The map of default global variables
  *
  * @see Stager.defaultGlobals
- * @see Game.getGlobal
+ * @see GameLoop.getGlobal
  */
 Stager.prototype.getDefaultGlobals = function() {
     return this.defaultGlobals;
+};
+
+/**
+ * ### Stager.setDefaultProperties
+ *
+ * Sets the default properties
+ *
+ * @param {object} defaultProperties The map of default properties
+ *
+ * @return {boolean} TRUE on success, FALSE on error
+ *
+ * @see Stager.defaultProperties
+ * @see GameLoop.getProperty
+ */
+Stager.prototype.setDefaultProperties = function(defaultProperties) {
+    if (!defaultProperties || 'object' !== typeof defaultProperties) {
+        node.warn("setDefaultProperties didn't receive object parameter");
+        return false;
+    }
+
+    this.defaultProperties = defaultProperties;
+    return true;
+};
+
+/**
+ * ### Stager.getDefaultProperties
+ *
+ * Returns the default properties
+ *
+ * @return {object} The map of default properties
+ *
+ * @see Stager.defaultProperties
+ * @see GameLoop.getProperty
+ */
+Stager.prototype.getDefaultProperties = function() {
+    return this.defaultProperties;
 };
 
 /**
@@ -10898,6 +10955,111 @@ GameLoop.prototype.getStepRule = function(gameStage) {
     // TODO: Use first line once possible (serialization issue):
     //return this.plot.getDefaultStepRule();
     return this.plot.defaultStepRule;
+};
+
+/**
+ * ### GameLoop.getGlobal
+ *
+ * Looks up the value of a global variable
+ *
+ * Looks for definitions of a global variable in
+ *
+ * 1. the globals property of the step object of the given gameStage,
+ *
+ * 2. the globals property of the stage object of the given gameStage,
+ *
+ * 3. the defaults, defined in the Stager.
+ *
+ * @param {GameStage|string} gameStage The GameStage object,
+ *  or its string representation
+ * @param {string} globalVar The name of the global variable
+ *
+ * @return {object|null} The value of the global variable if found,
+ *   NULL otherwise.
+ */
+GameLoop.prototype.getGlobal = function(gameStage, globalVar) {
+    var stepObj, stageObj;
+    var stepGlobals, stageGlobals, defaultGlobals;
+
+    gameStage = new GameStage(gameStage);
+
+    // Look in current step:
+    stepObj = this.getStep(gameStage);
+    if (stepObj) {
+        stepGlobals = stepObj.globals;
+        if (stepGlobals && stepGlobals.hasOwnProperty(globalVar)) {
+            return stepGlobals[globalVar];
+        }
+    }
+
+    // Look in current stage:
+    stageObj = this.getStage(gameStage);
+    if (stageObj) {
+        stageGlobals = stageObj.globals;
+        if (stageGlobals && stageGlobals.hasOwnProperty(globalVar)) {
+            return stageGlobals[globalVar];
+        }
+    }
+
+    // Look in Stager's defaults:
+    if (this.plot) {
+        defaultGlobals = this.plot.getDefaultGlobals();
+        if (defaultGlobals && defaultGlobals.hasOwnProperty(globalVar)) {
+            return defaultGlobals[globalVar];
+        }
+    }
+
+    // Not found:
+    return null;
+};
+
+/**
+ * ### GameLoop.getProperty
+ *
+ * Looks up the value of a property
+ *
+ * Looks for definitions of a property in
+ *
+ * 1. the step object of the given gameStage,
+ *
+ * 2. the stage object of the given gameStage,
+ *
+ * 3. the defaults, defined in the Stager.
+ *
+ * @param {GameStage|string} gameStage The GameStage object,
+ *  or its string representation
+ * @param {string} property The name of the property
+ *
+ * @return {object|null} The value of the property if found, NULL otherwise.
+ */
+GameLoop.prototype.getProperty = function(gameStage, property) {
+    var stepObj, stageObj;
+    var defaultProps;
+
+    gameStage = new GameStage(gameStage);
+
+    // Look in current step:
+    stepObj = this.getStep(gameStage);
+    if (stepObj && stepObj.hasOwnProperty(property)) {
+        return stepObj[property];
+    }
+
+    // Look in current stage:
+    stageObj = this.getStage(gameStage);
+    if (stageObj && stageObj.hasOwnProperty(property)) {
+        return stageObj[property];
+    }
+
+    // Look in Stager's defaults:
+    if (this.plot) {
+        defaultProps = this.plot.getDefaultProperties();
+        if (defaultProps && defaultProps.hasOwnProperty(property)) {
+            return defaultProps[property];
+        }
+    }
+
+    // Not found:
+    return null;
 };
 
 /**
@@ -12717,61 +12879,6 @@ Game.prototype.publishUpdate = function() {
         var stateEvent = node.OUT + action.SAY + '.STATE';
         node.emit(stateEvent, this.getStateLevel(), 'ALL');
     }
-};
-
-/**
- * ### Game.getGlobal
- *
- * Looks up the value of a global variable
- *
- * Looks for definitions of a global variable in
- *
- * 1. the current step object,
- *
- * 2. the current stage object,
- *
- * 3. the defaults, defined in the Stager.
- *
- * @param {string} global The name of the global variable
- *
- * @return {object|null} The value of the global variable if found,
- *   NULL otherwise.
- */
-Game.prototype.getGlobal = function(globalVar) {
-    var curGameStage;
-    var stepObj, stageObj;
-    var stepGlobals, stageGlobals, defaultGlobals;
-
-    curGameStage = this.getCurrentGameStage();
-
-    // Look in current step:
-    stepObj = this.gameLoop.getStep(curGameStage);
-    if (stepObj) {
-        stepGlobals = stepObj.globals;
-        if (stepGlobals && stepGlobals.hasOwnProperty(globalVar)) {
-            return stepGlobals[globalVar];
-        }
-    }
-
-    // Look in current stage:
-    stageObj = this.gameLoop.getStage(curGameStage);
-    if (stageObj) {
-        stageGlobals = stageObj.globals;
-        if (stageGlobals && stageGlobals.hasOwnProperty(globalVar)) {
-            return stageGlobals[globalVar];
-        }
-    }
-
-    // Look in Stager's defaults:
-    if (this.gameLoop.plot) {
-        defaultGlobals = this.gameLoop.plot.getDefaultGlobals();
-        if (defaultGlobals && defaultGlobals.hasOwnProperty(globalVar)) {
-            return defaultGlobals[globalVar];
-        }
-    }
-
-    // Not found:
-    return null;
 };
 
 /**
