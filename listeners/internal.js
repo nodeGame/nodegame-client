@@ -6,57 +6,20 @@
 
 (function (node) {
 
-	if (!node) {
-		console.log('nodeGame not found. Cannot add internal listeners');
-		return false;
-	}
+    
 	
-	var action = node.action,
-		target = node.target;
+    var action = node.action,
+        target = node.target;
 	
-	var GameMsg = node.GameMsg,
-		GameStage = node.GameStage,
-		Game = node.Game;
-	
-	var say = action.SAY + '.',
-		set = action.SET + '.',
-		get = action.GET + '.',
-		IN  = node.IN,
-		OUT = node.OUT;
-	
-/**
- * ## STAGEDONE
- * 
- * Fired when all the players in the player list are DONE
- */ 
-node.events.ng.on('STAGEDONE', function() {
-	
-	// In single player mode we ignore when all the players have completed the stage
-	if (node.game.solo_mode) {
-		return;
-	}
-	
-	// <!-- If we go auto -->
-	if (node.game.auto_step && !node.game.observer) {
-		node.log('We play AUTO', 'DEBUG');
-		var morePlayers = ('undefined' !== typeof node.game.minPlayers) ? node.game.minPlayers - node.game.pl.count() : 0 ;
-		node.log('Additional player required: ' + morePlayers > 0 ? MorePlayers : 0, 'DEBUG');
-		
-		if (morePlayers > 0) {
-			node.emit(OUT + say + target.TXT, morePlayers + ' player/s still needed to play the game');
-			node.log(morePlayers + ' player/s still needed to play the game');
-		}
-		// TODO: differentiate between before the game starts and during the game
-		else {
-			node.emit(OUT + say + target.TXT, node.game.minPlayers + ' players ready. Game can proceed');
-			node.log(node.game.pl.count() + ' players ready. Game can proceed');
-			node.game.step();
-		}
-	}
-	else {
-		node.log('Waiting for monitor to step', 'DEBUG');
-	}
-});
+    var GameMsg = node.GameMsg,
+        GameStage = node.GameStage,
+        Game = node.Game;
+    
+    var say = action.SAY + '.',
+        set = action.SET + '.',
+        get = action.GET + '.',
+	IN  = node.IN,
+        OUT = node.OUT;
 
 /**
  * ## DONE
@@ -104,7 +67,7 @@ node.events.ng.on('DONE', function(p1, p2, p3) {
  * @emit LOADED
  */
 node.events.ng.on('WINDOW_LOADED', function() {
-	if (node.game.ready) node.emit('LOADED');
+    if (node.game.isReady()) node.emit('LOADED');
 });
 
 /**
@@ -116,7 +79,7 @@ node.events.ng.on('WINDOW_LOADED', function() {
  * @emit LOADED
  */
 node.events.ng.on('GAME_LOADED', function() {
-	if (node.game.ready) node.emit('LOADED');
+    if (node.game.isReady()) node.emit('LOADED');
 });
 
 /**
@@ -125,12 +88,12 @@ node.events.ng.on('GAME_LOADED', function() {
  * 
  */
 node.events.ng.on('LOADED', function() {
-	node.emit('BEFORE_LOADING');
-	node.game.setStageLevel(Game.stageLevels.PLAYING);
-	//TODO: the number of messages to emit to inform other players
-	// about its own stage should be controlled. Observer is 0 
-	//node.game.publishUpdate();
-	node.socket.clearBuffer();
+    node.emit('BEFORE_LOADING');
+    node.game.setStageLevel(Game.stageLevels.PLAYING);
+    //TODO: the number of messages to emit to inform other players
+    // about its own stage should be controlled. Observer is 0 
+    //node.game.publishUpdate();
+    node.socket.clearBuffer();
 	
 });
 
@@ -155,4 +118,4 @@ node.events.ng.on('NODEGAME_GAMECOMMAND_' + node.gamecommand.start, function(opt
 node.log('internal listeners added');
 	
 })('undefined' !== typeof node ? node : module.parent.exports); 
-// <!-- ends outgoing listener -->
+// <!-- ends internal listener -->

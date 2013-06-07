@@ -2,22 +2,17 @@
 // Outgoing listeners are fired when messages are sent
 
 (function (node) {
-
-	if (!node) {
-		console.log('nodeGame not found. Cannot add outgoing listeners');
-		return false;
-	}
 	
-	var GameMsg = node.GameMsg,
-		GameState = node.GameState;
+    var GameMsg = node.GameMsg,
+        GameState = node.GameState;
+    
+    var action = node.action,
+        target = node.target;
 	
-	var action = node.action,
-		target = node.target;
-	
-	var say = action.SAY + '.',
-		set = action.SET + '.',
-		get = action.GET + '.',
-		OUT  = node.OUT;
+    var say = action.SAY + '.',
+        set = action.SET + '.',
+        get = action.GET + '.',
+        OUT  = node.OUT;
 	
 /**
  * ## out.say.STAGE
@@ -29,7 +24,7 @@
  * 
  */
 node.events.ng.on( OUT + say + 'STAGE', function (stage, to) {
-	node.socket.sendSTAGE(action.SAY, stage, to);
+    node.socket.sendSTAGE(action.SAY, stage, to);
 });	
 	
 /**
@@ -38,7 +33,7 @@ node.events.ng.on( OUT + say + 'STAGE', function (stage, to) {
  * Sends out a TXT message to the specified recipient
  */
 node.events.ng.on( OUT + say + 'TXT', function (text, to) {
-	node.socket.sendTXT(text,to);
+    node.socket.sendTXT(text,to);
 });
 
 /**
@@ -47,7 +42,7 @@ node.events.ng.on( OUT + say + 'TXT', function (text, to) {
  * Sends out a DATA message to the specified recipient
  */
 node.events.ng.on( OUT + say + 'DATA', function (data, to, key) {
-	node.socket.sendDATA(action.SAY, data, to, key);
+    node.socket.sendDATA(action.SAY, data, to, key);
 });
 
 /**
@@ -60,7 +55,7 @@ node.events.ng.on( OUT + say + 'DATA', function (data, to, key) {
  * of the sender
  */
 node.events.ng.on( OUT + set + 'STAGE', function (stage, to) {
-	node.socket.sendSTAGE(action.SET, stage, to);
+    node.socket.sendSTAGE(action.SET, stage, to);
 });
 
 /**
@@ -73,7 +68,7 @@ node.events.ng.on( OUT + set + 'STAGE', function (stage, to) {
  * @see node.GameDB
  */
 node.events.ng.on( OUT + set + 'DATA', function (data, to, key) {
-	node.socket.sendDATA(action.SET, data, to, key);
+    node.socket.sendDATA(action.SET, data, to, key);
 });
 
 /**
@@ -84,7 +79,7 @@ node.events.ng.on( OUT + set + 'DATA', function (data, to, key) {
  * Experimental. Undocumented (for now)
  */
 node.events.ng.on( OUT + get + 'DATA', function (data, to, key) {
-	node.socket.sendDATA(action.GET, data, to, data);
+    node.socket.sendDATA(action.GET, data, to, data);
 });
 	
 node.log('outgoing listeners added');
