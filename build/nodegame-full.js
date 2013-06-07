@@ -10921,7 +10921,8 @@ GameLoop.prototype.jump = function(curStage, delta) {
  *
  * Returns the number of steps until the beginning of the next stage
  *
- * @param {object|string} gameStage The GameStage object, or its string representation
+ * @param {GameStage|string} gameStage The GameStage object,
+ *  or its string representation
  *
  * @return {number|null} The number of steps to go, minimum 1. Null on error.
  */
@@ -10951,7 +10952,8 @@ GameLoop.prototype.stepsToNextStage = function(gameStage) {
  *
  * Returns the number of steps back until the end of the previous stage
  *
- * @param {object|string} gameStage The GameStage object, or its string representation
+ * @param {GameStage|string} gameStage The GameStage object,
+ *  or its string representation
  *
  * @return {number|null} The number of steps to go, minimum 1. Null on error.
  */
@@ -10980,7 +10982,8 @@ GameLoop.prototype.stepsToPreviousStage = function(gameStage) {
  *
  * Returns the stage object corresponding to a GameStage
  *
- * @param {object|string} gameStage The GameStage object, or its string representation
+ * @param {GameStage|string} gameStage The GameStage object,
+ *  or its string representation
  *
  * @return {object|null} The corresponding stage object, or null value
  *  if the step was not found
@@ -11003,7 +11006,8 @@ GameLoop.prototype.getStage = function(gameStage) {
  *
  * Returns the step object corresponding to a GameStage
  *
- * @param {object|string} gameStage The GameStage object, or its string representation
+ * @param {GameStage|string} gameStage The GameStage object,
+ *  or its string representation
  *
  * @return {object|null} The corresponding step object, or null value
  *  if the step was not found
@@ -11034,7 +11038,8 @@ GameLoop.prototype.getStep = function(gameStage) {
  *
  * 3. default step-rule of the Stager object
  *
- * @param {object|string} gameStage The GameStage object, or its string representation
+ * @param {GameStage|string} gameStage The GameStage object,
+ *  or its string representation
  *
  * @return {function|null} The step-rule function. Null on error.
  */
@@ -11069,7 +11074,7 @@ GameLoop.prototype.getStepRule = function(gameStage) {
  *  or its string representation
  * @param {string} globalVar The name of the global variable
  *
- * @return {object|null} The value of the global variable if found,
+ * @return {mixed|null} The value of the global variable if found,
  *   NULL otherwise.
  */
 GameLoop.prototype.getGlobal = function(gameStage, globalVar) {
@@ -11125,7 +11130,7 @@ GameLoop.prototype.getGlobal = function(gameStage, globalVar) {
  *  or its string representation
  * @param {string} property The name of the property
  *
- * @return {object|null} The value of the property if found, NULL otherwise.
+ * @return {mixed|null} The value of the property if found, NULL otherwise.
  */
 GameLoop.prototype.getProperty = function(gameStage, property) {
     var stepObj, stageObj;
@@ -12549,27 +12554,27 @@ var action = node.action;
 exports.Game = Game;
 
 Game.stateLevels = {
-    UNINITIALIZED: 0,  // game created, the init function has not been called
-    INITIALIZING:  1,  // executing init
-    INITIALIZED:   5,  // init executed
-    READY:         7,  // stages are set
-    ONGOING:      50,
-    GAMEOVER:    100,  // game complete
+    UNINITIALIZED:  0,  // game created, the init function has not been called
+    INITIALIZING:   1,  // executing init
+    INITIALIZED:    5,  // init executed
+    READY:          7,  // stages are set
+    ONGOING:       50,
+    GAMEOVER:     100,  // game complete
     RUNTIME_ERROR: -1
 };
 
 Game.stageLevels = {
-    UNINITIALIZED: 0,
-    INITIALIZING: 1,  // executing init
-    INITIALIZED: 5,  // init executed
-    LOADING: 30,
-    LOADED: 40,
-    PLAYING: 50,
-    PAUSING:  55,
-    PAUSED: 60,
-    RESUMING: 65,
-    RESUMED: 70,
-    DONE: 100
+    UNINITIALIZED:  0,
+    INITIALIZING:   1,  // executing init
+    INITIALIZED:    5,  // init executed
+    LOADING:       30,
+    LOADED:        40,
+    PLAYING:       50,
+    PAUSING:       55,
+    PAUSED:        60,
+    RESUMING:      65,
+    RESUMED:       70,
+    DONE:         100
 };
 
 /**
@@ -12836,12 +12841,15 @@ Game.prototype.shouldStep = function() {
  *
  * @see Game.stager
  * @see Game.currentStage
- * @see Game.execStage
+ * @see Game.execStep
  *
  * TODO: harmonize return values
  */
 Game.prototype.step = function() {
     var nextStep, curStep;
+    var nextStepObj, nextStageObj;
+    var ev;
+
     curStep = this.getCurrentGameStage();
     nextStep = this.gameLoop.next(curStep);
 
@@ -12849,7 +12857,6 @@ Game.prototype.step = function() {
     node.events.ee.step.clear();
 
     if ('string' === typeof nextStep) {
-
         if (nextStep === GameLoop.GAMEOVER) {
             node.emit('GAMEOVER');
             return this.gameover(); // can throw Errors
@@ -12859,33 +12866,58 @@ Game.prototype.step = function() {
         return null;
     }
     else {
-
-        // If we enter a new stage we need to update a few things
-        // TODO: Also when same stage is repeated.
-        if (curStep.stage !== nextStep.stage) {
-            // clear the previous stage listeners
-            node.events.ee.stage.clear();
-
-            // TODO execute the init function of the stage, if any (this = node.game), update sta?eLevels
-            // TODO load the listeners for the stage, if any
-            // for ev in ons:
-            //   node.events.ee.stage.on(ev, ons[ev])
-            // analoguous with steps
-        }
-
         // TODO maybe update also in case of string
         this.setCurrentGameStage(nextStep);
 
-        // TODO execute the init function of the step, if any
-        // TODO load the listeners for the step, if any
+        // If we enter a new stage (including repeating the same stage)
+        // we need to update a few things:
+        if (this.gameLoop.stepsToNextStage(curStep) === 1) {
+            nextStageObj = this.gameLoop.getStage(nextStep);
+            if (!nextStageObj) return false;
+
+            // clear the previous stage listeners
+            node.events.ee.stage.clear();
+
+            // Execute the init function of the stage, if any:
+            if (nextStageObj.hasOwnProperty('init')) {
+                this.setStageLevel(Game.stageLevels.INITIALIZING);
+                nextStageObj.init.call(node.game);
+            }
+
+            // Load the listeners for the stage, if any:
+            for (ev in nextStageObj.on) {
+                if (nextStageObj.on.hasOwnProperty(ev)) {
+                    node.events.ee.stage.on(ev, nextStageObjs.on[ev]);
+                }
+            }
+        }
+
+        nextStepObj = this.gameLoop.getStep(nextStep);
+        if (!nextStepObj) return false;
+
+        // Execute the init function of the step, if any:
+        if (nextStepObj.hasOwnProperty('init')) {
+            this.setStageLevel(Game.stageLevels.INITIALIZING);
+            nextStepObj.init.call(node.game);
+        }
+
+        this.setStageLevel(Game.stageLevels.INITIALIZED);
+
+        // Load the listeners for the step, if any:
+        for (ev in nextStepObj.on) {
+            if (nextStepObj.on.hasOwnProperty(ev)) {
+                node.events.ee.step.on(ev, nextStepObjs.on[ev]);
+            }
+        }
+
         // TODO what else to load?
 
-        return this.execStage(this.getCurrentStep());
+        return this.execStep(this.getCurrentStep());
     }
 };
 
 /**
- * ### Game.execStage
+ * ### Game.execStep
  *
  * Executes the specified stage object
  *
@@ -12894,18 +12926,18 @@ Game.prototype.step = function() {
  * @param stage {object} Full stage object to execute
  *
  */
-Game.prototype.execStage = function(stage) {
+Game.prototype.execStep = function(stage) {
     var cb, res;
-   
+
     cb = stage.cb;
-    
+
     this.setStageLevel(Game.stageLevels.LOADING);
 
     try {
         res = cb.call(node.game);
     }
     catch (e) {
-	if (node.debug) throw e;
+        if (node.debug) throw e;
         node.err('An error occurred while executing a custom callback');
         throw new node.NodeGameRuntimeError(e);
     }
@@ -12917,7 +12949,7 @@ Game.prototype.execStage = function(stage) {
     }
     if (res === false) {
         // A non fatal error occurred
-	node.err('A non fatal error occurred while executing the callback of stage ' + this.getCurrentGameStage());
+        node.err('A non fatal error occurred while executing the callback of stage ' + this.getCurrentGameStage());
     }
 
     return res;
@@ -12951,22 +12983,23 @@ Game.prototype.setStateLevel = function(stateLevel) {
 };
 
 // PLAYING, DONE, etc.
+// Publishes update only if value actually changed.
 Game.prototype.setStageLevel = function(stageLevel) {
     if ('number' !== typeof stageLevel) {
         throw new node.NodeGameMisconfiguredGameError(
                 'setStageLevel called with invalid parameter: ' + stageLevel);
     }
 
-    this.stageLevel = stageLevel;
-
     // Publish update:
-    if (!this.observer) {
+    if (!this.observer && this.stageLevel !== stageLevel) {
         node.socket.send(node.msg.create({
             target: node.target.STAGE_LEVEL,
             data: stageLevel,
             to: 'ALL'
         }));
     }
+
+    this.stageLevel = stageLevel;
 };
 
 Game.prototype.setCurrentGameStage = function(gameStage) {
