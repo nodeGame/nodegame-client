@@ -28,7 +28,7 @@
  * The message is for informative purpose
  * 
  */
-node.on( OUT + say + 'STAGE', function (stage, to) {
+node.events.ng.on( OUT + say + 'STAGE', function (stage, to) {
 	node.socket.sendSTAGE(action.SAY, stage, to);
 });	
 	
@@ -37,7 +37,7 @@ node.on( OUT + say + 'STAGE', function (stage, to) {
  * 
  * Sends out a TXT message to the specified recipient
  */
-node.on( OUT + say + 'TXT', function (text, to) {
+node.events.ng.on( OUT + say + 'TXT', function (text, to) {
 	node.socket.sendTXT(text,to);
 });
 
@@ -46,7 +46,7 @@ node.on( OUT + say + 'TXT', function (text, to) {
  * 
  * Sends out a DATA message to the specified recipient
  */
-node.on( OUT + say + 'DATA', function (data, to, key) {
+node.events.ng.on( OUT + say + 'DATA', function (data, to, key) {
 	node.socket.sendDATA(action.SAY, data, to, key);
 });
 
@@ -59,7 +59,7 @@ node.on( OUT + say + 'DATA', function (data, to, key) {
  * The receiver will update its representation of the stage
  * of the sender
  */
-node.on( OUT + set + 'STAGE', function (stage, to) {
+node.events.ng.on( OUT + set + 'STAGE', function (stage, to) {
 	node.socket.sendSTAGE(action.SET, stage, to);
 });
 
@@ -72,7 +72,7 @@ node.on( OUT + set + 'STAGE', function (stage, to) {
  * 
  * @see node.GameDB
  */
-node.on( OUT + set + 'DATA', function (data, to, key) {
+node.events.ng.on( OUT + set + 'DATA', function (data, to, key) {
 	node.socket.sendDATA(action.SET, data, to, key);
 });
 
@@ -83,7 +83,7 @@ node.on( OUT + set + 'DATA', function (data, to, key) {
  * 
  * Experimental. Undocumented (for now)
  */
-node.on( OUT + get + 'DATA', function (data, to, key) {
+node.events.ng.on( OUT + get + 'DATA', function (data, to, key) {
 	node.socket.sendDATA(action.GET, data, to, data);
 });
 	
