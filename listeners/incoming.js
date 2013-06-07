@@ -30,11 +30,11 @@
  * @emit UPDATED_PLIST
  * @see Game.pl 
  */
-	node.on( IN + say + 'PCONNECT', function (msg) {
-		if (!msg.data) return;
-		node.game.pl.add(new Player(msg.data));
-		node.emit('UPDATED_PLIST');
-	});	
+    node.events.ng.on( IN + say + 'PCONNECT', function (msg) {
+	if (!msg.data) return;
+	node.game.pl.add(new Player(msg.data));
+	node.emit('UPDATED_PLIST');
+    });	
 	
 /**
  * ## in.say.PDISCONNECT
@@ -44,7 +44,7 @@
  * @emit UPDATED_PLIST
  * @see Game.pl 
  */
-	node.on( IN + say + 'PDISCONNECT', function (msg) {
+	node.events.ng.on( IN + say + 'PDISCONNECT', function (msg) {
 		if (!msg.data) return;
 		node.game.pl.remove(msg.data.id);
 		node.emit('UPDATED_PLIST');
@@ -58,7 +58,7 @@
  * @emit UPDATED_MLIST
  * @see Game.ml 
  */
-	node.on( IN + say + 'MCONNECT', function (msg) {
+	node.events.ng.on( IN + say + 'MCONNECT', function (msg) {
 		if (!msg.data) return;
 		node.game.ml.add(new Player(msg.data));
 		node.emit('UPDATED_MLIST');
@@ -72,7 +72,7 @@
  * @emit UPDATED_MLIST
  * @see Game.ml 
  */
-	node.on( IN + say + 'MDISCONNECT', function (msg) {
+	node.events.ng.on( IN + say + 'MDISCONNECT', function (msg) {
 		if (!msg.data) return;
 		node.game.ml.remove(msg.data.id);
 		node.emit('UPDATED_MLIST');
@@ -87,7 +87,7 @@
  * @emit UPDATED_PLIST
  * @see Game.pl 
  */
-node.on( IN + say + 'PLIST', function (msg) {
+node.events.ng.on( IN + say + 'PLIST', function (msg) {
 	if (!msg.data) return;
 	node.game.pl = new PlayerList({}, msg.data);
 	node.emit('UPDATED_PLIST');
@@ -101,7 +101,7 @@ node.on( IN + say + 'PLIST', function (msg) {
  * @emit UPDATED_MLIST
  * @see Game.pl 
  */
-node.on( IN + say + 'MLIST', function (msg) {
+node.events.ng.on( IN + say + 'MLIST', function (msg) {
 	if (!msg.data) return;
 	node.game.ml = new PlayerList({}, msg.data);
 	node.emit('UPDATED_MLIST');
@@ -112,7 +112,7 @@ node.on( IN + say + 'MLIST', function (msg) {
  * 
  * Experimental feature. Undocumented (for now)
  */ 
-node.on( IN + get + 'DATA', function (msg) {
+node.events.ng.on( IN + get + 'DATA', function (msg) {
 	if (msg.text === 'LOOP'){
 		node.socket.sendDATA(action.SAY, node.game.gameLoop, msg.from, 'GAME');
 	}
@@ -126,7 +126,7 @@ node.on( IN + get + 'DATA', function (msg) {
  * Adds an entry to the memory object 
  * 
  */
-node.on( IN + set + 'STATE', function (msg) {
+node.events.ng.on( IN + set + 'STATE', function (msg) {
 	node.game.memory.add(msg.text, msg.data, msg.from);
 });
 
@@ -136,7 +136,7 @@ node.on( IN + set + 'STATE', function (msg) {
  * Adds an entry to the memory object 
  * 
  */
-node.on( IN + set + 'DATA', function (msg) {
+node.events.ng.on( IN + set + 'DATA', function (msg) {
 	node.game.memory.add(msg.text, msg.data, msg.from);
 });
 
@@ -153,7 +153,7 @@ node.on( IN + set + 'DATA', function (msg) {
  *  @emit UPDATED_PLIST
  *  @see Game.pl 
  */
-	node.on( IN + say + 'STAGE', function (msg) {
+	node.events.ng.on( IN + say + 'STAGE', function (msg) {
 
 		if (node.socket.serverid && msg.from === node.socket.serverid) {
 //			console.log(node.socket.serverid + ' ---><--- ' + msg.from);
@@ -185,7 +185,7 @@ node.on( IN + set + 'DATA', function (msg) {
  *  @emit UPDATED_PLIST
  *  @see Game.pl 
  */
-	node.on( IN + say + 'STAGE_LEVEL', function (msg) {
+	node.events.ng.on( IN + say + 'STAGE_LEVEL', function (msg) {
 		if (node.socket.serverid && msg.from === node.socket.serverid) {
 //			console.log(node.socket.serverid + ' ---><--- ' + msg.from);
 //			console.log('NOT EXISTS');
@@ -211,7 +211,7 @@ node.on( IN + set + 'DATA', function (msg) {
  * 
  * @see node.redirect
  */
-node.on( IN + say + 'REDIRECT', function (msg) {
+node.events.ng.on( IN + say + 'REDIRECT', function (msg) {
 	if (!msg.data) return;
 	if ('undefined' === typeof window || !window.location) {
 		node.log('window.location not found. Cannot redirect', 'err');
@@ -232,7 +232,7 @@ node.on( IN + say + 'REDIRECT', function (msg) {
  * @see node.setup
  * @see JSUS.parse
  */
-node.on( IN + say + 'SETUP', function (msg) {
+node.events.ng.on( IN + say + 'SETUP', function (msg) {
     if (!msg.text) return;
     var feature = msg.text,
         payload = JSUS.parse(msg.data);
@@ -252,7 +252,7 @@ node.on( IN + say + 'SETUP', function (msg) {
  * 
  * @see node.setup
  */
-node.on( IN + say + 'GAMECOMMAND', function (msg) {
+node.events.ng.on( IN + say + 'GAMECOMMAND', function (msg) {
     if (!msg.text || !node.gamecommand[msg.text]) {
 	node.err('unknown game command received: ' + msg.text);
 	return;
@@ -269,7 +269,7 @@ node.on( IN + say + 'GAMECOMMAND', function (msg) {
  * does not leave the page, it just switches channel. 
  * 
  */
-node.on( IN + say + 'JOIN', function (msg) {
+node.events.ng.on( IN + say + 'JOIN', function (msg) {
     if (!msg.text) return;
     //node.socket.disconnect();
     node.connect(msg.text);

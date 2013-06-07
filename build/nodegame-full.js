@@ -7883,7 +7883,7 @@ EventEmitter.prototype.emit = function(type) { // Up to 3 parameters
 	
     var handler, len, args, i, listeners; 
 
-    handler = this._events[type];
+    handler = this.events[type];
     
     if (typeof handler === 'undefined') return false;
 
@@ -7916,7 +7916,7 @@ EventEmitter.prototype.emit = function(type) { // Up to 3 parameters
 	    for (i = 1; i < len; i++) {
 		args[i - 1] = arguments[i];
 	    }
-	    handler.apply(this, args);
+	    handler.apply(node.game, args);
 	}
     } 
     else if (typeof handler === 'object') {
@@ -7929,7 +7929,7 @@ EventEmitter.prototype.emit = function(type) { // Up to 3 parameters
 	len = listeners.length;
 	
 	for (i = 0; i < len; i++) {
-	    listeners[i].apply(this, args);
+	    listeners[i].apply(node.game, args);
 	}
     }
 
@@ -8069,19 +8069,18 @@ EventEmitter.prototype.remove = function(type, listener) {
 	case 3:
 	    this[groupName] = {
 		emit: function() {
-		    that.ee[args[0]].emit.apply(node.game, arguments);
-		    that.ee[args[1]].emit.apply(node.game, arguments);
+		    that.ee[args[0]].emit(arguments);
+		    that.ee[args[1]].emit(arguments);
 		},
 		on: this.ee[args[0]].on,
 		once: this.ee[args[1]].once,
 		clear: function() {
-		    debugger;
 		    that.ee[args[0]].clear();
 		    that.ee[args[1]].clear();
 		},
 		remove: function() {
-		    that.ee[args[0]].remove.apply(node.game, arguments);
-		    that.ee[args[1]].remove.apply(node.game, arguments);
+		    that.ee[args[0]].remove(arguments);
+		    that.ee[args[1]].remove(arguments);
 		},
 		printAll: function() {
 		    that.ee[args[0]].printAll();
@@ -8092,9 +8091,9 @@ EventEmitter.prototype.remove = function(type, listener) {
 	case 4:
 	    this[groupName] = {
 		emit: function() {
-		    that.ee[args[0]].emit.apply(node.game, arguments);
-		    that.ee[args[1]].emit.apply(node.game, arguments);
-		    that.ee[args[2]].emit.apply(node.game, arguments);
+		    that.ee[args[0]].emit(arguments);
+		    that.ee[args[1]].emit(arguments);
+		    that.ee[args[2]].emit(arguments);
 		},
 		on: this.ee[args[0]].on,
 		once: this.ee[args[1]].once,
@@ -8104,9 +8103,9 @@ EventEmitter.prototype.remove = function(type, listener) {
 		    that.ee[args[2]].clear();
 		},
 		remove: function() {
-		    that.ee[args[0]].remove.apply(node.game, arguments);
-		    that.ee[args[1]].remove.apply(node.game, arguments);
-		    that.ee[args[2]].remove.apply(node.game, arguments);
+		    that.ee[args[0]].remove(arguments);
+		    that.ee[args[1]].remove(arguments);
+		    that.ee[args[2]].remove(arguments);
 		},
 		printAll: function() {
 		    that.ee[args[0]].printAll();
@@ -8121,7 +8120,7 @@ EventEmitter.prototype.remove = function(type, listener) {
 	    this[groupName] = {
 		emit: function() {
 		    for (i = 0; i < len; i++) {
-			that.ee[args[i]].emit.apply(node.game, arguments);
+			that.ee[args[i]].emit(arguments);
 		    }
 		},
 		on: this.ee[args[0]].on,
@@ -8134,7 +8133,7 @@ EventEmitter.prototype.remove = function(type, listener) {
 		},
 		remove: function() {
 		     for (i = 0; i < len; i++) {
-			that.ee[args[i]].remove.apply(node.game, arguments);
+			 that.ee[args[i]].remove(arguments);
 		     }
 		},
 		printAll: function() {
@@ -8185,7 +8184,7 @@ EventEmitter.prototype.remove = function(type, listener) {
 
 	for (i in this.ee) {
 	    if (this.ee.hasOwnProperty(i)) {
-		this.ee[i].emit.apply(node.game, arguments);
+		this.ee[i].emit(arguments);
 	    }
 	}
     };
@@ -14207,7 +14206,7 @@ SessionManager.prototype.store = function() {
  * @param {object} p3 Optional. A parameter to be passed to the listener
  */	
     node.emit = function () {	
-	node.events.emit.apply(node.game, arguments);
+	node.events.emit(arguments);
     };	
 	
 /**
@@ -14356,24 +14355,23 @@ SessionManager.prototype.store = function() {
  * @param {EventEmitter} The current event emitter obj
  */
     node.getCurrentEventEmitter = function() {
-
-	return node.events.ng;
-
+	debugger;
+	
 	// NodeGame default listeners
 	if (!node.game || !node.game.getCurrentStep()) {
-	    return node.events.ng;
+	    return node.events.ee.ng;
 	}	
 
 	// It is a game init function
 	if ((GameStage.compare(node.game.getCurrentStep(), new GameStage(), true) === 0 )) {
-	    return node.events.game;
+	    return node.events.ee.game;
 	}
 
 	// TODO return the stage ee
 
 	// It is a game step function
 	else {
-	    node.events.step;
+	    return node.events.ee.step;
 	}
     };
 
@@ -15152,11 +15150,11 @@ node.random = {};
  * @emit UPDATED_PLIST
  * @see Game.pl 
  */
-	node.on( IN + say + 'PCONNECT', function (msg) {
-		if (!msg.data) return;
-		node.game.pl.add(new Player(msg.data));
-		node.emit('UPDATED_PLIST');
-	});	
+    node.events.ng.on( IN + say + 'PCONNECT', function (msg) {
+	if (!msg.data) return;
+	node.game.pl.add(new Player(msg.data));
+	node.emit('UPDATED_PLIST');
+    });	
 	
 /**
  * ## in.say.PDISCONNECT
@@ -15166,7 +15164,7 @@ node.random = {};
  * @emit UPDATED_PLIST
  * @see Game.pl 
  */
-	node.on( IN + say + 'PDISCONNECT', function (msg) {
+	node.events.ng.on( IN + say + 'PDISCONNECT', function (msg) {
 		if (!msg.data) return;
 		node.game.pl.remove(msg.data.id);
 		node.emit('UPDATED_PLIST');
@@ -15180,7 +15178,7 @@ node.random = {};
  * @emit UPDATED_MLIST
  * @see Game.ml 
  */
-	node.on( IN + say + 'MCONNECT', function (msg) {
+	node.events.ng.on( IN + say + 'MCONNECT', function (msg) {
 		if (!msg.data) return;
 		node.game.ml.add(new Player(msg.data));
 		node.emit('UPDATED_MLIST');
@@ -15194,7 +15192,7 @@ node.random = {};
  * @emit UPDATED_MLIST
  * @see Game.ml 
  */
-	node.on( IN + say + 'MDISCONNECT', function (msg) {
+	node.events.ng.on( IN + say + 'MDISCONNECT', function (msg) {
 		if (!msg.data) return;
 		node.game.ml.remove(msg.data.id);
 		node.emit('UPDATED_MLIST');
@@ -15209,7 +15207,7 @@ node.random = {};
  * @emit UPDATED_PLIST
  * @see Game.pl 
  */
-node.on( IN + say + 'PLIST', function (msg) {
+node.events.ng.on( IN + say + 'PLIST', function (msg) {
 	if (!msg.data) return;
 	node.game.pl = new PlayerList({}, msg.data);
 	node.emit('UPDATED_PLIST');
@@ -15223,7 +15221,7 @@ node.on( IN + say + 'PLIST', function (msg) {
  * @emit UPDATED_MLIST
  * @see Game.pl 
  */
-node.on( IN + say + 'MLIST', function (msg) {
+node.events.ng.on( IN + say + 'MLIST', function (msg) {
 	if (!msg.data) return;
 	node.game.ml = new PlayerList({}, msg.data);
 	node.emit('UPDATED_MLIST');
@@ -15234,7 +15232,7 @@ node.on( IN + say + 'MLIST', function (msg) {
  * 
  * Experimental feature. Undocumented (for now)
  */ 
-node.on( IN + get + 'DATA', function (msg) {
+node.events.ng.on( IN + get + 'DATA', function (msg) {
 	if (msg.text === 'LOOP'){
 		node.socket.sendDATA(action.SAY, node.game.gameLoop, msg.from, 'GAME');
 	}
@@ -15248,7 +15246,7 @@ node.on( IN + get + 'DATA', function (msg) {
  * Adds an entry to the memory object 
  * 
  */
-node.on( IN + set + 'STATE', function (msg) {
+node.events.ng.on( IN + set + 'STATE', function (msg) {
 	node.game.memory.add(msg.text, msg.data, msg.from);
 });
 
@@ -15258,7 +15256,7 @@ node.on( IN + set + 'STATE', function (msg) {
  * Adds an entry to the memory object 
  * 
  */
-node.on( IN + set + 'DATA', function (msg) {
+node.events.ng.on( IN + set + 'DATA', function (msg) {
 	node.game.memory.add(msg.text, msg.data, msg.from);
 });
 
@@ -15275,7 +15273,7 @@ node.on( IN + set + 'DATA', function (msg) {
  *  @emit UPDATED_PLIST
  *  @see Game.pl 
  */
-	node.on( IN + say + 'STAGE', function (msg) {
+	node.events.ng.on( IN + say + 'STAGE', function (msg) {
 
 		if (node.socket.serverid && msg.from === node.socket.serverid) {
 //			console.log(node.socket.serverid + ' ---><--- ' + msg.from);
@@ -15307,7 +15305,7 @@ node.on( IN + set + 'DATA', function (msg) {
  *  @emit UPDATED_PLIST
  *  @see Game.pl 
  */
-	node.on( IN + say + 'STAGE_LEVEL', function (msg) {
+	node.events.ng.on( IN + say + 'STAGE_LEVEL', function (msg) {
 		if (node.socket.serverid && msg.from === node.socket.serverid) {
 //			console.log(node.socket.serverid + ' ---><--- ' + msg.from);
 //			console.log('NOT EXISTS');
@@ -15333,7 +15331,7 @@ node.on( IN + set + 'DATA', function (msg) {
  * 
  * @see node.redirect
  */
-node.on( IN + say + 'REDIRECT', function (msg) {
+node.events.ng.on( IN + say + 'REDIRECT', function (msg) {
 	if (!msg.data) return;
 	if ('undefined' === typeof window || !window.location) {
 		node.log('window.location not found. Cannot redirect', 'err');
@@ -15354,7 +15352,7 @@ node.on( IN + say + 'REDIRECT', function (msg) {
  * @see node.setup
  * @see JSUS.parse
  */
-node.on( IN + say + 'SETUP', function (msg) {
+node.events.ng.on( IN + say + 'SETUP', function (msg) {
     if (!msg.text) return;
     var feature = msg.text,
         payload = JSUS.parse(msg.data);
@@ -15374,7 +15372,7 @@ node.on( IN + say + 'SETUP', function (msg) {
  * 
  * @see node.setup
  */
-node.on( IN + say + 'GAMECOMMAND', function (msg) {
+node.events.ng.on( IN + say + 'GAMECOMMAND', function (msg) {
     if (!msg.text || !node.gamecommand[msg.text]) {
 	node.err('unknown game command received: ' + msg.text);
 	return;
@@ -15391,7 +15389,7 @@ node.on( IN + say + 'GAMECOMMAND', function (msg) {
  * does not leave the page, it just switches channel. 
  * 
  */
-node.on( IN + say + 'JOIN', function (msg) {
+node.events.ng.on( IN + say + 'JOIN', function (msg) {
     if (!msg.text) return;
     //node.socket.disconnect();
     node.connect(msg.text);
@@ -15432,7 +15430,7 @@ node.on( IN + say + 'JOIN', function (msg) {
  * The message is for informative purpose
  * 
  */
-node.on( OUT + say + 'STAGE', function (stage, to) {
+node.events.ng.on( OUT + say + 'STAGE', function (stage, to) {
 	node.socket.sendSTAGE(action.SAY, stage, to);
 });	
 	
@@ -15441,7 +15439,7 @@ node.on( OUT + say + 'STAGE', function (stage, to) {
  * 
  * Sends out a TXT message to the specified recipient
  */
-node.on( OUT + say + 'TXT', function (text, to) {
+node.events.ng.on( OUT + say + 'TXT', function (text, to) {
 	node.socket.sendTXT(text,to);
 });
 
@@ -15450,7 +15448,7 @@ node.on( OUT + say + 'TXT', function (text, to) {
  * 
  * Sends out a DATA message to the specified recipient
  */
-node.on( OUT + say + 'DATA', function (data, to, key) {
+node.events.ng.on( OUT + say + 'DATA', function (data, to, key) {
 	node.socket.sendDATA(action.SAY, data, to, key);
 });
 
@@ -15463,7 +15461,7 @@ node.on( OUT + say + 'DATA', function (data, to, key) {
  * The receiver will update its representation of the stage
  * of the sender
  */
-node.on( OUT + set + 'STAGE', function (stage, to) {
+node.events.ng.on( OUT + set + 'STAGE', function (stage, to) {
 	node.socket.sendSTAGE(action.SET, stage, to);
 });
 
@@ -15476,7 +15474,7 @@ node.on( OUT + set + 'STAGE', function (stage, to) {
  * 
  * @see node.GameDB
  */
-node.on( OUT + set + 'DATA', function (data, to, key) {
+node.events.ng.on( OUT + set + 'DATA', function (data, to, key) {
 	node.socket.sendDATA(action.SET, data, to, key);
 });
 
@@ -15487,7 +15485,7 @@ node.on( OUT + set + 'DATA', function (data, to, key) {
  * 
  * Experimental. Undocumented (for now)
  */
-node.on( OUT + get + 'DATA', function (data, to, key) {
+node.events.ng.on( OUT + get + 'DATA', function (data, to, key) {
 	node.socket.sendDATA(action.GET, data, to, data);
 });
 	
@@ -15527,7 +15525,7 @@ node.log('outgoing listeners added');
  * 
  * Fired when all the players in the player list are DONE
  */ 
-node.on('STAGEDONE', function() {
+node.events.ng.on('STAGEDONE', function() {
 	
 	// In single player mode we ignore when all the players have completed the stage
 	if (node.game.solo_mode) {
@@ -15568,7 +15566,7 @@ node.on('STAGEDONE', function() {
  * @emit BEFORE_DONE
  * @emit WAITING...
  */
-node.on('DONE', function(p1, p2, p3) {
+node.events.ng.on('DONE', function(p1, p2, p3) {
 	
     // Execute done handler before updating stage
     var ok = true,
@@ -15601,7 +15599,7 @@ node.on('DONE', function(p1, p2, p3) {
  * @emit BEFORE_LOADING
  * @emit LOADED
  */
-node.on('WINDOW_LOADED', function() {
+node.events.ng.on('WINDOW_LOADED', function() {
 	if (node.game.ready) node.emit('LOADED');
 });
 
@@ -15613,7 +15611,7 @@ node.on('WINDOW_LOADED', function() {
  * @emit BEFORE_LOADING
  * @emit LOADED
  */
-node.on('GAME_LOADED', function() {
+node.events.ng.on('GAME_LOADED', function() {
 	if (node.game.ready) node.emit('LOADED');
 });
 
@@ -15622,7 +15620,7 @@ node.on('GAME_LOADED', function() {
  * 
  * 
  */
-node.on('LOADED', function() {
+node.events.ng.on('LOADED', function() {
 	node.emit('BEFORE_LOADING');
 	node.game.setStageLevel(Game.stageLevels.PLAYING);
 	//TODO: the number of messages to emit to inform other players
@@ -15637,7 +15635,7 @@ node.on('LOADED', function() {
  * ## NODEGAME_GAMECOMMAND: start
  * 
  */
-node.on('NODEGAME_GAMECOMMAND_' + node.gamecommand.start, function(options) {
+node.events.ng.on('NODEGAME_GAMECOMMAND_' + node.gamecommand.start, function(options) {
 	
     node.emit('BEFORE_GAMECOMMAND', node.gamecommand.start, options);
 	

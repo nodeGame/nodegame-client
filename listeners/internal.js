@@ -29,7 +29,7 @@
  * 
  * Fired when all the players in the player list are DONE
  */ 
-node.on('STAGEDONE', function() {
+node.events.ng.on('STAGEDONE', function() {
 	
 	// In single player mode we ignore when all the players have completed the stage
 	if (node.game.solo_mode) {
@@ -70,7 +70,7 @@ node.on('STAGEDONE', function() {
  * @emit BEFORE_DONE
  * @emit WAITING...
  */
-node.on('DONE', function(p1, p2, p3) {
+node.events.ng.on('DONE', function(p1, p2, p3) {
 	
     // Execute done handler before updating stage
     var ok = true,
@@ -103,7 +103,7 @@ node.on('DONE', function(p1, p2, p3) {
  * @emit BEFORE_LOADING
  * @emit LOADED
  */
-node.on('WINDOW_LOADED', function() {
+node.events.ng.on('WINDOW_LOADED', function() {
 	if (node.game.ready) node.emit('LOADED');
 });
 
@@ -115,7 +115,7 @@ node.on('WINDOW_LOADED', function() {
  * @emit BEFORE_LOADING
  * @emit LOADED
  */
-node.on('GAME_LOADED', function() {
+node.events.ng.on('GAME_LOADED', function() {
 	if (node.game.ready) node.emit('LOADED');
 });
 
@@ -124,7 +124,7 @@ node.on('GAME_LOADED', function() {
  * 
  * 
  */
-node.on('LOADED', function() {
+node.events.ng.on('LOADED', function() {
 	node.emit('BEFORE_LOADING');
 	node.game.setStageLevel(Game.stageLevels.PLAYING);
 	//TODO: the number of messages to emit to inform other players
@@ -139,7 +139,7 @@ node.on('LOADED', function() {
  * ## NODEGAME_GAMECOMMAND: start
  * 
  */
-node.on('NODEGAME_GAMECOMMAND_' + node.gamecommand.start, function(options) {
+node.events.ng.on('NODEGAME_GAMECOMMAND_' + node.gamecommand.start, function(options) {
 	
     node.emit('BEFORE_GAMECOMMAND', node.gamecommand.start, options);
 	
