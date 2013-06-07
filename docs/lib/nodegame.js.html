@@ -365,34 +365,22 @@ set in other sessions (recovery)
 
   </div>
   <div class="body"><p>Emits an event locally</p>
+
+<p>The first parameter be the name of the event as <em>string</em>, 
+followed by any number of parameters that will be passed to the
+handler callback.</p>
   </div>
   <div class="details">
-    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">event</span>
-      <span class="dox_type">string</span>
-      <span>The name of the event to emit</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">p1</span>
-      <span class="dox_type">object</span>
-      <span>Optional. A parameter to be passed to the listener</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">p2</span>
-      <span class="dox_type">object</span>
-      <span>Optional. A parameter to be passed to the listener</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">p3</span>
-      <span class="dox_type">object</span>
-      <span>Optional. A parameter to be passed to the listener</span>
+      <span class="dox_type">EventEmitterManager.emit
+    </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> 
-  <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
     <span class="p">};</span>  
   </pre></div>
         </td>
@@ -664,15 +652,23 @@ to its next stage. </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="kr">debugger</span><span class="p">;</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>debugger;</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>NodeGame default listeners</p>
         </td>
@@ -684,7 +680,7 @@ to its next stage. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>It is a game init function</p>
         </td>
@@ -696,7 +692,7 @@ to its next stage. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>TODO return the stage ee</p>
         </td>
@@ -706,7 +702,7 @@ to its next stage. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>It is a game step function</p>
         </td>
@@ -917,7 +913,7 @@ to each others</p>
       <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;remoteCommand requires a valid command&#39;</span><span class="p">);</span>
       <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
   <span class="p">}</span>
-  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">who</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;remoteCommand requires a valid recipient&#39;</span><span class="p">);</span>
       <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
   <span class="p">}</span>  
@@ -939,7 +935,7 @@ to each others</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 Creating the objects
 <!-- object commented in index.js -->

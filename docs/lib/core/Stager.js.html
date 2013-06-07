@@ -1738,7 +1738,8 @@ callback returns TRUE.</p>
   <div class="body"><p>Sets the internal state of the Stager</p>
 
 <p>The passed state object can have the following fields:
-steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule
+steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule,
+defaultGlobals, defaultProperties, onInit, onGameover.
 All fields are optional.</p>
 
 <p>This function calls the corresponding functions to set these fields, and
@@ -1774,7 +1775,12 @@ performs error checking.</p>
 </div>
 <p>Clear previous state:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stateObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                <span class="s1">&#39;setState got invalid stateObj&#39;</span><span class="p">);</span>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1787,7 +1793,8 @@ performs error checking.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idx</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">idx</span><span class="p">]))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid steps&#39;</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
@@ -1805,7 +1812,8 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
         <span class="nx">stageObj</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">stages</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idx</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stageObj</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid stages&#39;</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
@@ -1843,25 +1851,29 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
 
         <span class="k">case</span> <span class="s1">&#39;plain&#39;</span><span class="o">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid sequence&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
 
         <span class="k">case</span> <span class="s1">&#39;repeat&#39;</span><span class="o">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">repeat</span><span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">num</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid sequence&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
 
         <span class="k">case</span> <span class="s1">&#39;loop&#39;</span><span class="o">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">loop</span><span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">cb</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid sequence&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
 
         <span class="k">case</span> <span class="s1">&#39;doLoop&#39;</span><span class="o">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">doLoop</span><span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">cb</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid sequence&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
 
@@ -1875,7 +1887,8 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
 </div>
 <p>Unknown type:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid sequence&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
         </td>
@@ -1889,7 +1902,8 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;generalNextFunction&#39;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">registerGeneralNext</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">generalNextFunction</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid general next-decider&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
         </td>
@@ -1904,7 +1918,8 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">nextFunctions</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">nextFunctions</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idx</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">registerNext</span><span class="p">(</span><span class="nx">idx</span><span class="p">,</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">nextFunctions</span><span class="p">[</span><span class="nx">idx</span><span class="p">]))</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                        <span class="s1">&#39;setState got invalid specific next-deciders&#39;</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
@@ -1919,7 +1934,8 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultStepRule&#39;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setDefaultStepRule</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultStepRule</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid default step-rule&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
         </td>
@@ -1933,7 +1949,8 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultGlobals&#39;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setDefaultGlobals</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultGlobals</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid default globals&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
         </td>
@@ -1947,7 +1964,8 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultProperties&#39;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setDefaultProperties</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultProperties</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid default properties&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
         </td>
@@ -1961,7 +1979,8 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;onInit&#39;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setOnInit</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">onInit</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid onInit&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
         </td>
@@ -1975,7 +1994,8 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;onGameover&#39;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setOnGameover</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">onGameover</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">();</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;setState got invalid onGameover&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span></pre></div>
@@ -1996,7 +2016,7 @@ first, handle all non-aliases (key of <code>stages</code> entry is same as <code
 
 <p>Fields of returned object:
 steps, stages, sequence, generalNextFunction, nextFunctions, defaultStepRule,
-defaultGlobals, defaultProperties, onInit, onGameover</p>
+defaultGlobals, defaultProperties, onInit, onGameover.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
