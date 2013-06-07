@@ -48,7 +48,9 @@
 <span class="kd">function</span> <span class="nx">makeStep</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="nx">id</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
-        <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;&#39;s callback!&quot;</span><span class="p">);</span> <span class="p">}</span>
+        <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;&#39;s callback!&quot;</span><span class="p">);</span> <span class="p">},</span>
+        <span class="nx">globals</span><span class="o">:</span> <span class="p">{</span> <span class="nx">MY_GLOBAL</span><span class="o">:</span> <span class="s1">&#39;GLOB_STEP_&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="p">},</span>
+        <span class="nx">myProperty</span><span class="o">:</span> <span class="s1">&#39;PROP_STEP_&#39;</span> <span class="o">+</span> <span class="nx">name</span>
     <span class="p">};</span>
 <span class="p">}</span>
 
@@ -59,13 +61,19 @@
 <span class="nx">plot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Stager</span><span class="p">();</span>
 <span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;intro&#39;</span><span class="p">));</span>
 <span class="nx">plot</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;gameStep1&#39;</span><span class="p">));</span>
-<span class="nx">plot</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;gameStep2&#39;</span><span class="p">));</span>
+<span class="nx">plot</span><span class="p">.</span><span class="nx">addStep</span><span class="p">({</span><span class="nx">id</span><span class="o">:</span><span class="s1">&#39;gameStep2&#39;</span><span class="p">,</span> <span class="nx">cb</span><span class="o">:</span><span class="kd">function</span><span class="p">(){}});</span>
 <span class="nx">plot</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;gameStep3&#39;</span><span class="p">));</span>
-<span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">({</span><span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;mainGame&#39;</span><span class="p">,</span> <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;gameStep1&#39;</span><span class="p">,</span> <span class="s1">&#39;gameStep2&#39;</span><span class="p">,</span> <span class="s1">&#39;gameStep3&#39;</span><span class="p">]});</span>
+<span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">({</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;mainGame&#39;</span><span class="p">,</span>
+    <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;gameStep1&#39;</span><span class="p">,</span> <span class="s1">&#39;gameStep2&#39;</span><span class="p">,</span> <span class="s1">&#39;gameStep3&#39;</span><span class="p">],</span>
+    <span class="nx">globals</span><span class="o">:</span> <span class="p">{</span><span class="nx">MY_GLOBAL</span><span class="o">:</span> <span class="s1">&#39;GLOB_STAGE_mainGame&#39;</span><span class="p">},</span>
+    <span class="nx">myProperty</span><span class="o">:</span> <span class="s1">&#39;PROP_STAGE_mainGame&#39;</span>
+<span class="p">});</span>
 <span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;randLoop&#39;</span><span class="p">));</span>
 <span class="nx">plot</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;outroStep1&#39;</span><span class="p">));</span>
 <span class="nx">plot</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">makeStep</span><span class="p">(</span><span class="s1">&#39;outroStep2&#39;</span><span class="p">));</span>
 <span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">({</span><span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;outro&#39;</span><span class="p">,</span> <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;outroStep1&#39;</span><span class="p">,</span> <span class="s1">&#39;outroStep2&#39;</span><span class="p">]});</span>
+<span class="nx">plot</span><span class="p">.</span><span class="nx">setDefaultGlobals</span><span class="p">({</span><span class="nx">MY_GLOBAL</span><span class="o">:</span> <span class="s1">&#39;GLOB_DEFAULT&#39;</span><span class="p">});</span>
 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;SIMPLE MODE&#39;</span><span class="p">);</span>
@@ -85,6 +93,8 @@
 
 <span class="k">while</span> <span class="p">(</span><span class="nx">gameStage</span> <span class="k">instanceof</span> <span class="nx">GameStage</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;At &#39;</span> <span class="o">+</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;S.s.r&#39;</span><span class="p">));</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot; * global &#39;MY_GLOBAL&#39;: &quot;</span> <span class="o">+</span>
+            <span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getGlobal</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="s1">&#39;MY_GLOBAL&#39;</span><span class="p">));</span>
     <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">gameLoop</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
 <span class="p">}</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span></pre></div>

@@ -452,7 +452,7 @@ overridable by more specific version in step and stage objects.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Game.getGlobal
+      <span class="dox_type">GameLoop.getGlobal
   </span>
     </div>
   </div>
@@ -679,20 +679,32 @@ Available only when nodegame is executed in <em>flexible</em> mode.</p>
       <span class="dox_type">object</span>
       <span>The map of default global variables</span>
     </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE on success, FALSE on error</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.defaultGlobals</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Game.getGlobal
+      <span class="dox_type">GameLoop.getGlobal
   </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setDefaultGlobals</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">defaultGlobals</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">defaultGlobals</span> <span class="o">||</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">defaultGlobals</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;setDefaultGlobals didn&#39;t receive object parameter&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
     <span class="k">this</span><span class="p">.</span><span class="nx">defaultGlobals</span> <span class="o">=</span> <span class="nx">defaultGlobals</span><span class="p">;</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -722,7 +734,7 @@ Available only when nodegame is executed in <em>flexible</em> mode.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Game.getGlobal
+      <span class="dox_type">GameLoop.getGlobal
   </span>
     </div>
   </div>

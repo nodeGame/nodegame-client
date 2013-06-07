@@ -61,6 +61,9 @@
         <a href="#gameloop.getsteprule">GameLoop.getStepRule</a>
       </div>
       <div class="heading h3">
+        <a href="#gameloop.getglobal">GameLoop.getGlobal</a>
+      </div>
+      <div class="heading h3">
         <a href="#gameloop.getname">GameLoop.getName</a>
       </div>
       <div class="heading h3">
@@ -1085,6 +1088,116 @@ return this.plot.getDefaultStepRule();</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="gameloop.getglobal">
+  <h3>
+    <a href="#gameloop.getglobal" class="pilcrow">&#182;</a>
+    GameLoop.getGlobal
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Looks up the value of a global variable</p>
+
+<p>Looks for definitions of a global variable in</p>
+
+<ol>
+<li><p>the current step object,</p></li>
+<li><p>the current stage object,</p></li>
+<li><p>the defaults, defined in the Stager.</p></li>
+</ol>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gameStage</span>
+      <span class="dox_type">GameStage</span>
+      <span class="dox_type">string</span>
+      <span>The GameStage object, or its string representation</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">global</span>
+      <span class="dox_type">string</span>
+      <span>The name of the global variable</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">null</span>
+      <span>The value of the global variable if found,
+  NULL otherwise.</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameLoop</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getGlobal</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">globalVar</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">stepObj</span><span class="p">,</span> <span class="nx">stageObj</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">stepGlobals</span><span class="p">,</span> <span class="nx">stageGlobals</span><span class="p">,</span> <span class="nx">defaultGlobals</span><span class="p">;</span>
+
+    <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+</div>
+<p>Look in current step:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">stepObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">stepObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">stepGlobals</span> <span class="o">=</span> <span class="nx">stepObj</span><span class="p">.</span><span class="nx">globals</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stepGlobals</span> <span class="o">&amp;&amp;</span> <span class="nx">stepGlobals</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">globalVar</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">stepGlobals</span><span class="p">[</span><span class="nx">globalVar</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+</div>
+<p>Look in current stage:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">stageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">stageObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">stageGlobals</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">globals</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stageGlobals</span> <span class="o">&amp;&amp;</span> <span class="nx">stageGlobals</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">globalVar</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">stageGlobals</span><span class="p">[</span><span class="nx">globalVar</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+</div>
+<p>Look in Stager's defaults:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">defaultGlobals</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getDefaultGlobals</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">defaultGlobals</span> <span class="o">&amp;&amp;</span> <span class="nx">defaultGlobals</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">globalVar</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">defaultGlobals</span><span class="p">[</span><span class="nx">globalVar</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+</div>
+<p>Not found:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="gameloop.getname">
   <h3>
     <a href="#gameloop.getname" class="pilcrow">&#182;</a>
@@ -1168,7 +1281,7 @@ return this.plot.getDefaultStepRule();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>Find stage number:</p>
         </td>
@@ -1192,7 +1305,7 @@ return this.plot.getDefaultStepRule();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 <p>Get sequence object:</p>
         </td>
@@ -1210,7 +1323,7 @@ return this.plot.getDefaultStepRule();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>Get stage object:</p>
         </td>
@@ -1220,7 +1333,7 @@ return this.plot.getDefaultStepRule();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>Find step number:</p>
         </td>
