@@ -55,7 +55,7 @@ node.msg = {};
  * 
  * @see node.GameSocketClient
  */	
-node.socket = node.gsc = {};
+node.socket = {};
 
 /**
  * ### node.session
@@ -64,7 +64,7 @@ node.socket = node.gsc = {};
  * 
  * Session variables can be saved and restored at a later stage
  */
-node.session 	= {};
+node.session = {};
 
 /**
  * ### node.player
@@ -170,7 +170,6 @@ if ('object' === typeof module && 'function' === typeof require) {
     // ### Loading Event listeners
     require('./listeners/incoming.js');
     require('./listeners/internal.js');
-    require('./listeners/outgoing.js');
 }
 else {
     // <!-- Browser -->

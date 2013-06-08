@@ -67,7 +67,6 @@ var ng_client = [
 // listeners
  	
     rootDir + "listeners/incoming.js",
-    rootDir + "listeners/outgoing.js",
     rootDir + "listeners/internal.js",
 ];
 
