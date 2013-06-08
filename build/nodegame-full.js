@@ -11554,14 +11554,12 @@ exports.Socket = Socket;
 // ## Global scope
 	
 var GameMsg = node.GameMsg,
-	GameStage = node.GameStage,
-	Player = node.Player,
-	GameMsgGenerator = node.GameMsgGenerator,
-	SocketFactory = node.SocketFactory;
-
+    GameStage = node.GameStage,
+    Player = node.Player,
+    GameMsgGenerator = node.GameMsgGenerator,
+    SocketFactory = node.SocketFactory;
+    
 var action = node.action;
-
-var buffer, session;
 
 function Socket(options) {
 	
@@ -11574,16 +11572,8 @@ function Socket(options) {
  * 
  * @api private
  */ 
-    buffer = [];
-    if (node.support.defineProperty) {
-	Object.defineProperty(this, 'buffer', {
-	    value: buffer,
-	    enumerable: true
-	});
-	}
-    else {
-	this.buffer = buffer;
-    }
+    this.buffer = [];
+    
     
 /**
  * ### Socket.session
@@ -11593,16 +11583,7 @@ function Socket(options) {
  * This property is initialized only when a game starts
  * 
  */
-    session = null;
-    if (node.support.defineProperty) {
-	Object.defineProperty(this, 'session', {
-	    value: session,
-	    enumerable: true
-	});
-	}
-    else {
-	this.session = session;
-    }
+    this.session = null;
     
     this.socket = null;
     
@@ -11620,7 +11601,7 @@ Socket.prototype.setup = function(options) {
 };
     
 Socket.prototype.setSocketType = function(type, options) {
-    var socket =  SocketFactory.get(type, options);
+    var socket = SocketFactory.get(type, options);
     if (socket) {
 	this.socket = socket;
 	return true;
@@ -11709,7 +11690,7 @@ Socket.prototype.onMessageFull = function(msg) {
 	else {
 	    console.log('BUFFERING');
 	    node.silly('buffering: ' + msg);
-	    buffer.push(msg);
+	    this.buffer.push(msg);
 	}
     }
 };
@@ -11733,10 +11714,12 @@ Socket.prototype.secureParse = secureParse = function (msg) {
     catch(e) {
 	return logSecureParseError('malformed msg received',  e);
     }
-    
-    if (this.session && gameMsg.session !== this.session) {
-	return logSecureParseError('local session id does not match incoming message session id');
-    }
+
+    // TODO check why clients do not have the right session id.
+    // session checking disabled for now
+    // if (this.session && gameMsg.session !== this.session) {
+    //	return logSecureParseError('local session id does not match incoming message session id');
+    // }
     
     return gameMsg;
 };
@@ -11751,7 +11734,7 @@ Socket.prototype.secureParse = secureParse = function (msg) {
  */
 Socket.prototype.clearBuffer = function () {
     var nelem, msg, i;
-    nelem = buffer.length;
+    nelem = this.buffer.length;
     for (i = 0; i < nelem; i++) {
 	msg = this.buffer.shift();
 	if (msg) {
@@ -11789,9 +11772,6 @@ Socket.prototype.startSession = function (msg) {
     return true;
 };
 
-//## SEND methods
-
-
 /**
 * ### Socket.send
 * 
@@ -11827,8 +11807,8 @@ var logSecureParseError = function (text, e) {
 };
 
 })(
-	'undefined' != typeof node ? node : module.exports,
-	'undefined' != typeof node ? node : module.parent.exports
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
