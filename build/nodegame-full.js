@@ -11435,12 +11435,12 @@ function GameMsgGenerator () {}
 GameMsgGenerator.create = function (msg) {
 
   return new GameMsg({
-      session: ('undefined' !== typeof msg.session) ? msg.session : node.socket.session, 
-      stage: msg.stage || node.game.stage,
+      session: 'undefined' !== typeof msg.session ? msg.session : node.socket.session, 
+      stage: 'undefined' !== typeof msg.stage ? msg.stage : node.game.stage,
       action: msg.action || action.SAY,
       target: msg.target || target.DATA,
       from: node.player.sid, // TODO change to id
-      to: ('undefined' !== typeof msg.to) ? msg.to : 'SERVER',
+      to: 'undefined' !== typeof msg.to ? msg.to : 'SERVER',
       text: msg.text || null,
       data: msg.data || null,
       priority: msg.priority || null,
