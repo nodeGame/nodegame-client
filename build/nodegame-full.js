@@ -7475,11 +7475,11 @@ else {
  * - SAY: Announces a change of state or other global property in the sender of the msg
  * 
  */
-	node.action = {};
+    node.action = {};
 
-	node.action.SET = 'set';
-	node.action.GET = 'get';
-	node.action.SAY = 'say';
+    node.action.SET = 'set';
+    node.action.GET = 'get';
+    node.action.SAY = 'say';
 
 /**
  * ### node.target
@@ -7492,87 +7492,87 @@ else {
  * 
  * It answers the question: "What is the content of the message?"
  */
-	node.target = {};
+    node.target = {};
 
 
 // #### target.DATA
 // Generic identifier for any type of data
-	node.target.DATA = 'DATA';
+    node.target.DATA = 'DATA';
 	
 // #### target.HI
 // A client is connecting for the first time
-	node.target.HI = 'HI';
+    node.target.HI = 'HI';
 
 // #### target.HI_AGAIN
 // A client re-connects to the server within the same session
-	node.target.HI_AGAIN = 'HI_AGAIN';
+    node.target.HI_AGAIN = 'HI_AGAIN';
 
 // #### target.PCONNECT
 // A new client just connected to the player endpoint
-	node.target.PCONNECT = 'PCONNECT';
+    node.target.PCONNECT = 'PCONNECT';
 	
 // #### target.PDISCONNECT
 // A client that just disconnected from the player endpoint
-	node.target.PDISCONNECT = 'PDISCONNECT';
+    node.target.PDISCONNECT = 'PDISCONNECT';
 
 // #### target.MCONNECT
 // A client that just connected to the admin (monitor) endpoint
-	node.target.MCONNECT = 'MCONNECT';
+    node.target.MCONNECT = 'MCONNECT';
 
 // #### target.MDISCONNECT
 // A client just disconnected from the admin (monitor) endpoint
-	node.target.MDISCONNECT = 'MDISCONNECT';
+    node.target.MDISCONNECT = 'MDISCONNECT';
 
 // #### target.PLIST
 // The list of clients connected to the player endpoint was updated
-	node.target.PLIST = 'PLIST';
+    node.target.PLIST = 'PLIST';
 	
 // #### target.MLIST
 // The list of clients connected to the admin (monitor) endpoint was updated
-	node.target.MLIST = 'MLIST';
+    node.target.MLIST = 'MLIST';
 
 // #### target.STATE
 // A client notifies his own state
-	node.target.STATE = 'STATE';
+    node.target.STATE = 'STATE';
 	
 // #### target.STAGE
 // A client notifies his own stage
-	node.target.STAGE = 'STAGE';
+    node.target.STAGE = 'STAGE';
 	
 // #### target.STAGE_LEVEL
 // A client notifies his own stage level
-	node.target.STAGE_LEVEL = 'STAGE_LEVEL';
+    node.target.STAGE_LEVEL = 'STAGE_LEVEL';
 	
 // #### target.REDIRECT
 // Redirects a client to a new uri
-	node.target.REDIRECT = 'REDIRECT';
+    node.target.REDIRECT = 'REDIRECT';
 
 // #### target.SETUP
 // Asks a client update its configuration
-	node.target.SETUP = 'SETUP';
+    node.target.SETUP = 'SETUP';
 	
 // #### target.GAMECOMMAND
 // Ask a client to start/pause/stop/resume the game
-	node.target.GAMECOMMAND = 'GAMECOMMAND';
+    node.target.GAMECOMMAND = 'GAMECOMMAND';
 	
 // #### target.JOIN
 // Asks a client to join another channel/subchannel/room
-	node.target.JOIN = 'JOIN';
+    node.target.JOIN = 'JOIN';
 
 // #### target.LOG
 // A log entry
-	node.target.LOG = 'LOG';
+    node.target.LOG = 'LOG';
 
 //#### not used targets (for future development)
 	
-	node.target.TXT 		= 'TXT';	// Text msg
+    node.target.TXT 		= 'TXT';	// Text msg
 	
-	// Still to implement
-	node.target.BYE			= 'BYE';	// Force disconnects
-	node.target.ACK			= 'ACK';	// A reliable msg was received correctly
+    // Still to implement
+    node.target.BYE			= 'BYE';	// Force disconnects
+    node.target.ACK			= 'ACK';	// A reliable msg was received correctly
 
-	node.target.WARN 		= 'WARN';	// To do.
-	node.target.ERR			= 'ERR';	// To do.
+    node.target.WARN 		= 'WARN';	// To do.
+    node.target.ERR			= 'ERR';	// To do.
 
 
 /**
@@ -7583,15 +7583,15 @@ else {
  * - node.gamecommand.resume
  * - node.gamecommand.stop
  */
-	node.gamecommand = {
-			start: 'start',
-			pause: 'pause',
-			resume: 'resume',
-			stop: 'stop',
-			restart: 'restart',
-			goto_stage: 'goto_stage'
-	};
-		
+    node.gamecommand = {
+	start: 'start',
+	pause: 'pause',
+	resume: 'resume',
+	stop: 'stop',
+	restart: 'restart',
+	goto_stage: 'goto_stage'
+    };
+    
 
 	
 
@@ -7603,8 +7603,11 @@ else {
  * - node.IN
  * - node.OUT
  */
-	node.IN		= 'in.';
-	node.OUT	= 'out.';
+    node.IN		= 'in.';
+    node.OUT	= 'out.';
+
+
+// TODO node.is is basically replaced by Game.stateLevels
 
 
 /**
@@ -7613,44 +7616,44 @@ else {
  * Levels associates to the states of the nodeGame engine
  * 
  */	
-	node.is = {};
+    node.is = {};
 
 // #### is.UNKNOWN
 // A game has not been initialized
-	node.is.UNKNOWN = 0;
+    node.is.UNKNOWN = 0;
 
 // #### is.INITIALIZING
 // The engine is loading all the modules
-	node.is.INITIALIZING = 1;
+    node.is.INITIALIZING = 1;
 
 // #### is.INITIALIZED
 // The engine is fully loaded, but there is still no game
-	node.is.INITIALIZED = 5;
+    node.is.INITIALIZED = 5;
 	
 // #### is.GAMELOADED
 // The engine is fully loaded, and a game has been loaded
-	node.is.GAMELOADED = 10;
+    node.is.GAMELOADED = 10;
 	
 // #### is.DEAD
 // An unrecoverable error has occurred
-	node.is.DEAD = -1;
+    node.is.DEAD = -1;
 	
 // TODO: remove these
 // #### is.LOADING
 // A game is loading
-	node.is.LOADING = 10;
+    node.is.LOADING = 10;
 	
 // #### is.LOADED
 // A game has been loaded, but the GameWindow object could still require some time
-	node.is.LOADED  = 25;
+    node.is.LOADED  = 25;
 	
 // #### is.PLAYING
 // Everything is ready
-	node.is.PLAYING = 50;
+    node.is.PLAYING = 50;
 	
 // #### is.DONE
 // The player completed the game state
-	node.is.DONE = 100;
+    node.is.DONE = 100;
 	
 	
 
@@ -11683,12 +11686,11 @@ Socket.prototype.onMessageFull = function(msg) {
     msg = this.secureParse(msg);
     
     if (msg) { // Parsing successful
-	// TODO: improve
-	if (node.game.isReady && node.game.isReady()) {
+	// message with high priority are executed immediately
+	if (msg.priority > 0 || node.game.isReady && node.game.isReady()) {
 	    node.emit(msg.toInEvent(), msg);
 	}
 	else {
-	    console.log('BUFFERING');
 	    node.silly('buffering: ' + msg);
 	    this.buffer.push(msg);
 	}
@@ -11704,7 +11706,7 @@ Socket.prototype.registerServer = function(msg) {
 };
 
 
-Socket.prototype.secureParse = secureParse = function (msg) {
+Socket.prototype.secureParse = function (msg) {
 	
     var gameMsg;
     try {
@@ -11715,11 +11717,9 @@ Socket.prototype.secureParse = secureParse = function (msg) {
 	return logSecureParseError('malformed msg received',  e);
     }
 
-    // TODO check why clients do not have the right session id.
-    // session checking disabled for now
-    // if (this.session && gameMsg.session !== this.session) {
-    //	return logSecureParseError('local session id does not match incoming message session id');
-    // }
+    if (this.session && gameMsg.session !== this.session) {
+	return logSecureParseError('local session id does not match incoming message session id');
+    }
     
     return gameMsg;
 };
@@ -11829,37 +11829,31 @@ var logSecureParseError = function (text, e) {
 // ## Global scope
 	
 var GameMsg = node.GameMsg,
-	Player = node.Player,
-	GameMsgGenerator = node.GameMsgGenerator;
+    Player = node.Player,
+    GameMsgGenerator = node.GameMsgGenerator;
 
 exports.SocketIo = SocketIo;
 
-
-
 function SocketIo(options) {
-	this.socket = null;
+    this.socket = null;
 }
 
 SocketIo.prototype.connect = function(url, options) {
+    var that;
+    if (!url) {
+	node.err('cannot connect to empty url.', 'ERR');
+	return false;
+    }
+    that = this;
 	
-	if (!url) {
-		node.err('cannot connect to empty url.', 'ERR');
-		return false;
-	}
-	
-	var that = this;
-	
-	this.socket = io.connect(url, options); //conf.io
-	
-	this.socket.on('connect', function (msg) {
-			
-	    node.info('socket.io connection open'); 
-	    
-	    that.socket.on('message', function(msg) {
-	    	node.socket.onMessage(msg);
-	    });
-	    
-	});
+    this.socket = io.connect(url, options); //conf.io
+
+    this.socket.on('connect', function (msg) {
+	node.info('socket.io connection open'); 
+	that.socket.on('message', function(msg) {
+	    node.socket.onMessage(msg);
+	});	
+    });
 	
     this.socket.on('disconnect', node.socket.onDisconnect);
     return true;
@@ -11867,18 +11861,15 @@ SocketIo.prototype.connect = function(url, options) {
 };
 
 SocketIo.prototype.send = function (msg) {
-	console.log(msg);
-	this.socket.send(msg.stringify());
+    this.socket.send(msg.stringify());
 };
-
 
 node.SocketFactory.register('SocketIo', SocketIo);
 
-
 })(
-	'undefined' != typeof node ? node : module.exports,
-	'undefined' != typeof node ? node : module.parent.exports,
-	'undefined' != typeof io ? io : module.parent.exports.io
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports,
+    'undefined' != typeof io ? io : module.parent.exports.io
 );
 
 /**
@@ -12293,26 +12284,6 @@ function Game(settings) {
      */
     this.ml = new PlayerList();
 
-    /**
-     * ### Game.ready
-     *
-     * If TRUE, the nodeGame engine is fully loaded
-     *
-     * Shortcut to game.isReady
-     *
-     * If the browser does not support the method object setters,
-     * this property is disabled, and Game.isReady() should be used
-     * instead.
-     *
-     * @see Game.isReady();
-     *
-     * @api private
-     * @deprecated
-     *
-     */
-    this.ready = null;
-
-
 
     // ## Public properties
 
@@ -12405,7 +12376,7 @@ Game.prototype.start = function() {
     var onInit;
 
     if (this.getStateLevel() > Game.stateLevels.UNINITIALIZED) {
-        node.warn('start called while game already running');
+        node.warn('game.start called on a running game');
         return;
     }
 
@@ -12684,116 +12655,16 @@ Game.prototype.publishUpdate = function() {
  * this property is disabled, and Game.isReady() should be used
  * instead.
  *
- * @see Game.ready;
- *
- * TODO make proper ready function
+ * TODO check whether the conditions are adequate
  *
  */
 Game.prototype.isReady = function() {
-    console.log(this.getStateLevel());
-    console.log(this.getStageLevel());
-    return true;
-    if (this.getStateLevel() < Game.stateLevels.READY) return false;
+//    if (this.getStateLevel() < Game.stateLevels.INITIALIZED) return false;
     if (this.getStageLevel() === Game.stageLevels.LOADING) return false;
 
     // Check if there is a gameWindow obj and whether it is loading
     return node.window ? node.window.state >= node.is.LOADED : true;
 };
-
-
-
-Game.prototype._isReadyToStep = function(stage, stager, pl) {
-    var cbStepper = this._getStepperCallback(stage, stager);
-    var myStageLevel = this.getStageLevel();
-    return cbStepper(myStageLevel, pl);
-};
-
-Game.prototype.isReadyToStep = function() {
-    return this._isReadyToStep(this.getCurrentStage(), this.gameLoop, this.pl);
-};
-
-
-Game.prototype._getStepperCallback = function(stage, stager) {
-    // Take default mode
-    // Is there a local function?
-
-    // Always go to the next when done for now
-    return function() { return true; };
-};
-
-Game.prototype.getStepperCallback = function() {
-    return this._getStepperCallback(this.getCurrentStage(), this.gameLoop);
-};
-
-// TODO : MAYBE TO REMOVE THEM
-
-/**
-* ### Game.next
-*
-* Fetches a state from the game-loop N steps ahead
-*
-* Optionally, a parameter can control the number of steps to take
-* in the game-loop before returning the state
-*
-* @param {number} N Optional. The number of steps to take in the game-loop. Defaults 1
-* @return {boolean|GameStage} The next state, or FALSE if it does not exist
-*
-* @see GameStage
-* @see Game.gameLoop
-*/
-/*
-Game.prototype.next = function(N) {
-    if (!N) return this.gameLoop.next(this.state);
-    return this.gameLoop.jump(this.state, Math.abs(N));
-};
-*/
-
-/**
-* ### Game.previous
-*
-* Fetches a state from the game-loop N steps back
-*
-* Optionally, a parameter can control the number of steps to take
-* backward in the game-loop before returning the state
-*
-* @param {number} times Optional. The number of steps to take in the game-loop. Defaults 1
-* @return {boolean|GameStage} The previous state, or FALSE if it does not exist
-*
-* @see GameStage
-* @see Game.gameLoop
-*/
-/*
-Game.prototype.previous = function(N) {
-    if (!N) return this.gameLoop.previous(this.state);
-    return this.gameLoop.jump(this.state, -Math.abs(N));
-};
-*/
-
-
-/**
-* ### Game.jumpTo
-*
-* Moves the game forward or backward in the game-loop
-*
-* Optionally, a parameter can control the number of steps to take
-* in the game-loop before executing the next function. A negative
-* value jumps backward in the game-loop, and a positive one jumps
-* forward in the game-loop
-*
-* @param {number} jump  The number of steps to take in the game-loop
-* @return {boolean} TRUE, if the game succesfully jumped to the desired state
-*
-* @see GameStage
-* @see Game.gameLoop
-*/
-/*
-Game.prototype.jumpTo = function(jump) {
-    if (!jump) return false;
-    var gs = this.gameLoop.jump(this.state, jump);
-    if (!gs) return false;
-    return this.updateStage(gs);
-};
-*/
 
 // ## Closure
 })(
@@ -14785,8 +14656,6 @@ node.random = {};
         // Player waits that all the clients have terminated the 
         // current step before going to the next
         rules['SYNC_ALL'] = function(stage, myStageLevel, pl, game) {
-            console.log('SYNC_ALL');
-            console.log(arguments);
             return myStageLevel === node.Game.stageLevels.DONE &&
                 pl.isStageDone(stage);
         };
