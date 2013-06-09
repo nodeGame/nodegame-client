@@ -52,8 +52,7 @@ node.events.ng.on('DONE', function(p1, p2, p3) {
 	    node.emit('WAITING...');
 	}
     }
-    node.game.publishUpdate();
-	
+
     // Step forward, if allowed
     node.game.shouldStep();
 });

@@ -3,7 +3,7 @@
 (function (node) {
 	
     var GameMsg = node.GameMsg,
-        GameStage = node.GameStage,
+        GameSage = node.GameStage,
         PlayerList = node.PlayerList,
         Player = node.Player,
         J = node.JSUS;
@@ -149,8 +149,6 @@ node.events.ng.on( IN + set + 'DATA', function (msg) {
  *  @see Game.pl 
  */
     node.events.ng.on( IN + say + 'STAGE', function (msg) {
-
-	
 	if (node.game.pl.exist(msg.from)) {			
 	    node.game.pl.updatePlayerStage(msg.from, msg.data);
 	    node.emit('UPDATED_PLIST');
@@ -159,7 +157,7 @@ node.events.ng.on( IN + set + 'DATA', function (msg) {
 	// <!-- Assume this is the server for now
 	// TODO: assign a string-id to the server -->
 	else {
-	    node.game.execStage(node.game.gameLoop.getStep(msg.data));
+	    node.game.execStep(node.game.gameLoop.getStep(msg.data));
 	}
     });
 

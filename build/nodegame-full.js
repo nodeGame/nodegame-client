@@ -8877,22 +8877,22 @@ PlayerList.prototype.updatePlayerStageLevel = function (id, stageLevel) {
  * @return {boolean} TRUE, if all checked players have terminated the stage
  */
 PlayerList.prototype.isStageDone = function (stage) {
-    var p;
+    var p, i;
 
-	if (!stage) return false;
-	for (var i = 0; i < this.db.length; i++) {
+    if (!stage) return false;
+    for (i = 0; i < this.db.length; i++) {
         p = this.db[i];
 
-		// Player is at another stage
-		if (GameStage.compare(stage, p.stage, false) !== 0) {
-			continue;
-		}
-		// Player is done for his stage
-		if (p.stageLevel !== node.Game.stageLevels.DONE) {
-			return false;
-		}
+	// Player is at another stage
+	if (GameStage.compare(stage, p.stage) !== 0) {
+	    continue;
 	}
-	return true;
+	// Player is done for his stage
+	if (p.stageLevel !== node.Game.stageLevels.DONE) {
+	    return false;
+	}
+    }
+    return true;
 };
 
 /**
@@ -12374,7 +12374,6 @@ function Game(settings) {
  */
 Game.prototype.start = function() {
     var onInit;
-
     if (this.getStateLevel() > Game.stateLevels.UNINITIALIZED) {
         node.warn('game.start called on a running game');
         return;
@@ -12430,10 +12429,12 @@ Game.prototype.resume = function() {
  * @see Game.step
  */
 Game.prototype.shouldStep = function() {
-    // Check the stager
-    var stepRule = this.gameLoop.getStepRule(this.getCurrentGameStage());
+    var stepRule;
+    stepRule = this.gameLoop.getStepRule(this.getCurrentGameStage());
 
-    if ('function' !== typeof stepRule) return false;
+    if ('function' !== typeof stepRule) {
+	throw new NodeGameMisconfiguredGameError("step rule is not a function");
+    }
 
     if (stepRule(this.getCurrentGameStage(), this.getStageLevel(), this.pl, this)) {
         return this.step();
@@ -12601,6 +12602,7 @@ Game.prototype.setStateLevel = function(stateLevel) {
     }
 
     this.stateLevel = stateLevel;
+    // TODO do we need to publish this kinds of update?
     //this.publishUpdate();
 };
 
@@ -12611,7 +12613,17 @@ Game.prototype.setStageLevel = function(stageLevel) {
         throw new node.NodeGameMisconfiguredGameError(
                 'setStageLevel called with invalid parameter: ' + stageLevel);
     }
+    this.publishStageLevelUpdate(stageLevel);
+    this.stageLevel = stageLevel;
+};
 
+Game.prototype.setCurrentGameStage = function(gameStage) {
+    gameStage = new GameStage(gameStage);
+    this.publishGameStageUpdate(gameStage);
+    this.currentGameStage = gameStage;
+};
+
+Game.prototype.publishStageLevelUpdate = function(stageLevel) {
     // Publish update:
     if (!this.observer && this.stageLevel !== stageLevel) {
         node.socket.send(node.msg.create({
@@ -12620,19 +12632,16 @@ Game.prototype.setStageLevel = function(stageLevel) {
             to: 'ALL'
         }));
     }
-
-    this.stageLevel = stageLevel;
 };
 
-Game.prototype.setCurrentGameStage = function(gameStage) {
-    this.currentGameStage = new GameStage(gameStage);
-};
-
-Game.prototype.publishUpdate = function() {
-    // <!-- Important: SAY -->
-    if (!this.observer) {
-        var stateEvent = node.OUT + action.SAY + '.STATE';
-        node.emit(stateEvent, this.getStateLevel(), 'ALL');
+Game.prototype.publishGameStageUpdate = function(gameStage) {
+    // Publish update:
+    if (!this.observer && this.currentGameStage !== gameStage) {
+        node.socket.send(node.msg.create({
+            target: node.target.STAGE,
+            data: gameStage,
+            to: 'ALL'
+        }));
     }
 };
 
@@ -14709,7 +14718,7 @@ node.random = {};
 (function (node) {
 	
     var GameMsg = node.GameMsg,
-        GameStage = node.GameStage,
+        GameSage = node.GameStage,
         PlayerList = node.PlayerList,
         Player = node.Player,
         J = node.JSUS;
@@ -14855,8 +14864,6 @@ node.events.ng.on( IN + set + 'DATA', function (msg) {
  *  @see Game.pl 
  */
     node.events.ng.on( IN + say + 'STAGE', function (msg) {
-
-	
 	if (node.game.pl.exist(msg.from)) {			
 	    node.game.pl.updatePlayerStage(msg.from, msg.data);
 	    node.emit('UPDATED_PLIST');
@@ -14865,7 +14872,8 @@ node.events.ng.on( IN + set + 'DATA', function (msg) {
 	// <!-- Assume this is the server for now
 	// TODO: assign a string-id to the server -->
 	else {
-	    node.game.execStage(node.game.gameLoop.getStep(msg.data));
+	    debugger;
+	    node.game.execStep(node.game.gameLoop.getStep(msg.data));
 	}
     });
 
@@ -15026,8 +15034,7 @@ node.events.ng.on('DONE', function(p1, p2, p3) {
 	    node.emit('WAITING...');
 	}
     }
-    node.game.publishUpdate();
-	
+
     // Step forward, if allowed
     node.game.shouldStep();
 });
