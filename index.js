@@ -149,7 +149,7 @@ node.support = {};
 // Load dependencies
 
 if ('object' === typeof module && 'function' === typeof require) {
-	// <!-- Node.js -->
+    // <!-- Node.js -->
 	
     require('./lib/modules/log.js');
     require('./lib/modules/variables.js');
