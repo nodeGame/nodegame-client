@@ -12497,6 +12497,7 @@ Game.prototype.step = function() {
             }
 
 			this.setStateLevel(Game.stateLevels.GAMEOVER);
+			this.setStageLevel(Game.stageLevels.DONE);
 
             return rc;
         }
