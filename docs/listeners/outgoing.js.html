@@ -18,27 +18,6 @@
     </div>
     <div id="tree"></div>
     <div id="headings">
-      <div class="heading h1">
-        <a href="#outgoing-listeners">Outgoing listeners</a>
-      </div>
-      <div class="heading h2">
-        <a href="#out.say.stage">out.say.STAGE</a>
-      </div>
-      <div class="heading h2">
-        <a href="#out.say.txt">out.say.TXT</a>
-      </div>
-      <div class="heading h2">
-        <a href="#out.say.data">out.say.DATA</a>
-      </div>
-      <div class="heading h2">
-        <a href="#out.set.stage">out.set.STAGE</a>
-      </div>
-      <div class="heading h2">
-        <a href="#out.set.data">out.set.DATA</a>
-      </div>
-      <div class="heading h2">
-        <a href="#out.get.data">out.get.DATA</a>
-      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -47,187 +26,106 @@
   <tbody>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="outgoing-listeners">
-  <h1>
-    <a href="#outgoing-listeners" class="pilcrow">&#182;</a>
-    Outgoing listeners
-  </h1>
-</div>
-
-
-<p>Outgoing listeners are fired when messages are sent</p>
+          <h1>outgoing.js</h1>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;nodeGame not found. Cannot add outgoing listeners&#39;</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-    <span class="nx">GameState</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span><span class="p">;</span>
-  
-  <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">,</span>
-    <span class="nx">target</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
-  
-  <span class="kd">var</span> <span class="nx">say</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
-    <span class="nx">set</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
-    <span class="nx">get</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">GET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
-    <span class="nx">OUT</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">OUT</span><span class="p">;</span>
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="out.say.stage">
-  <h2>
-    <a href="#out.say.stage" class="pilcrow">&#182;</a>
-    out.say.STAGE
-  </h2>
-</div>
-
-  </div>
-  <div class="body"><p>Sends out a STAGE message to the specified recipient</p>
-
-<p>TODO: check with the server 
-The message is for informative purpose</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;STAGE&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendSTAGE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
-<span class="p">});</span> 
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="out.say.txt">
-  <h2>
-    <a href="#out.say.txt" class="pilcrow">&#182;</a>
-    out.say.TXT
-  </h2>
-</div>
-
-  </div>
-  <div class="body"><p>Sends out a TXT message to the specified recipient</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;TXT&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendTXT</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span><span class="nx">to</span><span class="p">);</span>
-<span class="p">});</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="out.say.data">
-  <h2>
-    <a href="#out.say.data" class="pilcrow">&#182;</a>
-    out.say.DATA
-  </h2>
-</div>
-
-  </div>
-  <div class="body"><p>Sends out a DATA message to the specified recipient</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;DATA&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendDATA</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">key</span><span class="p">);</span>
-<span class="p">});</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="out.set.stage">
-  <h2>
-    <a href="#out.set.stage" class="pilcrow">&#182;</a>
-    out.set.STAGE
-  </h2>
-</div>
-
-  </div>
-  <div class="body"><p>Sends out a STAGE message to the specified recipient</p>
-
-<p>TODO: check with the server 
-The receiver will update its representation of the stage
-of the sender</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">set</span> <span class="o">+</span> <span class="s1">&#39;STAGE&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendSTAGE</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">to</span><span class="p">);</span>
-<span class="p">});</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="out.set.data">
-  <h2>
-    <a href="#out.set.data" class="pilcrow">&#182;</a>
-    out.set.DATA
-  </h2>
-</div>
-
-  </div>
-  <div class="body"><p>Sends out a DATA message to the specified recipient</p>
-
-<p>The sent data will be stored in the memory of the recipient</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">node.GameDB
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">set</span> <span class="o">+</span> <span class="s1">&#39;DATA&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendDATA</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">key</span><span class="p">);</span>
-<span class="p">});</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="out.get.data">
-  <h2>
-    <a href="#out.get.data" class="pilcrow">&#182;</a>
-    out.get.DATA
-  </h2>
-</div>
-
-  </div>
-  <div class="body"><p>Issues a DATA request</p>
-
-<p>Experimental. Undocumented (for now)</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">OUT</span> <span class="o">+</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;DATA&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendDATA</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
-<span class="p">});</span>
-  
-<span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;outgoing listeners added&#39;</span><span class="p">);</span>
-
-<span class="p">})(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">);</span> </pre></div>
-        </td>
+        <td class="code highlight"></td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
 </div>
-<!-- ends outgoing listener -->
+<p>// # Outgoing listeners
+// Outgoing listeners are fired when messages are sent</p>
+
+<p>(function (node) {</p>
+
+<p>var GameMsg = node.GameMsg,
+       GameState = node.GameState;</p>
+
+<p>var action = node.action,
+       target = node.target;</p>
+
+<p>var say = action.SAY + '.',
+       set = action.SET + '.',
+       get = action.GET + '.',
+       OUT  = node.OUT;</p>
+
+<p>/**
+* ## out.say.STAGE
+* 
+* Sends out a STAGE message to the specified recipient
+* 
+* TODO: check with the server 
+* The message is for informative purpose
+* 
+*/
+node.events.ng.on( OUT + say + 'STAGE', function (stage, to) {
+   node.socket.sendSTAGE(action.SAY, stage, to);
+});    </p>
+
+<p>/**
+* ## out.say.TXT
+* 
+* Sends out a TXT message to the specified recipient
+*/
+node.events.ng.on( OUT + say + 'TXT', function (text, to) {
+   node.socket.sendTXT(text,to);
+});</p>
+
+<p>/**
+* ## out.say.DATA
+* 
+* Sends out a DATA message to the specified recipient
+*/
+node.events.ng.on( OUT + say + 'DATA', function (data, to, key) {
+   node.socket.sendDATA(action.SAY, data, to, key);
+});</p>
+
+<p>/**
+* ## out.set.STAGE
+* 
+* Sends out a STAGE message to the specified recipient
+* 
+* TODO: check with the server 
+* The receiver will update its representation of the stage
+* of the sender
+*/
+node.events.ng.on( OUT + set + 'STAGE', function (stage, to) {
+   node.socket.sendSTAGE(action.SET, stage, to);
+});</p>
+
+<p>/**
+* ## out.set.DATA
+* 
+* Sends out a DATA message to the specified recipient
+* 
+* The sent data will be stored in the memory of the recipient
+* 
+* @see node.GameDB
+*/
+node.events.ng.on( OUT + set + 'DATA', function (data, to, key) {
+   node.socket.sendDATA(action.SET, data, to, key);
+});</p>
+
+<p>/**
+* ## out.get.DATA
+* 
+* Issues a DATA request
+* 
+* Experimental. Undocumented (for now)
+*/
+node.events.ng.on( OUT + get + 'DATA', function (data, to, key) {
+   node.socket.sendDATA(action.GET, data, to, data);
+});</p>
+
+<p>node.log('outgoing listeners added');</p>
+
+<p>})('undefined' !== typeof node ? node : module.parent.exports); 
+// <!-- ends outgoing listener --></p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+</pre></div>
         </td>
       </tr>
   </tbody>

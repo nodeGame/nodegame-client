@@ -168,7 +168,7 @@ to perform operation on them</p>
 <p>Setting up global scope variables </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
-  <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">;</span>
+    <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">;</span>
 
 <span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">;</span></pre></div>
         </td>
@@ -262,10 +262,10 @@ return array;
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">comparePlayers</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">p1</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">p2</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">p1</span><span class="p">.</span><span class="nx">count</span> <span class="o">&lt;</span> <span class="nx">p2</span><span class="p">.</span><span class="nx">count</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">p1</span><span class="p">.</span><span class="nx">count</span> <span class="o">&gt;</span> <span class="nx">p2</span><span class="p">.</span><span class="nx">count</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">p1</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">p2</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">p1</span><span class="p">.</span><span class="nx">count</span> <span class="o">&lt;</span> <span class="nx">p2</span><span class="p">.</span><span class="nx">count</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">p1</span><span class="p">.</span><span class="nx">count</span> <span class="o">&gt;</span> <span class="nx">p2</span><span class="p">.</span><span class="nx">count</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -312,14 +312,14 @@ return array;
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">PlayerList</span> <span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="p">{};</span>
-  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">.</span><span class="nx">indexes</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">.</span><span class="nx">indexes</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="p">}</span>
+    <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">.</span><span class="nx">indexes</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">.</span><span class="nx">indexes</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
   
-  <span class="nx">NDDB</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">);</span>
+    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">);</span>
   </pre></div>
         </td>
       </tr>
@@ -330,8 +330,8 @@ return array;
 </div>
 <p>Assigns a global comparator function</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">globalCompare</span> <span class="o">=</span> <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">comparePlayers</span><span class="p">;</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">globalCompare</span> <span class="o">=</span> <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">comparePlayers</span><span class="p">;</span>
+    </pre></div>
         </td>
       </tr>
       <tr>
@@ -343,11 +343,11 @@ return array;
 it could be that the constructor is called by the breed function
 and in such case we would duplicate them    </p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">index</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">index</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">return</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
-    <span class="p">});</span>
-  <span class="p">}</span></pre></div>
+  <span class="p">});</span>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -373,7 +373,7 @@ if (!this.stage) {
 <p>The internal counter that will be used to assing the <code>count</code> 
 property to each inserted player</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">pcounter</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">pcounter</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -726,10 +726,10 @@ have the property <code>stageLevel</code> equal to <code>Game.stageLevels.DONE</
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isStageDone</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">p</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">p</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span></pre></div>
         </td>
       </tr>
@@ -740,9 +740,9 @@ have the property <code>stageLevel</code> equal to <code>Game.stageLevels.DONE</
 </div>
 <p>Player is at another stage</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">continue</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>
+  <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -752,69 +752,12 @@ have the property <code>stageLevel</code> equal to <code>Game.stageLevels.DONE</
 </div>
 <p>Player is done for his stage</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
   <span class="p">}</span>
-  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
-</div>
-<p>/**
-* ### PlayerList.actives
-* 
-* Counts the number of player whose stage is different from 0:0:0
-* 
-* @return {number} result The number of player whose stage is different from 0:0:0
-* 
-*/
-PlayerList.prototype.actives = function () {
-var result = 0;
-var gs;
-this.each(function(p) {
-    gs = new GameStage(p.stage); <br />
-    // <!-- Player is on 0.0.0 stage -->
-    if (GameStage.compare(gs, new GameStage()) !== 0) {
-        result++;
-    }
-}); <br />
-// <!-- node.log('ACTIVES: ' + result); -->
-return result;
-};</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
-</div>
-<p>/**
-* ### PlayerList.checkStage
-* 
-* If all the players are DONE with the specfied stage,
-* emits a <code>STAGEDONE</code> event
-* 
-* @param {GameStage} stage Optional. The GameStage to check. Defaults stage = node.game.stage
-* @param {Boolean} extended Optional. If TRUE, also newly connected players are checked. Defaults, FALSE
-* 
-*         @see <code>PlayerList.actives</code>
-*         @see <code>PlayerList.isStageDone</code>
-* 
-*/
-PlayerList.prototype.checkStage = function (stage, extended) {
-if (this.isStageDone(stage, extended)) {
-    node.emit('STAGEDONE');
-}
-};</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -848,13 +791,13 @@ PlayerList</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">eol</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">EOL</span> <span class="o">=</span> <span class="nx">eol</span> <span class="o">||</span> <span class="s1">&#39;\n&#39;</span><span class="p">,</span> <span class="nx">stage</span><span class="p">;</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">EOL</span> <span class="o">=</span> <span class="nx">eol</span> <span class="o">||</span> <span class="s1">&#39;\n&#39;</span><span class="p">,</span> <span class="nx">stage</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">out</span> <span class="o">+=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">p</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
       <span class="nx">stage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
       <span class="nx">out</span> <span class="o">+=</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">stage</span> <span class="o">+</span> <span class="nx">EOL</span><span class="p">;</span>
-  <span class="p">});</span>
-  <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
+    <span class="p">});</span>
+    <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -882,21 +825,20 @@ PlayerList</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">Array</span>
-      <span>Array containing N <code>PlayerList</code> objects 
-
-
-<div class="highlight"><pre><code><span class="err">@</span><span class="n">see</span> <span class="err">`</span><span class="n">JSUS</span><span class="p">.</span><span class="n">getNGroups</span><span class="err">`</span>
-</code></pre></div>
-
-</span>
+      <span>Array containing N <code>PlayerList</code> objects </span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`JSUS.getNGroups`
+  </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getNGroups</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">N</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">groups</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getNGroups</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">,</span> <span class="nx">N</span><span class="p">);</span>
-  <span class="k">return</span> <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">array2Groups</span><span class="p">(</span><span class="nx">groups</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">N</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">groups</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getNGroups</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">,</span> <span class="nx">N</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">array2Groups</span><span class="p">(</span><span class="nx">groups</span><span class="p">);</span>
 <span class="p">};</span>  </pre></div>
         </td>
       </tr>
@@ -924,21 +866,20 @@ PlayerList</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">Array</span>
-      <span>Array containing N <code>PlayerList</code> objects 
-
-
-<div class="highlight"><pre><code><span class="err">@</span><span class="n">see</span> <span class="err">`</span><span class="n">JSUS</span><span class="p">.</span><span class="n">getGroupsSizeN</span><span class="err">`</span>
-</code></pre></div>
-
-</span>
+      <span>Array containing N <code>PlayerList</code> objects </span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`JSUS.getGroupsSizeN`
+  </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getGroupsSizeN</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">N</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">groups</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getGroupsSizeN</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">,</span> <span class="nx">N</span><span class="p">);</span>
-  <span class="k">return</span> <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">array2Groups</span><span class="p">(</span><span class="nx">groups</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">N</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">groups</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getGroupsSizeN</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">,</span> <span class="nx">N</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">array2Groups</span><span class="p">(</span><span class="nx">groups</span><span class="p">);</span>
 <span class="p">};</span>  </pre></div>
         </td>
       </tr>
@@ -1029,7 +970,7 @@ cannot overwrite any previously existing property.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Expose Player constructor</p>
         </td>
