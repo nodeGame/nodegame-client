@@ -12377,13 +12377,12 @@ function Game(settings) {
  * Important: it does not use `Game.publishUpdate` because that is
  * just for change of state after the game has started
  *
- *
  * @see node.play
  * @see Game.publishStage
- *
  */
 Game.prototype.start = function() {
     var onInit;
+
     if (this.getStateLevel() >= Game.stateLevels.INITIALIZING) {
         node.warn('game.start called on a running game');
         return;
@@ -12403,6 +12402,37 @@ Game.prototype.start = function() {
     this.step();
 
     node.log('game started');
+};
+
+/**
+ * ### Game.gameover
+ *
+ * Ends the game
+ *
+ * Calls the gameover function, sets levels.
+ */
+Game.prototype.gameover = function() {
+    var onGameover;
+
+    if (this.getStateLevel() >= Game.stateLevels.FINISHING) {
+        node.warn('game.gameover called on a finishing game');
+        return;
+    }
+
+	node.emit('GAMEOVER');
+
+	// Call gameover callback, if it exists:
+	if (this.plot && this.plot.stager) {
+		onGameover = this.plot.stager.getOnGameover();
+		if (onGameover) {
+			this.setStateLevel(Game.stateLevels.FINISHING);
+
+			onGameover.call(node.game);
+		}
+	}
+
+	this.setStateLevel(Game.stateLevels.GAMEOVER);
+	this.setStageLevel(Game.stageLevels.DONE);
 };
 
 /**
@@ -12470,8 +12500,7 @@ Game.prototype.shouldStep = function() {
 Game.prototype.step = function() {
     var nextStep, curStep;
     var nextStepObj, nextStageObj;
-    var onGameover;
-    var ev, rc;
+    var ev;
 
     curStep = this.getCurrentGameStage();
     nextStep = this.plot.next(curStep);
@@ -12481,25 +12510,8 @@ Game.prototype.step = function() {
 
     if ('string' === typeof nextStep) {
         if (nextStep === GamePlot.GAMEOVER) {
-            node.emit('GAMEOVER');
-
-			rc = null;
-
-            // Call gameover callback, if it exists:
-            if (this.plot && this.plot.stager) {
-                onGameover = this.plot.stager.getOnGameover();
-                if (onGameover) {
-					this.setStateLevel(Game.stateLevels.FINISHING);
-
-                    // Can throw errors:
-                    rc = onGameover.call(node.game);
-                }
-            }
-
-			this.setStateLevel(Game.stateLevels.GAMEOVER);
-			this.setStageLevel(Game.stageLevels.DONE);
-
-            return rc;
+			this.gameover();
+			return null;
         }
 
         // else do nothing

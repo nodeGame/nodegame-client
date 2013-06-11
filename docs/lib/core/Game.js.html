@@ -61,6 +61,9 @@
         <a href="#game.start">Game.start</a>
       </div>
       <div class="heading h3">
+        <a href="#game.gameover">Game.gameover</a>
+      </div>
+      <div class="heading h3">
         <a href="#game.pause">Game.pause</a>
       </div>
       <div class="heading h3">
@@ -482,7 +485,6 @@ just for change of state after the game has started</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Game.publishStage
-
   </span>
     </div>
   </div>
@@ -490,6 +492,7 @@ just for change of state after the game has started</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">onInit</span><span class="p">;</span>
+
     <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;game.start called on a running game&#39;</span><span class="p">);</span>
         <span class="k">return</span><span class="p">;</span>
@@ -516,6 +519,55 @@ just for change of state after the game has started</p>
     <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
 
     <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;game started&#39;</span><span class="p">);</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="game.gameover">
+  <h3>
+    <a href="#game.gameover" class="pilcrow">&#182;</a>
+    Game.gameover
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Ends the game</p>
+
+<p>Calls the gameover function, sets levels.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">gameover</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">onGameover</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">FINISHING</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;game.gameover called on a finishing game&#39;</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;GAMEOVER&#39;</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>Call gameover callback, if it exists:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">onGameover</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getOnGameover</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">onGameover</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">FINISHING</span><span class="p">);</span>
+
+      <span class="nx">onGameover</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -651,8 +703,7 @@ TODO: harmonize return values
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">nextStep</span><span class="p">,</span> <span class="nx">curStep</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">nextStepObj</span><span class="p">,</span> <span class="nx">nextStageObj</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">onGameover</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">ev</span><span class="p">,</span> <span class="nx">rc</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">ev</span><span class="p">;</span>
 
     <span class="nx">curStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
     <span class="nx">nextStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">curStep</span><span class="p">);</span></pre></div>
@@ -661,7 +712,7 @@ TODO: harmonize return values
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>Listeners from previous step are cleared in any case</p>
         </td>
@@ -669,39 +720,8 @@ TODO: harmonize return values
 
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">nextStep</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">nextStep</span> <span class="o">===</span> <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;GAMEOVER&#39;</span><span class="p">);</span>
-
-      <span class="nx">rc</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
-</div>
-<p>Call gameover callback, if it exists:</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">onGameover</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getOnGameover</span><span class="p">();</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">onGameover</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">FINISHING</span><span class="p">);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
-</div>
-<p>Can throw errors:</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>                    <span class="nx">rc</span> <span class="o">=</span> <span class="nx">onGameover</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-
-      <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">);</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">);</span>
-
-            <span class="k">return</span> <span class="nx">rc</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">gameover</span><span class="p">();</span>
+      <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span></pre></div>
         </td>
       </tr>
