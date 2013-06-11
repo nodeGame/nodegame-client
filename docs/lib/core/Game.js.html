@@ -52,7 +52,7 @@
         <a href="#game.memory">Game.memory</a>
       </div>
       <div class="heading h3">
-        <a href="#game.gameloop">Game.gameLoop</a>
+        <a href="#game.plot">Game.plot</a>
       </div>
       <div class="heading h2">
         <a href="#game-methods">Game methods</a>
@@ -101,7 +101,7 @@
   <div class="body"><p>Copyright(c) 2012 Stefano Balietti
 MIT Licensed</p>
 
-<p>Wrapper class for a <code>GameLoop</code> object and functions to control the game flow</p>
+<p>Wrapper class for a <code>GamePlot</code> object and functions to control the game flow</p>
 
 <p>Defines a number of event listeners, diveded in</p>
 
@@ -131,7 +131,7 @@ MIT Licensed</p>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
     <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
     <span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameDB</span><span class="p">,</span>
-    <span class="nx">GameLoop</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameLoop</span><span class="p">,</span>
+    <span class="nx">GamePlot</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GamePlot</span><span class="p">,</span>
     <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">,</span>
     <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
     <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span><span class="p">,</span>
@@ -401,20 +401,20 @@ automatically inserted in this object</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="game.gameloop">
+<div class="pilwrap" id="game.plot">
   <h3>
-    <a href="#game.gameloop" class="pilcrow">&#182;</a>
-    Game.gameLoop
+    <a href="#game.plot" class="pilcrow">&#182;</a>
+    Game.plot
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>The Game Loop</p>
+  <div class="body"><p>The Game Plot</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">GameLoop</span>
+      <span class="dox_type">GamePlot</span>
     </div>
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
@@ -424,7 +424,7 @@ automatically inserted in this object</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameLoop</span><span class="p">(</span><span class="k">new</span> <span class="nx">Stager</span><span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">stages</span><span class="p">));</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GamePlot</span><span class="p">(</span><span class="k">new</span> <span class="nx">Stager</span><span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">stages</span><span class="p">));</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -503,8 +503,8 @@ just for change of state after the game has started</p>
 </div>
 <p>INIT the game</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">plot</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">onInit</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getOnInit</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">onInit</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getOnInit</span><span class="p">();</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">onInit</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
             <span class="nx">onInit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
@@ -595,7 +595,7 @@ just for change of state after the game has started</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">shouldStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">stepRule</span><span class="p">;</span>
-    <span class="nx">stepRule</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
+    <span class="nx">stepRule</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stepRule</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;step rule is not a function&quot;</span><span class="p">);</span>
@@ -655,7 +655,7 @@ TODO: harmonize return values
     <span class="kd">var</span> <span class="nx">ev</span><span class="p">,</span> <span class="nx">rc</span><span class="p">;</span>
 
     <span class="nx">curStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
-    <span class="nx">nextStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">curStep</span><span class="p">);</span></pre></div>
+    <span class="nx">nextStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">curStep</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -668,7 +668,7 @@ TODO: harmonize return values
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">nextStep</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">nextStep</span> <span class="o">===</span> <span class="nx">GameLoop</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">nextStep</span> <span class="o">===</span> <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;GAMEOVER&#39;</span><span class="p">);</span>
 
       <span class="nx">rc</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
@@ -681,8 +681,8 @@ TODO: harmonize return values
 </div>
 <p>Call gameover callback, if it exists:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">plot</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">onGameover</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getOnGameover</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">onGameover</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getOnGameover</span><span class="p">();</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">onGameover</span><span class="p">)</span> <span class="p">{</span>
           <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">FINISHING</span><span class="p">);</span></pre></div>
         </td>
@@ -735,8 +735,8 @@ TODO: harmonize return values
 <p>If we enter a new stage (including repeating the same stage)
 we need to update a few things:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">stepsToNextStage</span><span class="p">(</span><span class="nx">curStep</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">nextStageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stepsToNextStage</span><span class="p">(</span><span class="nx">curStep</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">nextStageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">nextStageObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -778,7 +778,7 @@ we need to update a few things:</p>
             <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="nx">nextStepObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
+        <span class="nx">nextStepObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">nextStepObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -901,7 +901,7 @@ we need to update a few things:</p>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentGameStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -1016,7 +1016,7 @@ Publishes update only if value actually changed.</p>
 game will be considered READY unless the nodegame-window
 says otherwise</p>
 
-<p>During stepping between functions in the game-loop
+<p>During stepping between functions in the game-plot
 the flag is temporarily turned to FALSE, and all events
 are queued and fired only after nodeGame is ready to
 handle them again.</p>

@@ -26,7 +26,7 @@
  * 
  * Updates and publishes that the client has successfully terminated a stage 
  * 
- * If a DONE handler is defined in the game-loop, it will executes it before
+ * If a DONE handler is defined in the game-plot, it will executes it before
  * continuing with further operations. In case it returns FALSE, the update
  * process is stopped. 
  * 

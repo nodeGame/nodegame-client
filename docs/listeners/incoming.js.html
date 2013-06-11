@@ -299,7 +299,7 @@
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;DATA&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="s1">&#39;LOOP&#39;</span><span class="p">){</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendDATA</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="s1">&#39;GAME&#39;</span><span class="p">);</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">sendDATA</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="s1">&#39;GAME&#39;</span><span class="p">);</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -394,7 +394,7 @@ sent the message is updated </p>
 TODO: assign a string-id to the server -->
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">execStep</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">));</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">execStep</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">));</span>
   <span class="p">}</span>
     <span class="p">});</span></pre></div>
         </td>

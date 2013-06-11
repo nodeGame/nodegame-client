@@ -180,7 +180,7 @@ but has to wait before going to the next one</p>
 <p>if next step is going to be a new stage, wait for others</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">;</span>
-                <span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">gameLoop</span><span class="p">.</span><span class="nx">stepsToNextStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">||</span>
+                <span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stepsToNextStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">||</span>
                  <span class="nx">pl</span><span class="p">.</span><span class="nx">isStageDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">));</span>
         <span class="p">};</span>
     <span class="p">}</span>
