@@ -109,7 +109,7 @@ node.events.ng.on( IN + say + 'MLIST', function (msg) {
  */ 
 node.events.ng.on( IN + get + 'DATA', function (msg) {
     if (msg.text === 'LOOP'){
-	node.socket.sendDATA(action.SAY, node.game.gameLoop, msg.from, 'GAME');
+	node.socket.sendDATA(action.SAY, node.game.plot, msg.from, 'GAME');
     }
     // <!-- We could double emit
     // node.emit(msg.text, msg.data); -->
@@ -157,7 +157,7 @@ node.events.ng.on( IN + set + 'DATA', function (msg) {
 	// <!-- Assume this is the server for now
 	// TODO: assign a string-id to the server -->
 	else {
-	    node.game.execStep(node.game.gameLoop.getStep(msg.data));
+	    node.game.execStep(node.game.plot.getStep(msg.data));
 	}
     });
 

@@ -57,6 +57,16 @@ through Socket.IO</p>
       </tr>
       <tr>
         <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>TODO io will be undefined in Node.JS because module.parents.exports.io does not exists</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
 <div class="pilwrap" id="global-scope">
   <h2>
     <a href="#global-scope" class="pilcrow">&#182;</a>
@@ -67,37 +77,31 @@ through Socket.IO</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  
 <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-  <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
-  <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">;</span>
+    <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
+    <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">;</span>
 
 <span class="nx">exports</span><span class="p">.</span><span class="nx">SocketIo</span> <span class="o">=</span> <span class="nx">SocketIo</span><span class="p">;</span>
 
-
-
 <span class="kd">function</span> <span class="nx">SocketIo</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="nx">SocketIo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot connect to empty url.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+  <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
   
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot connect to empty url.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-  
-  <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">io</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span> <span class="c1">//conf.io</span>
-  
-  <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;connect&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-      
-      <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;socket.io connection open&#39;</span><span class="p">);</span> 
-      
-      <span class="nx">that</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">onMessage</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-      <span class="p">});</span>
-      
-  <span class="p">});</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">io</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span> <span class="c1">//conf.io</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;connect&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;socket.io connection open&#39;</span><span class="p">);</span> 
+  <span class="nx">that</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">onMessage</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+  <span class="p">});</span> 
+    <span class="p">});</span>
   
     <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;disconnect&#39;</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">onDisconnect</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
@@ -105,18 +109,15 @@ through Socket.IO</p>
 <span class="p">};</span>
 
 <span class="nx">SocketIo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">send</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">stringify</span><span class="p">());</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">stringify</span><span class="p">());</span>
 <span class="p">};</span>
-
 
 <span class="nx">node</span><span class="p">.</span><span class="nx">SocketFactory</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;SocketIo&#39;</span><span class="p">,</span> <span class="nx">SocketIo</span><span class="p">);</span>
 
-
 <span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">io</span> <span class="o">?</span> <span class="nx">io</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">io</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">io</span> <span class="o">?</span> <span class="nx">io</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">io</span> 
 <span class="p">);</span>
 </pre></div>
         </td>

@@ -22,9 +22,6 @@
         <a href="#internal-listeners">Internal listeners</a>
       </div>
       <div class="heading h2">
-        <a href="#stagedone">STAGEDONE</a>
-      </div>
-      <div class="heading h2">
         <a href="#done">DONE</a>
       </div>
       <div class="heading h2">
@@ -69,93 +66,20 @@ such as progressing in the loading chain, or finishing a game stage </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;nodeGame not found. Cannot add internal listeners&#39;</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">,</span>
-    <span class="nx">target</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
-  
-  <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-    <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
-    <span class="nx">Game</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">;</span>
-  
-  <span class="kd">var</span> <span class="nx">say</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
-    <span class="nx">set</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
-    <span class="nx">get</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">GET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
-    <span class="nx">IN</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">IN</span><span class="p">,</span>
-    <span class="nx">OUT</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">OUT</span><span class="p">;</span>
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="stagedone">
-  <h2>
-    <a href="#stagedone" class="pilcrow">&#182;</a>
-    STAGEDONE
-  </h2>
-</div>
-
-  </div>
-  <div class="body"><p>Fired when all the players in the player list are DONE</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;STAGEDONE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
-</div>
-<p>In single player mode we ignore when all the players have completed the stage</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">solo_mode</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span><span class="p">;</span>
-  <span class="p">}</span>
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
-</div>
-<!-- If we go auto -->
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">auto_step</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">observer</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;We play AUTO&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">morePlayers</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">minPlayers</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">minPlayers</span> <span class="o">-</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span> <span class="o">:</span> <span class="mi">0</span> <span class="p">;</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Additional player required: &#39;</span> <span class="o">+</span> <span class="nx">morePlayers</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">MorePlayers</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
     
-    <span class="k">if</span> <span class="p">(</span><span class="nx">morePlayers</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">OUT</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">TXT</span><span class="p">,</span> <span class="nx">morePlayers</span> <span class="o">+</span> <span class="s1">&#39; player/s still needed to play the game&#39;</span><span class="p">);</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">morePlayers</span> <span class="o">+</span> <span class="s1">&#39; player/s still needed to play the game&#39;</span><span class="p">);</span>
-    <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
-</div>
-<p>TODO: differentiate between before the game starts and during the game</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">OUT</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">TXT</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">minPlayers</span> <span class="o">+</span> <span class="s1">&#39; players ready. Game can proceed&#39;</span><span class="p">);</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; players ready. Game can proceed&#39;</span><span class="p">);</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Waiting for monitor to step&#39;</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">});</span></pre></div>
+  
+    <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">,</span>
+        <span class="nx">target</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
+  
+    <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
+        <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
+        <span class="nx">Game</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">;</span>
+    
+    <span class="kd">var</span> <span class="nx">say</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+        <span class="nx">set</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+        <span class="nx">get</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">GET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+  <span class="nx">IN</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">IN</span><span class="p">,</span>
+        <span class="nx">OUT</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">OUT</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -171,7 +95,7 @@ such as progressing in the loading chain, or finishing a game stage </p>
   </div>
   <div class="body"><p>Updates and publishes that the client has successfully terminated a stage </p>
 
-<p>If a DONE handler is defined in the game-loop, it will executes it before
+<p>If a DONE handler is defined in the game-plot, it will executes it before
 continuing with further operations. In case it returns FALSE, the update
 process is stopped. </p>
   </div>
@@ -186,7 +110,7 @@ process is stopped. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
 </div>
 <p>Execute done handler before updating stage</p>
         </td>
@@ -202,7 +126,7 @@ process is stopped. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
 </div>
 <p>Call all the functions that want to do 
 something before changing stage</p>
@@ -213,15 +137,13 @@ something before changing stage</p>
   <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>  
       <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;WAITING...&#39;</span><span class="p">);</span>
   <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">publishUpdate</span><span class="p">();</span>
-  </pre></div>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
 <p>Step forward, if allowed</p>
         </td>
@@ -247,7 +169,7 @@ something before changing stage</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;WINDOW_LOADED&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ready</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
 <span class="p">});</span></pre></div>
         </td>
       </tr>
@@ -269,7 +191,7 @@ something before changing stage</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;GAME_LOADED&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ready</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
 <span class="p">});</span></pre></div>
         </td>
       </tr>
@@ -289,20 +211,20 @@ something before changing stage</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;BEFORE_LOADING&#39;</span><span class="p">);</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">PLAYING</span><span class="p">);</span></pre></div>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;BEFORE_LOADING&#39;</span><span class="p">);</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">PLAYING</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
 </div>
 <p>TODO: the number of messages to emit to inform other players
 about its own stage should be controlled. Observer is 0 
 node.game.publishUpdate();</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">clearBuffer</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">clearBuffer</span><span class="p">();</span>
   
 <span class="p">});</span></pre></div>
         </td>
@@ -343,9 +265,9 @@ node.game.publishUpdate();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
-<!-- ends outgoing listener -->
+<!-- ends internal listener -->
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>

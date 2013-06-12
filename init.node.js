@@ -113,12 +113,12 @@ node.GameMsg = require('./lib/core/GameMsg').GameMsg;
 node.Stager = require('./lib/core/Stager').Stager;
 
 /**
- * ### node.GameLoop
+ * ### node.GamePlot
  * 
  * @api public
  */
 
-node.GameLoop = require('./lib/core/GameLoop').GameLoop;
+node.GamePlot = require('./lib/core/GamePlot').GamePlot;
 
 
 /**

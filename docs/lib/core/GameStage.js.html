@@ -89,7 +89,7 @@ MIT Licensed</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">GameLoop
+      <span class="dox_type">GamePlot
 
 ---
 
@@ -213,12 +213,12 @@ object are set to 0</p>
 </div>
 
   </div>
-  <div class="body"><p>The N-th game-block (stage) in the game-loop currently being executed</p>
+  <div class="body"><p>The N-th game-block (stage) in the game-plot currently being executed</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">GameLoop
+      <span class="dox_type">GamePlot
 
   </span>
     </div>
@@ -492,9 +492,10 @@ Refer to <code>GameStage.toHash</code> for the semantic of the characters.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gs1</span><span class="p">,</span> <span class="nx">gs2</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gs1</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">gs2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gs2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gs1</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs1</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs1</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -505,21 +506,9 @@ Refer to <code>GameStage.toHash</code> for the semantic of the characters.</p>
 <p>Convert the parameters to objects, if an hash string was passed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs1</span><span class="p">)</span> <span class="nx">gs1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gs1</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs2</span><span class="p">)</span> <span class="nx">gs2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gs2</span><span class="p">);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
-</div>
-<!--
-     console.log('COMPARAING GSs','DEBUG')
-     console.log(gs1,'DEBUG');
-     console.log(gs2,'DEBUG');
--->
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">stage</span> <span class="o">-</span> <span class="nx">gs2</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs2</span><span class="p">)</span> <span class="nx">gs2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gs2</span><span class="p">);</span>
+
+    <span class="nx">result</span> <span class="o">=</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">stage</span> <span class="o">-</span> <span class="nx">gs2</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">result</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">result</span> <span class="o">=</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">round</span> <span class="o">-</span> <span class="nx">gs2</span><span class="p">.</span><span class="nx">round</span><span class="p">;</span>
@@ -527,17 +516,9 @@ Refer to <code>GameStage.toHash</code> for the semantic of the characters.</p>
         <span class="k">if</span> <span class="p">(</span><span class="nx">result</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">result</span> <span class="o">=</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">step</span> <span class="o">-</span> <span class="nx">gs2</span><span class="p">.</span><span class="nx">step</span><span class="p">;</span>
         <span class="p">}</span>
-    <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
-</div>
- <!-- console.log('EQUAL? ' + result); -->
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>

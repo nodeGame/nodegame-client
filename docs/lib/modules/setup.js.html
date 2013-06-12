@@ -46,6 +46,9 @@
         <a href="#node.setup.verbosity">node.setup.verbosity</a>
       </div>
       <div class="heading h3">
+        <a href="#node.setup.verbosity">node.setup.verbosity</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.setup.env">node.setup.env</a>
       </div>
       <div class="heading h3">
@@ -53,6 +56,9 @@
       </div>
       <div class="heading h3">
         <a href="#node.setup.window">node.setup.window</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.setup.sio">node.setup.sio</a>
       </div>
       <div class="heading h3">
         <a href="#node.setup.game">node.setup.game</a>
@@ -160,31 +166,33 @@ the settings in <code>node.conf</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">property</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">frozen</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">property</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">res</span><span class="p">;</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">frozen</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;nodeGame configuration is frozen. No modification allowed.&#39;</span><span class="p">);</span>
       <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="nx">property</span> <span class="o">===</span> <span class="s1">&#39;register&#39;</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">property</span> <span class="o">===</span> <span class="s1">&#39;register&#39;</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;cannot setup property &quot;register&quot;&#39;</span><span class="p">);</span>
       <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">property</span><span class="p">])</span> <span class="p">{</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">property</span><span class="p">])</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;no such property to configure: &#39;</span> <span class="o">+</span> <span class="nx">property</span><span class="p">);</span>
       <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">property</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="nx">property</span> <span class="o">!==</span> <span class="s1">&#39;nodegame&#39;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">result</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="p">};</span>
-  </pre></div>
+  <span class="p">}</span>
+  
+  <span class="nx">res</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">property</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">property</span> <span class="o">!==</span> <span class="s1">&#39;nodegame&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">res</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
+    </pre></div>
         </td>
       </tr>
       <tr>
@@ -220,20 +228,20 @@ the settings in <code>node.conf</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">property</span><span class="p">,</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">property</span> <span class="o">||</span> <span class="o">!</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">property</span><span class="p">,</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">property</span> <span class="o">||</span> <span class="o">!</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot register empty setup function&#39;</span><span class="p">);</span>
       <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="nx">property</span> <span class="o">===</span> <span class="s1">&#39;register&#39;</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">property</span> <span class="o">===</span> <span class="s1">&#39;register&#39;</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot overwrite register function&#39;</span><span class="p">);</span>
       <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">func</span><span class="p">;</span>
-    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="p">};</span>  </pre></div>
+  <span class="p">}</span>
+  
+  <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">func</span><span class="p">;</span>
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>  </pre></div>
         </td>
       </tr>
       <tr>
@@ -264,17 +272,17 @@ Matches the keys of the configuration objects with the name of the registered
 functions and executes them. If no match is found, the configuration function 
 will set the default values</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;nodegame&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;nodegame&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;register&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;nodegame&#39;</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;register&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;nodegame&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
     <span class="p">}</span>
-    
-    
-  <span class="p">});</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+  
+  
+    <span class="p">});</span>
   </pre></div>
         </td>
       </tr>
@@ -292,11 +300,11 @@ will set the default values</p>
 @see node.Socket
 @see node.SocketFactory</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;socket&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">setup</span><span class="p">(</span><span class="nx">conf</span><span class="p">);</span>
-    <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
-  <span class="p">});</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;socket&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">setup</span><span class="p">(</span><span class="nx">conf</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
+    <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -313,7 +321,8 @@ will set the default values</p>
 If no value is passed, it will try to set the host from the window object
 in the browser enviroment. </p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>    </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>    
+  <span class="kd">var</span> <span class="nx">tokens</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -323,16 +332,16 @@ in the browser enviroment. </p>
 </div>
 <p>URL</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">host</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">;</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">host</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">;</span>
     <span class="p">}</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
       
-    <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">).</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span></pre></div>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">).</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -343,7 +352,7 @@ in the browser enviroment. </p>
 <p>url was not of the form '/channel'</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">host</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
+    <span class="nx">host</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
       <span class="p">}</span>
       </pre></div>
         </td>
@@ -356,12 +365,12 @@ in the browser enviroment. </p>
 <p>Add a trailing slash if missing</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">host</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">host</span> <span class="o">=</span> <span class="nx">host</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+    <span class="nx">host</span> <span class="o">=</span> <span class="nx">host</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
       <span class="p">}</span>
-    <span class="p">}</span>
-    
-    <span class="k">return</span> <span class="nx">host</span><span class="p">;</span>
-  <span class="p">});</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="nx">host</span><span class="p">;</span>
+    <span class="p">});</span>
   </pre></div>
         </td>
       </tr>
@@ -377,12 +386,35 @@ in the browser enviroment. </p>
 
 <p>Sets the verbosity level for nodegame    </p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;verbosity&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">level</span><span class="p">){</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;verbosity&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">level</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="nx">level</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">level</span><span class="p">;</span>
-  <span class="p">});</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">level</span><span class="p">;</span>
+    <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="node.setup.verbosity">
+  <h3>
+    <a href="#node.setup.verbosity" class="pilcrow">&#182;</a>
+    node.setup.verbosity
+  </h3>
+</div>
+
+
+<p>Sets the verbosity level for nodegame    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">enable</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">enable</span> <span class="o">=</span> <span class="nx">enable</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;boolean&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">enable</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s2">&quot;node.debug must be of type boolean&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nx">node</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">enable</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">enable</span><span class="p">;</span>
+    <span class="p">});</span>
+
   </pre></div>
         </td>
       </tr>
@@ -398,17 +430,17 @@ in the browser enviroment. </p>
 
 <p>Defines global variables to be stored in <code>node.env[myvar]</code>    </p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">){</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-          <span class="nx">node</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
     <span class="p">}</span>
-    
-    <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
-  <span class="p">});</span></pre></div>
+      <span class="p">}</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
+    <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -424,18 +456,18 @@ in the browser enviroment. </p>
 <p>Configure the EventEmitter object
 @see node.EventEmitter</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">){</span>
-    <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">){</span>
+  <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">conf</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">dumpEvents</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">dumpEvents</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">conf</span><span class="p">.</span><span class="nx">dumpEvents</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
-  <span class="p">});</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
+    <span class="p">});</span>
   </pre></div>
         </td>
       </tr>
@@ -452,24 +484,57 @@ in the browser enviroment. </p>
 <p>Configure the node.window object, if existing
 @see GameWindow</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;window&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">){</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;window&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.window not found, cannot configure it.&#39;</span><span class="p">);</span>
       <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}</span>
+  <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">conf</span><span class="p">);</span>
-    
-    <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
-  <span class="p">});</span>
+  <span class="p">}</span>
+  
+  <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">conf</span><span class="p">);</span>
+  
+  <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
+    <span class="p">});</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="node.setup.sio">
+  <h3>
+    <a href="#node.setup.sio" class="pilcrow">&#182;</a>
+    node.setup.sio
+  </h3>
+</div>
+
+
+<p>Configure the socket.io connection, if existing</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;sio&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.window not found, cannot configure it.&#39;</span><span class="p">);</span>
+      <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">conf</span><span class="p">);</span>
+  
+  <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
+    <span class="p">});</span>
   
   </pre></div>
         </td>
@@ -495,7 +560,7 @@ the configuration object to the contructor of <code>node.Game</code></p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>TODO</p>
         </td>
@@ -505,7 +570,7 @@ the configuration object to the contructor of <code>node.Game</code></p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Trying to parse the string, maybe it
 comes from a remote setup</p>
@@ -520,7 +585,7 @@ comes from a remote setup</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>creates the object</p>
         </td>
@@ -624,8 +689,9 @@ comes from a remote setup</p>
 
 
 <span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">io</span> <span class="o">?</span> <span class="nx">io</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">io</span>
 <span class="p">);</span>
 </pre></div>
         </td>
