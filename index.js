@@ -153,6 +153,7 @@ if ('object' === typeof module && 'function' === typeof require) {
 	
     require('./lib/modules/log.js');
     require('./lib/modules/variables.js');
+    require('./lib/modules/stepper.js');
     
     require('./init.node.js');
     require('./lib/nodegame.js');
@@ -161,7 +162,6 @@ if ('object' === typeof module && 'function' === typeof require) {
     require('./lib/modules/setup.js');
     require('./lib/modules/alias.js');
     require('./lib/modules/random.js');
-    require('./lib/modules/stepper.js');
     
     // ### Loading Sockets
     require('./lib/sockets/SocketIo.js');

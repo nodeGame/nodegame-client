@@ -7271,6 +7271,7 @@ if ('object' === typeof module && 'function' === typeof require) {
 	
     require('./lib/modules/log.js');
     require('./lib/modules/variables.js');
+    require('./lib/modules/stepper.js');
     
     require('./init.node.js');
     require('./lib/nodegame.js');
@@ -7279,7 +7280,6 @@ if ('object' === typeof module && 'function' === typeof require) {
     require('./lib/modules/setup.js');
     require('./lib/modules/alias.js');
     require('./lib/modules/random.js');
-    require('./lib/modules/stepper.js');
     
     // ### Loading Sockets
     require('./lib/sockets/SocketIo.js');
@@ -7693,6 +7693,97 @@ else {
         DONE:         100
     };
 
+})(
+	'undefined' != typeof node ? node : module.exports,
+	'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
+ * # Stager
+ *
+ * `nodeGame` container and builder of the game sequence
+ *
+ * ---
+ */
+(function(exports, node) {
+
+    // Storage for socket rules
+    var rules = {};
+
+    addDefaultRules();
+
+    function getRules() {
+    	return rules;
+    }
+
+    function get( id ) {
+    	return rules[id];
+    }
+
+    function register( id, cb ) {
+    	if ('undefined' === typeof id) {
+            node.err('stepper rule id cannot be undefined');
+        }
+
+        else if ('function' !== typeof cb) {
+            node.err('stepping rule is not a function');
+        }
+
+        else {
+            rules[id] = cb;
+        }
+
+    }
+
+    function addDefaultRules() {
+        
+        // ### SYNC_ALL
+        // Player waits that all the clients have terminated the 
+        // current step before going to the next
+        rules['SYNC_ALL'] = function(stage, myStageLevel, pl, game) {
+            return myStageLevel === node.stageLevels.DONE &&
+                pl.isStageDone(stage);
+        };
+        
+        // ### SOLO
+        // Player proceeds to the next step as soon as the current one
+        // is DONE, regardless to the situation of other players
+        rules['SOLO'] = function(stage, myStageLevel, pl, game) {
+            return myStageLevel === node.stageLevels.DONE;
+        };
+
+        // ### WAIT
+        // Player waits for explicit step command
+        rules['WAIT'] = function(stage, myStageLevel, pl, game) {
+            return false;
+        };
+    
+        // ### SYNC_STAGE
+        // Player can advance freely within the steps of one stage,
+        // but has to wait before going to the next one
+        rules['SYNC_STAGE'] = function(stage, myStageLevel, pl, game) {
+            // if next step is going to be a new stage, wait for others
+            return myStageLevel === node.stageLevels.DONE;
+                (game.plot.stepsToNextStage(stage) > 1 ||
+                 pl.isStageDone(stage));
+        };
+    }
+
+    function clear() {
+        rules = {};
+    }
+
+    // expose the methods
+    node.stepRules = {
+    	getRules: getRules,
+    	get: get,
+    	register: register,
+        clear: clear,
+        addDefaultRules: addDefaultRules
+    };
+
+
+// ## Closure
 })(
 	'undefined' != typeof node ? node : module.exports,
 	'undefined' != typeof node ? node : module.parent.exports
@@ -9751,7 +9842,7 @@ Stager.prototype.setDefaultStepRule = function(steprule) {
     }
     else {
         // Initial default:
-        this.defaultStepRule = function() { return true; };
+        this.defaultStepRule = node.stepRules.get('SOLO');
     }
 
     return true;
@@ -10491,13 +10582,13 @@ Stager.prototype.getState = function() {
 /**
  * ### Stager.extractStage
  *
- * Returns a minimal state package containing a stage
+ * Returns a minimal state package containing one or more stages
  *
  * The returned package consists of a `setState`-compatible object with the
- * `steps` and `stages` properties set to include the given stage.
+ * `steps` and `stages` properties set to include the given stages.
  * The `sequence` is optionally set to a single `next` block for the stage.
  *
- * @param {string} id A valid stage name
+ * @param {string|array} id Valid stage name(s)
  * @param {boolean} useSeq Optional. Whether to generate a singleton sequence.
  *  TRUE by default.
  *
@@ -10505,39 +10596,56 @@ Stager.prototype.getState = function() {
  *
  * @see Stager.setState
  */
-Stager.prototype.extractStage = function(id, useSeq) {
-    var result = {};
+Stager.prototype.extractStage = function(ids, useSeq) {
+    var result = {
+        steps: {}, stages: {}, sequence: []
+    };
     var stepIdx, stepId;
     var stageId;
     var stageObj;
+    var idArray, idIdx;
 
-    stageObj = this.stages[id];
-
-    if (!stageObj) return null;
+    if (ids instanceof Array) {
+        idArray = ids;
+    }
+    else if ('string' === typeof ids) {
+        idArray = [ ids ];
+    }
+    else return null;
 
     useSeq = (useSeq === false) ? false : true;  // undefined (default) -> true
 
-    // Add step objects:
-    result.steps = {};
-    for (stepIdx in stageObj.steps) {
-        stepId = stageObj.steps[stepIdx];
-        result.steps[stepId] = this.steps[stepId];
-    }
+    for (idIdx in idArray) {
+        if (idArray.hasOwnProperty(idIdx)) {
+            id = idArray[idIdx];
 
-    // Add stage object:
-    result.stages = {};
-    stageId = stageObj.id;
-    result.stages[stageId] = stageObj;
+            stageObj = this.stages[id];
 
-    // If given id is alias, also add alias:
-    if (stageId !== id) result.stages[id] = stageObj;
+            if (!stageObj) return null;
 
-    // Add mini-sequence:
-    if (useSeq) {
-        result.sequence = [{
-            type: 'plain',
-            id: stageId
-        }];
+            // Add step objects:
+            for (stepIdx in stageObj.steps) {
+                if (stageObj.steps.hasOwnProperty(stepIdx)) {
+                    stepId = stageObj.steps[stepIdx];
+                    result.steps[stepId] = this.steps[stepId];
+                }
+            }
+
+            // Add stage object:
+            stageId = stageObj.id;
+            result.stages[stageId] = stageObj;
+
+            // If given id is alias, also add alias:
+            if (stageId !== id) result.stages[id] = stageObj;
+
+            // Add mini-sequence:
+            if (useSeq) {
+                result.sequence.push({
+                    type: 'plain',
+                    id: stageId
+                });
+            }
+        }
     }
 
     return result;
@@ -14853,97 +14961,6 @@ node.random = {};
 	};	
 
 
-})(
-	'undefined' != typeof node ? node : module.exports,
-	'undefined' != typeof node ? node : module.parent.exports
-);
-
-/**
- * # Stager
- *
- * `nodeGame` container and builder of the game sequence
- *
- * ---
- */
-(function(exports, node) {
-
-    // Storage for socket rules
-    var rules = {};
-
-    addDefaultRules();
-
-    function getRules() {
-    	return rules;
-    }
-
-    function get( id ) {
-    	return rules[id];
-    }
-
-    function register( id, cb ) {
-    	if ('undefined' === typeof id) {
-            node.err('stepper rule id cannot be undefined');
-        }
-
-        else if ('function' !== typeof cb) {
-            node.err('stepping rule is not a function');
-        }
-
-        else {
-            rules[id] = cb;
-        }
-
-    }
-
-    function addDefaultRules() {
-        
-        // ### SYNC_ALL
-        // Player waits that all the clients have terminated the 
-        // current step before going to the next
-        rules['SYNC_ALL'] = function(stage, myStageLevel, pl, game) {
-            return myStageLevel === node.stageLevels.DONE &&
-                pl.isStageDone(stage);
-        };
-        
-        // ### SOLO
-        // Player proceeds to the next step as soon as the current one
-        // is DONE, regardless to the situation of other players
-        rules['SOLO'] = function(stage, myStageLevel, pl, game) {
-            return myStageLevel === node.stageLevels.DONE;
-        };
-
-        // ### WAIT
-        // Player waits for explicit step command
-        rules['WAIT'] = function(stage, myStageLevel, pl, game) {
-            return false;
-        };
-    
-        // ### SYNC_STAGE
-        // Player can advance freely within the steps of one stage,
-        // but has to wait before going to the next one
-        rules['SYNC_STAGE'] = function(stage, myStageLevel, pl, game) {
-            // if next step is going to be a new stage, wait for others
-            return myStageLevel === node.stageLevels.DONE;
-                (game.plot.stepsToNextStage(stage) > 1 ||
-                 pl.isStageDone(stage));
-        };
-    }
-
-    function clear() {
-        rules = {};
-    }
-
-    // expose the methods
-    node.stepRules = {
-    	getRules: getRules,
-    	get: get,
-    	register: register,
-        clear: clear,
-        addDefaultRules: addDefaultRules
-    };
-
-
-// ## Closure
 })(
 	'undefined' != typeof node ? node : module.exports,
 	'undefined' != typeof node ? node : module.parent.exports
