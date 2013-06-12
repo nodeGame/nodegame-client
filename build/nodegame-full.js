@@ -10488,6 +10488,61 @@ Stager.prototype.getState = function() {
     };
 };
 
+/**
+ * ### Stager.extractStage
+ *
+ * Returns a minimal state package containing a stage
+ *
+ * The returned package consists of a `setState`-compatible object with the
+ * `steps` and `stages` properties set to include the given stage.
+ * The `sequence` is optionally set to a single `next` block for the stage.
+ *
+ * @param {string} id A valid stage name
+ * @param {boolean} useSeq Optional. Whether to generate a singleton sequence.
+ *  TRUE by default.
+ *
+ * @return {object|null} The state object on success, NULL on error
+ *
+ * @see Stager.setState
+ */
+Stager.prototype.extractStage = function(id, useSeq) {
+    var result = {};
+    var stepIdx, stepId;
+    var stageId;
+    var stageObj;
+
+    stageObj = this.stages[id];
+
+    if (!stageObj) return null;
+
+    useSeq = (useSeq === false) ? false : true;  // undefined (default) -> true
+
+    // Add step objects:
+    result.steps = {};
+    for (stepIdx in stageObj.steps) {
+        stepId = stageObj.steps[stepIdx];
+        result.steps[stepId] = this.steps[stepId];
+    }
+
+    // Add stage object:
+    result.stages = {};
+    stageId = stageObj.id;
+    result.stages[stageId] = stageObj;
+
+    // If given id is alias, also add alias:
+    if (stageId !== id) result.stages[id] = stageObj;
+
+    // Add mini-sequence:
+    if (useSeq) {
+        result.sequence = [{
+            type: 'plain',
+            id: stageId
+        }];
+    }
+
+    return result;
+};
+
 // DEBUG:  Run sequence.  Should be deleted later on.
 Stager.prototype.seqTestRun = function(expertMode, firstStage) {
     var seqObj;
@@ -12534,13 +12589,9 @@ Game.prototype.step = function() {
     var ev;
 
     curStep = this.getCurrentGameStage();
-<<<<<<< HEAD
-    nextStep = this.gameLoop.next(curStep);
     node.silly('Nest stage ---> ' + nextStep);
-=======
     nextStep = this.plot.next(curStep);
 
->>>>>>> 0c518570f17c1e8cf641e22298b4e847d7687466
     // Listeners from previous step are cleared in any case
     node.events.ee.step.clear();
 

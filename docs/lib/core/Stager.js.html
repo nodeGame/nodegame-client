@@ -138,6 +138,9 @@
       <div class="heading h3">
         <a href="#stager.getstate">Stager.getState</a>
       </div>
+      <div class="heading h3">
+        <a href="#stager.extractstage">Stager.extractStage</a>
+      </div>
       <div class="heading h2">
         <a href="#stager-private-methods">Stager private methods</a>
       </div>
@@ -2096,9 +2099,121 @@ defaultGlobals, defaultProperties, onInit, onGameover.</p>
         </td>
       </tr>
       <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.extractstage">
+  <h3>
+    <a href="#stager.extractstage" class="pilcrow">&#182;</a>
+    Stager.extractStage
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a minimal state package containing a stage</p>
+
+<p>The returned package consists of a <code>setState</code>-compatible object with the
+<code>steps</code> and <code>stages</code> properties set to include the given stage.
+The <code>sequence</code> is optionally set to a single <code>next</code> block for the stage.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">id</span>
+      <span class="dox_type">string</span>
+      <span>A valid stage name</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">useSeq</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. Whether to generate a singleton sequence.
+ TRUE by default.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">null</span>
+      <span>The state object on success, NULL on error</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.setState
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extractStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">useSeq</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="kd">var</span> <span class="nx">stepIdx</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">stageId</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">stageObj</span><span class="p">;</span>
+
+    <span class="nx">stageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stageObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+
+    <span class="nx">useSeq</span> <span class="o">=</span> <span class="p">(</span><span class="nx">useSeq</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>  <span class="c1">// undefined (default) -&gt; true</span></pre></div>
+        </td>
+      </tr>
+      <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+</div>
+<p>Add step objects:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">result</span><span class="p">.</span><span class="nx">steps</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">stepIdx</span> <span class="k">in</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">stepId</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepIdx</span><span class="p">];</span>
+        <span class="nx">result</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">];</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+</div>
+<p>Add stage object:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="nx">stageId</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+    <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+</div>
+<p>If given id is alias, also add alias:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stageId</span> <span class="o">!==</span> <span class="nx">id</span><span class="p">)</span> <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+</div>
+<p>Add mini-sequence:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">useSeq</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">result</span><span class="p">.</span><span class="nx">sequence</span> <span class="o">=</span> <span class="p">[{</span>
+            <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span>
+            <span class="nx">id</span><span class="o">:</span> <span class="nx">stageId</span>
+        <span class="p">}];</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>DEBUG:  Run sequence.  Should be deleted later on.</p>
         </td>
@@ -2154,7 +2269,7 @@ defaultGlobals, defaultProperties, onInit, onGameover.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>Get first stage:</p>
         </td>
@@ -2175,7 +2290,7 @@ defaultGlobals, defaultProperties, onInit, onGameover.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
 <p>Get next stage:</p>
         </td>
@@ -2193,7 +2308,7 @@ defaultGlobals, defaultProperties, onInit, onGameover.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>Check stage validity:</p>
         </td>
@@ -2209,7 +2324,7 @@ defaultGlobals, defaultProperties, onInit, onGameover.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
 <p>DEBUG:  Run stage.  Should be deleted later on.</p>
         </td>
@@ -2341,7 +2456,7 @@ Steps objects are invalid.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
 <p>Check whether the referenced steps exist:</p>
         </td>
@@ -2412,7 +2527,7 @@ Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
 </div>
 <p>Check ID validity:</p>
         </td>
@@ -2425,7 +2540,7 @@ Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
 </div>
 <p>Check uniqueness:</p>
         </td>
@@ -2441,7 +2556,7 @@ Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
 </div>
 <p>Add alias:</p>
         </td>
