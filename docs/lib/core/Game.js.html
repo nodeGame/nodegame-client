@@ -34,6 +34,9 @@
         <a href="#game.metadata">Game.metadata</a>
       </div>
       <div class="heading h3">
+        <a href="#game.settings">Game.settings</a>
+      </div>
+      <div class="heading h3">
         <a href="#game.pl">Game.pl</a>
       </div>
       <div class="heading h3">
@@ -41,12 +44,6 @@
       </div>
       <div class="heading h2">
         <a href="#public-properties">Public properties</a>
-      </div>
-      <div class="heading h3">
-        <a href="#game.observer">Game.observer</a>
-      </div>
-      <div class="heading h3">
-        <a href="#game.auto_wait">Game.auto_wait</a>
       </div>
       <div class="heading h3">
         <a href="#game.memory">Game.memory</a>
@@ -224,6 +221,46 @@ name, description, version, session</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="game.settings">
+  <h3>
+    <a href="#game.settings" class="pilcrow">&#182;</a>
+    Game.settings
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The game's settings</p>
+
+<p>Contains following properties:</p>
+
+<ul>
+<li><p>observer: If TRUE, silently observes the game. Default: FALSE</p></li>
+<li><p>auto_wait: If TRUE, fires a WAITING... event immediately after
+a successful DONE event. Default: FALSE</p></li>
+<li><p>minPlayers: Default: 1</p></li>
+<li><p>maxPlayers: Default: 1000</p></li>
+</ul>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">API</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">private
+</span>
+    </span>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">settings</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">observer</span><span class="o">:</span>   <span class="o">!!</span><span class="nx">settings</span><span class="p">.</span><span class="nx">observer</span><span class="p">,</span>
+        <span class="nx">auto_wait</span><span class="o">:</span>  <span class="o">!!</span><span class="nx">settings</span><span class="p">.</span><span class="nx">auto_wait</span><span class="p">,</span>
+        <span class="nx">minPlayers</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">minPlayers</span> <span class="o">||</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nx">maxPlayers</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">maxPlayers</span> <span class="o">||</span> <span class="mi">1000</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="game.pl">
   <h3>
     <a href="#game.pl" class="pilcrow">&#182;</a>
@@ -291,64 +328,6 @@ name, description, version, session</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="game.observer">
-  <h3>
-    <a href="#game.observer" class="pilcrow">&#182;</a>
-    Game.observer
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>If TRUE, silently observes the game. Defaults, FALSE</p>
-
-<p>An nodeGame observer will not send any automatic notification
-to the server, but it will just <em>observe</em> the game played by
-other clients.</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">observer</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">observer</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">observer</span>
-        <span class="o">:</span> <span class="kc">false</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="game.auto_wait">
-  <h3>
-    <a href="#game.auto_wait" class="pilcrow">&#182;</a>
-    Game.auto_wait
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>If TRUE, fires a WAITING... event immediately after a successful DONE event</p>
-
-<p>Under default settings, the WAITING... event temporarily prevents the user
-to access the screen and displays a message to the player.</p>
-
-<p>Defaults: FALSE</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">auto_wait</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_wait</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_wait</span>
-        <span class="o">:</span> <span class="kc">false</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
-</div>
-<p>TODO: check this</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">minPlayers</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">minPlayers</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">maxPlayers</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">maxPlayers</span> <span class="o">||</span> <span class="mi">1000</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
 <div class="pilwrap" id="game.memory">
   <h3>
     <a href="#game.memory" class="pilcrow">&#182;</a>
@@ -406,7 +385,7 @@ automatically inserted in this object</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
 <p>TODO: check how to init</p>
         </td>
@@ -465,17 +444,31 @@ just for change of state after the game has started</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">onInit</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">rc</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;game.start called on a running game&#39;</span><span class="p">);</span>
-        <span class="k">return</span><span class="p">;</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>Check for the existence of stager contents:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                <span class="s1">&#39;game.start called with unready plot&#39;</span><span class="p">);</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <p>INIT the game</p>
         </td>
@@ -489,9 +482,11 @@ just for change of state after the game has started</p>
     <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameStage</span><span class="p">());</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
+    <span class="nx">rc</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
 
     <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;game started&#39;</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">rc</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -526,7 +521,7 @@ just for change of state after the game has started</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Call gameover callback, if it exists:</p>
         </td>
@@ -679,14 +674,14 @@ TODO: harmonize return values
     <span class="kd">var</span> <span class="nx">ev</span><span class="p">;</span>
 
     <span class="nx">curStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;Nest stage ---&gt; &#39;</span> <span class="o">+</span> <span class="nx">nextStep</span><span class="p">);</span>
-    <span class="nx">nextStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">curStep</span><span class="p">);</span></pre></div>
+    <span class="nx">nextStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">curStep</span><span class="p">);</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;Next stage ---&gt; &#39;</span> <span class="o">+</span> <span class="nx">nextStep</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>Listeners from previous step are cleared in any case</p>
         </td>
@@ -702,7 +697,7 @@ TODO: harmonize return values
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>else do nothing</p>
         </td>
@@ -714,7 +709,7 @@ TODO: harmonize return values
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>TODO maybe update also in case of string</p>
         </td>
@@ -724,7 +719,7 @@ TODO: harmonize return values
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>If we enter a new stage (including repeating the same stage)
 we need to update a few things:</p>
@@ -737,7 +732,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>clear the previous stage listeners</p>
         </td>
@@ -747,7 +742,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Execute the init function of the stage, if any:</p>
         </td>
@@ -761,7 +756,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Load the listeners for the stage, if any:</p>
         </td>
@@ -779,7 +774,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Execute the init function of the step, if any:</p>
         </td>
@@ -796,7 +791,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Load the listeners for the step, if any:</p>
         </td>
@@ -810,7 +805,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>TODO what else to load?</p>
         </td>
@@ -863,7 +858,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>This does not make sense. Basically it waits for the nodegame window to be loaded too</p>
         </td>
@@ -876,7 +871,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>A non fatal error occurred</p>
         </td>
@@ -906,7 +901,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>ERROR, WORKING, etc</p>
         </td>
@@ -922,7 +917,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>TODO do we need to publish this kinds of update?
 this.publishUpdate();</p>
@@ -933,7 +928,7 @@ this.publishUpdate();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>PLAYING, DONE, etc.
 Publishes update only if value actually changed.</p>
@@ -959,7 +954,7 @@ Publishes update only if value actually changed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>Publish update:</p>
         </td>
@@ -978,7 +973,7 @@ Publishes update only if value actually changed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>Publish update:</p>
         </td>
@@ -1029,7 +1024,7 @@ instead.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>if (this.getStateLevel() &lt; node.stateLevels.INITIALIZED) return false;</p>
         </td>
@@ -1039,7 +1034,7 @@ instead.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>Check if there is a gameWindow obj and whether it is loading</p>
         </td>
