@@ -105,6 +105,9 @@
       <div class="heading h3">
         <a href="#player.stage">Player.stage</a>
       </div>
+      <div class="heading h3">
+        <a href="#player.stagelevel">Player.stageLevel</a>
+      </div>
       <div class="heading h2">
         <a href="#extra-properties">Extra properties</a>
       </div>
@@ -170,7 +173,8 @@ to perform operation on them</p>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
     <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">;</span></pre></div>
+<span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
+    <span class="nx">Game</span>      <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -698,7 +702,7 @@ TODO remove after transition is complete</p>
   <div class="body"><p>Checks whether all players have terminated the specified stage</p>
 
 <p>A stage is considered <em>DONE</em> if all players that are on that stage
-have the property <code>stageLevel</code> equal to <code>Game.stageLevels.DONE</code>.</p>
+have the property <code>stageLevel</code> equal to <code>node.stageLevels.DONE</code>.</p>
 
 <p>Players at other stages are ignored.</p>
 
@@ -752,7 +756,7 @@ have the property <code>stageLevel</code> equal to <code>Game.stageLevels.DONE</
 </div>
 <p>Player is done for his stage</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
   <span class="p">}</span>
     <span class="p">}</span>
@@ -1235,6 +1239,32 @@ case of reconnections it can change</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">stage</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">();</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="player.stagelevel">
+  <h3>
+    <a href="#player.stagelevel" class="pilcrow">&#182;</a>
+    Player.stageLevel
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The current stage level of the player in the game</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.stageLevels
+      </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">;</span>
 
   </pre></div>
         </td>
