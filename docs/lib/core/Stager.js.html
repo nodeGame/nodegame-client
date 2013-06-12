@@ -1775,6 +1775,8 @@ All fields are optional.</p>
 <p>This function calls the corresponding functions to set these fields, and
 performs error checking.</p>
 
+<p>If updateRule is 'replace', the Stager is cleared before applying the state.</p>
+
 <p>Throws <code>NodeGameMisconfiguredGameError</code> if the given state is invalid.</p>
   </div>
   <div class="details">
@@ -1784,6 +1786,12 @@ performs error checking.</p>
       <span class="dox_type">object</span>
       <span>The Stager's state</span>
     </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">updateRule</span>
+      <span class="dox_type">string</span>
+      <span>Optional. Whether to 'replace' (default) or
+ to 'append'.</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.getState
@@ -1792,7 +1800,7 @@ performs error checking.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">idx</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">stageObj</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">seqObj</span><span class="p">;</span></pre></div>
@@ -1805,7 +1813,13 @@ performs error checking.</p>
 </div>
 <p>Clear previous state:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">updateRule</span> <span class="o">||</span> <span class="nx">updateRule</span> <span class="o">===</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                <span class="s1">&#39;setState got invalid updateRule&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stateObj</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
