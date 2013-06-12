@@ -523,7 +523,7 @@ TODO: assign a string-id to the server -->
   <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;error while parsing incoming remote setup message&#39;</span><span class="p">);</span>
   <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">}</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">(</span><span class="nx">feature</span><span class="p">,</span> <span class="nx">payload</span><span class="p">);</span> 
+    <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">[</span><span class="nx">feature</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">payload</span><span class="p">));</span>
 <span class="p">});</span> </pre></div>
         </td>
       </tr>

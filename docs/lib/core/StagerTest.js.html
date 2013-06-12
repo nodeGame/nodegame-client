@@ -38,6 +38,7 @@
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../../index.js&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;util&#39;</span><span class="p">);</span>
 <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
 <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
 
@@ -104,19 +105,7 @@
     <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;blah&#39;</span><span class="p">)</span>
     <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;durr AS durrurrurr&#39;</span><span class="p">)</span>
     <span class="p">.</span><span class="nx">gameover</span><span class="p">()</span>
-    <span class="p">;</span>
-
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Sequence (JS object):&#39;</span><span class="p">);</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getSequence</span><span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">));</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
-
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Sequence (human readable stages):&#39;</span><span class="p">);</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getSequence</span><span class="p">(</span><span class="s1">&#39;hstages&#39;</span><span class="p">));</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
-
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Sequence (human readable steps):&#39;</span><span class="p">);</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getSequence</span><span class="p">(</span><span class="s1">&#39;hsteps&#39;</span><span class="p">));</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span></pre></div>
+    <span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -124,23 +113,54 @@
 <div class="pilwrap">
   <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
 </div>
-<p>Testing state getter/setter:</p>
+<p>Testing extraction:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;State:&#39;</span><span class="p">);</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getState</span><span class="p">());</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Extraction of &#39;main&#39;:&quot;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">inspect</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">extractStage</span><span class="p">(</span><span class="s1">&#39;main&#39;</span><span class="p">),</span> <span class="kc">false</span><span class="p">,</span> <span class="mi">4</span><span class="p">));</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
-<span class="nx">stager</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getState</span><span class="p">());</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;State (after get+set):&#39;</span><span class="p">);</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getState</span><span class="p">());</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
-
-<span class="nx">stager</span><span class="p">.</span><span class="nx">seqTestRun</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span></pre></div>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Extraction of [&#39;blah&#39;, &#39;durrurrurr&#39;, &#39;blah&#39;]:&quot;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">inspect</span><span class="p">(</span><span class="nx">stager</span><span class="p">.</span><span class="nx">extractStage</span><span class="p">([</span><span class="s1">&#39;blah&#39;</span><span class="p">,</span> <span class="s1">&#39;durrurrurr&#39;</span><span class="p">,</span> <span class="s1">&#39;blah&#39;</span><span class="p">]),</span> <span class="kc">false</span><span class="p">,</span> <span class="mi">4</span><span class="p">));</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>console.log('Sequence (JS object):');
+console.log(stager.getSequence('o'));
+console.log();</p>
+  </div>
+  <div class="body"><p>console.log('Sequence (human readable stages):');
+console.log(stager.getSequence('hstages'));
+console.log();</p>
+
+<p>console.log('Sequence (human readable steps):');
+console.log(stager.getSequence('hsteps'));
+console.log();</p>
+
+<p>// Testing state getter/setter:
+console.log('State:');
+console.log(stager.getState());
+console.log();
+stager.setState(stager.getState());
+console.log('State (after get+set):');
+console.log(stager.getState());
+console.log();</p>
+
+<p>stager.seqTestRun(false);</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
 </div>
 <p>Expert mode test:</p>
 

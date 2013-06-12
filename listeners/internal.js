@@ -41,7 +41,7 @@ node.events.ng.on('DONE', function(p1, p2, p3) {
     
     if (done) ok = done.call(node.game, p1, p2, p3);
     if (!ok) return;
-    node.game.setStageLevel(Game.stageLevels.DONE)
+    node.game.setStageLevel(node.stageLevels.DONE)
 	
     // Call all the functions that want to do 
     // something before changing stage
@@ -88,7 +88,7 @@ node.events.ng.on('GAME_LOADED', function() {
  */
 node.events.ng.on('LOADED', function() {
     node.emit('BEFORE_LOADING');
-    node.game.setStageLevel(Game.stageLevels.PLAYING);
+    node.game.setStageLevel(node.stageLevels.PLAYING);
     //TODO: the number of messages to emit to inform other players
     // about its own stage should be controlled. Observer is 0 
     //node.game.publishUpdate();

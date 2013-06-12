@@ -120,6 +120,12 @@
       <div class="heading h4">
         <a href="#is.done">is.DONE</a>
       </div>
+      <div class="heading h3">
+        <a href="#node.statelevels">node.stateLevels</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.stagelevels">node.stageLevels</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -591,7 +597,9 @@ information carried in the message.</p>
 </div>
 
   </div>
-  <div class="body"><p>Levels associates to the states of the nodeGame engine</p>
+  <div class="body"><p>Levels associated to the states of the nodeGame engine</p>
+  </div>
+  <div class="details">
   </div>
 </div>
         </td>
@@ -740,11 +748,67 @@ information carried in the message.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">DONE</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
   
-  
 
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.statelevels">
+  <h3>
+    <a href="#node.statelevels" class="pilcrow">&#182;</a>
+    node.stateLevels
+  </h3>
+</div>
 
-  
-  
+  </div>
+  <div class="body"><p>Levels associated with the states of the Game</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">UNINITIALIZED</span><span class="o">:</span>  <span class="mi">0</span><span class="p">,</span>  <span class="c1">// creating the game object</span>
+        <span class="nx">STARTING</span><span class="o">:</span>   <span class="mi">1</span><span class="p">,</span>  <span class="c1">// starting the game</span>
+        <span class="nx">INITIALIZING</span><span class="o">:</span>   <span class="mi">2</span><span class="p">,</span>  <span class="c1">// calling game&#39;s init</span>
+        <span class="nx">INITIALIZED</span><span class="o">:</span>    <span class="mi">5</span><span class="p">,</span>  <span class="c1">// init executed</span>
+        <span class="nx">STAGE_INIT</span><span class="o">:</span>    <span class="mi">10</span><span class="p">,</span>  <span class="c1">// calling stage&#39;s init</span>
+        <span class="nx">STEP_INIT</span><span class="o">:</span>     <span class="mi">20</span><span class="p">,</span>  <span class="c1">// calling step&#39;s init</span>
+        <span class="nx">PLAYING_STEP</span><span class="o">:</span>  <span class="mi">30</span><span class="p">,</span>  <span class="c1">// executing step</span>
+        <span class="nx">FINISHING</span><span class="o">:</span>     <span class="mi">40</span><span class="p">,</span>  <span class="c1">// calling game&#39;s gameover</span>
+        <span class="nx">GAMEOVER</span><span class="o">:</span>     <span class="mi">100</span><span class="p">,</span>  <span class="c1">// game complete</span>
+        <span class="nx">RUNTIME_ERROR</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.stagelevels">
+  <h3>
+    <a href="#node.stagelevels" class="pilcrow">&#182;</a>
+    node.stageLevels
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Levels associated with the states of the stages of the Game</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">UNINITIALIZED</span><span class="o">:</span>  <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">INITIALIZING</span><span class="o">:</span>   <span class="mi">1</span><span class="p">,</span>  <span class="c1">// executing init</span>
+        <span class="nx">INITIALIZED</span><span class="o">:</span>    <span class="mi">5</span><span class="p">,</span>  <span class="c1">// init executed</span>
+        <span class="nx">LOADING</span><span class="o">:</span>       <span class="mi">30</span><span class="p">,</span>
+        <span class="nx">LOADED</span><span class="o">:</span>        <span class="mi">40</span><span class="p">,</span>
+        <span class="nx">PLAYING</span><span class="o">:</span>       <span class="mi">50</span><span class="p">,</span>
+        <span class="nx">PAUSING</span><span class="o">:</span>       <span class="mi">55</span><span class="p">,</span>
+        <span class="nx">PAUSED</span><span class="o">:</span>        <span class="mi">60</span><span class="p">,</span>
+        <span class="nx">RESUMING</span><span class="o">:</span>      <span class="mi">65</span><span class="p">,</span>
+        <span class="nx">RESUMED</span><span class="o">:</span>       <span class="mi">70</span><span class="p">,</span>
+        <span class="nx">DONE</span><span class="o">:</span>         <span class="mi">100</span>
+    <span class="p">};</span>
 
 <span class="p">})(</span>
   <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>

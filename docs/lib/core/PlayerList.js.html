@@ -105,6 +105,9 @@
       <div class="heading h3">
         <a href="#player.stage">Player.stage</a>
       </div>
+      <div class="heading h3">
+        <a href="#player.stagelevel">Player.stageLevel</a>
+      </div>
       <div class="heading h2">
         <a href="#extra-properties">Extra properties</a>
       </div>
@@ -170,7 +173,8 @@ to perform operation on them</p>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
     <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">;</span></pre></div>
+<span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
+    <span class="nx">Game</span>      <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -698,7 +702,7 @@ TODO remove after transition is complete</p>
   <div class="body"><p>Checks whether all players have terminated the specified stage</p>
 
 <p>A stage is considered <em>DONE</em> if all players that are on that stage
-have the property <code>stageLevel</code> equal to <code>Game.stageLevels.DONE</code>.</p>
+have the property <code>stageLevel</code> equal to <code>node.stageLevels.DONE</code>.</p>
 
 <p>Players at other stages are ignored.</p>
 
@@ -752,7 +756,7 @@ have the property <code>stageLevel</code> equal to <code>Game.stageLevels.DONE</
 </div>
 <p>Player is done for his stage</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
   <span class="p">}</span>
     <span class="p">}</span>
@@ -1001,8 +1005,7 @@ cannot overwrite any previously existing property.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">Player</span> <span class="p">(</span><span class="nx">pl</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">pl</span> <span class="o">=</span> <span class="nx">pl</span> <span class="o">||</span> <span class="p">{};</span>
-  </pre></div>
+    <span class="nx">pl</span> <span class="o">=</span> <span class="nx">pl</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1015,7 +1018,7 @@ cannot overwrite any previously existing property.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -1033,17 +1036,7 @@ cannot overwrite any previously existing property.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">sid</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">sid</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;sid&#39;</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">value</span><span class="o">:</span> <span class="nx">sid</span><span class="p">,</span>
-        <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">sid</span> <span class="o">=</span> <span class="nx">sid</span><span class="p">;</span>
-  <span class="p">}</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">sid</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">sid</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1064,17 +1057,7 @@ case of reconnections it can change</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">sid</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">value</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span>
-        <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
-  <span class="p">}</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">sid</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1094,17 +1077,7 @@ case of reconnections it can change</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">count</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">count</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="p">{</span>
-        <span class="nx">value</span><span class="o">:</span> <span class="nx">count</span><span class="p">,</span>
-        <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="nx">count</span><span class="p">;</span>
-  <span class="p">}</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">count</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1122,17 +1095,7 @@ case of reconnections it can change</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">admin</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">pl</span><span class="p">.</span><span class="nx">admin</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">value</span><span class="o">:</span> <span class="nx">admin</span><span class="p">,</span>
-        <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">admin</span> <span class="o">=</span> <span class="nx">admin</span><span class="p">;</span>
-  <span class="p">}</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">admin</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">pl</span><span class="p">.</span><span class="nx">admin</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1150,17 +1113,7 @@ case of reconnections it can change</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">disconnected</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">pl</span><span class="p">.</span><span class="nx">disconnected</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;disconnected&#39;</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">value</span><span class="o">:</span> <span class="nx">disconnected</span><span class="p">,</span>
-        <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">disconnected</span> <span class="o">=</span> <span class="nx">disconnected</span><span class="p">;</span>
-  <span class="p">}</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">disconnected</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">pl</span><span class="p">.</span><span class="nx">disconnected</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1193,8 +1146,7 @@ case of reconnections it can change</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">ip</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">ip</span><span class="p">;</span>
- </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">ip</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">ip</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1212,8 +1164,7 @@ case of reconnections it can change</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1234,13 +1185,37 @@ case of reconnections it can change</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">stage</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">();</span>
-
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">stage</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">();</span></pre></div>
         </td>
       </tr>
       <tr>
-        <td class="docs">
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="player.stagelevel">
+  <h3>
+    <a href="#player.stagelevel" class="pilcrow">&#182;</a>
+    Player.stageLevel
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The current stage level of the player in the game</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.stageLevels
+      </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="extra-properties">
   <h2>
     <a href="#extra-properties" class="pilcrow">&#182;</a>
@@ -1248,20 +1223,23 @@ case of reconnections it can change</p>
   </h2>
 </div>
 
+  </div>
+  <div class="body"><p>Non-default properties are all added as private</p>
 
-<p>Non-default properties are all added as private
-For security reasons, they cannot be of type function, and they 
+<p>For security reasons, they cannot be of type function, and they 
 cannot overwrite any previously defined variable</p>
+  </div>
+</div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">pl</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">pl</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">pl</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-          <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">pl</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">pl</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">pl</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
         <span class="p">}</span>
-      <span class="p">}</span>
     <span class="p">}</span>
-  <span class="p">}</span>
 <span class="p">}</span></pre></div>
         </td>
       </tr>
