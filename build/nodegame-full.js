@@ -10833,6 +10833,7 @@ exports.GamePlot = GamePlot;
 
 var Stager = node.Stager;
 var GameStage = node.GameStage;
+var J = node.JSUS;
 
 // ## Constants
 GamePlot.GAMEOVER = 'NODEGAME_GAMEOVER';
@@ -11456,6 +11457,22 @@ GamePlot.prototype.getProperty = function(gameStage, property) {
 
     // Not found:
     return null;
+};
+
+
+/**
+ * ### GamePlot.isReady
+ *
+ * Returns whether the stager has any content
+ *
+ * @return {boolean} FALSE if stager is empty, TRUE otherwise
+ */
+GamePlot.prototype.isReady = function() {
+    debugger;
+    return this.stager &&
+        (this.stager.sequence.length > 0 ||
+         this.stager.generalNextFunction !== null ||
+         !J.isEmpty(this.stager.nextFunctions));
 };
 
 /**
@@ -12425,6 +12442,31 @@ function Game(settings) {
     };
 
     /**
+     * ### Game.settings
+     *
+     * The game's settings
+     *
+     * Contains following properties:
+     * 
+     *  - observer: If TRUE, silently observes the game. Default: FALSE
+     *
+     *  - auto_wait: If TRUE, fires a WAITING... event immediately after
+     *     a successful DONE event. Default: FALSE
+     *
+     *  - minPlayers: Default: 1
+     *
+     *  - maxPlayers: Default: 1000
+     *
+     * @api private
+     */
+    this.settings = {
+        observer:   !!settings.observer,
+        auto_wait:  !!settings.auto_wait,
+        minPlayers: settings.minPlayers || 1,
+        maxPlayers: settings.maxPlayers || 1000
+    };
+
+    /**
      * ### Game.pl
      *
      * The list of players connected to the game
@@ -12448,43 +12490,6 @@ function Game(settings) {
 
 
     // ## Public properties
-
-    /**
-     * ### Game.observer
-     *
-     * If TRUE, silently observes the game. Defaults, FALSE
-     *
-     * An nodeGame observer will not send any automatic notification
-     * to the server, but it will just *observe* the game played by
-     * other clients.
-     *
-     */
-    this.observer = ('undefined' !== typeof settings.observer) ? settings.observer
-        : false;
-
-
-    /**
-     * ### Game.auto_wait
-     *
-     * If TRUE, fires a WAITING... event immediately after a successful DONE event
-     *
-     * Under default settings, the WAITING... event temporarily prevents the user
-     * to access the screen and displays a message to the player.
-     *
-     * Defaults: FALSE
-     *
-     */
-    this.auto_wait = ('undefined' !== typeof settings.auto_wait) ? settings.auto_wait
-        : false;
-
-
-
-
-    // TODO: check this
-    this.minPlayers = settings.minPlayers || 1;
-    this.maxPlayers = settings.maxPlayers || 1000;
-
-
 
     /**
      * ### Game.memory
@@ -12535,10 +12540,17 @@ function Game(settings) {
  */
 Game.prototype.start = function() {
     var onInit;
+    var rc;
 
     if (this.getStateLevel() >= node.stateLevels.INITIALIZING) {
         node.warn('game.start called on a running game');
-        return;
+        return false;
+    }
+
+    // Check for the existence of stager contents:
+    if (!this.plot.isReady()) {
+        throw new node.NodeGameMisconfiguredGameError(
+                'game.start called with unready plot');
     }
 
     // INIT the game
@@ -12552,9 +12564,11 @@ Game.prototype.start = function() {
     this.setStateLevel(node.stateLevels.INITIALIZED);
 
     this.setCurrentGameStage(new GameStage());
-    this.step();
+    rc = this.step();
 
     node.log('game started');
+
+    return rc;
 };
 
 /**
@@ -12656,8 +12670,8 @@ Game.prototype.step = function() {
     var ev;
 
     curStep = this.getCurrentGameStage();
-    node.silly('Nest stage ---> ' + nextStep);
     nextStep = this.plot.next(curStep);
+    node.silly('Next stage ---> ' + nextStep);
 
     // Listeners from previous step are cleared in any case
     node.events.ee.step.clear();
@@ -13925,12 +13939,8 @@ SessionManager.prototype.store = function() {
  * ### node.play
  * 
  * Starts a game
- * 
- * @param {object} conf A configuration object
- * @param {object} game The game object
  */	
-    node.play = function(game) {	
-        if (game) node.setup.game(game);	
+    node.play = function() {	
         node.game.start();
     };
 	
@@ -14579,33 +14589,39 @@ node.setup.register('sio', function(conf) {
 
 
 /**
- * ### node.setup.game
+ * ### node.setup.game_settings
  *
- * Creates the `node.game` object
- *
- * The input parameter can be either an object (function) or
- * a stringified object (function), and it will be passed as
- * the configuration object to the contructor of `node.Game`
+ * Sets up `node.game.settings`
  */
-node.setup.register('game', function(gameState) {
-    // TODO
-    if (!gameState) return {};
-
-    // Trying to parse the string, maybe it
-    // comes from a remote setup
-    if ('string' === typeof gameState) {
-        gameState = J.parse(gameState);
+node.setup.register('game_settings', function(settings) {
+    if (!node.game) {
+        node.warn("register('game_settings') called before node.game was initialized");
+        throw new NodeGameMisconfiguredGameError("node.game non-existent");
     }
 
-    if ('function' === typeof gameState) {
-        // creates the object
-        gameState = new gameState();
+    if (settings) {
+        J.mixin(node.game.settings, settings);
     }
 
-    node.game = new Game(gameState);
-    node.emit('NODEGAME_GAME_CREATED');
+    return node.game.settings;
+});
 
-    return node.game;
+/**
+ * ### node.setup.game_metadata
+ *
+ * Sets up `node.game.metadata`
+ */
+node.setup.register('game_metadata', function(metadata) {
+    if (!node.game) {
+        node.warn("register('game_metadata') called before node.game was initialized");
+        throw new NodeGameMisconfiguredGameError("node.game non-existent");
+    }
+
+    if (metadata) {
+        J.mixin(node.game.metadata, metadata);
+    }
+
+    return node.game.metadata;
 });
 
 /**
@@ -14669,15 +14685,17 @@ node.setup.register('plist', function(playerList, updateRule) {
         throw new NodeGameMisconfiguredGameError("node.game non-existent");
     }
 
-    if (!updateRule || updateRule === 'replace') {
-        node.game.pl.clear(true);
-    }
-    else if(updateRule !== 'append') {
-        throw new NodeGameMisconfiguredGameError(
-                "register('plist') got invalid updateRule");
-    }
+    if (playerList) {
+        if (!updateRule || updateRule === 'replace') {
+            node.game.pl.clear(true);
+        }
+        else if (updateRule !== 'append') {
+            throw new NodeGameMisconfiguredGameError(
+                    "register('plist') got invalid updateRule");
+        }
 
-    node.game.pl.importDB(playerList);
+        node.game.pl.importDB(playerList);
+    }
 
     return node.game.pl;
 });
