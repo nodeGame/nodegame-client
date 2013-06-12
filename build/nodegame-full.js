@@ -9133,152 +9133,111 @@ exports.Player = Player;
  * 
  */
 function Player (pl) {
-	pl = pl || {};
-	
-// ## Private properties
-	
-/**
- * ### Player.sid
- * 
- * The session id received from the nodeGame server 
- * 
- */	
-	var sid = pl.sid;
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'sid', {
-			value: sid,
-	    	enumerable: true
-		});
-	}
-	else {
-		this.sid = sid;
-	}
-	
-/**
- * ### Player.id
- * 
- * The nodeGame session id associate to the player 
- * 
- * Usually it is the same as the Socket.io id, but in 
- * case of reconnections it can change
- * 
- */	
-	var id = pl.id || sid;
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'id', {
-			value: id,
-	    	enumerable: true
-		});
-	}
-	else {
-		this.id = id;
-	}
-	
-/**
- * ### Player.count
- * 
- * The ordinal position of the player in a PlayerList object
- * 
- * 	@see PlayerList
- */		
-	var count = pl.count;
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'count', {
-	    	value: count,
-	    	enumerable: true
-		});
-	}
-	else {
-		this.count = count;
-	}
-	
-/**
- * ### Player.admin
- * 
- * The admin status of the client
- * 
- */	
-	var admin = !!pl.admin;
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'admin', {
-			value: admin,
-	    	enumerable: true
-		});
-	}
-	else {
-		this.admin = admin;
-	}
-	
-/**
- * ### Player.disconnected
- * 
- * The connection status of the client
- * 
- */	
-	var disconnected = !!pl.disconnected;
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'disconnected', {
-			value: disconnected,
-	    	enumerable: true
-		});
-	}
-	else {
-		this.disconnected = disconnected;
-	}
-	
-// ## Player public properties
+    pl = pl || {};
 
-/**
- * ### Player.ip
- * 
- * The ip address of the player
- * 
- * Note: this can change in mobile networks
- * 
- */		
- 	this.ip = pl.ip;
- 
-/**
- * ### Player.name
- * 
- * An alphanumeric name associated with the player
- * 
- */	 
-	this.name = pl.name;
-	
-/**
- * ### Player.stage
- * 
- * Reference to the game-stage the player currently is
- * 
- * 	@see node.game.stage
- * 	@see GameStage
- */		
-	this.stage = pl.stage || new GameStage();
-	
-/**
- * ### Player.stageLevel
- * 
- * The current stage level of the player in the game
- * 
- * @see node.stageLevels
- */		
+    // ## Private properties
+
+    /**
+     * ### Player.sid
+     * 
+     * The session id received from the nodeGame server 
+     * 
+     */	
+    this.sid = pl.sid;
+
+    /**
+     * ### Player.id
+     * 
+     * The nodeGame session id associate to the player 
+     * 
+     * Usually it is the same as the Socket.io id, but in 
+     * case of reconnections it can change
+     * 
+     */	
+    this.id = pl.id || this.sid;
+
+    /**
+     * ### Player.count
+     * 
+     * The ordinal position of the player in a PlayerList object
+     * 
+     * 	@see PlayerList
+     */		
+    this.count = pl.count;
+
+    /**
+     * ### Player.admin
+     * 
+     * The admin status of the client
+     * 
+     */	
+    this.admin = !!pl.admin;
+
+    /**
+     * ### Player.disconnected
+     * 
+     * The connection status of the client
+     * 
+     */	
+    this.disconnected = !!pl.disconnected;
+
+    // ## Player public properties
+
+    /**
+     * ### Player.ip
+     * 
+     * The ip address of the player
+     * 
+     * Note: this can change in mobile networks
+     * 
+     */		
+    this.ip = pl.ip;
+
+    /**
+     * ### Player.name
+     * 
+     * An alphanumeric name associated with the player
+     * 
+     */	 
+    this.name = pl.name;
+
+    /**
+     * ### Player.stage
+     * 
+     * Reference to the game-stage the player currently is
+     * 
+     * 	@see node.game.stage
+     * 	@see GameStage
+     */		
+    this.stage = pl.stage || new GameStage();
+
+    /**
+     * ### Player.stageLevel
+     * 
+     * The current stage level of the player in the game
+     * 
+     * @see node.stageLevels
+     */		
     this.stageLevel = pl.stageLevel || node.stageLevels.UNINITIALIZED;
 
-	
-// ## Extra properties
-// Non-default properties are all added as private
-// For security reasons, they cannot be of type function, and they 
-// cannot overwrite any previously defined variable
-	for (var key in pl) {
-		if (pl.hasOwnProperty(key)) {
-			if ('function' !== typeof pl[key]) {
-				if (!this.hasOwnProperty(key)) {
-					this[key] = pl[key];
-				}
-			}
-		}
-	}
+
+    /**
+     * ## Extra properties
+     *
+     * Non-default properties are all added as private
+     *
+     * For security reasons, they cannot be of type function, and they 
+     * cannot overwrite any previously defined variable
+     */
+    for (var key in pl) {
+        if (pl.hasOwnProperty(key)) {
+            if ('function' !== typeof pl[key]) {
+                if (!this.hasOwnProperty(key)) {
+                    this[key] = pl[key];
+                }
+            }
+        }
+    }
 }
 
 // ## Player methods
