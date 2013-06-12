@@ -12534,8 +12534,13 @@ Game.prototype.step = function() {
     var ev;
 
     curStep = this.getCurrentGameStage();
+<<<<<<< HEAD
+    nextStep = this.gameLoop.next(curStep);
+    node.silly('Nest stage ---> ' + nextStep);
+=======
     nextStep = this.plot.next(curStep);
 
+>>>>>>> 0c518570f17c1e8cf641e22298b4e847d7687466
     // Listeners from previous step are cleared in any case
     node.events.ee.step.clear();
 
