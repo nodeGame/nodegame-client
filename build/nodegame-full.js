@@ -14203,10 +14203,12 @@ var frozen = false;
  * Configures a specific feature of nodeGame and and stores
  * the settings in `node.conf`.
  *
+ * Accepts any number of extra parameters that are passed to the callback
+ * function.
+ *
  * See the examples folder for all available configuration options.
  *
  * @param {string} property The feature to configure
- * @param {mixed} options The values of the options to configure
  * @return {boolean} TRUE, if configuration is successful
  *
  * @see node.setup.register
@@ -14532,8 +14534,9 @@ node.setup.register('plot', function(stagerState, updateRule) {
  *
  * Sends a setup configuration to a connected client
  *
+ * Accepts any number of extra parameters that are sent as option values.
+ *
  * @param {string} property The feature to configure
- * @param {mixed} options The value of the option to configure
  * @param {string} to The id of the remote client to configure
  *
  * @return{boolean} TRUE, if configuration is successful
@@ -14541,7 +14544,7 @@ node.setup.register('plot', function(stagerState, updateRule) {
  * @see node.setup
  * @see JSUS.stringifyAll
  */
-node.remoteSetup = function(property, options, to) {
+node.remoteSetup = function(property, to) {
     var msg, payload;
 
     if (!property) {
@@ -14553,7 +14556,7 @@ node.remoteSetup = function(property, options, to) {
         return false;
     }
 
-    payload = J.stringifyAll(options);
+    payload = J.stringifyAll(Array.prototype.slice.call(arguments, 2));
 
     if (!payload) {
         node.err('an error occurred while stringifying payload for remote setup');
@@ -15116,7 +15119,7 @@ node.events.ng.on( IN + say + 'SETUP', function (msg) {
 	node.err('error while parsing incoming remote setup message');
 	return false;
     }
-    node.setup(feature, payload);	
+    node.setup.apply(this, [feature].concat(payload));
 });	
 
 

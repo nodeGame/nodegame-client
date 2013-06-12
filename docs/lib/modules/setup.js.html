@@ -759,6 +759,8 @@ comes from a remote setup</p>
 
   </div>
   <div class="body"><p>Sends a setup configuration to a connected client</p>
+
+<p>Accepts any number of extra parameters that are sent as option values.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -766,11 +768,6 @@ comes from a remote setup</p>
       <span class="dox_tag_name">property</span>
       <span class="dox_type">string</span>
       <span>The feature to configure</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">options</span>
-      <span class="dox_type">mixed</span>
-      <span>The value of the option to configure</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">to</span>
@@ -789,7 +786,7 @@ comes from a remote setup</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">remoteSetup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">property</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">remoteSetup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">property</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">payload</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
@@ -801,7 +798,7 @@ comes from a remote setup</p>
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="nx">payload</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">stringifyAll</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+    <span class="nx">payload</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">stringifyAll</span><span class="p">(</span><span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">payload</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;an error occurred while stringifying payload for remote setup&#39;</span><span class="p">);</span>

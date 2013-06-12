@@ -224,7 +224,7 @@ node.events.ng.on( IN + say + 'SETUP', function (msg) {
 	node.err('error while parsing incoming remote setup message');
 	return false;
     }
-    node.setup(feature, payload);	
+    node.setup.apply(this, [feature].concat(payload));
 });	
 
 
