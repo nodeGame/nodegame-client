@@ -2109,10 +2109,10 @@ defaultGlobals, defaultProperties, onInit, onGameover.</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns a minimal state package containing a stage</p>
+  <div class="body"><p>Returns a minimal state package containing one or more stages</p>
 
 <p>The returned package consists of a <code>setState</code>-compatible object with the
-<code>steps</code> and <code>stages</code> properties set to include the given stage.
+<code>steps</code> and <code>stages</code> properties set to include the given stages.
 The <code>sequence</code> is optionally set to a single <code>next</code> block for the stage.</p>
   </div>
   <div class="details">
@@ -2120,7 +2120,8 @@ The <code>sequence</code> is optionally set to a single <code>next</code> block 
     <div class="dox_tag_detail">
       <span class="dox_tag_name">id</span>
       <span class="dox_type">string</span>
-      <span>A valid stage name</span>
+      <span class="dox_type">array</span>
+      <span>Valid stage name(s)</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">useSeq</span>
@@ -2143,17 +2144,32 @@ The <code>sequence</code> is optionally set to a single <code>next</code> block 
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extractStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">useSeq</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="p">{};</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extractStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">,</span> <span class="nx">useSeq</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">steps</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">stages</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">sequence</span><span class="o">:</span> <span class="p">[]</span>
+    <span class="p">};</span>
     <span class="kd">var</span> <span class="nx">stepIdx</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">stageId</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">stageObj</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">idArray</span><span class="p">,</span> <span class="nx">idIdx</span><span class="p">;</span>
 
-    <span class="nx">stageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">ids</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">idArray</span> <span class="o">=</span> <span class="nx">ids</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">ids</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">idArray</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">ids</span> <span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stageObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="nx">useSeq</span> <span class="o">=</span> <span class="p">(</span><span class="nx">useSeq</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>  <span class="c1">// undefined (default) -&gt; true</span>
 
-    <span class="nx">useSeq</span> <span class="o">=</span> <span class="p">(</span><span class="nx">useSeq</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>  <span class="c1">// undefined (default) -&gt; true</span></pre></div>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">idIdx</span> <span class="k">in</span> <span class="nx">idArray</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">idArray</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idIdx</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">id</span> <span class="o">=</span> <span class="nx">idArray</span><span class="p">[</span><span class="nx">idIdx</span><span class="p">];</span>
+
+            <span class="nx">stageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stageObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2163,11 +2179,12 @@ The <code>sequence</code> is optionally set to a single <code>next</code> block 
 </div>
 <p>Add step objects:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">result</span><span class="p">.</span><span class="nx">steps</span> <span class="o">=</span> <span class="p">{};</span>
-    <span class="k">for</span> <span class="p">(</span><span class="nx">stepIdx</span> <span class="k">in</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">stepId</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepIdx</span><span class="p">];</span>
-        <span class="nx">result</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">];</span>
-    <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">for</span> <span class="p">(</span><span class="nx">stepIdx</span> <span class="k">in</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">stepIdx</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">stepId</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepIdx</span><span class="p">];</span>
+                    <span class="nx">result</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">];</span>
+                <span class="p">}</span>
+            <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2177,9 +2194,8 @@ The <code>sequence</code> is optionally set to a single <code>next</code> block 
 </div>
 <p>Add stage object:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span> <span class="o">=</span> <span class="p">{};</span>
-    <span class="nx">stageId</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
-    <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">stageId</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+            <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2189,7 +2205,7 @@ The <code>sequence</code> is optionally set to a single <code>next</code> block 
 </div>
 <p>If given id is alias, also add alias:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">stageId</span> <span class="o">!==</span> <span class="nx">id</span><span class="p">)</span> <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">stageId</span> <span class="o">!==</span> <span class="nx">id</span><span class="p">)</span> <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2199,11 +2215,13 @@ The <code>sequence</code> is optionally set to a single <code>next</code> block 
 </div>
 <p>Add mini-sequence:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">useSeq</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">result</span><span class="p">.</span><span class="nx">sequence</span> <span class="o">=</span> <span class="p">[{</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span>
-            <span class="nx">id</span><span class="o">:</span> <span class="nx">stageId</span>
-        <span class="p">}];</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">useSeq</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">result</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                    <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span>
+                    <span class="nx">id</span><span class="o">:</span> <span class="nx">stageId</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 
     <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
