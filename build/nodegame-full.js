@@ -14651,6 +14651,37 @@ node.setup.register('plot', function(stagerState, updateRule) {
     return node.game.plot;
 });
 
+/**
+ * ### node.setup.plist
+ *
+ * Updates the PlayerList in Game
+ *
+ * @param {PlayerList} playerList The new PlayerList
+ * @param {string} updateRule Optional. Whether to 'replace' (default) or
+ *  to 'append'.
+ *
+ * @see node.game.plot
+ * @see Stager.setState
+ */
+node.setup.register('plist', function(playerList, updateRule) {
+    if (!node.game || !node.game.pl) {
+        node.warn("register('plist') called before node.game was initialized");
+        throw new NodeGameMisconfiguredGameError("node.game non-existent");
+    }
+
+    if (!updateRule || updateRule === 'replace') {
+        node.game.pl.clear(true);
+    }
+    else if(updateRule !== 'append') {
+        throw new NodeGameMisconfiguredGameError(
+                "register('plist') got invalid updateRule");
+    }
+
+    node.game.pl.importDB(playerList);
+
+    return node.game.pl;
+});
+
 
 /**
  * ### node.remoteSetup
