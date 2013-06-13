@@ -7215,16 +7215,6 @@ node.game.memory = null;
 
 
 /**
- * ### node.game.state
- * 
- * Keeps track of the state of the game
- * 
- * @see node.GameState
- */
-node.game.stateLevel = null;
-
-
-/**
  * ### node.store
  * 
  * Makes the nodeGame session persistent, saving it
@@ -7825,6 +7815,7 @@ else {
     node.NodeGameRuntimeError = NodeGameRuntimeError;
     node.NodeGameStageCallbackError = NodeGameStageCallbackError;
     node.NodeGameMisconfiguredGameError = NodeGameMisconfiguredGameError;
+    node.NodeGameIllegalOperationError = NodeGameIllegalOperationError;
 
     /*
      * ### NodeGameRuntimeError
@@ -12859,11 +12850,11 @@ Game.prototype.execStep = function(stage) {
 };
 
 Game.prototype.getStateLevel = function() {
-    return this.stateLevel;
+    return node.player.stateLevel;
 };
 
 Game.prototype.getStageLevel = function() {
-    return this.stageLevel;
+    return node.player.stageLevel;
 };
 
 Game.prototype.getCurrentStep = function() {
@@ -12871,7 +12862,7 @@ Game.prototype.getCurrentStep = function() {
 };
 
 Game.prototype.getCurrentGameStage = function() {
-    return this.currentGameStage;
+    return node.player.stage;
 };
 
 // ERROR, WORKING, etc
@@ -12881,7 +12872,7 @@ Game.prototype.setStateLevel = function(stateLevel) {
                 'setStateLevel called with invalid parameter: ' + stateLevel);
     }
 
-    this.stateLevel = stateLevel;
+    node.player.stateLevel = stateLevel;
     // TODO do we need to publish this kinds of update?
     //this.publishUpdate();
 };
@@ -12894,18 +12885,18 @@ Game.prototype.setStageLevel = function(stageLevel) {
                 'setStageLevel called with invalid parameter: ' + stageLevel);
     }
     this.publishStageLevelUpdate(stageLevel);
-    this.stageLevel = stageLevel;
+    node.player.stageLevel = stageLevel;
 };
 
 Game.prototype.setCurrentGameStage = function(gameStage) {
     gameStage = new GameStage(gameStage);
     this.publishGameStageUpdate(gameStage);
-    this.currentGameStage = gameStage;
+    node.player.stage = gameStage;
 };
 
 Game.prototype.publishStageLevelUpdate = function(stageLevel) {
     // Publish update:
-    if (!this.observer && this.stageLevel !== stageLevel) {
+    if (!this.observer && node.player.stageLevel !== stageLevel) {
         node.socket.send(node.msg.create({
             target: node.target.STAGE_LEVEL,
             data: stageLevel,
@@ -12916,7 +12907,7 @@ Game.prototype.publishStageLevelUpdate = function(stageLevel) {
 
 Game.prototype.publishGameStageUpdate = function(gameStage) {
     // Publish update:
-    if (!this.observer && this.currentGameStage !== gameStage) {
+    if (!this.observer && node.player.stage !== gameStage) {
         node.socket.send(node.msg.create({
             target: node.target.STAGE,
             data: gameStage,
@@ -13947,7 +13938,7 @@ SessionManager.prototype.store = function() {
         player = new Player(player);
 
         if (node.player &&
-                node.player.stateLevel >= node.stateLevels.STARTING &&
+                node.player.stateLevel > node.stateLevels.STARTING &&
                 node.player.stateLevel !== node.stateLevels.GAMEOVER) {
             throw new node.NodeGameIllegalOperationError(
                     'createPlayer: cannot create player while game is running');

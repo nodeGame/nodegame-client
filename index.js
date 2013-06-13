@@ -97,16 +97,6 @@ node.game.memory = null;
 
 
 /**
- * ### node.game.state
- * 
- * Keeps track of the state of the game
- * 
- * @see node.GameState
- */
-node.game.stateLevel = null;
-
-
-/**
  * ### node.store
  * 
  * Makes the nodeGame session persistent, saving it

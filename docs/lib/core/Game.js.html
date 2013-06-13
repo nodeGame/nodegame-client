@@ -886,11 +886,11 @@ we need to update a few things:</p>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStateLevel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStageLevel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stageLevel</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stageLevel</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -898,7 +898,7 @@ we need to update a few things:</p>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentGameStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">currentGameStage</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -915,7 +915,7 @@ we need to update a few things:</p>
                 <span class="s1">&#39;setStateLevel called with invalid parameter: &#39;</span> <span class="o">+</span> <span class="nx">stateLevel</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">=</span> <span class="nx">stateLevel</span><span class="p">;</span></pre></div>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">=</span> <span class="nx">stateLevel</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -943,13 +943,13 @@ Publishes update only if value actually changed.</p>
                 <span class="s1">&#39;setStageLevel called with invalid parameter: &#39;</span> <span class="o">+</span> <span class="nx">stageLevel</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">publishStageLevelUpdate</span><span class="p">(</span><span class="nx">stageLevel</span><span class="p">);</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">stageLevel</span><span class="p">;</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">stageLevel</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setCurrentGameStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">publishGameStageUpdate</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">currentGameStage</span> <span class="o">=</span> <span class="nx">gameStage</span><span class="p">;</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">gameStage</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">publishStageLevelUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span></pre></div>
@@ -962,7 +962,7 @@ Publishes update only if value actually changed.</p>
 </div>
 <p>Publish update:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
             <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE_LEVEL</span><span class="p">,</span>
             <span class="nx">data</span><span class="o">:</span> <span class="nx">stageLevel</span><span class="p">,</span>
@@ -981,7 +981,7 @@ Publishes update only if value actually changed.</p>
 </div>
 <p>Publish update:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">currentGameStage</span> <span class="o">!==</span> <span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span> <span class="o">!==</span> <span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
             <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE</span><span class="p">,</span>
             <span class="nx">data</span><span class="o">:</span> <span class="nx">gameStage</span><span class="p">,</span>
