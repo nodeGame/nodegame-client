@@ -179,31 +179,19 @@ line, multiplayer games in the browser.</p>
 </div>
 
   </div>
-  <div class="body"><p>Mixes in default properties for the player object and
-additional configuration variables from node.conf.player</p>
-
-<p>Writes the node.player object</p>
-
-<p>Properties: <code>id</code>, <code>sid</code>, <code>ip</code> can never be overwritten.</p>
-
-<p>Properties added as local configuration cannot be further
-modified during the game.</p>
-
-<p>Only the property <code>name</code>, can be changed.</p>
+  <div class="body"><p>Creates player</p>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-
         <span class="nx">player</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Player</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">pconf</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
-            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">pconf</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">pconf</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">inArray</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;sid&#39;</span><span class="p">,</span> <span class="s1">&#39;ip&#39;</span><span class="p">]))</span> <span class="p">{</span>
-                        <span class="k">continue</span><span class="p">;</span>
-                    <span class="p">}</span></pre></div>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">&gt;=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STARTING</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">!==</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameIllegalOperationError</span><span class="p">(</span>
+                    <span class="s1">&#39;createPlayer: cannot create player while game is running&#39;</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -211,40 +199,17 @@ modified during the game.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
 </div>
-<p>Cannot be overwritten properties previously
-set in other sessions (recovery)</p>
-
-<p>if (player.hasOwnProperty(key)) {
-    continue;
-}</p>
+<p>Overwrite existing 'current' player:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="p">{</span>
-                            <span class="nx">value</span><span class="o">:</span> <span class="nx">pconf</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span>
-                            <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-                        <span class="p">});</span>
-                    <span class="p">}</span>
-                    <span class="k">else</span> <span class="p">{</span>
-                        <span class="nx">player</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">pconf</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
         <span class="p">}</span>
 
+        <span class="nx">node</span><span class="p">.</span><span class="nx">player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">value</span><span class="o">:</span> <span class="nx">player</span><span class="p">,</span>
-                <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-            <span class="p">});</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">player</span> <span class="o">=</span> <span class="nx">player</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PLAYER_CREATED&#39;</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">);</span>
 
-        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PLAYER_CREATED&#39;</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
-
-        <span class="k">return</span> <span class="nx">player</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>

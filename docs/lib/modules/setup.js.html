@@ -73,6 +73,9 @@
         <a href="#node.setup.plist">node.setup.plist</a>
       </div>
       <div class="heading h3">
+        <a href="#node.setup.mlist">node.setup.mlist</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.remotesetup">node.remoteSetup</a>
       </div>
     </div>
@@ -646,7 +649,13 @@ in the browser enviroment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
+<span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -766,6 +775,67 @@ in the browser enviroment.</p>
     <span class="p">}</span>
 
     <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">;</span>
+<span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.setup.mlist">
+  <h3>
+    <a href="#node.setup.mlist" class="pilcrow">&#182;</a>
+    node.setup.mlist
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>TODO: docs, merge with plist
+Updates the PlayerList in Game</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">playerList</span>
+      <span class="dox_type">PlayerList</span>
+      <span>The new PlayerList</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">updateRule</span>
+      <span class="dox_type">string</span>
+      <span>Optional. Whether to 'replace' (default) or
+ to 'append'.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.game.plot</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.setState
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;mlist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">playerList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;register(&#39;mlist&#39;) called before node.game was initialized&quot;</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">playerList</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">updateRule</span> <span class="o">||</span> <span class="nx">updateRule</span> <span class="o">===</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s2">&quot;register(&#39;plist&#39;) got invalid updateRule&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">playerList</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">;</span>
 <span class="p">});</span></pre></div>
         </td>
       </tr>

@@ -218,7 +218,7 @@ node.events.ng.on( IN + say + 'REDIRECT', function (msg) {
 node.events.ng.on( IN + say + 'SETUP', function (msg) {
     if (!msg.text) return;
     var feature = msg.text,
-        payload = JSUS.parse(msg.data);
+        payload = ('string' === typeof msg.data) ? J.parse(msg.data) : msg.data;
     
     if (!payload) {
 	node.err('error while parsing incoming remote setup message');

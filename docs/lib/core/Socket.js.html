@@ -240,12 +240,10 @@ MIT Licensed </p>
 <span class="p">};</span>
 
 <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onMessage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-  
     <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">secureParse</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-    
-    <span class="kd">var</span> <span class="nx">sessionObj</span><span class="p">;</span>
-  </pre></div>
+
+    <span class="kd">var</span> <span class="nx">sessionObj</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -255,8 +253,7 @@ MIT Licensed </p>
 </div>
 <p>Parsing successful</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">===</span> <span class="s1">&#39;HI&#39;</span><span class="p">)</span> <span class="p">{</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">===</span> <span class="s1">&#39;HI&#39;</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -266,13 +263,13 @@ MIT Licensed </p>
 </div>
 <p>replace itself: will change onMessage</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">attachMsgListeners</span><span class="p">();</span>
-  
-  <span class="k">this</span><span class="p">.</span><span class="nx">startSession</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-  
-  <span class="nx">sessionObj</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">session</span><span class="p">);</span>
-  
-  <span class="k">if</span> <span class="p">(</span><span class="kc">false</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">attachMsgListeners</span><span class="p">();</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">startSession</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+
+        <span class="nx">sessionObj</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">session</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="kc">false</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -282,19 +279,18 @@ MIT Licensed </p>
 </div>
 <p>if (sessionObj) {</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>      <span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">restore</span><span class="p">(</span><span class="nx">sessionObj</span><span class="p">);</span>
-      
-      <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-    <span class="nx">target</span><span class="o">:</span> <span class="s1">&#39;HI_AGAIN&#39;</span><span class="p">,</span>
-    <span class="nx">data</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span>
-      <span class="p">});</span>
-      
-      <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-      
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">save</span><span class="p">());</span>
-      </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">restore</span><span class="p">(</span><span class="nx">sessionObj</span><span class="p">);</span>
+
+            <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+                <span class="nx">target</span><span class="o">:</span> <span class="s1">&#39;HI_AGAIN&#39;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span>
+            <span class="p">});</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">save</span><span class="p">());</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -304,14 +300,14 @@ MIT Licensed </p>
 </div>
 <p>send HI to ALL</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>      <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-    <span class="nx">target</span><span class="o">:</span> <span class="s1">&#39;HI&#39;</span><span class="p">,</span>
-    <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;ALL&#39;</span><span class="p">,</span>
-    <span class="nx">data</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span>
-      <span class="p">}));</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+                <span class="nx">target</span><span class="o">:</span> <span class="s1">&#39;HI&#39;</span><span class="p">,</span>
+                <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;ALL&#39;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span>
+            <span class="p">}));</span>
 
-  <span class="p">}</span>
-  
+        <span class="p">}</span>
+
     <span class="p">}</span> 
 <span class="p">};</span>
 
@@ -468,10 +464,10 @@ stores the session ids in the session object </p>
 <p>Store server info</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">registerServer</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-    
+
     <span class="nx">player</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">id</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> 
-  <span class="nx">sid</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span>
+        <span class="nx">id</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> 
+        <span class="nx">sid</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span>
     <span class="p">};</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span><span class="p">;</span>
@@ -511,10 +507,15 @@ stores the session ids in the session object </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">send</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;socket cannot send message. No open socket.&#39;</span><span class="p">);</span>
-  <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;socket cannot send message. No open socket.&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">}</span>
-    
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">from</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">UNDEFINED_PLAYER</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;socket cannot send message. Player undefined.&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
     <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;S: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>

@@ -7693,6 +7693,14 @@ else {
         DONE:         100
     };
 
+
+/**
+ * ### node.UNDEFINED_PLAYER
+ *
+ * Undefined player ID
+ */
+    node.UNDEFINED_PLAYER = -1;
+
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
@@ -7861,6 +7869,21 @@ else {
     NodeGameMisconfiguredGameError.prototype = new Error();
     NodeGameMisconfiguredGameError.prototype.constructor = NodeGameMisconfiguredGameError;
     NodeGameMisconfiguredGameError.prototype.name = 'NodeGameMisconfiguredGameError';
+
+
+    /*
+     * ### NodeGameIllegalOperationError
+     *
+     * An error occurred during the configuration of the Game
+     */
+    function NodeGameIllegalOperationError() {
+        Error.apply(this, arguments);
+        this.stack = (new Error()).stack;
+    }
+
+    NodeGameIllegalOperationError.prototype = new Error();
+    NodeGameIllegalOperationError.prototype.constructor = NodeGameIllegalOperationError;
+    NodeGameIllegalOperationError.prototype.name = 'NodeGameIllegalOperationError';
 
     if (J.isNodeJS()) {
 	// TODO fix this
@@ -9171,7 +9194,11 @@ exports.Player = Player;
  *
  */
 function Player (pl) {
-    pl = pl || {};
+    var key;
+
+    if (!pl || !pl.id) {
+        throw new TypeError('Player: invalid pl parameter');
+    }
 
     /**
      * ### Player.id
@@ -9182,7 +9209,7 @@ function Player (pl) {
      * case of reconnections it can change
      *
      */
-    this.id = pl.id || this.sid;
+    this.id = pl.id;
 
     /**
      * ### Player.sid
@@ -9257,6 +9284,15 @@ function Player (pl) {
      */
     this.stageLevel = pl.stageLevel || node.stageLevels.UNINITIALIZED;
 
+    /**
+     * ### Player.stateLevel
+     *
+     * The current state level of the player in the game
+     *
+     * @see node.stateLevels
+     */
+    this.stateLevel = pl.stateLevel || node.stateLevels.UNINITIALIZED;
+
 
     /**
      * ## Extra properties
@@ -9266,7 +9302,7 @@ function Player (pl) {
      * For security reasons, they cannot be of type function, and they
      * cannot overwrite any previously defined variable
      */
-    for (var key in pl) {
+    for (key in pl) {
         if (pl.hasOwnProperty(key)) {
             if ('function' !== typeof pl[key]) {
                 if (!this.hasOwnProperty(key)) {
@@ -11664,18 +11700,18 @@ function GameMsgGenerator () {}
  */
 GameMsgGenerator.create = function (msg) {
 
-  return new GameMsg({
-      session: 'undefined' !== typeof msg.session ? msg.session : node.socket.session, 
-      stage: 'undefined' !== typeof msg.stage ? msg.stage : node.game.stage,
-      action: msg.action || action.SAY,
-      target: msg.target || target.DATA,
-      from: node.player.sid, // TODO change to id
-      to: 'undefined' !== typeof msg.to ? msg.to : 'SERVER',
-      text: msg.text || null,
-      data: msg.data || null,
-      priority: msg.priority || null,
-      reliable: msg.reliable || 1
-  });
+    return new GameMsg({
+        session: 'undefined' !== typeof msg.session ? msg.session : node.socket.session, 
+           stage: 'undefined' !== typeof msg.stage ? msg.stage : node.game.stage,
+           action: msg.action || action.SAY,
+           target: msg.target || target.DATA,
+           from: node.player ? node.player.sid : node.UNDEFINED_PLAYER, // TODO change to id
+           to: 'undefined' !== typeof msg.to ? msg.to : 'SERVER',
+           text: msg.text || null,
+           data: msg.data || null,
+           priority: msg.priority || null,
+           reliable: msg.reliable || 1
+    });
 
 };
 
@@ -11871,46 +11907,45 @@ Socket.prototype.onDisconnect = function() {
 };
 
 Socket.prototype.onMessage = function(msg) {
-	
     msg = this.secureParse(msg);
     if (!msg) return;
-    
+
     var sessionObj;
-	
+
     // Parsing successful
     if (msg.target === 'HI') {
-	
-	// replace itself: will change onMessage
-	this.attachMsgListeners();
-	
-	this.startSession(msg);
-	
-	sessionObj = node.store(msg.session);
-	
-	if (false) {
-	    //if (sessionObj) {
-	    node.session.restore(sessionObj);
-			
-	    msg = node.msg.create({
-		target: 'HI_AGAIN',
-		data: node.player
-	    });
-	    
-	    this.send(msg);
-	    
-	}
-	else {
-	    node.store(msg.session, node.session.save());
-	    
-	    // send HI to ALL
-	    this.send(node.msg.create({
-		target: 'HI',
-		to: 'ALL',
-		data: node.player
-	    }));
 
-	}
-	
+        // replace itself: will change onMessage
+        this.attachMsgListeners();
+
+        this.startSession(msg);
+
+        sessionObj = node.store(msg.session);
+
+        if (false) {
+            //if (sessionObj) {
+            node.session.restore(sessionObj);
+
+            msg = node.msg.create({
+                target: 'HI_AGAIN',
+                data: node.player
+            });
+
+            this.send(msg);
+
+        }
+        else {
+            node.store(msg.session, node.session.save());
+
+            // send HI to ALL
+            this.send(node.msg.create({
+                target: 'HI',
+                to: 'ALL',
+                data: node.player
+            }));
+
+        }
+
     } 
 };
 
@@ -11999,10 +12034,10 @@ Socket.prototype.startSession = function (msg) {
     var player;
     // Store server info
     this.registerServer(msg);
-    
+
     player = {
-	id: msg.data,	
-	sid: msg.data
+        id: msg.data,	
+        sid: msg.data
     };
     node.createPlayer(player);
     this.session = msg.session;
@@ -12024,10 +12059,15 @@ Socket.prototype.startSession = function (msg) {
 */
 Socket.prototype.send = function(msg) {
     if (!this.socket) {
-	node.err('socket cannot send message. No open socket.');
-	return false;
+        node.err('socket cannot send message. No open socket.');
+        return false;
     }
-    
+
+    if (msg.from === node.UNDEFINED_PLAYER) {
+        node.err('socket cannot send message. Player undefined.');
+        return false;
+    }
+
     this.socket.send(msg);
     node.info('S: ' + msg);
     return true;
@@ -13901,64 +13941,28 @@ SessionManager.prototype.store = function() {
 /**
  * ### node.createPlayer
  *
- * Mixes in default properties for the player object and
- * additional configuration variables from node.conf.player
- *
- * Writes the node.player object
- *
- * Properties: `id`, `sid`, `ip` can never be overwritten.
- *
- * Properties added as local configuration cannot be further
- * modified during the game.
- *
- * Only the property `name`, can be changed.
- *
+ * Creates player
  */
     node.createPlayer = function (player) {
-
         player = new Player(player);
 
-        if (node.conf && node.conf.player) {
-            var pconf = node.conf.player;
-            for (var key in pconf) {
-                if (pconf.hasOwnProperty(key)) {
-                    if (J.inArray(key, ['id', 'sid', 'ip'])) {
-                        continue;
-                    }
-
-                    // Cannot be overwritten properties previously
-                    // set in other sessions (recovery)
-                    //
-                    // if (player.hasOwnProperty(key)) {
-                    //     continue;
-                    // }
-                    if (node.support.defineProperty) {
-                        Object.defineProperty(player, key, {
-                            value: pconf[key],
-                            enumerable: true
-                        });
-                    }
-                    else {
-                        player[key] = pconf[key];
-                    }
-                }
-            }
+        if (node.player &&
+                node.player.stateLevel >= node.stateLevels.STARTING &&
+                node.player.stateLevel !== node.stateLevels.GAMEOVER) {
+            throw new node.NodeGameIllegalOperationError(
+                    'createPlayer: cannot create player while game is running');
         }
 
-
-        if (node.support.defineProperty) {
-            Object.defineProperty(node, 'player', {
-                value: player,
-                enumerable: true
-            });
-        }
-        else {
-            node.player = player;
+        // Overwrite existing 'current' player:
+        if (node.player) {
+            node.game.pl.remove(node.player.id);
         }
 
-        node.emit('PLAYER_CREATED', player);
+        node.player = node.game.pl.add(player);
 
-        return player;
+        node.emit('PLAYER_CREATED', node.player);
+
+        return node.player;
     };
 
 /**
@@ -14648,7 +14652,13 @@ node.setup.register('game_metadata', function(metadata) {
  * @see node.Player
  * @see node.createPlayer
  */
-node.setup.register('player', node.createPlayer);
+node.setup.register('player', function(player) {
+    if (!player) {
+        return null;
+    }
+
+    return node.createPlayer(player);
+});
 
 /**
  * ### node.setup.plot
@@ -14714,6 +14724,40 @@ node.setup.register('plist', function(playerList, updateRule) {
     }
 
     return node.game.pl;
+});
+
+/**
+ * ### node.setup.mlist
+ *
+ * TODO: docs, merge with plist
+ * Updates the PlayerList in Game
+ *
+ * @param {PlayerList} playerList The new PlayerList
+ * @param {string} updateRule Optional. Whether to 'replace' (default) or
+ *  to 'append'.
+ *
+ * @see node.game.plot
+ * @see Stager.setState
+ */
+node.setup.register('mlist', function(playerList, updateRule) {
+    if (!node.game || !node.game.ml) {
+        node.warn("register('mlist') called before node.game was initialized");
+        throw new NodeGameMisconfiguredGameError("node.game non-existent");
+    }
+
+    if (playerList) {
+        if (!updateRule || updateRule === 'replace') {
+            node.game.ml.clear(true);
+        }
+        else if (updateRule !== 'append') {
+            throw new NodeGameMisconfiguredGameError(
+                    "register('plist') got invalid updateRule");
+        }
+
+        node.game.ml.importDB(playerList);
+    }
+
+    return node.game.ml;
 });
 
 
@@ -15210,7 +15254,7 @@ node.events.ng.on( IN + say + 'REDIRECT', function (msg) {
 node.events.ng.on( IN + say + 'SETUP', function (msg) {
     if (!msg.text) return;
     var feature = msg.text,
-        payload = JSUS.parse(msg.data);
+        payload = ('string' === typeof msg.data) ? J.parse(msg.data) : msg.data;
     
     if (!payload) {
 	node.err('error while parsing incoming remote setup message');

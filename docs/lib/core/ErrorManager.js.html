@@ -33,6 +33,9 @@
       <div class="heading h3">
         <a href="#nodegamemisconfiguredgameerror">NodeGameMisconfiguredGameError</a>
       </div>
+      <div class="heading h3">
+        <a href="#nodegameillegaloperationerror">NodeGameIllegalOperationError</a>
+      </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
       </div>
@@ -154,7 +157,32 @@ MIT Licensed</p>
 
     <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
     <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">;</span>
-    <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;NodeGameMisconfiguredGameError&#39;</span><span class="p">;</span>
+    <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;NodeGameMisconfiguredGameError&#39;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameillegaloperationerror">
+  <h3>
+    <a href="#nodegameillegaloperationerror" class="pilcrow">&#182;</a>
+    NodeGameIllegalOperationError
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>An error occurred during the configuration of the Game</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameIllegalOperationError</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nb">Error</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">NodeGameIllegalOperationError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
+    <span class="nx">NodeGameIllegalOperationError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">NodeGameIllegalOperationError</span><span class="p">;</span>
+    <span class="nx">NodeGameIllegalOperationError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;NodeGameIllegalOperationError&#39;</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isNodeJS</span><span class="p">())</span> <span class="p">{</span></pre></div>
         </td>
@@ -162,7 +190,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
 </div>
 <p>TODO fix this
 process.on('uncaughtException', function (err) {
