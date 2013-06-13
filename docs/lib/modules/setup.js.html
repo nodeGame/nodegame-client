@@ -583,7 +583,7 @@ in the browser enviroment.</p>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;game_settings&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;register(&#39;game_settings&#39;) called before node.game was initialized&quot;</span><span class="p">);</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
@@ -612,7 +612,7 @@ in the browser enviroment.</p>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;game_metadata&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;register(&#39;game_metadata&#39;) called before node.game was initialized&quot;</span><span class="p">);</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
@@ -699,7 +699,7 @@ in the browser enviroment.</p>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;plot&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stagerState</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;register(&#39;plot&#39;) called before node.game was initialized&quot;</span><span class="p">);</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="nx">stagerState</span> <span class="o">=</span> <span class="nx">stagerState</span> <span class="o">||</span> <span class="p">{};</span>
@@ -759,7 +759,7 @@ in the browser enviroment.</p>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;plist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">playerList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;register(&#39;plist&#39;) called before node.game was initialized&quot;</span><span class="p">);</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">playerList</span><span class="p">)</span> <span class="p">{</span>
@@ -767,7 +767,7 @@ in the browser enviroment.</p>
             <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
                     <span class="s2">&quot;register(&#39;plist&#39;) got invalid updateRule&quot;</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -820,7 +820,7 @@ Updates the PlayerList in Game</p>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;mlist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">playerList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;register(&#39;mlist&#39;) called before node.game was initialized&quot;</span><span class="p">);</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">playerList</span><span class="p">)</span> <span class="p">{</span>
@@ -828,7 +828,7 @@ Updates the PlayerList in Game</p>
             <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
                     <span class="s2">&quot;register(&#39;plist&#39;) got invalid updateRule&quot;</span><span class="p">);</span>
         <span class="p">}</span>
 
