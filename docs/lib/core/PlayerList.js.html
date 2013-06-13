@@ -55,7 +55,7 @@
         <a href="#playerlist.updateplayerstagelevel">PlayerList.updatePlayerStageLevel</a>
       </div>
       <div class="heading h3">
-        <a href="#playerlist.isstagedone">PlayerList.isStageDone</a>
+        <a href="#playerlist.isstepdone">PlayerList.isStepDone</a>
       </div>
       <div class="heading h3">
         <a href="#playerlist.tostring">PlayerList.toString</a>
@@ -75,14 +75,11 @@
       <div class="heading h2">
         <a href="#player-constructor">Player constructor</a>
       </div>
-      <div class="heading h2">
-        <a href="#private-properties">Private properties</a>
+      <div class="heading h3">
+        <a href="#player.id">Player.id</a>
       </div>
       <div class="heading h3">
         <a href="#player.sid">Player.sid</a>
-      </div>
-      <div class="heading h3">
-        <a href="#player.id">Player.id</a>
       </div>
       <div class="heading h3">
         <a href="#player.count">Player.count</a>
@@ -691,34 +688,35 @@ TODO remove after transition is complete</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="playerlist.isstagedone">
+<div class="pilwrap" id="playerlist.isstepdone">
   <h3>
-    <a href="#playerlist.isstagedone" class="pilcrow">&#182;</a>
-    PlayerList.isStageDone
+    <a href="#playerlist.isstepdone" class="pilcrow">&#182;</a>
+    PlayerList.isStepDone
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Checks whether all players have terminated the specified stage</p>
+  <div class="body"><p>Checks whether all players have terminated the specified game step</p>
 
-<p>A stage is considered <em>DONE</em> if all players that are on that stage
-have the property <code>stageLevel</code> equal to <code>node.stageLevels.DONE</code>.</p>
+<p>A stage is considered <em>DONE</em> if all players that are found playing
+that game step have the property <code>stageLevel</code> equal to <code>Game.stageLevels.DONE</code>.</p>
 
-<p>Players at other stages are ignored.</p>
+<p>Players at other steps are ignored.</p>
 
-<p>If no player is found at the desired stage, it returns TRUE.</p>
+<p>If no player is found at the desired step, it returns TRUE.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">stage</span>
+      <span class="dox_tag_name">gameStage</span>
       <span class="dox_type">GameStage</span>
       <span>The GameStage of reference</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">extended</span>
+      <span class="dox_tag_name">upTo</span>
       <span class="dox_type">boolean</span>
-      <span>Optional. If TRUE, all players are checked. Defaults, FALSE.</span>
+      <span>Optional. If TRUE, all players in the stage up to the
+ given step are checked. Defaults, FALSE.</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -729,12 +727,17 @@ have the property <code>stageLevel</code> equal to <code>node.stageLevels.DONE</
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isStageDone</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isStepDone</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">upTo</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gameStage</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+
+    <span class="nx">upTo</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">upTo</span><span class="p">;</span>
+
     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">p</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span></pre></div>
+        <span class="nx">p</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">upTo</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -742,11 +745,9 @@ have the property <code>stageLevel</code> equal to <code>node.stageLevels.DONE</
 <div class="pilwrap">
   <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
-<p>Player is at another stage</p>
+<p>Check players in current stage up to the reference step:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">continue</span><span class="p">;</span>
-  <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -754,12 +755,65 @@ have the property <code>stageLevel</code> equal to <code>node.stageLevels.DONE</
 <div class="pilwrap">
   <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
-<p>Player is done for his stage</p>
+<p>Player in another stage</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">gameStage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">!==</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+</div>
+<p>Player after/before given step</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">Stage</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+</div>
+<p>Just check players in current step:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+</div>
+<p>Player in another step</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+</div>
+<p>Player not done with his step</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
     <span class="p">}</span>
+
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -974,7 +1028,7 @@ cannot overwrite any previously existing property.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Expose Player constructor</p>
         </td>
@@ -1009,37 +1063,6 @@ cannot overwrite any previously existing property.</p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap" id="private-properties">
-  <h2>
-    <a href="#private-properties" class="pilcrow">&#182;</a>
-    Private properties
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="player.sid">
-  <h3>
-    <a href="#player.sid" class="pilcrow">&#182;</a>
-    Player.sid
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>The session id received from the nodeGame server </p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">sid</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">sid</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
 <div class="pilwrap" id="player.id">
@@ -1058,6 +1081,24 @@ case of reconnections it can change</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">sid</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="player.sid">
+  <h3>
+    <a href="#player.sid" class="pilcrow">&#182;</a>
+    Player.sid
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The session id received from the nodeGame server </p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">sid</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">sid</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>

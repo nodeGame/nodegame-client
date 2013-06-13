@@ -58,9 +58,6 @@
         <a href="#node.setup.window">node.setup.window</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.sio">node.setup.sio</a>
-      </div>
-      <div class="heading h3">
         <a href="#node.setup.game_settings">node.setup.game_settings</a>
       </div>
       <div class="heading h3">
@@ -546,41 +543,6 @@ in the browser enviroment.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;window&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.window not found, cannot configure it.&#39;</span><span class="p">);</span>
-        <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">conf</span><span class="p">);</span>
-
-    <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
-<span class="p">});</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.setup.sio">
-  <h3>
-    <a href="#node.setup.sio" class="pilcrow">&#182;</a>
-    node.setup.sio
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Configure the socket.io connection, if existing</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;sio&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.window not found, cannot configure it.&#39;</span><span class="p">);</span>
         <span class="k">return</span><span class="p">;</span>

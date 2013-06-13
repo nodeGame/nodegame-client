@@ -102,6 +102,16 @@
       </tr>
       <tr>
         <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>TODO node.Game.stageLevels -> node.stageLevels;</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
 <div class="pilwrap" id="sync_all">
   <h3>
     <a href="#sync_all" class="pilcrow">&#182;</a>
@@ -115,7 +125,7 @@ current step before going to the next</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">rules</span><span class="p">[</span><span class="s1">&#39;SYNC_ALL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span> <span class="o">&amp;&amp;</span>
-                <span class="nx">pl</span><span class="p">.</span><span class="nx">isStageDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
+                <span class="nx">pl</span><span class="p">.</span><span class="nx">isStepDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
         <span class="p">};</span>
         </pre></div>
         </td>
@@ -169,19 +179,27 @@ is DONE, regardless to the situation of other players</p>
 <p>Player can advance freely within the steps of one stage,
 but has to wait before going to the next one</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">rules</span><span class="p">[</span><span class="s1">&#39;SYNC_STAGE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">rules</span><span class="p">[</span><span class="s1">&#39;SYNC_STAGE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">iamdone</span> <span class="o">=</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;*** myStageLevel: &#39;</span> <span class="o">+</span> <span class="nx">myStageLevel</span> <span class="o">+</span> <span class="s1">&#39; (iamdone: &#39;</span> <span class="o">+</span> <span class="nx">iamdone</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;*** stepsToNextStage: &#39;</span> <span class="o">+</span> <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stepsToNextStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">));</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;*** isStepDone [upTo]: &#39;</span> <span class="o">+</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">isStepDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="kc">true</span><span class="p">));</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stepsToNextStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">iamdone</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
 </div>
 <p>if next step is going to be a new stage, wait for others</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">;</span>
-                <span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stepsToNextStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">||</span>
-                 <span class="nx">pl</span><span class="p">.</span><span class="nx">isStageDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">));</span>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="k">return</span> <span class="nx">iamdone</span> <span class="o">&amp;&amp;</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">isStepDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="p">}</span>
         <span class="p">};</span>
     <span class="p">}</span>
 
@@ -193,7 +211,7 @@ but has to wait before going to the next one</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
 <p>expose the methods</p>
         </td>
