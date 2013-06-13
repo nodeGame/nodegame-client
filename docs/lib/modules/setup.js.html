@@ -729,14 +729,14 @@ in the browser enviroment.</p>
 </div>
 
   </div>
-  <div class="body"><p>Updates the PlayerList in Game</p>
+  <div class="body"><p>Updates the player list in Game</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">playerList</span>
       <span class="dox_type">PlayerList</span>
-      <span>The new PlayerList</span>
+      <span>The new player list</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">updateRule</span>
@@ -757,24 +757,7 @@ in the browser enviroment.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;plist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">playerList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;register(&#39;plist&#39;) called before node.game was initialized&quot;</span><span class="p">);</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="nx">playerList</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">updateRule</span> <span class="o">||</span> <span class="nx">updateRule</span> <span class="o">===</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
-                    <span class="s2">&quot;register(&#39;plist&#39;) got invalid updateRule&quot;</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">playerList</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">;</span>
+    <span class="nx">updatePlayerList</span><span class="p">(</span><span class="s1">&#39;pl&#39;</span><span class="p">,</span> <span class="nx">playerList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">);</span>
 <span class="p">});</span></pre></div>
         </td>
       </tr>
@@ -789,15 +772,15 @@ in the browser enviroment.</p>
 </div>
 
   </div>
-  <div class="body"><p>TODO: docs, merge with plist
-Updates the PlayerList in Game</p>
+  <div class="body"><p>TODO: merge with plist
+Updates the monitor list in Game</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">playerList</span>
+      <span class="dox_tag_name">monitorList</span>
       <span class="dox_type">PlayerList</span>
-      <span>The new PlayerList</span>
+      <span>The new monitor list</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">updateRule</span>
@@ -817,25 +800,8 @@ Updates the PlayerList in Game</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;mlist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">playerList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;register(&#39;mlist&#39;) called before node.game was initialized&quot;</span><span class="p">);</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="nx">playerList</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">updateRule</span> <span class="o">||</span> <span class="nx">updateRule</span> <span class="o">===</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
-                    <span class="s2">&quot;register(&#39;plist&#39;) got invalid updateRule&quot;</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">playerList</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;mlist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">monitorList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">updatePlayerList</span><span class="p">(</span><span class="s1">&#39;ml&#39;</span><span class="p">,</span> <span class="nx">monitorList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">);</span>
 <span class="p">});</span></pre></div>
         </td>
       </tr>
@@ -905,8 +871,50 @@ Updates the PlayerList in Game</p>
     <span class="p">});</span>
 
     <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-<span class="p">};</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+</div>
+<p>Utility for setup.plist and setup.mlist:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">updatePlayerList</span><span class="p">(</span><span class="nx">dstListName</span><span class="p">,</span> <span class="nx">srcList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">dstList</span><span class="p">;</span>
 
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList called before node.game was initialized&#39;</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s1">&#39;node.game non-existent&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">dstListName</span> <span class="o">===</span> <span class="s1">&#39;pl&#39;</span><span class="p">)</span>      <span class="nx">dstList</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">;</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">dstListName</span> <span class="o">===</span> <span class="s1">&#39;ml&#39;</span><span class="p">)</span> <span class="nx">dstList</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">;</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList called with invalid dstListName&#39;</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;invalid dstListName&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">dstList</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList called before node.game was initialized&#39;</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s1">&#39;dstList non-existent&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">srcList</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">updateRule</span> <span class="o">||</span> <span class="nx">updateRule</span> <span class="o">===</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">dstList</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s2">&quot;register(&#39;plist&#39;) got invalid updateRule&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">dstList</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">srcList</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">dstList</span><span class="p">;</span>
+<span class="p">}</span>
 
 <span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
