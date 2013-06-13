@@ -74,15 +74,15 @@
     <span class="nx">addDefaultRules</span><span class="p">();</span>
 
     <span class="kd">function</span> <span class="nx">getRules</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">rules</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">rules</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="kd">function</span> <span class="nx">get</span><span class="p">(</span> <span class="nx">id</span> <span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">rules</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+        <span class="k">return</span> <span class="nx">rules</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
     <span class="p">}</span>
 
     <span class="kd">function</span> <span class="nx">register</span><span class="p">(</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">cb</span> <span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;stepper rule id cannot be undefined&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -96,18 +96,7 @@
 
     <span class="p">}</span>
 
-    <span class="kd">function</span> <span class="nx">addDefaultRules</span><span class="p">()</span> <span class="p">{</span>
-        </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
-</div>
-<p>TODO node.Game.stageLevels -> node.stageLevels;</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+    <span class="kd">function</span> <span class="nx">addDefaultRules</span><span class="p">()</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -120,14 +109,13 @@
 </div>
 
 
-<p>Player waits that all the clients have terminated the 
+<p>Player waits that all the clients have terminated the
 current step before going to the next</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">rules</span><span class="p">[</span><span class="s1">&#39;SYNC_ALL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span> <span class="o">&amp;&amp;</span>
                 <span class="nx">pl</span><span class="p">.</span><span class="nx">isStepDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
-        <span class="p">};</span>
-        </pre></div>
+        <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -162,8 +150,7 @@ is DONE, regardless to the situation of other players</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">rules</span><span class="p">[</span><span class="s1">&#39;WAIT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="p">};</span>
-    </pre></div>
+        <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -194,13 +181,14 @@ but has to wait before going to the next one</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
 </div>
 <p>if next step is going to be a new stage, wait for others</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>                <span class="k">return</span> <span class="nx">iamdone</span> <span class="o">&amp;&amp;</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">isStepDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">};</span>
+
     <span class="p">}</span>
 
     <span class="kd">function</span> <span class="nx">clear</span><span class="p">()</span> <span class="p">{</span>
@@ -211,14 +199,14 @@ but has to wait before going to the next one</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
 </div>
 <p>expose the methods</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="nx">getRules</span><span class="o">:</span> <span class="nx">getRules</span><span class="p">,</span>
-      <span class="nx">get</span><span class="o">:</span> <span class="nx">get</span><span class="p">,</span>
-      <span class="nx">register</span><span class="o">:</span> <span class="nx">register</span><span class="p">,</span>
+        <span class="nx">getRules</span><span class="o">:</span> <span class="nx">getRules</span><span class="p">,</span>
+        <span class="nx">get</span><span class="o">:</span> <span class="nx">get</span><span class="p">,</span>
+        <span class="nx">register</span><span class="o">:</span> <span class="nx">register</span><span class="p">,</span>
         <span class="nx">clear</span><span class="o">:</span> <span class="nx">clear</span><span class="p">,</span>
         <span class="nx">addDefaultRules</span><span class="o">:</span> <span class="nx">addDefaultRules</span>
     <span class="p">};</span></pre></div>
@@ -235,8 +223,8 @@ but has to wait before going to the next one</p>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
         </td>

@@ -515,7 +515,7 @@ just for change of state after the game has started</p>
         <span class="k">return</span><span class="p">;</span>
     <span class="p">}</span>
 
-  <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;GAMEOVER&#39;</span><span class="p">);</span></pre></div>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;GAMEOVER&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -525,17 +525,17 @@ just for change of state after the game has started</p>
 </div>
 <p>Call gameover callback, if it exists:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">onGameover</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getOnGameover</span><span class="p">();</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">onGameover</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">FINISHING</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">onGameover</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getOnGameover</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">onGameover</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">FINISHING</span><span class="p">);</span>
 
-      <span class="nx">onGameover</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+            <span class="nx">onGameover</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">}</span>
-  <span class="p">}</span>
 
-  <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -618,7 +618,7 @@ just for change of state after the game has started</p>
     <span class="nx">stepRule</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stepRule</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;step rule is not a function&quot;</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;step rule is not a function&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">stepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">pl</span><span class="p">,</span> <span class="k">this</span><span class="p">))</span> <span class="p">{</span>
@@ -689,8 +689,8 @@ TODO: harmonize return values
 
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">nextStep</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">nextStep</span> <span class="o">===</span> <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">gameover</span><span class="p">();</span>
-      <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">gameover</span><span class="p">();</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -779,12 +779,12 @@ we need to update a few things:</p>
 <p>Execute the init function of the step, if any:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">nextStepObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">))</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STEP_INIT</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STEP_INIT</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
             <span class="nx">nextStepObj</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
         <span class="p">}</span>
 
-    <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">PLAYING_STEP</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">PLAYING_STEP</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span></pre></div>
         </td>
       </tr>
@@ -840,7 +840,7 @@ we need to update a few things:</p>
     <span class="kd">var</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span> <span class="o">||</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span><span class="p">(</span><span class="s1">&#39;game.execStep requires a valid object&#39;</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span><span class="p">(</span><span class="s1">&#39;game.execStep requires a valid object&#39;</span><span class="p">);</span>
     <span class="p">}</span>
     
     <span class="nx">cb</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">;</span>
