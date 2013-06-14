@@ -63,9 +63,9 @@
 
   </div>
   <div class="body"><p>Copyright(c) 2012 Stefano Balietti
-MIT Licensed </p>
+MIT Licensed</p>
 
-<p><code>nodeGame</code> component responsible for dispatching events and messages </p>
+<p><code>nodeGame</code> component responsible for dispatching events and messages</p>
 
 <hr />
   </div>
@@ -73,9 +73,8 @@ MIT Licensed </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
-  
-<span class="nx">exports</span><span class="p">.</span><span class="nx">Socket</span> <span class="o">=</span> <span class="nx">Socket</span><span class="p">;</span>  
-  </pre></div>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">Socket</span> <span class="o">=</span> <span class="nx">Socket</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -88,18 +87,16 @@ MIT Licensed </p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
-<span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
     <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
     <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
     <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
     <span class="nx">SocketFactory</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">SocketFactory</span><span class="p">;</span>
-    
-<span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">,</span>
-    <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>    
 
-<span class="kd">function</span> <span class="nx">Socket</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  </pre></div>
+<span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">,</span>
+    <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">Socket</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -126,7 +123,7 @@ MIT Licensed </p>
 </div>
 
   </div>
-  <div class="body"><p>Buffer of queued messages </p>
+  <div class="body"><p>Buffer of queued messages</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">API</div>
@@ -137,9 +134,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="p">[];</span>
-    
-    </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="p">[];</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -159,8 +154,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-    </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -190,10 +184,10 @@ MIT Licensed </p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">user_options</span> <span class="o">=</span> <span class="p">{};</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-    
+
     <span class="k">this</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 <span class="p">}</span>
-    
+
 
 <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">type</span><span class="p">;</span>
@@ -202,11 +196,11 @@ MIT Licensed </p>
     <span class="k">delete</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">user_options</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">setSocketType</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setSocketType</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">};</span>
-    
-<span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setSocketType</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>    
+
+<span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setSocketType</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">SocketFactory</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span> <span class="c1">// returns null on error</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">;</span>
 <span class="p">};</span>
@@ -214,13 +208,13 @@ MIT Licensed </p>
 <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot connet to &#39;</span> <span class="o">+</span> <span class="nx">url</span> <span class="o">+</span> <span class="s1">&#39; . No open socket.&#39;</span><span class="p">);</span>
-  <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot connet to &#39;</span> <span class="o">+</span> <span class="nx">url</span> <span class="o">+</span> <span class="s1">&#39; . No open socket.&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">}</span>
-    
+
     <span class="k">this</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">url</span><span class="p">;</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;connecting to &#39;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">);</span>
-  
+
     <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">user_options</span><span class="p">);</span>
 <span class="p">};</span>
 
@@ -308,7 +302,7 @@ MIT Licensed </p>
 
         <span class="p">}</span>
 
-    <span class="p">}</span> 
+    <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">attachMsgListeners</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -318,7 +312,7 @@ MIT Licensed </p>
 
 <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onMessageFull</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">secureParse</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-    
+
     <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Parsing successful</span></pre></div>
         </td>
       </tr>
@@ -329,13 +323,13 @@ MIT Licensed </p>
 </div>
 <p>message with high priority are executed immediately</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">priority</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">toInEvent</span><span class="p">(),</span> <span class="nx">msg</span><span class="p">);</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;buffering: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-  <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">priority</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">toInEvent</span><span class="p">(),</span> <span class="nx">msg</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;buffering: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
@@ -350,7 +344,7 @@ MIT Licensed </p>
 </div>
 <p>Setting global info</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">servername</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">servername</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -360,25 +354,25 @@ MIT Licensed </p>
 </div>
 <p>Keep serverid = msg.from for now</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">serverid</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">serverid</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">;</span>
 <span class="p">};</span>
 
 
 <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">secureParse</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-  
+
     <span class="kd">var</span> <span class="nx">gameMsg</span><span class="p">;</span>
     <span class="k">try</span> <span class="p">{</span>
-  <span class="nx">gameMsg</span> <span class="o">=</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">msg</span><span class="p">));</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;R: &#39;</span> <span class="o">+</span> <span class="nx">gameMsg</span><span class="p">);</span>
+        <span class="nx">gameMsg</span> <span class="o">=</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">msg</span><span class="p">));</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;R: &#39;</span> <span class="o">+</span> <span class="nx">gameMsg</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">logSecureParseError</span><span class="p">(</span><span class="s1">&#39;malformed msg received&#39;</span><span class="p">,</span>  <span class="nx">e</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">logSecureParseError</span><span class="p">(</span><span class="s1">&#39;malformed msg received&#39;</span><span class="p">,</span>  <span class="nx">e</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">&amp;&amp;</span> <span class="nx">gameMsg</span><span class="p">.</span><span class="nx">session</span> <span class="o">!==</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">logSecureParseError</span><span class="p">(</span><span class="s1">&#39;local session id does not match incoming message session id&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">logSecureParseError</span><span class="p">(</span><span class="s1">&#39;local session id does not match incoming message session id&#39;</span><span class="p">);</span>
     <span class="p">}</span>
-    
+
     <span class="k">return</span> <span class="nx">gameMsg</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -409,11 +403,11 @@ MIT Licensed </p>
     <span class="kd">var</span> <span class="nx">nelem</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
     <span class="nx">nelem</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nelem</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">toInEvent</span><span class="p">(),</span> <span class="nx">msg</span><span class="p">);</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;Debuffered &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
-  <span class="p">}</span>
+        <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">toInEvent</span><span class="p">(),</span> <span class="nx">msg</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;Debuffered &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -431,8 +425,8 @@ MIT Licensed </p>
   </div>
   <div class="body"><p>Initializes a nodeGame session</p>
 
-<p>Creates a the player and saves it in node.player, and 
-stores the session ids in the session object </p>
+<p>Creates a the player and saves it in node.player, and
+stores the session ids in the session object</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -445,9 +439,12 @@ stores the session ids in the session object </p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, if session was correctly initialized
-
-@see node.createPlayer</span>
+      <span>TRUE, if session was correctly initialized</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.createPlayer
+  </span>
     </div>
   </div>
 </div>
@@ -466,7 +463,7 @@ stores the session ids in the session object </p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">registerServer</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
 
     <span class="nx">player</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="nx">id</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> 
+        <span class="nx">id</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span>
         <span class="nx">sid</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span>
     <span class="p">};</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>

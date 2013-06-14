@@ -618,6 +618,10 @@ just for change of state after the game has started</p>
     <span class="nx">stepRule</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stepRule</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;*** plot: &#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">);</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;*** gameStage: &#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;*** stepRule: &#39;</span><span class="p">,</span> <span class="nx">stepRule</span><span class="p">);</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;step rule is not a function&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -713,13 +717,25 @@ TODO: harmonize return values
 </div>
 <p>TODO maybe update also in case of string</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+</div>
+<p>stageLevel needs to be changed, otherwise it stays DONE
+for a short time in the new game stage:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>If we enter a new stage (including repeating the same stage)
 we need to update a few things:</p>
@@ -732,7 +748,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>clear the previous stage listeners</p>
         </td>
@@ -742,7 +758,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Execute the init function of the stage, if any:</p>
         </td>
@@ -756,7 +772,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Load the listeners for the stage, if any:</p>
         </td>
@@ -774,7 +790,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Execute the init function of the step, if any:</p>
         </td>
@@ -791,7 +807,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Load the listeners for the step, if any:</p>
         </td>
@@ -805,7 +821,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>TODO what else to load?</p>
         </td>
@@ -840,9 +856,11 @@ we need to update a few things:</p>
     <span class="kd">var</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span> <span class="o">||</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">();</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;*** stage: &#39;</span><span class="p">,</span> <span class="nx">plot</span><span class="p">);</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span><span class="p">(</span><span class="s1">&#39;game.execStep requires a valid object&#39;</span><span class="p">);</span>
     <span class="p">}</span>
-    
+
     <span class="nx">cb</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">;</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">LOADING</span><span class="p">);</span>
@@ -862,7 +880,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>This does not make sense. Basically it waits for the nodegame window to be loaded too</p>
         </td>
@@ -875,7 +893,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>A non fatal error occurred</p>
         </td>
@@ -905,7 +923,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>ERROR, WORKING, etc</p>
         </td>
@@ -921,7 +939,7 @@ we need to update a few things:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>TODO do we need to publish this kinds of update?
 this.publishUpdate();</p>
@@ -932,7 +950,7 @@ this.publishUpdate();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>PLAYING, DONE, etc.
 Publishes update only if value actually changed.</p>
@@ -952,26 +970,7 @@ Publishes update only if value actually changed.</p>
     <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">gameStage</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">publishStageLevelUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
-</div>
-<p>Publish update:</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-            <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE_LEVEL</span><span class="p">,</span>
-            <span class="nx">data</span><span class="o">:</span> <span class="nx">stageLevel</span><span class="p">,</span>
-            <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;ALL&#39;</span>
-        <span class="p">}));</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-
-<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">publishGameStageUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span></pre></div>
+<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">publishStageLevelUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newStageLevel</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -981,10 +980,29 @@ Publishes update only if value actually changed.</p>
 </div>
 <p>Publish update:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span> <span class="o">!==</span> <span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">newStageLevel</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-            <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE</span><span class="p">,</span>
-            <span class="nx">data</span><span class="o">:</span> <span class="nx">gameStage</span><span class="p">,</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PLAYER_UPDATE</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="p">{</span> <span class="nx">stageLevel</span><span class="o">:</span> <span class="nx">newStageLevel</span> <span class="p">},</span>
+            <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;ALL&#39;</span>
+        <span class="p">}));</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">publishGameStageUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newGameStage</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+</div>
+<p>Publish update:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span> <span class="o">!==</span> <span class="nx">newGameStage</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PLAYER_UPDATE</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="p">{</span> <span class="nx">stage</span><span class="o">:</span> <span class="nx">newGameStage</span> <span class="p">},</span>
             <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;ALL&#39;</span>
         <span class="p">}));</span>
     <span class="p">}</span>
@@ -1028,7 +1046,7 @@ instead.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>if (this.getStateLevel() &lt; node.stateLevels.INITIALIZED) return false;</p>
         </td>
@@ -1038,7 +1056,7 @@ instead.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>Check if there is a gameWindow obj and whether it is loading</p>
         </td>

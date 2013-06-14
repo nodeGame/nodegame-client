@@ -566,14 +566,13 @@ MIT Licensed </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  
-  <span class="kd">var</span> <span class="nx">SPT</span> <span class="o">=</span> <span class="s2">&quot;,\t&quot;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">SPTend</span> <span class="o">=</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">DLM</span> <span class="o">=</span> <span class="s2">&quot;\&quot;&quot;</span><span class="p">;</span>
-  
-  <span class="kd">var</span> <span class="nx">gs</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
-  
-  <span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">created</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">SPT</span> <span class="o">=</span> <span class="s2">&quot;,\t&quot;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">SPTend</span> <span class="o">=</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">DLM</span> <span class="o">=</span> <span class="s2">&quot;\&quot;&quot;</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">line</span><span class="p">;</span>
+    
+    <span class="nx">line</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">created</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
     <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
     <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
     <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
@@ -582,10 +581,11 @@ MIT Licensed </p>
     <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">to</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
     <span class="nx">line</span> <span class="o">+=</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">text</span> <span class="o">+</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
     <span class="nx">line</span> <span class="o">+=</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">+</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span> <span class="c1">// maybe to remove</span>
+    <span class="nx">line</span> <span class="o">+=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
     <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">reliable</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
     <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">priority</span> <span class="o">+</span> <span class="nx">SPTend</span><span class="p">;</span>
-    
-  <span class="k">return</span> <span class="nx">line</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="nx">line</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>

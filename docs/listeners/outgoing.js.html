@@ -53,20 +53,20 @@
 
 <p>/**
 * ## out.say.STAGE
-* 
+*
 * Sends out a STAGE message to the specified recipient
-* 
-* TODO: check with the server 
+*
+* TODO: check with the server
 * The message is for informative purpose
-* 
+*
 */
 node.events.ng.on( OUT + say + 'STAGE', function (stage, to) {
    node.socket.sendSTAGE(action.SAY, stage, to);
-});    </p>
+});</p>
 
 <p>/**
 * ## out.say.TXT
-* 
+*
 * Sends out a TXT message to the specified recipient
 */
 node.events.ng.on( OUT + say + 'TXT', function (text, to) {
@@ -75,7 +75,7 @@ node.events.ng.on( OUT + say + 'TXT', function (text, to) {
 
 <p>/**
 * ## out.say.DATA
-* 
+*
 * Sends out a DATA message to the specified recipient
 */
 node.events.ng.on( OUT + say + 'DATA', function (data, to, key) {
@@ -84,10 +84,10 @@ node.events.ng.on( OUT + say + 'DATA', function (data, to, key) {
 
 <p>/**
 * ## out.set.STAGE
-* 
+*
 * Sends out a STAGE message to the specified recipient
-* 
-* TODO: check with the server 
+*
+* TODO: check with the server
 * The receiver will update its representation of the stage
 * of the sender
 */
@@ -97,11 +97,11 @@ node.events.ng.on( OUT + set + 'STAGE', function (stage, to) {
 
 <p>/**
 * ## out.set.DATA
-* 
+*
 * Sends out a DATA message to the specified recipient
-* 
+*
 * The sent data will be stored in the memory of the recipient
-* 
+*
 * @see node.GameDB
 */
 node.events.ng.on( OUT + set + 'DATA', function (data, to, key) {
@@ -110,9 +110,9 @@ node.events.ng.on( OUT + set + 'DATA', function (data, to, key) {
 
 <p>/**
 * ## out.get.DATA
-* 
+*
 * Issues a DATA request
-* 
+*
 * Experimental. Undocumented (for now)
 */
 node.events.ng.on( OUT + get + 'DATA', function (data, to, key) {
@@ -121,7 +121,7 @@ node.events.ng.on( OUT + get + 'DATA', function (data, to, key) {
 
 <p>node.log('outgoing listeners added');</p>
 
-<p>})('undefined' !== typeof node ? node : module.parent.exports); 
+<p>})('undefined' !== typeof node ? node : module.parent.exports);
 // <!-- ends outgoing listener --></p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>

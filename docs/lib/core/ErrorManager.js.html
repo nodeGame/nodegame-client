@@ -101,9 +101,19 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameRuntimeError</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nb">Error</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>Error.apply(this, arguments);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
+        <span class="k">throw</span> <span class="s1">&#39;Runtime: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="nx">NodeGameRuntimeError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
@@ -126,9 +136,19 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameStageCallbackError</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nb">Error</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameStageCallbackError</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>Error.apply(this, arguments);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
+        <span class="k">throw</span> <span class="s1">&#39;StageCallback: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="nx">NodeGameStageCallbackError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
@@ -151,9 +171,19 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nb">Error</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>Error.apply(this, arguments);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
+        <span class="k">throw</span> <span class="s1">&#39;MisconfiguredGame: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
@@ -176,9 +206,19 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameIllegalOperationError</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nb">Error</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameIllegalOperationError</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>Error.apply(this, arguments);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
+        <span class="k">throw</span> <span class="s1">&#39;IllegalOperation: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="nx">NodeGameIllegalOperationError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
@@ -191,7 +231,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
 </div>
 <p>TODO fix this
 process.on('uncaughtException', function (err) {

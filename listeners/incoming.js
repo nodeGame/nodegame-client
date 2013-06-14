@@ -136,55 +136,35 @@ node.events.ng.on( IN + set + 'DATA', function (msg) {
 });
 
 /**
+ * ## in.say.PLAYER_UPDATE
+ *
+ * Updates the player's state in the player-list object
+ *
+ * @emit UPDATED_PLIST
+ * @see Game.pl
+ */
+    node.events.ng.on( IN + say + 'PLAYER_UPDATE', function (msg) {
+        node.game.pl.updatePlayer(msg.from, msg.data);
+        node.emit('UPDATED_PLIST');
+        node.game.shouldStep();
+    });
+
+/**
  * ## in.say.STAGE
  *
- * Updates the game stage or updates a player's state in
- * the player-list object
- *
- * If the message is from the server, it updates the game stage,
- * else the stage in the player-list object from the player who
- * sent the message is updated
- *
- *  @emit UPDATED_PLIST
- *  @see Game.pl
+ * Updates the game stage
  */
     node.events.ng.on( IN + say + 'STAGE', function (msg) {
-        if (node.game.pl.exist(msg.from)) {
-            node.game.pl.updatePlayerStage(msg.from, msg.data);
-            node.emit('UPDATED_PLIST');
-            node.game.shouldStep();
-        }
-        // <!-- Assume this is the server for now
-        // TODO: assign a string-id to the server -->
-        else {
-            node.game.execStep(node.game.plot.getStep(msg.data));
-        }
+        node.game.execStep(node.game.plot.getStep(msg.data));
     });
 
 /**
  * ## in.say.STAGE_LEVEL
  *
- * Updates a player's stage level in the player-list object
- *
- * If the message is from the server, it updates the game stage,
- * else the stage in the player-list object from the player who
- * sent the message is updated
- *
- *  @emit UPDATED_PLIST
- *  @see Game.pl
+ * Updates the stage level
  */
     node.events.ng.on( IN + say + 'STAGE_LEVEL', function (msg) {
-
-        if (node.game.pl.exist(msg.from)) {
-            node.game.pl.updatePlayerStageLevel(msg.from, msg.data);
-            node.emit('UPDATED_PLIST');
-            node.game.shouldStep();
-        }
-        // <!-- Assume this is the server for now
-        // TODO: assign a string-id to the server -->
-        else {
-            //node.game.setStageLevel(msg.data);
-        }
+        //node.game.setStageLevel(msg.data);
     });
 
 /**
