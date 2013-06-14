@@ -66,19 +66,7 @@ node.events.ng.on('DONE', function(p1, p2, p3) {
  * @emit LOADED
  */
 node.events.ng.on('WINDOW_LOADED', function() {
-    if (node.game.isReady()) node.emit('LOADED');
-});
-
-/**
- * ## GAME_LOADED
- * 
- * Checks if the window was loaded, and if so fires the LOADED event
- *
- * @emit BEFORE_LOADING
- * @emit LOADED
- */
-node.events.ng.on('GAME_LOADED', function() {
-    if (node.game.isReady()) node.emit('LOADED');
+    node.socket.shouldClearBuffer();
 });
 
 /**

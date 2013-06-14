@@ -37,6 +37,9 @@
         <a href="#socket.user_options">Socket.user_options</a>
       </div>
       <div class="heading h3">
+        <a href="#socket.shouldclearbuffer">Socket.shouldClearBuffer</a>
+      </div>
+      <div class="heading h3">
         <a href="#socket.clearbuffer">Socket.clearBuffer</a>
       </div>
       <div class="heading h3">
@@ -380,6 +383,35 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="socket.shouldclearbuffer">
+  <h3>
+    <a href="#socket.shouldclearbuffer" class="pilcrow">&#182;</a>
+    Socket.shouldClearBuffer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Clears buffer conditionally</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.emit
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">shouldClearBuffer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">clearBuffer</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="socket.clearbuffer">
   <h3>
     <a href="#socket.clearbuffer" class="pilcrow">&#182;</a>
@@ -456,7 +488,7 @@ stores the session ids in the session object</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Store server info</p>
         </td>
@@ -522,7 +554,7 @@ stores the session ids in the session object</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>helping methods</p>
         </td>

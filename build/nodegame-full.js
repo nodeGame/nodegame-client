@@ -7192,7 +7192,7 @@ node.session = {};
  * 
  * @see node.PlayerList.Player
  */
-node.player = {};
+node.player = { placeholder: true };
 
 /**
  * ### node.game
@@ -11432,7 +11432,9 @@ GamePlot.prototype.getStep = function(gameStage) {
  *
  * Returns the step-rule function corresponding to a GameStage
  *
- * The order of lookup is:
+ * If gameStage.stage = 0, it returns a function that always returns TRUE.
+ *
+ * Otherwise, the order of lookup is:
  *
  * 1. `steprule` property of the step object
  *
@@ -11446,10 +11448,19 @@ GamePlot.prototype.getStep = function(gameStage) {
  * @return {function|null} The step-rule function. NULL on error.
  */
 GamePlot.prototype.getStepRule = function(gameStage) {
-    var stageObj = this.getStage(gameStage),
-        stepObj  = this.getStep(gameStage);
+    var stageObj, stepObj;
 
-    if (!stageObj || !stepObj) return null;
+    gameStage = new GameStage(gameStage);
+
+    if (gameStage.stage === 0) {
+        return function() { return false; };
+    }
+
+    stageObj = this.getStage(gameStage);
+    stepObj  = this.getStep(gameStage);
+
+    if (!stageObj || !stepObj)
+        return null;
 
     if ('function' === typeof  stepObj.steprule) return  stepObj.steprule;
     if ('function' === typeof stageObj.steprule) return stageObj.steprule;
@@ -12037,6 +12048,19 @@ Socket.prototype.secureParse = function (msg) {
     return gameMsg;
 };
 
+
+/**
+ * ### Socket.shouldClearBuffer
+ *
+ * Clears buffer conditionally
+ *
+ * @see node.emit
+ */
+Socket.prototype.shouldClearBuffer = function () {
+    if (node.game.isReady && node.game.isReady()) {
+        this.clearBuffer();
+    }
+};
 
 /**
  * ### Socket.clearBuffer
@@ -12659,6 +12683,11 @@ Game.prototype.start = function() {
     var onInit;
     var rc;
 
+    if (node.player.placeholder) {
+        throw new node.NodeGameMisconfiguredGameError(
+                'game.start called without player');
+    }
+
     if (this.getStateLevel() >= node.stateLevels.INITIALIZING) {
         node.warn('game.start called on a running game');
         return false;
@@ -12757,10 +12786,6 @@ Game.prototype.shouldStep = function() {
     stepRule = this.plot.getStepRule(this.getCurrentGameStage());
 
     if ('function' !== typeof stepRule) {
-        console.log();
-        console.log('*** plot: ', this.plot);
-        console.log('*** gameStage: ', this.getCurrentGameStage());
-        console.log('*** stepRule: ', stepRule);
         throw new node.NodeGameMisconfiguredGameError("step rule is not a function");
     }
 
@@ -12797,9 +12822,16 @@ Game.prototype.step = function() {
     // Listeners from previous step are cleared in any case
     node.events.ee.step.clear();
 
+    // Emit buffered messages:
+    node.socket.shouldClearBuffer();
+
     if ('string' === typeof nextStep) {
         if (nextStep === GamePlot.GAMEOVER) {
             this.gameover();
+
+            // Emit buffered messages:
+            node.socket.shouldClearBuffer();
+
             return null;
         }
 
@@ -12858,6 +12890,9 @@ Game.prototype.step = function() {
             }
         }
 
+        // Emit buffered messages:
+        node.socket.shouldClearBuffer();
+
         // TODO what else to load?
 
         return this.execStep(this.getCurrentStep());
@@ -12878,8 +12913,6 @@ Game.prototype.execStep = function(stage) {
     var cb, res;
 
     if (!stage || 'object' !== typeof stage) {
-        console.log();
-        console.log('*** stage: ', plot);
         throw new node.NodeGameRuntimeError('game.execStep requires a valid object');
     }
 
@@ -12897,10 +12930,7 @@ Game.prototype.execStep = function(stage) {
     }
 
     this.setStageLevel(node.stageLevels.LOADED);
-    // This does not make sense. Basically it waits for the nodegame window to be loaded too
-    if (this.isReady()) {
-        node.emit('LOADED');
-    }
+    node.emit('STEP_CALLBACK_EXECUTED');
     if (res === false) {
         // A non fatal error occurred
         node.err('A non fatal error occurred while executing the callback of stage ' + this.getCurrentGameStage());
@@ -12999,8 +13029,25 @@ Game.prototype.publishGameStageUpdate = function(newGameStage) {
  *
  */
 Game.prototype.isReady = function() {
-//    if (this.getStateLevel() < node.stateLevels.INITIALIZED) return false;
-    if (this.getStageLevel() === node.stageLevels.LOADING) return false;
+    var stateLevel = this.getStateLevel();
+    var stageLevel = this.getStageLevel();
+
+    switch (stateLevel) {
+    case node.stateLevels.UNINITIALIZED:
+    case node.stateLevels.INITIALIZING:
+    case node.stateLevels.STAGE_INIT:
+    case node.stateLevels.STEP_INIT:
+    case node.stateLevels.FINISHING:
+        return false;
+
+    case node.stateLevels.PLAYING_STEP:
+        switch (stageLevel) {
+        case node.stageLevels.LOADING:
+        case node.stageLevels.PAUSING:
+        case node.stageLevels.RESUMING:
+            return false;
+        }
+    }
 
     // Check if there is a gameWindow obj and whether it is loading
     return node.window ? node.window.state >= node.is.LOADED : true;
@@ -13995,14 +14042,16 @@ SessionManager.prototype.store = function() {
  * Creates player
  */
     node.createPlayer = function (player) {
-        player = new Player(player);
-
         if (node.player &&
                 node.player.stateLevel > node.stateLevels.STARTING &&
                 node.player.stateLevel !== node.stateLevels.GAMEOVER) {
             throw new node.NodeGameIllegalOperationError(
                     'createPlayer: cannot create player while game is running');
         }
+
+        player = new Player(player);
+        player.stateLevel = node.player.stateLevel;
+        player.stageLevel = node.player.stageLevel;
 
         // Overwrite existing 'current' player:
         if (node.player) {
@@ -15117,7 +15166,7 @@ node.random = {};
     node.events.ng.on( IN + say + 'PCONNECT', function (msg) {
         if (!msg.data) return;
         node.game.pl.add(new Player(msg.data));
-        node.emit('UPDATED_PLIST');
+        //node.emit('UPDATED_PLIST');
     });
 
 /**
@@ -15233,7 +15282,6 @@ node.events.ng.on( IN + set + 'DATA', function (msg) {
  * @see Game.pl
  */
     node.events.ng.on( IN + say + 'PLAYER_UPDATE', function (msg) {
-        debugger;
         node.game.pl.updatePlayer(msg.from, msg.data);
         node.emit('UPDATED_PLIST');
         node.game.shouldStep();
@@ -15402,19 +15450,7 @@ node.events.ng.on('DONE', function(p1, p2, p3) {
  * @emit LOADED
  */
 node.events.ng.on('WINDOW_LOADED', function() {
-    if (node.game.isReady()) node.emit('LOADED');
-});
-
-/**
- * ## GAME_LOADED
- * 
- * Checks if the window was loaded, and if so fires the LOADED event
- *
- * @emit BEFORE_LOADING
- * @emit LOADED
- */
-node.events.ng.on('GAME_LOADED', function() {
-    if (node.game.isReady()) node.emit('LOADED');
+    node.socket.shouldClearBuffer();
 });
 
 /**

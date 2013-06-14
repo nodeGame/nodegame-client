@@ -74,7 +74,7 @@ node.session = {};
  * 
  * @see node.PlayerList.Player
  */
-node.player = {};
+node.player = { placeholder: true };
 
 /**
  * ### node.game

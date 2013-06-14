@@ -1071,7 +1071,9 @@ If a sequence end is reached, returns immediately.</p>
   </div>
   <div class="body"><p>Returns the step-rule function corresponding to a GameStage</p>
 
-<p>The order of lookup is:</p>
+<p>If gameStage.stage = 0, it returns a function that always returns TRUE.</p>
+
+<p>Otherwise, the order of lookup is:</p>
 
 <ol>
 <li><p><code>steprule</code> property of the step object</p></li>
@@ -1099,10 +1101,19 @@ If a sequence end is reached, returns immediately.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStepRule</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">stageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">),</span>
-        <span class="nx">stepObj</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">stageObj</span><span class="p">,</span> <span class="nx">stepObj</span><span class="p">;</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stageObj</span> <span class="o">||</span> <span class="o">!</span><span class="nx">stepObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">gameStage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="nx">stageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
+    <span class="nx">stepObj</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stageObj</span> <span class="o">||</span> <span class="o">!</span><span class="nx">stepObj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span>  <span class="nx">stepObj</span><span class="p">.</span><span class="nx">steprule</span><span class="p">)</span> <span class="k">return</span>  <span class="nx">stepObj</span><span class="p">.</span><span class="nx">steprule</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">steprule</span><span class="p">)</span> <span class="k">return</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">steprule</span><span class="p">;</span></pre></div>

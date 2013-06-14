@@ -184,14 +184,16 @@ line, multiplayer games in the browser.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">player</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Player</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
-
         <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span> <span class="o">&amp;&amp;</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">&gt;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STARTING</span> <span class="o">&amp;&amp;</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">!==</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameIllegalOperationError</span><span class="p">(</span>
                     <span class="s1">&#39;createPlayer: cannot create player while game is running&#39;</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+        <span class="nx">player</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Player</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
+        <span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span><span class="p">;</span>
+        <span class="nx">player</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stageLevel</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
