@@ -5,15 +5,14 @@
 // such as progressing in the loading chain, or finishing a game stage 
 
 (function (node) {
-
     
-	
     var action = node.action,
         target = node.target;
 	
     var GameMsg = node.GameMsg,
         GameStage = node.GameStage,
-        Game = node.Game;
+        Game = node.Game,
+        J = node.JSUS;
     
     var say = action.SAY + '.',
         set = action.SET + '.',
@@ -31,15 +30,15 @@
  * process is stopped. 
  * 
  * @emit BEFORE_DONE
- * @emit WAITING...
+ *
  */
-node.events.ng.on('DONE', function(p1, p2, p3) {
+node.events.ng.on('DONE', function() {
 	
     // Execute done handler before updating stage
     var ok = true,
-       done = node.game.getCurrentStep().done;
+        done = node.game.getCurrentStep().done;
     
-    if (done) ok = done.call(node.game, p1, p2, p3);
+    if (done) ok = done.apply(node.game, J.obj2Array(arguments));
     if (!ok) return;
     node.game.setStageLevel(node.stageLevels.DONE)
 	
@@ -47,41 +46,22 @@ node.events.ng.on('DONE', function(p1, p2, p3) {
     // something before changing stage
     node.emit('BEFORE_DONE');
 	
-    if (node.game.auto_wait) {
-	if (node.window) {	
-	    node.emit('WAITING...');
-	}
-    }
-
     // Step forward, if allowed
     node.game.shouldStep();
 });
 
 /**
- * ## WINDOW_LOADED
+ * ## PLAYING
  * 
- * Checks if the game is ready, and if so fires the LOADED event
- *
- * @emit BEFORE_LOADING
- * @emit LOADED
+ * @emit BEFORE_PLAYING 
  */
-node.events.ng.on('WINDOW_LOADED', function() {
-    node.socket.shouldClearBuffer();
-});
-
-/**
- * ## LOADED
- * 
- * 
- */
-node.events.ng.on('LOADED', function() {
-    node.emit('BEFORE_LOADING');
+node.events.ng.on('PLAYING', function() {
     node.game.setStageLevel(node.stageLevels.PLAYING);
     //TODO: the number of messages to emit to inform other players
     // about its own stage should be controlled. Observer is 0 
     //node.game.publishUpdate();
-    node.socket.clearBuffer();
-	
+    node.socket.clearBuffer();	
+    node.emit('BEFORE_PLAYING');
 });
 
 
