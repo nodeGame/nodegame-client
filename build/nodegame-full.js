@@ -8793,27 +8793,6 @@ exports.PlayerList = PlayerList;
 PlayerList.prototype = new NDDB();
 PlayerList.prototype.constructor = PlayerList;
 
-
-///**
-// * ## PlayerList.array2Groups (static)
-// *
-// * Transforms an array of array (of players) into an
-// * array of PlayerList instances and returns it.
-// *
-// * The original array is modified.
-// *
-// * @param {Array} array The array to transform
-// * @return {Array} array The array of `PlayerList` objects
-// *
-// */
-//PlayerList.array2Groups = function (array) {
-//  if (!array) return;
-//  for (var i = 0; i < array.length; i++) {
-//      array[i] = new PlayerList({}, array[i]);
-//  };
-//  return array;
-//};
-
 /**
  * ### PlayerList.comparePlayers
  *
@@ -8885,12 +8864,30 @@ function PlayerList (options, db) {
 // ## PlayerList methods
 
 /**
+ * ### PlayerList.importDB
+ *
+ * Adds an array of players to the database at once
+ *
+ * Overrides NDDB.importDB
+ *
+ * @param {array} pl The array of player to import at once
+ */
+PlayerList.prototype.importDB = function (pl) {
+    var i;
+    if (!pl) return;
+    for (i = 0; i < pl.length; i++) {
+        this.add(pl[i]);
+    }
+}; 
+
+/**
  * ### PlayerList.add
  *
  * Adds a new player to the database
  *
  * Before insertion, objects are checked to be valid `Player` objects,
- * that is they must have a unique player id.
+ * that is they must have a unique player id. Objects will then 
+ * automatically casted to type Player.
  *
  * The `count` property is added to the player object, and
  * the internal `pcounter` variable is incremented.
@@ -8899,9 +8896,12 @@ function PlayerList (options, db) {
  * @return {player|boolean} The inserted player, or FALSE if an error occurs
  */
 PlayerList.prototype.add = function (player) {
-    if (!player || 'undefined' === typeof player.id) {
-        node.err('Player id not found, cannot add object to player list.');
-        return false;
+    if (!(player instanceof Player)) {
+        if (!player || 'undefined' === typeof player.id) {
+            node.err('Player id not found, cannot add object to player list.');
+            return false;
+        }
+        player = new Player(player);
     }
 
     if (this.exist(player.id)) {
@@ -9070,7 +9070,7 @@ PlayerList.prototype.updatePlayerStageLevel = function (id, stageLevel) {
  * @return {boolean} TRUE, if all checked players have terminated the stage
  */
 PlayerList.prototype.isStepDone = function (gameStage, upTo) {
-    var p, i;
+    var p, i, cmp;
 
     if (!gameStage) return false;
 
@@ -9078,7 +9078,8 @@ PlayerList.prototype.isStepDone = function (gameStage, upTo) {
 
     for (i = 0; i < this.db.length; i++) {
         p = this.db[i];
-
+        cmp = GameStage.compare(gameStage, p.stage);
+        
         if (upTo) {
             // Check players in current stage up to the reference step:
 
@@ -9086,20 +9087,22 @@ PlayerList.prototype.isStepDone = function (gameStage, upTo) {
             if (gameStage.stage !== p.stage.stage) {
                 continue;
             }
-
-            // Player after/before given step
-            if (GameStage.compare(gameStage, p.stage) < 0) {
+           
+            // Player after given step
+            if (cmp < 0) {
                 continue;
             }
-            else if (GameStage.compare(gameStage, p.stage) > 0) {
+            // Player before given step
+            else if (cmp > 0) {
                 return false;
             }
+           
         }
         else {
             // Just check players in current step:
 
             // Player in another step
-            if (GameStage.compare(gameStage, p.stage) !== 0) {
+            if (cmp !== 0) {
                 continue;
             }
         }
@@ -9578,7 +9581,7 @@ GameMsg.prototype.toString = function () {
     line += this.session + SPT;
     line += this.action + SPT;
     line += this.target + SPT;
-    line +=	this.from + SPT;
+    line += this.from + SPT;
     line += this.to + SPT;
     line += DLM + this.text + DLM + SPT;
     line += DLM + this.data + DLM + SPT; // maybe to remove
@@ -9902,7 +9905,7 @@ Stager.prototype.registerNext = function(id, func) {
 Stager.prototype.setDefaultStepRule = function(steprule) {
     if (steprule) {
         if ('function' !== typeof steprule) {
-            node.warn("setDefaultStepRule didn't receive function parameter");
+            node.warn("setDefaultStepRule did not receive a function as parameter");
             return false;
         }
 
@@ -11452,23 +11455,41 @@ GamePlot.prototype.getStep = function(gameStage) {
  * @return {function|null} The step-rule function. NULL on error.
  */
 GamePlot.prototype.getStepRule = function(gameStage) {
-    var stageObj, stepObj;
+    var stageObj, stepObj, rule;
 
     gameStage = new GameStage(gameStage);
 
     if (gameStage.stage === 0) {
         return function() { return false; };
     }
-
+    
     stageObj = this.getStage(gameStage);
     stepObj  = this.getStep(gameStage);
 
-    if (!stageObj || !stepObj)
+    if (!stageObj || !stepObj) {
+        // TODO is this an error?
         return null;
+    }
+    
+    // return a step-defined rule
+    if ('string' === typeof stepObj.steprule) {
+        rule =  node.stepRules.get(stepObj.steprule);        
+    }
+    else if ('function' === typeof stepObj.steprule) {
+        rule = stepObj.steprule;
+    }    
+    if ('function' === typeof rule) return rule;
 
-    if ('function' === typeof  stepObj.steprule) return  stepObj.steprule;
-    if ('function' === typeof stageObj.steprule) return stageObj.steprule;
+    // return a stage-defined rule
+    if ('string' === typeof stageObj.steprule) {
+        rule =  node.stepRules.get(stageObj.steprule);        
+    }
+    else if ('function' === typeof stageObj.steprule) {
+        rule = stageObj.steprule;
+    }    
+    if ('function' === typeof rule) return rule;
 
+    // Default rule
     // TODO: Use first line once possible (serialization issue):
     //return this.stager.getDefaultStepRule();
     return this.stager.defaultStepRule;
@@ -12606,7 +12627,6 @@ function Game(settings) {
      */
     this.settings = {
         observer:   !!settings.observer,
-        auto_wait:  !!settings.auto_wait,
         minPlayers: settings.minPlayers || 1,
         maxPlayers: settings.maxPlayers || 1000
     };
@@ -12786,14 +12806,17 @@ Game.prototype.resume = function() {
  * @see Game.step
  */
 Game.prototype.shouldStep = function() {
+    
     var stepRule;
     stepRule = this.plot.getStepRule(this.getCurrentGameStage());
 
     if ('function' !== typeof stepRule) {
         throw new node.NodeGameMisconfiguredGameError("step rule is not a function");
     }
-
-    if (stepRule(this.getCurrentGameStage(), this.getStageLevel(), this.pl, this)) {
+    //debugger
+    var a = stepRule(this.getCurrentGameStage(), this.getStageLevel(), this.pl, this);
+    
+    if (a) {
         return this.step();
     }
     else {
@@ -14913,7 +14936,9 @@ function updatePlayerList(dstListName, srcList, updateRule) {
             throw new node.NodeGameMisconfiguredGameError(
                     "register('plist') got invalid updateRule");
         }
-
+        
+        // we need to cast the items of the array from Object to Player
+        
         dstList.importDB(srcList);
     }
 
@@ -18720,7 +18745,7 @@ node.widgets = new Widgets();
 // ## Meta-data
 	
     WaitScreen.name = 'WaitingScreen';
-    WaitScreen.version = '0.3.2';
+    WaitScreen.version = '0.4.0';
     WaitScreen.description = 'Show a standard waiting screen';
     
     function WaitScreen (options) {
