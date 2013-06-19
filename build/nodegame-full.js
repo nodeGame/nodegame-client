@@ -6001,26 +6001,22 @@ NDDB.prototype.fetchKeyArray = function (key) {
 NDDB.prototype.groupBy = function (key) {
     if (!key) return this.db;
     
-    var groups = [];
-    var outs = [];
-    for (var i=0; i < this.db.length; i++) {
-        var el = J.getNestedValue(key, this.db[i]);
+    var groups = [], outs = [], i, el, out;
+    for (i = 0 ; i < this.db.length ; i++) {
+        el = J.getNestedValue(key, this.db[i]);
         if ('undefined' === typeof el) continue;
         // Creates a new group and add entries to it
         if (!J.in_array(el, groups)) {
             groups.push(el);
-            var out = this.filter(function (elem) {
+            out = this.filter(function (elem) {
                 if (J.equals(J.getNestedValue(key, elem), el)) {
                     return this;
                 }
-            });
-            
+            });   
             // Reset nddb_pointer in subgroups
             out.nddb_pointer = 0;
-            
             outs.push(out);
         }
-        
     }
     return outs;
 };    
@@ -7028,7 +7024,7 @@ NDDBIndex.prototype.size = function () {
  * @see NDDBIndex.update
  */
 NDDBIndex.prototype.get = function (idx) {
-	if (!this.resolve[idx]) return false
+	if ('undefined' === typeof this.resolve[idx]) return false;
     return this.nddb.db[this.resolve[idx]];
 };
 
@@ -10250,8 +10246,11 @@ Stager.prototype.repeat = function(id, nRepeats) {
  * The given stage will be repeated as long as the `func` callback returns TRUE.
  * If it returns FALSE on the first time, the stage is never executed.
  *
+ * If no callback function is specified the loop is repeated indefinetely.
+ *
  * @param {string} id A valid stage name with optional alias
- * @param {function} func Callback returning TRUE for repetition
+ * @param {function} func Optional. Callback returning TRUE for repetition. Defaults, 
+ *   a function that returns always TRUE.
  *
  * @return {Stager|null} this object on success, NULL on error
  *
@@ -10265,6 +10264,10 @@ Stager.prototype.loop = function(id, func) {
     if (stageName === null) {
         node.warn('loop received invalid stage name');
         return null;
+    }
+
+    if ('undefined' === typeof func) {
+        func = function() { return true; };
     }
 
     if ('function' !== typeof func) {
@@ -11518,7 +11521,7 @@ GamePlot.prototype.getStepRule = function(gameStage) {
 GamePlot.prototype.getGlobal = function(gameStage, globalVar) {
     var stepObj, stageObj;
     var stepGlobals, stageGlobals, defaultGlobals;
-
+    
     gameStage = new GameStage(gameStage);
 
     // Look in current step:
@@ -14937,8 +14940,7 @@ function updatePlayerList(dstListName, srcList, updateRule) {
                     "register('plist') got invalid updateRule");
         }
         
-        // we need to cast the items of the array from Object to Player
-        
+        // automatic cast from Object to Player   
         dstList.importDB(srcList);
     }
 
