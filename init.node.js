@@ -11,201 +11,78 @@
  * 
  */
 
-(function (node) {
-	
-module.exports = node;
+(function () {
+    
+    // ## Loading libraries
 
-// ## Libraries
+    // ### Dependencies
+    module.exports.JSUS = require('JSUS').JSUS;
+    module.exports.support = module.exports.JSUS.compatibility();
+    module.exports.NDDB = require('NDDB').NDDB;
 
+    // Costants
+    module.exports.constants = require('./lib/modules/variables');
+    module.exports.stepRules = require('./lib/modules/stepRules');
 
+    // Events
+    module.exports.ErrorManager = require('./lib/core/ErrorManager').ErrorManager;
+    module.exports.EventEmitterManager = require('./lib/core/EventEmitter').EventEmitterManager;
+    module.exports.EventEmitter = require('./lib/core/EventEmitter').EventEmitter;
 
-/**
- * ### node.JSUS
- * 
- * @api public
- */
+    // Core
+    module.exports.GameStage = require('./lib/core/GameStage').GameStage;
+    module.exports.PlayerList = require('./lib/core/PlayerList').PlayerList;
+    module.exports.Player = require('./lib/core/PlayerList').Player;
+    module.exports.GameMsg = require('./lib/core/GameMsg').GameMsg;
+    module.exports.Stager = require('./lib/core/Stager').Stager;
+    module.exports.GamePlot = require('./lib/core/GamePlot').GamePlot;
+    module.exports.GameMsgGenerator = require('./lib/core/GameMsgGenerator').GameMsgGenerator;
+    
+    // Sockets
+    module.exports.SocketFactory = require('./lib/core/SocketFactory').SocketFactory;
+    module.exports.Socket = require('./lib/core/Socket').Socket;
 
-node.JSUS = require('JSUS').JSUS;
+    require('./lib/sockets/SocketIo.js');
+    require('./lib/sockets/SocketDirect.js');
 
-// Update compatibility report
-node.support = node.JSUS.compatibility();
+    // Game
+    module.exports.GameDB = require('./lib/core/GameDB').GameDB;
+    module.exports.GameBit = require('./lib/core/GameDB').GameBit;
+    module.exports.Game = require('./lib/core/Game').Game;
+    
+    // Extra (to be tested)
+    module.exports.GroupManager = require('./lib/core/GroupManager').GroupManager;
+    module.exports.RoleMapper = require('./lib/core/RoleMapper').RoleMapper;
+    module.exports.GameSession = require('./lib/core/Session').GameSession;
 
-/**
- * ### node.NDDB
- * 
- * @api public
- */
+    // Addons
+    module.exports.GameTimer = require('./addons/GameTimer').GameTimer;
+    module.exports.TriggerManager = require('./addons/TriggerManager').TriggerManager;
 
-node.NDDB = require('NDDB').NDDB;
-
-/**
- * ### node.Socket.io-client
- * 
- * @api public
- */
-
-node.io = require('socket.io-client');
-
-/**
- * ### node.ErrorManager
- * 
- * @api public
- */
-
-node.ErrorManager = require('./lib/core/ErrorManager').ErrorManager;
-
-
-/**
- * ### node.EEManager
- * 
- * @api public
- */
-
-node.EventEmitterManager = require('./lib/core/EventEmitter').EventEmitterManager;
-
-/**
- * ### node.EventEmitter
- * 
- * @api public
- */
-
-node.EventEmitter = require('./lib/core/EventEmitter').EventEmitter;
-
-/**
- * ### node.GameStage
- * 
- * @api public
- */
-
-node.GameStage = require('./lib/core/GameStage').GameStage;
-
-/**
- * ### node.PlayerList
- * 
- * @api public
- */
-
-node.PlayerList = require('./lib/core/PlayerList').PlayerList;
-
-/**
- * ### node.Player
- * 
- * @api public
- */
-
-node.Player = require('./lib/core/PlayerList').Player;
+    // FS
+    module.exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;
 
 
-/**
- * ### node.GameMsg
- * 
- * @api public
- */
-
-node.GameMsg = require('./lib/core/GameMsg').GameMsg;
-
-/**
- * ### node.Stager
- * 
- * @api public
- */
-
-node.Stager = require('./lib/core/Stager').Stager;
-
-/**
- * ### node.GamePlot
- * 
- * @api public
- */
-
-node.GamePlot = require('./lib/core/GamePlot').GamePlot;
-
-
-/**
- * ### node.GameMsgGenerator
- * 
- * @api public
- */
-
-node.GameMsgGenerator = require('./lib/core/GameMsgGenerator').GameMsgGenerator;
-
-
-/**
- * Expose SocketFactory
- * 
- * @api public
- */
-
-node.SocketFactory = require('./lib/core/SocketFactory').SocketFactory;
-
-/**
- * Expose Socket
- * 
- * @api public
- */
-
-node.Socket = require('./lib/core/Socket').Socket;
-
-
-/**
- * ### node.GameDB
- * 
- * @api public
- */
-
-node.GameDB = require('./lib/core/GameDB').GameDB;
-
-/**
- * ### node.GameBit
- * 
- * @api public
- */
-
-node.GameBit = require('./lib/core/GameDB').GameBit;
-
-/**
- * ### node.Game
- * 
- * @api public
- */
-
-node.Game = require('./lib/core/Game').Game;
-
-
-/**
- * ### node.GroupManager
- *
- * @api public
- */
-node.GroupManager = require('./lib/core/GroupManager').GroupManager;
-
-/**
- * ### node.GroupManager
- *
- * @api public
- */
-node.RoleMapper = require('./lib/core/RoleMapper').RoleMapper;
-
-/**
- * Expose GameSession
- * 
- * @api public
- */
-node.GameSession = require('./lib/core/Session').GameSession;
-
-
-// ### Addons
-
-node.GameTimer = require('./addons/GameTimer').GameTimer;
-
-/**
- * ### node.TriggerManager
- * 
- * @api public
- */
-node.TriggerManager = require('./addons/TriggerManager').TriggerManager;
-
-
-
-
-})('undefined' != typeof node ? node : module.parent.exports);
+    // Load main nodegame-client class    
+    module.exports.NodeGameClient = require('./lib/core/NodeGameClient').NodeGameClient;
+    
+    // Load extensions to the prototype
+    
+    require('./lib/modules/log.js');
+    require('./lib/modules/setup.js');
+    require('./lib/modules/alias.js');
+    require('./lib/modules/events.js');
+    require('./lib/modules/connect.js');
+    require('./lib/modules/player.js');
+    require('./lib/modules/ssgd.js');
+    require('./lib/modules/commands.js');
+    require('./lib/modules/extra.js');
+    
+    require('./lib/modules/variables.js');
+ 
+    
+    // ### Loading Event listeners
+    require('./listeners/incoming.js');
+    require('./listeners/internal.js');
+    
+})();

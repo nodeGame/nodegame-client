@@ -1,0 +1,4 @@
+var a = require('nodegame-client');
+
+a.getClient();
+//console.log(a)
