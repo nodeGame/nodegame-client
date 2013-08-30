@@ -27,13 +27,14 @@ var distDir =  rootDir + 'build/';
 var ng_client = [
     rootDir + "index.js",
  	
- // modules
-    rootDir + "lib/modules/log.js",
+ // Constants.
+
     rootDir + "lib/modules/variables.js",
-    rootDir + "lib/modules/stepper.js",
+    rootDir + "lib/modules/stepRules.js",
 
  	
- // lib
+ // Libs.
+
     rootDir + "lib/core/ErrorManager.js",
     rootDir + "lib/core/EventEmitter.js",
     rootDir + "lib/core/GameStage.js",
@@ -45,7 +46,6 @@ var ng_client = [
  	
     rootDir + "lib/core/SocketFactory.js",
     rootDir + "lib/core/Socket.js",
-    
     rootDir + "lib/sockets/SocketIo.js",
     
     rootDir + "lib/core/GameDB.js",
@@ -55,16 +55,21 @@ var ng_client = [
     rootDir + "lib/core/GroupManager.js",
     rootDir + "lib/core/RoleMapper.js",
  		 	
- // nodeGame
-    rootDir + "lib/nodegame.js",
+ // NodeGameClient.
+
+    rootDir + "lib/core/NodeGameClient.js",
  	
- 	
-// modules
+ // Extending NodeGameClient prototype.
+
+    rootDir + "lib/modules/log.js",
     rootDir + "lib/modules/setup.js",
     rootDir + "lib/modules/alias.js",
-    rootDir + "lib/modules/random.js",
- 	
-// listeners
+    rootDir + "lib/modules/connect.js",
+    rootDir + "lib/modules/player.js",
+    rootDir + "lib/modules/events.js",
+    rootDir + "lib/modules/ssgd.js",
+    rootDir + "lib/modules/commands.js",
+    rootDir + "lib/modules/extra.js",
  	
     rootDir + "listeners/incoming.js",
     rootDir + "listeners/internal.js",

@@ -24,8 +24,10 @@
     module.exports.constants = require('./lib/modules/variables');
     module.exports.stepRules = require('./lib/modules/stepRules');
 
+    // ErrorManager
+    require('./lib/core/ErrorManager');
+
     // Events
-    module.exports.ErrorManager = require('./lib/core/ErrorManager').ErrorManager;
     module.exports.EventEmitterManager = require('./lib/core/EventEmitter').EventEmitterManager;
     module.exports.EventEmitter = require('./lib/core/EventEmitter').EventEmitter;
 
