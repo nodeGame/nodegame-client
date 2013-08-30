@@ -24,6 +24,17 @@
             node = new module.exports.NodeGameClient();
             module.exports.JSUS.mixin(node, exports.constants); // TODO maybe not necessary, maybe keep them in .constants
             module.exports.JSUS.mixin(node, exports.stepRules); // TODO see above
+            
+            // TODO: find a good way to incorpare all the classes
+            
+            node.Stager = module.exports.Stager;
+            node.stepRules = module.exports.stepRules;
+            node.NodeGameRuntimeError = module.exports.NodeGameRuntimeError;
+            node.NodeGameStageCallbackError = module.exports.NodeGameStageCallbackError;
+            node.NodeGameMisconfiguredGameError = module.exports.NodeGameMisconfiguredGameError;
+            node.NodeGameIllegalOperationError = module.exports.NodeGameIllegalOperationError;
+
+            
             return node;
         }
 
