@@ -34,12 +34,12 @@
      * @return {boolean} TRUE on success
      */
     NGC.prototype.addDefaultInternalListeners = function(force) {
-        var that;
+        var node = this;
         if (this.internalAdded && !force) {
             this.err('Default internal listeners already added once. Use the force flag to re-add.');
             return false;
         }
-        that = this;
+
         /**
          * ## DONE
          * 
@@ -56,18 +56,18 @@
 	    
             // Execute done handler before updating stage
             var ok = true,
-            done = that.game.getCurrentStep().done;
+            done = node.game.getCurrentStep().done;
             
-            if (done) ok = done.apply(that.game, J.obj2Array(arguments));
+            if (done) ok = done.apply(node.game, J.obj2Array(arguments));
             if (!ok) return;
-            that.game.setStageLevel(constants.stageLevels.DONE)
+            node.game.setStageLevel(constants.stageLevels.DONE)
 	    
             // Call all the functions that want to do 
             // something before changing stage
-            that.emit('BEFORE_DONE');
+            node.emit('BEFORE_DONE');
 	    
             // Step forward, if allowed
-            that.game.shouldStep();
+            node.game.shouldStep();
         });
 
         /**
@@ -76,12 +76,12 @@
          * @emit BEFORE_PLAYING 
          */
         this.events.ng.on('PLAYING', function() {
-            that.game.setStageLevel(constants.stageLevels.PLAYING);
+            node.game.setStageLevel(constants.stageLevels.PLAYING);
             //TODO: the number of messages to emit to inform other players
             // about its own stage should be controlled. Observer is 0 
-            //that.game.publishUpdate();
-            that.socket.clearBuffer();	
-            that.emit('BEFORE_PLAYING');
+            //node.game.publishUpdate();
+            node.socket.clearBuffer();	
+            node.emit('BEFORE_PLAYING');
         });
 
 
@@ -91,14 +91,14 @@
          */
         this.events.ng.on('NODEGAME_GAMECOMMAND_' + constants.gamecommand.start, function(options) {
 	    
-            that.emit('BEFORE_GAMECOMMAND', constants.gamecommand.start, options);
+            node.emit('BEFORE_GAMECOMMAND', constants.gamecommand.start, options);
 	    
-            if (that.game.getCurrentStep() && that.game.getCurrentStep().stage !== 0) {
-	        that.err('Game already started. Use restart if you want to start the game again');
+            if (node.game.getCurrentStep() && node.game.getCurrentStep().stage !== 0) {
+	        node.err('Game already started. Use restart if you want to start the game again');
 	        return;
             }
 	    
-            that.game.start();	
+            node.game.start();	
         });
 
         this.incomingAdded = true;

@@ -29,9 +29,10 @@
      * @return {boolean} TRUE on success
      */
     NGC.prototype.addDefaultIncomingListeners = function(force) {
+        var node = this;
 
-        if (this.incomingAdded && !force) {
-            this.err('Default incoming listeners already added once. Use the force flag to re-add.');
+        if (node.incomingAdded && !force) {
+            node.err('Default incoming listeners already added once. Use the force flag to re-add.');
             return false;
         }
         
@@ -43,10 +44,10 @@
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        this.events.ng.on( IN + say + 'PCONNECT', function (msg) {
+        node.events.ng.on( IN + say + 'PCONNECT', function (msg) {
             if (!msg.data) return;
-            this.game.pl.add(new Player(msg.data));
-            this.emit('UPDATED_PLIST');
+            node.game.pl.add(new Player(msg.data));
+            node.emit('UPDATED_PLIST');
         });
 
         /**
@@ -57,10 +58,10 @@
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        this.events.ng.on( IN + say + 'PDISCONNECT', function (msg) {
+        node.events.ng.on( IN + say + 'PDISCONNECT', function (msg) {
             if (!msg.data) return;
-            this.game.pl.remove(msg.data.id);
-            this.emit('UPDATED_PLIST');
+            node.game.pl.remove(msg.data.id);
+            node.emit('UPDATED_PLIST');
         });
 
         /**
@@ -71,10 +72,10 @@
          * @emit UPDATED_MLIST
          * @see Game.ml
          */
-        this.events.ng.on( IN + say + 'MCONNECT', function (msg) {
+        node.events.ng.on( IN + say + 'MCONNECT', function (msg) {
             if (!msg.data) return;
-            this.game.ml.add(new Player(msg.data));
-            this.emit('UPDATED_MLIST');
+            node.game.ml.add(new Player(msg.data));
+            node.emit('UPDATED_MLIST');
         });
 
         /**
@@ -85,10 +86,10 @@
          * @emit UPDATED_MLIST
          * @see Game.ml
          */
-        this.events.ng.on( IN + say + 'MDISCONNECT', function (msg) {
+        node.events.ng.on( IN + say + 'MDISCONNECT', function (msg) {
             if (!msg.data) return;
-            this.game.ml.remove(msg.data.id);
-            this.emit('UPDATED_MLIST');
+            node.game.ml.remove(msg.data.id);
+            node.emit('UPDATED_MLIST');
         });
 
 
@@ -100,10 +101,10 @@
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        this.events.ng.on( IN + say + 'PLIST', function (msg) {
+        node.events.ng.on( IN + say + 'PLIST', function (msg) {
             if (!msg.data) return;
-            this.game.pl = new PlayerList({}, msg.data);
-            this.emit('UPDATED_PLIST');
+            node.game.pl = new PlayerList({}, msg.data);
+            node.emit('UPDATED_PLIST');
         });
 
         /**
@@ -114,10 +115,10 @@
          * @emit UPDATED_MLIST
          * @see Game.pl
          */
-        this.events.ng.on( IN + say + 'MLIST', function (msg) {
+        node.events.ng.on( IN + say + 'MLIST', function (msg) {
             if (!msg.data) return;
-            this.game.ml = new PlayerList({}, msg.data);
-            this.emit('UPDATED_MLIST');
+            node.game.ml = new PlayerList({}, msg.data);
+            node.emit('UPDATED_MLIST');
         });
 
         /**
@@ -125,12 +126,12 @@
          *
          * Experimental feature. Undocumented (for now)
          */
-        this.events.ng.on( IN + get + 'DATA', function (msg) {
+        node.events.ng.on( IN + get + 'DATA', function (msg) {
             if (msg.text === 'LOOP'){
-                this.socket.sendDATA(action.SAY, this.game.plot, msg.from, 'GAME');
+                node.socket.sendDATA(action.SAY, node.game.plot, msg.from, 'GAME');
             }
             // <!-- We could double emit
-            // this.emit(msg.text, msg.data); -->
+            // node.emit(msg.text, msg.data); -->
         });
 
         /**
@@ -139,8 +140,8 @@
          * Adds an entry to the memory object
          *
          */
-        this.events.ng.on( IN + set + 'STATE', function (msg) {
-            this.game.memory.add(msg.text, msg.data, msg.from);
+        node.events.ng.on( IN + set + 'STATE', function (msg) {
+            node.game.memory.add(msg.text, msg.data, msg.from);
         });
 
         /**
@@ -149,8 +150,8 @@
          * Adds an entry to the memory object
          *
          */
-        this.events.ng.on( IN + set + 'DATA', function (msg) {
-            this.game.memory.add(msg.text, msg.data, msg.from);
+        node.events.ng.on( IN + set + 'DATA', function (msg) {
+            node.game.memory.add(msg.text, msg.data, msg.from);
         });
 
         /**
@@ -161,10 +162,10 @@
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        this.events.ng.on( IN + say + 'PLAYER_UPDATE', function (msg) {
-            this.game.pl.updatePlayer(msg.from, msg.data);
-            this.emit('UPDATED_PLIST');
-            this.game.shouldStep();
+        node.events.ng.on( IN + say + 'PLAYER_UPDATE', function (msg) {
+            node.game.pl.updatePlayer(msg.from, msg.data);
+            node.emit('UPDATED_PLIST');
+            node.game.shouldStep();
         });
 
         /**
@@ -172,8 +173,8 @@
          *
          * Updates the game stage
          */
-        this.events.ng.on( IN + say + 'STAGE', function (msg) {
-            this.game.execStep(this.game.plot.getStep(msg.data));
+        node.events.ng.on( IN + say + 'STAGE', function (msg) {
+            node.game.execStep(node.game.plot.getStep(msg.data));
         });
 
         /**
@@ -181,8 +182,8 @@
          *
          * Updates the stage level
          */
-        this.events.ng.on( IN + say + 'STAGE_LEVEL', function (msg) {
-            //this.game.setStageLevel(msg.data);
+        node.events.ng.on( IN + say + 'STAGE_LEVEL', function (msg) {
+            //node.game.setStageLevel(msg.data);
         });
 
         /**
@@ -192,10 +193,10 @@
          *
          * @see node.redirect
          */
-        this.events.ng.on( IN + say + 'REDIRECT', function (msg) {
+        node.events.ng.on( IN + say + 'REDIRECT', function (msg) {
             if (!msg.data) return;
             if ('undefined' === typeof window || !window.location) {
-                this.err('window.location not found. Cannot redirect');
+                node.err('window.location not found. Cannot redirect');
                 return false;
             }
 
@@ -213,16 +214,16 @@
          * @see node.setup
          * @see JSUS.parse
          */
-        this.events.ng.on( IN + say + 'SETUP', function (msg) {
+        node.events.ng.on( IN + say + 'SETUP', function (msg) {
             if (!msg.text) return;
             var feature = msg.text,
             payload = ('string' === typeof msg.data) ? J.parse(msg.data) : msg.data;
 
             if (!payload) {
-                this.err('error while parsing incoming remote setup message');
+                node.err('error while parsing incoming remote setup message');
                 return false;
             }
-            this.setup.apply(this, [feature].concat(payload));
+            node.setup.apply(node, [feature].concat(payload));
         });
 
 
@@ -233,12 +234,12 @@
          *
          * @see node.setup
          */
-        this.events.ng.on( IN + say + 'GAMECOMMAND', function (msg) {
-            if (!msg.text || !this.gamecommand[msg.text]) {
-                this.err('unknown game command received: ' + msg.text);
+        node.events.ng.on( IN + say + 'GAMECOMMAND', function (msg) {
+            if (!msg.text || !node.gamecommand[msg.text]) {
+                node.err('unknown game command received: ' + msg.text);
                 return;
             }
-            this.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
+            node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
         });
 
         /**
@@ -251,14 +252,14 @@
          *
          * @experimental
          */
-        this.events.ng.on( IN + say + 'JOIN', function (msg) {
+        node.events.ng.on( IN + say + 'JOIN', function (msg) {
             if (!msg.text) return;
-            //this.socket.disconnect();
-            this.connect(msg.text);
+            //node.socket.disconnect();
+            node.connect(msg.text);
         });
 
-        this.incomingAdded = true;
-        this.silly('incoming listeners added');
+        node.incomingAdded = true;
+        node.silly('incoming listeners added');
         return true;
     };
 
