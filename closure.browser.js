@@ -1,10 +1,10 @@
 /**
  * Exposing the node object
  */
-(function (node) {
+(function () {
 
-    var tmp = node;
-    node = new exports.NodeGameClient();
-    JSUS.mixin(node, tmp);
+    var tmp = new window.node.NodeGameClient();
+    JSUS.mixin(tmp, window.node)
+    window.node = tmp;
 
-})(window.node);
+})();

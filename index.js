@@ -20,7 +20,7 @@
 
     // Costants
     exports.constants = require('./lib/modules/variables').constants;
-    exports.stepRules = require('./lib/modules/stepRules');
+    exports.stepRules = require('./lib/modules/stepRules').stepRules;
 
     // ErrorManager
     require('./lib/core/ErrorManager');
