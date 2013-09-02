@@ -203,13 +203,15 @@ but has to wait before going to the next one</p>
 </div>
 <p>expose the methods</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="nx">getRules</span><span class="o">:</span> <span class="nx">getRules</span><span class="p">,</span>
-        <span class="nx">get</span><span class="o">:</span> <span class="nx">get</span><span class="p">,</span>
-        <span class="nx">register</span><span class="o">:</span> <span class="nx">register</span><span class="p">,</span>
-        <span class="nx">clear</span><span class="o">:</span> <span class="nx">clear</span><span class="p">,</span>
-        <span class="nx">addDefaultRules</span><span class="o">:</span> <span class="nx">addDefaultRules</span>
-    <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">getRules</span><span class="o">:</span> <span class="nx">getRules</span><span class="p">,</span>
+            <span class="nx">get</span><span class="o">:</span> <span class="nx">get</span><span class="p">,</span>
+            <span class="nx">register</span><span class="o">:</span> <span class="nx">register</span><span class="p">,</span>
+            <span class="nx">clear</span><span class="o">:</span> <span class="nx">clear</span><span class="p">,</span>
+            <span class="nx">addDefaultRules</span><span class="o">:</span> <span class="nx">addDefaultRules</span>
+        <span class="p">};</span>
+    <span class="p">})();</span></pre></div>
         </td>
       </tr>
       <tr>

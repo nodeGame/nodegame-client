@@ -12686,6 +12686,11 @@ GamePlot.prototype.normalizeGameStage = function(gameStage) {
         var nextStepObj, nextStageObj;
         var ev, node;
         node = this.node;
+
+        if (this.getStateLevel() < constants.stateLevels.INITIALIZED) {
+            throw new node.NodeGameMisconfiguredGameError(
+                'game.step called before game.start');
+        }
         
         curStep = this.getCurrentGameStage();
         nextStep = this.plot.next(curStep);
@@ -12950,6 +12955,7 @@ GamePlot.prototype.normalizeGameStage = function(gameStage) {
     'undefined' != typeof node ? node : module.exports
  ,  'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # GameSession
  *
