@@ -11834,7 +11834,12 @@ GameMsg.prototype.toEvent = function () {
             this.node.err('socket cannot send message. Player undefined.');
             return false;
         }
-
+        
+        // TODO: add conf variable node.emitOutMsg
+        if (this.node.debug) {
+            this.node.emit(msg.toOutEvent(), msg);
+        }
+        
         this.socket.send(msg);
         this.node.info('S: ' + msg);
         return true;
@@ -11895,7 +11900,7 @@ GameMsg.prototype.toEvent = function () {
         }
 
         socket = io.connect(url, options); //conf.io
-        socket.on('connect', function (msg) {
+        socket.on('connect', function(msg) {
             node.info('socket.io connection open');
             socket.on('message', function(msg) {
                 node.socket.onMessage(msg);
@@ -11912,8 +11917,7 @@ GameMsg.prototype.toEvent = function () {
 
     };
 
-    SocketIo.prototype.send = function (msg) {
-        console.log(this);
+    SocketIo.prototype.send = function(msg) {
         this.socket.send(msg.stringify());
     };
 
@@ -11924,7 +11928,6 @@ GameMsg.prototype.toEvent = function () {
     'undefined' != typeof node ? node : module.parent.exports,
     'undefined' != typeof io ? io : require('socket.io-client') 
 );
-
 /**
  * # GameDB
  * 
@@ -19761,32 +19764,42 @@ node.widgets = new Widgets();
     VisualState.prototype.listeners = function () {
 	var that = this;
         
-        node.on('INIT', function() {
+        node.on('STEP_CALLBACK_EXECUTED', function() {
 	    that.writeState();
 	});
-	node.on('STEPPING', function() {
-	    that.writeState();
-	});
-        node.on('GAMEOVER', function() {
-	    that.writeState();
-	});
-        
-        
+
+        // Game over and init?
     };
     
     VisualState.prototype.writeState = function () {
-	var miss, state, pr, nx, curStep, nextStep, prevStep;
+	var miss, state, pr, nx, tmp;
+        var curStep, nextStep, prevStep;
 	var t;
+        
         miss = '-';
-	
+	state = 'Uninitialized';
+        pr = miss;
+        nx = miss;
+        
         curStep = node.game.getCurrentGameStage();
         
-	state = (curStep) ? curStep.name : miss;
-	prevStep = node.game.plot.previous(curStep);
-	pr = (tmp) ? prevStep.name : miss;
-	nextStep = node.game.plot.next(curStep);
-	nx = (nextStep) ? nextStep.name : miss;
-	
+	if (curStep) {
+            tmp = node.game.plot.getStep(curStep);
+            state = tmp ? tmp.id : miss;
+            
+	    prevStep = node.game.plot.previous(curStep);
+            if (prevStep) {
+                tmp = node.game.plot.getStep(prevStep);
+	        pr = tmp ? tmp.id : miss;
+            }
+            
+	    nextStep = node.game.plot.next(curStep);
+            if (nextStep) {
+                tmp = node.game.plot.getStep(nextStep);
+	        nx = tmp ? tmp.id : miss;
+            }
+        }
+        
 	this.table.clear(true);
 
 	this.table.addRow(['Previous: ', pr]);
@@ -19802,81 +19815,95 @@ node.widgets = new Widgets();
 })(node);
 (function (node) {
 
-	var Table = node.window.Table,
-		GameStage = node.GameStage;
-	
-	node.widgets.register('StateDisplay', StateDisplay);	
+    var Table = node.window.Table,
+    GameStage = node.GameStage;
+    
+    node.widgets.register('StateDisplay', StateDisplay);	
 
-// ## Defaults
+    // ## Defaults
+    
+    StateDisplay.defaults = {};
+    StateDisplay.defaults.id = 'statedisplay';
+    StateDisplay.defaults.fieldset = { legend: 'State Display' };		
+    
+    // ## Meta-data
+    
+    StateDisplay.name = 'State Display';
+    StateDisplay.version = '0.4.2';
+    StateDisplay.description = 'Display basic information about player\'s status.';
+    
+    function StateDisplay (options) {
 	
-	StateDisplay.defaults = {};
-	StateDisplay.defaults.id = 'statedisplay';
-	StateDisplay.defaults.fieldset = { legend: 'State Display' };		
+	this.id = options.id;
 	
-// ## Meta-data
+	this.root = null;
+	this.table = new Table();
+    }
+    
+    // TODO: Write a proper INIT method
+    StateDisplay.prototype.init = function () {};
+    
+    StateDisplay.prototype.getRoot = function () {
+	return this.root;
+    };
+    
+    
+    StateDisplay.prototype.append = function (root) {
+	var that = this;
+	var PREF = this.id + '_';
 	
-	StateDisplay.name = 'State Display';
-	StateDisplay.version = '0.4.2';
-	StateDisplay.description = 'Display basic information about player\'s status.';
+	var idFieldset = PREF + 'fieldset';
+	var idPlayer = PREF + 'player';
+	var idState = PREF + 'state'; 
 	
-	function StateDisplay (options) {
-		
-		this.id = options.id;
-				
-		this.root = null;
-		this.table = new Table();
-	}
+	var checkPlayerName = setInterval(function(idState,idPlayer) {
+	    if (node.player && node.player.id) {
+		clearInterval(checkPlayerName);
+		that.updateAll();
+	    }
+	}, 100);
 	
-	// TODO: Write a proper INIT method
-	StateDisplay.prototype.init = function () {};
+	root.appendChild(this.table.table);
+	this.root = root;
+	return root;
 	
-	StateDisplay.prototype.getRoot = function () {
-		return this.root;
-	};
+    };
+    
+    StateDisplay.prototype.updateAll = function() {
+	var stage, stageNo, stageId, playerId, tmp, miss;
+        miss = '-';
+        
+        stageId = miss;
+        stageNo = miss;
+        playerId = miss;
+
+	if (node.player.id) {
+            playerId = node.player.id;
+        }
+        
+	stage = node.game.getCurrentGameStage();	
+	if (stage) {
+            tmp = node.game.plot.getStep(stage);
+            stageId = tmp ? tmp.id : '-';
+            stageNo = stage.toString();
+        }
+        
+	this.table.clear(true);
+	this.table.addRow(['Stage  No: ', stageNo]);
+	this.table.addRow(['Stage  Id: ', stageId]);
+	this.table.addRow(['Player Id: ', playerId]);
+	this.table.parse();
 	
+    };
+    
+    StateDisplay.prototype.listeners = function () {
+	var that = this;
 	
-	StateDisplay.prototype.append = function (root) {
-		var that = this;
-		var PREF = this.id + '_';
-		
-		var idFieldset = PREF + 'fieldset';
-		var idPlayer = PREF + 'player';
-		var idState = PREF + 'state'; 
-			
-		var checkPlayerName = setInterval(function(idState,idPlayer) {
-			if (node.player && node.player.id) {
-				clearInterval(checkPlayerName);
-				that.updateAll();
-			}
-		}, 100);
-	
-		root.appendChild(this.table.table);
-		this.root = root;
-		return root;
-		
-	};
-	
-	StateDisplay.prototype.updateAll = function() {
-		var state = node.game ? new GameStage(node.game.state) : new GameStage(),
-			id = node.player ? node.player.id : '-',
-			name = node.player && node.player.name ? node.player.name : '-';
-			
-		this.table.clear(true);
-		this.table.addRow(['Name: ', name]);
-		this.table.addRow(['State: ', state.toString()]);
-		this.table.addRow(['Id: ', id]);
-		this.table.parse();
-		
-	};
-	
-	StateDisplay.prototype.listeners = function () {
-		var that = this;
-		
-		node.on('STATECHANGE', function() {
-			that.updateAll();
-		}); 
-	}; 
-	
+	node.on('STEP_CALLBACK_EXECUTED', function() {
+	    that.updateAll();
+	}); 
+    }; 
+    
 })(node);
 
 (function (node) {
