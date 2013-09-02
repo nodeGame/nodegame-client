@@ -3,14 +3,14 @@ should = require('should');
 
 
 
-var node = module.exports.node = require('./../index.js');
+var ngc = module.exports.node = require('./../index.js');
 
 //console.log(node);
 
-var PlayerList = node.PlayerList;
-var Player = node.Player;
+var PlayerList = ngc.PlayerList;
+var Player = ngc.Player;
 
-
+var nodeclient = ngc.getClient();
 
 var test_player = null,
 player = new Player ({
@@ -60,6 +60,14 @@ function samePlayer(pl1, pl2) {
     pl2.id.should.equal(pl1.id);	
 };
 
+function myLog(a) {
+    this.a = 'A';
+}
+
+myLog.prototype.log = function(a) {
+    return 'A' + a;
+}
+
 describe('PlayerList', function() {
     
     describe('#constructor', function() {
@@ -76,9 +84,17 @@ describe('PlayerList', function() {
             pl.rebuildIndexes();
 	    pl.id.size().should.equal(plDB.length);
 	});
-    });
+        it('with a log function: should use the log function', function() {
+            var log = new myLog();
+            pl = new PlayerList({
+                log: log.log
+            });
+            pl.log('A').should.equal('AA');
+	});
 
-    
+
+    });
+  
 //    describe('#get()', function() {
 //	before(function(){
 //	    test_player = pl.get(player.id);
