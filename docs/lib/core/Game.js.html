@@ -398,7 +398,7 @@ automatically inserted in this object</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GamePlot</span><span class="p">(</span><span class="k">new</span> <span class="nx">Stager</span><span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">stages</span><span class="p">));</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GamePlot</span><span class="p">(</span><span class="k">new</span> <span class="nx">Stager</span><span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">stages</span><span class="p">),</span> <span class="nx">node</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -489,6 +489,7 @@ just for change of state after the game has started</p>
             <span class="nx">onInit</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getOnInit</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">onInit</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;INIT&#39;</span><span class="p">);</span>
                 <span class="nx">onInit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>

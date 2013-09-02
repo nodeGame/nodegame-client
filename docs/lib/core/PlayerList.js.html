@@ -187,9 +187,10 @@ to perform operation on them</p>
 <p>Setting up global scope variables</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
-    <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">,</span>
-    <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
-    <span class="nx">Game</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Game</span><span class="p">;</span>
+        <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">,</span>
+        <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
+        <span class="nx">Game</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Game</span><span class="p">,</span>
+        <span class="nx">NodeGameRuntimeError</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">stageLevels</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">stateLevels</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">;</span></pre></div>
@@ -473,8 +474,7 @@ the internal <code>pcounter</code> variable is incremented.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">player</span>
-      <span class="dox_type">boolean</span>
-      <span>The inserted player, or FALSE if an error occurs</span>
+      <span>The inserted player</span>
     </div>
   </div>
 </div>
@@ -482,16 +482,15 @@ the internal <code>pcounter</code> variable is incremented.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">player</span> <span class="k">instanceof</span> <span class="nx">Player</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span> <span class="o">||</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kr">debugger</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Player id not found, cannot add object to player list.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
-                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
+                        <span class="s1">&#39;PlayerList.add: player.id was not given&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="nx">player</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Player</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PlayerList.add: Player already existent (id &#39;</span> <span class="o">+</span> <span class="nx">player</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
+                    <span class="s1">&#39;PlayerList.add: Player already exists (id &#39;</span> <span class="o">+</span> <span class="nx">player</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         
         <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
@@ -526,18 +525,21 @@ the internal <code>pcounter</code> variable is incremented.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">Player</span>
-      <span class="dox_type">boolean</span>
-      <span>The player with the speficied id, or FALSE if none was found</span>
+      <span>The player with the speficied id</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
+                    <span class="s1">&#39;PlayerList.get: id was not given&#39;</span><span class="p">);</span>
+
+        <span class="p">}</span>
         <span class="kd">var</span> <span class="nx">player</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PlayerList.get: Player not found (id &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
+                    <span class="s1">&#39;PlayerList.get: Player not found (id &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">player</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -569,18 +571,20 @@ the internal <code>pcounter</code> variable is incremented.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
-      <span class="dox_type">boolean</span>
-      <span>The removed player object, or FALSE if none was found</span>
+      <span>The removed player object</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
+                <span class="s1">&#39;PlayerList.remove: id was not given&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
         <span class="kd">var</span> <span class="nx">player</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PlayerList.remove: Player not found (id &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
+                <span class="s1">&#39;PlayerList.remove: Player not found (id &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">player</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -665,8 +669,7 @@ TODO remove after transition is complete</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
-      <span class="dox_type">boolean</span>
-      <span>The updated player object, or FALSE if an error occurred</span>
+      <span>The updated player object</span>
     </div>
   </div>
 </div>
@@ -682,13 +685,13 @@ TODO remove after transition is complete</p>
 <p>TODO: check playerState</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PlayerList.updatePlayer: Player not found (id &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
+                    <span class="s1">&#39;PlayerList.updatePlayer: Player not found (id &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">playerState</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PlayerList.updatePlayer: Attempt to assign to a player an undefined playerState&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
+                <span class="s1">&#39;PlayerList.updatePlayer: Attempt to assign to a player an undefined playerState&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">playerState</span><span class="p">);</span>
@@ -724,8 +727,7 @@ TODO remove after transition is complete</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
-      <span class="dox_type">boolean</span>
-      <span>The updated player object, or FALSE if an error occurred</span>
+      <span>The updated player object</span>
     </div>
   </div>
 </div>
@@ -733,13 +735,13 @@ TODO remove after transition is complete</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updatePlayerStage</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PlayerList.updatePlayerStage: Player not found (id &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
+                    <span class="s1">&#39;PlayerList.updatePlayerStage: Player not found (id &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PlayerList.updatePlayerStage: Attempt to assign to a player an undefined stage&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
+                <span class="s1">&#39;PlayerList.updatePlayerStage: Attempt to assign to a player an undefined stage&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span>
@@ -777,21 +779,20 @@ TODO remove after transition is complete</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
-      <span class="dox_type">boolean</span>
-      <span>The updated player object, or FALSE if an error occurred</span>
+      <span>The updated player object</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updatePlayerStageLevel</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PlayerList.updatePlayerStageLevel: Player not found (id &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
+                    <span class="s1">&#39;PlayerList.updatePlayerStageLevel: Player not found (id &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PlayerList.updatePlayerStageLevel: Attempt to assign to a player an undefined stage&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
+                <span class="s1">&#39;PlayerList.updatePlayerStageLevel: Attempt to assign to a player an undefined stage&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span>
@@ -1100,8 +1101,8 @@ PlayerList</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRandom</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">N</span><span class="p">)</span> <span class="nx">N</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">N</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;N must be an integer &gt;= 1&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
+                    <span class="s1">&#39;PlayerList.getRandom: N must be an integer &gt;= 1&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">();</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">limit</span><span class="p">(</span><span class="nx">N</span><span class="p">).</span><span class="nx">fetch</span><span class="p">();</span>
