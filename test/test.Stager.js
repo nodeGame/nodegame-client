@@ -186,3 +186,101 @@
 //	
 //	
 //});
+
+
+// The following was copied from the Stager class
+
+//    // DEBUG:  Run sequence.  Should be deleted later on.
+//    Stager.prototype.seqTestRun = function(expertMode, firstStage) {
+//        var seqObj;
+//        var curStage;
+//        var stageNum;
+//
+//        console.log('* Commencing sequence test run!');
+//
+//        if (!expertMode) {
+//            for (stageNum in this.sequence) {
+//                if (this.sequence.hasOwnProperty(stageNum)) {
+//                    seqObj = this.sequence[stageNum];
+//                    console.log('** num: ' + stageNum + ', type: ' + seqObj.type);
+//                    switch (seqObj.type) {
+//                    case 'gameover':
+//                        console.log('* Game Over.');
+//                        return;
+//
+//                    case 'plain':
+//                        this.stageTestRun(seqObj.id);
+//                        break;
+//
+//                    case 'repeat':
+//                        for (var i = 0; i < seqObj.num; i++) {
+//                            this.stageTestRun(seqObj.id);
+//                        }
+//                        break;
+//
+//                    case 'loop':
+//                        while (seqObj.cb()) {
+//                            this.stageTestRun(seqObj.id);
+//                        }
+//                        break;
+//
+//                    case 'doLoop':
+//                        do {
+//                            this.stageTestRun(seqObj.id);
+//                        } while (seqObj.cb());
+//                        break;
+//
+//                    default:
+//                        throw new Error('unknown sequence object type');
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//        else {
+//            // Get first stage:
+//            if (firstStage) {
+//                curStage = firstStage;
+//            }
+//            else if (this.generalNextFunction) {
+//                curStage = this.generalNextFunction();
+//            }
+//            else {
+//                curStage = null;
+//            }
+//
+//            while (curStage) {
+//                this.stageTestRun(curStage);
+//
+//                // Get next stage:
+//                if (this.nextFunctions[curStage]) {
+//                    curStage = this.nextFunctions[curStage]();
+//                }
+//                else if (this.generalNextFunction) {
+//                    curStage = this.generalNextFunction();
+//                }
+//                else {
+//                    curStage = null;
+//                }
+//
+//                // Check stage validity:
+//                if (curStage !== null && !this.stages[curStage]) {
+//                    throw new Error('next-deciding callback yielded invalid stage');
+//                    curStage = null;
+//                }
+//            }
+//        }
+//    };
+//
+//    // DEBUG:  Run stage.  Should be deleted later on.
+//    Stager.prototype.stageTestRun = function(stageId) {
+//        var steps = this.stages[stageId].steps;
+//        var stepId;
+//
+//        for (var i in steps) {
+//            if (steps.hasOwnProperty(i)) {
+//                stepId = steps[i];
+//                this.steps[stepId].cb();
+//            }
+//        }
+//    };
