@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>extra.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../../', thisFile = 'lib/modules/extra.js', defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#log">Log</a>
+      </div>
+      <div class="heading h2">
+        <a href="#extra">Extra</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.env">node.env</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegameclient.randomemit">NodeGameClient.randomEmit</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegameclient.randomexec">NodeGameClient.randomExec</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegameclient.play">NodeGameClient.play</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegameclient.replay">NodeGameClient.replay</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="log">
+  <h1>
+    <a href="#log" class="pilcrow">&#182;</a>
+    Log
+  </h1>
+</div>
+
+  </div>
+  <div class="body"><p>Copyright(c) 2012 Stefano Balietti
+MIT Licensed </p>
+
+<p><code>nodeGame</code> logging module</p>
+
+<hr />
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+    
+    <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span>
+    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="extra">
+  <h2>
+    <a href="#extra" class="pilcrow">&#182;</a>
+    Extra
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.env">
+  <h3>
+    <a href="#node.env" class="pilcrow">&#182;</a>
+    node.env
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Executes a block of code conditionally to nodeGame environment variables</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">env</span>
+      <span>{string} The name of the environment</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">func</span>
+      <span>{function} The callback function to execute</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">ctx</span>
+      <span>{object} Optional. The context of execution</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">params</span>
+      <span>{array} Optional. An array of additional parameters for the callback</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">env</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">env</span> <span class="o">||</span> <span class="o">!</span><span class="nx">func</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="nx">env</span><span class="p">])</span> <span class="k">return</span><span class="p">;</span>
+        <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">ctx</span> <span class="o">||</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="nx">params</span> <span class="o">=</span> <span class="nx">params</span> <span class="o">||</span> <span class="p">[];</span>
+        <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">params</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient.randomemit">
+  <h3>
+    <a href="#nodegameclient.randomemit" class="pilcrow">&#182;</a>
+    NodeGameClient.randomEmit
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Emits an event after a random time interval between 0 and maxWait</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">event</span>
+      <span class="dox_type">string</span>
+      <span>The name of the event</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">maxWait</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The maximum time (in milliseconds)
+  to wait before emitting the event. to Defaults, 6000</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">randomEmit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">){</span>
+        <span class="nx">maxWait</span> <span class="o">=</span> <span class="nx">maxWait</span> <span class="o">||</span> <span class="mi">6000</span><span class="p">;</span>
+        <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+        <span class="p">},</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="nx">event</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient.randomexec">
+  <h3>
+    <a href="#nodegameclient.randomexec" class="pilcrow">&#182;</a>
+    NodeGameClient.randomExec
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Executes a callback function after a random time interval between 0 and maxWait</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">The</span>
+      <span class="dox_type">function</span>
+      <span>callback function to execute</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">maxWait</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The maximum time (in milliseconds)
+  to wait before executing the callback. to Defaults, 6000</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">randomExec</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">maxWait</span> <span class="o">=</span> <span class="nx">maxWait</span> <span class="o">||</span> <span class="mi">6000</span><span class="p">;</span>
+        <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">();</span>
+        <span class="p">},</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="nx">func</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient.play">
+  <h3>
+    <a href="#nodegameclient.play" class="pilcrow">&#182;</a>
+    NodeGameClient.play
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Starts a game</p>
+  </div>
+  <div class="details">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">play</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient.replay">
+  <h3>
+    <a href="#nodegameclient.replay" class="pilcrow">&#182;</a>
+    NodeGameClient.replay
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Moves the game stage to 1.1.1</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">rest</span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, to erase the game memory before update the game stage</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">replay</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">reset</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">reset</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">execStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="s2">&quot;1.1.1&quot;</span><span class="p">));</span>
+    <span class="p">};</span>
+
+
+<span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>
