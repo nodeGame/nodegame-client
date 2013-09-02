@@ -24,29 +24,8 @@
       <div class="heading h2">
         <a href="#global-scope">Global scope</a>
       </div>
-      <div class="heading h2">
-        <a href="#aliases">Aliases</a>
-      </div>
       <div class="heading h3">
         <a href="#node.alias">node.alias</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.on.txt">node.on.txt</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.on.data">node.on.data</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.on.state">node.on.state</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.on.stage">node.on.stage</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.on.plist">node.on.plist</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.on.pconnect">node.on.pconnect</a>
       </div>
     </div>
   </div>
@@ -75,7 +54,7 @@ MIT Licensed </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-  </pre></div>
+    </pre></div>
         </td>
       </tr>
       <tr>
@@ -88,24 +67,14 @@ MIT Licensed </p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
-<span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
+        <td class="code highlight"><div class="highlight"><pre>    
+    <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
     <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
     <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
-    <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="aliases">
-  <h2>
-    <a href="#aliases" class="pilcrow">&#182;</a>
-    Aliases
-  </h2>
-</div>
+    <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+
+    <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -153,194 +122,36 @@ to new listeners on the given events.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">alias</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">alias</span> <span class="o">||</span> <span class="o">!</span><span class="nx">events</span><span class="p">)</span> <span class="p">{</span> 
-      <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;undefined alias or events&#39;</span><span class="p">);</span> 
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">alias</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">alias</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">alias</span> <span class="o">||</span> <span class="o">!</span><span class="nx">events</span><span class="p">)</span> <span class="p">{</span> 
+      <span class="k">this</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;undefined alias or events&#39;</span><span class="p">);</span> 
       <span class="k">return</span><span class="p">;</span> 
   <span class="p">}</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">events</span><span class="p">))</span> <span class="nx">events</span> <span class="o">=</span> <span class="p">[</span><span class="nx">events</span><span class="p">];</span>
-  
-  <span class="nx">J</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">){</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">[</span><span class="nx">alias</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="o">?</span> 
+  <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="nx">J</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">on</span><span class="p">[</span><span class="nx">alias</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="o">?</span> 
       <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-          <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">));</span>
+          <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">));</span>
       <span class="p">}</span>
       <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-          <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+          <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
       <span class="p">}</span>
-    <span class="p">);</span>
-
+           <span class="p">);</span>
+                
       <span class="p">};</span>
   <span class="p">});</span>
     <span class="p">};</span>  
     
-    </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="node.on.txt">
-  <h3>
-    <a href="#node.on.txt" class="pilcrow">&#182;</a>
-    node.on.txt
-  </h3>
-</div>
+    
 
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.TXT&#39;</span><span class="p">);</span>
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="node.on.data">
-  <h3>
-    <a href="#node.on.data" class="pilcrow">&#182;</a>
-    node.on.data
-  </h3>
-</div>
 
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.DATA&#39;</span><span class="p">]);</span>
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="node.on.state">
-  <h3>
-    <a href="#node.on.state" class="pilcrow">&#182;</a>
-    node.on.state
-  </h3>
-</div>
 
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STATE&#39;</span><span class="p">);</span>
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="node.on.stage">
-  <h3>
-    <a href="#node.on.stage" class="pilcrow">&#182;</a>
-    node.on.stage
-  </h3>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STAGE&#39;</span><span class="p">);</span>  
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="node.on.plist">
-  <h3>
-    <a href="#node.on.plist" class="pilcrow">&#182;</a>
-    node.on.plist
-  </h3>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;plist&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.set.PLIST&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PLIST&#39;</span><span class="p">]);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="node.on.pconnect">
-  <h3>
-    <a href="#node.on.pconnect" class="pilcrow">&#182;</a>
-    node.on.pconnect
-  </h3>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;pconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
-    <span class="p">});</span>
-
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
-</div>
-<p>/**
-*  ### node.DONE
-* 
-* Emits locally a DONE event
-* 
-* The DONE event signals that the player has terminated a game stage, 
-* and that it is ready to advance to the next one.
-* 
-* @param {mixed} param Optional. An additional parameter passed along
-*/
-   node.DONE = function () {
-node.emit('DONE', );
-   };</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>  
-
-    </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
-</div>
-<p>node.onTXT = function(func) {
-if (!func) return;
-node.on("", function(msg) {
-    func.call(node.game,msg);
-});
-   };</p>
-
-<p>node.onDATA = function(text, func) {
-if (!text || !func) return;</p>
-
-<p>node.on('in.say.DATA', function(msg) {
-    if (msg.text === text) {
-    func.call(node.game, msg);
-    }
-});</p>
-
-<p>node.on('in.set.DATA', function(msg) {
-    if (msg.text === text) {
-    func.call(node.game, msg);
-    }
-});
-   };</p>
-
-<p>node.onSTATE = function(func) {
-node.on("in.set.STATE", function(msg) {
-    func.call(node.game, msg);
-});
-   };</p>
-
-<p>node.onSTAGE = function(func) {
-node.on("in.set.STAGE", function(msg) {
-    func.call(node.game, msg);
-});
-   };</p>
-
-<p>node.onPLIST = function(func) {
-node.on("in.set.PLIST", function(msg) {
-    func.call(node.game, msg);
-});</p>
-
-<p>node.on("in.say.PLIST", function(msg) {
-    func.call(node.game, msg);
-});
-   };</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
         </td>

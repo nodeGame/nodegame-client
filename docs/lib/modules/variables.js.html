@@ -25,6 +25,18 @@
         <a href="#constants">Constants</a>
       </div>
       <div class="heading h3">
+        <a href="#version">version</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.verbosity_levels">node.verbosity_levels</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.verbosity">node.verbosity</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.remoteverbosity">node.remoteVerbosity</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.actions">node.actions</a>
       </div>
       <div class="heading h3">
@@ -158,7 +170,7 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -171,7 +183,90 @@ MIT Licensed</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">k</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="version">
+  <h3>
+    <a href="#version" class="pilcrow">&#182;</a>
+    version
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;1.0.0-beta&#39;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.verbosity_levels">
+  <h3>
+    <a href="#node.verbosity_levels" class="pilcrow">&#182;</a>
+    node.verbosity_levels
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>ALWAYS, ERR, WARN, INFO, DEBUG</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">verbosity_levels</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">ALWAYS</span><span class="o">:</span> <span class="o">-</span><span class="p">(</span><span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_VALUE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> 
+  <span class="nx">ERR</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+  <span class="nx">WARN</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="nx">INFO</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nx">SILLY</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
+  <span class="nx">DEBUG</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+  <span class="nx">NEVER</span><span class="o">:</span> <span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_VALUE</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="p">};</span>  
+    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.verbosity">
+  <h3>
+    <a href="#node.verbosity" class="pilcrow">&#182;</a>
+    node.verbosity
+  </h3>
+</div>
+
+
+<p>The minimum level for a log entry to be displayed as output</p>
+
+<p>Defaults, only errors are displayed.</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="nx">k</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">WARN</span><span class="p">;</span>
+    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.remoteverbosity">
+  <h3>
+    <a href="#node.remoteverbosity" class="pilcrow">&#182;</a>
+    node.remoteVerbosity
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The minimum level for a log entry to be reported to the server</p>
+
+<p>Defaults, only errors are displayed.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">remoteVerbosity</span> <span class="o">=</span> <span class="nx">k</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">WARN</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -201,11 +296,11 @@ message. It specify the nature of requests
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">action</span> <span class="o">=</span> <span class="p">{};</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">action</span> <span class="o">=</span> <span class="p">{};</span>
 
-    <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span> <span class="o">=</span> <span class="s1">&#39;set&#39;</span><span class="p">;</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span> <span class="o">=</span> <span class="s1">&#39;get&#39;</span><span class="p">;</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">=</span> <span class="s1">&#39;say&#39;</span><span class="p">;</span></pre></div>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span> <span class="o">=</span> <span class="s1">&#39;set&#39;</span><span class="p">;</span>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span> <span class="o">=</span> <span class="s1">&#39;get&#39;</span><span class="p">;</span>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">=</span> <span class="s1">&#39;say&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -229,7 +324,7 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -244,7 +339,7 @@ information carried in the message.</p>
 
 <p>Generic identifier for any type of data</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span> <span class="o">=</span> <span class="s1">&#39;DATA&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span> <span class="o">=</span> <span class="s1">&#39;DATA&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -259,7 +354,7 @@ information carried in the message.</p>
 
 <p>A client is connecting for the first time</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">HI</span> <span class="o">=</span> <span class="s1">&#39;HI&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">HI</span> <span class="o">=</span> <span class="s1">&#39;HI&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -274,7 +369,7 @@ information carried in the message.</p>
 
 <p>A client re-connects to the server within the same session</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">HI_AGAIN</span> <span class="o">=</span> <span class="s1">&#39;HI_AGAIN&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">HI_AGAIN</span> <span class="o">=</span> <span class="s1">&#39;HI_AGAIN&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -289,7 +384,7 @@ information carried in the message.</p>
 
 <p>A new client just connected to the player endpoint</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PCONNECT</span> <span class="o">=</span> <span class="s1">&#39;PCONNECT&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PCONNECT</span> <span class="o">=</span> <span class="s1">&#39;PCONNECT&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -304,7 +399,7 @@ information carried in the message.</p>
 
 <p>A client that just disconnected from the player endpoint</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PDISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;PDISCONNECT&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PDISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;PDISCONNECT&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -319,7 +414,7 @@ information carried in the message.</p>
 
 <p>A client that just connected to the admin (monitor) endpoint</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MCONNECT</span> <span class="o">=</span> <span class="s1">&#39;MCONNECT&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MCONNECT</span> <span class="o">=</span> <span class="s1">&#39;MCONNECT&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -334,7 +429,7 @@ information carried in the message.</p>
 
 <p>A client just disconnected from the admin (monitor) endpoint</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MDISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;MDISCONNECT&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MDISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;MDISCONNECT&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -349,7 +444,7 @@ information carried in the message.</p>
 
 <p>The list of clients connected to the player endpoint was updated</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PLIST</span> <span class="o">=</span> <span class="s1">&#39;PLIST&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PLIST</span> <span class="o">=</span> <span class="s1">&#39;PLIST&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -364,7 +459,7 @@ information carried in the message.</p>
 
 <p>The list of clients connected to the admin (monitor) endpoint was updated</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MLIST</span> <span class="o">=</span> <span class="s1">&#39;MLIST&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MLIST</span> <span class="o">=</span> <span class="s1">&#39;MLIST&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -379,7 +474,7 @@ information carried in the message.</p>
 
 <p>A client updates his Player object</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PLAYER_UPDATE</span> <span class="o">=</span> <span class="s1">&#39;PLAYER_UPDATE&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PLAYER_UPDATE</span> <span class="o">=</span> <span class="s1">&#39;PLAYER_UPDATE&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -394,7 +489,7 @@ information carried in the message.</p>
 
 <p>A client notifies his own state</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STATE</span> <span class="o">=</span> <span class="s1">&#39;STATE&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STATE</span> <span class="o">=</span> <span class="s1">&#39;STATE&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -409,7 +504,7 @@ information carried in the message.</p>
 
 <p>A client notifies his own stage</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE</span> <span class="o">=</span> <span class="s1">&#39;STAGE&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE</span> <span class="o">=</span> <span class="s1">&#39;STAGE&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -424,7 +519,7 @@ information carried in the message.</p>
 
 <p>A client notifies his own stage level</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE_LEVEL</span> <span class="o">=</span> <span class="s1">&#39;STAGE_LEVEL&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE_LEVEL</span> <span class="o">=</span> <span class="s1">&#39;STAGE_LEVEL&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -439,7 +534,7 @@ information carried in the message.</p>
 
 <p>Redirects a client to a new uri</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">REDIRECT</span> <span class="o">=</span> <span class="s1">&#39;REDIRECT&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">REDIRECT</span> <span class="o">=</span> <span class="s1">&#39;REDIRECT&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -454,7 +549,7 @@ information carried in the message.</p>
 
 <p>Asks a client update its configuration</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">SETUP</span> <span class="o">=</span> <span class="s1">&#39;SETUP&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">SETUP</span> <span class="o">=</span> <span class="s1">&#39;SETUP&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -469,7 +564,7 @@ information carried in the message.</p>
 
 <p>Ask a client to start/pause/stop/resume the game</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">GAMECOMMAND</span> <span class="o">=</span> <span class="s1">&#39;GAMECOMMAND&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">GAMECOMMAND</span> <span class="o">=</span> <span class="s1">&#39;GAMECOMMAND&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -484,7 +579,7 @@ information carried in the message.</p>
 
 <p>Asks a client to join another channel/subchannel/room</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">JOIN</span> <span class="o">=</span> <span class="s1">&#39;JOIN&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">JOIN</span> <span class="o">=</span> <span class="s1">&#39;JOIN&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -499,7 +594,7 @@ information carried in the message.</p>
 
 <p>A log entry</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LOG</span> <span class="o">=</span> <span class="s1">&#39;LOG&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LOG</span> <span class="o">=</span> <span class="s1">&#39;LOG&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -512,21 +607,21 @@ information carried in the message.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">TXT</span>  <span class="o">=</span> <span class="s1">&#39;TXT&#39;</span><span class="p">;</span>    <span class="c1">// Text msg</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">TXT</span>  <span class="o">=</span> <span class="s1">&#39;TXT&#39;</span><span class="p">;</span>    <span class="c1">// Text msg</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Still to implement</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">BYE</span>  <span class="o">=</span> <span class="s1">&#39;BYE&#39;</span><span class="p">;</span>    <span class="c1">// Force disconnects</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ACK</span>  <span class="o">=</span> <span class="s1">&#39;ACK&#39;</span><span class="p">;</span>    <span class="c1">// A reliable msg was received correctly</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">BYE</span>  <span class="o">=</span> <span class="s1">&#39;BYE&#39;</span><span class="p">;</span>    <span class="c1">// Force disconnects</span>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ACK</span>  <span class="o">=</span> <span class="s1">&#39;ACK&#39;</span><span class="p">;</span>    <span class="c1">// A reliable msg was received correctly</span>
 
-    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">WARN</span> <span class="o">=</span> <span class="s1">&#39;WARN&#39;</span><span class="p">;</span>   <span class="c1">// To do.</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ERR</span>  <span class="o">=</span> <span class="s1">&#39;ERR&#39;</span><span class="p">;</span>    <span class="c1">// To do.</span></pre></div>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">WARN</span> <span class="o">=</span> <span class="s1">&#39;WARN&#39;</span><span class="p">;</span>   <span class="c1">// To do.</span>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ERR</span>  <span class="o">=</span> <span class="s1">&#39;ERR&#39;</span><span class="p">;</span>    <span class="c1">// To do.</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -549,7 +644,7 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">gamecommand</span> <span class="o">=</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">gamecommand</span> <span class="o">=</span> <span class="p">{</span>
         <span class="nx">start</span><span class="o">:</span> <span class="s1">&#39;start&#39;</span><span class="p">,</span>
         <span class="nx">pause</span><span class="o">:</span> <span class="s1">&#39;pause&#39;</span><span class="p">,</span>
         <span class="nx">resume</span><span class="o">:</span> <span class="s1">&#39;resume&#39;</span><span class="p">,</span>
@@ -579,14 +674,14 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">IN</span>  <span class="o">=</span> <span class="s1">&#39;in.&#39;</span><span class="p">;</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">OUT</span> <span class="o">=</span> <span class="s1">&#39;out.&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">IN</span>  <span class="o">=</span> <span class="s1">&#39;in.&#39;</span><span class="p">;</span>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">OUT</span> <span class="o">=</span> <span class="s1">&#39;out.&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>TODO node.is is basically replaced by Game.stateLevels</p>
         </td>
@@ -610,7 +705,7 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">is</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">is</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -625,7 +720,7 @@ information carried in the message.</p>
 
 <p>A game has not been initialized</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">UNKNOWN</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">UNKNOWN</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -640,7 +735,7 @@ information carried in the message.</p>
 
 <p>The engine is loading all the modules</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">INITIALIZING</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">INITIALIZING</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -655,7 +750,7 @@ information carried in the message.</p>
 
 <p>The engine is fully loaded, but there is still no game</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">INITIALIZED</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">INITIALIZED</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -670,7 +765,7 @@ information carried in the message.</p>
 
 <p>The engine is fully loaded, and a game has been loaded</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">GAMELOADED</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">GAMELOADED</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -685,7 +780,7 @@ information carried in the message.</p>
 
 <p>An unrecoverable error has occurred</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">DEAD</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">DEAD</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -702,7 +797,7 @@ information carried in the message.</p>
 
 <p>A game is loading</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADING</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADING</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -717,7 +812,7 @@ information carried in the message.</p>
 
 <p>A game has been loaded, but the GameWindow object could still require some time</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADED</span>  <span class="o">=</span> <span class="mi">25</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADED</span>  <span class="o">=</span> <span class="mi">25</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -732,7 +827,7 @@ information carried in the message.</p>
 
 <p>Everything is ready</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">PLAYING</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">PLAYING</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -747,7 +842,7 @@ information carried in the message.</p>
 
 <p>The player completed the game state</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">DONE</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">DONE</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -765,7 +860,7 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span> <span class="o">=</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">stateLevels</span> <span class="o">=</span> <span class="p">{</span>
         <span class="nx">UNINITIALIZED</span><span class="o">:</span>  <span class="mi">0</span><span class="p">,</span>  <span class="c1">// creating the game object</span>
         <span class="nx">STARTING</span><span class="o">:</span>       <span class="mi">1</span><span class="p">,</span>  <span class="c1">// starting the game</span>
         <span class="nx">INITIALIZING</span><span class="o">:</span>   <span class="mi">2</span><span class="p">,</span>  <span class="c1">// calling game&#39;s init</span>
@@ -794,7 +889,7 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">stageLevels</span> <span class="o">=</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">stageLevels</span> <span class="o">=</span> <span class="p">{</span>
         <span class="nx">UNINITIALIZED</span><span class="o">:</span>  <span class="mi">0</span><span class="p">,</span>
         <span class="nx">INITIALIZING</span><span class="o">:</span>   <span class="mi">1</span><span class="p">,</span>  <span class="c1">// executing init</span>
         <span class="nx">INITIALIZED</span><span class="o">:</span>    <span class="mi">5</span><span class="p">,</span>  <span class="c1">// init executed</span>
@@ -824,12 +919,9 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">UNDEFINED_PLAYER</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">UNDEFINED_PLAYER</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
 
-<span class="p">})(</span>
-    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
-    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
-<span class="p">);</span>
+<span class="p">})(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">);</span>
 </pre></div>
         </td>
       </tr>
