@@ -174,7 +174,18 @@
          * Updates the game stage
          */
         node.events.ng.on( IN + say + 'STAGE', function (msg) {
-            node.game.execStep(node.game.plot.getStep(msg.data));
+            var stageObj;
+            if (!msg.data) {
+                node.warn('Received in.say.STAGE msg with empty stage');
+                return;
+            }
+            stageObj = node.game.plot.getStep(msg.data);
+            
+            if (!stageObj) {
+                node.err('Received in.say.STAGE msg with invalid stage');
+                return;
+            }
+            node.game.execStep(stageObj);
         });
 
         /**
