@@ -7949,8 +7949,13 @@ JSUS.extend(PARSE);
         var listeners, len, i, type, node;
         node = this.node;
 
+        if ('string' !== typeof type) {
+            throw TypeError('EventEmitter.remove: type must be a string', this.name);
+        }
+
         if (!this.events[type]) {
-            node.warn('attempt to remove unexisting event ' + type, this.name);
+            debugger;
+            node.warn('EventEmitter.remove: unexisting event ' + type, this.name);
             return false;
         }
 
@@ -7961,31 +7966,33 @@ JSUS.extend(PARSE);
         }
 
         if (listener && 'function' !== typeof listener) {
-            throw TypeError('listener must be a function', this.name);
+            debugger
+            throw TypeError('EventEmitter.remove: listener must be a function', this.name);
         }
 
 
         if ('function' === typeof this.events[type] ) {
             if (listeners == listener) {
                 listeners.splice(i, 1);
-                node.silly('removed listener ' + type + ' ' + listener, this.name);
-                return true;
-            }
-        }
-
-        // array
-        listeners = this.events[type];
-        len = listeners.length;
-        for (i = 0; i < len; i++) {
-            if (listeners[i] == listener) {
-                listeners.splice(i, 1);
                 node.silly('Removed listener ' + type + ' ' + listener, this.name);
                 return true;
             }
         }
+        else {
+            // array
+            listeners = this.events[type];
+            len = listeners.length;
+            for (i = 0; i < len; i++) {
+                if (listeners[i] == listener) {
+                    listeners.splice(i, 1);
+                    node.silly('Removed listener ' + type + ' ' + listener, this.name);
+                    return true;
+                }
+            }
+        }
 
+        node.warn('EventEmitter.remove: no listener-match found for event ' + type, this.name);
         return false;
-
     };
 
     /**
@@ -8187,13 +8194,15 @@ JSUS.extend(PARSE);
     EventEmitterManager.prototype.remove = function(event, listener) {
         var i;
 
-        if ('undefined' === typeof event) {
-            this.node.err('cannot remove listener of undefined event');
+        if ('string' !== typeof event) {
+            debugger
+            this.node.err('EventEmitterManager.remove: event must be string.');
             return false;
         }
 
-        if (listener && 'function' === typeof listener) {
-            this.node.err('listener must be of type function');
+        if (listener && 'function' !== typeof listener) {
+            debugger
+            this.node.err('EventEmitterManager.remove: listener must be function.');
             return false;
         }
 
@@ -14818,13 +14827,16 @@ GameMsg.prototype.toEvent = function () {
      * @see NodeGameClient.off
      */
     NGC.prototype.once = function (event, listener) {
-        var that;
-        if (!event || !listener) return;
-        that = this;
-        this.on(event, listener);
-        this.on(event, function(event, listener) {
-            that.events.remove(event, listener);
-        });
+        var ee, cbRemove;
+        // This function will remove the event listener
+        // and itself.
+        cbRemove = function() {
+            ee.remove(event, listener);
+            ee.remove(event, cbRemove);
+        };
+        ee = this.getCurrentEventEmitter();
+        ee.on(event, listener);
+        ee.on(event, cbRemove);
     };
 
     /**
