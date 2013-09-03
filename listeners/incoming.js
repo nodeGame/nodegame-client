@@ -174,7 +174,6 @@
          * Updates the game stage
          */
         node.events.ng.on( IN + say + 'STAGE', function (msg) {
-            debugger
             var stageObj;
             if (!msg.data) {
                 node.warn('Received in.say.STAGE msg with empty stage');
@@ -186,7 +185,10 @@
                 node.err('Received in.say.STAGE msg with invalid stage');
                 return;
             }
-            node.game.execStep(stageObj);
+            // TODO: renable when it does not cause problems.
+            // At the moment the AdminServer sends this kind of msg
+            // each time an admin publishes its own state
+            //node.game.execStep(stageObj);
         });
 
         /**
