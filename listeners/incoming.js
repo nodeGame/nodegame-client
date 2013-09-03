@@ -174,6 +174,7 @@
          * Updates the game stage
          */
         node.events.ng.on( IN + say + 'STAGE', function (msg) {
+            debugger
             var stageObj;
             if (!msg.data) {
                 node.warn('Received in.say.STAGE msg with empty stage');
