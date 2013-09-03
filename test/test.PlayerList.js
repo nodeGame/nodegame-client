@@ -91,6 +91,14 @@ describe('PlayerList', function() {
             });
             pl.log('A').should.equal('AA');
 	});
+        it('with an index function: should use the index function', function() {
+            pl = new PlayerList({
+                I: {
+                    myIdx: function(o) { return o.count > 100 ? o.id : undefined; }
+                }
+            });
+            ('undefined' !== typeof pl.myIdx).should.be.true;
+	});
 
 
     });
