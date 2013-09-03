@@ -12422,7 +12422,7 @@ GameMsg.prototype.toEvent = function () {
 
 
         // TODO: check how to init
-        this.setCurrentGameStage(new GameStage());
+        this.setCurrentGameStage(new GameStage(), true);
 
 
         this.paused = false;
