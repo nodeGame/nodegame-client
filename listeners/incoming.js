@@ -229,6 +229,7 @@
          * @see JSUS.parse
          */
         node.events.ng.on( IN + say + 'SETUP', function (msg) {
+console.log('* SETUP * ', msg);
             if (!msg.text) return;
             var feature = msg.text,
             payload = ('string' === typeof msg.data) ? J.parse(msg.data) : msg.data;
@@ -249,6 +250,7 @@
          * @see node.setup
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function (msg) {
+console.log('* GAMECOMMAND * ', msg);
             if (!msg.text || !parent.constants.gamecommand[msg.text]) {
                 node.err('unknown game command received: ' + msg.text);
                 return;

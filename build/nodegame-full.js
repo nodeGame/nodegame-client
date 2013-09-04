@@ -11609,7 +11609,7 @@ GameStage.stringify = function(gs) {
             stage: gameStage,
             action: msg.action || constants.action.SAY,
             target: msg.target || constants.target.DATA,
-            from: node.player ? node.player.sid : node.UNDEFINED_PLAYER, // TODO change to id
+            from: node.player ? node.player.id : node.UNDEFINED_PLAYER, // TODO change to id
             to: 'undefined' !== typeof msg.to ? msg.to : 'SERVER',
             text: msg.text || null,
             data: msg.data || null,
@@ -11937,15 +11937,10 @@ GameStage.stringify = function(gs) {
      * @see node.createPlayer
      */
     Socket.prototype.startSession = function (msg) {
-        var player;
         // Store server info
         this.registerServer(msg);
 
-        player = {
-            id: msg.data,
-            sid: msg.data
-        };
-        this.node.createPlayer(player);
+        this.node.createPlayer(msg.data);
         this.session = msg.session;
         return true;
     };
@@ -15572,6 +15567,7 @@ GameStage.stringify = function(gs) {
          * @see JSUS.parse
          */
         node.events.ng.on( IN + say + 'SETUP', function (msg) {
+console.log('* SETUP * ', msg);
             if (!msg.text) return;
             var feature = msg.text,
             payload = ('string' === typeof msg.data) ? J.parse(msg.data) : msg.data;
@@ -15592,6 +15588,7 @@ GameStage.stringify = function(gs) {
          * @see node.setup
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function (msg) {
+console.log('* GAMECOMMAND * ', msg);
             if (!msg.text || !parent.constants.gamecommand[msg.text]) {
                 node.err('unknown game command received: ' + msg.text);
                 return;

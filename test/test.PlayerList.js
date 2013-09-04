@@ -102,6 +102,32 @@ describe('PlayerList', function() {
 
 
     });
+    
+    describe('#view initializations', function() {
+	it('outside view 1', function() {     
+            var pl1, pl2,
+                outsideView1, outsideView2;
+
+            pl1 = new PlayerList({ V: { myView : function(o) { return o.id; } } });
+            outsideView1 = pl1.myView;
+	    pl1.add({ id: 1 });
+
+            pl2 = new PlayerList({ V: { myView : function(o) { return o.id; } } });
+            outsideView2 = pl2.myView;
+	    pl2.add({ id: 2 });
+
+            outsideView1.db.should.not.equal(outsideView2.db);
+	});
+	it('outside view 2', function() {     
+            var outsideView;
+
+            pl = new PlayerList({ V: { myView : function(o) { return o.id; } } });
+            outsideView = pl.myView;
+	    pl.add({ id: 1 });
+
+            outsideView.db.should.equal(pl.myView.db);
+	});
+    });
   
 //    describe('#get()', function() {
 //	before(function(){
