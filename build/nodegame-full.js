@@ -9210,285 +9210,311 @@ GameStage.stringify = function(gs) {
 
 /**
  * # GameMsg
- * 
- * Copyright(c) 2012 Stefano Balietti
- * MIT Licensed 
- * 
+ *
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
  * `nodeGame` exchangeable data format
- * 
+ *
  * ---
  */
 (function (exports, node) {
 
-// ## Global scope	
-var GameStage = node.GameStage,
-	JSUS = node.JSUS;
+    // ## Global scope
+    var GameStage = node.GameStage,
+    JSUS = node.JSUS;
 
-exports.GameMsg = GameMsg;
-
-
-/**
- * ### GameMSg.clone (static)
- * 
- * Returns a perfect copy of a game-message
- * 
- * @param {GameMsg} gameMsg The message to clone
- * @return {GameMsg} The cloned messaged
- * 
- * 	@see JSUS.clone
- */
-GameMsg.clone = function (gameMsg) {	
-	return new GameMsg(gameMsg);
-};
+    exports.GameMsg = GameMsg;
 
 
-/**
- * ## GameMsg constructor
- * 
- * Creates an instance of GameMsg
- */
-function GameMsg (gm) {
-	gm = gm || {};
-	
-// ## Private properties
-
-/**
- * ### GameMsg.id
- * 
- * A randomly generated unique id
- * 
- * @api private
- */	
-	var id = gm.id || Math.floor(Math.random()*1000000);
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'id', {
-			value: id,
-			enumerable: true
-		});
-	}
-	else {
-		this.id = id;
-	}
-
-/**
- * ### GameMsg.session
- * 
- * The session id in which the message was generated
- * 
- * @api private
- */	
-	var session = gm.session;
-	if (node.support.defineProperty) {
-		Object.defineProperty(this, 'session', {
-			value: session,
-			enumerable: true
-		});
-	}
-	else {
-		this.session = session;
-	}
-
-// ## Public properties	
-
-/**
- * ### GameMsg.stage
- * 
- * The game-stage in which the message was generated
- * 
- * 	@see GameStage
- */	
-	this.stage = gm.stage;
-
-/**
- * ### GameMsg.action
- * 
- * The action of the message
- * 
- * 	@see node.action
- */		
-	this.action = gm.action;
-	
-/**
- * ### GameMsg.target
- * 
- * The target of the message
- * 
- * 	@see node.target
- */	
-	this.target = gm.target;
-	
-/**
- * ### GameMsg.from
- * 
- * The id of the sender of the message
- * 
- * 	@see Player.id
- */		
-	this.from = gm.from;
-
-/**
- * ### GameMsg.to
- * 
- * The id of the receiver of the message
- * 
- * 	@see Player.id
- * 	@see node.player.id
- */		
-	this.to = gm.to;
-
-/**
- * ### GameMsg.text
- * 
- * An optional text adding a description for the message
- */		
-	this.text = gm.text; 
-	
-/**
- * ### GameMsg.data
- * 
- * An optional payload field for the message
- */			
-	this.data = gm.data;
-	
-/**
- * ### GameMsg.priority
- * 
- * A priority index associated to the message
- */	
-	this.priority = gm.priority;
-	
-/**
- * ### GameMsg.reliable
- * 
- * Experimental. Disabled for the moment
- * 
- * If set, requires ackwnoledgment of delivery
- * 
- */	
-	this.reliable = gm.reliable;
-
-/**
- * ### GameMsg.created
- * 
- * A timestamp of the date of creation
- */		
-	this.created = JSUS.getDate();
-	
-/**
- * ### GameMsg.forward
- * 
- * If TRUE, the message is a forward. 
- * 
- * E.g. between nodeGame servers
- */	
-	this.forward = 0;
-}
-
-/**
- * ### GameMsg.stringify
- * 
- * Calls JSON.stringify on the message
- * 
- * @return {string} The stringified game-message
- * 
- * 	@see GameMsg.toString
- */
-GameMsg.prototype.stringify = function () {
-	return JSON.stringify(this);
-};
+    /**
+     * ### GameMSg.clone (static)
+     *
+     * Returns a perfect copy of a game-message
+     *
+     * @param {GameMsg} gameMsg The message to clone
+     * @return {GameMsg} The cloned messaged
+     *
+     *  @see JSUS.clone
+     */
+    GameMsg.clone = function (gameMsg) {
+        return new GameMsg(gameMsg);
+    };
 
 
-/**
- * ### GameMsg.toString
- * 
- * Creates a human readable string representation of the message
- * 
- * @return {string} The string representation of the message
- * 	@see GameMsg.stringify
- */
-GameMsg.prototype.toString = function () {
-    var SPT = ",\t";
-    var SPTend = "\n";
-    var DLM = "\"";
+    /**
+     * ## GameMsg constructor
+     *
+     * Creates an instance of GameMsg
+     */
+    function GameMsg (gm) {
+        gm = gm || {};
 
-    var line;
-    
-    line  = this.created + SPT;
-    line += this.id + SPT;
-    line += this.session + SPT;
-    line += this.action + SPT;
-    line += this.target + SPT;
-    line += this.from + SPT;
-    line += this.to + SPT;
-    line += DLM + this.text + DLM + SPT;
-    line += DLM + this.data + DLM + SPT; // maybe to remove
-    line += new GameStage(this.stage) + SPT;
-    line += this.reliable + SPT;
-    line += this.priority + SPTend;
+        // ## Private properties
 
-    return line;
-};
+        /**
+         * ### GameMsg.id
+         *
+         * A randomly generated unique id
+         *
+         * @api private
+         */
+        var id = gm.id || Math.floor(Math.random()*1000000);
+        if (node.support.defineProperty) {
+            Object.defineProperty(this, 'id', {
+                value: id,
+                enumerable: true
+            });
+        }
+        else {
+            this.id = id;
+        }
 
-/**
- * ### GameMSg.toSMS
- * 
- * Creates a compact visualization of the most important properties
- * 
- * @return {string} A compact string representing the message 
- * 
- * @TODO: Create an hash method as for GameStage
- */
-GameMsg.prototype.toSMS = function () {
-	
-	var parseDate = /\w+/; // Select the second word;
-	var results = parseDate.exec(this.created);
+        /**
+         * ### GameMsg.session
+         *
+         * The session id in which the message was generated
+         *
+         * @api private
+         */
+        var session = gm.session;
+        if (node.support.defineProperty) {
+            Object.defineProperty(this, 'session', {
+                value: session,
+                enumerable: true
+            });
+        }
+        else {
+            this.session = session;
+        }
 
-	var line = '[' + this.from + ']->[' + this.to + ']\t';
-	line += '|' + this.action + '.' + this.target + '|'+ '\t';
-	line += ' ' + this.text + ' ';
-	
-	return line;
-};
+        // ## Public properties
 
-/**
- * ### GameMsg.toInEvent
- * 
- * Hashes the action and target properties of an incoming message
- * 
- * @return {string} The hash string
- * 	@see GameMsg.toEvent 
- */
-GameMsg.prototype.toInEvent = function() {
-	return 'in.' + this.toEvent();
-};
+        /**
+         * ### GameMsg.stage
+         *
+         * The game-stage in which the message was generated
+         *
+         *      @see GameStage
+         */
+        this.stage = gm.stage;
 
-/**
- * ### GameMsg.toOutEvent
- * 
- * Hashes the action and target properties of an outgoing message
- * 
- * @return {string} The hash string
- *  @see GameMsg.toEvent
- */
-GameMsg.prototype.toOutEvent = function() {
-	return 'out.' + this.toEvent();
-};
+        /**
+         * ### GameMsg.action
+         *
+         * The action of the message
+         *
+         *      @see node.action
+         */
+        this.action = gm.action;
 
-/**
- * ### GameMsg.toEvent
- * 
- * Hashes the action and target properties of the message
- * 
- * @return {string} The hash string
- */
-GameMsg.prototype.toEvent = function () {
-	return this.action + '.' + this.target;
-}; 
+        /**
+         * ### GameMsg.target
+         *
+         * The target of the message
+         *
+         *      @see node.target
+         */
+        this.target = gm.target;
 
-// ## Closure
+        /**
+         * ### GameMsg.from
+         *
+         * The id of the sender of the message
+         *
+         *      @see Player.id
+         */
+        this.from = gm.from;
+
+        /**
+         * ### GameMsg.to
+         *
+         * The id of the receiver of the message
+         *
+         *      @see Player.id
+         *      @see node.player.id
+         */
+        this.to = gm.to;
+
+        /**
+         * ### GameMsg.text
+         *
+         * An optional text adding a description for the message
+         */
+        this.text = gm.text;
+
+        /**
+         * ### GameMsg.data
+         *
+         * An optional payload field for the message
+         */
+        this.data = gm.data;
+
+        /**
+         * ### GameMsg.priority
+         *
+         * A priority index associated to the message
+         */
+        this.priority = gm.priority;
+
+        /**
+         * ### GameMsg.reliable
+         *
+         * Experimental. Disabled for the moment
+         *
+         * If set, requires ackwnoledgment of delivery
+         *
+         */
+        this.reliable = gm.reliable;
+
+        /**
+         * ### GameMsg.created
+         *
+         * A timestamp of the date of creation
+         */
+        this.created = JSUS.getDate();
+
+        /**
+         * ### GameMsg.forward
+         *
+         * If TRUE, the message is a forward.
+         *
+         * E.g. between nodeGame servers
+         */
+        this.forward = 0;
+    }
+
+    /**
+     * ### GameMsg.stringify
+     *
+     * Calls JSON.stringify on the message
+     *
+     * @return {string} The stringified game-message
+     *
+     *  @see GameMsg.toString
+     */
+    GameMsg.prototype.stringify = function () {
+        return JSON.stringify(this);
+    };
+
+
+    /**
+     * ### GameMsg.toString
+     *
+     * Creates a human readable string representation of the message
+     *
+     * @return {string} The string representation of the message
+     *  @see GameMsg.stringify
+     */
+    GameMsg.prototype.toString = function () {
+        var SPT, TAB, DLM, line, UNKNOWN, tmp;
+        SPT = ",\t";
+        TAB = "\t";
+        DLM = "\"";
+        UNKNOWN = "\"unknown\"\t";
+        line  = this.created + SPT;
+        line += this.id + SPT;
+        line += this.session + SPT;
+        line += this.action + SPT;
+        line += this.target ? this.target.length < 6  ? this.target + SPT + TAB : this.target + SPT : UNKNOWN;
+        line += this.from ? this.from.length < 6  ? this.from + SPT + TAB : this.from + SPT : UKNOWN;
+        line += this.to ? this.to.length < 6  ? this.to + SPT + TAB : this.to + SPT : UNKNOWN;
+        if (!this.text) {
+            line += "\"no text\"" + SPT;
+        }
+        else {
+            tmp = this.text.toString();
+            if (tmp.length > 9) { 
+                line += DLM + tmp.substr(0,9) + "..." + DLM + SPT;
+            }
+            else if (tmp.length < 6) {
+                line += DLM + tmp + DLM + SPT + TAB;
+            }
+            else {
+                line += DLM + tmp + DLM + SPT;
+            }
+        }
+        if (!this.data) {
+            line += "\"no data\"" + SPT;
+        }
+        else {
+            tmp = this.data.toString();
+            if (tmp.length > 9) { 
+                line += DLM + tmp.substr(0,9) + "..." + DLM + SPT;
+            }
+            else if (tmp.length < 6) {
+                line += DLM + tmp + DLM + SPT + TAB;
+            }
+            else {
+                line += DLM + tmp + DLM + SPT;
+            }
+        }
+        line += new GameStage(this.stage) + SPT;
+        line += this.reliable + SPT;
+        line += this.priority;
+        return line;
+    };
+
+    /**
+     * ### GameMSg.toSMS
+     *
+     * Creates a compact visualization of the most important properties
+     *
+     * @return {string} A compact string representing the message
+     *
+     * @TODO: Create an hash method as for GameStage
+     */
+    GameMsg.prototype.toSMS = function () {
+
+        var parseDate = /\w+/; // Select the second word;
+        var results = parseDate.exec(this.created);
+
+        var line = '[' + this.from + ']->[' + this.to + ']\t';
+        line += '|' + this.action + '.' + this.target + '|'+ '\t';
+        line += ' ' + this.text + ' ';
+
+        return line;
+    };
+
+    /**
+     * ### GameMsg.toInEvent
+     *
+     * Hashes the action and target properties of an incoming message
+     *
+     * @return {string} The hash string
+     *  @see GameMsg.toEvent
+     */
+    GameMsg.prototype.toInEvent = function() {
+        return 'in.' + this.toEvent();
+    };
+
+    /**
+     * ### GameMsg.toOutEvent
+     *
+     * Hashes the action and target properties of an outgoing message
+     *
+     * @return {string} The hash string
+     *  @see GameMsg.toEvent
+     */
+    GameMsg.prototype.toOutEvent = function() {
+        return 'out.' + this.toEvent();
+    };
+
+    /**
+     * ### GameMsg.toEvent
+     *
+     * Hashes the action and target properties of the message
+     *
+     * @return {string} The hash string
+     */
+    GameMsg.prototype.toEvent = function () {
+        return this.action + '.' + this.target;
+    };
+
+    // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports,
-	'undefined' != typeof node ? node : module.parent.exports
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
 );
 
 /**
@@ -15399,6 +15425,9 @@ GameMsg.prototype.toEvent = function () {
                 node.err('Received in.say.STAGE msg with invalid stage');
                 return;
             }
+            // TODO: renable when it does not cause problems.
+            // At the moment the AdminServer sends this kind of msg
+            // each time an admin publishes its own state
             //node.game.execStep(stageObj);
         });
 
