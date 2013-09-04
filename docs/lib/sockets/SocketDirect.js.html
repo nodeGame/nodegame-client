@@ -21,6 +21,9 @@
       <div class="heading h1">
         <a href="#socketdirect">SocketDirect</a>
       </div>
+      <div class="heading h2">
+        <a href="#socketdirect.socket">SocketDirect.socket</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -54,8 +57,26 @@ a shared event-emitter object</p>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
-        
-        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">socket</span><span class="p">;</span>
+        </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socketdirect.socket">
+  <h2>
+    <a href="#socketdirect.socket" class="pilcrow">&#182;</a>
+    SocketDirect.socket
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>The SocketDirect object shared with the server</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">socket</span><span class="p">;</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">}</span>
 
@@ -72,8 +93,17 @@ a shared event-emitter object</p>
       <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
   
-        <span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>Call the SocketDirect method on the server.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;socket.direct connection open&#39;</span><span class="p">);</span> 
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
   

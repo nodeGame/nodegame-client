@@ -113,8 +113,8 @@
 </div>
 
   </div>
-  <div class="body"><p>Copyright(c) 2012 Stefano Balietti
-MIT Licensed </p>
+  <div class="body"><p>Copyright(c) 2013 Stefano Balietti
+MIT Licensed</p>
 
 <p><code>nodeGame</code> exchangeable data format</p>
 
@@ -135,10 +135,10 @@ MIT Licensed </p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
-  <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
+    <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">GameMsg</span><span class="p">;</span></pre></div>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">GameMsg</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -172,9 +172,9 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">clone</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gameMsg</span><span class="p">)</span> <span class="p">{</span>  
-  <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">(</span><span class="nx">gameMsg</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">clone</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">gameMsg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">(</span><span class="nx">gameMsg</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -192,9 +192,8 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">GameMsg</span> <span class="p">(</span><span class="nx">gm</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">gm</span> <span class="o">=</span> <span class="nx">gm</span> <span class="o">||</span> <span class="p">{};</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">GameMsg</span> <span class="p">(</span><span class="nx">gm</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">gm</span> <span class="o">=</span> <span class="nx">gm</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -232,16 +231,16 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span><span class="o">*</span><span class="mi">1000000</span><span class="p">);</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">value</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span>
-      <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
-  <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span><span class="o">*</span><span class="mi">1000000</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">value</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span>
+                <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -266,16 +265,16 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">session</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">session</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">value</span><span class="o">:</span> <span class="nx">session</span><span class="p">,</span>
-      <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="nx">session</span><span class="p">;</span>
-  <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">session</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">session</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">value</span><span class="o">:</span> <span class="nx">session</span><span class="p">,</span>
+                <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="nx">session</span><span class="p">;</span>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -304,11 +303,15 @@ MIT Licensed </p>
   </div>
   <div class="body"><p>The game-stage in which the message was generated</p>
 
-<p>@see GameStage</p>
+
+<div class="highlight"><pre><code> <span class="err">@</span><span class="n">see</span> <span class="n">GameStage</span>
+</code></pre></div>
+
+
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -324,12 +327,15 @@ MIT Licensed </p>
   </div>
   <div class="body"><p>The action of the message</p>
 
-<p>@see node.action</p>
+
+<div class="highlight"><pre><code> <span class="err">@</span><span class="n">see</span> <span class="n">node</span><span class="p">.</span><span class="n">action</span>
+</code></pre></div>
+
+
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">action</span><span class="p">;</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">action</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -345,12 +351,15 @@ MIT Licensed </p>
   </div>
   <div class="body"><p>The target of the message</p>
 
-<p>@see node.target</p>
+
+<div class="highlight"><pre><code> <span class="err">@</span><span class="n">see</span> <span class="n">node</span><span class="p">.</span><span class="n">target</span>
+</code></pre></div>
+
+
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -366,11 +375,15 @@ MIT Licensed </p>
   </div>
   <div class="body"><p>The id of the sender of the message</p>
 
-<p>@see Player.id</p>
+
+<div class="highlight"><pre><code> <span class="err">@</span><span class="n">see</span> <span class="n">Player</span><span class="p">.</span><span class="n">id</span>
+</code></pre></div>
+
+
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">from</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">from</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">from</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">from</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -386,12 +399,16 @@ MIT Licensed </p>
   </div>
   <div class="body"><p>The id of the receiver of the message</p>
 
-<p>@see Player.id
-  @see node.player.id</p>
+
+<div class="highlight"><pre><code> <span class="err">@</span><span class="n">see</span> <span class="n">Player</span><span class="p">.</span><span class="n">id</span>
+ <span class="err">@</span><span class="n">see</span> <span class="n">node</span><span class="p">.</span><span class="n">player</span><span class="p">.</span><span class="n">id</span>
+</code></pre></div>
+
+
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">to</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">to</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">to</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">to</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -409,8 +426,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">text</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">text</span><span class="p">;</span> 
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">text</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">text</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -428,8 +444,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -447,8 +462,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">priority</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">priority</span><span class="p">;</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">priority</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">priority</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -468,7 +482,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">reliable</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">reliable</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">reliable</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">reliable</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -486,8 +500,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">created</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getDate</span><span class="p">();</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">created</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getDate</span><span class="p">();</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -501,14 +514,14 @@ MIT Licensed </p>
 </div>
 
   </div>
-  <div class="body"><p>If TRUE, the message is a forward. </p>
+  <div class="body"><p>If TRUE, the message is a forward.</p>
 
 <p>E.g. between nodeGame servers</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">forward</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">forward</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -536,9 +549,9 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -560,33 +573,59 @@ MIT Licensed </p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
       <span>The string representation of the message
-  @see GameMsg.stringify</span>
+ @see GameMsg.stringify</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">SPT</span> <span class="o">=</span> <span class="s2">&quot;,\t&quot;</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">SPTend</span> <span class="o">=</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">DLM</span> <span class="o">=</span> <span class="s2">&quot;\&quot;&quot;</span><span class="p">;</span>
-
-    <span class="kd">var</span> <span class="nx">line</span><span class="p">;</span>
-    
-    <span class="nx">line</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">created</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
-    <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
-    <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
-    <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
-    <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
-    <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">from</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
-    <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">to</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
-    <span class="nx">line</span> <span class="o">+=</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">text</span> <span class="o">+</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
-    <span class="nx">line</span> <span class="o">+=</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">+</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span> <span class="c1">// maybe to remove</span>
-    <span class="nx">line</span> <span class="o">+=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
-    <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">reliable</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
-    <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">priority</span> <span class="o">+</span> <span class="nx">SPTend</span><span class="p">;</span>
-
-    <span class="k">return</span> <span class="nx">line</span><span class="p">;</span>
-<span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">SPT</span><span class="p">,</span> <span class="nx">TAB</span><span class="p">,</span> <span class="nx">DLM</span><span class="p">,</span> <span class="nx">line</span><span class="p">,</span> <span class="nx">UNKNOWN</span><span class="p">,</span> <span class="nx">tmp</span><span class="p">;</span>
+        <span class="nx">SPT</span> <span class="o">=</span> <span class="s2">&quot;,\t&quot;</span><span class="p">;</span>
+        <span class="nx">TAB</span> <span class="o">=</span> <span class="s2">&quot;\t&quot;</span><span class="p">;</span>
+        <span class="nx">DLM</span> <span class="o">=</span> <span class="s2">&quot;\&quot;&quot;</span><span class="p">;</span>
+        <span class="nx">UNKNOWN</span> <span class="o">=</span> <span class="s2">&quot;\&quot;unknown\&quot;\t&quot;</span><span class="p">;</span>
+        <span class="nx">line</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">created</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
+        <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
+        <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
+        <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
+        <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">6</span>  <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">+</span> <span class="nx">SPT</span> <span class="o">+</span> <span class="nx">TAB</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">+</span> <span class="nx">SPT</span> <span class="o">:</span> <span class="nx">UNKNOWN</span><span class="p">;</span>
+        <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">from</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">from</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">6</span>  <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">from</span> <span class="o">+</span> <span class="nx">SPT</span> <span class="o">+</span> <span class="nx">TAB</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">from</span> <span class="o">+</span> <span class="nx">SPT</span> <span class="o">:</span> <span class="nx">UKNOWN</span><span class="p">;</span>
+        <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">to</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">6</span>  <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">to</span> <span class="o">+</span> <span class="nx">SPT</span> <span class="o">+</span> <span class="nx">TAB</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">to</span> <span class="o">+</span> <span class="nx">SPT</span> <span class="o">:</span> <span class="nx">UNKNOWN</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">line</span> <span class="o">+=</span> <span class="s2">&quot;\&quot;no text\&quot;&quot;</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">tmp</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">text</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmp</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">9</span><span class="p">)</span> <span class="p">{</span> 
+                <span class="nx">line</span> <span class="o">+=</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">tmp</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span> <span class="o">+</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">tmp</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">line</span> <span class="o">+=</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">tmp</span> <span class="o">+</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">SPT</span> <span class="o">+</span> <span class="nx">TAB</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">line</span> <span class="o">+=</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">tmp</span> <span class="o">+</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">line</span> <span class="o">+=</span> <span class="s2">&quot;\&quot;no data\&quot;&quot;</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">tmp</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmp</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">9</span><span class="p">)</span> <span class="p">{</span> 
+                <span class="nx">line</span> <span class="o">+=</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">tmp</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span> <span class="o">+</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">tmp</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">line</span> <span class="o">+=</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">tmp</span> <span class="o">+</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">SPT</span> <span class="o">+</span> <span class="nx">TAB</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">line</span> <span class="o">+=</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">tmp</span> <span class="o">+</span> <span class="nx">DLM</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">line</span> <span class="o">+=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
+        <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">reliable</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
+        <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">priority</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">line</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -607,22 +646,22 @@ MIT Licensed </p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
-      <span>A compact string representing the message </span>
+      <span>A compact string representing the message</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toSMS</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  
-  <span class="kd">var</span> <span class="nx">parseDate</span> <span class="o">=</span> <span class="sr">/\w+/</span><span class="p">;</span> <span class="c1">// Select the second word;</span>
-  <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">parseDate</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">created</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toSMS</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-  <span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">from</span> <span class="o">+</span> <span class="s1">&#39;]-&gt;[&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">to</span> <span class="o">+</span> <span class="s1">&#39;]\t&#39;</span><span class="p">;</span>
-  <span class="nx">line</span> <span class="o">+=</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span><span class="o">+</span> <span class="s1">&#39;\t&#39;</span><span class="p">;</span>
-  <span class="nx">line</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">text</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">;</span>
-  
-  <span class="k">return</span> <span class="nx">line</span><span class="p">;</span>
-<span class="p">};</span></pre></div>
+        <span class="kd">var</span> <span class="nx">parseDate</span> <span class="o">=</span> <span class="sr">/\w+/</span><span class="p">;</span> <span class="c1">// Select the second word;</span>
+        <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">parseDate</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">created</span><span class="p">);</span>
+
+        <span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">from</span> <span class="o">+</span> <span class="s1">&#39;]-&gt;[&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">to</span> <span class="o">+</span> <span class="s1">&#39;]\t&#39;</span><span class="p">;</span>
+        <span class="nx">line</span> <span class="o">+=</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span><span class="o">+</span> <span class="s1">&#39;\t&#39;</span><span class="p">;</span>
+        <span class="nx">line</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">text</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="nx">line</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -644,14 +683,14 @@ MIT Licensed </p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
       <span>The hash string
-  @see GameMsg.toEvent </span>
+ @see GameMsg.toEvent</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toInEvent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="s1">&#39;in.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">toEvent</span><span class="p">();</span>
-<span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toInEvent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;in.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">toEvent</span><span class="p">();</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -678,9 +717,9 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toOutEvent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="s1">&#39;out.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">toEvent</span><span class="p">();</span>
-<span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toOutEvent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;out.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">toEvent</span><span class="p">();</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -706,9 +745,9 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toEvent</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
-<span class="p">};</span> </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toEvent</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -722,8 +761,8 @@ MIT Licensed </p>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
         </td>

@@ -207,7 +207,7 @@ MIT Licensed</p>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">;</span>
     <span class="p">};</span>
 
-    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uri</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">humanReadableUri</span> <span class="o">=</span> <span class="nx">uri</span> <span class="o">||</span> <span class="s1">&#39;local server&#39;</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Socket.connet: cannot connet to &#39;</span> <span class="o">+</span> <span class="nx">humanReadableUri</span> <span class="o">+</span> <span class="s1">&#39; . No open socket.&#39;</span><span class="p">);</span>
@@ -217,7 +217,7 @@ MIT Licensed</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">uri</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;connecting to &#39;</span> <span class="o">+</span> <span class="nx">humanReadableUri</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">user_options</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span> <span class="o">?</span> <span class="nx">options</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">user_options</span><span class="p">);</span>
     <span class="p">};</span>
 
     <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onDisconnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
@@ -347,7 +347,7 @@ send HI to ALL
                 <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">toInEvent</span><span class="p">(),</span> <span class="nx">msg</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;buffering: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;B: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -454,7 +454,7 @@ send HI to ALL
             <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">toInEvent</span><span class="p">(),</span> <span class="nx">msg</span><span class="p">);</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;Debuffered &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;D: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">};</span></pre></div>

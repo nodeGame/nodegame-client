@@ -204,15 +204,14 @@ multiplayer games in the browser.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">verbosity_levels</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="nx">ALWAYS</span><span class="o">:</span> <span class="o">-</span><span class="p">(</span><span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_VALUE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> 
-      <span class="nx">ERR</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-      <span class="nx">WARN</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="nx">INFO</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-      <span class="nx">SILLY</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
-      <span class="nx">DEBUG</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
-      <span class="nx">NEVER</span><span class="o">:</span> <span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_VALUE</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="p">};</span>  
-  </pre></div>
+            <span class="nx">ALWAYS</span><span class="o">:</span> <span class="o">-</span><span class="p">(</span><span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_VALUE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="nx">ERR</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+            <span class="nx">WARN</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">INFO</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nx">SILLY</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="nx">DEBUG</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="nx">NEVER</span><span class="o">:</span> <span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_VALUE</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -225,17 +224,14 @@ multiplayer games in the browser.</p>
   </h3>
 </div>
 
-
-<p>The minimum level for a log entry to be displayed as output</p>
+  </div>
+  <div class="body"><p>The minimum level for a log entry to be displayed as output</p>
 
 <p>Defaults, only errors are displayed.</p>
   </div>
-  <div class="body">
-  </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">WARN</span><span class="p">;</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">WARN</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -248,17 +244,14 @@ multiplayer games in the browser.</p>
   </h3>
 </div>
 
-
-<p>The name of this node, used in logging output</p>
+  </div>
+  <div class="body"><p>The name of this node, used in logging output</p>
 
 <p>Defaults, 'ng'</p>
   </div>
-  <div class="body">
-  </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">=</span> <span class="s1">&#39;ng&#39;</span><span class="p">;</span>
-        </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">=</span> <span class="s1">&#39;ng&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1062,8 +1055,7 @@ Updates the monitor list in Game</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;mlist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">monitorList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">updatePlayerList</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;ml&#39;</span><span class="p">,</span> <span class="nx">monitorList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">);</span>
-        <span class="p">});</span>
-        </pre></div>
+        <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1100,8 +1092,7 @@ Updates the monitor list in Game</p>
                 <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">throw</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
                         <span class="s2">&quot;register(&#39;plist&#39;) got invalid updateRule&quot;</span><span class="p">);</span>
-                <span class="p">}</span>
-                </pre></div>
+                <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1109,14 +1100,13 @@ Updates the monitor list in Game</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
-<p>automatic cast from Object to Player   </p>
+<p>automatic cast from Object to Player</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>                <span class="nx">dstList</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">srcList</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="k">return</span> <span class="nx">dstList</span><span class="p">;</span>
-        <span class="p">}</span>
-        </pre></div>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1126,7 +1116,7 @@ Updates the monitor list in Game</p>
 </div>
 <p>ALIAS</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        </pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -1139,8 +1129,7 @@ Updates the monitor list in Game</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.TXT&#39;</span><span class="p">);</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.TXT&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1153,8 +1142,7 @@ Updates the monitor list in Game</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.DATA&#39;</span><span class="p">]);</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.DATA&#39;</span><span class="p">]);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1167,8 +1155,7 @@ Updates the monitor list in Game</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STATE&#39;</span><span class="p">);</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STATE&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1181,8 +1168,7 @@ Updates the monitor list in Game</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STAGE&#39;</span><span class="p">);</span>  
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STAGE&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1195,8 +1181,7 @@ Updates the monitor list in Game</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;plist&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.set.PLIST&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PLIST&#39;</span><span class="p">]);</span>
-        </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;plist&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.set.PLIST&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PLIST&#39;</span><span class="p">]);</span></pre></div>
         </td>
       </tr>
       <tr>
