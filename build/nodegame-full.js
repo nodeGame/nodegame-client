@@ -13949,7 +13949,7 @@ GameMsg.prototype.toEvent = function () {
          *   
          *  Defaults, 'ng'
          */
-        this.nodename = 'noga';
+        this.nodename = 'ng';
         
         /**
          * ### node.remoteVerbosity
@@ -14135,7 +14135,7 @@ GameMsg.prototype.toEvent = function () {
          * Sets the name for nodegame
          */
         this.registerSetup('nodename', function(newName) {
-            newName = newName || 'noge';
+            newName = newName || 'ng';
             if ('string' !== typeof newName) {
                 throw new TypeError('node.nodename must be of type string');
             }
