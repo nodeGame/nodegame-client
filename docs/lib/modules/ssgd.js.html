@@ -105,23 +105,13 @@ MIT Licensed</p>
         <span class="p">}</span>
 
         <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-            <span class="nx">target</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
             <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
             <span class="nx">text</span><span class="o">:</span> <span class="nx">label</span><span class="p">,</span>
             <span class="nx">data</span><span class="o">:</span> <span class="nx">payload</span>
-        <span class="p">});</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
-</div>
-<p>@TODO when refactoring is finished, emit this event.
-By default there nothing should happen, but people could listen to it
-this.emit('out.say.DATA', msg);</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+        <span class="p">});</span>
+        <span class="kr">debugger</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -162,8 +152,8 @@ this.emit('out.say.DATA', msg);</p>
         <span class="p">}</span>
 
         <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-            <span class="nx">action</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span>
-            <span class="nx">target</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
+            <span class="nx">action</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
             <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
             <span class="nx">reliable</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nx">text</span><span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
@@ -174,7 +164,7 @@ this.emit('out.say.DATA', msg);</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
 </div>
 <p>@TODO when refactoring is finished, emit this event.
 By default there nothing should happen, but people could listen to it
@@ -228,8 +218,8 @@ Experimental. Undocumented (for now)</span>
         <span class="p">}</span>
 
         <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-            <span class="nx">action</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span>
-            <span class="nx">target</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
+            <span class="nx">action</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
             <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
             <span class="nx">reliable</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nx">text</span><span class="o">:</span> <span class="nx">key</span>
@@ -239,7 +229,7 @@ Experimental. Undocumented (for now)</span>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
 <p>@TODO when refactoring is finished, emit this event.
 By default there nothing should happen, but people could listen to it

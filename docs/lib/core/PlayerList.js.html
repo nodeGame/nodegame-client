@@ -320,8 +320,9 @@ to perform operation on them</p>
   <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
 <p>Indexing the players by id.
-We need to add this for the DB constructor that will be
-able to index the players passed in the db parameter</p>
+We need to add this option for the NDDB constructor,
+so that will be able to index all the players passed 
+in the db parameter</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">I</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">I</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">I</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
@@ -334,6 +335,20 @@ able to index the players passed in the db parameter</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
 </div>
+<p>Probably we don't need this
+       // Indexing the players by sid.
+       if ('undefined' === typeof options.I.sid) {
+           options.I.sid =  function(p) { return p.sid; };
+       }</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
 <p>We check if the index are not existing already because
 it could be that the constructor is called by the breed function
 and in such case we would duplicate them.
@@ -344,14 +359,28 @@ PlayerList.exist will fail.</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">index</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
             <span class="p">});</span>
-        <span class="p">}</span>
-        </pre></div>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>Probably we don't need this
+       if (!this.sid) {
+           this.index('sid', function(p) {
+               return p.id;
+           });
+       }</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>Invoking NDDB constructor.</p>
         </td>
@@ -362,7 +391,7 @@ PlayerList.exist will fail.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>Assigns a global comparator function.</p>
         </td>
@@ -372,7 +401,7 @@ PlayerList.exist will fail.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
 <p>Not sure if we need it now
  if (!this.stage) {
@@ -387,7 +416,7 @@ PlayerList.exist will fail.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <p>The internal counter that will be used to assing the <code>count</code>
 property to each inserted player</p>
@@ -531,12 +560,13 @@ the internal <code>pcounter</code> variable is incremented.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">player</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
                     <span class="s1">&#39;PlayerList.get: id was not given&#39;</span><span class="p">);</span>
 
         <span class="p">}</span>
-        <span class="kd">var</span> <span class="nx">player</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+        <span class="nx">player</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
                     <span class="s1">&#39;PlayerList.get: Player not found (id &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
@@ -577,11 +607,12 @@ the internal <code>pcounter</code> variable is incremented.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">player</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
                 <span class="s1">&#39;PlayerList.remove: id was not given&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="kd">var</span> <span class="nx">player</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+        <span class="nx">player</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
                 <span class="s1">&#39;PlayerList.remove: Player not found (id &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
@@ -680,7 +711,7 @@ TODO remove after transition is complete</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>TODO: check playerState</p>
         </td>
@@ -860,7 +891,7 @@ that game step have the property <code>stageLevel</code> equal to <code>Game.sta
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Check players in current stage up to the reference step:</p>
         </td>
@@ -870,7 +901,7 @@ that game step have the property <code>stageLevel</code> equal to <code>Game.sta
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Player in another stage</p>
         </td>
@@ -882,7 +913,7 @@ that game step have the property <code>stageLevel</code> equal to <code>Game.sta
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Player after given step</p>
         </td>
@@ -894,7 +925,7 @@ that game step have the property <code>stageLevel</code> equal to <code>Game.sta
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Player before given step</p>
         </td>
@@ -909,7 +940,7 @@ that game step have the property <code>stageLevel</code> equal to <code>Game.sta
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Just check players in current step:</p>
         </td>
@@ -919,7 +950,7 @@ that game step have the property <code>stageLevel</code> equal to <code>Game.sta
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Player in another step</p>
         </td>
@@ -932,7 +963,7 @@ that game step have the property <code>stageLevel</code> equal to <code>Game.sta
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Player not done with his step</p>
         </td>
@@ -1155,7 +1186,7 @@ cannot overwrite any previously existing property.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Expose Player constructor</p>
         </td>

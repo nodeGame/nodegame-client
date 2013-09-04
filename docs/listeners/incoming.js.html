@@ -451,9 +451,20 @@ node.emit(msg.text, msg.data); -->
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stageObj</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Received in.say.STAGE msg with invalid stage&#39;</span><span class="p">);</span>
                 <span class="k">return</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">execStep</span><span class="p">(</span><span class="nx">stageObj</span><span class="p">);</span>
-        <span class="p">});</span></pre></div>
+            <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>TODO: renable when it does not cause problems.
+At the moment the AdminServer sends this kind of msg
+each time an admin publishes its own state
+node.game.execStep(stageObj);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -477,7 +488,7 @@ node.emit(msg.text, msg.data); -->
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>node.game.setStageLevel(msg.data);</p>
         </td>
@@ -616,7 +627,7 @@ does not leave the page, it just switches channel.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>node.socket.disconnect();</p>
         </td>
@@ -638,7 +649,7 @@ does not leave the page, it just switches channel.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <!-- ends incoming listener -->
         </td>

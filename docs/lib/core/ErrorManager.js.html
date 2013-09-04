@@ -113,7 +113,7 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
-        <span class="k">throw</span> <span class="s1">&#39;Runtime: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">;</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Runtime: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="nx">NodeGameRuntimeError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
