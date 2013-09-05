@@ -22,7 +22,7 @@
         <a href="#stepping-rules">Stepping Rules</a>
       </div>
       <div class="heading h2">
-        <a href="#sync_all">SYNC_ALL</a>
+        <a href="#sync_step">SYNC_STEP</a>
       </div>
       <div class="heading h2">
         <a href="#solo">SOLO</a>
@@ -79,10 +79,10 @@ context-less in the browser too.</p>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="sync_all">
+<div class="pilwrap" id="sync_step">
   <h2>
-    <a href="#sync_all" class="pilcrow">&#182;</a>
-    SYNC_ALL
+    <a href="#sync_step" class="pilcrow">&#182;</a>
+    SYNC_STEP
   </h2>
 </div>
 
@@ -90,7 +90,7 @@ context-less in the browser too.</p>
 <p>Player waits that all the clients have terminated the
 current step before going to the next</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">.</span><span class="nx">SYNC_ALL</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">.</span><span class="nx">SYNC_STEP</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span> <span class="o">&amp;&amp;</span>
             <span class="nx">pl</span><span class="p">.</span><span class="nx">isStepDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
