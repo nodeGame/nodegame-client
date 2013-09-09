@@ -1,8 +1,6 @@
 var util = require('util'),
 should = require('should');
 
-
-
 var ngc = module.exports.node = require('./../index.js');
 
 //console.log(node);
@@ -106,7 +104,7 @@ describe('PlayerList', function() {
     describe('#view initializations', function() {
 	it('outside view 1', function() {     
             var pl1, pl2,
-                outsideView1, outsideView2;
+            outsideView1, outsideView2;
 
             pl1 = new PlayerList({ V: { myView : function(o) { return o.id; } } });
             outsideView1 = pl1.myView;
@@ -128,56 +126,56 @@ describe('PlayerList', function() {
             outsideView.db.should.equal(pl.myView.db);
 	});
     });
-  
-//    describe('#get()', function() {
-//	before(function(){
-//	    test_player = pl.get(player.id);
-//	});
-//	it('should return the player we have inserted before', function() {
-//	    samePlayer(player, test_player);
-//	});
-//	
-//    });
-//    
-//    describe('#pop()', function() {
-//	before(function() {
-//	    test_player = pl.pop(player.id);
-//	});
-//	
-//	it('should return a player object', function() {
-//	    test_player.should.exists;
-//	});
-//	
-//	it('should return the player we have inserted before', function() {
-//	    samePlayer(player, test_player);
-//	});
-//	
-//	it('should remove the player we have inserted before', function() {
-//	    pl.length.should.equal(0);
-//	});
-//    });
-//    
-//    describe('#getRandom()', function() {
-//	before(function(){
-//	    pl.add(player);
-//	    pl.add(player2);
-//	    pl.add(player3);
-//	    pl.add(player4);
-//	});
-//	
-//	it('should return one random player', function() {
-//	    var r = pl.getRandom();
-//	    r.name.should.exist;
-//	    r.should.be.a('object');
-//	    [player,player2,player3,player4].should.include(r);
-//	    
-//	});
-//	
-//	it('should return two random players', function() {
-//	    var set = pl.getRandom(2);
-//	    set.length.should.equal(2);
-//	});
-//    });
+    
+    //    describe('#get()', function() {
+    //	before(function(){
+    //	    test_player = pl.get(player.id);
+    //	});
+    //	it('should return the player we have inserted before', function() {
+    //	    samePlayer(player, test_player);
+    //	});
+    //	
+    //    });
+    //    
+    //    describe('#pop()', function() {
+    //	before(function() {
+    //	    test_player = pl.pop(player.id);
+    //	});
+    //	
+    //	it('should return a player object', function() {
+    //	    test_player.should.exists;
+    //	});
+    //	
+    //	it('should return the player we have inserted before', function() {
+    //	    samePlayer(player, test_player);
+    //	});
+    //	
+    //	it('should remove the player we have inserted before', function() {
+    //	    pl.length.should.equal(0);
+    //	});
+    //    });
+    //    
+    //    describe('#getRandom()', function() {
+    //	before(function(){
+    //	    pl.add(player);
+    //	    pl.add(player2);
+    //	    pl.add(player3);
+    //	    pl.add(player4);
+    //	});
+    //	
+    //	it('should return one random player', function() {
+    //	    var r = pl.getRandom();
+    //	    r.name.should.exist;
+    //	    r.should.be.a('object');
+    //	    [player,player2,player3,player4].should.include(r);
+    //	    
+    //	});
+    //	
+    //	it('should return two random players', function() {
+    //	    var set = pl.getRandom(2);
+    //	    set.length.should.equal(2);
+    //	});
+    //    });
     
     
 });
