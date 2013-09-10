@@ -94,18 +94,18 @@ describe('GameDB', function() {
 	
     });
     
-    describe('#select()', function() {
-	before(function(){
-	    test_db = null;
-	});
-	it("db.select('stage', '=', '3.2.1') should consist of 4 items", function() {
-	    db.select('stage', '=', '3.2.1').length.should.equal(4);
-	});
-	it("db.select('player', '=', player4) should consist of 1 item", function() {
-	    db.select('player', '=', player4).length.should.equal(1);
-	});
-	
-	// TODO: try different combinations
-    });
+//    describe('#select()', function() {
+//	before(function(){
+//	    test_db = null;
+//	});
+//	it("db.select('stage', '=', '3.2.1') should consist of 4 items", function() {
+//	    db.select('stage', '=', '3.2.1').length.should.equal(4);
+//	});
+//	it("db.select('player', '=', player4) should consist of 1 item", function() {
+//	    db.select('player', '=', player4).length.should.equal(1);
+//	});
+//	
+//	// TODO: try different combinations
+//    });
     
 });
