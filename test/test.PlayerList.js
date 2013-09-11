@@ -69,13 +69,17 @@ myLog.prototype.log = function(a) {
 describe('PlayerList', function() {
     
     describe('#constructor', function() {
-	it('with no paramters: player list length 0', function() {     
+	it('with no parameters: player list length 0', function() {     
             pl = new PlayerList();
 	    pl.size().should.equal(0);
 	});
         it('with a list of players: player list length 4', function() {     
             pl = new PlayerList(null, plDB);
 	    pl.size().should.equal(plDB.length);
+	});
+        it('with no parameters: should have the id index', function() {
+            pl = new PlayerList();
+	    ('undefined' !== typeof pl.id).should.be.true;
 	});
 	it('with a list of players: should have for elements in the ID index', function() {
             pl = new PlayerList(null, plDB);
