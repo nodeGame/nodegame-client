@@ -9253,10 +9253,9 @@ GameStage.stringify = function(gs) {
 
     // ## Global scope
     var GameStage = node.GameStage,
-    JSUS = node.JSUS;
+    J = node.JSUS;
 
     exports.GameMsg = GameMsg;
-
 
     /**
      * ### GameMSg.clone (static)
@@ -9403,7 +9402,7 @@ GameStage.stringify = function(gs) {
          *
          * A timestamp of the date of creation
          */
-        this.created = JSUS.getDate();
+        this.created = J.getDate();
 
         /**
          * ### GameMsg.forward
@@ -9473,7 +9472,7 @@ GameStage.stringify = function(gs) {
             if (tmp.length > 9) { 
                 line += DLM + tmp.substr(0,9) + "..." + DLM + SPT;
             }
-            else if (tmp.length < 6) {
+            else if (tmp.length < 9) {
                 line += DLM + tmp + DLM + SPT + TAB;
             }
             else {
@@ -12401,11 +12400,11 @@ GameStage.stringify = function(gs) {
          *
          * Contains following properties:
          *
-         *  - observer: If TRUE, silently observes the game. Default: FALSE
-         *
          *  - minPlayers: Default: 1
          *
          *  - maxPlayers: Default: 1000
+         *
+         *  - publishLevel: Default: REGULAR (10)
          */
         this.settings = {
             minPlayers: settings.minPlayers || 1, // 0 is invalid
@@ -12421,8 +12420,6 @@ GameStage.stringify = function(gs) {
          * The list of players connected to the game
          *
          * The list may be empty, depending on the server settings
-         *
-         * @api private
          */
         this.pl = new PlayerList({
             log: this.node.log,
@@ -12435,8 +12432,6 @@ GameStage.stringify = function(gs) {
          * The list of monitor clients connected to the game
          *
          * The list may be empty, depending on the server settings
-         *
-         * @api private
          */
         this.ml = new PlayerList({
             log: this.node.log,
@@ -12468,17 +12463,13 @@ GameStage.stringify = function(gs) {
          * The Game Plot
          *
          * @see GamePlot
-         * @api private
          */
         this.plot = new GamePlot(new Stager(settings.stages), node);
 
-
-        // TODO: check how to init
+        // Setting to stage 0.0.0 and starting.
         this.setCurrentGameStage(new GameStage(), true);
-
+        this.setStateLevel(constants.stateLevels.STARTING, true);
         this.paused = false;
-
-        this.setStateLevel(constants.stateLevels.STARTING);
     } // <!-- ends constructor -->
 
     // ## Game methods
@@ -12863,6 +12854,7 @@ GameStage.stringify = function(gs) {
                 node.socket.send(node.msg.create({
                     target: constants.target.PLAYER_UPDATE,
                     data: data,
+                    text: type,
                     to: 'ALL'
                 }));
         }
@@ -12889,6 +12881,7 @@ GameStage.stringify = function(gs) {
             throw new TypeError(
                 'Game.shouldPublishUpdate: type must be string.');
         }
+        debugger
         k = constants;
         switch(this.settings.publishLevel) {
         case k.NONE: 
