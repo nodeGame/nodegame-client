@@ -253,7 +253,6 @@
          * @see node.setup
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function (msg) {
-            console.log('* GAMECOMMAND * ', msg);
             if (!msg.text || !parent.constants.gamecommand[msg.text]) {
                 node.err('unknown game command received: ' + msg.text);
                 return;
