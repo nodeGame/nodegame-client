@@ -5,17 +5,17 @@
     var NGC = parent.NodeGameClient;
 
     var GameMsg = parent.GameMsg,
-        GameSage = parent.GameStage,
-        PlayerList = parent.PlayerList,
-        Player = parent.Player,
-        J = parent.JSUS;
+    GameSage = parent.GameStage,
+    PlayerList = parent.PlayerList,
+    Player = parent.Player,
+    J = parent.JSUS;
 
     var action = parent.constants.action,
-        target = parent.constants.target;
+    target = parent.constants.target;
 
     var say = action.SAY + '.',
-        set = action.SET + '.',
-        get = action.GET + '.',
+    set = action.SET + '.',
+    get = action.GET + '.',
         IN = parent.constants.IN;
 
     /**
@@ -32,14 +32,15 @@
         var node = this;
 
         if (node.incomingAdded && !force) {
-            node.err('Default incoming listeners already added once. Use the force flag to re-add.');
+            node.err('node.addDefaultIncomingListeners: listeners already ' +
+                     'added once. Use the force flag to re-add.');
             return false;
         }
         
         /**
          * ## in.say.PCONNECT
          *
-         * Adds a new player to the player list from the data contained in the message
+         * Adds a new player to the player list
          *
          * @emit UPDATED_PLIST
          * @see Game.pl
@@ -229,13 +230,15 @@
          * @see JSUS.parse
          */
         node.events.ng.on( IN + say + 'SETUP', function (msg) {
-console.log('* SETUP * ', msg);
+            var feature;
             if (!msg.text) return;
-            var feature = msg.text,
-            payload = ('string' === typeof msg.data) ? J.parse(msg.data) : msg.data;
+            feature = msg.text,
+            payload = 'string' === typeof msg.data ? 
+                J.parse(msg.data) : msg.data;
 
             if (!payload) {
-                node.err('error while parsing incoming remote setup message');
+                node.err('node.on.in.say.SETUP: error while parsing ' +
+                         'incoming remote setup message');
                 return false;
             }
             node.setup.apply(node, [feature].concat(payload));
@@ -250,7 +253,7 @@ console.log('* SETUP * ', msg);
          * @see node.setup
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function (msg) {
-console.log('* GAMECOMMAND * ', msg);
+            console.log('* GAMECOMMAND * ', msg);
             if (!msg.text || !parent.constants.gamecommand[msg.text]) {
                 node.err('unknown game command received: ' + msg.text);
                 return;

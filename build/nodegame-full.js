@@ -7612,10 +7612,10 @@ JSUS.extend(PARSE);
      * - NONE: no updates. The same as observer.
      */  
     k.publish_levels = {
-	ALL: 20,
-	MOST: 15,
-	REGULAR: 10,
-	FEW: 5,
+	ALL: 4,
+	MOST: 3,
+	REGULAR: 2,
+	FEW: 1,
 	NONE: 0
     };	
 
@@ -9454,7 +9454,7 @@ GameStage.stringify = function(gs) {
         }
         else {
             tmp = this.text.toString();
-            if (tmp.length > 9) { 
+            if (tmp.length > 12) { 
                 line += DLM + tmp.substr(0,9) + "..." + DLM + SPT;
             }
             else if (tmp.length < 6) {
@@ -9469,7 +9469,7 @@ GameStage.stringify = function(gs) {
         }
         else {
             tmp = this.data.toString();
-            if (tmp.length > 9) { 
+            if (tmp.length > 12) { 
                 line += DLM + tmp.substr(0,9) + "..." + DLM + SPT;
             }
             else if (tmp.length < 9) {
@@ -12409,7 +12409,6 @@ GameStage.stringify = function(gs) {
         this.settings = {
             minPlayers: settings.minPlayers || 1, // 0 is invalid
             maxPlayers: settings.maxPlayers || 1000, // 0 is invalid
-            observer:   !!settings.observer, // TODO: to remove observer?
             publishLevel: 'undefined' === typeof settings.publishLevel ?
                 constants.publish_levels.REGULAR : settings.publishLevel
         };
@@ -12876,29 +12875,31 @@ GameStage.stringify = function(gs) {
      * @return {boolean} TRUE, if the update should be sent
      */
     Game.prototype.shouldPublishUpdate = function(type, value) {
-        var k;
+        var levels;
         if ('string' !== typeof type) {
             throw new TypeError(
                 'Game.shouldPublishUpdate: type must be string.');
         }
-        debugger
-        k = constants;
+        levels = constants.publish_levels;
         switch(this.settings.publishLevel) {
-        case k.NONE: 
+        case levels.NONE: 
             return false;
-        case k.MOST:
-            return type !== 'stateLevel';
-        case k.REGULAR:
+        case levels.FEW:
+            return type === 'stage';
+        case levels.REGULAR:
             if (type === 'stateLevel') return false;
             if (type === 'stageLevel') {
-                return (value === k.stageLevels.PLAYING || 
-                        value === k.stageLevels.DONE);
+                return (value === constants.stageLevels.PLAYING || 
+                        value === constants.stageLevels.DONE);
             }
             return true; // type === 'stage'
-        case k.MODERATE:
-            return type === 'stage';
-        default: // k.ALL
+        case levels.MOST:
+            return type !== 'stateLevel';
+        case levels.ALL:
             return true;
+        default:
+            // Unknown values of publishLevels are treated as ALL. 
+            return true; 
         }
     };
 
@@ -15337,17 +15338,17 @@ GameStage.stringify = function(gs) {
     var NGC = parent.NodeGameClient;
 
     var GameMsg = parent.GameMsg,
-        GameSage = parent.GameStage,
-        PlayerList = parent.PlayerList,
-        Player = parent.Player,
-        J = parent.JSUS;
+    GameSage = parent.GameStage,
+    PlayerList = parent.PlayerList,
+    Player = parent.Player,
+    J = parent.JSUS;
 
     var action = parent.constants.action,
-        target = parent.constants.target;
+    target = parent.constants.target;
 
     var say = action.SAY + '.',
-        set = action.SET + '.',
-        get = action.GET + '.',
+    set = action.SET + '.',
+    get = action.GET + '.',
         IN = parent.constants.IN;
 
     /**
@@ -15364,14 +15365,15 @@ GameStage.stringify = function(gs) {
         var node = this;
 
         if (node.incomingAdded && !force) {
-            node.err('Default incoming listeners already added once. Use the force flag to re-add.');
+            node.err('node.addDefaultIncomingListeners: listeners already ' +
+                     'added once. Use the force flag to re-add.');
             return false;
         }
         
         /**
          * ## in.say.PCONNECT
          *
-         * Adds a new player to the player list from the data contained in the message
+         * Adds a new player to the player list
          *
          * @emit UPDATED_PLIST
          * @see Game.pl
@@ -15561,13 +15563,15 @@ GameStage.stringify = function(gs) {
          * @see JSUS.parse
          */
         node.events.ng.on( IN + say + 'SETUP', function (msg) {
-console.log('* SETUP * ', msg);
+            var feature;
             if (!msg.text) return;
-            var feature = msg.text,
-            payload = ('string' === typeof msg.data) ? J.parse(msg.data) : msg.data;
+            feature = msg.text,
+            payload = 'string' === typeof msg.data ? 
+                J.parse(msg.data) : msg.data;
 
             if (!payload) {
-                node.err('error while parsing incoming remote setup message');
+                node.err('node.on.in.say.SETUP: error while parsing ' +
+                         'incoming remote setup message');
                 return false;
             }
             node.setup.apply(node, [feature].concat(payload));
@@ -15582,7 +15586,7 @@ console.log('* SETUP * ', msg);
          * @see node.setup
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function (msg) {
-console.log('* GAMECOMMAND * ', msg);
+            console.log('* GAMECOMMAND * ', msg);
             if (!msg.text || !parent.constants.gamecommand[msg.text]) {
                 node.err('unknown game command received: ' + msg.text);
                 return;
