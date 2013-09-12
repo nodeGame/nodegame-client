@@ -7615,7 +7615,7 @@ JSUS.extend(PARSE);
 	ALL: 20,
 	MOST: 15,
 	REGULAR: 10,
-	MODERATE: 5,
+	FEW: 5,
 	NONE: 0
     };	
 
@@ -12868,36 +12868,6 @@ GameStage.stringify = function(gs) {
         }
     };
     
-//    Game.prototype.publishStageLevelUpdate = function(newStageLevel) {
-//        var node;
-//        node = this.node;
-//        // Update is never sent if the value has not changed.
-//        if (node.player.stageLevel !== newStageLevel &&
-//            this.shouldPublishUpdate('stageLevel', newStageLevel) {
-//                node.socket.send(node.msg.create({
-//                    target: constants.target.PLAYER_UPDATE,
-//                    data: { stageLevel: newStageLevel },
-//                    to: 'ALL'
-//                }));
-//            }
-//        }
-//    };
-//
-//    Game.prototype.publishGameStageUpdate = function(newGameStage) {
-//        var node;
-//        node = this.node;
-//        // Update is never sent if the value has not changed.
-//        if (node.player.stage !== newGameStage &&
-//            this.shouldPublishUpdate('gameStage', newGameStage) {
-//                node.socket.send(node.msg.create({
-//                    target: constants.target.PLAYER_UPDATE,
-//                    data: { stage: newGameStage },
-//                    to: 'ALL'
-//                }));
-//            }
-//        }
-//    };
-
     /**
      * ## Game.shouldPublishUpdate
      *
@@ -12905,6 +12875,8 @@ GameStage.stringify = function(gs) {
      *
      * Evaluates the current `publishLevel`, the type of update, and the
      * value of the update to decide whether is to be published or not.
+     *
+     * Updates rules are described in '/lib/modules/variables.js'.
      *
      * @param {string} type The type of update:
      *   'stateLevel', 'stageLevel', 'gameStage'.
