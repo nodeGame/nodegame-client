@@ -7316,8 +7316,6 @@ JSUS.extend(PARSE);
     // ### version	
     k.version = '1.0.0-beta';
 
-
-
     /**
      * ### node.verbosity_levels
      * 
@@ -7333,6 +7331,8 @@ JSUS.extend(PARSE);
 	NEVER: Number.MIN_VALUE - 1
     };	
     
+    // TODO: do we need these defaults ?
+
     /**
      *  ### node.verbosity
      *  
@@ -7555,9 +7555,6 @@ JSUS.extend(PARSE);
     // The player completed the game state
     k.is.DONE = 100;
 
-
-
-
     /**
      * ### node.stateLevels
      *
@@ -7575,7 +7572,6 @@ JSUS.extend(PARSE);
         GAMEOVER:     100,  // game complete
         RUNTIME_ERROR: -1
     };
-
 
     /**
      * ### node.stageLevels
@@ -7602,6 +7598,26 @@ JSUS.extend(PARSE);
      * Undefined player ID
      */
     k.UNDEFINED_PLAYER = -1;
+
+
+     /**
+     * ### node.verbosity_levels
+     *
+     * The level of updates that the server receives about the state of a game
+     * 
+     * - ALL: all stateLevel, stageLevel, and gameStage updates
+     * - MOST: all stageLevel and gameStage updates
+     * - REGULAR: only stageLevel PLAYING and DONE, and all gameStage updates
+     * - MODERATE: only gameStage updates (might not work for multiplayer games)
+     * - NONE: no updates. The same as observer.
+     */  
+    k.publish_levels = {
+	ALL: 20,
+	MOST: 15,
+	REGULAR: 10,
+	MODERATE: 5,
+	NONE: 0
+    };	
 
 })('undefined' != typeof node ? node : module.exports);
 
@@ -12320,8 +12336,7 @@ GameStage.stringify = function(gs) {
 
 /**
  * # Game
- *
- * Copyright(c) 2012 Stefano Balietti
+ * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
  *
  * Wrapper class for a `GamePlot` object and functions to control the game flow
@@ -12355,10 +12370,12 @@ GameStage.stringify = function(gs) {
 
         this.node = node;
 
+        settings = settings || {};
+
+        // This updates are never published.
         this.setStateLevel(constants.stateLevels.UNINITIALIZED, true);
         this.setStageLevel(constants.stageLevels.UNINITIALIZED, true);
 
-        settings = settings || {};
 
         // ## Private properties
 
@@ -12369,8 +12386,6 @@ GameStage.stringify = function(gs) {
          *
          * Contains following properties:
          * name, description, version, session
-         *
-         * @api private
          */
         this.metadata = {
             name:        settings.name || 'A nodeGame game',
@@ -12388,19 +12403,16 @@ GameStage.stringify = function(gs) {
          *
          *  - observer: If TRUE, silently observes the game. Default: FALSE
          *
-         *  - auto_wait: If TRUE, fires a WAITING... event immediately after
-         *     a successful DONE event. Default: FALSE
-         *
          *  - minPlayers: Default: 1
          *
          *  - maxPlayers: Default: 1000
-         *
-         * @api private
          */
         this.settings = {
-            observer:   !!settings.observer,
-            minPlayers: settings.minPlayers || 1,
-            maxPlayers: settings.maxPlayers || 1000
+            minPlayers: settings.minPlayers || 1, // 0 is invalid
+            maxPlayers: settings.maxPlayers || 1000, // 0 is invalid
+            observer:   !!settings.observer, // TODO: to remove observer?
+            publishLevel: 'undefined' === typeof settings.publishLevel ?
+                constants.publish_levels.REGULAR : settings.publishLevel
         };
 
         /**
@@ -12464,7 +12476,6 @@ GameStage.stringify = function(gs) {
         // TODO: check how to init
         this.setCurrentGameStage(new GameStage(), true);
 
-
         this.paused = false;
 
         this.setStateLevel(constants.stateLevels.STARTING);
@@ -12502,7 +12513,7 @@ GameStage.stringify = function(gs) {
                 'game.start called, but plot is not ready.');
         }
 
-        // INIT the game
+        // INIT the game.
         if (this.plot && this.plot.stager) {
             onInit = this.plot.stager.getOnInit();
             if (onInit) {
@@ -12521,16 +12532,18 @@ GameStage.stringify = function(gs) {
         return rc;
     };
 
-    
     /**
      * ### Game.restart
      *
      * Moves the game stage to 1.1.1
      *
-     * @param {boolean} rest TRUE, to erase the game memory before update the game stage
+     * @param {boolean} rest If TRUE, erases the game memory before restarting.
+     *   Defaults, FALSE.
      *
      * TODO: should we send a message to connected players as well,
      * or give an option to send it?
+     *
+     * TODO: check if the game has started already, and give a warning if not
      * 
      * @experimental
      */
@@ -12538,9 +12551,6 @@ GameStage.stringify = function(gs) {
         if (reset) this.memory.clear(true);
         this.execStep(this.plot.getStep("1.1.1"));
     };
-
-
-
 
     /**
      * ### Game.gameover
@@ -12596,7 +12606,6 @@ GameStage.stringify = function(gs) {
         this.paused = false;
     };
 
-
     /**
      * ### Game.shouldStep
      *
@@ -12612,10 +12621,12 @@ GameStage.stringify = function(gs) {
         stepRule = this.plot.getStepRule(this.getCurrentGameStage());
 
         if ('function' !== typeof stepRule) {
-            throw new this.node.NodeGameMisconfiguredGameError("step rule is not a function");
+            throw new this.node.NodeGameMisconfiguredGameError(
+                'Game.shouldStep: rule is not a function');
         }
         
-        if (stepRule(this.getCurrentGameStage(), this.getStageLevel(), this.pl, this)) {
+        if (stepRule(this.getCurrentGameStage(), this.getStageLevel(),
+                     this.pl, this)) {
             return this.step();
         }
         else {
@@ -12734,7 +12745,7 @@ GameStage.stringify = function(gs) {
      *
      * Executes the specified stage object
      *
-     * @TODO: emit an event "executing stage", so that other methods get notified
+     * @TODO: emit an event 'executing stage', so that other methods get notified
      *
      * @param stage {object} Full stage object to execute
      *
@@ -12744,7 +12755,8 @@ GameStage.stringify = function(gs) {
         node = this.node;
         
         if (!stage || 'object' !== typeof stage) {
-            throw new node.NodeGameRuntimeError('game.execStep requires a valid object');
+            throw new node.NodeGameRuntimeError(
+                'game.execStep requires a valid object');
         }
 
         cb = stage.cb;
@@ -12764,14 +12776,15 @@ GameStage.stringify = function(gs) {
         node.emit('STEP_CALLBACK_EXECUTED');
         if (res === false) {
             // A non fatal error occurred
-            node.err('A non fatal error occurred while executing the callback of stage ' + this.getCurrentGameStage());
+            node.err('A non fatal error occurred while executing ' +
+                     'the callback of stage ' + this.getCurrentGameStage());
         }
         
         // TODO node.is is probably going to change
         if (!node.window || node.window.state == node.constants.is.LOADED) {
-            // If there is a node.window, we must make sure that the DOM of the page
-            // is fully loaded. Only the last one to load (between the window and 
-            // the callback will emit 'PLAYING'.
+            // If there is a node.window, we must make sure that the DOM
+            // of the page is fully loaded. Only the last one to load
+            // (between the window and the callback) will emit 'PLAYING'.
             // @see GameWindow.updateStatus
             node.emit('PLAYING');
         }
@@ -12803,10 +12816,9 @@ GameStage.stringify = function(gs) {
             throw new node.NodeGameMisconfiguredGameError(
                 'setStateLevel called with invalid parameter: ' + stateLevel);
         }
-
+        // Important: First publish, then actually update.
+        if (!silent) this.publishUpdate('stateLevel', stateLevel);
         node.player.stateLevel = stateLevel;
-        // TODO do we need to publish this kinds of update?
-        //if (!silent) this.publishUpdate();
     };
 
     // PLAYING, DONE, etc.
@@ -12818,39 +12830,110 @@ GameStage.stringify = function(gs) {
             throw new node.NodeGameMisconfiguredGameError(
                 'setStageLevel called with invalid parameter: ' + stageLevel);
         }
-        if (!silent) this.publishStageLevelUpdate(stageLevel);
+        // Important: First publish, then actually update.
+        if (!silent) this.publishUpdate('stageLevel', stageLevel);
         node.player.stageLevel = stageLevel;
     };
 
     Game.prototype.setCurrentGameStage = function(gameStage, silent) {        
         gameStage = new GameStage(gameStage);
-        if (!silent) this.publishGameStageUpdate(gameStage);
+        // Important: First publish, then actually update.
+        if (!silent) this.publishUpdate('stage', gameStage);
         this.node.player.stage = gameStage;
     };
 
-    Game.prototype.publishStageLevelUpdate = function(newStageLevel) {
-        var node;
+    // TODO check the update rules and how they are inserted in the general
+    // framework
+
+    Game.prototype.publishUpdate = function(type, newValue) {
+        var node, data;
+        if ('string' !== typeof type) {
+            throw new TypeError('Game.PublishUpdate: type must be string.');
+        }
+        if (type !== 'stage' && type !== 'stageLevel' && type !== 'stateLevel') {
+            throw new Error(
+                'Game.publishUpdate: unknown update type (' + type + ')');
+        }
         node = this.node;
-        // Publish update:
-        if (!this.settings.observer && node.player.stageLevel !== newStageLevel) {
-            node.socket.send(node.msg.create({
-                target: constants.target.PLAYER_UPDATE,
-                data: { stageLevel: newStageLevel },
-                to: 'ALL'
-            }));
+        // Update is never sent if the value has not changed.
+        if (node.player[type] !== newValue &&
+            this.shouldPublishUpdate(type, newValue)) {
+                data = {};
+                data[type] = newValue;
+                node.socket.send(node.msg.create({
+                    target: constants.target.PLAYER_UPDATE,
+                    data: data,
+                    to: 'ALL'
+                }));
         }
     };
+    
+//    Game.prototype.publishStageLevelUpdate = function(newStageLevel) {
+//        var node;
+//        node = this.node;
+//        // Update is never sent if the value has not changed.
+//        if (node.player.stageLevel !== newStageLevel &&
+//            this.shouldPublishUpdate('stageLevel', newStageLevel) {
+//                node.socket.send(node.msg.create({
+//                    target: constants.target.PLAYER_UPDATE,
+//                    data: { stageLevel: newStageLevel },
+//                    to: 'ALL'
+//                }));
+//            }
+//        }
+//    };
+//
+//    Game.prototype.publishGameStageUpdate = function(newGameStage) {
+//        var node;
+//        node = this.node;
+//        // Update is never sent if the value has not changed.
+//        if (node.player.stage !== newGameStage &&
+//            this.shouldPublishUpdate('gameStage', newGameStage) {
+//                node.socket.send(node.msg.create({
+//                    target: constants.target.PLAYER_UPDATE,
+//                    data: { stage: newGameStage },
+//                    to: 'ALL'
+//                }));
+//            }
+//        }
+//    };
 
-    Game.prototype.publishGameStageUpdate = function(newGameStage) {
-        var node;
-        node = this.node;
-        // Publish update:
-        if (!this.settings.observer && node.player.stage !== newGameStage) {
-            node.socket.send(node.msg.create({
-                target: constants.target.PLAYER_UPDATE,
-                data: { stage: newGameStage },
-                to: 'ALL'
-            }));
+    /**
+     * ## Game.shouldPublishUpdate
+     *
+     * Checks whether a game update should be sent to the server
+     *
+     * Evaluates the current `publishLevel`, the type of update, and the
+     * value of the update to decide whether is to be published or not.
+     *
+     * @param {string} type The type of update:
+     *   'stateLevel', 'stageLevel', 'gameStage'.
+     * @param {mixed} value Optional. The actual update to be sent
+     * @return {boolean} TRUE, if the update should be sent
+     */
+    Game.prototype.shouldPublishUpdate = function(type, value) {
+        var k;
+        if ('string' !== typeof type) {
+            throw new TypeError(
+                'Game.shouldPublishUpdate: type must be string.');
+        }
+        k = constants;
+        switch(this.settings.publishLevel) {
+        case k.NONE: 
+            return false;
+        case k.MOST:
+            return type !== 'stateLevel';
+        case k.REGULAR:
+            if (type === 'stateLevel') return false;
+            if (type === 'stageLevel') {
+                return (value === k.stageLevels.PLAYING || 
+                        value === k.stageLevels.DONE);
+            }
+            return true; // type === 'stage'
+        case k.MODERATE:
+            return type === 'stage';
+        default: // k.ALL
+            return true;
         }
     };
 
@@ -12910,7 +12993,6 @@ GameStage.stringify = function(gs) {
     'undefined' != typeof node ? node : module.exports
  ,  'undefined' != typeof node ? node : module.parent.exports
 );
-
 /**
  * # GameSession
  *
