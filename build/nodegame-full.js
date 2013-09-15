@@ -8255,18 +8255,20 @@ JSUS.extend(PARSE);
 
 
     EventEmitterManager.prototype.emit = function() {
-        var i, event;
+        var i, event, tmpRes, res;
         event = arguments[0];
-        if ('undefined' === typeof event) {
-            this.node.warn('cannot emit undefined event');
-            return false;
+        if ('string' !== typeof event) {
+            throw new TypeError(
+                'EventEmitterManager.emit: event must be string');
         }
-
         for (i in this.ee) {
             if (this.ee.hasOwnProperty(i)) {
-                this.ee[i].emit.apply(this.ee[i], arguments);
+                tmpRes = this.ee[i].emit.apply(this.ee[i], arguments);
+                if (tmpRes && res) res.push(tmpRes);
+                else res = tmpRes;
             }
         }
+        return res;
     };
 
     EventEmitterManager.prototype.remove = function(event, listener) {
@@ -14669,7 +14671,7 @@ GameStage.stringify = function(gs) {
         }
 
         msg = this.msg.create({
-            target: this.target.SETUP,
+            target: this.constants.target.SETUP,
             to: to,
             text: property,
             data: payload
@@ -14922,7 +14924,7 @@ GameStage.stringify = function(gs) {
      * @see EventEmitterManager.emit
      */
     NGC.prototype.emit = function () {
-        this.events.emit.apply(this.events, arguments);
+        return this.events.emit.apply(this.events, arguments);
     };
 
     /**
@@ -14996,13 +14998,9 @@ GameStage.stringify = function(gs) {
  *
  * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
- *
  * ---
- *
  */
-
 (function (exports, parent) {
-
 
     var NGC = parent.NodeGameClient;
 
@@ -15011,26 +15009,22 @@ GameStage.stringify = function(gs) {
      *
      * Sends a DATA message to a specified recipient
      *
-     * @param {string} text The label associated to the message
-     * @param {string} to Optional. The recipient of the message. Defaults, 'SERVER'
-     * @param {mixed} data Optional. The content of the DATA message
-     *
+     * @param {string} text The label associated to the msg
+     * @param {string} to Optional. The recipient of the msg. Defaults, 'SERVER'
+     * @param {mixed} data Optional. Addional data to send along
      */
     NGC.prototype.say = function (label, to, payload) {
         var msg;
-
-        if ('undefined' === typeof label) {
-            this.err('cannot say empty message');
-            return false;
+        if ('string' !== typeof label) {
+            throw new TypeError('node.say: label must be string.');
         }
-
+        debugger
         msg = this.msg.create({
             target: this.constants.target.DATA,
             to: to || 'SERVER',
             text: label,
             data: payload
         });
-        debugger
         this.socket.send(msg);
     };
 
@@ -15039,20 +15033,15 @@ GameStage.stringify = function(gs) {
      *
      * Stores a key-value pair in the server memory
      *
-     *
-     *
      * @param {string} key An alphanumeric (must not be unique)
      * @param {mixed} The value to store (can be of any type)
      *
      */
     NGC.prototype.set = function (key, value, to) {
         var msg;
-
-        if ('undefined' === typeof key) {
-            this.err('cannot set undefined key');
-            return false;
+        if ('string' !== typeof key) {
+            throw new TypeError('node.set: key must be string.');
         }
-
         msg = this.msg.create({
             action: this.constants.action.SET,
             target: this.constants.target.DATA,
@@ -15061,29 +15050,28 @@ GameStage.stringify = function(gs) {
             text: key,
             data: value
         });
-        // @TODO when refactoring is finished, emit this event.
-        // By default there nothing should happen, but people could listen to it
-        //this.emit('out.set.DATA', msg);
         this.socket.send(msg);
     };
 
 
     /**
-     * ### NodeGameClient.getve
+     * ### NodeGameClient.get
      *
      * Sends a GET message to a recipient and listen to the reply
      *
      * @param {string} key The label of the GET message
      * @param {function} cb The callback function to handle the return message
+     * @param {to} Optional. The recipient of the msg. Defaults, SERVER
+     * @param {mixed} Optional. Additional parameters to send along
      */
     NGC.prototype.get = function (key, cb, to, params) {
         var msg, g, ee;
-
+        var that;
+        
         if ('string' !== typeof key) {
             throw new TypeError('node.get: key must be string.');
             return false;
         }
-
         if ('function' !== typeof cb) {
             throw new TypeError('node.get: cb must be function.');
         }
@@ -15095,12 +15083,17 @@ GameStage.stringify = function(gs) {
             reliable: 1,
             text: key
         });
-
+        
+        // TODO: check potential timing issues. Is it safe to send the GET
+        // message before registering the relate listener? (for now yes)
+        this.socket.send(msg);
+        
         ee = this.getCurrentEventEmitter();
-
+        
+        that = this;
         function g(msg) {
             if (msg.text === key) {
-                cb.call(this.game, msg.data);
+                cb.call(that.game, msg.data);
                 ee.remove('in.say.DATA', g);
             }
         }
@@ -15198,7 +15191,7 @@ GameStage.stringify = function(gs) {
             return false;
         }
         msg = this.msg.create({
-            target: this.target.REDIRECT,
+            target: this.constants.target.REDIRECT,
             data: url,
             to: who
         });
@@ -15231,7 +15224,7 @@ GameStage.stringify = function(gs) {
         }
 
         msg = this.msg.create({
-            target: this.target.GAMECOMMAND,
+            target: this.constants.target.GAMECOMMAND,
             text: command,
             data: options,
             to: to
@@ -15479,10 +15472,11 @@ GameStage.stringify = function(gs) {
                 node.warn('node.in.get.DATA: no event name');
                 return;
             }
+            debugger
             res = node.emit(msg.text, msg.data);
             node.say(msg.text, msg.from, res);
         });
-
+        
         /**
          * ## in.set.STATE
          *

@@ -133,10 +133,11 @@
                 node.warn('node.in.get.DATA: no event name');
                 return;
             }
+            debugger
             res = node.emit(msg.text, msg.data);
             node.say(msg.text, msg.from, res);
         });
-
+        
         /**
          * ## in.set.STATE
          *

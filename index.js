@@ -89,8 +89,10 @@
     exports.getClient = function(options) {
         var node;
         node = new exports.NodeGameClient();
-        exports.JSUS.mixin(node, exports.constants); // TODO maybe not necessary, maybe keep them in .constants
-        exports.JSUS.mixin(node, exports.stepRules); // TODO see above
+        // exports.JSUS.mixin(node, exports.constants); // TODO maybe not necessary, maybe keep them in .constants
+        // exports.JSUS.mixin(node, exports.stepRules); // TODO see above
+        node.constants = exports.constants;
+        node.stepRules = exports.stepRules;
         
         // TODO: find a good way to incorpare all the classes
         
