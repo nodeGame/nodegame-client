@@ -128,10 +128,13 @@
          * Experimental feature. Undocumented (for now)
          */
         node.events.ng.on( IN + get + 'DATA', function (msg) {
-//            var getCb;
-//            getCb = node.rpc
-//            node.say(msg.text, msg.from, data);
-//            node.emit('in.', msg.data);
+            var res;
+            if (!msg.text) {
+                node.warn('node.in.get.DATA: no event name');
+                return;
+            }
+            res = node.emit(msg.text, msg.data);
+            node.say(msg.text, msg.from, res);
         });
 
         /**
