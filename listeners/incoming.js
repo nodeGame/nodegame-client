@@ -128,11 +128,10 @@
          * Experimental feature. Undocumented (for now)
          */
         node.events.ng.on( IN + get + 'DATA', function (msg) {
-            if (msg.text === 'LOOP'){
-                node.socket.sendDATA(action.SAY, node.game.plot, msg.from, 'GAME');
-            }
-            // <!-- We could double emit
-            // node.emit(msg.text, msg.data); -->
+//            var getCb;
+//            getCb = node.rpc
+//            node.say(msg.text, msg.from, data);
+//            node.emit('in.', msg.data);
         });
 
         /**
@@ -140,6 +139,7 @@
          *
          * Adds an entry to the memory object
          *
+         * TODO: check, this should be a player update
          */
         node.events.ng.on( IN + set + 'STATE', function (msg) {
             node.game.memory.add(msg.text, msg.data, msg.from);
@@ -258,22 +258,6 @@
                 return;
             }
             node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
-        });
-
-        /**
-         * ## in.say.JOIN
-         *
-         * Invites the client to leave the current channel and joining another one
-         *
-         * It differs from `REDIRECT` messages because the client
-         * does not leave the page, it just switches channel.
-         *
-         * @experimental
-         */
-        node.events.ng.on( IN + say + 'JOIN', function (msg) {
-            if (!msg.text) return;
-            //node.socket.disconnect();
-            node.connect(msg.text);
         });
 
         node.incomingAdded = true;
