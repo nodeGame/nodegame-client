@@ -11807,22 +11807,20 @@ GameStage.stringify = function(gs) {
             // TODO: do we need this?
             //sessionObj = this.node.store(msg.session);
 
-            // TODO: recover this branch
-            if (false) {
-                //if (sessionObj) {
-                this.node.session.restore(sessionObj);
-
-                this.send(this.node.msg.create({
-                    target: 'HI_AGAIN',
-                    data: this.node.player
-                }));    
-            }
-            else {
-                this.node.store(msg.session);
-                this.node.store('BBB', 'aaa');
-                // TODO: do we need this ? Every time? Shall set an option?
-                // this.node.store(msg.session, this.node.session.save());
-            }
+//            // TODO: recover this branch
+//            if (false) {
+//                //if (sessionObj) {
+//                this.node.session.restore(sessionObj);
+//
+//                this.send(this.node.msg.create({
+//                    target: 'HI_AGAIN',
+//                    data: this.node.player
+//                }));    
+//            }
+//            else {
+//                // TODO: do we need this ? Every time? Shall set an option?
+//                // this.node.store(msg.session, this.node.session.save());
+//            }
 
         }
     };
@@ -11846,15 +11844,6 @@ GameStage.stringify = function(gs) {
             }
         }
     };
-
-
-    Socket.prototype.registerServer = function(msg) {
-        // Setting global info
-        this.servername = msg.from;
-        // Keep serverid = msg.from for now
-        this.serverid = msg.from;
-    };
-
 
     Socket.prototype.secureParse = function (msg) {
         var gameMsg;
@@ -11922,12 +11911,29 @@ GameStage.stringify = function(gs) {
      * @see node.createPlayer
      */
     Socket.prototype.startSession = function (msg) {
-        // Store server info
+        // Extracts server info from the first msg.
         this.registerServer(msg);
-
-        this.node.createPlayer(msg.data);
+        
         this.session = msg.session;
+        this.node.createPlayer(msg.data);
+        
+        if (this.node.store.cookie) {
+            this.node.store.cookie('session', this.session);
+            this.node.store.cookie('player', this.node.player.id);
+        }
+        else {
+            this.node.warn('Socket.startSession: cannot set cookies. Session ' +
+                           'support disabled');
+        }
         return true;
+    };
+
+    
+    Socket.prototype.registerServer = function(msg) {
+        // Setting global info
+        this.servername = msg.from;
+        // Keep serverid = msg.from for now
+        this.serverid = msg.from;
     };
 
     /**
@@ -14358,9 +14364,6 @@ GameStage.stringify = function(gs) {
          * @param {PlayerList} playerList The new player list
          * @param {string} updateRule Optional. Whether to 'replace' (default) or
          *  to 'append'.
-         *
-         * @see node.game.plot
-         * @see Stager.setState
          */
         this.registerSetup('plist', function(playerList, updateRule) {
             updatePlayerList.call(this, 'pl', playerList, updateRule);
@@ -14369,15 +14372,11 @@ GameStage.stringify = function(gs) {
         /**
          * ### this.setup.mlist
          *
-         * TODO: merge with plist
          * Updates the monitor list in Game
          *
          * @param {PlayerList} monitorList The new monitor list
          * @param {string} updateRule Optional. Whether to 'replace' (default) or
          *  to 'append'.
-         *
-         * @see this.game.plot
-         * @see Stager.setState
          */
         this.registerSetup('mlist', function(monitorList, updateRule) {
             updatePlayerList.call(this, 'ml', monitorList, updateRule);
@@ -14877,7 +14876,6 @@ GameStage.stringify = function(gs) {
         }
         
         this.player = player;
-
         this.emit('PLAYER_CREATED', this.player);
 
         return this.player;
