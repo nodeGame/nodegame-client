@@ -12574,6 +12574,20 @@ GameStage.stringify = function(gs) {
          */
         this.plot = new GamePlot(new Stager(settings.stages), node);
 
+        /**
+         * ### Game.checkPlistSize
+         *
+         * Applies to the PlayerList the constraints defined in the Stager
+         *
+         * Reads the properties min/max/exactPlayers valid for the current step
+         * and checks them with the PlayerList object.
+         *
+         * @return {boolean} TRUE if all checks are passed
+         * 
+         * @see Game.step
+         */
+        this.checkPlistSize = function() { return true; };
+
         // Setting to stage 0.0.0 and starting.
         this.setCurrentGameStage(new GameStage(), true);
         this.setStateLevel(constants.stateLevels.STARTING, true);
@@ -12717,6 +12731,11 @@ GameStage.stringify = function(gs) {
      */
     Game.prototype.shouldStep = function() {
         var stepRule;
+
+        if (!this.checkPlistSize()) {
+            return;
+        }
+
         stepRule = this.plot.getStepRule(this.getCurrentGameStage());
 
         if ('function' !== typeof stepRule) {
@@ -12908,6 +12927,29 @@ GameStage.stringify = function(gs) {
 
                 // Check conditions explicitly:
                 handler();
+
+                // Set bounds-checking function:
+                this.checkPlistSize = function() {
+                    var nPlayers = node.game.pl.size() + 1;
+
+                    if (minCallback && nPlayers < minThreshold) {
+                        return false;
+                    }
+
+                    if (maxCallback && nPlayers > maxThreshold) {
+                        return false;
+                    }
+
+                    if (exactCallback && nPlayers !== exactThreshold) {
+                        return false;
+                    }
+
+                    return true;
+                };
+            }
+            else {
+                // Set bounds-checking function:
+                this.checkPlistSize = function() { return true; };
             }
 
             // Load the listeners for the step, if any:
