@@ -1,11 +1,11 @@
 // # Internal listeners
 
 // Internal listeners are not directly associated to messages,
-// but they are usually responding to internal nodeGame events, 
-// such as progressing in the loading chain, or finishing a game stage 
+// but they are usually responding to internal nodeGame events,
+// such as progressing in the loading chain, or finishing a game stage
 
 (function (exports, parent) {
-    
+
     var NGC = parent.NodeGameClient;
 
     var GameMsg = parent.GameMsg,
@@ -14,7 +14,7 @@
     Player = parent.Player,
     J = parent.JSUS,
     constants = parent.constants;
-    
+
     var action = constants.action,
     target = constants.target;
 
@@ -26,7 +26,7 @@
     /**
      * ## NodeGameClient.addDefaultInternalListeners
      *
-     * Adds a battery of event listeners for internal events 
+     * Adds a battery of event listeners for internal events
      *
      * If executed once, it requires a force flag to re-add the listeners
      *
@@ -42,69 +42,87 @@
 
         /**
          * ## DONE
-         * 
-         * Updates and publishes that the client has successfully terminated a stage 
-         * 
+         *
+         * Updates and publishes that the client has successfully terminated a stage
+         *
          * If a DONE handler is defined in the game-plot, it will executes it before
          * continuing with further operations. In case it returns FALSE, the update
-         * process is stopped. 
-         * 
+         * process is stopped.
+         *
          * @emit BEFORE_DONE
          *
          */
         this.events.ng.on('DONE', function() {
-	    
             // Execute done handler before updating stage
             var ok = true,
-            done = node.game.getCurrentStep().done;
-            
+                done = node.game.getCurrentStep().done;
+
             if (done) ok = done.apply(node.game, J.obj2Array(arguments));
             if (!ok) return;
-            node.game.setStageLevel(constants.stageLevels.DONE)
-	    
-            // Call all the functions that want to do 
+            node.game.setStageLevel(constants.stageLevels.DONE);
+
+            // Call all the functions that want to do
             // something before changing stage
             node.emit('BEFORE_DONE');
-	    
+
             // Step forward, if allowed
             node.game.shouldStep();
         });
 
         /**
          * ## PLAYING
-         * 
-         * @emit BEFORE_PLAYING 
+         *
+         * @emit BEFORE_PLAYING
          */
         this.events.ng.on('PLAYING', function() {
             node.game.setStageLevel(constants.stageLevels.PLAYING);
             //TODO: the number of messages to emit to inform other players
-            // about its own stage should be controlled. Observer is 0 
+            // about its own stage should be controlled. Observer is 0
             //node.game.publishUpdate();
-            node.socket.clearBuffer();	
+            node.socket.clearBuffer();
             node.emit('BEFORE_PLAYING');
         });
 
 
         /**
          * ## NODEGAME_GAMECOMMAND: start
-         * 
+         *
          */
         this.events.ng.on('NODEGAME_GAMECOMMAND_' + constants.gamecommand.start, function(options) {
-	    
             node.emit('BEFORE_GAMECOMMAND', constants.gamecommand.start, options);
-	    
+
             if (node.game.getCurrentStep() && node.game.getCurrentStep().stage !== 0) {
-	        node.err('Game already started. Use restart if you want to start the game again');
-	        return;
+                node.err('Game already started. Use restart if you want to start the game again');
+                return;
             }
-	    
-            node.game.start();	
+
+            node.game.start();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: pause
+         *
+         */
+        this.events.ng.on('NODEGAME_GAMECOMMAND_' + constants.gamecommand.pause, function(options) {
+            node.emit('BEFORE_GAMECOMMAND', constants.gamecommand.pause, options);
+
+            node.game.pause();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: resume
+         *
+         */
+        this.events.ng.on('NODEGAME_GAMECOMMAND_' + constants.gamecommand.resume, function(options) {
+            node.emit('BEFORE_GAMECOMMAND', constants.gamecommand.resume, options);
+
+            node.game.resume();
         });
 
         this.incomingAdded = true;
         this.silly('internal listeners added');
         return true;
-    }
+    };
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports

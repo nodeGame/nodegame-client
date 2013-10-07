@@ -21,7 +21,7 @@
     /**
      * ## NodeGameClient.addDefaultIncomingListeners
      *
-     * Adds a battery of event listeners for incoming messages 
+     * Adds a battery of event listeners for incoming messages
      *
      * If executed once, it requires a force flag to re-add the listeners
      *
@@ -36,7 +36,7 @@
                      'added once. Use the force flag to re-add.');
             return false;
         }
-        
+
         /**
          * ## in.say.PCONNECT
          *
@@ -136,7 +136,7 @@
             res = node.emit(msg.text, msg.data);
             node.say(msg.text, msg.from, res);
         });
-        
+
         /**
          * ## in.set.STATE
          *
@@ -184,7 +184,7 @@
                 return;
             }
             stageObj = node.game.plot.getStep(msg.data);
-            
+
             if (!stageObj) {
                 node.err('Received in.say.STAGE msg with invalid stage');
                 return;
@@ -236,7 +236,7 @@
             var feature;
             if (!msg.text) return;
             feature = msg.text,
-            payload = 'string' === typeof msg.data ? 
+            payload = 'string' === typeof msg.data ?
                 J.parse(msg.data) : msg.data;
 
             if (!payload) {
@@ -268,7 +268,7 @@
         return true;
     };
 
-    
+
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
