@@ -176,7 +176,7 @@ GameTimer.prototype.init = function (options) {
  * 
  */
 GameTimer.prototype.fire = function (h) {
-	if (!h && !h.hook) return;
+	if (!h) return;
 	var hook = h.hook || h;
 	if ('function' === typeof hook) {
 		var ctx = h.ctx || node.game;
@@ -215,7 +215,6 @@ GameTimer.prototype.start = function() {
 	var that = this;
 	this.timer = setInterval(function() {
 		that.status = GameTimer.RUNNING;
-		node.log('interval started: ' + that.timeLeft, 'DEBUG', 'GameTimer: ');
 		that.timePassed = that.timePassed + that.update;
 		that.timeLeft = that.milliseconds - that.timePassed;
 		// Fire custom hooks from the latest to the first if any
@@ -227,7 +226,6 @@ GameTimer.prototype.start = function() {
 			// First stop the timer and then call the timeup
 			that.stop();
 			that.fire(that.timeup);
-			node.log('time is up: ' + that.timeup, 'DEBUG', 'GameTimer: ');
 		}
 		
 	}, this.update);
