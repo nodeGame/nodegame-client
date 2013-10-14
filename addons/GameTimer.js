@@ -82,7 +82,7 @@ function GameTimer (options) {
  * 
  */	
 	this.timePassed = 0;
-
+	
 /**
  * ### GameTimer.update
  * 
@@ -90,6 +90,22 @@ function GameTimer (options) {
  * 
  */	
 	this.update = 1000;	
+	
+/**
+ * ### GameTimer.updateRemaining
+ * 
+ * Milliseconds remaining for current update
+ * 
+ */	
+	this.updateRemaining = 0;
+	
+/**
+ * ### GameTimer.updateStart
+ * 
+ * Timestamp of the start of the last update
+ * 
+ */	
+	this.updateStart = 0;
 	
 /**
  * ### GameTimer.timeup
@@ -212,11 +228,16 @@ GameTimer.prototype.start = function() {
 		return;
 	}
 
+    // Remember time of start:
+    this.updateStart = (new Date).getTime();
+    this.updateRemaining = this.update;
+
 	var that = this;
 	this.timer = setInterval(function() {
 		that.status = GameTimer.RUNNING;
-		that.timePassed = that.timePassed + that.update;
-		that.timeLeft = that.milliseconds - that.timePassed;
+		that.timePassed += that.update;
+		that.timeLeft -= that.update;
+        that.updateStart = (new Date).getTime();
 		// Fire custom hooks from the latest to the first if any
 		for (var i = that.hooks.length; i > 0; i--) {
 			that.fire(that.hooks[(i-1)]);
@@ -259,10 +280,16 @@ GameTimer.prototype.addHook = function (hook, ctx) {
  * 
  */
 GameTimer.prototype.pause = function() {
+    var timestamp;
+
 	if (this.status > 0) {
 		this.status = GameTimer.PAUSED;
-		//console.log('Clearing Interval... pause')
+
 		clearInterval(this.timer);
+
+        // Save time of pausing:
+        timestamp = (new Date).getTime();
+        this.updateRemaining -= timestamp - this.updateStart;
 	}
 };	
 
@@ -276,9 +303,35 @@ GameTimer.prototype.pause = function() {
  * 	@see GameTimer.restart
  */
 GameTimer.prototype.resume = function() {
+    var that = this;
+
 	if (this.status !== GameTimer.PAUSED) return; // timer was not paused
-	var options = JSUS.extend({milliseconds: this.milliseconds - this.timePassed}, this.options);
-	this.restart(options);
+
+	this.status = GameTimer.LOADING;
+
+    this.updateStart = (new Date).getTime();
+
+    // Run rest of this "update" interval:
+    this.timer = setTimeout(function() {
+        // TODO: Remove duplication:
+		that.status = GameTimer.RUNNING;
+		that.timePassed += that.update;
+		that.timeLeft -= that.update;
+        that.updateStart = (new Date).getTime();
+		// Fire custom hooks from the latest to the first if any
+		for (var i = that.hooks.length; i > 0; i--) {
+			that.fire(that.hooks[(i-1)]);
+		}
+		// Fire Timeup Event
+		if (that.timeLeft <= 0) {
+			// First stop the timer and then call the timeup
+			that.stop();
+			that.fire(that.timeup);
+		}
+        else {
+            that.start();
+        }
+    }, this.updateRemaining);
 };	
 
 /**
@@ -344,7 +397,6 @@ GameTimer.prototype.listeners = function () {
 //		});
 	
 //		node.on('DONE', function(){
-//			console.log('TIMER PAUSED');
 //			that.pause();
 //		});
 	
