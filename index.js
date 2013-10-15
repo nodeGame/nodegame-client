@@ -62,6 +62,8 @@
     // FS
     exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;
 
+    // Timer
+    exports.Timer = require('./lib/core/Timer').Timer;
 
     // Load main nodegame-client class    
     exports.NodeGameClient = require('./lib/core/NodeGameClient').NodeGameClient;

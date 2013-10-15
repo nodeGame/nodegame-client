@@ -14199,6 +14199,60 @@ GameStage.stringify = function(gs) {
 );
 
 /**
+ * # Timer
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
+ * Timing-related utility functions
+ *
+ *  ---
+ */
+(function(exports, parent) {
+
+    // ## Global scope
+
+    // Exposing Timer constructor
+    exports.Timer = Timer;
+
+    var GameTimer = parent.GameTimer;
+
+    var constants = parent.constants;
+
+    /**
+     * ## Timer constructor
+     *
+     * Creates a new instance of Timer
+     *
+     * @param {NodeGameClient} node. A valid NodeGameClient object
+     * @param {object} settings Optional. A configuration object
+     */
+    function Timer(node, settings) {
+        this.node = node;
+
+        settings = settings || {};
+    }
+
+    // ## Timer methods
+
+    /**
+     * ### Timer.getTimer
+     *
+     * Returns a GameTimer
+     *
+     * The GameTimer instance is automatically paused and resumed on
+     * the respective events.
+     */
+    Timer.prototype.getTimer = function(options) {
+        // TODO
+    };
+
+    // ## Closure
+})(
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
  * # nodeGame: Social Experiments in the Browser!
  *
  * Copyright(c) 2013 Stefano Balietti
@@ -14216,15 +14270,16 @@ GameStage.stringify = function(gs) {
     exports.NodeGameClient = NodeGameClient;
 
     var EventEmitterManager = parent.EventEmitterManager,
-    EventEmitter = parent.EventEmitter,
-    GameMsgGenerator = parent.GameMsgGenerator,
-    Socket = parent.Socket,
-    GameStage = parent.GameStage,
-    GameMsg = parent.GameMsg,
-    Game = parent.Game,
-    Player = parent.Player,
-    GameSession = parent.GameSession,
-    J = parent.JSUS;
+        EventEmitter = parent.EventEmitter,
+        GameMsgGenerator = parent.GameMsgGenerator,
+        Socket = parent.Socket,
+        GameStage = parent.GameStage,
+        GameMsg = parent.GameMsg,
+        Game = parent.Game,
+        Timer = parent.Timer,
+        Player = parent.Player,
+        GameSession = parent.GameSession,
+        J = parent.JSUS;
     
     var that;
     that = this;
@@ -14331,6 +14386,15 @@ GameStage.stringify = function(gs) {
          * @see Game
          */
         this.game = new Game(this);
+
+        /**
+         * ### node.timer
+         *
+         * Instance of node.Timer
+         *
+         * @see Timer
+         */
+        this.timer = new Timer(this);
 
 
         /**
@@ -14739,6 +14803,7 @@ GameStage.stringify = function(gs) {
     'undefined' != typeof node ? node : module.exports
  ,  'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Log
  *
@@ -16239,22 +16304,10 @@ function GameTimer (options) {
 GameTimer.prototype.init = function (options) {
     options = options || this.options;
 
-    // Check validity of options
-    //if ('number' !== typeof options.milliseconds) {
-    //    throw new Error(
-    //            'GameTimer.init: options.milliseconds must be a number');
-    //}
-
-    this.milliseconds = options.milliseconds || 0;
-    this.update = options.update || options.milliseconds;
-
-    if (this.update > this.milliseconds) {
-        throw new Error('GameTimer.init: options.update must not be greater ' +
-                        'than options.milliseconds');
-    }
-
     this.status = GameTimer.UNINITIALIZED;
     if (this.timer) clearInterval(this.timer);
+    this.milliseconds = options.milliseconds;
+    this.update = options.update || this.milliseconds;
     this.timeLeft = this.milliseconds;
     this.timePassed = 0;
     this.timeup = options.timeup || 'TIMEUP'; // event to be fired when timer expires
@@ -16313,6 +16366,15 @@ GameTimer.prototype.fire = function (h) {
  *
  */
 GameTimer.prototype.start = function() {
+    // Check validity of state
+    if ('number' !== typeof this.milliseconds) {
+        throw new Error('GameTimer.start: this.milliseconds must be a number');
+    }
+    if (this.update > this.milliseconds) {
+        throw new Error('GameTimer.start: this.update must not be greater ' +
+                        'than this.milliseconds');
+    }
+
     this.status = GameTimer.LOADING;
     // fire the event immediately if time is zero
     if (this.options.milliseconds === 0) {
@@ -16414,10 +16476,7 @@ GameTimer.prototype.resume = function() {
  *
  */
 GameTimer.prototype.stop = function() {
-    if (this.status === GameTimer.UNINITIALIZED ||
-        this.status === GameTimer.INITIALIZED ||
-        this.status === GameTimer.STOPPED) {
-
+    if (this.isStopped()) {
         throw new Error('GameTimer.stop: timer was not running');
     }
 
@@ -16479,6 +16538,25 @@ GameTimer.prototype.listeners = function () {
 //      });
 // -->
 
+};
+
+/**
+ * ### GameTimer.isStopped
+ *
+ * Returns whether timer is stopped
+ *
+ * Paused doesn't count as stopped.
+ */
+GameTimer.prototype.isStopped = function() {
+    if (this.status === GameTimer.UNINITIALIZED ||
+        this.status === GameTimer.INITIALIZED ||
+        this.status === GameTimer.STOPPED) {
+
+        return true;
+    }
+    else {
+        return false;
+    }
 };
 
 // Do a timer update.
@@ -20590,7 +20668,9 @@ node.widgets = new Widgets();
 	};
 	
 	VisualTimer.prototype.stop = function (options) {
-		this.gameTimer.stop();
+        if (!this.gameTimer.isStopped()) {
+            this.gameTimer.stop();
+        }
 	};
 	
 	VisualTimer.prototype.resume = function (options) {
@@ -20617,7 +20697,7 @@ node.widgets = new Widgets();
 						options = timer;
 						break;
 					case 'function':
-						options.milliseconds = timer
+						options.milliseconds = timer;
 						break;
 					case 'string':
 						options.milliseconds = Number(timer);
@@ -20643,7 +20723,7 @@ node.widgets = new Widgets();
 		
 		node.on('DONE', function() {
 			// TODO: This should be enabled again
-			that.gameTimer.stop();
+			that.stop();
 			that.timerDiv.className = 'strike';
 		});
 	};
