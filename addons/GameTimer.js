@@ -146,8 +146,8 @@ function GameTimer (options) {
  * 
  * 	var options = {
  * 		milliseconds: 4000, // The length of the interval
- * 		update: 1000, // How often to update the time counter. Defaults every 1sec
- * 		timeup: 'MY_EVENT', // An event ot function to fire when the timer expires
+ * 		update: 1000, // How often to update the time counter. Defaults to milliseconds
+ * 		timeup: 'MY_EVENT', // An event or function to fire when the timer expires
  * 		hooks: [ myFunc, // Array of functions or events to fire at every update
  * 				'MY_EVENT_UPDATE', 
  * 				{ hook: myFunc2,
@@ -162,13 +162,26 @@ function GameTimer (options) {
  */
 GameTimer.prototype.init = function (options) {
 	options = options || this.options;
+
+    // Check validity of options
+    //if ('number' !== typeof options.milliseconds) {
+    //    throw new Error(
+    //            'GameTimer.init: options.milliseconds must be a number');
+    //}
+
+	this.milliseconds = options.milliseconds || 0;
+	this.update = options.update || options.milliseconds;
+
+    if (this.update > this.milliseconds) {
+        throw new Error('GameTimer.init: options.update must not be greater ' +
+                        'than options.milliseconds');
+    }
+
 	this.status = GameTimer.UNINITIALIZED;
 	if (this.timer) clearInterval(this.timer);
-	this.milliseconds = options.milliseconds || 0;
 	this.timeLeft = this.milliseconds;
 	this.timePassed = 0;
-	this.update = options.update || 1000;
-	this.timeup = options.timeup || 'TIMEUP'; // event to be fire when timer is expired
+	this.timeup = options.timeup || 'TIMEUP'; // event to be fired when timer expires
 	// TODO: update and milliseconds must be multiple now
 	if (options.hooks) {
 		for (var i=0; i < options.hooks.length; i++){
@@ -192,7 +205,10 @@ GameTimer.prototype.init = function (options) {
  * 
  */
 GameTimer.prototype.fire = function (h) {
-	if (!h) return;
+	if (!h) {
+        throw new Error('GameTimer.fire: missing argument');
+    }
+
 	var hook = h.hook || h;
 	if ('function' === typeof hook) {
 		var ctx = h.ctx || node.game;
@@ -221,10 +237,12 @@ GameTimer.prototype.fire = function (h) {
  * 
  */
 GameTimer.prototype.start = function() {
+	var that = this;
+
 	this.status = GameTimer.LOADING;
 	// fire the event immediately if time is zero
 	if (this.options.milliseconds === 0) {
-		node.emit(this.timeup);
+		this.fire(this.timeup);
 		return;
 	}
 
@@ -232,7 +250,6 @@ GameTimer.prototype.start = function() {
     this.updateStart = (new Date).getTime();
     this.updateRemaining = this.update;
 
-	var that = this;
 	this.timer = setInterval(function() {
 		that.status = GameTimer.RUNNING;
 		that.timePassed += that.update;
@@ -261,11 +278,15 @@ GameTimer.prototype.start = function() {
  * containing an hook property.
  */
 GameTimer.prototype.addHook = function (hook, ctx) {
-	if (!hook) return;
 	var ctx = ctx || node.game;
+
+	if (!hook) {
+        throw new Error('GameTimer.addHook: missing argument');
+    }
+
 	if (hook.hook) {
 		ctx = hook.ctx || ctx;
-		var hook = hook.hook;
+		hook = hook.hook;
 	}
 	this.hooks.push({hook: hook, ctx: ctx});
 };
@@ -291,6 +312,9 @@ GameTimer.prototype.pause = function() {
         timestamp = (new Date).getTime();
         this.updateRemaining -= timestamp - this.updateStart;
 	}
+    else {
+        throw new Error('GameTimer.pause: timer was not running');
+    }
 };	
 
 /**
@@ -305,7 +329,9 @@ GameTimer.prototype.pause = function() {
 GameTimer.prototype.resume = function() {
     var that = this;
 
-	if (this.status !== GameTimer.PAUSED) return; // timer was not paused
+	if (this.status !== GameTimer.PAUSED) {
+        throw new Error('GameTimer.resume: timer was not paused');
+    }
 
 	this.status = GameTimer.LOADING;
 
@@ -345,9 +371,13 @@ GameTimer.prototype.resume = function() {
  * 
  */
 GameTimer.prototype.stop = function() {
-	if (this.status === GameTimer.UNINITIALIZED) return;
-	if (this.status === GameTimer.INITIALIZED) return;
-	if (this.status === GameTimer.STOPPED) return;
+	if (this.status === GameTimer.UNINITIALIZED ||
+	    this.status === GameTimer.INITIALIZED ||
+	    this.status === GameTimer.STOPPED) {
+
+        throw new Error('GameTimer.stop: timer was not running');
+    }
+
 	this.status = GameTimer.STOPPED;
 	clearInterval(this.timer);
 	this.timePassed = 0;
@@ -410,6 +440,6 @@ GameTimer.prototype.listeners = function () {
 
 // ## Closure
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+	'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
 );
