@@ -163,22 +163,10 @@ function GameTimer (options) {
 GameTimer.prototype.init = function (options) {
     options = options || this.options;
 
-    // Check validity of options
-    //if ('number' !== typeof options.milliseconds) {
-    //    throw new Error(
-    //            'GameTimer.init: options.milliseconds must be a number');
-    //}
-
-    this.milliseconds = options.milliseconds || 0;
-    this.update = options.update || options.milliseconds;
-
-    if (this.update > this.milliseconds) {
-        throw new Error('GameTimer.init: options.update must not be greater ' +
-                        'than options.milliseconds');
-    }
-
     this.status = GameTimer.UNINITIALIZED;
     if (this.timer) clearInterval(this.timer);
+    this.milliseconds = options.milliseconds;
+    this.update = options.update || this.milliseconds;
     this.timeLeft = this.milliseconds;
     this.timePassed = 0;
     this.timeup = options.timeup || 'TIMEUP'; // event to be fired when timer expires
@@ -237,6 +225,15 @@ GameTimer.prototype.fire = function (h) {
  *
  */
 GameTimer.prototype.start = function() {
+    // Check validity of state
+    if ('number' !== typeof this.milliseconds) {
+        throw new Error('GameTimer.start: this.milliseconds must be a number');
+    }
+    if (this.update > this.milliseconds) {
+        throw new Error('GameTimer.start: this.update must not be greater ' +
+                        'than this.milliseconds');
+    }
+
     this.status = GameTimer.LOADING;
     // fire the event immediately if time is zero
     if (this.options.milliseconds === 0) {
@@ -338,10 +335,7 @@ GameTimer.prototype.resume = function() {
  *
  */
 GameTimer.prototype.stop = function() {
-    if (this.status === GameTimer.UNINITIALIZED ||
-        this.status === GameTimer.INITIALIZED ||
-        this.status === GameTimer.STOPPED) {
-
+    if (this.isStopped()) {
         throw new Error('GameTimer.stop: timer was not running');
     }
 
@@ -403,6 +397,25 @@ GameTimer.prototype.listeners = function () {
 //      });
 // -->
 
+};
+
+/**
+ * ### GameTimer.isStopped
+ *
+ * Returns whether timer is stopped
+ *
+ * Paused doesn't count as stopped.
+ */
+GameTimer.prototype.isStopped = function() {
+    if (this.status === GameTimer.UNINITIALIZED ||
+        this.status === GameTimer.INITIALIZED ||
+        this.status === GameTimer.STOPPED) {
+
+        return true;
+    }
+    else {
+        return false;
+    }
 };
 
 // Do a timer update.
