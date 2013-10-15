@@ -12735,7 +12735,11 @@ GameStage.stringify = function(gs) {
     Game.prototype.pause = function() {
         var msgHandler;
 
-        if (this.paused) return;
+        if (this.paused) {
+            throw new Error('Game.pause: called while already paused');
+        }
+
+        this.node.emit('PAUSING');
 
         this.paused = true;
 
@@ -12751,6 +12755,8 @@ GameStage.stringify = function(gs) {
             });
         }
 
+        this.node.emit('PAUSED');
+
         // broadcast?
     };
 
@@ -12764,7 +12770,11 @@ GameStage.stringify = function(gs) {
     Game.prototype.resume = function() {
         var msgHandler;
 
-        if (!this.paused) return;
+        if (!this.paused) {
+            throw new Error('Game.pause: called while not paused');
+        }
+
+        this.node.emit('RESUMING');
 
         this.paused = false;
 
@@ -12783,6 +12793,8 @@ GameStage.stringify = function(gs) {
 
         // Reset the Socket's message handler to the default:
         this.node.socket.setMsgListener();
+
+        this.node.emit('RESUMED');
 
         // broadcast?
     };
@@ -14249,16 +14261,54 @@ GameStage.stringify = function(gs) {
         result = new GameTimer(options);
 
         // Attach pause / resume listeners:
-        this.node.events.ng.on('NODEGAME_GAMECOMMAND_' +
-                constants.gamecommand.pause, function() {
-                    result.pause();
-                });
-        this.node.events.ng.on('NODEGAME_GAMECOMMAND_' +
-                constants.gamecommand.resume, function() {
-                    result.resume();
-                });
+        this.node.on('PAUSED', function() {
+            // TODO: Check whether not paused
+            // Possible problem: Pausing before starting?
+            result.pause();
+        });
+        this.node.on('RESUMED', function() {
+            // TODO: Check whether paused
+            result.resume();
+        });
 
         return result;
+    };
+
+    /**
+     * ### Timer.randomEmit
+     *
+     * Emits an event after a random time interval between 0 and maxWait
+     *
+     * Respects pausing / resuming.
+     *
+     * @param {string} event The name of the event
+     * @param {number} maxWait Optional. The maximum time (in milliseconds)
+     *   to wait before emitting the event. to Defaults, 6000
+     */
+    Timer.prototype.randomEmit = function(event, maxWait) {
+        maxWait = maxWait || 6000;
+
+        setTimeout(function(event) {
+            node.emit(event);
+        }, Math.random() * maxWait, event);
+    };
+
+    /**
+     * ### Timer.randomExec
+     *
+     * Executes a callback function after a random time interval between 0 and maxWait
+     *
+     * Respects pausing / resuming.
+     *
+     * @param {function} The callback function to execute
+     * @param {number} maxWait Optional. The maximum time (in milliseconds)
+     *   to wait before executing the callback. to Defaults, 6000
+     */
+    Timer.prototype.randomExec = function(func, maxWait) {
+        maxWait = maxWait || 6000;
+        setTimeout(function(func) {
+            func.call();
+        }, Math.random() * maxWait, func);
     };
 
     // ## Closure
