@@ -237,8 +237,6 @@ GameTimer.prototype.fire = function (h) {
  *
  */
 GameTimer.prototype.start = function() {
-    var that = this;
-
     this.status = GameTimer.LOADING;
     // fire the event immediately if time is zero
     if (this.options.milliseconds === 0) {
@@ -250,23 +248,7 @@ GameTimer.prototype.start = function() {
     this.updateStart = (new Date()).getTime();
     this.updateRemaining = this.update;
 
-    this.timer = setInterval(function() {
-        that.status = GameTimer.RUNNING;
-        that.timePassed += that.update;
-        that.timeLeft -= that.update;
-        that.updateStart = (new Date()).getTime();
-        // Fire custom hooks from the latest to the first if any
-        for (var i = that.hooks.length; i > 0; i--) {
-            that.fire(that.hooks[(i-1)]);
-        }
-        // Fire Timeup Event
-        if (that.timeLeft <= 0) {
-            // First stop the timer and then call the timeup
-            that.stop();
-            that.fire(that.timeup);
-        }
-
-    }, this.update);
+    this.timer = setInterval(updateCallback, this.update, this);
 };
 
 /**
@@ -303,9 +285,10 @@ GameTimer.prototype.pause = function() {
     var timestamp;
 
     if (this.status > 0) {
-        this.status = GameTimer.PAUSED;
-
         clearInterval(this.timer);
+        clearTimeout(this.timer);
+
+        this.status = GameTimer.PAUSED;
 
         // Save time of pausing:
         timestamp = (new Date()).getTime();
@@ -338,22 +321,7 @@ GameTimer.prototype.resume = function() {
 
     // Run rest of this "update" interval:
     this.timer = setTimeout(function() {
-        // TODO: Remove duplication:
-        that.status = GameTimer.RUNNING;
-        that.timePassed += that.update;
-        that.timeLeft -= that.update;
-        that.updateStart = (new Date()).getTime();
-        // Fire custom hooks from the latest to the first if any
-        for (var i = that.hooks.length; i > 0; i--) {
-            that.fire(that.hooks[(i-1)]);
-        }
-        // Fire Timeup Event
-        if (that.timeLeft <= 0) {
-            // First stop the timer and then call the timeup
-            that.stop();
-            that.fire(that.timeup);
-        }
-        else {
+        if (updateCallback(that)) {
             that.start();
         }
     }, this.updateRemaining);
@@ -436,6 +404,29 @@ GameTimer.prototype.listeners = function () {
 // -->
 
 };
+
+// Do a timer update.
+// Return false if timer ran out, true otherwise.
+function updateCallback(that) {
+    that.status = GameTimer.RUNNING;
+    that.timePassed += that.update;
+    that.timeLeft -= that.update;
+    that.updateStart = (new Date()).getTime();
+    // Fire custom hooks from the latest to the first if any
+    for (var i = that.hooks.length; i > 0; i--) {
+        that.fire(that.hooks[(i-1)]);
+    }
+    // Fire Timeup Event
+    if (that.timeLeft <= 0) {
+        // First stop the timer and then call the timeup
+        that.stop();
+        that.fire(that.timeup);
+        return false;
+    }
+    else {
+        return true;
+    }
+}
 
 // ## Closure
 })(
