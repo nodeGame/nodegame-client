@@ -14226,8 +14226,6 @@ GameStage.stringify = function(gs) {
     // Exposing Timer constructor
     exports.Timer = Timer;
 
-    var GameTimer = parent.GameTimer;
-
     var constants = parent.constants;
 
     /**
@@ -14262,7 +14260,7 @@ GameStage.stringify = function(gs) {
         var gameTimer, pausedCb, resumedCb;
 
         // Create the GameTimer:
-        gameTimer = new GameTimer(options);
+        gameTimer = new node.GameTimer(options);
 
         // Attach pause / resume listeners:
         pausedCb = function() {
@@ -14275,7 +14273,7 @@ GameStage.stringify = function(gs) {
         resumedCb = function() {
             // TODO: Check whether paused
             gameTimer.resume();
-        }
+        };
         this.node.on('RESUMED', resumedCb);
 
         // Attach listener handlers to GameTimer object so they can be
@@ -14296,14 +14294,47 @@ GameStage.stringify = function(gs) {
      */
     Timer.prototype.destroyTimer = function(gameTimer) {
         // Stop timer:
-        gameTimer.stop();
+        if (!gameTimer.isStopped()) {
+            gameTimer.stop();
+        }
 
         // Detach listeners:
         this.node.off('PAUSED', gameTimer.timerPausedCallback);
         this.node.off('RESUMED', gameTimer.timerResumedCallback);
     };
 
-    // TODO: random* functions below:
+    // Common handler for randomEmit and randomExec
+    function randomFire(hook, maxWait, emit) {
+        var that = this;
+        var waitTime;
+        var callback;
+        var timerObj;
+
+        // Get time to wait:
+        maxWait = maxWait || 6000;
+        waitTime = Math.random() * maxWait;
+
+        // Define timeup callback:
+        if (emit) {
+            callback = function() {
+                that.destroyTimer(timerObj);
+                node.emit(hook);
+            };
+        }
+        else {
+            callback = function() {
+                that.destroyTimer(timerObj);
+                hook.call();
+            };
+        }
+
+        // Create and run timer:
+        timerObj = this.createTimer({
+            milliseconds: waitTime,
+            timeup: callback
+        });
+        timerObj.start();
+    }
 
     /**
      * ### Timer.randomEmit
@@ -14317,11 +14348,7 @@ GameStage.stringify = function(gs) {
      *   to wait before emitting the event. to Defaults, 6000
      */
     Timer.prototype.randomEmit = function(event, maxWait) {
-        maxWait = maxWait || 6000;
-
-        setTimeout(function(event) {
-            node.emit(event);
-        }, Math.random() * maxWait, event);
+        randomFire.call(this, event, maxWait, true);
     };
 
     /**
@@ -14336,10 +14363,7 @@ GameStage.stringify = function(gs) {
      *   to wait before executing the callback. to Defaults, 6000
      */
     Timer.prototype.randomExec = function(func, maxWait) {
-        maxWait = maxWait || 6000;
-        setTimeout(function(func) {
-            func.call();
-        }, Math.random() * maxWait, func);
+        randomFire.call(this, func, maxWait, false);
     };
 
     // ## Closure
@@ -15761,38 +15785,6 @@ GameStage.stringify = function(gs) {
         ctx = ctx || node;
         params = params || [];
         func.apply(ctx, params);
-    };
-
-    /**
-     * ### NodeGameClient.randomEmit
-     *
-     * Emits an event after a random time interval between 0 and maxWait
-     *
-     * @param {string} event The name of the event
-     * @param {number} maxWait Optional. The maximum time (in milliseconds)
-     *   to wait before emitting the event. to Defaults, 6000
-     */
-    NGC.prototype.randomEmit = function (event, maxWait){
-        maxWait = maxWait || 6000;
-        setTimeout(function(event) {
-            node.emit(event);
-        }, Math.random() * maxWait, event);
-    };
-
-    /**
-     * ### NodeGameClient.randomExec
-     *
-     * Executes a callback function after a random time interval between 0 and maxWait
-     *
-     * @param {function} The callback function to execute
-     * @param {number} maxWait Optional. The maximum time (in milliseconds)
-     *   to wait before executing the callback. to Defaults, 6000
-     */
-    NGC.prototype.randomExec = function (func, maxWait) {
-        maxWait = maxWait || 6000;
-        setTimeout(function(func) {
-            func.call();
-        }, Math.random() * maxWait, func);
     };
 
     /**
