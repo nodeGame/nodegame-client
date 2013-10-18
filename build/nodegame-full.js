@@ -14253,26 +14253,57 @@ GameStage.stringify = function(gs) {
      *
      * The GameTimer instance is automatically paused and resumed on
      * the respective events.
+     *
+     * @param {object} options The options that are given to GameTimer
+     *
+     * @see GameTimer
      */
     Timer.prototype.createTimer = function(options) {
-        var result;
+        var gameTimer, pausedCb, resumedCb;
 
         // Create the GameTimer:
-        result = new GameTimer(options);
+        gameTimer = new GameTimer(options);
 
         // Attach pause / resume listeners:
-        this.node.on('PAUSED', function() {
+        pausedCb = function() {
             // TODO: Check whether not paused
             // Possible problem: Pausing before starting?
-            result.pause();
-        });
-        this.node.on('RESUMED', function() {
-            // TODO: Check whether paused
-            result.resume();
-        });
+            gameTimer.pause();
+        };
+        this.node.on('PAUSED', pausedCb);
 
-        return result;
+        resumedCb = function() {
+            // TODO: Check whether paused
+            gameTimer.resume();
+        }
+        this.node.on('RESUMED', resumedCb);
+
+        // Attach listener handlers to GameTimer object so they can be
+        // unregistered later:
+        gameTimer.timerPausedCallback = pausedCb;
+        gameTimer.timerResumedCallback = resumedCb;
+
+        return gameTimer;
     };
+
+    /**
+     * ### Timer.destroyTimer
+     *
+     * Stops and removes a GameTimer
+     *
+     * The event handlers listening on PAUSED/RESUMED that are attached to
+     * the given GameTimer object are removed.
+     */
+    Timer.prototype.destroyTimer = function(gameTimer) {
+        // Stop timer:
+        gameTimer.stop();
+
+        // Detach listeners:
+        this.node.off('PAUSED', gameTimer.timerPausedCallback);
+        this.node.off('RESUMED', gameTimer.timerResumedCallback);
+    };
+
+    // TODO: random* functions below:
 
     /**
      * ### Timer.randomEmit
