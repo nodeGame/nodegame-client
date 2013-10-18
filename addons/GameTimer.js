@@ -308,7 +308,7 @@ GameTimer.prototype.pause = function() {
 GameTimer.prototype.resume = function() {
     var that = this;
 
-    if (this.status !== GameTimer.PAUSED) {
+    if (!this.isPaused()) {
         throw new Error('GameTimer.resume: timer was not paused');
     }
 
@@ -405,6 +405,8 @@ GameTimer.prototype.listeners = function () {
  * Returns whether timer is stopped
  *
  * Paused doesn't count as stopped.
+ *
+ * @see GameTimer.isPaused
  */
 GameTimer.prototype.isStopped = function() {
     if (this.status === GameTimer.UNINITIALIZED ||
@@ -416,6 +418,15 @@ GameTimer.prototype.isStopped = function() {
     else {
         return false;
     }
+};
+
+/**
+ * ### GameTimer.isPaused
+ *
+ * Returns whether timer is paused
+ */
+GameTimer.prototype.isPaused = function() {
+    return (this.status === GameTimer.PAUSED);
 };
 
 // Do a timer update.
