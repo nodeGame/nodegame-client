@@ -108,6 +108,14 @@ function GameTimer (options) {
     this.updateStart = 0;
 
 /**
+ * ### GameTimer.startPaused
+ *
+ * Whether to enter the pause state when starting
+ *
+ */
+    this.startPaused = false;
+
+/**
  * ### GameTimer.timeup
  *
  * Event string or function to fire when the time is up
@@ -235,6 +243,12 @@ GameTimer.prototype.start = function() {
     }
 
     this.status = GameTimer.LOADING;
+
+    if (this.startPaused) {
+        this.pause();
+        return;
+    }
+
     // fire the event immediately if time is zero
     if (this.options.milliseconds === 0) {
         this.fire(this.timeup);
@@ -281,7 +295,7 @@ GameTimer.prototype.addHook = function (hook, ctx) {
 GameTimer.prototype.pause = function() {
     var timestamp;
 
-    if (this.status > 0) {
+    if (this.isRunning()) {
         clearInterval(this.timer);
         clearTimeout(this.timer);
 
@@ -291,8 +305,12 @@ GameTimer.prototype.pause = function() {
         timestamp = (new Date()).getTime();
         this.updateRemaining -= timestamp - this.updateStart;
     }
+    else if (!this.isPaused()) {
+        // pause() was called before start(); remember it:
+        this.startPaused = true;
+    }
     else {
-        throw new Error('GameTimer.pause: timer was not running');
+        throw new Error('GameTimer.pause: timer was already paused');
     }
 };
 
@@ -313,6 +331,8 @@ GameTimer.prototype.resume = function() {
     }
 
     this.status = GameTimer.LOADING;
+
+    this.startPaused = false;
 
     this.updateStart = (new Date()).getTime();
 
@@ -400,11 +420,22 @@ GameTimer.prototype.listeners = function () {
 };
 
 /**
+ * ### GameTimer.isRunning
+ *
+ * Returns whether timer is running
+ *
+ * Running means either LOADING or RUNNING.
+ */
+GameTimer.prototype.isRunning = function() {
+    return (this.status > 0);
+};
+
+/**
  * ### GameTimer.isStopped
  *
  * Returns whether timer is stopped
  *
- * Paused doesn't count as stopped.
+ * Stopped means either UNINITIALIZED, INITIALIZED or STOPPED.
  *
  * @see GameTimer.isPaused
  */
