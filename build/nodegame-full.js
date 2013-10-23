@@ -15513,6 +15513,9 @@ GameStage.stringify = function(gs) {
         if ('string' !== typeof label) {
             throw new TypeError('node.say: label must be string.');
         }
+        if (!to) {
+            throw new TypeError('node.say: to must be defined.');
+        }
         msg = this.msg.create({
             target: this.constants.target.DATA,
             to: to || 'SERVER',
