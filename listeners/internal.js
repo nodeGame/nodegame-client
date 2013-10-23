@@ -75,12 +75,19 @@
          * @emit BEFORE_PLAYING
          */
         this.events.ng.on('PLAYING', function() {
+            var currentTime;
+
             node.game.setStageLevel(constants.stageLevels.PLAYING);
             //TODO: the number of messages to emit to inform other players
             // about its own stage should be controlled. Observer is 0
             //node.game.publishUpdate();
             node.socket.clearBuffer();
             node.emit('BEFORE_PLAYING');
+
+            // Store time:
+            currentTime = (new Date()).getTime();
+            node.timer.setTimestamp(node.game.getCurrentGameStage().toString(), currentTime);
+            node.timer.setTimestamp('step', currentTime);
         });
 
 

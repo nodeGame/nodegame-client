@@ -12645,6 +12645,9 @@ GameStage.stringify = function(gs) {
         var onInit, rc, node;
         node = this.node;
 
+        // Store time:
+        this.node.timer.setTimestamp('start');
+
         if (node.player.placeholder) {
             throw new node.NodeGameMisconfiguredGameError(
                 'game.start called without a player.');
@@ -12859,6 +12862,7 @@ GameStage.stringify = function(gs) {
         var property, handler;
         var minThreshold, maxThreshold, exactThreshold;
         var minCallback = null, maxCallback = null, exactCallback = null;
+
         node = this.node;
 
         if (this.getStateLevel() < constants.stateLevels.INITIALIZED) {
@@ -12903,6 +12907,9 @@ GameStage.stringify = function(gs) {
             if (this.plot.stepsToNextStage(curStep) === 1) {
                 nextStageObj = this.plot.getStage(nextStep);
                 if (!nextStageObj) return false;
+
+                // Store time:
+                this.node.timer.setTimestamp('stage', (new Date()).getTime());
 
                 // clear the previous stage listeners
                 node.events.ee.stage.clear();
@@ -13064,6 +13071,7 @@ GameStage.stringify = function(gs) {
      */
     Game.prototype.execStep = function(stage) {
         var cb, res, node;
+
         node = this.node;
 
         if (!stage || 'object' !== typeof stage) {
@@ -14247,6 +14255,19 @@ GameStage.stringify = function(gs) {
         this.node = node;
 
         settings = settings || {};
+
+        /**
+         * ### Timer.timestamps
+         *
+         * Named timestamp collection
+         *
+         * Maps names to numbers (milliseconds since epoch)
+         *
+         * @see Timer.setTimestamp
+         * @see Timer.getTimestamp
+         * @see Timer.getTimeSince
+         */
+        this.timestamps = {};
     }
 
     // ## Timer methods
@@ -14344,6 +14365,97 @@ GameStage.stringify = function(gs) {
         });
         timerObj.start();
     }
+
+    /**
+     * ### Timer.setTimestamp
+     *
+     * Adds or changes a named timestamp
+     *
+     * @param {string} name The name of the timestamp
+     * @param {number|undefined} time Optional. The time in ms as returned by
+     *   Date.getTime(). Default: Current time.
+     */
+    Timer.prototype.setTimestamp = function(name, time) {
+        // Default time: Current time
+        if ('undefined' === typeof time) time = (new Date()).getTime();
+
+        // Check inputs:
+        if ('string' !== typeof name) {
+            throw new Error('Timer.setTimestamp: name must be a string');
+        }
+        if ('number' !== typeof time) {
+            throw new Error('Timer.setTimestamp: time must be a number or ' +
+                            'undefined');
+        }
+
+        this.timestamps[name] = time;
+    };
+
+    /**
+     * ### Timer.getTimestamp
+     *
+     * Retrieves a named timestamp
+     *
+     * @param {string} name The name of the timestamp
+     *
+     * @return {number|null} The time associated with the timestamp,
+     *   NULL if it doesn't exist
+     */
+    Timer.prototype.getTimestamp = function(name) {
+        // Check input:
+        if ('string' !== typeof name) {
+            throw new Error('Timer.getTimestamp: name must be a string');
+        }
+
+        if (this.timestamps.hasOwnProperty(name)) {
+            return this.timestamps[name];
+        }
+        else {
+            return null;
+        }
+    };
+
+    /**
+     * ### Timer.getAllTimestamps
+     *
+     * Returns the map with all timestamps
+     *
+     * Do not change the returned object.
+     *
+     * @return {object} The timestamp map
+     */
+    Timer.prototype.getAllTimestamps = function() {
+        return this.timestamps;
+    };
+
+    /**
+     * ### Timer.getTimeSince
+     *
+     * Gets the time in ms since a timestamp
+     *
+     * @param {string} name The name of the timestamp
+     *
+     * @return {number|null} The time since the timestamp in ms,
+     *   NULL if it doesn't exist
+     */
+    Timer.prototype.getTimeSince = function(name) {
+        var currentTime;
+
+        // Get current time:
+        currentTime = (new Date()).getTime();
+
+        // Check input:
+        if ('string' !== typeof name) {
+            throw new Error('Timer.getTimeSince: name must be a string');
+        }
+
+        if (this.timestamps.hasOwnProperty(name)) {
+            return currentTime - this.timestamps[name];
+        }
+        else {
+            return null;
+        }
+    };
 
     /**
      * ### Timer.randomEmit
@@ -16185,12 +16297,19 @@ GameStage.stringify = function(gs) {
          * @emit BEFORE_PLAYING
          */
         this.events.ng.on('PLAYING', function() {
+            var currentTime;
+
             node.game.setStageLevel(constants.stageLevels.PLAYING);
             //TODO: the number of messages to emit to inform other players
             // about its own stage should be controlled. Observer is 0
             //node.game.publishUpdate();
             node.socket.clearBuffer();
             node.emit('BEFORE_PLAYING');
+
+            // Store time:
+            currentTime = (new Date()).getTime();
+            node.timer.setTimestamp(node.game.getCurrentGameStage().toString(), currentTime);
+            node.timer.setTimestamp('step', currentTime);
         });
 
 
