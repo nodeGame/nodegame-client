@@ -54,6 +54,8 @@ var ng_client = [
     
     rootDir + "lib/core/GroupManager.js",
     rootDir + "lib/core/RoleMapper.js",
+
+    rootDir + "lib/core/Timer.js",
     
     // NodeGameClient.
 
