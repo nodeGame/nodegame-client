@@ -104,6 +104,7 @@
          * @emit PLAYING
          */
         this.events.ng.on('LOADED', function() {
+            node.game.setStageLevel(constants.stageLevels.LOADED);
             if (node.socket.shouldClearBuffer()) {
                 node.socket.clearBuffer();
             }
