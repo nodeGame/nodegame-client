@@ -122,13 +122,12 @@
             node.game.setStageLevel(stageLevels.PLAYING);
             node.socket.clearBuffer();
             node.emit('BEFORE_PLAYING');
-
-            // Store time:
+            // Last thing to do, is to store time:
             currentTime = (new Date()).getTime();
-            node.timer.setTimestamp(node.game.getCurrentGameStage().toString(), currentTime);
+            node.timer.setTimestamp(node.game.getCurrentGameStage().toString(),
+                                    currentTime);
             node.timer.setTimestamp('step', currentTime);
         });
-
 
         /**
          * ## NODEGAME_GAMECOMMAND: start
