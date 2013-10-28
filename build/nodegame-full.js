@@ -7819,16 +7819,14 @@ JSUS.extend(PARSE);
      * whole length of the game
      *
      * @param {string} type The event name
-     * @param {function} listener The function to fire
-     *
-     * @see EventEmitter.addLocal
+     * @param {function} listener The function to emit
      */
     EventEmitter.prototype.on = function (type, listener) {
         if ('string' !== typeof type) {
-            throw TypeError('EventEmitter.on: type must be a string');
+            throw TypeError('EventEmitter.on: type must be a string.');
         }
         if ('function' !== typeof listener) {
-            throw TypeError('EventEmitter.remove: listener must be a function');
+            throw TypeError('EventEmitter.on: listener must be a function.');
         }
 
         if (!this.events[type]) {
@@ -8022,7 +8020,7 @@ JSUS.extend(PARSE);
             for (i = 0; i < len; i++) {
                 if (listeners[i] == listener) {
                     listeners.splice(i, 1);
-                    node.silly('ee.' + this.name + 'removed ' + 
+                    node.silly('ee.' + this.name + ' removed ' + 
                                'listener: ' + type + ' ' + listener);
                     return true;
                 }
@@ -12983,14 +12981,37 @@ GameStage.stringify = function(gs) {
         return this.node.player.stateLevel;
     };
 
-    Game.prototype.getStageLevel = function() {
-        return this.node.player.stageLevel;
-    };
-
     Game.prototype.getCurrentStep = function() {
         return this.plot.getStep(this.getCurrentGameStage());
     };
 
+    /**
+     * ## Game.getStageLevel
+     *
+     * Return the execution level of the current game stage
+     *
+     * The execution level is defined in `node.constants.stageLevels`,
+     * and it is of the type INITIALIZED, CALLBACK_EXECUTED, etc.
+     * The return value is a reference to `node.player.stageLevel`.
+     *
+     * @return GameStage
+     * @see node.player.stageLevel
+     * @see node.constants.stageLevels
+     */
+    Game.prototype.getStageLevel = function() {
+        return this.node.player.stageLevel;
+    };
+    
+    /**
+     * ## Game.getCurrentGameStage
+     *
+     * Return the GameStage that is currently being executed. 
+     *
+     * The return value is a reference to node.player.stage.
+     *
+     * @return GameStage
+     * @see node.player.stage
+     */
     Game.prototype.getCurrentGameStage = function() {
         return this.node.player.stage;
     };
@@ -13028,9 +13049,6 @@ GameStage.stringify = function(gs) {
         if (!silent) this.publishUpdate('stage', gameStage);
         this.node.player.stage = gameStage;
     };
-
-    // TODO check the update rules and how they are inserted in the general
-    // framework
 
     Game.prototype.publishUpdate = function(type, newValue) {
         var node, data;
@@ -13134,9 +13152,6 @@ GameStage.stringify = function(gs) {
      * If the browser does not support the method object setters,
      * this property is disabled, and Game.isReady() should be used
      * instead.
-     *
-     * TODO check whether the conditions are adequate
-     *
      */
     Game.prototype.isReady = function() {
         var node, stageLevel, stateLevel;
@@ -13165,8 +13180,6 @@ GameStage.stringify = function(gs) {
             }
             break;
         }
-
-        // TODO: make node.window use other than the .is constant
         // Check if there is a gameWindow obj and whether it is loading
         return node.window ? node.window.isReady() : true;
     };
@@ -13183,18 +13196,24 @@ GameStage.stringify = function(gs) {
      * between the beginning of the stepping procedure and this
      * method call.
      *
-     * Does not check the window object. Methods invoking `shouldEmitPlaying`
-     * must control the state of the GameWindow object beforehand.
-     *
-     * @return {boolean} TRUE, if the PLAYING event should be emit
+     * Checks also the GameWindow object.
+     * @param {boolean} strict If TRUE, PLAYING can be emitted only coming
+     *   from the LOADED stage level. Defaults, TRUE.
+     * @return {boolean} TRUE, if the PLAYING event should be emitted.
      */
-    Game.prototype.shouldEmitPlaying = function() {
-        var curGameStage, syncOnLoaded, node;
+    Game.prototype.shouldEmitPlaying = function(strict) {
+        var curGameStage, curStageLevel, syncOnLoaded, node;
+        if ('undefined' === typeof strict || strict) {
+            // Should emit PLAYING only after LOADED.
+            curStageLevel = this.getStageLevel();
+            if (curStageLevel !== constants.stageLevels.LOADED) return false;
+        }
         node = this.node;
         curGameStage = this.getCurrentGameStage();
         if (!this.isReady()) return false;
         if (!this.checkPlistSize()) return false;
-        syncOnLoaded = this.plot.getProperty(curGameStage,'syncOnLoaded');
+        
+        syncOnLoaded = this.plot.getProperty(curGameStage, 'syncOnLoaded');
         if (!syncOnLoaded) return true;
         return node.game.pl.isStepLoaded(curGameStage);
     }
@@ -13203,7 +13222,6 @@ GameStage.stringify = function(gs) {
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
-
 /**
  * # GameSession
  *
@@ -14206,7 +14224,7 @@ GameStage.stringify = function(gs) {
         var gameTimer, pausedCb, resumedCb;
         options = options || {};
         options.name = options.name || 
-            J.uniqueKey(this.timers, 'timer_' + J.randomInt());
+            J.uniqueKey(this.timers, 'timer_' + J.randomInt(0, 10000000));
 
         if (this.timers[options.name]) {
             throw new Error('Timer.createTimer: timer ' + options.name +
@@ -14500,11 +14518,11 @@ GameStage.stringify = function(gs) {
         this.options = options;
 
         /**
-         * ### GameTimer.timer
+         * ### GameTimer.timerId
          *
          * The ID of the javascript interval.
          */
-        this.timer = null;
+        this.timerId = null;
 
         /**
          * ### GameTimer.timeLeft
@@ -14607,9 +14625,9 @@ GameStage.stringify = function(gs) {
         options = options || this.options;
 
         this.status = GameTimer.UNINITIALIZED;
-        if (this.timer) {
-            clearInterval(this.timer);
-            this.timer = null;
+        if (this.timerId) {
+            clearInterval(this.timerId);
+            this.timerId = null;
         }
         this.milliseconds = options.milliseconds;
         this.update = options.update || this.milliseconds;
@@ -14699,7 +14717,7 @@ GameStage.stringify = function(gs) {
         this.updateStart = (new Date()).getTime();
         this.updateRemaining = this.update;
 
-        this.timer = setInterval(updateCallback, this.update, this);
+        this.timerId = setInterval(updateCallback, this.update, this);
     };
 
     /**
@@ -14735,8 +14753,8 @@ GameStage.stringify = function(gs) {
         var timestamp;
 
         if (this.isRunning()) {
-            clearInterval(this.timer);
-            clearTimeout(this.timer);
+            clearInterval(this.timerId);
+            clearTimeout(this.timerId);
 
             this.status = GameTimer.PAUSED;
 
@@ -14776,7 +14794,7 @@ GameStage.stringify = function(gs) {
         this.updateStart = (new Date()).getTime();
 
         // Run rest of this "update" interval:
-        this.timer = setTimeout(function() {
+        this.timerId = setTimeout(function() {
             if (updateCallback(that)) {
                 that.start();
             }
@@ -14799,7 +14817,7 @@ GameStage.stringify = function(gs) {
         }
 
         this.status = GameTimer.STOPPED;
-        clearInterval(this.timer);
+        clearInterval(this.timerId);
         this.timePassed = 0;
         this.timeLeft = null;
     };
@@ -14859,7 +14877,7 @@ GameStage.stringify = function(gs) {
      * Returns whether timer is paused
      */
     GameTimer.prototype.isPaused = function() {
-        return (this.status === GameTimer.PAUSED);
+        return this.status === GameTimer.PAUSED;
     };
 
     // Do a timer update.
@@ -16344,7 +16362,7 @@ GameStage.stringify = function(gs) {
 
 // # Incoming listeners
 // Incoming listeners are fired in response to incoming messages
-(function (exports, parent) {
+(function(exports, parent) {
 
     var NGC = parent.NodeGameClient;
 
@@ -16389,7 +16407,7 @@ GameStage.stringify = function(gs) {
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'PCONNECT', function (msg) {
+        node.events.ng.on( IN + say + 'PCONNECT', function(msg) {
             if (!msg.data) return;
             node.game.pl.add(new Player(msg.data));
             node.emit('UPDATED_PLIST');
@@ -16403,7 +16421,7 @@ GameStage.stringify = function(gs) {
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'PDISCONNECT', function (msg) {
+        node.events.ng.on( IN + say + 'PDISCONNECT', function(msg) {
             if (!msg.data) return;
             node.game.pl.remove(msg.data.id);
             node.emit('UPDATED_PLIST');
@@ -16417,7 +16435,7 @@ GameStage.stringify = function(gs) {
          * @emit UPDATED_MLIST
          * @see Game.ml
          */
-        node.events.ng.on( IN + say + 'MCONNECT', function (msg) {
+        node.events.ng.on( IN + say + 'MCONNECT', function(msg) {
             if (!msg.data) return;
             node.game.ml.add(new Player(msg.data));
             node.emit('UPDATED_MLIST');
@@ -16431,7 +16449,7 @@ GameStage.stringify = function(gs) {
          * @emit UPDATED_MLIST
          * @see Game.ml
          */
-        node.events.ng.on( IN + say + 'MDISCONNECT', function (msg) {
+        node.events.ng.on( IN + say + 'MDISCONNECT', function(msg) {
             if (!msg.data) return;
             node.game.ml.remove(msg.data.id);
             node.emit('UPDATED_MLIST');
@@ -16445,7 +16463,7 @@ GameStage.stringify = function(gs) {
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'PLIST', function (msg) {
+        node.events.ng.on( IN + say + 'PLIST', function(msg) {
             if (!msg.data) return;
             node.game.pl = new PlayerList({}, msg.data);
             node.emit('UPDATED_PLIST');
@@ -16459,7 +16477,7 @@ GameStage.stringify = function(gs) {
          * @emit UPDATED_MLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'MLIST', function (msg) {
+        node.events.ng.on( IN + say + 'MLIST', function(msg) {
             if (!msg.data) return;
             node.game.ml = new PlayerList({}, msg.data);
             node.emit('UPDATED_MLIST');
@@ -16470,7 +16488,7 @@ GameStage.stringify = function(gs) {
          *
          * Experimental feature. Undocumented (for now)
          */
-        node.events.ng.on( IN + get + 'DATA', function (msg) {
+        node.events.ng.on( IN + get + 'DATA', function(msg) {
             var res;
             if (!msg.text) {
                 node.warn('node.in.get.DATA: no event name');
@@ -16487,7 +16505,7 @@ GameStage.stringify = function(gs) {
          *
          * TODO: check, this should be a player update
          */
-        node.events.ng.on( IN + set + 'STATE', function (msg) {
+        node.events.ng.on( IN + set + 'STATE', function(msg) {
             node.game.memory.add(msg.text, msg.data, msg.from);
         });
 
@@ -16497,7 +16515,7 @@ GameStage.stringify = function(gs) {
          * Adds an entry to the memory object
          *
          */
-        node.events.ng.on( IN + set + 'DATA', function (msg) {
+        node.events.ng.on( IN + set + 'DATA', function(msg) {
             node.game.memory.add(msg.text, msg.data, msg.from);
         });
 
@@ -16509,7 +16527,7 @@ GameStage.stringify = function(gs) {
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'PLAYER_UPDATE', function (msg) {
+        node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
             node.game.pl.updatePlayer(msg.from, msg.data);
             node.emit('UPDATED_PLIST');
             if (node.game.shouldStep()) {
@@ -16525,7 +16543,7 @@ GameStage.stringify = function(gs) {
          *
          * Updates the game stage
          */
-        node.events.ng.on( IN + say + 'STAGE', function (msg) {
+        node.events.ng.on( IN + say + 'STAGE', function(msg) {
             var stageObj;
             if (!msg.data) {
                 node.warn('Received in.say.STAGE msg with empty stage');
@@ -16548,7 +16566,7 @@ GameStage.stringify = function(gs) {
          *
          * Updates the stage level
          */
-        node.events.ng.on( IN + say + 'STAGE_LEVEL', function (msg) {
+        node.events.ng.on( IN + say + 'STAGE_LEVEL', function(msg) {
             //node.game.setStageLevel(msg.data);
         });
 
@@ -16559,7 +16577,7 @@ GameStage.stringify = function(gs) {
          *
          * @see node.redirect
          */
-        node.events.ng.on( IN + say + 'REDIRECT', function (msg) {
+        node.events.ng.on( IN + say + 'REDIRECT', function(msg) {
             if (!msg.data) return;
             if ('undefined' === typeof window || !window.location) {
                 node.err('window.location not found. Cannot redirect');
@@ -16580,7 +16598,7 @@ GameStage.stringify = function(gs) {
          * @see node.setup
          * @see JSUS.parse
          */
-        node.events.ng.on( IN + say + 'SETUP', function (msg) {
+        node.events.ng.on( IN + say + 'SETUP', function(msg) {
             var feature;
             if (!msg.text) return;
             feature = msg.text,
@@ -16595,7 +16613,6 @@ GameStage.stringify = function(gs) {
             node.setup.apply(node, [feature].concat(payload));
         });
 
-
         /**
          * ## in.say.GAMECOMMAND
          *
@@ -16603,7 +16620,7 @@ GameStage.stringify = function(gs) {
          *
          * @see node.setup
          */
-        node.events.ng.on( IN + say + 'GAMECOMMAND', function (msg) {
+        node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
             if (!msg.text || !parent.constants.gamecommand[msg.text]) {
                 node.err('unknown game command received: ' + msg.text);
                 return;
@@ -16709,7 +16726,6 @@ GameStage.stringify = function(gs) {
             }
         });
         
-
         /**
          * ## WINDOW_LOADED
          *
@@ -16745,11 +16761,7 @@ GameStage.stringify = function(gs) {
          */
         this.events.ng.on('PLAYING', function() {
             var currentTime;
-
             node.game.setStageLevel(stageLevels.PLAYING);
-            //TODO: the number of messages to emit to inform other players
-            // about its own stage should be controlled. Observer is 0
-            //node.game.publishUpdate();
             node.socket.clearBuffer();
             node.emit('BEFORE_PLAYING');
 

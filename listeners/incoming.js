@@ -1,6 +1,6 @@
 // # Incoming listeners
 // Incoming listeners are fired in response to incoming messages
-(function (exports, parent) {
+(function(exports, parent) {
 
     var NGC = parent.NodeGameClient;
 
@@ -45,7 +45,7 @@
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'PCONNECT', function (msg) {
+        node.events.ng.on( IN + say + 'PCONNECT', function(msg) {
             if (!msg.data) return;
             node.game.pl.add(new Player(msg.data));
             node.emit('UPDATED_PLIST');
@@ -59,7 +59,7 @@
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'PDISCONNECT', function (msg) {
+        node.events.ng.on( IN + say + 'PDISCONNECT', function(msg) {
             if (!msg.data) return;
             node.game.pl.remove(msg.data.id);
             node.emit('UPDATED_PLIST');
@@ -73,7 +73,7 @@
          * @emit UPDATED_MLIST
          * @see Game.ml
          */
-        node.events.ng.on( IN + say + 'MCONNECT', function (msg) {
+        node.events.ng.on( IN + say + 'MCONNECT', function(msg) {
             if (!msg.data) return;
             node.game.ml.add(new Player(msg.data));
             node.emit('UPDATED_MLIST');
@@ -87,7 +87,7 @@
          * @emit UPDATED_MLIST
          * @see Game.ml
          */
-        node.events.ng.on( IN + say + 'MDISCONNECT', function (msg) {
+        node.events.ng.on( IN + say + 'MDISCONNECT', function(msg) {
             if (!msg.data) return;
             node.game.ml.remove(msg.data.id);
             node.emit('UPDATED_MLIST');
@@ -101,7 +101,7 @@
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'PLIST', function (msg) {
+        node.events.ng.on( IN + say + 'PLIST', function(msg) {
             if (!msg.data) return;
             node.game.pl = new PlayerList({}, msg.data);
             node.emit('UPDATED_PLIST');
@@ -115,7 +115,7 @@
          * @emit UPDATED_MLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'MLIST', function (msg) {
+        node.events.ng.on( IN + say + 'MLIST', function(msg) {
             if (!msg.data) return;
             node.game.ml = new PlayerList({}, msg.data);
             node.emit('UPDATED_MLIST');
@@ -126,7 +126,7 @@
          *
          * Experimental feature. Undocumented (for now)
          */
-        node.events.ng.on( IN + get + 'DATA', function (msg) {
+        node.events.ng.on( IN + get + 'DATA', function(msg) {
             var res;
             if (!msg.text) {
                 node.warn('node.in.get.DATA: no event name');
@@ -143,7 +143,7 @@
          *
          * TODO: check, this should be a player update
          */
-        node.events.ng.on( IN + set + 'STATE', function (msg) {
+        node.events.ng.on( IN + set + 'STATE', function(msg) {
             node.game.memory.add(msg.text, msg.data, msg.from);
         });
 
@@ -153,7 +153,7 @@
          * Adds an entry to the memory object
          *
          */
-        node.events.ng.on( IN + set + 'DATA', function (msg) {
+        node.events.ng.on( IN + set + 'DATA', function(msg) {
             node.game.memory.add(msg.text, msg.data, msg.from);
         });
 
@@ -165,7 +165,7 @@
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'PLAYER_UPDATE', function (msg) {
+        node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
             node.game.pl.updatePlayer(msg.from, msg.data);
             node.emit('UPDATED_PLIST');
             if (node.game.shouldStep()) {
@@ -181,7 +181,7 @@
          *
          * Updates the game stage
          */
-        node.events.ng.on( IN + say + 'STAGE', function (msg) {
+        node.events.ng.on( IN + say + 'STAGE', function(msg) {
             var stageObj;
             if (!msg.data) {
                 node.warn('Received in.say.STAGE msg with empty stage');
@@ -204,7 +204,7 @@
          *
          * Updates the stage level
          */
-        node.events.ng.on( IN + say + 'STAGE_LEVEL', function (msg) {
+        node.events.ng.on( IN + say + 'STAGE_LEVEL', function(msg) {
             //node.game.setStageLevel(msg.data);
         });
 
@@ -215,7 +215,7 @@
          *
          * @see node.redirect
          */
-        node.events.ng.on( IN + say + 'REDIRECT', function (msg) {
+        node.events.ng.on( IN + say + 'REDIRECT', function(msg) {
             if (!msg.data) return;
             if ('undefined' === typeof window || !window.location) {
                 node.err('window.location not found. Cannot redirect');
@@ -236,7 +236,7 @@
          * @see node.setup
          * @see JSUS.parse
          */
-        node.events.ng.on( IN + say + 'SETUP', function (msg) {
+        node.events.ng.on( IN + say + 'SETUP', function(msg) {
             var feature;
             if (!msg.text) return;
             feature = msg.text,
@@ -251,7 +251,6 @@
             node.setup.apply(node, [feature].concat(payload));
         });
 
-
         /**
          * ## in.say.GAMECOMMAND
          *
@@ -259,7 +258,7 @@
          *
          * @see node.setup
          */
-        node.events.ng.on( IN + say + 'GAMECOMMAND', function (msg) {
+        node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
             if (!msg.text || !parent.constants.gamecommand[msg.text]) {
                 node.err('unknown game command received: ' + msg.text);
                 return;
