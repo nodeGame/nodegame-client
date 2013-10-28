@@ -1,8 +1,8 @@
-// # Internal listeners
+// # Internal listeners.
 
 // Internal listeners are not directly associated to messages,
 // but they are usually responding to internal nodeGame events,
-// such as progressing in the loading chain, or finishing a game stage
+// such as progressing in the loading chain, or finishing a game stage.
 
 (function (exports, parent) {
 
@@ -17,6 +17,7 @@
 
     var action = constants.action,
     target = constants.target;
+    stageLevels = constants.stageLevels;
 
     var say = action.SAY + '.',
     set = action.SET + '.',
@@ -53,20 +54,62 @@
          *
          */
         this.events.ng.on('DONE', function() {
-            // Execute done handler before updating stage
+            // Execute done handler before updating stage.
             var ok = true,
                 done = node.game.getCurrentStep().done;
 
-            if (done) ok = done.apply(node.game, J.obj2Array(arguments));
+            if (done) ok = done.apply(node.game, arguments);
             if (!ok) return;
-            node.game.setStageLevel(constants.stageLevels.DONE);
+            node.game.setStageLevel(stageLevels.DONE);
 
             // Call all the functions that want to do
-            // something before changing stage
+            // something before changing stage.
             node.emit('BEFORE_DONE');
 
-            // Step forward, if allowed
-            node.game.shouldStep();
+            // Step forward, if allowed.
+            if (node.game.shouldStep()){
+                node.game.step();
+            }
+        });
+        
+        /**
+         * ## STEP_CALLBACK_EXECUTED
+         *
+         * @emit LOADED
+         */
+        this.events.ng.on('STEP_CALLBACK_EXECUTED', function() {
+            if (!node.window || node.window.isReady()) {
+                node.game.setStageLevel(stageLevels.LOADED);
+                node.emit('LOADED');
+            }
+        });
+        
+
+        /**
+         * ## WINDOW_LOADED
+         *
+         * @emit LOADED
+         */
+        this.events.ng.on('WINDOW_LOADED', function() {
+            // TODO we should have a better check
+            if (node.game.getStageLevel() >= stageLevels.CALLBACK_EXECUTED) {
+                node.game.setStageLevel(stageLevels.LOADED);
+                node.emit('LOADED');
+            }
+        });
+
+        /**
+         * ## LOADED
+         *
+         * @emit PLAYING
+         */
+        this.events.ng.on('LOADED', function() {
+            if (node.socket.shouldClearBuffer()) {
+                node.socket.clearBuffer();
+            }
+            if (node.game.shouldEmitPlaying()) {
+                node.emit('PLAYING');
+            }
         });
 
         /**
@@ -77,7 +120,7 @@
         this.events.ng.on('PLAYING', function() {
             var currentTime;
 
-            node.game.setStageLevel(constants.stageLevels.PLAYING);
+            node.game.setStageLevel(stageLevels.PLAYING);
             //TODO: the number of messages to emit to inform other players
             // about its own stage should be controlled. Observer is 0
             //node.game.publishUpdate();

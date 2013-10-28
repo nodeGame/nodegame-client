@@ -93,7 +93,6 @@
             node.emit('UPDATED_MLIST');
         });
 
-
         /**
          * ## in.say.PLIST
          *
@@ -169,7 +168,12 @@
         node.events.ng.on( IN + say + 'PLAYER_UPDATE', function (msg) {
             node.game.pl.updatePlayer(msg.from, msg.data);
             node.emit('UPDATED_PLIST');
-            node.game.shouldStep();
+            if (node.game.shouldStep()) {
+                node.game.step();
+            }
+            else if (node.game.shouldEmitPlaying()) {
+                node.emit('PLAYING');
+            }
         });
 
         /**
