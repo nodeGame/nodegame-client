@@ -6,6 +6,8 @@
 
 (function (exports, parent) {
 
+    "use strict";
+
     var NGC = parent.NodeGameClient;
 
     var GameMsg = parent.GameMsg,
@@ -16,8 +18,8 @@
     constants = parent.constants;
 
     var action = constants.action,
-    target = constants.target;
-    stageLevels = constants.stageLevels;
+        target = constants.target,
+        stageLevels = constants.stageLevels;
 
     var say = action.SAY + '.',
     set = action.SET + '.',

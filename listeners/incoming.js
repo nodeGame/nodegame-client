@@ -2,6 +2,8 @@
 // Incoming listeners are fired in response to incoming messages
 (function(exports, parent) {
 
+    "use strict";
+
     var NGC = parent.NodeGameClient;
 
     var GameMsg = parent.GameMsg,
@@ -231,13 +233,13 @@
          *
          * Setups a features of nodegame
          *
-         * Unstrigifies the payload before calling `node.setup`
+         * Unstrigifies the payload before calling `node.setup`.
          *
          * @see node.setup
          * @see JSUS.parse
          */
         node.events.ng.on( IN + say + 'SETUP', function(msg) {
-            var feature;
+            var payload, feature;
             if (!msg.text) return;
             feature = msg.text,
             payload = 'string' === typeof msg.data ?
