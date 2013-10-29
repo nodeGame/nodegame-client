@@ -7702,7 +7702,6 @@ JSUS.extend(PARSE);
             });
         }
         else {
-            console.log('WI');
             window.onerror = function(msg, url, linenumber) {
                 var msg;
                 msg = url + ' ' + linenumber + ': ' + msg;

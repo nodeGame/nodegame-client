@@ -42,7 +42,7 @@
          *
          * Adds a new player to the player list
          *
-         * @emit UPDATED_PLIST
+         * @emit UDATED_PLIST
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PCONNECT', function(msg) {
