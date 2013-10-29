@@ -11508,7 +11508,7 @@ JSUS.extend(PARSE);
      * @api private
      */
     GamePlot.prototype.normalizeGameStage = function(gameStage) {
-        var stageNo, stepNo, seqIdx, seqObj;
+        var stageNo, stageObj, stepNo, seqIdx, seqObj;
 
         if (!gameStage || 'object' !== typeof gameStage) return null;
 
@@ -13256,7 +13256,7 @@ JSUS.extend(PARSE);
             throw new TypeError(
                 'Game.shouldPublishUpdate: type must be string.');
         }
-        myPublishLevel = this.settings.myPublishLevel;
+        myPublishLevel = this.settings.publishLevel;
         levels = constants.publish_levels;
         stageLevels = constants.stageLevels;
 
@@ -15374,8 +15374,9 @@ JSUS.extend(PARSE);
          * Defines global variables to be stored in `node.env[myvar]`
          */
         this.registerSetup('env', function(conf) {
+            var i;
             if ('undefined' !== typeof conf) {
-                for (var i in conf) {
+                for (i in conf) {
                     if (conf.hasOwnProperty(i)) {
                         this.env[i] = conf[i];
                     }
