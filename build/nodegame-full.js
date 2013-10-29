@@ -15099,11 +15099,16 @@ JSUS.extend(PARSE);
         Player = parent.Player,
         GameSession = parent.GameSession,
         J = parent.JSUS;
-    
-    var that = this;
-    
-    function NodeGameClient() {
 
+    /**
+     * ## NodeGameClient constructor
+     *
+     * Creates a new NodeGameClient object.
+     */       
+    function NodeGameClient() {
+        
+        var that = this;
+        
         /**
          * ### node.verbosity_levels
          *
@@ -15620,13 +15625,10 @@ JSUS.extend(PARSE);
                 cb.call(that.game, msg.data);
             };
         });
-        var ahah = this;
+
         // ### node.on.stepdone
         this.alias('stepdone', 'UPDATED_PLIST', function(cb) {
-
             return function() {
-                debugger;
-                console.log(that);
                 if (that.game.shouldStep()) {
                     cb.call(that.game, that.game.pl);
                 }
@@ -16764,7 +16766,6 @@ JSUS.extend(PARSE);
 
             window.location = msg.data;
         });
-
 
         /**
          * ## in.say.SETUP
