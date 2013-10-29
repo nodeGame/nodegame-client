@@ -12660,15 +12660,6 @@ GameStage.stringify = function(gs) {
 
         node.socket.clearBuffer(msgHandler);
 
-// TODO: check if we this lengthy construct
-//        if (msgHandler) {
-//            // shouldClearBuffer checks Game.isReady and we don't want that
-//            this.node.socket.clearBuffer(msgHandler);
-//        }
-//        else {
-//            node.socket.shouldClearBuffer();
-//        }
-
         // Reset the Socket's message handler to the default:
         node.socket.setMsgListener();
         node.emit('RESUMED');
@@ -12926,7 +12917,6 @@ GameStage.stringify = function(gs) {
             }
 
             return this.execStep(this.getCurrentStep());
-            
         }
     };
 
@@ -12937,8 +12927,8 @@ GameStage.stringify = function(gs) {
      *
      * @TODO: emit an event 'executing stage', so that other methods get notified
      *
-     * @param stage {object} Full stage object to execute
-     *
+     * @param {object} stage Full stage object to execute
+     * @return {boolean} The result of the execution of the step callback
      */
     Game.prototype.execStep = function(stage) {
         var cb, res, node;
@@ -12969,54 +12959,93 @@ GameStage.stringify = function(gs) {
         }
         
         this.setStageLevel(constants.stageLevels.CALLBACK_EXECUTED);
-        
-        node.emit('STEP_CALLBACK_EXECUTED');
-        
+        node.emit('STEP_CALLBACK_EXECUTED');    
         // Internal listeners will check whether we need to emit PLAYING.
-
         return res;
     };
 
-    Game.prototype.getStateLevel = function() {
-        return this.node.player.stateLevel;
-    };
-
+    /**
+     * ### Game.getCurrentStep
+     *
+     * Returns the object representing the current game step. 
+     *
+     * @return {object} The game-step as defined in the stager.
+     *
+     * @see Stager
+     * @see GamePlot
+     */
     Game.prototype.getCurrentStep = function() {
         return this.plot.getStep(this.getCurrentGameStage());
     };
 
     /**
-     * ## Game.getStageLevel
-     *
-     * Return the execution level of the current game stage
-     *
-     * The execution level is defined in `node.constants.stageLevels`,
-     * and it is of the type INITIALIZED, CALLBACK_EXECUTED, etc.
-     * The return value is a reference to `node.player.stageLevel`.
-     *
-     * @return GameStage
-     * @see node.player.stageLevel
-     * @see node.constants.stageLevels
-     */
-    Game.prototype.getStageLevel = function() {
-        return this.node.player.stageLevel;
-    };
-    
-    /**
-     * ## Game.getCurrentGameStage
+     * ### Game.getCurrentGameStage
      *
      * Return the GameStage that is currently being executed. 
      *
      * The return value is a reference to node.player.stage.
      *
-     * @return GameStage
+     * @return {GameStage} The stage currently played.
      * @see node.player.stage
      */
     Game.prototype.getCurrentGameStage = function() {
         return this.node.player.stage;
     };
+    
+    /**
+     * ### Game.setCurrentGameStage
+     *
+     * Sets the current game stage, and optionally notifies the server 
+     *
+     * The value is actually stored in `node.player.stage`.
+     *
+     * Game stages can be objects, or strings like '1.1.1'.
+     *
+     * @param {string|GameStage} gameStage The value of the update.
+     * @param {boolean} silent If TRUE, no notification is sent.
+     *
+     * @see Game.publishUpdate
+     */
+    Game.prototype.setCurrentGameStage = function(gameStage, silent) {
+        gameStage = new GameStage(gameStage);
+        // Important: First publish, then actually update.
+        if (!silent) this.publishUpdate('stage', gameStage);
+        this.node.player.stage = gameStage;
+    };
 
-    // ERROR, WORKING, etc
+    /**
+     * ### Game.getStateLevel
+     *
+     * Returns the state of the nodeGame engine
+     *
+     * The engine states are defined in `node.constants.stateLevels`,
+     * and it is of the type: STAGE_INIT, PLAYING_STEP, GAMEOVER, etc.
+     * The return value is a reference to `node.player.stateLevel`.
+     *
+     * @return {number} The state of the engine.
+     * @see node.player.stateLevel
+     * @see node.constants.stateLevels
+     */
+    Game.prototype.getStateLevel = function() {
+        return this.node.player.stateLevel;
+    };
+
+    /**
+     * ### Game.setStateLevel
+     *
+     * Sets the current game state level, and optionally notifies the server 
+     *
+     * The value is actually stored in `node.player.stateLevel`.
+     *
+     * Stage levels are defined in `node.constants.stageLevels`, for example:
+     * STAGE_INIT, PLAYING_STEP, GAMEOVER, etc.
+     *
+     * @param {number} stateLevel The value of the update.
+     * @param {boolean} silent If TRUE, no notification is sent.
+     *
+     * @see Game.publishUpdate
+     * @see node.constants.stageLevels
+     */
     Game.prototype.setStateLevel = function(stateLevel, silent) {
         var node;
         node = this.node;
@@ -13029,8 +13058,39 @@ GameStage.stringify = function(gs) {
         node.player.stateLevel = stateLevel;
     };
 
-    // PLAYING, DONE, etc.
-    // Publishes update only if value actually changed.
+    /**
+     * ### Game.getStageLevel
+     *
+     * Return the execution level of the current game stage
+     *
+     * The execution level is defined in `node.constants.stageLevels`,
+     * and it is of the type INITIALIZED, CALLBACK_EXECUTED, etc.
+     * The return value is a reference to `node.player.stageLevel`.
+     *
+     * @return {number} The level of the stage execution. 
+     * @see node.player.stageLevel
+     * @see node.constants.stageLevels
+     */
+    Game.prototype.getStageLevel = function() {
+        return this.node.player.stageLevel;
+    };
+
+    /**
+     * ### Game.setStageLevel
+     *
+     * Sets the current game stage level, and optionally notifies the server 
+     *
+     * The value is actually stored in `node.player.stageLevel`.
+     *
+     * Stage levels are defined in `node.constants.stageLevels`, for example:
+     * PLAYING, DONE, etc.
+     *
+     * @param {string|GameStage} gameStage The value of the update.
+     * @param {boolean} silent If TRUE, no notification is sent.
+     *
+     * @see Game.publishUpdate
+     * @see node.constants.stageLevels
+     */
     Game.prototype.setStageLevel = function(stageLevel, silent) {
         var node;
         node = this.node;
@@ -13042,14 +13102,21 @@ GameStage.stringify = function(gs) {
         if (!silent) this.publishUpdate('stageLevel', stageLevel);
         node.player.stageLevel = stageLevel;
     };
-
-    Game.prototype.setCurrentGameStage = function(gameStage, silent) {
-        gameStage = new GameStage(gameStage);
-        // Important: First publish, then actually update.
-        if (!silent) this.publishUpdate('stage', gameStage);
-        this.node.player.stage = gameStage;
-    };
-
+    
+    /**
+     * ### Game.publishUpdate
+     *
+     * Sends out a PLAYER_UPDATE message, if conditions are met. 
+     *
+     * Type is a property of the `node.player` object. The update is published
+     * only if the new value differs from the old one.
+     *
+     * @param {string} type The type of update:
+     *   'stateLevel', 'stageLevel', 'gameStage'.
+     * @param {mixed} newValue Optional. The actual value of update to be sent.
+     *
+     * @see Game.shouldPublishUpdate
+     */
     Game.prototype.publishUpdate = function(type, newValue) {
         var node, data;
         if ('string' !== typeof type) {
@@ -13075,7 +13142,7 @@ GameStage.stringify = function(gs) {
     };
 
     /**
-     * ## Game.shouldPublishUpdate
+     * ### Game.shouldPublishUpdate
      *
      * Checks whether a game update should be sent to the server
      *
@@ -13184,9 +13251,8 @@ GameStage.stringify = function(gs) {
         return node.window ? node.window.isReady() : true;
     };
 
-    
     /**
-     * ## Game.shouldEmitPlaying
+     * ### Game.shouldEmitPlaying
      *
      * Gives the last green light to let the players play a step.
      *
@@ -13197,6 +13263,7 @@ GameStage.stringify = function(gs) {
      * method call.
      *
      * Checks also the GameWindow object.
+     *
      * @param {boolean} strict If TRUE, PLAYING can be emitted only coming
      *   from the LOADED stage level. Defaults, TRUE.
      * @return {boolean} TRUE, if the PLAYING event should be emitted.
@@ -14918,11 +14985,9 @@ GameStage.stringify = function(gs) {
  *
  * `nodeGame` is a free, open source javascript framework for on line,
  * multiplayer games in the browser.
- *
  * ---
  */
-
-(function (exports, parent) {
+(function(exports, parent) {
 
     // ## Exposing Class
     exports.NodeGameClient = NodeGameClient;
@@ -14960,29 +15025,31 @@ GameStage.stringify = function(gs) {
         };
 
         /**
-         *  ### node.verbosity
+         * ### node.verbosity
          *
-         *  The minimum level for a log entry to be displayed as output
+         * The minimum level for a log entry to be displayed as output
          *
-         *  Defaults, only errors are displayed.
+         * Defaults, only errors are displayed.
          */
         this.verbosity = this.verbosity_levels.WARN;
 
         /**
-         *  ### node.nodename
+         * ### node.nodename
          *
-         *  The name of this node, used in logging output
+         * The name of this node, used in logging output
          *
-         *  Defaults, 'ng'
+         * Defaults, 'ng'
          */
         this.nodename = 'ng';
 
         /**
          * ### node.remoteVerbosity
          *
-         *  The minimum level for a log entry to be reported to the server
+         * The minimum level for a log entry to be reported to the server
          *
-         *  Defaults, only errors are displayed.
+         * Defaults, only errors are reported.
+         *
+         * @experimental
          */
         this.remoteVerbosity = this.verbosity_levels.WARN;
 
@@ -15778,21 +15845,22 @@ GameStage.stringify = function(gs) {
         if (modifier && 'function' !== typeof modifier) {
             throw new TypeError(
                 'node.alias: modifier must be function or undefined.');
-        }   
+        }
 
-	that = this;
-        J.each(events, function(event) {
+        that = this;
+        if (!J.isArray(events)) events = [events];
+        that.on[alias] = function(func) {
             // If set, we use the callback returned by the modifier.
-            // Otherwise, we assume that the first parameter is the callback.
-            that.on[alias] = function(func) {
-                if (modifier) {
-                    func = modifier.apply(node.game, arguments);
-                }
+            // Otherwise, we assume the first parameter is the callback.
+            if (modifier) {
+                func = modifier.apply(node.game, arguments);
+            }
+            J.each(events, function(event) {
                 that.on(event, function() {
                     func.apply(node.game, arguments);
                 });
-            };
-        });
+            });
+        };
     };
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -15837,11 +15905,8 @@ GameStage.stringify = function(gs) {
  *
  * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
- *
  * ---
- *
  */
-
 (function (exports, parent) {
 
     var NGC = parent.NodeGameClient,
@@ -15851,9 +15916,14 @@ GameStage.stringify = function(gs) {
     /**
      * ### NodeGameClient.createPlayer
      *
-     * Creates player
+     * Creates player object and places it in node.player
+     *
+     * @param {object} A player object with a valid id property
+     *
+     * @see node.setup.player
+     * @emit PLAYER_CREATED
      */
-    NGC.prototype.createPlayer = function (player) {
+    NGC.prototype.createPlayer = function(player) {
         if (this.player &&
             this.player.stateLevel > constants.stateLevels.STARTING &&
             this.player.stateLevel !== constants.stateLevels.GAMEOVER) {
@@ -15864,13 +15934,6 @@ GameStage.stringify = function(gs) {
         player = new Player(player);
         player.stateLevel = this.player.stateLevel;
         player.stageLevel = this.player.stageLevel;
-
-        // TODO: do we need to add the local player to the playerList ?
-        // Overwrite existing 'current' player:
-        // if (this.player && this.player.id) {
-        //     this.game.pl.remove(this.player.id);
-        // }
-        // this.player = this.game.pl.add(player);
 
         if (this.game.pl.exist(player.id)) {
             throw new Error('node.createPlayer: already id already found in ' +
@@ -15883,12 +15946,10 @@ GameStage.stringify = function(gs) {
         return this.player;
     };
 
-
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
-
 /**
  * # NodeGameClient Events Handling  
  *
@@ -16024,7 +16085,7 @@ GameStage.stringify = function(gs) {
  * MIT Licensed
  * ---
  */
-(function (exports, parent) {
+(function(exports, parent) {
 
     var NGC = parent.NodeGameClient;
 
@@ -16034,10 +16095,10 @@ GameStage.stringify = function(gs) {
      * Sends a DATA message to a specified recipient
      *
      * @param {string} text The label associated to the msg
-     * @param {string} to Optional. The recipient of the msg. Defaults, 'SERVER'
-     * @param {mixed} data Optional. Addional data to send along
+     * @param {string} to The recipient of the msg.
+     * @param {mixed} payload Optional. Addional data to send along
      */
-    NGC.prototype.say = function (label, to, payload) {
+    NGC.prototype.say = function(label, to, payload) {
         var msg;
         if ('string' !== typeof label) {
             throw new TypeError('node.say: label must be string.');
@@ -16047,7 +16108,7 @@ GameStage.stringify = function(gs) {
         }
         msg = this.msg.create({
             target: this.constants.target.DATA,
-            to: to || 'SERVER',
+            to: to,
             text: label,
             data: payload
         });
@@ -16063,7 +16124,7 @@ GameStage.stringify = function(gs) {
      * @param {mixed} The value to store (can be of any type)
      *
      */
-    NGC.prototype.set = function (key, value, to) {
+    NGC.prototype.set = function(key, value, to) {
         var msg;
         if ('string' !== typeof key) {
             throw new TypeError('node.set: key must be string.');
@@ -16098,7 +16159,7 @@ GameStage.stringify = function(gs) {
      *    the listener will be removed. If equal -1, the listener will not be
      *    removed. Defaults, 0. 
      */
-    NGC.prototype.get = function (key, cb, to, params, timeout) {
+    NGC.prototype.get = function(key, cb, to, params, timeout) {
         var msg, g, ee;
         var that;
         
@@ -16235,7 +16296,7 @@ GameStage.stringify = function(gs) {
      * @param {string} who A player id or 'ALL'
      * @return {boolean} TRUE, if the redirect message is sent
      */
-    NGC.prototype.redirect = function (url, who) {
+    NGC.prototype.redirect = function(url, who) {
         var msg;
         if ('string' !== typeof url) {
             this.err('redirect requires a valid string');
@@ -16267,7 +16328,7 @@ GameStage.stringify = function(gs) {
      * @param {string} to The id of the player to command
      * @return {boolean} TRUE, if the game command is sent
      */
-    NGC.prototype.remoteCommand = function (command, to, options) {
+    NGC.prototype.remoteCommand = function(command, to, options) {
         var msg;
         if (!command) {
             this.err('remoteCommand requires a valid command');
@@ -16764,13 +16825,12 @@ GameStage.stringify = function(gs) {
             node.game.setStageLevel(stageLevels.PLAYING);
             node.socket.clearBuffer();
             node.emit('BEFORE_PLAYING');
-
-            // Store time:
+            // Last thing to do, is to store time:
             currentTime = (new Date()).getTime();
-            node.timer.setTimestamp(node.game.getCurrentGameStage().toString(), currentTime);
+            node.timer.setTimestamp(node.game.getCurrentGameStage().toString(),
+                                    currentTime);
             node.timer.setTimestamp('step', currentTime);
         });
-
 
         /**
          * ## NODEGAME_GAMECOMMAND: start
