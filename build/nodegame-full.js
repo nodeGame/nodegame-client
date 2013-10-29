@@ -7645,17 +7645,15 @@ JSUS.extend(PARSE);
 );
 
 /**
- * # Stager
+ * # ErrorManager
  *
- * Copyright(c) 2012 Stefano Balietti
+ * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
  *
- * `nodeGame` container of game-state functions, and parameters
- *
+ * Handles the runtime errors.
  * ---
- *
  */
-(function (exports, parent) {
+(function(exports, parent) {
 
 // ## Global scope
     var J = parent.JSUS;
@@ -7734,19 +7732,19 @@ JSUS.extend(PARSE);
 
     if (J.isNodeJS()) {
 	// TODO fix this
-        //process.on('uncaughtException', function (err) {
-        //    node.err('Caught exception: ' + err);
-        //    if (node.debug) {
-        //        throw err;
-        //    }
-        //});
+        process.on('uncaughtException', function (err) {
+            node.err('Caught exception: ' + err);
+            if (node.debug) {
+                throw err;
+            }
+        });
     }
     else {
-//        window.onerror = function(msg, url, linenumber) {
-//            console.log(node, msg);
-//            node.err(url + ' ' + linenumber + ': ' + msg);
-//            return !node.debug;
-//        };
+        window.onerror = function(msg, url, linenumber) {
+            console.log(node, msg);
+            node.err(url + ' ' + linenumber + ': ' + msg);
+            return !node.debug;
+        };
     }
 
 // ## Closure
@@ -7754,7 +7752,6 @@ JSUS.extend(PARSE);
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
-
 /**
  * # EventEmitter
  *
