@@ -7663,7 +7663,57 @@ JSUS.extend(PARSE);
     parent.NodeGameMisconfiguredGameError = NodeGameMisconfiguredGameError;
     parent.NodeGameIllegalOperationError = NodeGameIllegalOperationError;
 
-    /*
+    parent.ErrorManager = ErrorManager;
+
+    /**
+     * ## ErrorManager
+     *
+     * Creates a new instance of ErrorManager 
+     *
+     * @param {NodeGameClient} node Reference to the active node object.
+     */
+    function ErrorManager(node) {
+        
+        /**
+         * ## ErrorManager.lastError
+         *
+         * Reference to the last error occurred. 
+         */
+        this.lastError = null;
+
+        this.init(node);
+    }
+    
+    /**
+     * ## ErrorManager.init
+     *
+     * Starts catching run-time errors 
+     *
+     * @param {NodeGameClient} node Reference to the active node object.
+     */
+    ErrorManager.prototype.init = function(node) {
+        if (J.isNodeJS()) {
+            process.on('uncaughtException', function(err) {
+                this.lastError = err;
+                node.err('Caught exception: ' + err);
+                if (node.debug) {
+                    throw err;
+                }
+            });
+        }
+        else {
+            console.log('WI');
+            window.onerror = function(msg, url, linenumber) {
+                var msg;
+                msg = url + ' ' + linenumber + ': ' + msg;
+                this.lastError = msg;
+                node.err(msg);
+                return !node.debug;
+            };
+        }
+    }
+
+    /**
      * ### NodeGameRuntimeError
      *
      * An error occurred during the execution of nodeGame
@@ -7680,7 +7730,7 @@ JSUS.extend(PARSE);
     NodeGameRuntimeError.prototype.name = 'NodeGameRuntimeError';
 
 
-    /*
+    /**
      * ### NodeGameStageCallbackError
      *
      * An error occurred during the execution of one of the stage callbacks
@@ -7697,7 +7747,7 @@ JSUS.extend(PARSE);
     NodeGameStageCallbackError.prototype.name = 'NodeGameStageCallbackError';
 
 
-    /*
+    /**
      * ### NodeGameMisconfiguredGameError
      *
      * An error occurred during the configuration of the Game
@@ -7714,7 +7764,7 @@ JSUS.extend(PARSE);
     NodeGameMisconfiguredGameError.prototype.name = 'NodeGameMisconfiguredGameError';
 
 
-    /*
+    /**
      * ### NodeGameIllegalOperationError
      *
      * An error occurred during the configuration of the Game
@@ -7729,23 +7779,6 @@ JSUS.extend(PARSE);
     NodeGameIllegalOperationError.prototype = new Error();
     NodeGameIllegalOperationError.prototype.constructor = NodeGameIllegalOperationError;
     NodeGameIllegalOperationError.prototype.name = 'NodeGameIllegalOperationError';
-
-    if (J.isNodeJS()) {
-	// TODO fix this
-        process.on('uncaughtException', function (err) {
-            node.err('Caught exception: ' + err);
-            if (node.debug) {
-                throw err;
-            }
-        });
-    }
-    else {
-        window.onerror = function(msg, url, linenumber) {
-            console.log(node, msg);
-            node.err(url + ' ' + linenumber + ': ' + msg);
-            return !node.debug;
-        };
-    }
 
 // ## Closure
 })(
@@ -7776,7 +7809,7 @@ JSUS.extend(PARSE);
     /**
      * ## EventEmitter constructor
      *
-     * creates a new instance of EventEmitter
+     * Creates a new instance of EventEmitter
      */
     function EventEmitter(name, node) {
 
@@ -14989,7 +15022,8 @@ GameStage.stringify = function(gs) {
     // ## Exposing Class
     exports.NodeGameClient = NodeGameClient;
 
-    var EventEmitterManager = parent.EventEmitterManager,
+    var ErrorManager = parent.ErrorManager,
+        EventEmitterManager = parent.EventEmitterManager,
         EventEmitter = parent.EventEmitter,
         GameMsgGenerator = parent.GameMsgGenerator,
         Socket = parent.Socket,
@@ -15049,6 +15083,15 @@ GameStage.stringify = function(gs) {
          * @experimental
          */
         this.remoteVerbosity = this.verbosity_levels.WARN;
+
+        /**
+         * ### node.errorManager
+         *
+         * Catches run-time errors.
+         *
+         * In debug mode errors are re-thrown.
+         */
+        this.errorManager = new ErrorManager(this);
 
         /**
          * ### node.events
@@ -15236,7 +15279,7 @@ GameStage.stringify = function(gs) {
         this.registerSetup('nodename', function(newName) {
             newName = newName || 'ng';
             if ('string' !== typeof newName) {
-                throw new TypeError('node.nodename must be of type string');
+                throw new TypeError('node.nodename must be of type string.');
             }
             this.nodename = newName;
             return newName;
@@ -15250,7 +15293,7 @@ GameStage.stringify = function(gs) {
         this.registerSetup('debug', function(enable) {
             enable = enable || false;
             if ('boolean' !== typeof enable) {
-                throw new TypeError('node.debug must be of type boolean');
+                throw new TypeError('node.debug must be of type boolean.');
             }
             this.debug = enable;
             return enable;
@@ -16256,7 +16299,6 @@ GameStage.stringify = function(gs) {
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
-
 /**
  * # NodeGameClient Events Handling  
  *
@@ -16873,22 +16915,6 @@ GameStage.stringify = function(gs) {
     'undefined' != typeof node ? node : module.parent.exports
 );
 // <!-- ends internal listener -->
-
-//(function (exports, node) {
-//
-//// ## Global scope
-//
-//    exports.GameTimer = GameTimer;
-//
-//    var JSUS = node.JSUS;
-//
-//
-//
-//// ## Closure
-//})(
-//    'undefined' != typeof node ? node : module.exports,
-//    'undefined' != typeof node ? node : module.parent.exports
-//);
 
 /**
  * 

@@ -79,7 +79,6 @@ var ng_client = [
 
 // ng-addons
 var ng_addons = [           
-    rootDir + "addons/GameTimer.js",
     rootDir + "addons/TriggerManager.js",
     // 	rootDir + "addons/GameSession.js",
     // 	rootDir + "addons/WaitingRoom.js",
