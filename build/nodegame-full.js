@@ -4143,7 +4143,7 @@ JSUS.extend(PARSE);
  * See README.md for help.
  * ---
  */
-(function (exports, J, store) {
+(function(exports, J, store) {
 
     NDDB.compatibility = J.compatibility();
 
@@ -4440,7 +4440,7 @@ JSUS.extend(PARSE);
      */
     NDDB.prototype._autoUpdate = function(options) {
         var update = options ? J.merge(this.__update, options) : this.__update;
-
+        
         if (update.pointer) {
             this.nddb_pointer = this.db.length-1;
         }
@@ -4452,7 +4452,6 @@ JSUS.extend(PARSE);
             this.rebuildIndexes();
         }
     };
-
 
     function nddb_insert(o, update) {
         if (o === null) return;
@@ -4952,7 +4951,6 @@ JSUS.extend(PARSE);
 
         var cb, idx;
         if (!h && !i && !v) return;
-
         // Reset current indexes
         this.resetIndexes({h: h, v: v, i: i});
 
@@ -4992,7 +4990,7 @@ JSUS.extend(PARSE);
         }
 
         for (idx = 0 ; idx < this.db.length ; idx++) {
-            // _hashIt and viewIt do not need idx, it is no harm anyway
+            // _hashIt and viewIt do not need idx, it is no harm anyway.
             cb.call(this, this.db[idx], idx);
         }
     };
@@ -5013,7 +5011,7 @@ JSUS.extend(PARSE);
             if (this.__I.hasOwnProperty(key)) {
                 func = this.__I[key];
                 index = func(o);
-
+                
                 if ('undefined' === typeof index) continue;
 
                 if (!this[key]) this[key] = new NDDBIndex(key, this);
@@ -7233,7 +7231,7 @@ JSUS.extend(PARSE);
         o = this.nddb.db[dbidx];
         J.mixin(o, update);
         this.nddb.emit('update', o);
-        this.nddb._autoUpdate();
+        //this.nddb._autoUpdate();
         return o;
     };
 
@@ -8723,7 +8721,7 @@ JSUS.extend(PARSE);
      *
      * @see NDDB.constructor
      */
-    function PlayerList (options, db) {
+    function PlayerList(options, db) {
         options = options || {};
         
         // Updates indexes on the fly.
@@ -8897,8 +8895,11 @@ JSUS.extend(PARSE);
                 'PlayerList.updatePlayer: Attempt to assign to a player an ' +
                     'undefined playerState');
         }
-
-        return this.id.update(id, playerState);
+        var player = this.id.get(id);
+        J.mixin(player, playerState);
+        return player;
+        // This creates some problems with the _autoUpdate...to be investigated.
+        //return this.id.update(id, playerState);
     };
 
     /**
@@ -9058,7 +9059,6 @@ JSUS.extend(PARSE);
                 return false;
             }
         }
-        
         return true;
     };
 
@@ -13197,7 +13197,7 @@ JSUS.extend(PARSE);
                 'setStageLevel called with invalid parameter: ' + stageLevel);
         }
         node = this.node;
-        console.log(stageLevel);
+        // console.log(stageLevel);
         // Important: First publish, then actually update.
         if (!silent) {
             // Publish only if the update is different than current value.
@@ -14834,7 +14834,7 @@ JSUS.extend(PARSE);
         if (!h) {
             throw new Error('GameTimer.fire: missing argument');
         }
-
+        console.log(this.name);
         hook = h.hook || h;
         if ('function' === typeof hook) {
             ctx = h.ctx || this.node.game;
@@ -16722,6 +16722,7 @@ JSUS.extend(PARSE);
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
+            // console.log('PLAYER_UPDATE', msg.data, msg.from);
             node.game.pl.updatePlayer(msg.from, msg.data);
             node.emit('UPDATED_PLIST');
             if (node.game.shouldStep()) {
@@ -16814,7 +16815,7 @@ JSUS.extend(PARSE);
          * @see node.setup
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
-            console.log('GM', msg);
+            // console.log('GM', msg);
             if (!msg.text || !parent.constants.gamecommands[msg.text]) {
                 node.err('unknown game command received: ' + msg.text);
                 return;
@@ -23657,32 +23658,26 @@ TriggerManager.prototype.size = function () {
 
     VisualTimer.prototype.init = function(options) {
         options = options || this.options;
-        var that = this;
-        (function initHooks() {
-            if (options.hooks) {
-                if (!options.hooks instanceof Array) {
-                    options.hooks = [options.hooks];
-                }
+
+        if (options.hooks) {
+            if (!options.hooks instanceof Array) {
+                options.hooks = [options.hooks];
             }
-            else {
-                options.hooks = [];
-            }
-
-            options.hooks.push({
-                hook: that.updateDisplay,
-                ctx: that
-            });
-        })();
-
-
-        this.gameTimer = options.gameTimer || node.timer.createTimer();
-
-        if (this.gameTimer) {
-            this.gameTimer.init(options);
         }
         else {
-            node.log('GameTimer object could not be initialized. VisualTimer will not work properly.', 'ERR');
+            options.hooks = [];
         }
+
+        options.hooks.push({
+            hook: this.updateDisplay,
+            ctx: this
+        });
+
+        if (!this.gameTimer) {
+            this.gameTimer = node.timer.createTimer();
+        }
+        
+        this.gameTimer.init(options);
 
         if (this.timerDiv) {
             this.timerDiv.className = options.className || '';
@@ -23702,14 +23697,15 @@ TriggerManager.prototype.size = function () {
     };
 
     VisualTimer.prototype.updateDisplay = function() {
+        var time, minutes, seconds;
         if (!this.gameTimer.milliseconds || this.gameTimer.milliseconds === 0) {
             this.timerDiv.innerHTML = '00:00';
             return;
         }
-        var time = this.gameTimer.milliseconds - this.gameTimer.timePassed;
+        time = this.gameTimer.milliseconds - this.gameTimer.timePassed;
         time = JSUS.parseMilliseconds(time);
-        var minutes = (time[2] < 10) ? '' + '0' + time[2] : time[2];
-        var seconds = (time[3] < 10) ? '' + '0' + time[3] : time[3];
+        minutes = (time[2] < 10) ? '' + '0' + time[2] : time[2];
+        seconds = (time[3] < 10) ? '' + '0' + time[3] : time[3];
         this.timerDiv.innerHTML = minutes + ':' + seconds;
     };
 
@@ -23778,7 +23774,6 @@ TriggerManager.prototype.size = function () {
         });
 
         node.on('DONE', function() {
-            // TODO: This should be enabled again
             that.stop();
             that.timerDiv.className = 'strike';
         });
