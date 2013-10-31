@@ -16,7 +16,8 @@ player = new Player ({
     sid: 1,
     count: 1,
     name: 'Ste',
-    state: {round: 1},
+    stage: {stage: 1, step: 1, round: 1},
+    stageLevel: 100, // DONE
     ip:	'1.2.3.4',
 }),
 player2 = new Player ({
@@ -24,7 +25,8 @@ player2 = new Player ({
     sid: 2,
     count: 2,
     name: 'Ste2',
-    state: {round: 1},
+    stage: {stage: 1, step: 1, round: 1},
+    stageLevel: 100, // DONE
     ip:	'1.2.3.5',
 }),
 player3 = new Player ({
@@ -32,7 +34,8 @@ player3 = new Player ({
     sid: 3,
     count: 3,
     name: 'Ste3',
-    state: {round: 1},
+    stage: {stage: 1, step: 1, round: 2},
+    stageLevel: 100,
     ip:	'1.2.3.6',
 }),
 player4 = new Player ({
@@ -40,10 +43,28 @@ player4 = new Player ({
     sid: 4,
     count: 4,
     name: 'Ste4',
-    state: {round: 1},
+    stage: {stage: 1, step: 2, round: 1},
+    stageLevel: 100,
     ip:	'1.2.3.7',
 });
-
+player5 = new Player ({
+    id: 4,
+    sid: 4,
+    count: 4,
+    name: 'Ste4',
+    stage: {stage: 1, step: 1, round: 1},
+    stageLevel: 50, // PLAYING
+    ip:	'1.2.3.7',
+});
+player6 = new Player ({
+    id: 4,
+    sid: 4,
+    count: 4,
+    name: 'Ste4',
+    stage: {stage: 3, step: 1, round: 1},
+    stageLevel: 50, // PLAYING
+    ip:	'1.2.3.7',
+});
 
 // If updated, updates the tests.
 var plDB = [player, player2, player3, player4];
@@ -64,7 +85,7 @@ function myLog(a) {
 
 myLog.prototype.log = function(a) {
     return 'A' + a;
-}
+};
 
 describe('PlayerList', function() {
     
@@ -101,8 +122,6 @@ describe('PlayerList', function() {
             });
             ('undefined' !== typeof pl.myIdx).should.be.true;
 	});
-
-
     });
     
     describe('#view initializations', function() {
@@ -131,55 +150,124 @@ describe('PlayerList', function() {
 	});
     });
     
-    //    describe('#get()', function() {
-    //	before(function(){
-    //	    test_player = pl.get(player.id);
-    //	});
-    //	it('should return the player we have inserted before', function() {
-    //	    samePlayer(player, test_player);
-    //	});
-    //	
-    //    });
-    //    
-    //    describe('#pop()', function() {
-    //	before(function() {
-    //	    test_player = pl.pop(player.id);
-    //	});
-    //	
-    //	it('should return a player object', function() {
-    //	    test_player.should.exists;
-    //	});
-    //	
-    //	it('should return the player we have inserted before', function() {
-    //	    samePlayer(player, test_player);
-    //	});
-    //	
-    //	it('should remove the player we have inserted before', function() {
-    //	    pl.length.should.equal(0);
-    //	});
-    //    });
-    //    
-    //    describe('#getRandom()', function() {
-    //	before(function(){
-    //	    pl.add(player);
-    //	    pl.add(player2);
-    //	    pl.add(player3);
-    //	    pl.add(player4);
-    //	});
-    //	
-    //	it('should return one random player', function() {
-    //	    var r = pl.getRandom();
-    //	    r.name.should.exist;
-    //	    r.should.be.a('object');
-    //	    [player,player2,player3,player4].should.include(r);
-    //	    
-    //	});
-    //	
-    //	it('should return two random players', function() {
-    //	    var set = pl.getRandom(2);
-    //	    set.length.should.equal(2);
-    //	});
-    //    });
+    describe('#get()', function() {
+	before(function() {
+            pl = new PlayerList();
+	    pl.add(player);
+            test_player = pl.id.get(player.id);
+	});
+	it('should return the player we have inserted before', function() {
+	    samePlayer(player, test_player);
+	});
+	
+    });
+    
+    describe('#pop()', function() {
+	before(function() {
+	    test_player = pl.id.pop(player.id);
+	});
+	
+	it('should return a player object', function() {
+	    test_player.should.exists;
+	});
+	
+	it('should return the player we have inserted before', function() {
+	    samePlayer(player, test_player);
+	});
+	
+	it('should remove the player we have inserted before', function() {
+	    pl.size().should.equal(0);
+	});
+    });
+    
+    describe('#getRandom()', function() {
+	before(function(){
+	    pl.add(player);
+	    pl.add(player2);
+	    pl.add(player3);
+	    pl.add(player4);
+	});
+	
+	it('should return one random player', function() {
+	    var r = pl.getRandom();
+	    ('undefined' !== typeof r.name).should.be.true;
+	    r.should.be.a('object');
+	    [player,player2,player3,player4].should.include(r);
+	    
+	});
+	
+	it('should return two random players', function() {
+	    var set = pl.getRandom(2);
+	    set.length.should.equal(2);
+	});
+    });
+
+    describe('#arePlayersSync()', function() {
+	before(function(){
+	    pl = new PlayerList();
+            pl.add(player);
+	    pl.add(player2);
+	});
+	
+	it('players should be sync on same stage 1.1.1', function() {
+	    pl.arePlayersSync('1.1.1').should.be.true;
+	});
+        it('players should be sync on same stage 1.1.1 and stageLevel DONE', function() {
+	    pl.arePlayersSync('1.1.1', 100).should.be.true;
+	});
+        it('players should be sync on same stage 1.1.1', function() {
+            pl.add(player5);
+	    pl.arePlayersSync('1.1.1').should.be.true;
+	});
+        it('players should NOT be sync on same stage 1.1.1 and DONE', function() {
+	    pl.arePlayersSync('1.1.1', 100).should.be.false;
+	});
+        it('players should be sync on same stage 1.1.1, ignoring stageLevel and outliers', function() {
+            pl.add(player3);
+	    pl.arePlayersSync('1.1.1', undefined, 'STAGE', false).should.be.true;
+	});
+        it('players should be sync on same stage 1.1.1, ignoring outliers', function() {
+            pl.id.pop(player5.id);
+	    pl.arePlayersSync('1.1.1', 100, 'STAGE', false).should.be.true;
+	});
+        it('players should be sync up to stage 1.1.1 and DONE, ignoring outliers', function() {
+            pl.arePlayersSync('1.1.1', 100, 'STAGE_UPTO', false).should.be.true;
+	});
+        it('players should be sync up to stage 1.1.2, ignoring stageLevel and outliers', function() {
+            pl.arePlayersSync('1.1.2', undefined, 'STAGE_UPTO', false).should.be.false;
+	});
+        it('players should NOT be sync up to stage 1.1.2, ignoring stageLevel', function() {
+            pl.arePlayersSync('1.1.2', undefined, 'STAGE_UPTO').should.be.false;
+	});
+        it('players should be sync up to stage 1.1.1, ignoring stageLevel and outliers', function() {
+            pl.add(player6);
+            pl.arePlayersSync('1.1.1', undefined, 'STAGE_UPTO', false).should.be.true;
+	});
+        it('players should be sync up to stage 1.1.1, ignoring outliers', function() {
+            pl.arePlayersSync('1.1.1', 50, 'STAGE_UPTO', false).should.be.false;
+	});
+        it('players should be sync up to stage 1.1.1, ignoring stageLevel', function() {
+            pl.arePlayersSync('1.1.1', undefined, 'STAGE_UPTO').should.be.false;
+	});
+    });
+    describe('#isStepDone()', function() {
+	before(function(){
+	    pl = new PlayerList();
+            pl.add(player);
+	    pl.add(player2);
+	});
+	
+	it('players should be DONE exactly on stage 1.1.1', function() {
+	    pl.isStepDone('1.1.1').should.be.true;
+	});
+        it('players should NOT be DONE exactly on stage 1.1.1', function() {
+	    pl.add(player3);
+            pl.isStepDone('1.1.1').should.be.false;
+	});
+        it('players should be DONE on stage 1 (in different steps is allowed)', function() {
+            pl.isStepDone('1.1.1', 'STAGE').should.be.true;
+	});
+    });
     
     
 });

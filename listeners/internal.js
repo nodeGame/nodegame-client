@@ -81,7 +81,6 @@
          */
         this.events.ng.on('STEP_CALLBACK_EXECUTED', function() {
             if (!node.window || node.window.isReady()) {
-                node.game.setStageLevel(stageLevels.LOADED);
                 node.emit('LOADED');
             }
         });
@@ -92,9 +91,9 @@
          * @emit LOADED
          */
         this.events.ng.on('WINDOW_LOADED', function() {
-            // TODO we should have a better check
-            if (node.game.getStageLevel() >= stageLevels.CALLBACK_EXECUTED) {
-                node.game.setStageLevel(stageLevels.LOADED);
+            var stageLevel;
+            stageLevel = node.game.getStageLevel();
+            if (stageLevel >= stageLevels.CALLBACK_EXECUTED) {
                 node.emit('LOADED');
             }
         });
