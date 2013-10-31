@@ -7651,7 +7651,7 @@ JSUS.extend(PARSE);
         var stage;
         if (!pl.size()) return false;
         stage = pl.first().stage;
-        return pl.arePlayersSync(stage, node.constants.stageLevels.DONE, 'ALL');
+        return pl.arePlayersSync(stage, node.constants.stageLevels.DONE, 'EXACT');
     };
 
     // ## Closure
@@ -8801,7 +8801,7 @@ JSUS.extend(PARSE);
 
         if (this.exist(player.id)) {
             throw new NodeGameRuntimeError(
-                    'PlayerList.add: Player already exists (id ' + player.id + ')');
+                'PlayerList.add: Player already exists (id ' + player.id + ')');
         }
         
         this.insert(player);
@@ -8889,70 +8889,16 @@ JSUS.extend(PARSE);
 
         if (!this.exist(id)) {
             throw new NodeGameRuntimeError(
-                    'PlayerList.updatePlayer: Player not found (id ' + id + ')');
+                'PlayerList.updatePlayer: Player not found (id ' + id + ')');
         }
 
         if ('undefined' === typeof playerState) {
             throw new NodeGameRuntimeError(
-                'PlayerList.updatePlayer: Attempt to assign to a player an undefined playerState');
+                'PlayerList.updatePlayer: Attempt to assign to a player an ' +
+                    'undefined playerState');
         }
 
         return this.id.update(id, playerState);
-    };
-
-    /**
-     * ### PlayerList.updatePlayerStage
-     *
-     * Updates the value of the `stage` object of a player
-     *
-     * @param {number} id The id of the player
-     * @param {GameStage} stage The new stage object
-     * @return {object} The updated player object
-     *
-     * @deprecated
-     */
-    PlayerList.prototype.updatePlayerStage = function(id, stage) {
-
-        if (!this.exist(id)) {
-            throw new NodeGameRuntimeError(
-                    'PlayerList.updatePlayerStage: Player not found (id ' + id + ')');
-        }
-
-        if ('undefined' === typeof stage) {
-            throw new NodeGameRuntimeError(
-                'PlayerList.updatePlayerStage: Attempt to assign to a player an undefined stage');
-        }
-
-        return this.id.update(id, {
-            stage: stage
-        });
-    };
-
-    /**
-     * ### PlayerList.updatePlayerStageLevel
-     *
-     * Updates the value of the `stageLevel` object of a player
-     *
-     * @param {number} id The id of the player
-     * @param {number} stageLevel The new stageLevel
-     * @return {object} The updated player object
-     *
-     * @deprecated
-     */
-    PlayerList.prototype.updatePlayerStageLevel = function(id, stageLevel) {
-        if (!this.exist(id)) {
-            throw new NodeGameRuntimeError(
-                    'PlayerList.updatePlayerStageLevel: Player not found (id ' + id + ')');
-        }
-
-        if ('undefined' === typeof stageLevel) {
-            throw new NodeGameRuntimeError(
-                'PlayerList.updatePlayerStageLevel: Attempt to assign to a player an undefined stage');
-        }
-
-        return this.id.update(id, {
-            stageLevel: stageLevel
-        });
     };
 
     /**
@@ -8979,8 +8925,8 @@ JSUS.extend(PARSE);
      * @return {boolean} TRUE, if all checked players have terminated the stage
      * @see PlayerList.arePlayersSync
      */
-    PlayerList.prototype.isStepDone = function(gameStage, type) {
-        return this.arePlayersSync(gameStage, stageLevels.DONE, type);
+    PlayerList.prototype.isStepDone = function(gameStage, type, checkOutliers) {
+        return this.arePlayersSync(gameStage, stageLevels.DONE, type, checkOutliers);
     };
 
     /**
@@ -9005,7 +8951,7 @@ JSUS.extend(PARSE);
      * @see PlayerList.arePlayersSync
      */
     PlayerList.prototype.isStepLoaded = function(gameStage) {
-        return this.arePlayersSync(gameStage, stageLevels.LOADED, 'ALL');
+        return this.arePlayersSync(gameStage, stageLevels.LOADED, 'EXACT');
     };
     
     /**
@@ -9018,70 +8964,97 @@ JSUS.extend(PARSE);
      * will return false. Players at later game steps will still be ignored.
      *
      // TODO UPDATE DOC
+     
+     strict: same stage, step, round, stageLevel
+     stage: same stage
+     stage_up_to: 
+     
+     players in other stages - ignore - false
 
      * @param {GameStage} gameStage The GameStage of reference
      * @param {numeric} stageLevel The stageLevel of reference
      * @param {string} Optional. type. Flag to say what players will be checked.
      * @return {boolean} TRUE, if all checked players are sync
      */
-    PlayerList.prototype.arePlayersSync = function(gameStage, stageLevel, type) {
-        var p, i, len, cmp, types;
+    PlayerList.prototype.arePlayersSync = function(gameStage, stageLevel, type, checkOutliers) {
+        var p, i, len, cmp, types, outlier;
 
         if (!gameStage) {
             throw new TypeError('PlayerList.arePlayersSync: invalid gameStage.');
         }
-        type = type || 'STEP';
+        if ('undefined' !== typeof stageLevel &&
+            'number' !== typeof stageLevel) {
+            throw new TypeError('PlayerList.arePlayersSync: stagelevel must ' +
+                                'be number or undefined.');
+        }
+        
+        type = type || 'EXACT';
         if ('string' !== typeof type) {
             throw new TypeError('PlayerList.arePlayersSync: type must be ' +
                                 ' string or undefined.');
         }
-        types = {STEP: '', STAGE_UPTO: '', ALL: ''};
+        types = {STAGE: '', STAGE_UPTO: '', EXACT: ''};
         if ('undefined' === typeof types[type]) {
-            throw new Error('PlayerList.arePlayersSync: unknown type: '
-                            + type + '.');
+            throw new Error('PlayerList.arePlayersSync: unknown type: ' +
+                            type + '.');
         }
         
+        checkOutliers = 'undefined' === typeof checkOutliers ?
+            true : checkOutliers;
+
+        if ('boolean' !== typeof checkOutliers) {
+            throw new TypeError('PlayerList.arePlayersSync: checkOutliers' +
+                                ' must be boolean or undefined.');
+        }
+
+        if (!checkOutliers && type === 'EXACT') {
+            throw new Error('PlayerList.arePlayersSync: incompatible options:' +
+                            ' type=EXACT and checkOutliers=FALSE.');
+        }
+        
+        // Cast the gameStage to object.
+        gameStage = new GameStage(gameStage);
+
         len = this.db.length;
         for (i = 0; i < len; i++) {
             p = this.db[i];
-            cmp = GameStage.compare(gameStage, p.stage);
             
             switch(type) {
             
-            case 'ALL':
+            case 'EXACT':
+                // Players in same stage, step and round.
+                cmp = GameStage.compare(gameStage, p.stage);
                 if (cmp !== 0) return false;
                 break;
 
-            case 'STAGE_UPTO':                
-                // Check players in current stage up to the reference step:
-
-                // Player in another stage
+            case 'STAGE':
                 if (gameStage.stage !== p.stage.stage) {
-                    continue;
-                }
-
-                // Player after given step
-                if (cmp < 0) {
-                    continue;
-                }
-                // Player before given step
-                else if (cmp > 0) {
-                    return false;
+                    outlier = true;
                 }
                 break;
-
-            case 'STEP':
-                // Just check players in current step:
-
-                // Player in another step
-                if (cmp !== 0) {
-                    continue;
+                
+             case 'STAGE_UPTO':                
+                // Players in current stage up to the reference step.
+                cmp = GameStage.compare(gameStage, p.stage);
+                
+                // Player in another stage or in later step
+                if (gameStage.stage !== p.stage.stage || cmp < 0) {
+                    outlier = true;
+                    break;
+                }
+                // Player before given step.
+                if (cmp > 0) {
+                    return false;
                 }
                 break;
             }
             
-            // Player not at the desidered stageLevel.
-            if (p.stageLevel !== stageLevel) {
+            // If outliers are not allowed returns false if one was found.
+            if (checkOutliers && outlier) return false;
+            
+            // If the stageLevel check is required let's do it!
+            if ('undefined' !== typeof stageLevel &&
+                p.stageLevel !== stageLevel) {
                 return false;
             }
         }
@@ -9144,7 +9117,7 @@ JSUS.extend(PARSE);
      *
      * Returns a set of N random players
      *
-     * @param {number} N The number of random players to include in the set. Defaults N = 1
+     * @param {number} N The number of players in the random set. Defaults N = 1
      * @return {Player|Array} A single player object or an array of
      */
     PlayerList.prototype.getRandom = function(N) {
@@ -9154,7 +9127,7 @@ JSUS.extend(PARSE);
                     'PlayerList.getRandom: N must be an integer >= 1');
         }
         this.shuffle();
-        return this.limit(N).fetch();
+        return N === 1 ? this.first() : this.limit(N).fetch();
     };
 
     /**
@@ -9186,7 +9159,6 @@ JSUS.extend(PARSE);
      * cannot overwrite any previously existing property.
      *
      * ---
-     *
      */
 
     // Expose Player constructor
@@ -9213,7 +9185,6 @@ JSUS.extend(PARSE);
          *
          * Usually it is the same as the Socket.io id, but in
          * case of reconnections it can change
-         *
          */
         this.id = player.id;
 
@@ -9221,7 +9192,6 @@ JSUS.extend(PARSE);
          * ### Player.sid
          *
          * The session id received from the nodeGame server
-         *
          */
         this.sid = player.sid;
 
@@ -9239,7 +9209,6 @@ JSUS.extend(PARSE);
          * ### Player.admin
          *
          * The admin status of the client
-         *
          */
         this.admin = !!player.admin;
 
@@ -9247,7 +9216,6 @@ JSUS.extend(PARSE);
          * ### Player.disconnected
          *
          * The connection status of the client
-         *
          */
         this.disconnected = !!player.disconnected;
 
@@ -9259,7 +9227,6 @@ JSUS.extend(PARSE);
          * The ip address of the player
          *
          * Note: this can change in mobile networks
-         *
          */
         this.ip = player.ip;
 
@@ -9267,7 +9234,6 @@ JSUS.extend(PARSE);
          * ### Player.name
          *
          * An alphanumeric name associated with the player
-         *
          */
         this.name = player.name;
 
@@ -12604,7 +12570,7 @@ JSUS.extend(PARSE);
         this.setCurrentGameStage(new GameStage(), true);
         this.setStateLevel(constants.stateLevels.STARTING, true);
         this.paused = false;
-    } // <!-- ends constructor -->
+    }
 
     // ## Game methods
 
@@ -12652,7 +12618,7 @@ JSUS.extend(PARSE);
         }
         this.setStateLevel(constants.stateLevels.INITIALIZED);
 
-        this.setCurrentGameStage(new GameStage());
+        this.setCurrentGameStage(new GameStage(), true);
         rc = this.step();
 
         node.log('game started.');
@@ -12870,9 +12836,9 @@ JSUS.extend(PARSE);
 
             node.emit('STEPPING');
 
-            // stageLevel needs to be changed, otherwise it stays DONE
+            // stageLevel needs to be changed (silent), otherwise it stays DONE
             // for a short time in the new game stage:
-            this.setStageLevel(constants.stageLevels.UNINITIALIZED);
+            this.setStageLevel(constants.stageLevels.UNINITIALIZED, true);
             this.setCurrentGameStage(nextStep);
 
             // If we enter a new stage (including repeating the same stage)
@@ -13123,9 +13089,19 @@ JSUS.extend(PARSE);
      */
     Game.prototype.setCurrentGameStage = function(gameStage, silent) {
         gameStage = new GameStage(gameStage);
-        console.log(gameStage);
-        // Important: First publish, then actually update.
-        if (!silent) this.publishUpdate('stage', gameStage);
+        // Update is never sent if the value has not changed.
+        if (!silent) {
+            if (GameStage.compare(this.getCurrentGameStage(), gameStage) !== 0) {
+                // Important: First publish, then actually update.
+                // The stage level, must also be sent in the published update,
+                // otherwise we could have a mismatch in the remote
+                // representation of the stage + stageLevel of the client.
+                this.publishUpdate('stage', {
+                    stage: gameStage,
+                    stageLevel: this.getStageLevel()
+                });
+            }
+        }
         this.node.player.stage = gameStage;
     };
 
@@ -13170,7 +13146,13 @@ JSUS.extend(PARSE);
                 'setStateLevel called with invalid parameter: ' + stateLevel);
         }
         // Important: First publish, then actually update.
-        if (!silent) this.publishUpdate('stateLevel', stateLevel);
+        if (!silent) {
+            if (this.getStateLevel !== stateLevel) {
+                this.publishUpdate('stateLevel', {
+                    stateLevel: stateLevel
+                });
+            }
+        }
         node.player.stateLevel = stateLevel;
     };
 
@@ -13214,9 +13196,16 @@ JSUS.extend(PARSE);
                 'setStageLevel called with invalid parameter: ' + stageLevel);
         }
         node = this.node;
-        console.log(stageLevel);
+        
         // Important: First publish, then actually update.
-        if (!silent) this.publishUpdate('stageLevel', stageLevel);
+        if (!silent) {
+            // Publish only if the update is different than current value.
+            if (this.getStageLevel() !== stageLevel) {
+                this.publishUpdate('stageLevel', {
+                    stageLevel: stageLevel
+                });
+            }
+        }
         node.player.stageLevel = stageLevel;
     };
     
@@ -13225,8 +13214,7 @@ JSUS.extend(PARSE);
      *
      * Sends out a PLAYER_UPDATE message, if conditions are met. 
      *
-     * Type is a property of the `node.player` object. The update is published
-     * only if the new value differs from the old one.
+     * Type is a property of the `node.player` object.
      *
      * @param {string} type The type of update:
      *   'stateLevel', 'stageLevel', 'gameStage'.
@@ -13234,8 +13222,8 @@ JSUS.extend(PARSE);
      *
      * @see Game.shouldPublishUpdate
      */
-    Game.prototype.publishUpdate = function(type, newValue) {
-        var node, data;
+    Game.prototype.publishUpdate = function(type, update) {
+        var node;
         if ('string' !== typeof type) {
             throw new TypeError('Game.PublishUpdate: type must be string.');
         }
@@ -13244,17 +13232,14 @@ JSUS.extend(PARSE);
                 'Game.publishUpdate: unknown update type (' + type + ')');
         }
         node = this.node;
-        // Update is never sent if the value has not changed.
-        if (node.player[type] !== newValue &&
-            this.shouldPublishUpdate(type, newValue)) {
-                data = {};
-                data[type] = newValue;
-                node.socket.send(node.msg.create({
-                    target: constants.target.PLAYER_UPDATE,
-                    data: data,
-                    text: type,
-                    to: 'ALL'
-                }));
+       
+        if (this.shouldPublishUpdate(type, update)) {
+            node.socket.send(node.msg.create({
+                target: constants.target.PLAYER_UPDATE,
+                data: update,
+                text: type,
+                to: 'ALL'
+            }));
         }
     };
 
@@ -13291,7 +13276,8 @@ JSUS.extend(PARSE);
             return false;
         }
         if (this.plot.getProperty(this.getCurrentGameStage(), 'syncOnLoaded')) {
-            if (type === 'stageLevel' && value === stageLevels.LOADED) {
+            if (type === 'stageLevel' && 
+                value.stageLevel === stageLevels.LOADED) {
                 return true;
             }
             // Else will be evaluated below.
@@ -13304,8 +13290,8 @@ JSUS.extend(PARSE);
         case levels.REGULAR:
             if (type === 'stateLevel') return false;
             if (type === 'stageLevel') {
-                return (value === stageLevels.PLAYING ||
-                        value === stageLevels.DONE);
+                return (value.stageLevel === stageLevels.PLAYING ||
+                        value.stageLevel === stageLevels.DONE);
             }
             return true; // type === 'stage'
         case levels.MOST:
@@ -16739,7 +16725,6 @@ JSUS.extend(PARSE);
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
-            console.log(msg.data);
             node.game.pl.updatePlayer(msg.from, msg.data);
             node.emit('UPDATED_PLIST');
             if (node.game.shouldStep()) {
