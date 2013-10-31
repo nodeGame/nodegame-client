@@ -168,6 +168,7 @@
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
+            // console.log('PLAYER_UPDATE', msg.data, msg.from);
             node.game.pl.updatePlayer(msg.from, msg.data);
             node.emit('UPDATED_PLIST');
             if (node.game.shouldStep()) {
@@ -260,7 +261,8 @@
          * @see node.setup
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
-            if (!msg.text || !parent.constants.gamecommand[msg.text]) {
+            // console.log('GM', msg);
+            if (!msg.text || !parent.constants.gamecommands[msg.text]) {
                 node.err('unknown game command received: ' + msg.text);
                 return;
             }

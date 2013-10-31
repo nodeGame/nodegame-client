@@ -7486,7 +7486,7 @@ JSUS.extend(PARSE);
      * - node.gamecommand.resume
      * - node.gamecommand.stop
      */
-    k.gamecommand = {
+    k.gamecommands = {
         start: 'start',
         pause: 'pause',
         resume: 'resume',
@@ -9058,6 +9058,7 @@ JSUS.extend(PARSE);
                 return false;
             }
         }
+        
         return true;
     };
 
@@ -13196,7 +13197,7 @@ JSUS.extend(PARSE);
                 'setStageLevel called with invalid parameter: ' + stageLevel);
         }
         node = this.node;
-        
+        console.log(stageLevel);
         // Important: First publish, then actually update.
         if (!silent) {
             // Publish only if the update is different than current value.
@@ -15638,19 +15639,15 @@ JSUS.extend(PARSE);
         });
 
         // ### node.on.stepdone
+        // Uses the step rule to determine when a step is DONE.
         this.alias('stepdone', 'UPDATED_PLIST', function(cb) {
             return function() {
                 if (that.game.shouldStep()) {
-                    console.log('yes');
-                    console.log(that.game.pl.db);
                     cb.call(that.game, that.game.pl);
-                }
-                else {
-                    console.log('no');
-                    console.log(that.game.pl.db);
                 }
             };
         });
+
         // LISTENERS
 
         this.addDefaultIncomingListeners();
@@ -16464,12 +16461,12 @@ JSUS.extend(PARSE);
      */
     NGC.prototype.remoteCommand = function(command, to, options) {
         var msg;
-        if (!command) {
-            this.err('remoteCommand requires a valid command');
+        if (!command || !parent.constants.gamecommands[command]) {
+            this.err('node.remoteCommand: invalid command.');
             return false;
         }
         if ('undefined' === typeof to) {
-            this.err('remoteCommand requires a valid recipient');
+            this.err('node.remoteCommand: invalid recipient.');
             return false;
         }
 
@@ -16817,7 +16814,8 @@ JSUS.extend(PARSE);
          * @see node.setup
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
-            if (!msg.text || !parent.constants.gamecommand[msg.text]) {
+            console.log('GM', msg);
+            if (!msg.text || !parent.constants.gamecommands[msg.text]) {
                 node.err('unknown game command received: ' + msg.text);
                 return;
             }
@@ -16863,6 +16861,8 @@ JSUS.extend(PARSE);
     set = action.SET + '.',
     get = action.GET + '.',
     OUT = constants.OUT;
+
+    var gcommands = constants.gamecommands;
 
     /**
      * ## NodeGameClient.addDefaultInternalListeners
@@ -16972,11 +16972,13 @@ JSUS.extend(PARSE);
          * ## NODEGAME_GAMECOMMAND: start
          *
          */
-        this.events.ng.on('NODEGAME_GAMECOMMAND_' + constants.gamecommand.start, function(options) {
-            node.emit('BEFORE_GAMECOMMAND', constants.gamecommand.start, options);
+        this.events.ng.on('NODEGAME_GAMECOMMAND_' + gcommands.start, function(options) {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.start, options);
 
-            if (node.game.getCurrentStep() && node.game.getCurrentStep().stage !== 0) {
-                node.err('Game already started. Use restart if you want to start the game again');
+            if (node.game.getCurrentStep() &&
+                node.game.getCurrentStep().stage !== 0) {
+                node.err('Game already started. ' +
+                         'Use restart if you want to start the game again');
                 return;
             }
 
@@ -16987,8 +16989,10 @@ JSUS.extend(PARSE);
          * ## NODEGAME_GAMECOMMAND: pause
          *
          */
-        this.events.ng.on('NODEGAME_GAMECOMMAND_' + constants.gamecommand.pause, function(options) {
-            node.emit('BEFORE_GAMECOMMAND', constants.gamecommand.pause, options);
+        this.events.ng.on('NODEGAME_GAMECOMMAND_' + gcommands.pause, function(options) {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.pause, options);
+            
+            // TODO: check conditions
 
             node.game.pause();
         });
@@ -16997,10 +17001,24 @@ JSUS.extend(PARSE);
          * ## NODEGAME_GAMECOMMAND: resume
          *
          */
-        this.events.ng.on('NODEGAME_GAMECOMMAND_' + constants.gamecommand.resume, function(options) {
-            node.emit('BEFORE_GAMECOMMAND', constants.gamecommand.resume, options);
+        this.events.ng.on('NODEGAME_GAMECOMMAND_' + gcommands.resume, function(options) {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.resume, options);
+
+            // TODO: check conditions
 
             node.game.resume();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: resume
+         *
+         */
+        this.events.ng.on('NODEGAME_GAMECOMMAND_' + gcommands.step, function(options) {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.step, options);
+
+            // TODO: check conditions
+
+            node.game.step();
         });
 
         this.incomingAdded = true;

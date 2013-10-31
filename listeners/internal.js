@@ -26,6 +26,8 @@
     get = action.GET + '.',
     OUT = constants.OUT;
 
+    var gcommands = constants.gamecommands;
+
     /**
      * ## NodeGameClient.addDefaultInternalListeners
      *
@@ -134,11 +136,13 @@
          * ## NODEGAME_GAMECOMMAND: start
          *
          */
-        this.events.ng.on('NODEGAME_GAMECOMMAND_' + constants.gamecommand.start, function(options) {
-            node.emit('BEFORE_GAMECOMMAND', constants.gamecommand.start, options);
+        this.events.ng.on('NODEGAME_GAMECOMMAND_' + gcommands.start, function(options) {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.start, options);
 
-            if (node.game.getCurrentStep() && node.game.getCurrentStep().stage !== 0) {
-                node.err('Game already started. Use restart if you want to start the game again');
+            if (node.game.getCurrentStep() &&
+                node.game.getCurrentStep().stage !== 0) {
+                node.err('Game already started. ' +
+                         'Use restart if you want to start the game again');
                 return;
             }
 
@@ -149,8 +153,10 @@
          * ## NODEGAME_GAMECOMMAND: pause
          *
          */
-        this.events.ng.on('NODEGAME_GAMECOMMAND_' + constants.gamecommand.pause, function(options) {
-            node.emit('BEFORE_GAMECOMMAND', constants.gamecommand.pause, options);
+        this.events.ng.on('NODEGAME_GAMECOMMAND_' + gcommands.pause, function(options) {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.pause, options);
+            
+            // TODO: check conditions
 
             node.game.pause();
         });
@@ -159,10 +165,24 @@
          * ## NODEGAME_GAMECOMMAND: resume
          *
          */
-        this.events.ng.on('NODEGAME_GAMECOMMAND_' + constants.gamecommand.resume, function(options) {
-            node.emit('BEFORE_GAMECOMMAND', constants.gamecommand.resume, options);
+        this.events.ng.on('NODEGAME_GAMECOMMAND_' + gcommands.resume, function(options) {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.resume, options);
+
+            // TODO: check conditions
 
             node.game.resume();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: resume
+         *
+         */
+        this.events.ng.on('NODEGAME_GAMECOMMAND_' + gcommands.step, function(options) {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.step, options);
+
+            // TODO: check conditions
+
+            node.game.step();
         });
 
         this.incomingAdded = true;
