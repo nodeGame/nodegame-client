@@ -16964,7 +16964,9 @@ JSUS.extend(PARSE);
                 return;
             }
             res = node.emit(msg.text, msg.data);
-            node.say(msg.text, msg.from, res);
+            if (!J.isEmpty(res)) {
+                node.say(msg.text, msg.from, res);
+            }
         });
 
         /**
