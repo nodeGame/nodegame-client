@@ -158,9 +158,7 @@
          */
         this.events.ng.on(CMD + gcommands.pause, function(options) {
             node.emit('BEFORE_GAMECOMMAND', gcommands.pause, options);
-
             // TODO: check conditions
-
             node.game.pause();
         });
 
@@ -170,22 +168,28 @@
          */
         this.events.ng.on(CMD + gcommands.resume, function(options) {
             node.emit('BEFORE_GAMECOMMAND', gcommands.resume, options);
-
-            // TODO: check conditions
-
+            // TODO: check conditions.
             node.game.resume();
         });
 
         /**
-         * ## NODEGAME_GAMECOMMAND: resume
+         * ## NODEGAME_GAMECOMMAND: step
          *
          */
         this.events.ng.on(CMD + gcommands.step, function(options) {
             node.emit('BEFORE_GAMECOMMAND', gcommands.step, options);
-
-            // TODO: check conditions
-
+            // TODO: check conditions.
             node.game.step();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: stop
+         *
+         */
+        this.events.ng.on(CMD + gcommands.stop, function(options) {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.stop, options);
+            // Conditions checked inside stop.
+            node.game.stop();
         });
 
         this.internalAdded = true;
