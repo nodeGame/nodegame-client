@@ -1,9 +1,13 @@
-// # Internal listeners.
-
-// Internal listeners are not directly associated to messages,
-// but they are usually responding to internal nodeGame events,
-// such as progressing in the loading chain, or finishing a game stage.
-
+/**
+ * # Listeners for incoming messages.
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ * 
+ * Internal listeners are not directly associated to messages,
+ * but they are usually responding to internal nodeGame events,
+ * such as progressing in the loading chain, or finishing a game stage.
+ * ---
+ */
 (function(exports, parent) {
 
     "use strict";
@@ -200,4 +204,3 @@
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
-// <!-- ends internal listener -->

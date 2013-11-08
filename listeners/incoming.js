@@ -1,5 +1,9 @@
-// # Incoming listeners
-// Incoming listeners are fired in response to incoming messages
+/**
+ * # Listeners for incoming messages.
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ * ---
+ */
 (function(exports, parent) {
 
     "use strict";
@@ -56,7 +60,7 @@
         /**
          * ## in.say.PDISCONNECT
          *
-         * Removes a player from the player list based on the data contained in the message
+         * Removes a player from the player list
          *
          * @emit UPDATED_PLIST
          * @see Game.pl
@@ -70,7 +74,7 @@
         /**
          * ## in.say.MCONNECT
          *
-         * Adds a new monitor to the monitor list from the data contained in the message
+         * Adds a new monitor to the monitor list
          *
          * @emit UPDATED_MLIST
          * @see Game.ml
@@ -84,7 +88,7 @@
         /**
          * ## in.say.MDISCONNECT
          *
-         * Removes a monitor from the player list based on the data contained in the message
+         * Removes a monitor from the player list
          *
          * @emit UPDATED_MLIST
          * @see Game.ml
@@ -98,7 +102,7 @@
         /**
          * ## in.say.PLIST
          *
-         * Creates a new player-list object from the data contained in the message
+         * Creates a new player-list object
          *
          * @emit UPDATED_PLIST
          * @see Game.pl
@@ -112,7 +116,7 @@
         /**
          * ## in.say.MLIST
          *
-         * Creates a new monitor-list object from the data contained in the message
+         * Creates a new monitor-list object
          *
          * @emit UPDATED_MLIST
          * @see Game.pl
@@ -126,15 +130,16 @@
         /**
          * ## in.get.DATA
          *
-         * Experimental feature. Undocumented (for now)
+         * Emits the content 
          */
         node.events.ng.on( IN + get + 'DATA', function(msg) {
             var res;
-            if (!msg.text) {
-                node.warn('node.in.get.DATA: no event name');
+            
+            if ('string' !== typeof msg.text || msg.text === '') {
+                node.warn('node.in.get.DATA: invalid / missing event name.');
                 return;
             }
-            res = node.emit(msg.text, msg.data);
+            res = node.emit(msg.text, msg);
             if (!J.isEmpty(res)) {
                 node.say(msg.text, msg.from, res);
             }
@@ -271,6 +276,35 @@
             node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
         });
 
+        /**
+         * ## in.say.ALERT
+         *
+         * Displays an alert message (if in the browser window)
+         *
+         * If in Node.js, the message will be printed to standard output.
+         *
+         * @see node.setup
+         */
+        node.events.ng.on( IN + say + 'ALERT', function(msg) {
+            if (J.isEmpty(msg.text)) {
+                node.err('Alert message received, but content is empty.');
+                return;
+            }
+            if ('undefined' !== typeof window) {
+                if ('undefined' === typeof alert) {
+                    node.err('Alert msg received, but alert is not defined:' +
+                             msg.text);
+                    return;
+                }
+                alert(msg.text);
+            }
+            else {
+                console.log('****** ALERT ******');
+                console.log(msg.text);
+                console.log('*******************');
+            }
+        });
+
         node.incomingAdded = true;
         node.silly('incoming listeners added');
         return true;
@@ -281,4 +315,3 @@
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
-// <!-- ends incoming listener -->
