@@ -270,7 +270,8 @@
         node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
             // console.log('GM', msg);
             if (!msg.text || !parent.constants.gamecommands[msg.text]) {
-                node.err('unknown game command received: ' + msg.text);
+                node.err('node.on.in.say.GAMECOMMAND: unknown game command ' +
+                         'received: ' + msg.text);
                 return;
             }
             node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);

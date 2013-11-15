@@ -196,6 +196,16 @@
             node.game.stop();
         });
 
+        /**
+         * ## NODEGAME_GAMECOMMAND: goto_stage
+         *
+         */
+        this.events.ng.on(CMD + gcommands.goto_stage, function(stage, options) {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.goto_stage, options);
+            // Conditions checked inside stop.
+            node.game.stop();
+        });
+
         this.internalAdded = true;
         this.silly('internal listeners added');
         return true;

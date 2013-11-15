@@ -131,7 +131,7 @@ var ng_es5 = [
 //shelf.js
 var shelfDir = J.resolveModuleDir('shelf.js', __dirname);
 var ng_shelf = [
-    shelfDir + "/build/shelf.js",
+    shelfDir + "/build/shelf-browser.js",
 ];
 
 function build(options) {
