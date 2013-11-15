@@ -79,6 +79,7 @@
     require('./lib/modules/ssgd.js');
     require('./lib/modules/commands.js');
     require('./lib/modules/extra.js');
+    require('./lib/modules/getJSON.js');
     
     require('./lib/modules/variables.js');
  

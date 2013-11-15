@@ -7264,7 +7264,6 @@ JSUS.extend(PARSE);
      */
     k.UNDEFINED_PLAYER = -1;
 
-
      /**
      * ### node.constants.verbosity_levels
      *
@@ -11309,47 +11308,6 @@ JSUS.extend(PARSE);
     };
 
     /**
-     * ### GamePlot.diff
-     * 
-     * Returns the distance in steps between two stages in the game-loop 
-     * 
-     * All steps and rounds in between are counted (repetitions included).
-     * 
-     * It works under the assumption that state1 comes first than state2
-     * in the game-loop.
-     * 
-     * @param {GameState} state1 The reference game-state
-     * @param {GameState} state2 The second state for comparison.
-     * 
-     * @return {number} The state index in the loop, or -1 if it does not exist
-     * 
-     * @TODO: compute also negative distances
-     */
-    GamePlot.prototype.diff = function(state1, state2) {
-        if (!state1) return false;
-        state1 = new GameState(state1) ;
-        
-        if (!state2) {
-            if (!node.game.state) return false;
-            state2 = node.game.state
-        }
-        else {
-            state2 = new GameState(state2) ;
-        }
-        
-        
-        var idx = 0;
-        while (state2) {
-            if (GameState.compare(state1, state2) === 0){
-                return idx;
-            }
-            state2 = this.next(state2);
-            idx++;
-        }
-        return -1;
-    };
-
-    /**
      * ## GamePlot.isFlexibleMode
      *
      * Returns TRUE if operating in _flexible_ mode
@@ -12648,6 +12606,7 @@ JSUS.extend(PARSE);
         }
 
         this.memory.clear(true);
+        node.window.clearCache();
 
         // Update state/stage levels and game stage.
         this.setStateLevel(constants.stateLevels.STARTING, true);
@@ -12803,6 +12762,7 @@ JSUS.extend(PARSE);
      *
      * @see Game.stager
      * @see Game.currentStage
+     * @see Game.gotoStep
      * @see Game.execStep
      */
     Game.prototype.step = function() {
@@ -12826,8 +12786,21 @@ JSUS.extend(PARSE);
      * ## Game.gotoStep
      *
      * Updates the current game step to toStep and executes it.
-     * Can re-execute the same step.
-     * TODO: harmonize return values 
+     *
+     * It unloads the old step listeners, before loading the listeners of the
+     * new one.
+     *
+     * It does note check if the next step is different from the current one,
+     * and in this case the same step is re-executed.
+     *
+     * @param {string|GameStage} nextStep A game stage object, or a string like
+     *   GAME_OVER.
+     *
+     * @see Game.execStep
+     * @see GameStage
+     *
+     * TODO: harmonize return values
+     * TODO: remove some unused comments in the code.
      */
     Game.prototype.gotoStep = function(nextStep) {
         var curStep;
@@ -16826,6 +16799,113 @@ JSUS.extend(PARSE);
     };
 
     
+
+})(
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
+ * # NodeGameClient JSON fetching  
+ *
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
+ * ---
+ */
+
+(function(exports, parent) {
+
+    "use strict";
+
+    var NGC = parent.NodeGameClient;
+
+    /**
+     * ### NodeGameClient.getJSON
+     *
+     * Retrieves JSON data via JSONP from one or many URIs
+     *
+     * The callback will be called with the JSON object as the parameter.
+     *
+     * TODO: Update doc
+     * @param {array|string} uris The URI(s)
+     * @param {function} callback The function to call with the data
+     */
+    NGC.prototype.getJSON = function(uris, dataCb, doneCb) {
+        // TODO: Work in progress
+        var that;
+        var loadedCount;
+        var currentUri, uriIdx;
+        var cbScriptTag;
+        var jsonpCallbackName;
+        var scriptTag, scriptTagName;
+
+        if ('string' === typeof uris) {
+            uris = [ uris ];
+        }
+
+        // Do nothing if no URIs are given:
+        if (!uris || !uris.length) {
+            if (doneCb) doneCb();
+            return;
+        }
+
+        that = this;
+
+        // Keep count of loaded data:
+        loadedCount = 0;
+
+        // Create a temporary script tag with the JSONP callback:
+        cbScriptTag = document.createElement('script');
+        cbScriptTag.id = 'tmp_script_' + uriIdx;
+        cbScriptTag.innerHTML =
+            'function NGC_getJSON_callback(data){' +
+                //'dataCb(data);' +
+                'console.log("JSONP!!!");' +
+                'console.log(data);' +
+            '}';
+        document.body.appendChild(scriptTag);
+
+        for (uriIdx = 0; uriIdx < uris.length; uriIdx++) {
+            currentUri = uris[uriIdx];
+
+            // Create a temporary script tag for the current URI:
+            scriptTag = document.createElement('script');
+            scriptTagName = 'tmp_script_' + uriIdx;
+            scriptTag.id = scriptTagName;
+            scriptTag.name = scriptTagName;
+            document.body.appendChild(scriptTag);
+
+            // Register the onload handler:
+            scriptTag.onload = (function(uri, thisScriptTag) {
+                return function() {
+                    var frameDocumentElement;
+
+                    frameDocumentElement =
+                        (thisScriptTag.contentDocument ?
+                         thisScriptTag.contentDocument :
+                         thisScriptTag.contentWindow.document)
+                        .documentElement;
+
+                    // Store the contents in the cache:
+                    that.cache[uri] = {
+                        contents: frameDocumentElement.innerHTML,
+                        cacheOnClose: false
+                    };
+
+                    // Remove the internal frame:
+                    document.body.removeChild(thisScriptTag);
+
+                    // Increment loaded URIs counter:
+                    loadedCount++;
+                    if (loadedCount >= uris.length) {
+                        // All requested URIs have been loaded at this point.
+                        if (doneCb) doneCb();
+                    }
+                };
+            })(currentUri, scriptTag);
+        }
+    };
 
 })(
     'undefined' != typeof node ? node : module.exports,
