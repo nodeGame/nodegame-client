@@ -72,6 +72,7 @@ var ng_client = [
     rootDir + "lib/modules/ssgd.js",
     rootDir + "lib/modules/commands.js",
     rootDir + "lib/modules/extra.js",
+    rootDir + "lib/modules/getJSON.js",
     
     rootDir + "listeners/incoming.js",
     rootDir + "listeners/internal.js",
