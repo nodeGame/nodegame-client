@@ -4296,7 +4296,8 @@ JSUS.extend(PARSE);
      *   plus the shared objects
      */
     NDDB.prototype.cloneSettings = function(leaveOut) {
-        var options, keepShared;
+        var i, options, keepShared;
+        var logCopy, logCtxCopy;
         options = this.__options || {};
         keepShared = true;
 
@@ -4309,8 +4310,21 @@ JSUS.extend(PARSE);
         options.hooks = this.hooks;
         options.globalCompare = this.globalCompare;
 
-        options = J.clone(options);
+        // Must be removed before cloning.
+        if (options.log) {
+            logCopy = options.log;
+            delete options.log;
+        }
+        // Must be removed before cloning.
+        if (options.logCtx) {
+            logCtxCopy = options.logCtx;
+            delete options.logCtx;
+        }
 
+        // Cloning.
+        options = J.clone(options);
+        
+        // Removing unwanted options.
         for (i in leaveOut) {
             if (leaveOut.hasOwnProperty(i)) {
                 if (i === 'shared') {
@@ -4322,8 +4336,18 @@ JSUS.extend(PARSE);
                 delete options[i];
             }
         }
-        
-        if (keepShared) options.shared = this.__shared;
+
+        if (keepShared) {
+            options.shared = this.__shared;
+        }
+        if (logCopy) {
+            options.log = logCopy;
+            this.__options.log = logCopy;
+        }
+        if (logCtxCopy) {
+            options.logCtx = logCtxCopy;
+            this.__options.logCtx = logCtxCopy;
+        }
         return options;
     };
 
@@ -6939,13 +6963,21 @@ JSUS.extend(PARSE);
      * @see NDDBIndex.remove
      */
     NDDBIndex.prototype.update = function(idx, update) {
-        var o, dbidx;
+        var o, dbidx, nddb;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
-        o = this.nddb.db[dbidx];
+        nddb = this.nddb;
+        o = nddb.db[dbidx];
+        nddb.emit('update', o, update);
         J.mixin(o, update);
-        this.nddb.emit('update', o);
-        this.nddb._autoUpdate();
+        // We do indexes separately from the other components of _autoUpdate
+        // to avoid looping through all the other elements that are unchanged.
+        if (nddb.__update.indexes) {
+            nddb._indexIt(o, dbidx);
+            nddb._hashIt(o);
+            nddb._viewIt(o);
+        }
+        nddb._autoUpdate({indexes: false});
         return o;
     };
 
@@ -7189,7 +7221,7 @@ JSUS.extend(PARSE);
         stop: 'stop',
         restart: 'restart',
         step: 'step',
-        goto_stage: 'goto_stage'
+        goto_step: 'goto_step'
     };
 
     /**
@@ -9208,12 +9240,11 @@ JSUS.extend(PARSE);
      *
      * @return {string} The stringified game-message
      *
-     *  @see GameMsg.toString
+     * @see GameMsg.toString
      */
     GameMsg.prototype.stringify = function() {
         return JSON.stringify(this);
     };
-
 
     /**
      * ### GameMsg.toString
@@ -9221,7 +9252,7 @@ JSUS.extend(PARSE);
      * Creates a human readable string representation of the message
      *
      * @return {string} The string representation of the message
-     *  @see GameMsg.stringify
+     * @see GameMsg.stringify
      */
     GameMsg.prototype.toString = function() {
         var SPT, TAB, DLM, line, UNKNOWN, tmp;
@@ -9233,14 +9264,26 @@ JSUS.extend(PARSE);
         line += this.id + SPT;
         line += this.session + SPT;
         line += this.action + SPT;
-        line += this.target ? this.target.length < 6  ? this.target + SPT + TAB : this.target + SPT : UNKNOWN;
-        line += this.from ? this.from.length < 6  ? this.from + SPT + TAB : this.from + SPT : UKNOWN;
-        line += this.to ? this.to.length < 6  ? this.to + SPT + TAB : this.to + SPT : UNKNOWN;
-        if (!this.text) {
+
+        line += this.target ? 
+            this.target.length < 6  ?
+            this.target + SPT + TAB : this.target + SPT : UNKNOWN;
+        line += this.from ?
+            this.from.length < 6  ?
+            this.from + SPT + TAB : this.from + SPT : UKNOWN;
+        line += this.to ?
+            this.to.length < 6  ?
+            this.to + SPT + TAB : this.to + SPT : UNKNOWN;
+
+        if (this.text === null || 'undefined' === typeof this.text) {
             line += "\"no text\"" + SPT;
+        }
+        else if ('number' === typeof this.text) {
+            line += "" + this.text;
         }
         else {
             tmp = this.text.toString();
+            
             if (tmp.length > 12) { 
                 line += DLM + tmp.substr(0,9) + "..." + DLM + SPT;
             }
@@ -9251,8 +9294,12 @@ JSUS.extend(PARSE);
                 line += DLM + tmp + DLM + SPT;
             }
         }
-        if (!this.data) {
+
+        if (this.data === null || 'undefined' === typeof this.data) {
             line += "\"no data\"" + SPT;
+        }
+        else if ('number' === typeof this.data) {
+            line += "" + this.data;
         }
         else {
             tmp = this.data.toString();
@@ -9266,6 +9313,7 @@ JSUS.extend(PARSE);
                 line += DLM + tmp + DLM + SPT;
             }
         }
+
         line += new GameStage(this.stage) + SPT;
         line += this.reliable + SPT;
         line += this.priority;
@@ -11419,8 +11467,8 @@ JSUS.extend(PARSE);
             target: msg.target || constants.target.DATA,
             from: node.player ? node.player.id : constants.UNDEFINED_PLAYER,
             to: 'undefined' !== typeof msg.to ? msg.to : 'SERVER',
-            text: msg.text || null,
-            data: msg.data || null,
+            text: 'undefined' !== typeof msg.text ? "" + msg.text : null,
+            data: 'undefined' !== typeof msg.data ? msg.data : null,
             priority: priority,
             reliable: msg.reliable || 1
         });
@@ -11703,6 +11751,9 @@ JSUS.extend(PARSE);
      */
     Socket.prototype.secureParse = function(msg) {
         var gameMsg;
+        // this is causing an exception after changing GameMsg.toString
+        // gameMsg = GameMsg.clone(JSON.parse(msg));
+        // this.node.info('R: ' + gameMsg);
         try {
             gameMsg = GameMsg.clone(JSON.parse(msg));
             this.node.info('R: ' + gameMsg);
@@ -12606,8 +12657,9 @@ JSUS.extend(PARSE);
         }
 
         this.memory.clear(true);
-        node.window.clearCache();
-
+        if (node.window) {
+            node.window.clearCache();
+        }
         // Update state/stage levels and game stage.
         this.setStateLevel(constants.stateLevels.STARTING, true);
         this.setStageLevel(constants.stageLevels.UNINITIALIZED, true);
@@ -12770,15 +12822,6 @@ JSUS.extend(PARSE);
         node = this.node;
         curStep = this.getCurrentGameStage();
         nextStep = this.plot.next(curStep);
-        // Sends start / step command to connected clients if option is on.
-        if (this.settings.syncStepping) {
-            if (curStep.stage === 0) {
-                node.remoteCommand('start', 'ALL');
-            }
-            else {
-                node.remoteCommand('step', 'ALL');
-            }
-        }
         return this.gotoStep(nextStep);
     };
 
@@ -12833,7 +12876,15 @@ JSUS.extend(PARSE);
             node.socket.clearBuffer();
         }
 
-        // TODO: here was the syncStepping option
+        // Sends start / step command to connected clients if option is on.
+        if (this.settings.syncStepping) {
+            if (curStep.stage === 0) {
+                node.remoteCommand('start', 'ALL');
+            }
+            else {
+                node.remoteCommand('goto_step', 'ALL', nextStep);
+            }
+        }
 
         if ('string' === typeof nextStep) {
             if (nextStep === GamePlot.GAMEOVER) {
@@ -16936,7 +16987,7 @@ JSUS.extend(PARSE);
     var say = action.SAY + '.',
     set = action.SET + '.',
     get = action.GET + '.',
-        IN = parent.constants.IN;
+    IN = parent.constants.IN;
 
     /**
      * ## NodeGameClient.addDefaultIncomingListeners
@@ -17248,7 +17299,7 @@ JSUS.extend(PARSE);
     var NGC = parent.NodeGameClient;
 
     var GameMsg = parent.GameMsg,
-    GameSage = parent.GameStage,
+    GameStage = parent.GameStage,
     PlayerList = parent.PlayerList,
     Player = parent.Player,
     J = parent.JSUS,
@@ -17430,13 +17481,13 @@ JSUS.extend(PARSE);
         });
 
         /**
-         * ## NODEGAME_GAMECOMMAND: goto_stage
+         * ## NODEGAME_GAMECOMMAND: goto_step
          *
          */
-        this.events.ng.on(CMD + gcommands.goto_stage, function(stage, options) {
-            node.emit('BEFORE_GAMECOMMAND', gcommands.goto_stage, options);
-            // Conditions checked inside stop.
-            node.game.stop();
+        this.events.ng.on(CMD + gcommands.goto_step, function(step) {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step);
+            // Conditions checked inside gotoStep.
+            node.game.gotoStep(new GameStage(step));
         });
 
         this.internalAdded = true;
@@ -18236,16 +18287,21 @@ JSUS.extend(PARSE);
     /**
      * ### GameWindow.preCache
      *
-     * Loads the HTML content of the given URIs into the cache
+     * Loads the HTML content of the given URI(s) into the cache
      *
-     * @param {array} uris The URIs to cache
-     * @param {function} callback The function to call once the caching is done
+     * @param {string|array} uris The URI(s) to cache
+     * @param {function} callback Optional. The function to call once the
+     *   caching is done
      */
     GameWindow.prototype.preCache = function(uris, callback) {
         var that;
         var loadedCount;
         var currentUri, uriIdx;
         var iframe, iframeName;
+
+        if ('string' === typeof uris) {
+            uris = [ uris ];
+        }
 
         // Don't preload if no URIs are given:
         if (!uris || !uris.length) {
@@ -18263,7 +18319,7 @@ JSUS.extend(PARSE);
 
             // Create an invisible internal frame for the current URI:
             iframe = document.createElement('iframe');
-            iframe.style.visibility = 'hidden';
+            iframe.style.display = 'none';
             iframeName = 'tmp_iframe_' + uriIdx;
             iframe.id = iframeName;
             iframe.name = iframeName;
@@ -18301,6 +18357,15 @@ JSUS.extend(PARSE);
             // Start loading the page:
             window.frames[iframeName].location = currentUri;
         }
+    };
+
+    /**
+     * ### GameWindow.clearCache
+     *
+     * Empties the cache
+     */
+    GameWindow.prototype.clearCache = function() {
+        this.cache = {};
     };
 
 
@@ -18382,8 +18447,8 @@ JSUS.extend(PARSE);
      *    (default: default iframe of the game)
      *  - cache (object): Caching options.  Fields:
      *      * loadMode (string):
-     *          'reload' (default; reload page without the cache),
-     *          'cache' (get the page from cache if possible)
+     *          'cache' (default; get the page from cache if possible),
+     *          'reload' (reload page without the cache)
      *      * storeMode (string):
      *          'off' (default; don't cache page),
      *          'onLoad' (cache given page after it is loaded),
@@ -18393,8 +18458,9 @@ JSUS.extend(PARSE);
      * content is coming from another domain.
      *
      * @param {string} uri The uri to load
-     * @param {function} func The function to call once the DOM is ready
-     * @param {object} opts The options object
+     * @param {function} func Optional. The function to call once the DOM is
+     *   ready
+     * @param {object} opts Optional. The options object
      */
     GameWindow.prototype.loadFrame = function(uri, func, opts) {
         var that;

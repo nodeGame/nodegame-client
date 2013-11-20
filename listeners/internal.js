@@ -15,7 +15,7 @@
     var NGC = parent.NodeGameClient;
 
     var GameMsg = parent.GameMsg,
-    GameSage = parent.GameStage,
+    GameStage = parent.GameStage,
     PlayerList = parent.PlayerList,
     Player = parent.Player,
     J = parent.JSUS,
@@ -197,13 +197,13 @@
         });
 
         /**
-         * ## NODEGAME_GAMECOMMAND: goto_stage
+         * ## NODEGAME_GAMECOMMAND: goto_step
          *
          */
-        this.events.ng.on(CMD + gcommands.goto_stage, function(stage, options) {
-            node.emit('BEFORE_GAMECOMMAND', gcommands.goto_stage, options);
-            // Conditions checked inside stop.
-            node.game.stop();
+        this.events.ng.on(CMD + gcommands.goto_step, function(step) {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step);
+            // Conditions checked inside gotoStep.
+            node.game.gotoStep(new GameStage(step));
         });
 
         this.internalAdded = true;

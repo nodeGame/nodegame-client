@@ -22,7 +22,7 @@
     var say = action.SAY + '.',
     set = action.SET + '.',
     get = action.GET + '.',
-        IN = parent.constants.IN;
+    IN = parent.constants.IN;
 
     /**
      * ## NodeGameClient.addDefaultIncomingListeners
