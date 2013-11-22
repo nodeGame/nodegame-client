@@ -7246,6 +7246,10 @@ JSUS.extend(PARSE);
     // Ask a client to start/pause/stop/resume the game
     k.target.GAMECOMMAND = 'GAMECOMMAND';
 
+    // #### target.SERVERCOMMAND
+    // Ask a server to execute a command
+    k.target.SERVERCOMMAND = 'SERVERCOMMAND';
+
     // #### target.ALERT
     // Displays an alert message in the receiving client (if in the browser)
     k.target.ALERT = 'ALERT';
@@ -8706,24 +8710,26 @@ JSUS.extend(PARSE);
      * @param {object} playerState An update with fields to update in the player
      * @return {object} The updated player object
      */
-    PlayerList.prototype.updatePlayer = function(id, playerState) {
-        // TODO: check playerState
-
+    PlayerList.prototype.updatePlayer = function(id, update) {
+        //var player;
+        if ('string' !== typeof id) {
+            throw new TypeError(
+                'PlayerList.updatePlayer: id must be string.');
+        }
         if (!this.exist(id)) {
             throw new NodeGameRuntimeError(
                 'PlayerList.updatePlayer: Player not found (id ' + id + ')');
         }
 
-        if ('undefined' === typeof playerState) {
-            throw new NodeGameRuntimeError(
-                'PlayerList.updatePlayer: Attempt to assign to a player an ' +
-                    'undefined playerState');
+        if ('object' !== typeof update) {
+            throw new TypeError(
+                'PlayerList.updatePlayer: update must be object.');
         }
-        var player = this.id.get(id);
-        J.mixin(player, playerState);
-        return player;
+        //player = this.id.get(id);
+        //J.mixin(player, update);
+        //return player;
         // This creates some problems with the _autoUpdate...to be investigated.
-        //return this.id.update(id, playerState);
+        return this.id.update(id, update);
     };
 
     /**
@@ -12085,6 +12091,7 @@ JSUS.extend(PARSE);
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # SocketIo
  *
@@ -20788,8 +20795,11 @@ JSUS.extend(PARSE);
      * @see Widgets.get
      */
     Widgets.prototype.append = Widgets.prototype.add = function(w, root, options) {
-        if (!w) return;
         var that = this;
+
+        if ('string' !== typeof w && 'object' !== typeof w) {
+            throw new TypeError('Widgets.add: w must be string or object.');
+        }
 
         function appendFieldset(root, options, w) {
             if (!options) return root;
@@ -20872,6 +20882,7 @@ JSUS.extend(PARSE);
     ('undefined' !== typeof window) ? window : module.parent.exports.window,
     ('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
+
 /**
  * # Chat widget for nodeGame
  * Copyright(c) 2013 Stefano Balietti
@@ -22963,8 +22974,9 @@ JSUS.extend(PARSE);
 	var sendButton, textInput, dataInput;
 
 	sendButton = W.addButton(root);
-	W.writeln('Text');
+	//W.writeln('Text');
 	textInput = W.addTextInput(root, 'data-bar-text');
+	W.addLabel(root, textInput, undefined, 'Text');
 	W.writeln('Data');
 	dataInput = W.addTextInput(root, 'data-bar-data');
 
@@ -22982,7 +22994,7 @@ JSUS.extend(PARSE);
 
 	    node.log('Parsed Data: ' + JSON.stringify(data));
 
-	    node.say(data, text, to);
+	    node.say(text, to, data);
 	};
 
 	node.on('UPDATED_PLIST', function() {
@@ -22994,6 +23006,7 @@ JSUS.extend(PARSE);
     };
 
 })(node);
+
 /**
  * # Dynamic Table widget for nodeGame
  * Copyright(c) 2013 Stefano Balietti
