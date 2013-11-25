@@ -175,7 +175,7 @@
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
-            // console.log('PLAYER_UPDATE', msg.data, msg.from);
+            //console.log('PLAYER_UPDATE', msg.data, msg.from);
             node.game.pl.updatePlayer(msg.from, msg.data);
             node.emit('UPDATED_PLIST');
             if (node.game.shouldStep()) {
