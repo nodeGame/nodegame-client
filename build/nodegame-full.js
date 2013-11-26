@@ -13460,14 +13460,14 @@ JSUS.extend(PARSE);
 
         this.setStageLevel(constants.stageLevels.EXECUTING_CALLBACK);
 
-        try {
+        //try {
             res = cb.call(node.game);
-        }
-        catch (e) {
-            if (node.debug) throw e;
-            node.err('An error occurred while executing a custom callback');
-            throw new node.NodeGameRuntimeError(e);
-        }
+        //}
+        //catch (e) {
+        //    if (node.debug) throw e;
+        //    node.err('An error occurred while executing a custom callback');
+        //    throw new node.NodeGameRuntimeError(e);
+        //}
         if (res === false) {
             // A non fatal error occurred.
             node.err('A non fatal error occurred while executing ' +
@@ -15781,7 +15781,6 @@ JSUS.extend(PARSE);
          */
         this.timer = new Timer(this);
 
-
         /**
          * ### node.store
          *
@@ -17254,7 +17253,7 @@ JSUS.extend(PARSE);
         if ('string' === typeof uris) {
             uris = [ uris ];
         }
-
+        debugger
         // Do nothing if no URIs are given:
         if (!uris || !uris.length) {
             if (doneCb) doneCb();
@@ -17275,7 +17274,7 @@ JSUS.extend(PARSE);
                 'console.log("JSONP!!!");' +
                 'console.log(data);' +
             '}';
-        document.body.appendChild(scriptTag);
+        document.body.appendChild(cbScriptTag);
 
         for (uriIdx = 0; uriIdx < uris.length; uriIdx++) {
             currentUri = uris[uriIdx];
