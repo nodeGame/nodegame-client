@@ -4430,6 +4430,8 @@ JSUS.extend(PARSE);
                     this.__shared[sh] = options.shared[sh];
                 }
             }
+            // Delete from options to avoid copy.
+            delete this.__options.shared;
         }
 
         if (options.log) {
@@ -4654,7 +4656,7 @@ JSUS.extend(PARSE);
      */
     NDDB.prototype.cloneSettings = function(leaveOut) {
         var i, options, keepShared;
-        var logCopy, logCtxCopy;
+        var logCopy, logCtxCopy, sharedCopy;
         options = this.__options || {};
         keepShared = true;
 
@@ -4746,7 +4748,7 @@ JSUS.extend(PARSE);
         this.each(function(e) {
             // decycle, if possible
             e = NDDB.decycle(e);
-            out += J.stringify(e) + ', ';
+            out += J.stringify(e, spaces) + ', ';
         });
         out = out.replace(/, $/,']');
 
@@ -7496,6 +7498,10 @@ JSUS.extend(PARSE);
     // Ask a client to start/pause/stop/resume the game
     k.target.GAMECOMMAND = 'GAMECOMMAND';
 
+    // #### target.SERVERCOMMAND
+    // Ask a server to execute a command
+    k.target.SERVERCOMMAND = 'SERVERCOMMAND';
+
     // #### target.ALERT
     // Displays an alert message in the receiving client (if in the browser)
     k.target.ALERT = 'ALERT';
@@ -9312,6 +9318,19 @@ JSUS.extend(PARSE);
          */
         this.sid = player.sid;
 
+        /**
+         * ### Player.group
+         *
+         * The group to which the player belongs
+         */
+        this.group = null;
+
+        /**
+         * ### Player.role
+         *
+         * The role of the player
+         */
+        this.role = null;
 
         /**
          * ### Player.count
@@ -9382,7 +9401,7 @@ JSUS.extend(PARSE);
          */
         this.stateLevel = player.stateLevel || stateLevels.UNINITIALIZED;
 
-
+        
         /**
          * ## Extra properties
          *
@@ -12384,6 +12403,7 @@ JSUS.extend(PARSE);
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # SocketIo
  *
@@ -12506,15 +12526,15 @@ JSUS.extend(PARSE);
      * Creates an instance of GameDB
      * 
      * @param {object} options Optional. A configuration object
-     * @param {array} db Optional. An initial array of items to import into the database
+     * @param {array} db Optional. An initial array of items
      * 
      * @see NDDB constructor
      */
     function GameDB(options, db) {
         options = options || {};
-
         if (!options.update) options.update = {};
-        // Auto build indexes by default
+
+        // Auto build indexes by default.
         options.update.indexes = true;
         
         NDDB.call(this, options, db);
@@ -12522,23 +12542,24 @@ JSUS.extend(PARSE);
         this.comparator('stage', GameBit.compareState);
         
         if (!this.player) {
-            this.index('player', function(gb) {
+            this.hash('player', function(gb) {
                 return gb.player;
             });
         }
         if (!this.stage) {
-            this.index('stage', function(gb) {
-                return GameStage.toHash(gb.stage, 'S.s.r');
+            this.hash('stage', function(gb) {
+                if (gb.stage) {
+                    return GameStage.toHash(gb.stage, 'S.s.r');
+                }
             });
         }  
         if (!this.key) {
-            this.index('key', function(gb) {
+            this.hash('key', function(gb) {
                 return gb.key;
             });
         }
 
-        this.node = options.shared ? (options.shared.node ? options.shared.node : null) : null;
-        
+        this.node = this.__shared.node;
     }
 
     // ## GameDB methods
@@ -12571,13 +12592,12 @@ JSUS.extend(PARSE);
      * 
      * @return {boolean} TRUE, if insertion was successful
      * 
-     *  @see GameBit
+     * @see GameBit
      */
     GameDB.prototype.add = function(key, value, player, stage) {
         var gb;
-        if (!key) {
-            this.log("GameDB.add: Missing mandatory attribute 'key'.", 'ERR');
-            return false;
+        if ('string' !== typeof key) {
+            throw new TypeError('GameDB.add: key must be string.');
         }
         
         if (this.node) {
@@ -12601,11 +12621,9 @@ JSUS.extend(PARSE);
     /**
      * # GameBit
      * 
-     * ### Container of relevant information for the game
-     * 
-     *  ---
+     * Container of relevant information for the game
      *  
-     * A GameBit unit always contains the following properties
+     * A GameBit unit always contains the following properties:
      * 
      * - stage GameStage
      * - player Player
@@ -12622,14 +12640,12 @@ JSUS.extend(PARSE);
      * Creates a new instance of GameBit
      */
     function GameBit(options) {
-        
         this.stage = options.stage;
         this.player = options.player;
         this.key = options.key;
         this.value = options.value;
         this.time = (Date) ? Date.now() : null;
     }
-
 
     /**
      * ### GameBit.toString
@@ -12639,7 +12655,8 @@ JSUS.extend(PARSE);
      * @return {string} string representation of the instance of GameBit
      */
     GameBit.prototype.toString = function() {
-        return this.player + ', ' + GameStage.stringify(this.stage) + ', ' + this.key + ', ' + this.value;
+        return this.player + ', ' + GameStage.stringify(this.stage) + 
+            ', ' + this.key + ', ' + this.value;
     };
 
     /** 
@@ -12655,14 +12672,15 @@ JSUS.extend(PARSE);
      *  
      * @param {GameBit} gb1 The first game-bit to compare
      * @param {GameBit} gb2 The second game-bit to compare
-     * @param {boolean} strict Optional. If TRUE, compares also the `value` property
+     * @param {boolean} strict Optional. If TRUE, compares also the 
+     *  `value` property
      * 
      * @return {boolean} TRUE, if the two objects are equals
      * 
-     *  @see GameBit.comparePlayer
-     *  @see GameBit.compareState
-     *  @see GameBit.compareKey
-     *  @see GameBit.compareValue
+     * @see GameBit.comparePlayer
+     * @see GameBit.compareState
+     * @see GameBit.compareKey
+     * @see GameBit.compareValue
      */
     GameBit.equals = function(gb1, gb2, strict) {
         if (!gb1 || !gb2) return false;
@@ -12670,7 +12688,8 @@ JSUS.extend(PARSE);
         if (GameBit.comparePlayer(gb1, gb2) !== 0) return false;
         if (GameBit.compareState(gb1, gb2) !== 0) return false;
         if (GameBit.compareKey(gb1, gb2) !== 0) return false;
-        if (strict && gb1.value && GameBit.compareValue(gb1, gb2) !== 0) return false;
+        if (strict &&
+            gb1.value && GameBit.compareValue(gb1, gb2) !== 0) return false;
         return true;    
     };
 
@@ -12695,7 +12714,6 @@ JSUS.extend(PARSE);
         if (!gb1) return 1;
         if (!gb2) return -1;
         if (gb1.player === gb2.player) return 0;
-
         if (gb1.player > gb2.player) return 1;
         return -1;
     };
@@ -12754,8 +12772,10 @@ JSUS.extend(PARSE);
      * 
      * Returns a numerical id that can assume the following values
      * 
-     * - `-1`: the value of the first game-bit comes first alphabetically / numerically
-     * - `1`: the value of the second game-bit comes first alphabetically / numerically 
+     * - `-1`: the value of the first game-bit comes first alphabetically or
+     *    numerically
+     * - `1`: the value of the second game-bit comes first alphabetically or
+     *   numerically 
      * - `0`: the two gamebits have identical value properties
      * 
      * @param {GameBit} gb1 The first game-bit to compare
@@ -12763,7 +12783,7 @@ JSUS.extend(PARSE);
      * 
      * @return {number} The result of the comparison
      * 
-     *  @see JSUS.equals
+     * @see JSUS.equals
      */
     GameBit.compareValue = function(gb1, gb2) {
         if (!gb1 && !gb2) return 0;
@@ -12774,13 +12794,10 @@ JSUS.extend(PARSE);
         return -1;
     };  
 
-    // ## Closure
-    
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
-
 /**
  * # Game
  * Copyright(c) 2013 Stefano Balietti
@@ -13178,11 +13195,6 @@ JSUS.extend(PARSE);
         stepRule = this.plot.getStepRule(this.getCurrentGameStage());
 
         if ('function' !== typeof stepRule) {
-            console.log('aa');
-            console.log(this.getCurrentGameStage());
-            console.log(stepRule);
-            debugger
-            stepRule = this.plot.getStepRule(this.getCurrentGameStage());
             throw new this.node.NodeGameMisconfiguredGameError(
                 'Game.shouldStep: stepRule is not a function.');
         }
@@ -17243,7 +17255,6 @@ JSUS.extend(PARSE);
  *
  * ---
  */
-
 (function(exports, parent) {
 
     "use strict";
@@ -17255,27 +17266,43 @@ JSUS.extend(PARSE);
      *
      * Retrieves JSON data via JSONP from one or many URIs
      *
-     * The callback will be called with the JSON object as the parameter.
+     * The dataCb callback will be called every time the data from one of the
+     * URIs has been fetched.
      *
-     * TODO: Update doc
+     * This method creates a temporary entry in the node instance,
+     * `node.tempCallbacks`, to store a temporary internal callback.
+     * This field is deleted again after the internal callbacks are done.
+     *
      * @param {array|string} uris The URI(s)
-     * @param {function} callback The function to call with the data
+     * @param {function} dataCb The function to call with the data
+     * @param {function} doneCb Optional. The function to call after all the
+     *   data has been retrieved
      */
     NGC.prototype.getJSON = function(uris, dataCb, doneCb) {
-        // TODO: Work in progress
         var that;
         var loadedCount;
         var currentUri, uriIdx;
-        var cbScriptTag;
-        var jsonpCallbackName;
+        var tempCb, cbIdx;
         var scriptTag, scriptTagName;
 
+        // Check input:
         if ('string' === typeof uris) {
             uris = [ uris ];
         }
+        else if ('object' !== typeof uris || 'number' !== typeof uris.length) {
+            throw new Error('NGC.getJSON: uris must be an array or a string');
+        }
 
-        // Do nothing if no URIs are given:
-        if (!uris || !uris.length) {
+        if ('function' !== typeof dataCb) {
+            throw new Error('NGC.getJSON: dataCb must be a function');
+        }
+
+        if ('undefined' !== typeof doneCb && 'function' !== typeof doneCb) {
+            throw new Error('NGC.getJSON: doneCb must be undefined or function');
+        }
+
+        // If no URIs are given, we're done:
+        if (uris.length === 0) {
             if (doneCb) doneCb();
             return;
         }
@@ -17285,45 +17312,42 @@ JSUS.extend(PARSE);
         // Keep count of loaded data:
         loadedCount = 0;
 
-        // Create a temporary script tag with the JSONP callback:
-        cbScriptTag = document.createElement('script');
-        cbScriptTag.id = 'tmp_script_' + uriIdx;
-        cbScriptTag.innerHTML =
-            'function NGC_getJSON_callback(data){' +
-                //'dataCb(data);' +
-                'console.log("JSONP!!!");' +
-                'console.log(data);' +
-            '}';
-        document.body.appendChild(cbScriptTag);
+        // Create a temporary JSONP callback, store it with the node instance:
+        if ('undefined' === typeof this.tempCallbacks) {
+            this.tempCallbacks = { counter: 0 };
+        }
+        else {
+            this.tempCallbacks.counter++;
+        }
+        cbIdx = this.tempCallbacks.counter;
+
+        tempCb = function(data) {
+            dataCb(data);
+
+            // Clean up:
+            delete that.tempCallbacks[cbIdx];
+            if (JSUS.size(that.tempCallbacks) <= 1) {
+                delete that.tempCallbacks;
+            }
+        };
+        this.tempCallbacks[cbIdx] = tempCb;
 
         for (uriIdx = 0; uriIdx < uris.length; uriIdx++) {
             currentUri = uris[uriIdx];
 
             // Create a temporary script tag for the current URI:
             scriptTag = document.createElement('script');
-            scriptTagName = 'tmp_script_' + uriIdx;
+            scriptTagName = 'tmp_script_' + cbIdx + '_' + uriIdx;
             scriptTag.id = scriptTagName;
             scriptTag.name = scriptTagName;
+            scriptTag.src = currentUri +
+                '?callback=node.tempCallbacks[' + cbIdx + ']';
             document.body.appendChild(scriptTag);
 
             // Register the onload handler:
             scriptTag.onload = (function(uri, thisScriptTag) {
                 return function() {
-                    var frameDocumentElement;
-
-                    frameDocumentElement =
-                        (thisScriptTag.contentDocument ?
-                         thisScriptTag.contentDocument :
-                         thisScriptTag.contentWindow.document)
-                        .documentElement;
-
-                    // Store the contents in the cache:
-                    that.cache[uri] = {
-                        contents: frameDocumentElement.innerHTML,
-                        cacheOnClose: false
-                    };
-
-                    // Remove the internal frame:
+                    // Remove the script tag:
                     document.body.removeChild(thisScriptTag);
 
                     // Increment loaded URIs counter:
@@ -17341,7 +17365,6 @@ JSUS.extend(PARSE);
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
-
 /**
  * # Listeners for incoming messages.
  * Copyright(c) 2013 Stefano Balietti
