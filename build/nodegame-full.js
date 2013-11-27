@@ -8542,25 +8542,23 @@ JSUS.extend(PARSE);
                 this.stage = !isNaN(stageNum) ? stageNum : tokens[0];
             }
             if ('undefined' !== typeof tokens[1]) {
-                this.step  = !isNaN(stepNum)  ? stepNum  : tokens[1];
+                this.step  = !isNaN(stepNum) ? stepNum : tokens[1];
+            }
+            else if (this.stage !== 0) {
+                this.step = 1;
             }
             if ('undefined' !== typeof tokens[2]) {
                 this.round = roundNum;
             }
+            else if (this.stage !== 0) {
+                this.round = 1;
+            }
         }
         // Not null object.
         else if (gs && 'object' === typeof gs) {
-            if ('undefined' !== typeof gs.stage) {
-                this.stage = gs.stage;
-            }
-
-            if ('undefined' !== typeof gs.step) {
-                this.step  = gs.step;
-            }
-
-            if ('undefined' !== typeof gs.round) {
-                this.round = gs.round;
-            }
+            this.stage = gs.stage;
+            this.step = 'undefined' !== typeof gs.step ? gs.step : 1;
+            this.round = 'undefined' !== typeof gs.round ? gs.round : 1;
         }
         // Number.
         else if ('number' === typeof gs) {
@@ -8573,13 +8571,37 @@ JSUS.extend(PARSE);
                                     'a negative number.');
             }
             this.stage = gs;
+            this.step = 1;
+            this.round = 1;
         }
         // Defaults or error.
         else if (gs !== null && 'undefined' !== typeof gs) {
             throw new TypeError('GameStage constructor: gs must be string, ' +
                                 'object, a positive number, or undefined.');
         }
+        
+        // Final sanity checks.
 
+        if ('undefined' === typeof this.stage) {
+            throw new Error('GameStage constructor: stage cannot be ' +
+                            'undefined.'); 
+        }
+        if ('undefined' === typeof this.step) {
+            throw new Error('GameStage constructor: step cannot be ' +
+                            'undefined.'); 
+        }
+        if ('undefined' === typeof this.round) {
+            throw new Error('GameStage constructor: round cannot be ' +
+                            'undefined.'); 
+        }
+        
+        // Either 0.0.0 or no 0 is allowed.
+        if (!(this.stage === 0 && this.step === 0 && this.round === 0)) {
+            if (this.stage === 0 || this.step === 0 || this.round === 0) {
+                throw new Error('GameStage constructor: non-sensical game ' +
+                                'stage: ' + this.toString()); 
+            }
+        }
     }
 
     /**
@@ -8756,7 +8778,6 @@ JSUS.extend(PARSE);
      *
      * @param {Array} array The array to transform
      * @return {Array} array The array of `PlayerList` objects
-     *
      */
     PlayerList.array2Groups = function (array) {
         if (!array) return;
@@ -13153,10 +13174,15 @@ JSUS.extend(PARSE);
         if (!this.checkPlistSize()) {
             return;
         }
-
+        
         stepRule = this.plot.getStepRule(this.getCurrentGameStage());
 
         if ('function' !== typeof stepRule) {
+            console.log('aa');
+            console.log(this.getCurrentGameStage());
+            console.log(stepRule);
+            debugger
+            stepRule = this.plot.getStepRule(this.getCurrentGameStage());
             throw new this.node.NodeGameMisconfiguredGameError(
                 'Game.shouldStep: stepRule is not a function.');
         }
@@ -13459,15 +13485,9 @@ JSUS.extend(PARSE);
         cb = stage.cb;
 
         this.setStageLevel(constants.stageLevels.EXECUTING_CALLBACK);
-
-        //try {
-            res = cb.call(node.game);
-        //}
-        //catch (e) {
-        //    if (node.debug) throw e;
-        //    node.err('An error occurred while executing a custom callback');
-        //    throw new node.NodeGameRuntimeError(e);
-        //}
+        
+        // Execute custom callback. Can throw errors.
+        res = cb.call(node.game);
         if (res === false) {
             // A non fatal error occurred.
             node.err('A non fatal error occurred while executing ' +
@@ -17253,7 +17273,7 @@ JSUS.extend(PARSE);
         if ('string' === typeof uris) {
             uris = [ uris ];
         }
-        debugger
+
         // Do nothing if no URIs are given:
         if (!uris || !uris.length) {
             if (doneCb) doneCb();
@@ -18322,6 +18342,16 @@ JSUS.extend(PARSE);
          */
         this.state = null;
 
+        /**
+         * ### GameWindow.waitScreen
+         *
+         * Reference to the _WaitScreen_ widget, if one is appended in the page 
+         *
+         * @see node.widgets.WaitScreen
+         */
+        this.waitScreen = null;
+
+        // Init.
         this.init();
     }
 
@@ -19065,7 +19095,6 @@ JSUS.extend(PARSE);
         return this.header;
     };
 
-
     // Overriding Document.write and DOM.writeln and DOM.write
     GameWindow.prototype._write = DOM.write;
     GameWindow.prototype._writeln = DOM.writeln;
@@ -19126,6 +19155,8 @@ JSUS.extend(PARSE);
      *
      * Gives the impression of a loading time.
      *
+     * @param {number} len Optional. The maximum length of the loading dots.
+     *   Defaults, 5
      * @param {string} id Optional The id of the span
      * @return {object} An object containing two properties: the span element
      *   and a method stop, that clears the interval.
@@ -19163,6 +19194,26 @@ JSUS.extend(PARSE);
         };
     };
 
+    /**
+     * ### GameWindow.addLoadingDots
+     *
+     * Appends _loading dots_ to an HTML element
+     *
+     * By invoking this method you lose access to the _stop_ function of the
+     * _loading dots_ element.
+     *
+     * @param {HTMLElement} root The element to which the loading dots will be
+     *   appended.
+     * @param {number} len Optional. The maximum length of the loading dots.
+     *   Defaults, 5
+     * @param {string} id Optional The id of the span
+     * @return {object} The span with the loading dots.
+     *
+     * @see GameWindow.getLoadingDots
+     */
+    GameWindow.prototype.addLoadingDots = function(root, len, id) {
+        return root.appendChild(this.getLoadingDots(len, id).span);
+    };
 
     /**
      * ### GameWindow.toggleInputs
@@ -19193,8 +19244,8 @@ JSUS.extend(PARSE);
         }
         else {
             container = this.getFrameDocument();
-            if (!container) {
-                // No warning.
+            if (!container || !container.getElementsByTagName) {
+                // Frame either not existing or not ready. No warning.
                 return;
             }
         }
@@ -19231,7 +19282,7 @@ JSUS.extend(PARSE);
      * TODO: check if this can be called in any stage.
      */
     GameWindow.prototype.lockFrame = function(text) {
-        if (!node.game.waitScreen) {
+        if (!this.waitScreen) {
             throw new Error('GameWindow.lockFrame: waitScreen not found.');
         }
         if (text && 'string' !== typeof text) {
@@ -20933,8 +20984,15 @@ JSUS.extend(PARSE);
     var J = node.JSUS;
 
     function Widgets() {
+
+        /**
+         * ## Widgets.widgets
+         *
+         * Container of currently registered widgets 
+         *
+         * @see Widgets.register
+         */
         this.widgets = {};
-        this.root = node.window.root || document.body;
     }
 
     /**
@@ -20986,6 +21044,7 @@ JSUS.extend(PARSE);
      * @param {string} w_str The name of the widget to load
      * @param {options} options Optional. Configuration options
      *   to be passed to the widgets
+     * @return {object} widget The requested widget
      *
      * @see Widgets.add
      *
@@ -20993,8 +21052,17 @@ JSUS.extend(PARSE);
      * @TODO: add example.
      */
     Widgets.prototype.get = function(w_str, options) {
-	if (!w_str) return;
-	var that = this;
+        var wProto, widget;
+        var that;
+        if ('string' !== typeof w_str) {
+            throw new TypeError('Widgets.get: w_str must be string.');
+        }
+        if (options && 'object' !== typeof options) {
+            throw new TypeError('Widgets.get: options must be object or ' +
+                                'undefined.');
+        }
+        
+        that = this;
 	options = options || {};
 
 	function createListenerFunction(w, e, l) {
@@ -21006,10 +21074,12 @@ JSUS.extend(PARSE);
 
 	function attachListeners(options, w) {
 	    if (!options || !w) return;
+            var events = ['onclick', 'onfocus', 'onblur', 'onchange', 
+                          'onsubmit', 'onload', 'onunload', 'onmouseover'];
 	    var isEvent = false;
 	    for (var i in options) {
 		if (options.hasOwnProperty(i)) {
-		    isEvent = J.in_array(i, ['onclick', 'onfocus', 'onblur', 'onchange', 'onsubmit', 'onload', 'onunload', 'onmouseover']);
+		    isEvent = J.in_array(i, events);
 		    if (isEvent && 'function' === typeof options[i]) {
 			createListenerFunction(w, i, options[i]);
 		    }
@@ -21017,17 +21087,17 @@ JSUS.extend(PARSE);
 	    };
 	};
 
-	var wProto = J.getNestedValue(w_str, this.widgets);
-	var widget;
-
+	wProto = J.getNestedValue(w_str, this.widgets);
+	
 	if (!wProto) {
-	    node.err('widget ' + w_str + ' not found.');
-	    return;
+            throw new Error('Widgets.get: ' + w_str + ' not found.');
 	}
 
 	node.info('registering ' + wProto.name + ' v.' +  wProto.version);
 
-	if (!this.checkDependencies(wProto)) return false;
+	if (!this.checkDependencies(wProto)) {
+            throw new Error('Widgets.get: ' + w_str + ' has unmet dependecies.');
+        }
 
 	// Add missing properties to the user options
 	J.mixout(options, J.clone(wProto.defaults));
@@ -21044,6 +21114,7 @@ JSUS.extend(PARSE);
 
 	return widget;
     };
+
     /**
      * ### Widgets.append
      *
@@ -21060,16 +21131,30 @@ JSUS.extend(PARSE);
      * options parameter.
      *
      * @param {string} w_str The name of the widget to load
-     * @param {object} root. The HTML element to which appending the widget
+     * @param {object} root. Optional. The HTML element under which the widget
+     *   will be appended. Defaults, `GameWindow.getFrameRoot()` or document.body
      * @param {options} options Optional. Configuration options to be passed
      *   to the widgets
      * @return {object|boolean} The requested widget, or FALSE is an error occurs
      *
      * @see Widgets.get
      */
-    Widgets.prototype.append = Widgets.prototype.add = function(w, root, options) {
-        if (!w) return;
-        var that = this;
+    Widgets.prototype.append = Widgets.prototype.add = function(w, root,
+                                                                options) {
+        var that;
+        if ('string' !== typeof w && 'object' !== typeof w) {
+            throw new TypeError('Widgets.append: w must be string or object');
+        }
+        if (root && !J.isElement(root)) {
+            throw new TypeError('Widgets.append: root must be HTMLElement ' +
+                                'or undefined.');
+        }
+        if (options && 'object' !== typeof options) {
+            throw new TypeError('Widgets.append: options must be object or ' +
+                                'undefined.');
+        }
+        
+        that = this;
 
         function appendFieldset(root, options, w) {
             if (!options) return root;
@@ -21078,15 +21163,16 @@ JSUS.extend(PARSE);
             return W.addFieldset(root, idFieldset, legend, options.attributes);
         };
 
-        // Init default values
-        root = root || this.root;
+        // Init default values.
+        root = root || W.getFrameRoot() || document.body;
         options = options || {};
 
         // Check if it is a object (new widget)
         // If it is a string is the name of an existing widget
         // In this case a dependencies check is done
-        if ('object' !== typeof w) w = this.get(w, options);
-        if (!w) return false;
+        if ('string' === typeof w) {
+            w = this.get(w, options);
+        }
 
         // options exists and options.fieldset exist
         root = appendFieldset(root, options.fieldset || w.defaults.fieldset, w);
@@ -25111,7 +25197,7 @@ JSUS.extend(PARSE);
     StateDisplay.prototype.listeners = function() {
 	var that = this;
 
-	node.on('LOADED', function() {
+	node.on('STEP_CALLBACK_EXECUTED', function() {
 	    that.updateAll();
 	});
     };
@@ -25430,11 +25516,14 @@ JSUS.extend(PARSE);
 
     // ## Meta-data
 
-    WaitScreen.version = '0.5.0';
+    WaitScreen.version = '0.6.0';
     WaitScreen.description = 'Show a standard waiting screen';
 
     function WaitScreen(options) {
+
 	this.id = options.id;
+
+        this.root = null;
 
 	this.text = {
             waiting: options.waitingText ||
@@ -25465,6 +25554,10 @@ JSUS.extend(PARSE);
     };
 
     WaitScreen.prototype.append = function(root) {
+        // Saves a reference of the widget in GameWindow
+        // that will use it in the GameWindow.lockFrame method.
+        W.waitScreen = this;
+        this.root = root;
 	return root;
     };
 
@@ -25485,6 +25578,14 @@ JSUS.extend(PARSE);
         node.on('PLAYING', function(text) {
             that.unlock();
         });
+    };
+
+    WaitScreen.prototype.destroy = function() {
+        this.unlock();
+        if (this.waitingDiv) {
+            this.root.removeChild(this.waitingDiv);
+        }
+        W.waitScreen = null; 
     };
 })(node);
 /**

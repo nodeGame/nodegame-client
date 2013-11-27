@@ -44,6 +44,9 @@
 
     require('./lib/sockets/SocketIo.js');
     require('./lib/sockets/SocketDirect.js');
+    
+    // Timer
+    exports.Timer = require('./lib/core/Timer').Timer;
 
     // Game
     exports.GameDB = require('./lib/core/GameDB').GameDB;
@@ -56,14 +59,10 @@
     exports.GameSession = require('./lib/core/Session').GameSession;
 
     // Addons
-    exports.GameTimer = require('./addons/GameTimer').GameTimer;
     exports.TriggerManager = require('./addons/TriggerManager').TriggerManager;
 
     // FS
     exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;
-
-    // Timer
-    exports.Timer = require('./lib/core/Timer').Timer;
 
     // Load main nodegame-client class    
     exports.NodeGameClient = require('./lib/core/NodeGameClient').NodeGameClient;
@@ -92,20 +91,18 @@
     exports.getClient = function(options) {
         var node;
         node = new exports.NodeGameClient();
-        // exports.JSUS.mixin(node, exports.constants); // TODO maybe not necessary, maybe keep them in .constants
-        // exports.JSUS.mixin(node, exports.stepRules); // TODO see above
         node.constants = exports.constants;
         node.stepRules = exports.stepRules;
         
         // TODO: find a good way to incorpare all the classes
-        
+        // TODO: should they use the new operator?
         node.Stager = exports.Stager;
         node.stepRules = exports.stepRules;
         node.NodeGameRuntimeError = exports.NodeGameRuntimeError;
         node.NodeGameStageCallbackError = exports.NodeGameStageCallbackError;
         node.NodeGameMisconfiguredGameError = exports.NodeGameMisconfiguredGameError;
         node.NodeGameIllegalOperationError = exports.NodeGameIllegalOperationError;
-
+        node.fs = new exports.NodeGameFS(node);
         
         return node;
     }
