@@ -22,6 +22,9 @@
         <a href="#eventemitter">EventEmitter</a>
       </div>
       <div class="heading h2">
+        <a href="#keeps-a-register-of-events-listeners.">Keeps a register of events listeners.</a>
+      </div>
+      <div class="heading h2">
         <a href="#global-scope">Global scope</a>
       </div>
       <div class="heading h2">
@@ -88,16 +91,23 @@
   </div>
   <div class="body"><p>Event emitter engine for <code>nodeGame</code></p>
 
-<p>Copyright(c) 2012 Stefano Balietti
+<p>Copyright(c) 2013 Stefano Balietti
 MIT Licensed</p>
 
-<p>Keeps a register of events and function listeners.</p>
 
-<hr />
+<div class="pilwrap" id="keeps-a-register-of-events-listeners.">
+  <h2>
+    <a href="#keeps-a-register-of-events-listeners." class="pilcrow">&#182;</a>
+    Keeps a register of events listeners.
+  </h2>
+</div>
+
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -128,7 +138,7 @@ MIT Licensed</p>
 </div>
 
   </div>
-  <div class="body"><p>creates a new instance of EventEmitter</p>
+  <div class="body"><p>Creates a new instance of EventEmitter</p>
   </div>
 </div>
         </td>
@@ -193,7 +203,6 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">EventEmitter.store
-
   </span>
     </div>
   </div>
@@ -242,22 +251,17 @@ whole length of the game</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">listener</span>
       <span class="dox_type">function</span>
-      <span>The function to fire</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">EventEmitter.addLocal
-  </span>
+      <span>The function to emit</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.on: type must be a string&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.on: type must be a string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.remove: listener must be a function&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.on: listener must be a function.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span></pre></div>
@@ -268,7 +272,8 @@ whole length of the game</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
-<p>Optimize the case of one listener. Don't need the extra array object.</p>
+<p>Optimize the case of one listener. 
+Don't need the extra array object.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">listener</span><span class="p">;</span>
         <span class="p">}</span>
@@ -297,7 +302,8 @@ whole length of the game</p>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">],</span> <span class="nx">listener</span><span class="p">];</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;ee.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; added listener: &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">listener</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;ee.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; added listener: &#39;</span> <span class="o">+</span> 
+                        <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">listener</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -365,17 +371,35 @@ after its first invocation</p>
 <p>The first parameter be the name of the event as <em>string</em>,
 followed by any number of parameters that will be passed to the
 handler callback.</p>
+
+<p>Return values of each callback are aggregated and returned as an
+array. If the array contains less than 2 elements, the only element
+or <em>undefined</em> is returned instead.</p>
+
+<p>Technical notice: classic EventEmitter classes do not return any value.
+Returning a value creates an overhead when multiple listeners are
+registered under the same event, and an array needs to be managed.
+Such overhead is anyway very small, and can be neglected (for now).</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">mixed</span>
+      <span>The return value of the callback/s</span>
+    </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">handler</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">listeners</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">tmpRes</span><span class="p">;</span>
 
         <span class="nx">type</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
         <span class="nx">handler</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">handler</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">handler</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
         <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span></pre></div>
@@ -386,10 +410,10 @@ handler callback.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
-<p><!-- Debug</p>
+<p>Useful for debugging.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">dumpEvents</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;F: &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;F - &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">handler</span><span class="p">)</span> <span class="p">{</span>
@@ -405,16 +429,17 @@ handler callback.</p>
 <p>fast cases</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
-                <span class="nx">handler</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">ctx</span><span class="p">);</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">ctx</span><span class="p">);</span>
                 <span class="k">break</span><span class="p">;</span>
             <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
-                <span class="nx">handler</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
                 <span class="k">break</span><span class="p">;</span>
             <span class="k">case</span> <span class="mi">3</span><span class="o">:</span>
-                <span class="nx">handler</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
                 <span class="k">break</span><span class="p">;</span>
             <span class="k">case</span> <span class="mi">4</span><span class="o">:</span>
-                <span class="nx">handler</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                   <span class="nx">arguments</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
                 <span class="k">break</span><span class="p">;</span>
 
             <span class="k">default</span><span class="o">:</span></pre></div>
@@ -432,7 +457,7 @@ handler callback.</p>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">args</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
                 <span class="p">}</span>
-                <span class="nx">handler</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">handler</span><span class="p">)</span> <span class="p">{</span>
@@ -442,12 +467,7 @@ handler callback.</p>
                 <span class="nx">args</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
             <span class="p">}</span>
             <span class="nx">listeners</span> <span class="o">=</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
-            <span class="nx">len</span> <span class="o">=</span> <span class="nx">listeners</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">}</span></pre></div>
+            <span class="nx">len</span> <span class="o">=</span> <span class="nx">listeners</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -455,14 +475,45 @@ handler callback.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
-<p>Log the event into node.history object, if present</p>
+<p>If more than one event listener is registered,
+we will return an array.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">res</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">tmpRes</span><span class="p">)</span>
+                <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>If less than 2 listeners returned a value, compact the result.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">res</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="nx">res</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>Log the event into node.history object, if present.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span> 
+            <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span>
                 <span class="nx">stage</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span>
                 <span class="nx">args</span><span class="o">:</span> <span class="nx">arguments</span>
             <span class="p">});</span>
         <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -489,7 +540,8 @@ handler callback.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">listener</span>
       <span class="dox_type">function</span>
-      <span>Optional. The specific function to deregister</span>
+      <span>Optional. The specific function 
+  to deregister</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -505,11 +557,13 @@ handler callback.</p>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.remove (&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;): type must be a string&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.remove (&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span>
+                            <span class="s1">&#39;): type must be a string&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;EventEmitter.remove (&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;): unexisting event &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;EventEmitter.remove (&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span>
+                      <span class="s1">&#39;): unexisting event &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
 
@@ -520,14 +574,15 @@ handler callback.</p>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">listener</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.remove (&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;): listener must be a function&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.remove (&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span>
+                            <span class="s1">&#39;): listener must be a function&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">listeners</span> <span class="o">==</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">listeners</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;ee.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; removed listener: &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">listener</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">listener</span> <span class="o">==</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;ee.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; removed listener: &#39;</span> <span class="o">+</span>
+                           <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">listener</span><span class="p">);</span>
                 <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -537,7 +592,7 @@ handler callback.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>array</p>
         </td>
@@ -546,13 +601,15 @@ handler callback.</p>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">listeners</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-                    <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;ee.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;removed listener: &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">listener</span><span class="p">);</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;ee.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; removed &#39;</span> <span class="o">+</span> 
+                               <span class="s1">&#39;listener: &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">listener</span><span class="p">);</span>
                     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;EventEmitter.remove (&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;): no listener-match found for event &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;EventEmitter.remove (&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;): no &#39;</span> <span class="o">+</span> 
+                  <span class="s1">&#39;listener-match found for event &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">);</span>
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -595,7 +652,8 @@ handler callback.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">printAll</span> <span class="o">=</span>  <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">.</span><span class="nx">length</span> <span class="o">?</span> <span class="nx">i</span><span class="p">.</span><span class="nx">length</span> <span class="o">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="s1">&#39; listener/s&#39;</span><span class="p">);</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">.</span><span class="nx">length</span> <span class="o">?</span> <span class="nx">i</span><span class="p">.</span><span class="nx">length</span> <span class="o">:</span> <span class="mi">1</span> <span class="o">+</span>
+                            <span class="s1">&#39; listener/s&#39;</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">};</span></pre></div>
@@ -631,7 +689,7 @@ handler callback.</p>
     <span class="p">};</span>
 
     <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">createEEGroup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">groupName</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">args</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">args</span><span class="p">;</span>
         <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
@@ -645,16 +703,19 @@ handler callback.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Checking if each ee exist</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter name must be a string&#39;</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span>
+                    <span class="s1">&#39;EventEmitter name must be a string&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;non-existing EventEmitter in group &#39;</span> <span class="o">+</span> <span class="nx">groupName</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;EventEmitterManager.createEEGroup: &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;non-existing EventEmitter in group &#39;</span> <span class="o">+</span>
+                                <span class="nx">groupName</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
             <span class="p">}</span>
         <span class="p">}</span></pre></div>
         </td>
@@ -662,7 +723,7 @@ handler callback.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>copying the args obj into an array;</p>
         </td>
@@ -677,7 +738,7 @@ handler callback.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>fast cases</p>
         </td>
@@ -738,9 +799,9 @@ handler callback.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
-<p>slower</p>
+<p>Slower.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="nx">len</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">len</span><span class="p">;</span>
             <span class="k">this</span><span class="p">[</span><span class="nx">groupName</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
@@ -801,31 +862,43 @@ handler callback.</p>
 
 
     <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">event</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">tmpRes</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
         <span class="nx">event</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;cannot emit undefined event&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;EventEmitterManager.emit: event must be string&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-
+        <span class="nx">res</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">);</span>
+                <span class="nx">tmpRes</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
             <span class="p">}</span>
-        <span class="p">}</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+</div>
+<p>If there are less than 2 elements, unpack the array.
+res[0] is either undefined or some value.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">?</span> <span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="nx">res</span><span class="p">;</span>
     <span class="p">};</span>
 
     <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;EventEmitterManager.remove: event must be string.&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitterManager.remove: &#39;</span> <span class="o">+</span> 
+                                <span class="s1">&#39;event must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">listener</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;EventEmitterManager.remove: listener must be function.&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitterManager.remove: &#39;</span> <span class="o">+</span> 
+                                <span class="s1">&#39;listener must be function.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">)</span> <span class="p">{</span>
@@ -888,7 +961,8 @@ handler callback.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">h</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">e</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-            <span class="nx">stage</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">e</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">?</span> <span class="nx">e</span><span class="p">.</span><span class="nx">stage</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
+            <span class="nx">stage</span> <span class="o">=</span> <span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">e</span><span class="p">.</span><span class="nx">stage</span> <span class="o">?</span> 
+                <span class="nx">e</span><span class="p">.</span><span class="nx">stage</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
             <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
         <span class="p">});</span>
 
@@ -911,11 +985,12 @@ handler callback.</p>
             <span class="nx">hash</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">session</span><span class="p">.</span><span class="nx">stage</span><span class="p">).</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;no old events to re-emit were found during session recovery&#39;</span><span class="p">);</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;No past events to re-emit found.&#39;</span><span class="p">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">stage</span><span class="p">[</span><span class="nx">hash</span><span class="p">]){</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;the current stage &#39;</span> <span class="o">+</span> <span class="nx">hash</span> <span class="o">+</span> <span class="s1">&#39; has no events to re-emit&#39;</span><span class="p">);</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;Current stage &#39;</span> <span class="o">+</span> <span class="nx">hash</span> <span class="o">+</span> <span class="s1">&#39; has no events &#39;</span> <span class="o">+</span>
+                           <span class="s1">&#39;to re-emit&#39;</span><span class="p">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
 
@@ -929,7 +1004,7 @@ handler callback.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>cleaning up the events to remit
 @TODO NDDB commands have changed, update</p>
@@ -947,14 +1022,14 @@ handler callback.</p>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">remit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">remit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;re-emitting &#39;</span> <span class="o">+</span> <span class="nx">db</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; events&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>We have events that were fired at the stage when
 disconnection happened. Let's fire them again</p>

@@ -22,6 +22,9 @@
         <a href="#alias">Alias</a>
       </div>
       <div class="heading h2">
+        <a href="#nodegame-aliasing-module">nodeGame aliasing module</a>
+      </div>
+      <div class="heading h2">
         <a href="#global-scope">Global scope</a>
       </div>
       <div class="heading h3">
@@ -44,16 +47,23 @@
 </div>
 
   </div>
-  <div class="body"><p>Copyright(c) 2012 Stefano Balietti
+  <div class="body"><p>Copyright(c) 2013 Stefano Balietti
 MIT Licensed </p>
 
-<p><code>nodeGame</code> aliasing module</p>
 
-<hr />
+<div class="pilwrap" id="nodegame-aliasing-module">
+  <h2>
+    <a href="#nodegame-aliasing-module" class="pilcrow">&#182;</a>
+    <code>nodeGame</code> aliasing module
+  </h2>
+</div>
+
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+    
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
     </pre></div>
         </td>
       </tr>
@@ -72,7 +82,6 @@ MIT Licensed </p>
     <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
     <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
     <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
-
 
     <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span></pre></div>
         </td>
@@ -95,9 +104,17 @@ after the alias. The alias can be used as a shortcut to register
 to new listeners on the given events.</p>
 
 <p>```javascript
-  node.alias('myAlias', ['in.say.DATA', 'myEvent']);</p>
+  // The node.on.data alias example with modifier function
+  // only DATA msg with the right label will be fired.
+  this.alias('data', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
+      return function(msg) {
+          if (msg.text === text) {
+              cb.call(that.game, msg);
+          }
+      };
+  });</p>
 
-<p>node.on.myAlias(function(){ console.log('myEvent or in.say.DATA'); };
+<p>node.on.data('myLabel', function(){ ... };
 ```  </p>
   </div>
   <div class="details">
@@ -111,44 +128,58 @@ to new listeners on the given events.</p>
       <span class="dox_tag_name">events</span>
       <span class="dox_type">string</span>
       <span class="dox_type">array</span>
-      <span>The event/s under which the listeners will be registered to</span>
+      <span>The event/s under which the listeners 
+  will be registered</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">cb</span>
+      <span class="dox_tag_name">modifier</span>
       <span class="dox_type">function</span>
-      <span>Optional. If set the return value will be passed as parameter
-  of the emitted event</span>
+      <span>Optional. A function that makes a closure
+  around its own input parameters, and returns a function that will
+  actually be invoked when the aliased event is fired.</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">alias</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">alias</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">alias</span> <span class="o">||</span> <span class="o">!</span><span class="nx">events</span><span class="p">)</span> <span class="p">{</span> 
-      <span class="k">this</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;undefined alias or events&#39;</span><span class="p">);</span> 
-      <span class="k">return</span><span class="p">;</span> 
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">alias</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">alias</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">modifier</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">func</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">alias</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.alias: alias must be string.&#39;</span><span class="p">);</span>
   <span class="p">}</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">events</span><span class="p">))</span> <span class="nx">events</span> <span class="o">=</span> <span class="p">[</span><span class="nx">events</span><span class="p">];</span>
-  <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-  <span class="nx">J</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">that</span><span class="p">.</span><span class="nx">on</span><span class="p">[</span><span class="nx">alias</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">that</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="o">?</span> 
-      <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-          <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">));</span>
-      <span class="p">}</span>
-      <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-          <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
-      <span class="p">}</span>
-           <span class="p">);</span>
-                
-      <span class="p">};</span>
-  <span class="p">});</span>
-    <span class="p">};</span>  
-    
-    
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">events</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">events</span> <span class="o">=</span> <span class="p">[</span><span class="nx">events</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">events</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.alias: events must be array or string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">modifier</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">modifier</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;node.alias: modifier must be function or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
 
-
-
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">events</span><span class="p">))</span> <span class="nx">events</span> <span class="o">=</span> <span class="p">[</span><span class="nx">events</span><span class="p">];</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">on</span><span class="p">[</span><span class="nx">alias</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>If set, we use the callback returned by the modifier.
+Otherwise, we assume the first parameter is the callback.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">modifier</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">func</span> <span class="o">=</span> <span class="nx">modifier</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+            <span class="p">}</span> 
+            <span class="nx">J</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">});</span>
+        <span class="p">};</span>
+    <span class="p">};</span>
 <span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>

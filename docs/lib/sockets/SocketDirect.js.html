@@ -22,6 +22,9 @@
         <a href="#socketdirect">SocketDirect</a>
       </div>
       <div class="heading h2">
+        <a href="#a-shared-event-emitter-object.">a shared event-emitter object.</a>
+      </div>
+      <div class="heading h2">
         <a href="#socketdirect.socket">SocketDirect.socket</a>
       </div>
     </div>
@@ -44,14 +47,20 @@
   <div class="body"><p>Copyright(c) 2013 Stefano Balietti
 MIT Licensed </p>
 
-<p>Implementation of a direct socket communicating directly through
-a shared event-emitter object</p>
+<p>Implementation of a direct socket communicating directly through</p>
 
-<hr />
+
+<div class="pilwrap" id="a-shared-event-emitter-object.">
+  <h2>
+    <a href="#a-shared-event-emitter-object." class="pilcrow">&#182;</a>
+    a shared event-emitter object.
+  </h2>
+</div>
+
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
     
     <span class="kd">function</span> <span class="nx">SocketDirect</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
@@ -81,7 +90,7 @@ a shared event-emitter object</p>
     <span class="p">}</span>
 
     <span class="nx">SocketDirect</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">socket</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
   
         <span class="k">if</span> <span class="p">(</span><span class="nx">socket</span><span class="p">)</span> <span class="p">{</span>
@@ -103,10 +112,16 @@ a shared event-emitter object</p>
 </div>
 <p>Call the SocketDirect method on the server.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;socket.direct connection open&#39;</span><span class="p">);</span> 
-        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-  
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;socket.direct connection open&#39;</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">onConnect</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="nx">SocketDirect</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isConnected</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">connected</span><span class="p">;</span>
     <span class="p">};</span>
 
     <span class="nx">SocketDirect</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>

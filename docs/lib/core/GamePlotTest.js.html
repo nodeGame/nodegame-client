@@ -130,16 +130,16 @@ stager.addStage({id: 'outro', steps: ['outroStep1', 'outroStep2']});</p>
     var counter = 0;</p>
 
 
-<div class="highlight"><pre><code><span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">switch</span> <span class="p">(</span><span class="o">++</span><span class="nx">counter</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
-        <span class="k">return</span> <span class="s1">&#39;intro&#39;</span><span class="p">;</span>
-    <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
-        <span class="k">return</span> <span class="s1">&#39;mainGame&#39;</span><span class="p">;</span>
-    <span class="k">case</span> <span class="mi">3</span><span class="o">:</span>
-        <span class="k">return</span> <span class="s1">&#39;randLoop&#39;</span><span class="p">;</span>
-    <span class="k">default</span><span class="o">:</span>
-        <span class="k">return</span> <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">;</span>
+<div class="highlight"><pre><code><span class="k">return</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">switch</span> <span class="p">(</span><span class="o">++</span><span class="n">counter</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&#39;intro&#39;</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&#39;mainGame&#39;</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&#39;randLoop&#39;</span><span class="p">;</span>
+    <span class="n">default:</span>
+        <span class="k">return</span> <span class="n">GamePlot</span><span class="o">.</span><span class="n">GAMEOVER</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 </code></pre></div>

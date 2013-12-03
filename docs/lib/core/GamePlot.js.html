@@ -22,6 +22,9 @@
         <a href="#gameplot">GamePlot</a>
       </div>
       <div class="heading h2">
+        <a href="#nodegame-container-of-game-stages-functions.">nodeGame container of game stages functions.</a>
+      </div>
+      <div class="heading h2">
         <a href="#global-scope">Global scope</a>
       </div>
       <div class="heading h2">
@@ -79,6 +82,9 @@
         <a href="#gameplot.normalizegamestage">GamePlot.normalizeGameStage</a>
       </div>
       <div class="heading h2">
+        <a href="#gameplot.isflexiblemode">GamePlot.isFlexibleMode</a>
+      </div>
+      <div class="heading h2">
         <a href="#closure">Closure</a>
       </div>
     </div>
@@ -97,14 +103,24 @@
   </h1>
 </div>
 
-  </div>
-  <div class="body"><p><code>nodeGame</code> container of game-state functions</p>
 
-<hr />
+<p>Copyright(c) 2013 Stefano Balietti
+MIT Licensed</p>
+  </div>
+  <div class="body">
+<div class="pilwrap" id="nodegame-container-of-game-stages-functions.">
+  <h2>
+    <a href="#nodegame-container-of-game-stages-functions." class="pilcrow">&#182;</a>
+    <code>nodeGame</code> container of game stages functions.
+  </h2>
+</div>
+
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -295,7 +311,7 @@
 </div>
 <p>Find out flexibility mode:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">flexibleMode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">flexibleMode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">isFlexibleMode</span><span class="p">();</span>
 
         <span class="kd">var</span> <span class="nx">seqIdx</span><span class="p">,</span> <span class="nx">seqObj</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">stageObj</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">stageNo</span><span class="p">,</span> <span class="nx">stepNo</span><span class="p">;</span>
@@ -1501,7 +1517,7 @@ return this.stager.getDefaultStepRule();</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">normalizeGameStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">stageNo</span><span class="p">,</span> <span class="nx">stepNo</span><span class="p">,</span> <span class="nx">seqIdx</span><span class="p">,</span> <span class="nx">seqObj</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">stageNo</span><span class="p">,</span> <span class="nx">stageObj</span><span class="p">,</span> <span class="nx">stepNo</span><span class="p">,</span> <span class="nx">seqIdx</span><span class="p">,</span> <span class="nx">seqObj</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gameStage</span> <span class="o">||</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gameStage</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span></pre></div>
         </td>
@@ -1595,6 +1611,39 @@ return this.stager.getDefaultStepRule();</p>
             <span class="nx">round</span><span class="o">:</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">round</span>
         <span class="p">});</span>
     <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gameplot.isflexiblemode">
+  <h2>
+    <a href="#gameplot.isflexiblemode" class="pilcrow">&#182;</a>
+    GamePlot.isFlexibleMode
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Returns TRUE if operating in <em>flexible</em> mode</p>
+
+<p>In <em>flexible</em> mode the next step to be executed is decided by a
+a callback function.</p>
+
+<p>In standard mode all steps are already inserted in a sequence.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE if flexible mode is on</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isFlexibleMode</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>

@@ -25,6 +25,24 @@
         <a href="#global-scope">Global scope</a>
       </div>
       <div class="heading h2">
+        <a href="#rmatcher-constructor">RMatcher constructor</a>
+      </div>
+      <div class="heading h2">
+        <a href="#rmatcher.init">RMatcher.init</a>
+      </div>
+      <div class="heading h2">
+        <a href="#rmatcher.addgroup">RMatcher.addGroup</a>
+      </div>
+      <div class="heading h2">
+        <a href="#rmatcher.match">RMatcher.match</a>
+      </div>
+      <div class="heading h2">
+        <a href="#rmatcher.invermatched">RMatcher.inverMatched</a>
+      </div>
+      <div class="heading h2">
+        <a href="#group-constructor">Group constructor</a>
+      </div>
+      <div class="heading h2">
         <a href="#closure">Closure</a>
       </div>
     </div>
@@ -43,18 +61,19 @@
   </h1>
 </div>
 
-  </div>
-  <div class="body"><p>Copyright(c) 2012 Stefano Balietti
+
+<p>Copyright(c) 2013 Stefano Balietti
 MIT Licensed </p>
-
-<p><code>nodeGame</code> group manager</p>
-
-<hr />
+  </div>
+  <div class="body"><p><code>nodeGame</code> group manager.</p>
+  </div>
+  <div class="details">
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+   
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -67,9 +86,9 @@ MIT Licensed </p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
-  <span class="nx">exports</span><span class="p">.</span><span class="nx">GroupManager</span> <span class="o">=</span> <span class="nx">GroupManager</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GroupManager</span> <span class="o">=</span> <span class="nx">GroupManager</span><span class="p">;</span>
 
     <span class="kd">function</span> <span class="nx">GroupManager</span><span class="p">()</span> <span class="p">{</span></pre></div>
         </td>
@@ -114,23 +133,68 @@ pools: array of array. it is set of preferences (elements from the first array w
 </div>
 <p>Groups.rowLimit determines how many unique elements per row</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">RMatcher</span> <span class="o">=</span> <span class="nx">RMatcher</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">RMatcher</span> <span class="o">=</span> <span class="nx">RMatcher</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Group</span> <span class="o">=</span> <span class="nx">Group</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rmatcher-constructor">
+  <h2>
+    <a href="#rmatcher-constructor" class="pilcrow">&#182;</a>
+    RMatcher constructor
+  </h2>
 </div>
-<p>J = require('nodegame-client').JSUS;</p>
+
+  </div>
+  <div class="body"><p>Creates an instance of RMatcher</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options
+</span>
+      <span class="dox_type">object</span>
+      <span></span>
+    </div>
+  </div>
+</div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">RMatcher</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">RMatcher</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">groups</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">maxIteration</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">doneCounter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rmatcher.init">
+  <h2>
+    <a href="#rmatcher.init" class="pilcrow">&#182;</a>
+    RMatcher.init
+  </h2>
+</div>
 
-    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">elements</span><span class="p">,</span> <span class="nx">pools</span><span class="p">)</span> <span class="p">{</span>
+  </div>
+  <div class="body"><p>Initializes the RMatcher object</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">array</span>
+      <span>elements Array of elements (string, numbers...)</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">array</span>
+      <span>pools Array of arrays</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elements</span><span class="p">,</span> <span class="nx">pools</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">g</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">elements</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">g</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Group</span><span class="p">();</span>
@@ -141,23 +205,71 @@ pools: array of array. it is set of preferences (elements from the first array w
             <span class="nx">elements</span><span class="o">:</span> <span class="nx">elements</span><span class="p">,</span>
             <span class="nx">pools</span><span class="o">:</span> <span class="nx">pools</span>
         <span class="p">};</span>
-    <span class="p">};</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rmatcher.addgroup">
+  <h2>
+    <a href="#rmatcher.addgroup" class="pilcrow">&#182;</a>
+    RMatcher.addGroup
+  </h2>
+</div>
 
-    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addGroup</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">group</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">group</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  </div>
+  <div class="body"><p>Adds a group in the group array </p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">Group</span>
+      <span>group The group to addx</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addGroup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">group</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">group</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;RMatcher.addGroup: group must be object.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">group</span><span class="p">);</span>
-    <span class="p">};</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rmatcher.match">
+  <h2>
+    <a href="#rmatcher.match" class="pilcrow">&#182;</a>
+    RMatcher.match
+  </h2>
+</div>
 
-    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">match</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  </div>
+  <div class="body"><p>Does the matching according to pre-specified criteria </p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span>array The result of the matching</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">match</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
 </div>
-<p>Do first match</p>
+<p>Do first match.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">groups</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">match</span><span class="p">();</span>
@@ -174,10 +286,33 @@ pools: array of array. it is set of preferences (elements from the first array w
             <span class="k">this</span><span class="p">.</span><span class="nx">switchBetweenGroups</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">groups</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">g</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">g</span><span class="p">.</span><span class="nx">matched</span><span class="p">;</span> <span class="p">});</span>
-    <span class="p">};</span>
+        <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">groups</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">g</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">g</span><span class="p">.</span><span class="nx">matched</span><span class="p">;</span> <span class="p">});</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rmatcher.invermatched">
+  <h2>
+    <a href="#rmatcher.invermatched" class="pilcrow">&#182;</a>
+    RMatcher.inverMatched
+  </h2>
+</div>
 
-    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">invertMatched</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  </div>
+  <div class="body">
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">invertMatched</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">tmp</span><span class="p">,</span> <span class="nx">elements</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">inverted</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="nx">J</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">groups</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">g</span><span class="p">)</span> <span class="p">{</span>
@@ -194,16 +329,19 @@ pools: array of array. it is set of preferences (elements from the first array w
         <span class="p">};</span>
     <span class="p">};</span>
 
-
+    
     <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">allGroupsDone</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">doneCounter</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
     <span class="p">};</span>
 
-    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">tryOtherLeftOvers</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">g</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">tryOtherLeftOvers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">g</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">group</span><span class="p">,</span> <span class="nx">groupId</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">order</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+        <span class="kd">var</span> <span class="nx">order</span><span class="p">,</span> <span class="nx">leftOver</span><span class="p">;</span>
+
+        <span class="nx">order</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
         <span class="nx">order</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="nx">order</span><span class="p">);</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">order</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">order</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">groupId</span> <span class="o">=</span> <span class="nx">order</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">groupId</span> <span class="o">===</span> <span class="nx">g</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
             <span class="nx">group</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">groups</span><span class="p">[</span><span class="nx">groupId</span><span class="p">];</span>
@@ -229,7 +367,7 @@ pools: array of array. it is set of preferences (elements from the first array w
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>Group is full</p>
         </td>
@@ -245,7 +383,7 @@ pools: array of array. it is set of preferences (elements from the first array w
     <span class="p">};</span>
 
 
-    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">switchFromGroup</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">fromGroup</span><span class="p">,</span> <span class="nx">toGroup</span><span class="p">,</span> <span class="nx">fromRow</span><span class="p">,</span> <span class="nx">leftOvers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">switchFromGroup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fromGroup</span><span class="p">,</span> <span class="nx">toGroup</span><span class="p">,</span> <span class="nx">fromRow</span><span class="p">,</span> <span class="nx">leftOvers</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">toRow</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">switched</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">toRow</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">toRow</span> <span class="o">&lt;</span> <span class="nx">fromGroup</span><span class="p">.</span><span class="nx">elements</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">toRow</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
 
@@ -269,15 +407,11 @@ pools: array of array. it is set of preferences (elements from the first array w
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
-
-<div class="highlight"><pre><code>                        <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="err">&#39;</span><span class="n">is</span> <span class="n">done</span><span class="err">&#39;</span><span class="p">)</span>
-                        <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">toGroup</span><span class="p">);</span>
-                        <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="err">&#39;</span><span class="n">is</span> <span class="n">done</span><span class="err">&#39;</span><span class="p">)</span>
-</code></pre></div>
-
-
+<p>console.log('is done')
+console.log(toGroup);
+console.log('is done')</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>                                    <span class="k">this</span><span class="p">.</span><span class="nx">doneCounter</span><span class="o">++</span><span class="p">;</span>
                                 <span class="p">}</span>
@@ -294,7 +428,7 @@ pools: array of array. it is set of preferences (elements from the first array w
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary">
@@ -316,7 +450,7 @@ pools: array of array. it is set of preferences (elements from the first array w
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">trySwitchingBetweenGroups</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">g</span><span class="p">,</span> <span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">trySwitchingBetweenGroups</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">g</span><span class="p">,</span> <span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">lo</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">collectLeftOver</span><span class="p">();</span>
         <span class="kd">var</span> <span class="nx">toGroup</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">groups</span><span class="p">[</span><span class="nx">g</span><span class="p">];</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">fromGroup</span><span class="p">;</span></pre></div>
@@ -325,7 +459,7 @@ pools: array of array. it is set of preferences (elements from the first array w
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <p>Tries with all, even with the same group, that is why is (g + 1)</p>
         </td>
@@ -351,7 +485,7 @@ pools: array of array. it is set of preferences (elements from the first array w
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>Group has free elements</p>
         </td>
@@ -376,45 +510,90 @@ pools: array of array. it is set of preferences (elements from the first array w
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>//////////////// GROUP</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">Group</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="group-constructor">
+  <h2>
+    <a href="#group-constructor" class="pilcrow">&#182;</a>
+    Group constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a group</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">Group</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">elements</span> <span class="o">=</span> <span class="p">[];</span>
+        
+        <span class="k">this</span><span class="p">.</span><span class="nx">pool</span> <span class="o">=</span> <span class="p">[];</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">matched</span> <span class="o">=</span> <span class="p">[];</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">leftOver</span> <span class="o">=</span> <span class="p">[];</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">pointer</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">matches</span> <span class="o">=</span> <span class="p">{};</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">requested</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">done</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matches</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">total</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">requested</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">done</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">};</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">rowLimit</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rowLimit</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">noSelf</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">pool</span> <span class="o">=</span> <span class="p">[];</span>
-
         <span class="k">this</span><span class="p">.</span><span class="nx">shuffle</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">stretch</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="kr">debugger</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">elements</span><span class="p">,</span> <span class="nx">pool</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">elements</span> <span class="o">=</span> <span class="nx">elements</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">pool</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">pool</span><span class="p">);</span>
+    
+    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        
+        <span class="k">this</span><span class="p">.</span><span class="nx">noSelf</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">noSelf</span> <span class="o">?</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">noSelf</span> <span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">noSelf</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stretch</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">pool</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">stretch</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">pool</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">rowLimit</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">pool</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">pool</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-            <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">shuffle</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">shuffle</span> <span class="o">?</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">shuffle</span> <span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">stretch</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">stretch</span> <span class="o">?</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">stretch</span> <span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">stretch</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">rowLimit</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rowLimit</span> <span class="o">?</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">rowLimit</span> <span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rowLimit</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">elements</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setElements</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">elements</span><span class="p">);</span>
         <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">pool</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setPool</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">pool</span><span class="p">);</span>
+        <span class="p">}</span>
+
+    <span class="p">};</span>
+
+    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setElements</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elements</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">elements</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Group.setElements: elements must be array.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">elements</span> <span class="o">=</span> <span class="nx">elements</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">elements</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">done</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
@@ -426,13 +605,32 @@ pools: array of array. it is set of preferences (elements from the first array w
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">requested</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">elements</span><span class="p">.</span><span class="nx">length</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">rowLimit</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setPool</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">pool</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">pool</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Group.setPool: pool must be array.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">pool</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">pool</span><span class="p">);</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stretch</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">pool</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">stretch</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">pool</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">rowLimit</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">pool</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">pool</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>The same as canAdd, but does not consider row limit</p>
@@ -441,13 +639,13 @@ pools: array of array. it is set of preferences (elements from the first array w
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">canSwitchIn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">row</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">canSwitchIn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">row</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Element already matched</p>
         </td>
@@ -457,7 +655,7 @@ pools: array of array. it is set of preferences (elements from the first array w
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>No self</p>
         </td>
@@ -467,13 +665,13 @@ pools: array of array. it is set of preferences (elements from the first array w
     <span class="p">};</span>
 
 
-    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">canAdd</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">row</span><span class="p">)</span> <span class="p">{</span></pre></div>
+    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">canAdd</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">row</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>Row limit reached</p>
         </td>
@@ -482,7 +680,7 @@ pools: array of array. it is set of preferences (elements from the first array w
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">canSwitchIn</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">row</span><span class="p">);</span>
     <span class="p">};</span>
 
-    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">shouldSwitch</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">fromRow</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">shouldSwitch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">fromRow</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">leftOver</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matched</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
@@ -490,7 +688,7 @@ pools: array of array. it is set of preferences (elements from the first array w
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>var actualLeftOver = this.leftOver.length;</p>
         </td>
@@ -502,11 +700,11 @@ pools: array of array. it is set of preferences (elements from the first array w
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>If there is a hole, not in the last position, the algorithm fails</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">switchIt</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">switchIt</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">elements</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matched</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">rowLimit</span><span class="p">)</span> <span class="p">{</span>
@@ -516,7 +714,7 @@ pools: array of array. it is set of preferences (elements from the first array w
 
     <span class="p">};</span>
 
-    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">completeRow</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">row</span><span class="p">,</span> <span class="nx">leftOver</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">completeRow</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">row</span><span class="p">,</span> <span class="nx">leftOver</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">leftOver</span> <span class="o">=</span> <span class="nx">leftOver</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">leftOver</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">clone</span> <span class="o">=</span> <span class="nx">leftOver</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
         <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">clone</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
@@ -532,14 +730,14 @@ pools: array of array. it is set of preferences (elements from the first array w
     <span class="p">};</span>
 
 
-    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">switchItInRow</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">toRow</span><span class="p">,</span> <span class="nx">fromRow</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">switchItInRow</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">toRow</span><span class="p">,</span> <span class="nx">fromRow</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">canSwitchIn</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">toRow</span><span class="p">))</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>console.log('cannot switch ' + x + ' ' + toRow)</p>
         </td>
@@ -550,7 +748,7 @@ pools: array of array. it is set of preferences (elements from the first array w
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>console.log('can switch: ' + x + ' ' + toRow + ' from ' + fromRow)
 Check if we can insert any of the element of the 'toRow'
@@ -590,7 +788,7 @@ inside the 'toRow'</p>
     <span class="p">};</span>
 
 
-    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">matchBatch</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">pool</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">matchBatch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">pool</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">leftOver</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">pool</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">done</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">addIt</span><span class="p">(</span><span class="nx">pool</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span></pre></div>
@@ -599,7 +797,7 @@ inside the 'toRow'</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>if we could not add it as a match, it becomes leftover</p>
         </td>
@@ -609,14 +807,14 @@ inside the 'toRow'</p>
         <span class="k">return</span> <span class="nx">leftOver</span><span class="p">;</span>
     <span class="p">};</span>
 
-    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">match</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">pool</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">match</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">pool</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">pool</span> <span class="o">=</span> <span class="nx">pool</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">pool</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>console.log('matching pool');
 console.log(pool)</p>
@@ -629,7 +827,7 @@ console.log(pool)</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Loop through the pools: elements in lower
 indexes-pools have more chances to be used</p>
@@ -647,7 +845,7 @@ indexes-pools have more chances to be used</p>
         <span class="p">}</span>
     <span class="p">};</span>
 
-    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updatePointer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updatePointer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">pointer</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">pointer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="k">this</span><span class="p">.</span><span class="nx">elements</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
     <span class="p">};</span>
 
@@ -659,7 +857,7 @@ indexes-pools have more chances to be used</p>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;matched: &#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">matched</span><span class="p">);</span>
     <span class="p">};</span>
 
-    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">invertMatched</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">invertMatched</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">transpose</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matched</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -667,7 +865,7 @@ indexes-pools have more chances to be used</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Testing functions</p>
         </td>
@@ -676,7 +874,7 @@ indexes-pools have more chances to be used</p>
     <span class="kd">function</span> <span class="nx">getElements</span><span class="p">()</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="p">[],</span>
-            <span class="nx">n</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="nx">numbers</span><span class="p">);</span>
+        <span class="nx">n</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="nx">numbers</span><span class="p">);</span>
         <span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">J</span><span class="p">.</span><span class="nx">randomInt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nx">n</span><span class="p">.</span><span class="nx">length</span><span class="p">)));</span>
         <span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">J</span><span class="p">.</span><span class="nx">randomInt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nx">n</span><span class="p">.</span><span class="nx">length</span><span class="p">)));</span>
         <span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
@@ -710,7 +908,7 @@ indexes-pools have more chances to be used</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>console.log(getElements())
 console.log(getPools())</p>
@@ -720,19 +918,19 @@ console.log(getPools())</p>
         <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">N</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="kd">var</span> <span class="nx">rm</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RMatcher</span><span class="p">(),</span>
-                <span class="nx">elements</span> <span class="o">=</span> <span class="nx">getElements</span><span class="p">(),</span>
-                <span class="nx">pools</span> <span class="o">=</span> <span class="nx">getPools</span><span class="p">();</span></pre></div>
+            <span class="nx">elements</span> <span class="o">=</span> <span class="nx">getElements</span><span class="p">(),</span>
+            <span class="nx">pools</span> <span class="o">=</span> <span class="nx">getPools</span><span class="p">();</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code><span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="err">&#39;</span><span class="n">NN</span> <span class="err">&#39;</span> <span class="p">,</span> <span class="n">numbers</span><span class="p">);</span>
-<span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">elements</span><span class="p">);</span>
-<span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">pools</span><span class="p">)</span>
+<div class="highlight"><pre><code><span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;NN &#39;</span> <span class="p">,</span> <span class="n">numbers</span><span class="p">);</span>
+<span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">elements</span><span class="p">);</span>
+<span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">pools</span><span class="p">)</span>
 </code></pre></div>
 
 
@@ -768,7 +966,7 @@ console.log(getPools())</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>simulateMatch(1000000000);</p>
         </td>
@@ -778,7 +976,7 @@ console.log(getPools())</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>var myElements = [ [ 1, 5], [ 6, 9 ], [ 2, 3, 4, 7, 8 ] ];
 var myPools = [ [ [ ], [ 1,  5, 6, 7] ], [ [4], [ 3, 9] ], [ [], [ 2, 8] ] ];</p>
@@ -789,7 +987,7 @@ var myPools = [ [ [ ], [ 1,  5, 6, 7] ], [ [4], [ 3, 9] ], [ [], [ 2, 8] ] ];</p
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>4.07A 25
 4.77C 25
@@ -836,7 +1034,7 @@ B</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>20961392604176200    SUB A   1351591619837
 19868497151402600000    SUB A   1351591620386
@@ -854,7 +1052,7 @@ B</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>var myElements = [ [ 3, 5 ], [ 8, 9, 1, 7, 6 ], [ 2, 4 ] ];
 var myPools = [ [ [ 6 ], [ 9, 7 ] ], [ [], [ 8, 1, 5, 4 ] ], [ [], [ 2, 3 ] ] ];</p>
@@ -865,7 +1063,7 @@ var myPools = [ [ [ 6 ], [ 9, 7 ] ], [ [], [ 8, 1, 5, 4 ] ], [ [], [ 2, 3 ] ] ];
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>var myElements = [ [ '13988427821680113598', '102698780807709949' ],
  [],
@@ -887,8 +1085,8 @@ for (var h = 0; h &lt; g.elements.length; h++) {
         console.log('Wrong match: ' + j + '-' + h);</p>
 
 
-<div class="highlight"><pre><code>    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">myRM</span><span class="p">.</span><span class="n">options</span><span class="p">.</span><span class="n">elements</span><span class="p">);</span>
-    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">myRM</span><span class="p">.</span><span class="n">options</span><span class="p">.</span><span class="n">pools</span><span class="p">);</span>
+<div class="highlight"><pre><code>    <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">myRM</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">elements</span><span class="p">);</span>
+    <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">myRM</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">pools</span><span class="p">);</span>
 </code></pre></div>
 
 
@@ -904,7 +1102,7 @@ for (var h = 0; h &lt; g.elements.length; h++) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>if (!myRM.allGroupsDone()) {
 console.log('ERROR')
@@ -924,7 +1122,7 @@ J.each(myRM.groups, function(g) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>console.log(myElements);
 console.log(myPools);
@@ -937,7 +1135,7 @@ console.log(myMatch);</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>console.log(myRM.invertMatched());
 console.log(J.transpose(myMatch));</p>
@@ -950,7 +1148,7 @@ console.log(J.transpose(myMatch));</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>var poolA = [ [1, 2], [3, 4], ];
 var elementsA = [7, 1, 2, 4];</p>
@@ -984,7 +1182,7 @@ rm.addGroup(C);</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>[ [ [ 2, 1, 4 ], [ 2, 3, 4 ], [ 1, 4, 3 ], [ 1, 2, 3 ] ],
  [ [ 5, 6, 9 ], [ 5, 6, 7 ] ],
@@ -996,7 +1194,7 @@ rm.addGroup(C);</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>console.log(rm.allGroupsDone())</p>
         </td>
@@ -1006,7 +1204,7 @@ rm.addGroup(C);</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>console.log(g.elements);
 console.log(g.matched);</p>
@@ -1025,8 +1223,8 @@ console.log(g.matched);</p>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
         </td>

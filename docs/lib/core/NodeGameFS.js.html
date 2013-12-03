@@ -19,7 +19,10 @@
     <div id="tree"></div>
     <div id="headings">
       <div class="heading h1">
-        <a href="#fs">Fs</a>
+        <a href="#fs">FS</a>
+      </div>
+      <div class="heading h2">
+        <a href="#nodegame-file-system-module.">nodeGame file system module.</a>
       </div>
       <div class="heading h2">
         <a href="#global-scope">Global scope</a>
@@ -31,16 +34,10 @@
         <a href="#nodegamefs.writecsv--node.js-">NodeGameFS.writeCsv (Node.JS)</a>
       </div>
       <div class="heading h3">
-        <a href="#nodegamefs.memory2csv--node.js-">NodeGameFS.memory2csv (Node.JS)</a>
+        <a href="#nodegamefs.savememory--node.js-">NodeGameFS.saveMemory (Node.JS)</a>
       </div>
       <div class="heading h3">
-        <a href="#nodegamefs.memoryindexes2json--node.js-">NodeGameFS.memoryIndexes2json (Node.JS)</a>
-      </div>
-      <div class="heading h3">
-        <a href="#nodegamefs.memoryindexes2csv--node.js-">NodeGameFS.memoryIndexes2csv (Node.JS)</a>
-      </div>
-      <div class="heading h2">
-        <a href="#helper-function">Helper function</a>
+        <a href="#nodegamefs.savememoryindexes--node.js-">NodeGameFS.saveMemoryIndexes (Node.JS)</a>
       </div>
     </div>
   </div>
@@ -54,21 +51,28 @@
 <div class="pilwrap" id="fs">
   <h1>
     <a href="#fs" class="pilcrow">&#182;</a>
-    Fs
+    FS
   </h1>
 </div>
 
   </div>
-  <div class="body"><p>Copyright(c) 2012 Stefano Balietti
+  <div class="body"><p>Copyright(c) 2013 Stefano Balietti
 MIT Licensed</p>
 
-<p><code>nodeGame</code> file system module</p>
 
-<hr />
+<div class="pilwrap" id="nodegame-file-system-module.">
+  <h2>
+    <a href="#nodegame-file-system-module." class="pilcrow">&#182;</a>
+    <code>nodeGame</code> file system module.
+  </h2>
+</div>
+
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -83,7 +87,7 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameFS</span> <span class="o">=</span> <span class="nx">NodeGameFS</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
     <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">),</span>
     <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">),</span>
     <span class="nx">csv</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;ya-csv&#39;</span><span class="p">);</span></pre></div>
@@ -135,25 +139,34 @@ MIT Licensed</p>
       <span>The path to the csv file</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">obj</span>
-      <span class="dox_type">object</span>
-      <span>The object to serialze as csv file</span>
+      <span class="dox_tag_name">data</span>
+      <span class="dox_type">array</span>
+      <span>The data to serialze</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">options</span>
       <span class="dox_type">options</span>
-      <span>Optional. Configuration options
-
-@see <a href="http://nodejs.org/api/fs.html#fs_fs_createwritestream_path_options">node fs api</a></span>
+      <span>Optional. Configuration options format specific</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <a href="fs api](http://nodejs.org/api/fs.html#fs_fs_createwritestream_path_options)
+  ">[node</a>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">writeCsv</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">obj</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">writeCsv</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">writer</span><span class="p">,</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">path</span> <span class="o">||</span> <span class="o">!</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Empty path or object. Aborting.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">,</span> <span class="s1">&#39;node.fs.writeCsv: &#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.writeCsv: path must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.writeCsv: data must be array.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.writeCsv: options must be object or &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
@@ -167,7 +180,7 @@ MIT Licensed</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
 </div>
-<!-- Add headers, if not otherwise requested, and if found -->
+<p>Add headers, if not otherwise requested, and if found.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
@@ -179,19 +192,28 @@ MIT Licensed</p>
                 <span class="nx">headers</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">headers</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+                <span class="nx">headers</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">headers</span> <span class="o">&amp;&amp;</span> <span class="nx">headers</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">writer</span><span class="p">.</span><span class="nx">writeRecord</span><span class="p">(</span><span class="nx">headers</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Could not find headers&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.fs.writeCsv: no headers found.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">writer</span><span class="p">.</span><span class="nx">writeRecord</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
+                <span class="nx">writer</span><span class="p">.</span><span class="nx">writeRecord</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">writer</span><span class="p">.</span><span class="nx">writeRecord</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">obj2Array</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">]));</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.fs.writeCsv: data array contains &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;invalid entries: &#39;</span> <span class="o">+</span> <span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -199,10 +221,10 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nodegamefs.memory2csv--node.js-">
+<div class="pilwrap" id="nodegamefs.savememory--node.js-">
   <h3>
-    <a href="#nodegamefs.memory2csv--node.js-" class="pilcrow">&#182;</a>
-    NodeGameFS.memory2csv (Node.JS)
+    <a href="#nodegamefs.savememory--node.js-" class="pilcrow">&#182;</a>
+    NodeGameFS.saveMemory (Node.JS)
   </h3>
 </div>
 
@@ -214,6 +236,11 @@ be specified in the <code>options</code> parameter.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">format</span>
+      <span class="dox_type">string</span>
+      <span>The format of the files</span>
+    </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">path</span>
       <span class="dox_type">string</span>
@@ -227,46 +254,79 @@ be specified in the <code>options</code> parameter.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">NodeGameFS.writeCsv
-
   </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">memory2csv</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Missing path parameter&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">,</span> <span class="s1">&#39;node.fs.memory2csv: &#39;</span><span class="p">);</span>
-            <span class="k">return</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveMemory</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.saveMemory: format must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.saveMemory: unknown format: &#39;</span> <span class="o">+</span>
+                                <span class="nx">format</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.memory2csv: path must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.saveMemory: options must be object or &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetchValues</span><span class="p">(),</span> <span class="nx">options</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">format</span> <span class="o">===</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetch</span><span class="p">(),</span> <span class="nx">options</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>Params: path, callback, compress.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nodegamefs.memoryindexes2json--node.js-">
+<div class="pilwrap" id="nodegamefs.savememoryindexes--node.js-">
   <h3>
-    <a href="#nodegamefs.memoryindexes2json--node.js-" class="pilcrow">&#182;</a>
-    NodeGameFS.memoryIndexes2json (Node.JS)
+    <a href="#nodegamefs.savememoryindexes--node.js-" class="pilcrow">&#182;</a>
+    NodeGameFS.saveMemoryIndexes (Node.JS)
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Serializes to JSON files all the hashed indexes of the memory object</p>
+  <div class="body"><p>Saves the indexes of the memory object to file system</p>
 
-<p>Each file is named after the name of the hashed property
-and the index. E.g. stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
+<p>A new file is created for every index, named after the index. E.g.,
+stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
+
+<p>Two file formats are available: <em>csv</em> and <em>json</em>.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
+      <span class="dox_tag_name">format</span>
+      <span class="dox_type">string</span>
+      <span>The format of the files</span>
+    </div>
+    <div class="dox_tag_detail">
       <span class="dox_tag_name">dir</span>
       <span class="dox_type">string</span>
-      <span>The path to the folder in which all files will be saved</span>
+      <span>The path to the folder in which all files
+  will be saved</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">options</span>
@@ -285,88 +345,59 @@ and the index. E.g. stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">memoryIndexes2json</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">dir</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">saveAllIndexes</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="nx">dir</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="nodegamefs.memoryindexes2csv--node.js-">
-  <h3>
-    <a href="#nodegamefs.memoryindexes2csv--node.js-" class="pilcrow">&#182;</a>
-    NodeGameFS.memoryIndexes2csv (Node.JS)
-  </h3>
-</div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveMemoryIndexes</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">dir</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">ipath</span><span class="p">,</span> <span class="nx">indexData</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">memory</span><span class="p">;</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+        <span class="nx">memory</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">;</span>
 
-  </div>
-  <div class="body"><p>Serializes to CSV files all the hashed indexes of the memory object</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">dir</span>
-      <span class="dox_type">string</span>
-      <span>The path to the folder in which all files will be saved</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">options</span>
-      <span class="dox_type">options</span>
-      <span>Optional. Configuration options</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">NodeGameFS.memoryIndexes2json</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">NodeGameFS.writeCsv
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">memoryIndexes2csv</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">saveAllIndexes</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="nx">dir</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="helper-function">
-  <h2>
-    <a href="#helper-function" class="pilcrow">&#182;</a>
-    Helper function
-  </h2>
-</div>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: format must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: unknown format: &#39;</span> <span class="o">+</span>
+                                <span class="nx">format</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">saveAllIndexes</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">dir</span><span class="p">,</span> <span class="nx">csv</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">ipath</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">dir</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot save all indexes: missing dir parameter&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">dir</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: dir must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: options must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: no index found.&#39;</span><span class="p">);</span>
             <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="nx">dir</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: dir is not  &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;existing or not readable: &#39;</span> <span class="o">+</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">dir</span><span class="p">[</span><span class="nx">dir</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="nx">dir</span> <span class="o">=</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
- 
-        <span class="k">for</span> <span class="p">(</span><span class="nx">hash</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">hash</span><span class="p">)){</span>
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">])</span> <span class="p">{</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">])</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">].</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">index</span><span class="p">))</span> <span class="p">{</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">hash</span> <span class="k">in</span> <span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">hash</span><span class="p">)){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">].</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">index</span><span class="p">))</span> <span class="p">{</span>
                             <span class="nx">ipath</span> <span class="o">=</span> <span class="nx">dir</span> <span class="o">+</span> <span class="nx">hash</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">index</span><span class="p">;</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="nx">csv</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">indexData</span> <span class="o">=</span> <span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">][</span><span class="nx">index</span><span class="p">];</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">format</span> <span class="o">===</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span> <span class="p">{</span>
                                 <span class="nx">ipath</span> <span class="o">+=</span> <span class="s1">&#39;.csv&#39;</span><span class="p">;</span>
+                                <span class="kr">debugger</span>
                                 <span class="nx">node</span><span class="p">.</span><span class="nx">fs</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">ipath</span><span class="p">,</span>
-                                                 <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">][</span><span class="nx">index</span><span class="p">].</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetchValues</span><span class="p">(),</span>
+                                                 <span class="nx">indexData</span><span class="p">.</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetch</span><span class="p">(),</span>
                                                  <span class="nx">options</span><span class="p">);</span>
                             <span class="p">}</span>
                             <span class="k">else</span> <span class="p">{</span>
                                 <span class="nx">ipath</span> <span class="o">+=</span> <span class="s1">&#39;.nddb&#39;</span><span class="p">;</span>
-                                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">][</span><span class="nx">index</span><span class="p">].</span><span class="nx">save</span><span class="p">(</span><span class="nx">ipath</span><span class="p">);</span>
+                                <span class="nx">indexData</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="nx">ipath</span><span class="p">);</span>
                             <span class="p">}</span>
 
                         <span class="p">}</span>
@@ -375,8 +406,7 @@ and the index. E.g. stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">}</span>
-
+    <span class="p">};</span>
 
 <span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>

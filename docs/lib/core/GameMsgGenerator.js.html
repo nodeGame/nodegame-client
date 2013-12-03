@@ -53,28 +53,34 @@
 </div>
 
   </div>
-  <div class="body"><p>Copyright(c) 2012 Stefano Balietti
+  <div class="body"><p>Copyright(c) 2013 Stefano Balietti
 MIT Licensed</p>
 
 <p><code>nodeGame</code> component rensponsible creating messages</p>
 
 <p>Static factory of objects of type <code>GameMsg</code>.</p>
-
-<p>All message are reliable, but TXT messages.</p>
-
-
-<div class="highlight"><pre><code> <span class="err">@</span><span class="n">see</span> <span class="n">GameMSg</span>
- <span class="err">@</span><span class="n">see</span> <span class="n">node</span><span class="p">.</span><span class="n">target</span>
- <span class="err">@</span><span class="n">see</span> <span class="n">node</span><span class="p">.</span><span class="n">action</span>
-</code></pre></div>
-
-
-
-<hr />
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameMSg</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.target</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.action
+---
+  </span>
+    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -87,8 +93,7 @@ MIT Licensed</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">GameMsgGenerator</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">GameMsgGenerator</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
     <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
@@ -110,7 +115,7 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">GameMsgGenerator</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">GameMsgGenerator</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
     <span class="p">}</span></pre></div>
         </td>
@@ -142,7 +147,10 @@ MIT Licensed</p>
   <div class="body"><p>Primitive for creating a new GameMsg object</p>
 
 <p>Decorates an input object with all the missing properties
-of a full GameMsg object</p>
+of a full GameMsg object.</p>
+
+<p>By default GAMECOMMAND, REDIRECT, PCONNET, PDISCONNECT, PRECONNECT
+have priority 1, all the other targets have priority 0.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -165,27 +173,44 @@ of a full GameMsg object</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">gameStage</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">gameStage</span><span class="p">,</span> <span class="nx">priority</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">()</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="s1">&#39;0.0.0&#39;</span><span class="p">);</span>
+            <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">?</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">()</span><span class="o">:</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="s1">&#39;0.0.0&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">priority</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">priority</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">priority</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">===</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">GAMECOMMAND</span> <span class="o">||</span>
+                 <span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">===</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">REDIRECT</span> <span class="o">||</span>
+                 <span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">===</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PCONNECT</span> <span class="o">||</span>
+                 <span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">===</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PDISCONNECT</span> <span class="o">||</span>
+                 <span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">===</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PRECONNECT</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="nx">priority</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">priority</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">({</span>
-            <span class="nx">session</span><span class="o">:</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span> <span class="o">?</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span>
+            <span class="nx">session</span><span class="o">:</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span> <span class="o">?</span>
+                <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span>
             <span class="nx">stage</span><span class="o">:</span> <span class="nx">gameStage</span><span class="p">,</span>
             <span class="nx">action</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">action</span> <span class="o">||</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span><span class="p">,</span>
             <span class="nx">target</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
-            <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">id</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">UNDEFINED_PLAYER</span><span class="p">,</span> <span class="c1">// TODO change to id</span>
+            <span class="nx">from</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">id</span> <span class="o">:</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">UNDEFINED_PLAYER</span><span class="p">,</span>
             <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">to</span> <span class="o">?</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">to</span> <span class="o">:</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
-            <span class="nx">text</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">||</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="nx">data</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span> <span class="o">||</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="nx">priority</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">priority</span> <span class="o">||</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">?</span> <span class="s2">&quot;&quot;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span> <span class="o">?</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">priority</span><span class="o">:</span> <span class="nx">priority</span><span class="p">,</span>
             <span class="nx">reliable</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">reliable</span> <span class="o">||</span> <span class="mi">1</span>
         <span class="p">});</span>
 

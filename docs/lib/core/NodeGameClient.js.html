@@ -19,10 +19,16 @@
     <div id="tree"></div>
     <div id="headings">
       <div class="heading h1">
-        <a href="#nodegame">nodeGame</a>
+        <a href="#nodegame--social-experiments-in-the-browser-">nodeGame: Social Experiments in the Browser!</a>
+      </div>
+      <div class="heading h2">
+        <a href="#multiplayer-games-in-the-browser.">multiplayer games in the browser.</a>
       </div>
       <div class="heading h2">
         <a href="#exposing-class">Exposing Class</a>
+      </div>
+      <div class="heading h2">
+        <a href="#nodegameclient-constructor">NodeGameClient constructor</a>
       </div>
       <div class="heading h3">
         <a href="#node.verbosity_levels">node.verbosity_levels</a>
@@ -35,6 +41,9 @@
       </div>
       <div class="heading h3">
         <a href="#node.remoteverbosity">node.remoteVerbosity</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.errormanager">node.errorManager</a>
       </div>
       <div class="heading h3">
         <a href="#node.events">node.events</a>
@@ -53,6 +62,9 @@
       </div>
       <div class="heading h3">
         <a href="#node.game">node.game</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.timer">node.timer</a>
       </div>
       <div class="heading h3">
         <a href="#node.store">node.store</a>
@@ -103,6 +115,9 @@
         <a href="#node.setup.player">node.setup.player</a>
       </div>
       <div class="heading h3">
+        <a href="#node.setup.timer">node.setup.timer</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.setup.plot">node.setup.plot</a>
       </div>
       <div class="heading h3">
@@ -118,9 +133,6 @@
         <a href="#node.on.data">node.on.data</a>
       </div>
       <div class="heading h3">
-        <a href="#node.on.state">node.on.state</a>
-      </div>
-      <div class="heading h3">
         <a href="#node.on.stage">node.on.stage</a>
       </div>
       <div class="heading h3">
@@ -128,6 +140,24 @@
       </div>
       <div class="heading h3">
         <a href="#node.on.pconnect">node.on.pconnect</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.on.pdisconnect">node.on.pdisconnect</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.on.preconnect">node.on.preconnect</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.on.mconnect">node.on.mconnect</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.on.mreconnect">node.on.mreconnect</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.on.mdisconnect">node.on.mdisconnect</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.on.stepdone">node.on.stepdone</a>
       </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
@@ -141,25 +171,33 @@
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nodegame">
+<div class="pilwrap" id="nodegame--social-experiments-in-the-browser-">
   <h1>
-    <a href="#nodegame" class="pilcrow">&#182;</a>
-    nodeGame
+    <a href="#nodegame--social-experiments-in-the-browser-" class="pilcrow">&#182;</a>
+    nodeGame: Social Experiments in the Browser!
   </h1>
 </div>
 
-  </div>
-  <div class="body"><p>Social Experiments in the Browser</p>
 
-<p>Copyright(c) 2012 Stefano Balietti
+<p>Copyright(c) 2013 Stefano Balietti
 MIT Licensed</p>
+  </div>
+  <div class="body"><p><code>nodeGame</code> is a free, open source javascript framework for on line,</p>
 
-<p>nodeGame is a free, open source, event-driven javascript framework for on line,
-multiplayer games in the browser.</p>
+
+<div class="pilwrap" id="multiplayer-games-in-the-browser.">
+  <h2>
+    <a href="#multiplayer-games-in-the-browser." class="pilcrow">&#182;</a>
+    multiplayer games in the browser.
+  </h2>
+</div>
+
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -174,18 +212,39 @@ multiplayer games in the browser.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameClient</span> <span class="o">=</span> <span class="nx">NodeGameClient</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">EventEmitterManager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">EventEmitterManager</span><span class="p">,</span>
-    <span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">EventEmitter</span><span class="p">,</span>
-    <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
-    <span class="nx">Socket</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Socket</span><span class="p">,</span>
-    <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
-    <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-    <span class="nx">Game</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Game</span><span class="p">,</span>
-    <span class="nx">Player</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
-    <span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameSession</span><span class="p">,</span>
-    <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">ErrorManager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">ErrorManager</span><span class="p">,</span>
+        <span class="nx">EventEmitterManager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">EventEmitterManager</span><span class="p">,</span>
+        <span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">EventEmitter</span><span class="p">,</span>
+        <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
+        <span class="nx">Socket</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Socket</span><span class="p">,</span>
+        <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
+        <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
+        <span class="nx">Game</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Game</span><span class="p">,</span>
+        <span class="nx">Timer</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Timer</span><span class="p">,</span>
+        <span class="nx">Player</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
+        <span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameSession</span><span class="p">,</span>
+        <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient-constructor">
+  <h2>
+    <a href="#nodegameclient-constructor" class="pilcrow">&#182;</a>
+    NodeGameClient constructor
+  </h2>
+</div>
 
-    <span class="kd">function</span> <span class="nx">NodeGameClient</span><span class="p">()</span> <span class="p">{</span></pre></div>
+  </div>
+  <div class="body"><p>Creates a new NodeGameClient object.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameClient</span><span class="p">()</span> <span class="p">{</span>
+        
+        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        </pre></div>
         </td>
       </tr>
       <tr>
@@ -267,11 +326,33 @@ multiplayer games in the browser.</p>
   </div>
   <div class="body"><p>The minimum level for a log entry to be reported to the server</p>
 
-<p>Defaults, only errors are displayed.</p>
+<p>Defaults, only errors are reported.</p>
+  </div>
+  <div class="details">
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">remoteVerbosity</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">WARN</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.errormanager">
+  <h3>
+    <a href="#node.errormanager" class="pilcrow">&#182;</a>
+    node.errorManager
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Catches run-time errors.</p>
+
+<p>In debug mode errors are re-thrown.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">errorManager</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ErrorManager</span><span class="p">(</span><span class="k">this</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -427,6 +508,31 @@ proper listener functions</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="node.timer">
+  <h3>
+    <a href="#node.timer" class="pilcrow">&#182;</a>
+    node.timer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Instance of node.Timer</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Timer
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Timer</span><span class="p">(</span><span class="k">this</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="node.store">
   <h3>
     <a href="#node.store" class="pilcrow">&#182;</a>
@@ -519,17 +625,42 @@ to the browser local database or to a cookie</p>
   </div>
   <div class="body"><p>Runs all the registered configuration functions</p>
 
-<p>Matches the keys of the configuration objects with the name of the registered
-functions and executes them. If no match is found, the configuration function
-will set the default values.</p>
+<p>Matches the keys of the configuration objects with the name
+of the registered functions and executes them.
+If no match is found, the configuration function will set 
+the default values.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>The configuration object</span>
+    </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;nodegame&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.nodegame: options must &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
             <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;register&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;nodegame&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>Old Operas loop over the prototype property as well.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;register&#39;</span> <span class="o">&amp;&amp;</span>
+                        <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;nodegame&#39;</span> <span class="o">&amp;&amp;</span>
+                        <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;prototype&#39;</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
@@ -595,7 +726,7 @@ in the browser enviroment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>URL</p>
         </td>
@@ -614,7 +745,7 @@ in the browser enviroment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>url was not of the form '/channel'</p>
         </td>
@@ -626,7 +757,7 @@ in the browser enviroment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Add a trailing slash if missing</p>
         </td>
@@ -680,7 +811,7 @@ in the browser enviroment.</p>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;nodename&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">newName</span> <span class="o">=</span> <span class="nx">newName</span> <span class="o">||</span> <span class="s1">&#39;ng&#39;</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.nodename must be of type string&#39;</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.nodename must be of type string.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">=</span> <span class="nx">newName</span><span class="p">;</span>
             <span class="k">return</span> <span class="nx">newName</span><span class="p">;</span>
@@ -705,7 +836,7 @@ in the browser enviroment.</p>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">enable</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">enable</span> <span class="o">=</span> <span class="nx">enable</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;boolean&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">enable</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.debug must be of type boolean&#39;</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.debug must be of type boolean.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">enable</span><span class="p">;</span>
             <span class="k">return</span> <span class="nx">enable</span><span class="p">;</span>
@@ -728,8 +859,9 @@ in the browser enviroment.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
                         <span class="k">this</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
                     <span class="p">}</span>
@@ -788,6 +920,8 @@ in the browser enviroment.</p>
 
   </div>
   <div class="body"><p>Configure the node.window object, if existing</p>
+
+<p>TODO: move in GameWindow</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -800,7 +934,8 @@ in the browser enviroment.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;window&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.window not found, cannot configure it.&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.setup.window: window not found, &#39;</span> <span class="o">+</span>
+                          <span class="s1">&#39;are you in a browser?&#39;</span><span class="p">);</span>
                 <span class="k">return</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
@@ -903,11 +1038,76 @@ in the browser enviroment.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="p">}</span>
-
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.setup.timer">
+  <h3>
+    <a href="#node.setup.timer" class="pilcrow">&#182;</a>
+    node.setup.timer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Setup a timer object</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.timer</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.GameTimer
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;timer&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">timer</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">name</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">timers</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timer</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">timer</span><span class="p">.</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">timer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
+            <span class="p">}</span>
+            
+            <span class="k">switch</span> <span class="p">(</span><span class="nx">timer</span><span class="p">.</span><span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="s1">&#39;start&#39;</span><span class="o">:</span>
+                <span class="nx">timer</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;stop&#39;</span><span class="o">:</span> 
+                <span class="nx">timer</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;restart&#39;</span><span class="o">:</span>
+                <span class="nx">timer</span><span class="p">.</span><span class="nx">restart</span><span class="p">();</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;pause&#39;</span><span class="o">:</span>
+                <span class="nx">timer</span><span class="p">.</span><span class="nx">pause</span><span class="p">();</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;resume&#39;</span><span class="o">:</span>
+                <span class="nx">timer</span><span class="p">.</span><span class="nx">resume</span><span class="p">();</span>
+            <span class="p">}</span>
+            </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+</div>
+<p>Last configured timer options.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">return</span> <span class="p">{</span>
+                <span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="nx">data</span>
+            <span class="p">};</span>
         <span class="p">});</span></pre></div>
         </td>
       </tr>
@@ -997,15 +1197,6 @@ in the browser enviroment.</p>
       <span>Optional. Whether to 'replace' (default) or
  to 'append'.</span>
     </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">node.game.plot</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">Stager.setState
-  </span>
-    </div>
   </div>
 </div>
         </td>
@@ -1025,8 +1216,7 @@ in the browser enviroment.</p>
 </div>
 
   </div>
-  <div class="body"><p>TODO: merge with plist
-Updates the monitor list in Game</p>
+  <div class="body"><p>Updates the monitor list in Game</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1041,15 +1231,6 @@ Updates the monitor list in Game</p>
       <span>Optional. Whether to 'replace' (default) or
  to 'append'.</span>
     </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">this.game.plot</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">Stager.setState
-  </span>
-    </div>
   </div>
 </div>
         </td>
@@ -1061,7 +1242,7 @@ Updates the monitor list in Game</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Utility for setup.plist and setup.mlist:</p>
         </td>
@@ -1081,7 +1262,7 @@ Updates the monitor list in Game</p>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">dstList</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList called before this.game was initialized&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList called before node.game was initialized&#39;</span><span class="p">);</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s1">&#39;dstList non-existent&#39;</span><span class="p">);</span>
             <span class="p">}</span>
 
@@ -1098,7 +1279,7 @@ Updates the monitor list in Game</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>automatic cast from Object to Player</p>
         </td>
@@ -1112,7 +1293,7 @@ Updates the monitor list in Game</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>ALIAS</p>
         </td>
@@ -1142,20 +1323,13 @@ Updates the monitor list in Game</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.DATA&#39;</span><span class="p">]);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="node.on.state">
-  <h3>
-    <a href="#node.on.state" class="pilcrow">&#182;</a>
-    node.on.state
-  </h3>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STATE&#39;</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.DATA&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
+        <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1194,17 +1368,125 @@ Updates the monitor list in Game</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;pconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;pconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">};</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="node.on.pdisconnect">
+  <h3>
+    <a href="#node.on.pdisconnect" class="pilcrow">&#182;</a>
+    node.on.pdisconnect
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;pdisconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PDISCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">};</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="node.on.preconnect">
+  <h3>
+    <a href="#node.on.preconnect" class="pilcrow">&#182;</a>
+    node.on.preconnect
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;preconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PRECONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">};</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="node.on.mconnect">
+  <h3>
+    <a href="#node.on.mconnect" class="pilcrow">&#182;</a>
+    node.on.mconnect
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;mconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.MCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">};</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="node.on.mreconnect">
+  <h3>
+    <a href="#node.on.mreconnect" class="pilcrow">&#182;</a>
+    node.on.mreconnect
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;mreconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.MRECONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">};</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="node.on.mdisconnect">
+  <h3>
+    <a href="#node.on.mdisconnect" class="pilcrow">&#182;</a>
+    node.on.mdisconnect
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;mdisconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.MDISCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">};</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="node.on.stepdone">
+  <h3>
+    <a href="#node.on.stepdone" class="pilcrow">&#182;</a>
+    node.on.stepdone
+  </h3>
+</div>
+
+
+<p>Uses the step rule to determine when a step is DONE.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;stepdone&#39;</span><span class="p">,</span> <span class="s1">&#39;UPDATED_PLIST&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">shouldStep</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
         <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
-<p>LISTENERS</p>
+<p>LISTENERS.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultIncomingListeners</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultInternalListeners</span><span class="p">();</span>
