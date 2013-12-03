@@ -740,7 +740,7 @@ if (cookie.test()) {
 }(this));
 /**
  * # JSUS: JavaScript UtilS. 
- * Copyright(c) 2012 Stefano Balietti
+ * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
  * 
  * Collection of general purpose javascript functions. JSUS helps!
@@ -892,1499 +892,1543 @@ if (JSUS.isNodeJS()) {
 
 
 /**
- * # SUPPORT
- *  
- * Copyright(c) 2012 Stefano Balietti
+ * # COMPATIBILITY
+ *
+ * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
- * 
+ *
  * Tests browsers ECMAScript 5 compatibility
- * 
+ *
  * For more information see http://kangax.github.com/es5-compat-table/
- * 
+ * ---
  */
+(function(JSUS) {
 
-(function (JSUS) {
-    
-function COMPATIBILITY() {};
+    function COMPATIBILITY() {};
 
-/**
- * ## COMPATIBILITY.compatibility
- * 
- * Returns a report of the ECS5 features available
- * 
- * Useful when an application routinely performs an operation 
- * depending on a potentially unsupported ECS5 feature. 
- * 
- * Transforms multiple try-catch statements in a if-else
- * 
- * @return {object} support The compatibility object
- */
-COMPATIBILITY.compatibility = function() {
+    /**
+     * ## COMPATIBILITY.compatibility
+     *
+     * Returns a report of the ECS5 features available
+     *
+     * Useful when an application routinely performs an operation
+     * depending on a potentially unsupported ECS5 feature.
+     *
+     * Transforms multiple try-catch statements in a if-else
+     *
+     * @return {object} support The compatibility object
+     */
+    COMPATIBILITY.compatibility = function() {
 
-	var support = {};
-	
-	try {
-		Object.defineProperty({}, "a", {enumerable: false, value: 1})
-		support.defineProperty = true;
-	}
-	catch(e) {
-		support.defineProperty = false;	
-	}
-	
-	try {
-		eval('({ get x(){ return 1 } }).x === 1')
-		support.setter = true;
-	}
-	catch(err) {
-		support.setter = false;
-	}
-	  
-	try {
-		var value;
-		eval('({ set x(v){ value = v; } }).x = 1');
-		support.getter = true;
-	}
-	catch(err) {
-		support.getter = false;
-	}	  
+        var support = {};
 
-	return support;
-};
+        try {
+            Object.defineProperty({}, "a", {enumerable: false, value: 1})
+            support.defineProperty = true;
+        }
+        catch(e) {
+            support.defineProperty = false;
+        }
+
+        try {
+            eval('({ get x(){ return 1 } }).x === 1')
+            support.setter = true;
+        }
+        catch(err) {
+            support.setter = false;
+        }
+
+        try {
+            var value;
+            eval('({ set x(v){ value = v; } }).x = 1');
+            support.getter = true;
+        }
+        catch(err) {
+            support.getter = false;
+        }
+
+        return support;
+    };
 
 
-JSUS.extend(COMPATIBILITY);
-    
+    JSUS.extend(COMPATIBILITY);
+
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 /**
  * # ARRAY
- *  
- * Copyright(c) 2012 Stefano Balietti
+ * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
  * 
  * Collection of static functions to manipulate arrays.
- * 
  */
-
-(function (JSUS) {
+(function(JSUS) {
     
-function ARRAY(){};
+    function ARRAY(){};
 
+    /**
+     * ## ARRAY.filter
+     * 
+     * Add the filter method to ARRAY objects in case the method is not
+     * supported natively. 
+     * 
+     * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/ARRAY/filter
+     */
+    if (!Array.prototype.filter) {  
+        Array.prototype.filter = function(fun /*, thisp */) {  
+            "use strict";  
+            if (this === void 0 || this === null) throw new TypeError();  
 
-/**
- * ## ARRAY.filter
- * 
- * Add the filter method to ARRAY objects in case the method is not
- * supported natively. 
- * 
- * 		@see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/ARRAY/filter
- * 
- */
-if (!Array.prototype.filter) {  
-    Array.prototype.filter = function(fun /*, thisp */) {  
-        "use strict";  
-        if (this === void 0 || this === null) throw new TypeError();  
-
-        var t = Object(this);  
-        var len = t.length >>> 0;  
-        if (typeof fun !== "function") throw new TypeError();  
-    
-        var res = [];  
-        var thisp = arguments[1];  
-        for (var i = 0; i < len; i++) {  
-            if (i in t) {  
-                var val = t[i]; // in case fun mutates this  
-                if (fun.call(thisp, val, i, t)) { 
-                    res.push(val);  
+            var t = Object(this);  
+            var len = t.length >>> 0;  
+            if (typeof fun !== "function") throw new TypeError();  
+            
+            var res = [];  
+            var thisp = arguments[1];  
+            for (var i = 0; i < len; i++) {  
+                if (i in t) {  
+                    var val = t[i]; // in case fun mutates this  
+                    if (fun.call(thisp, val, i, t)) { 
+                        res.push(val);  
+                    }
                 }
+            }     
+            return res;  
+        };
+    }
+
+    /**
+     * ## ARRAY.isArray
+     * 
+     * Returns TRUE if a variable is an Array
+     * 
+     * This method is exactly the same as `Array.isArray`, 
+     * but it works on a larger share of browsers. 
+     * 
+     * @param {object} o The variable to check.
+     * @see Array.isArray
+     */
+    ARRAY.isArray = function(o) {
+        if (!o) return false;
+        return Object.prototype.toString.call(o) === '[object Array]';  
+    };
+
+    /**
+     * ## ARRAY.seq
+     * 
+     * Returns an array of sequential numbers from start to end
+     * 
+     * If start > end the series goes backward.
+     * 
+     * The distance between two subsequent numbers can be controlled
+     * by the increment parameter.
+     * 
+     * When increment is not a divider of Abs(start - end), end will
+     * be missing from the series.
+     * 
+     * A callback function to apply to each element of the sequence
+     * can be passed as fourth parameter.
+     *  
+     * Returns FALSE, in case parameters are incorrectly specified
+     * 
+     * @param {number} start The first element of the sequence
+     * @param {number} end The last element of the sequence
+     * @param {number} increment Optional. The increment between two 
+     *   subsequents element of the sequence
+     * @param {Function} func Optional. A callback function that can modify 
+     *   each number of the sequence before returning it
+     *  
+     * @return {array} out The final sequence 
+     */
+    ARRAY.seq = function(start, end, increment, func) {
+        var i;
+        if ('number' !== typeof start) return false;
+        if (start === Infinity) return false;
+        if ('number' !== typeof end) return false;
+        if (end === Infinity) return false;
+        if (start === end) return [start];
+        
+        if (increment === 0) return false;
+        if (!JSUS.in_array(typeof increment, ['undefined', 'number'])) {
+            return false;
+        }
+        
+        increment = increment || 1;
+        func = func || function(e) {return e;};
+        
+        i = start,
+        out = [];
+        
+        if (start < end) {
+            while (i <= end) {
+                out.push(func(i));
+                i = i + increment;
+            }
+        }
+        else {
+            while (i >= end) {
+                out.push(func(i));
+                i = i - increment;
             }
         }
         
-        return res;  
+        return out;
     };
-}
 
-/**
- * ## ARRAY.isArray
- * 
- * Returns TRUE if a variable is an Array
- * 
- * This method is exactly the same as `Array.isArray`, 
- * but it works on a larger share of browsers. 
- * 
- * @param {object} o The variable to check.
- * @see Array.isArray
- *  
- */
-ARRAY.isArray = function (o) {
-	if (!o) return false;
-	return Object.prototype.toString.call(o) === '[object Array]';	
-};
-
-/**
- * ## ARRAY.seq
- * 
- * Returns an array of sequential numbers from start to end
- * 
- * If start > end the series goes backward.
- * 
- * The distance between two subsequent numbers can be controlled by the increment parameter.
- * 
- * When increment is not a divider of Abs(start - end), end will
- * be missing from the series.
- * 
- * A callback function to apply to each element of the sequence
- * can be passed as fourth parameter.
- *  
- * Returns FALSE, in case parameters are incorrectly specified
- * 
- * @param {number} start The first element of the sequence
- * @param {number} end The last element of the sequence
- * @param {number} increment Optional. The increment between two subsequents element of the sequence
- * @param {Function} func Optional. A callback function that can modify each number of the sequence before returning it
- *  
- * @return {array} out The final sequence 
- */
-ARRAY.seq = function (start, end, increment, func) {
-	if ('number' !== typeof start) return false;
-	if (start === Infinity) return false;
-	if ('number' !== typeof end) return false;
-	if (end === Infinity) return false;
-	if (start === end) return [start];
-	
-	if (increment === 0) return false;
-	if (!JSUS.in_array(typeof increment, ['undefined', 'number'])) {
-		return false;
-	}
-	
-	increment = increment || 1;
-	func = func || function(e) {return e;};
-	
-	var i = start,
-		out = [];
-	
-	if (start < end) {
-		while (i <= end) {
-    		out.push(func(i));
-    		i = i + increment;
-    	}
-	}
-	else {
-		while (i >= end) {
-    		out.push(func(i));
-    		i = i - increment;
-    	}
-	}
-	
-    return out;
-};
-
-
-/**
- * ## ARRAY.each
- * 
- * Executes a callback on each element of the array
- * 
- * If an error occurs returns FALSE.
- * 
- * @param {array} array The array to loop in
- * @param {Function} func The callback for each element in the array
- * @param {object} context Optional. The context of execution of the callback. Defaults ARRAY.each
- * 
- * @return {Boolean} TRUE, if execution was successful
- */
-ARRAY.each = function (array, func, context) {
-	if ('object' !== typeof array) return false;
-	if (!func) return false;
-    
-	context = context || this;
-    var i, len = array.length;
-    for (i = 0 ; i < len; i++) {
-        func.call(context, array[i]);
-    }
-    
-    return true;
-};
-
-/**
- * ## ARRAY.map
- * 
- * Applies a callback function to each element in the db, store
- * the results in an array and returns it
- * 
- * Any number of additional parameters can be passed after the 
- * callback function
- * 
- * @return {array} out The result of the mapping execution
- * @see ARRAY.each
- * 
- */
-ARRAY.map = function () {
-    if (arguments.length < 2) return;
-    var	args = Array.prototype.slice.call(arguments),
-    	array = args.shift(),
-    	func = args[0];
-    
-    if (!ARRAY.isArray(array)) {
-    	JSUS.log('ARRAY.map() the first argument must be an array. Found: ' + array);
-    	return;
-    }
-
-    var out = [],
-    	o = undefined;
-    for (var i = 0; i < array.length; i++) {
-    	args[0] = array[i];
-        o = func.apply(this, args);
-        if ('undefined' !== typeof o) out.push(o);
-    }
-    return out;
-};
-
-
-/**
- * ## ARRAY.removeElement
- * 
- * Removes an element from the the array, and returns it
- * 
- * For objects, deep equality comparison is performed 
- * through JSUS.equals.
- * 
- * If no element is removed returns FALSE.
- * 
- * @param {mixed} needle The element to search in the array
- * @param {array} haystack The array to search in
- * 
- * @return {mixed} The element that was removed, FALSE if none was removed
- * @see JSUS.equals
- */
-ARRAY.removeElement = function (needle, haystack) {
-    if ('undefined' === typeof needle || !haystack) return false;
-	
-    if ('object' === typeof needle) {
-        var func = JSUS.equals;
-    } else {
-        var func = function (a,b) {
-            return (a === b);
-        }
-    }
-    
-    for (var i=0; i < haystack.length; i++) {
-        if (func(needle, haystack[i])){
-            return haystack.splice(i,1);
-        }
-    }
-    
-    return false;
-};
-
-/**
- * ## ARRAY.inArray 
- * 
- * Returns TRUE if the element is contained in the array,
- * FALSE otherwise
- * 
- * For objects, deep equality comparison is performed 
- * through JSUS.equals.
- * 
- * Alias ARRAY.in_array (deprecated)
- * 
- * @param {mixed} needle The element to search in the array
- * @param {array} haystack The array to search in
- * @return {Boolean} TRUE, if the element is contained in the array
- * 
- * 	@see JSUS.equals
- */
-ARRAY.inArray = ARRAY.in_array = function (needle, haystack) {
-    if (!haystack) return false;
-    
-    var func = JSUS.equals;    
-    for (var i = 0; i < haystack.length; i++) {
-        if (func.call(this, needle, haystack[i])) {
-        	return true;
-        }
-    }
-    // <!-- console.log(needle, haystack); -->
-    return false;
-};
-
-/**
- * ## ARRAY.getNGroups
- * 
- * Returns an array of N array containing the same number of elements
- * If the length of the array and the desired number of elements per group
- * are not multiple, the last group could have less elements
- * 
- * The original array is not modified.
- *  
- *  @see ARRAY.getGroupsSizeN
- *  @see ARRAY.generateCombinations
- *  @see ARRAY.matchN
- *  
- * @param {array} array The array to split in subgroups
- * @param {number} N The number of subgroups
- * @return {array} Array containing N groups
- */ 
-ARRAY.getNGroups = function (array, N) {
-    return ARRAY.getGroupsSizeN(array, Math.floor(array.length / N));
-};
-
-/**
- * ## ARRAY.getGroupsSizeN
- * 
- * Returns an array of array containing N elements each
- * The last group could have less elements
- * 
- * @param {array} array The array to split in subgroups
- * @param {number} N The number of elements in each subgroup
- * @return {array} Array containing groups of size N
- * 
- *  	@see ARRAY.getNGroups
- *  	@see ARRAY.generateCombinations
- *  	@see ARRAY.matchN
- * 
- */ 
-ARRAY.getGroupsSizeN = function (array, N) {
-    
-    var copy = array.slice(0);
-    var len = copy.length;
-    var originalLen = copy.length;
-    var result = [];
-    
-    // <!-- Init values for the loop algorithm -->
-    var i, idx;
-    var group = [], count = 0;
-    for (i=0; i < originalLen; i++) {
+    /**
+     * ## ARRAY.each
+     * 
+     * Executes a callback on each element of the array
+     * 
+     * If an error occurs returns FALSE.
+     * 
+     * @param {array} array The array to loop in
+     * @param {Function} func The callback for each element in the array
+     * @param {object} context Optional. The context of execution of the
+     *   callback. Defaults ARRAY.each
+     * 
+     * @return {Boolean} TRUE, if execution was successful
+     */
+    ARRAY.each = function(array, func, context) {
+        if ('object' !== typeof array) return false;
+        if (!func) return false;
         
-        // <!-- Get a random idx between 0 and array length -->
-        idx = Math.floor(Math.random()*len);
+        context = context || this;
+        var i, len = array.length;
+        for (i = 0 ; i < len; i++) {
+            func.call(context, array[i]);
+        }
+        return true;
+    };
+
+    /**
+     * ## ARRAY.map
+     * 
+     * Applies a callback function to each element in the db, store
+     * the results in an array and returns it
+     * 
+     * Any number of additional parameters can be passed after the 
+     * callback function
+     * 
+     * @return {array} out The result of the mapping execution
+     * @see ARRAY.each
+     */
+    ARRAY.map = function() {
+        if (arguments.length < 2) return;
+        var args = Array.prototype.slice.call(arguments),
+        array = args.shift(),
+        func = args[0];
         
-        // <!-- Prepare the array container for the elements of a new group -->
-        if (count >= N) {
+        if (!ARRAY.isArray(array)) {
+            JSUS.log('ARRAY.map() the first argument must be an array. ' +
+                     'Found: ' + array);
+            return;
+        }
+
+        var out = [],
+        o = undefined;
+        for (var i = 0; i < array.length; i++) {
+            args[0] = array[i];
+            o = func.apply(this, args);
+            if ('undefined' !== typeof o) out.push(o);
+        }
+        return out;
+    };
+
+
+    /**
+     * ## ARRAY.removeElement
+     * 
+     * Removes an element from the the array, and returns it
+     * 
+     * For objects, deep equality comparison is performed 
+     * through JSUS.equals.
+     * 
+     * If no element is removed returns FALSE.
+     * 
+     * @param {mixed} needle The element to search in the array
+     * @param {array} haystack The array to search in
+     * 
+     * @return {mixed} The element that was removed, FALSE if none was removed
+     * @see JSUS.equals
+     */
+    ARRAY.removeElement = function(needle, haystack) {
+        var func, i;
+        if ('undefined' === typeof needle || !haystack) return false;
+        
+        if ('object' === typeof needle) {
+            func = JSUS.equals;
+        }
+        else {
+            func = function(a,b) {
+                return (a === b);
+            }
+        }
+        
+        for (i = 0; i < haystack.length; i++) {
+            if (func(needle, haystack[i])){
+                return haystack.splice(i,1);
+            }
+        }
+        return false;
+    };
+
+    /**
+     * ## ARRAY.inArray 
+     * 
+     * Returns TRUE if the element is contained in the array,
+     * FALSE otherwise
+     * 
+     * For objects, deep equality comparison is performed 
+     * through JSUS.equals.
+     * 
+     * Alias ARRAY.in_array (deprecated)
+     * 
+     * @param {mixed} needle The element to search in the array
+     * @param {array} haystack The array to search in
+     * @return {Boolean} TRUE, if the element is contained in the array
+     * 
+     *  @see JSUS.equals
+     */
+    ARRAY.inArray = ARRAY.in_array = function(needle, haystack) {
+        if (!haystack) return false;
+        
+        var func = JSUS.equals;    
+        for (var i = 0; i < haystack.length; i++) {
+            if (func.call(this, needle, haystack[i])) {
+                return true;
+            }
+        }
+        // <!-- console.log(needle, haystack); -->
+        return false;
+    };
+
+    /**
+     * ## ARRAY.getNGroups
+     * 
+     * Returns an array of N array containing the same number of elements
+     * If the length of the array and the desired number of elements per group
+     * are not multiple, the last group could have less elements
+     * 
+     * The original array is not modified.
+     *  
+     *  @see ARRAY.getGroupsSizeN
+     *  @see ARRAY.generateCombinations
+     *  @see ARRAY.matchN
+     *  
+     * @param {array} array The array to split in subgroups
+     * @param {number} N The number of subgroups
+     * @return {array} Array containing N groups
+     */ 
+    ARRAY.getNGroups = function(array, N) {
+        return ARRAY.getGroupsSizeN(array, Math.floor(array.length / N));
+    };
+
+    /**
+     * ## ARRAY.getGroupsSizeN
+     * 
+     * Returns an array of array containing N elements each
+     * The last group could have less elements
+     * 
+     * @param {array} array The array to split in subgroups
+     * @param {number} N The number of elements in each subgroup
+     * @return {array} Array containing groups of size N
+     * 
+     * @see ARRAY.getNGroups
+     * @see ARRAY.generateCombinations
+     * @see ARRAY.matchN
+     */ 
+    ARRAY.getGroupsSizeN = function(array, N) {
+        
+        var copy = array.slice(0);
+        var len = copy.length;
+        var originalLen = copy.length;
+        var result = [];
+        
+        // Init values for the loop algorithm.
+        var i, idx;
+        var group = [], count = 0;
+        for (i=0; i < originalLen; i++) {
+            
+            // Get a random idx between 0 and array length.
+            idx = Math.floor(Math.random()*len);
+            
+            // Prepare the array container for the elements of a new group.
+            if (count >= N) {
+                result.push(group);
+                count = 0;
+                group = [];
+            }
+            
+            // Insert element in the group.
+            group.push(copy[idx]);
+            
+            // Update.
+            copy.splice(idx,1);
+            len = copy.length;
+            count++;
+        }
+        
+        // Add any remaining element.
+        if (group.length > 0) {
             result.push(group);
-            count = 0;
+        }
+        
+        return result;
+    };
+
+    /**
+     * ## ARRAY._latinSquare
+     * 
+     * Generate a random Latin Square of size S
+     * 
+     * If N is defined, it returns "Latin Rectangle" (SxN) 
+     * 
+     * A parameter controls for self-match, i.e. whether the symbol "i" 
+     * is found or not in in column "i".
+     * 
+     * @api private
+     * @param {number} S The number of rows
+     * @param {number} Optional. N The number of columns. Defaults N = S
+     * @param {boolean} Optional. If TRUE self-match is allowed. Defaults TRUE
+     * @return {array} The resulting latin square (or rectangle)
+     */
+    ARRAY._latinSquare = function(S, N, self) {
+        self = ('undefined' === typeof self) ? true : self;
+        // Infinite loop.
+        if (S === N && !self) return false;
+        var seq = [];
+        var latin = [];
+        for (var i=0; i< S; i++) {
+            seq[i] = i;
+        }
+        
+        var idx = null;
+        
+        var start = 0;
+        var limit = S;
+        var extracted = [];
+        if (!self) {
+            limit = S-1;
+        }
+        
+        for (i=0; i < N; i++) {
+            do {
+                idx = JSUS.randomInt(start,limit);
+            }
+            while (JSUS.in_array(idx, extracted));
+            extracted.push(idx);
+            
+            if (idx == 1) {
+                latin[i] = seq.slice(idx);
+                latin[i].push(0);
+            }
+            else {
+                latin[i] = seq.slice(idx).concat(seq.slice(0,(idx)));
+            }
+            
+        }
+        
+        return latin;
+    };
+
+    /**
+     * ## ARRAY.latinSquare
+     * 
+     * Generate a random Latin Square of size S
+     * 
+     * If N is defined, it returns "Latin Rectangle" (SxN) 
+     * 
+     * @param {number} S The number of rows
+     * @param {number} Optional. N The number of columns. Defaults N = S
+     * @return {array} The resulting latin square (or rectangle)
+     */
+    ARRAY.latinSquare = function(S, N) {
+        if (!N) N = S;
+        if (!S || S < 0 || (N < 0)) return false;
+        if (N > S) N = S;
+        
+        return ARRAY._latinSquare(S, N, true);
+    };
+
+    /**
+     * ## ARRAY.latinSquareNoSelf
+     * 
+     * Generate a random Latin Square of size Sx(S-1), where 
+     * in each column "i", the symbol "i" is not found
+     * 
+     * If N < S, it returns a "Latin Rectangle" (SxN)
+     * 
+     * @param {number} S The number of rows
+     * @param {number} Optional. N The number of columns. Defaults N = S-1
+     * @return {array} The resulting latin square (or rectangle)
+     */
+    ARRAY.latinSquareNoSelf = function(S, N) {
+        if (!N) N = S-1;
+        if (!S || S < 0 || (N < 0)) return false;
+        if (N > S) N = S-1;
+        
+        return ARRAY._latinSquare(S, N, false);
+    }
+
+
+    /**
+     * ## ARRAY.generateCombinations
+     * 
+     * Generates all distinct combinations of exactly r elements each 
+     *  
+     * @param {array} array The array from which the combinations are extracted
+     * @param {number} r The number of elements in each combination
+     * @return {array} The total sets of combinations
+     *  
+     * @see ARRAY.getGroupSizeN
+     * @see ARRAY.getNGroups
+     * @see ARRAY.matchN
+     */
+    ARRAY.generateCombinations = function(array, r) {
+        function values(i, a) {
+            var ret = [];
+            for (var j = 0; j < i.length; j++) ret.push(a[i[j]]);
+            return ret;
+        }
+        var n = array.length;
+        var indices = [];
+        for (var i = 0; i < r; i++) indices.push(i);
+        var final = [];
+        for (var i = n - r; i < n; i++) final.push(i);
+        while (!JSUS.equals(indices, final)) {
+            callback(values(indices, array));
+            var i = r - 1;
+            while (indices[i] == n - r + i) i -= 1;
+            indices[i] += 1;
+            for (var j = i + 1; j < r; j++) indices[j] = indices[i] + j - i;
+        }
+        return values(indices, array); 
+    };
+
+    /**
+     * ## ARRAY.matchN
+     * 
+     * Match each element of the array with N random others
+     * 
+     * If strict is equal to true, elements cannot be matched multiple times.
+     * 
+     * *Important*: this method has a bug / feature. If the strict parameter 
+     * is set, the last elements could remain without match, because all the
+     * other have been already used. Another recombination would be able
+     * to match all the elements instead.
+     * 
+     * @param {array} array The array in which operate the matching
+     * @param {number} N The number of matches per element
+     * @param {Boolean} strict Optional. If TRUE, matched elements cannot be
+     *   repeated. Defaults, FALSE 
+     * @return {array} result The results of the matching
+     * 
+     * @see ARRAY.getGroupSizeN
+     * @see ARRAY.getNGroups
+     * @see ARRAY.generateCombinations
+     */
+    ARRAY.matchN = function(array, N, strict) {
+        var result, i, copy, group;
+        if (!array) return;
+        if (!N) return array;
+        
+        result = [],
+        len = array.length,
+        found = [];
+        for (i = 0 ; i < len ; i++) {
+            // Recreate the array.
+            copy = array.slice(0);
+            copy.splice(i,1);
+            if (strict) {
+                copy = ARRAY.arrayDiff(copy,found);
+            }
+            group = ARRAY.getNRandom(copy,N);
+            // Add to the set of used elements.
+            found = found.concat(group);
+            // Re-add the current element.
+            group.splice(0,0,array[i]);
+            result.push(group);
+            
+            // Update.
             group = [];
         }
-        
-        // <!-- Insert element in the group -->
-        group.push(copy[idx]);
-        
-        // <!-- Update -->
-        copy.splice(idx,1);
-        len = copy.length;
-        count++;
-    }
-    
-    // <!-- Add any remaining element -->
-    if (group.length > 0) {
-        result.push(group);
-    }
-    
-    return result;
-};
+        return result;
+    };
 
-/**
- * ## ARRAY._latinSquare
- * 
- * Generate a random Latin Square of size S
- * 
- * If N is defined, it returns "Latin Rectangle" (SxN) 
- * 
- * A parameter controls for self-match, i.e. whether the symbol "i" 
- * is found or not in in column "i".
- * 
- * @api private
- * @param {number} S The number of rows
- * @param {number} Optional. N The number of columns. Defaults N = S
- * @param {boolean} Optional. If TRUE self-match is allowed. Defaults TRUE
- * @return {array} The resulting latin square (or rectangle)
- * 
- */
-ARRAY._latinSquare = function (S, N, self) {
-	self = ('undefined' === typeof self) ? true : self;
-	if (S === N && !self) return false; // <!-- infinite loop -->
-	var seq = [];
-	var latin = [];
-	for (var i=0; i< S; i++) {
-		seq[i] = i;
-	}
-	
-	var idx = null;
-	
-	var start = 0;
-	var limit = S;
-	var extracted = [];
-	if (!self) {
-    	limit = S-1;
-	}
-	
-	for (i=0; i < N; i++) {
-		do {
-			idx = JSUS.randomInt(start,limit);
-		}
-		while (JSUS.in_array(idx, extracted));
-		extracted.push(idx);
-		
-		if (idx == 1) {
-			latin[i] = seq.slice(idx);
-			latin[i].push(0);
-		}
-		else {
-			latin[i] = seq.slice(idx).concat(seq.slice(0,(idx)));
-		}
-		
-	}
-	
-	return latin;
-};
-
-/**
- * ## ARRAY.latinSquare
- * 
- * Generate a random Latin Square of size S
- * 
- * If N is defined, it returns "Latin Rectangle" (SxN) 
- * 
- * @param {number} S The number of rows
- * @param {number} Optional. N The number of columns. Defaults N = S
- * @return {array} The resulting latin square (or rectangle)
- * 
- */
-ARRAY.latinSquare = function (S, N) {
-	if (!N) N = S;
-	if (!S || S < 0 || (N < 0)) return false;
-	if (N > S) N = S;
-	
-	return ARRAY._latinSquare(S, N, true);
-};
-
-/**
- * ## ARRAY.latinSquareNoSelf
- * 
- * Generate a random Latin Square of size Sx(S-1), where 
- * in each column "i", the symbol "i" is not found
- * 
- * If N < S, it returns a "Latin Rectangle" (SxN)
- * 
- * @param {number} S The number of rows
- * @param {number} Optional. N The number of columns. Defaults N = S-1
- * @return {array} The resulting latin square (or rectangle)
- */
-ARRAY.latinSquareNoSelf = function (S, N) {
-	if (!N) N = S-1;
-	if (!S || S < 0 || (N < 0)) return false;
-	if (N > S) N = S-1;
-	
-	return ARRAY._latinSquare(S, N, false);
-}
-
-
-/**
- * ## ARRAY.generateCombinations
- * 
- *  Generates all distinct combinations of exactly r elements each 
- *  and returns them into an array
- *  
- *  @param {array} array The array from which the combinations are extracted
- *  @param {number} r The number of elements in each combination
- *  @return {array} The total sets of combinations
- *  
- *  	@see ARRAY.getGroupSizeN
- *  	@see ARRAY.getNGroups
- *  	@see ARRAY.matchN
- * 
- */
-ARRAY.generateCombinations = function (array, r) {
-    function values(i, a) {
-        var ret = [];
-        for (var j = 0; j < i.length; j++) ret.push(a[i[j]]);
-        return ret;
-    }
-    var n = array.length;
-    var indices = [];
-    for (var i = 0; i < r; i++) indices.push(i);
-    var final = [];
-    for (var i = n - r; i < n; i++) final.push(i);
-    while (!JSUS.equals(indices, final)) {
-        callback(values(indices, array));
-        var i = r - 1;
-        while (indices[i] == n - r + i) i -= 1;
-        indices[i] += 1;
-        for (var j = i + 1; j < r; j++) indices[j] = indices[i] + j - i;
-    }
-    return values(indices, array); 
-};
-
-/**
- * ## ARRAY.matchN
- * 
- * Match each element of the array with N random others
- * 
- * If strict is equal to true, elements cannot be matched multiple times.
- * 
- * *Important*: this method has a bug / feature. If the strict parameter is set,
- * the last elements could remain without match, because all the other have been 
- * already used. Another recombination would be able to match all the 
- * elements instead.
- * 
- * @param {array} array The array in which operate the matching
- * @param {number} N The number of matches per element
- * @param {Boolean} strict Optional. If TRUE, matched elements cannot be repeated. Defaults, FALSE 
- * @return {array} result The results of the matching
- * 
- *  	@see ARRAY.getGroupSizeN
- *  	@see ARRAY.getNGroups
- *  	@see ARRAY.generateCombinations
- * 
- */
-ARRAY.matchN = function (array, N, strict) {
-	if (!array) return;
-	if (!N) return array;
-	
-    var result = [],
-    	len = array.length,
-    	found = [];
-    for (var i = 0 ; i < len ; i++) {
-        // <!-- Recreate the array -->
-        var copy = array.slice(0);
-        copy.splice(i,1);
-        if (strict) {
-            copy = ARRAY.arrayDiff(copy,found);
+    /**
+     * ## ARRAY.rep
+     * 
+     * Appends an array to itself a number of times and return a new array
+     * 
+     * The original array is not modified.
+     * 
+     * @param {array} array the array to repeat 
+     * @param {number} times The number of times the array must be appended
+     *   to itself
+     * @return {array} A copy of the original array appended to itself
+     */
+    ARRAY.rep = function(array, times) {
+        var i, result;
+        if (!array) return;
+        if (!times) return array.slice(0);
+        if (times < 1) {
+            JSUS.log('times must be greater or equal 1', 'ERR');
+            return;
         }
-        var group = ARRAY.getNRandom(copy,N);
-        // <!-- Add to the set of used elements -->
-        found = found.concat(group);
-        // <!-- Re-add the current element -->
-        group.splice(0,0,array[i]);
-        result.push(group);
         
-        // <!-- Update -->
-        group = [];
-    }
-    return result;
-};
-
-/**
- * ## ARRAY.rep
- * 
- * Appends an array to itself a number of times and return a new array
- * 
- * The original array is not modified.
- * 
- * @param {array} array the array to repeat 
- * @param {number} times The number of times the array must be appended to itself
- * @return {array} A copy of the original array appended to itself
- * 
- */
-ARRAY.rep = function (array, times) {
-	if (!array) return;
-	if (!times) return array.slice(0);
-	if (times < 1) {
-		JSUS.log('times must be greater or equal 1', 'ERR');
-		return;
-	}
-	
-    var i = 1, result = array.slice(0);
-    for (; i < times; i++) {
-        result = result.concat(array);
-    }
-    return result;
-};
-
-/**
- * ## ARRAY.stretch
- * 
- * Repeats each element of the array N times
- * 
- * N can be specified as an integer or as an array. In the former case all 
- * the elements are repeat the same number of times. In the latter, the each
- * element can be repeated a custom number of times. If the length of the `times`
- * array differs from that of the array to stretch a recycle rule is applied.
- * 
- * The original array is not modified.
- * 
- * E.g.:
- * 
- * ```js
- * 	var foo = [1,2,3];
- * 
- * 	ARRAY.stretch(foo, 2); // [1, 1, 2, 2, 3, 3]
- * 
- * 	ARRAY.stretch(foo, [1,2,3]); // [1, 2, 2, 3, 3, 3];
- *
- * 	ARRAY.stretch(foo, [2,1]); // [1, 1, 2, 3, 3];
- * ```
- * 
- * @param {array} array the array to strech
- * @param {number|array} times The number of times each element must be repeated
- * @return {array} A stretched copy of the original array
- * 
- */
-ARRAY.stretch = function (array, times) {
-	if (!array) return;
-	if (!times) return array.slice(0);
-	if ('number' === typeof times) {
-		if (times < 1) {
-			JSUS.log('times must be greater or equal 1', 'ERR');
-			return;
-		}
-		times = ARRAY.rep([times], array.length);
-	}
-	
-    var result = [];
-    for (var i = 0; i < array.length; i++) {
-    	var repeat = times[(i % times.length)];
-        for (var j = 0; j < repeat ; j++) {
-        	result.push(array[i]);
+        i = 1, result = array.slice(0);
+        for (; i < times; i++) {
+            result = result.concat(array);
         }
-    }
-    return result;
-};
+        return result;
+    };
+
+    /**
+     * ## ARRAY.stretch
+     * 
+     * Repeats each element of the array N times
+     * 
+     * N can be specified as an integer or as an array. In the former case all 
+     * the elements are repeat the same number of times. In the latter, each
+     * element can be repeated a custom number of times. If the length of the
+     * `times` array differs from that of the array to stretch a recycle rule
+     * is applied.
+     * 
+     * The original array is not modified.
+     * 
+     * E.g.:
+     * 
+     * ```js
+     *  var foo = [1,2,3];
+     * 
+     *  ARRAY.stretch(foo, 2); // [1, 1, 2, 2, 3, 3]
+     * 
+     *  ARRAY.stretch(foo, [1,2,3]); // [1, 2, 2, 3, 3, 3];
+     *
+     *  ARRAY.stretch(foo, [2,1]); // [1, 1, 2, 3, 3];
+     * ```
+     * 
+     * @param {array} array the array to strech
+     * @param {number|array} times The number of times each element 
+     *   must be repeated
+     * @return {array} A stretched copy of the original array
+     */
+    ARRAY.stretch = function(array, times) {
+        var result, i, repeat, j;
+        if (!array) return;
+        if (!times) return array.slice(0);
+        if ('number' === typeof times) {
+            if (times < 1) {
+                JSUS.log('times must be greater or equal 1', 'ERR');
+                return;
+            }
+            times = ARRAY.rep([times], array.length);
+        }
+        
+        result = [];
+        for (i = 0; i < array.length; i++) {
+            repeat = times[(i % times.length)];
+            for (j = 0; j < repeat ; j++) {
+                result.push(array[i]);
+            }
+        }
+        return result;
+    };
 
 
-/**
- * ## ARRAY.arrayIntersect
- * 
- * Computes the intersection between two arrays
- * 
- * Arrays can contain both primitive types and objects.
- * 
- * @param {array} a1 The first array
- * @param {array} a2 The second array
- * @return {array} All the values of the first array that are found also in the second one
- */
-ARRAY.arrayIntersect = function (a1, a2) {
-    return a1.filter( function(i) {
-        return JSUS.in_array(i, a2);
-    });
-};
+    /**
+     * ## ARRAY.arrayIntersect
+     * 
+     * Computes the intersection between two arrays
+     * 
+     * Arrays can contain both primitive types and objects.
+     * 
+     * @param {array} a1 The first array
+     * @param {array} a2 The second array
+     * @return {array} All the values of the first array that are found
+     *   also in the second one
+     */
+    ARRAY.arrayIntersect = function(a1, a2) {
+        return a1.filter( function(i) {
+            return JSUS.in_array(i, a2);
+        });
+    };
     
-/**
- * ## ARRAY.arrayDiff
- * 
- * Performs a diff between two arrays
- * 
- * Arrays can contain both primitive types and objects.
- * 
- * @param {array} a1 The first array
- * @param {array} a2 The second array
- * @return {array} All the values of the first array that are not found in the second one
- */
-ARRAY.arrayDiff = function (a1, a2) {
-    return a1.filter( function(i) {
-        return !(JSUS.in_array(i, a2));
-    });
-};
+    /**
+     * ## ARRAY.arrayDiff
+     * 
+     * Performs a diff between two arrays
+     * 
+     * Arrays can contain both primitive types and objects.
+     * 
+     * @param {array} a1 The first array
+     * @param {array} a2 The second array
+     * @return {array} All the values of the first array that are not 
+     *   found in the second one
+     */
+    ARRAY.arrayDiff = function(a1, a2) {
+        return a1.filter( function(i) {
+            return !(JSUS.in_array(i, a2));
+        });
+    };
 
-/**
- * ## ARRAY.shuffle
- * 
- * Shuffles the elements of the array using the Fischer algorithm
- * 
- * The original array is not modified, and a copy is returned.
- * 
- * @param {array} shuffle The array to shuffle
- * @return {array} copy The shuffled array
- * 
- * 		@see http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
- */
-ARRAY.shuffle = function (array) {
-	if (!array) return;
-    var copy = array.slice(0);
-    var len = array.length-1; // ! -1
-    var j, tmp;
-    for (var i = len; i > 0; i--) {
-        j = Math.floor(Math.random()*(i+1));
-        tmp = copy[j];
-        copy[j] = copy[i];
-        copy[i] = tmp;
-    }
-    return copy;
-};
+    /**
+     * ## ARRAY.shuffle
+     * 
+     * Shuffles the elements of the array using the Fischer algorithm
+     * 
+     * The original array is not modified, and a copy is returned.
+     * 
+     * @param {array} shuffle The array to shuffle
+     * @return {array} copy The shuffled array
+     * 
+     * @see http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+     */
+    ARRAY.shuffle = function(array) {
+        var copy, len, j, tmp, i;
+        if (!array) return;
+        copy = Array.prototype.slice.call(array);
+        len = array.length-1; // ! -1
+        for (i = len; i > 0; i--) {
+            j = Math.floor(Math.random()*(i+1));
+            tmp = copy[j];
+            copy[j] = copy[i];
+            copy[i] = tmp;
+        }
+        return copy;
+    };
 
-/**
- * ## ARRAY.getNRandom
- * 
- * Select N random elements from the array and returns them
- * 
- * @param {array} array The array from which extracts random elements
- * @paran {number} N The number of random elements to extract
- * @return {array} An new array with N elements randomly chose from the original array  
- */
-ARRAY.getNRandom = function (array, N) {
-    return ARRAY.shuffle(array).slice(0,N);
-};                           
+    /**
+     * ## ARRAY.getNRandom
+     * 
+     * Select N random elements from the array and returns them
+     * 
+     * @param {array} array The array from which extracts random elements
+     * @paran {number} N The number of random elements to extract
+     * @return {array} An new array with N elements randomly chosen
+     */
+    ARRAY.getNRandom = function(array, N) {
+        return ARRAY.shuffle(array).slice(0,N);
+    };                           
     
-/**
- * ## ARRAY.distinct
- * 
- * Removes all duplicates entries from an array and returns a copy of it
- * 
- * Does not modify original array.
- * 
- * Comparison is done with `JSUS.equals`.
- * 
- * @param {array} array The array from which eliminates duplicates
- * @return {array} out A copy of the array without duplicates
- * 
- * 	@see JSUS.equals
- */
-ARRAY.distinct = function (array) {
-	var out = [];
-	if (!array) return out;
-	
-	ARRAY.each(array, function(e) {
-		if (!ARRAY.in_array(e, out)) {
-			out.push(e);
-		}
-	});
-	return out;
-	
-};
+    /**
+     * ## ARRAY.distinct
+     * 
+     * Removes all duplicates entries from an array and returns a copy of it
+     * 
+     * Does not modify original array.
+     * 
+     * Comparison is done with `JSUS.equals`.
+     * 
+     * @param {array} array The array from which eliminates duplicates
+     * @return {array} out A copy of the array without duplicates
+     * 
+     * @see JSUS.equals
+     */
+    ARRAY.distinct = function(array) {
+        var out = [];
+        if (!array) return out;
+        
+        ARRAY.each(array, function(e) {
+            if (!ARRAY.in_array(e, out)) {
+                out.push(e);
+            }
+        });
+        return out;
+    };
 
-/**
- * ## ARRAY.transpose
- * 
- * Transposes a given 2D array.
- * 
- * The original array is not modified, and a new copy is
- * returned.
- *
- * @param {array} array The array to transpose
- * @return {array} The Transposed Array
- * 
- */
-ARRAY.transpose = function (array) {
-	if (!array) return;  
-	
-	// Calculate width and height
-    var w, h, i, j, t = []; 
-	w = array.length || 0;
-	h = (ARRAY.isArray(array[0])) ? array[0].length : 0;
-	if (w === 0 || h === 0) return t;
-	
-	for ( i = 0; i < h; i++) {
-		t[i] = [];
-	    for ( j = 0; j < w; j++) {	   
-	    	t[i][j] = array[j][i];
-	    }
-	} 
-	return t;
-};
+    /**
+     * ## ARRAY.transpose
+     * 
+     * Transposes a given 2D array.
+     * 
+     * The original array is not modified, and a new copy is
+     * returned.
+     *
+     * @param {array} array The array to transpose
+     * @return {array} The Transposed Array
+     */
+    ARRAY.transpose = function(array) {
+        if (!array) return;  
+        
+        // Calculate width and height
+        var w, h, i, j, t = []; 
+        w = array.length || 0;
+        h = (ARRAY.isArray(array[0])) ? array[0].length : 0;
+        if (w === 0 || h === 0) return t;
+        
+        for ( i = 0; i < h; i++) {
+            t[i] = [];
+            for ( j = 0; j < w; j++) {     
+                t[i][j] = array[j][i];
+            }
+        } 
+        return t;
+    };
 
-JSUS.extend(ARRAY);
+    JSUS.extend(ARRAY);
     
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 /**
  * # DOM
- *  
- * Copyright(c) 2012 Stefano Balietti
+ *
+ * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
- * 
+ *
  * Collection of static functions related to DOM manipulation
- * 
+ *
  * Helper library to perform generic operation with DOM elements.
- * 
+ *
  * The general syntax is the following: Every HTML element has associated
  * a get* and a add* method, whose syntax is very similar.
- * 
+ *
  * - The get* method creates the element and returns it.
- * - The add* method creates the element, append it as child to a root element, and then returns it.
- * 
- * The syntax of both method is the same, but the add* method 
+ * - The add* method creates the element, append it as child to a root element,
+ *     and then returns it.
+ *
+ * The syntax of both method is the same, but the add* method
  * needs the root element as first parameter. E.g.
- * 
- *  getButton(id, text, attributes);
- * 	addButton(root, id, text, attributes);
- *  
- * The last parameter is generally an object containing a list of 
+ *
+ * - getButton(id, text, attributes);
+ * - addButton(root, id, text, attributes);
+ *
+ * The last parameter is generally an object containing a list of
  * of key-values pairs as additional attributes to set to the element.
- *   
+ *
  * Only the methods which do not follow the above-mentioned syntax
- * will receive further explanation. 
- * 
- * 
+ * will receive further explanation.
+ * ---
  */
+(function(JSUS) {
 
-(function (JSUS) {
-    
-function DOM() {};
+    function DOM() {};
 
-// ## GENERAL
+    // ## GENERAL
 
-/**
- * ### DOM.write
- * 
- * Write a text, or append an HTML element or node, into the
- * the root element.
- * 
- * 	@see DOM.writeln
- * 
- */
-DOM.write = function (root, text) {
-    if (!root) return;
-    if (!text) return;
-    var content = (!JSUS.isNode(text) || !JSUS.isElement(text)) ? document.createTextNode(text) : text;
-    root.appendChild(content);
-    return content;
-};
+    /**
+     * ### DOM.write
+     *
+     * Write a text, or append an HTML element or node, into the
+     * the root element.
+     *
+     * @see DOM.writeln
+     */
+    DOM.write = function(root, text) {
+        if (!root) return;
+        if (!text) return;
+        var content = (!JSUS.isNode(text) || !JSUS.isElement(text)) ?
+            document.createTextNode(text) : text;
+        root.appendChild(content);
+        return content;
+    };
 
-/**
- * ### DOM.writeln
- * 
- * Write a text, or append an HTML element or node, into the
- * the root element and adds a break immediately after.
- * 
- * @see DOM.write
- * @see DOM.addBreak
- */
-DOM.writeln = function (root, text, rc) {
-    if (!root) return;
-    var br = this.addBreak(root, rc);
-    return (text) ? DOM.write(root, text) : br;
-};
+    /**
+     * ### DOM.writeln
+     *
+     * Write a text, or append an HTML element or node, into the
+     * the root element and adds a break immediately after.
+     *
+     * @see DOM.write
+     * @see DOM.addBreak
+     */
+    DOM.writeln = function(root, text, rc) {
+        if (!root) return;
+        var br = this.addBreak(root, rc);
+        return (text) ? DOM.write(root, text) : br;
+    };
 
-/**
- * ### DOM.sprintf
- * 
- * Builds up a decorated HTML text element
- * 
- * Performs string substitution from an args object where the first 
- * character of the key bears the following semantic: 
- *  
- * 	- '@': variable substitution with escaping 
- * 	- '!': variable substitution without variable escaping
- *  - '%': wraps a portion of string into a _span_ element to which is possible 
- *  		to associate a css class or id. Alternatively, it also possible to 
- *  		add in-line style. E.g.:
- * 
- * 	sprintf('%sImportant!%s An error has occurred: %pre@err%pre', {
- * 		'%pre': {
- * 			style: 'font-size: 12px; font-family: courier;'
- * 		},
- * 		'%s': {
- * 			id: 'myId',
- * 			'class': 'myClass',
- * 		},
- * 		'@err': 'file not found',
- * 	}, document.body);
- * 
- * 
- * @param {string} string A text to transform
- * @param {object} args Optional. An object containing the spans to apply to the string
- * @param {Element} root Optional. An HTML element to which append the string. Defaults, a new _span_ element
- * 
- */
-DOM.sprintf = function (string, args, root) {
-	
-	var text, textNode, span, idx_start, idx_finish, idx_replace, idxs, spans = {};
-	
-	if (!args) {
-		return document.createTextNode(string);
-	}
-	
-	root = root || document.createElement('span');
-	
-	// Transform arguments before inserting them.
-	for (var key in args) {
-		if (args.hasOwnProperty(key)) {
-			
-			// pattern not found
-			if (idx_start === -1) continue;
-			
-			switch(key[0]) {
-			
-			case '%': // span
-				
-				idx_start = string.indexOf(key);
-				idx_replace = idx_start + key.length;
-				idx_finish = string.indexOf(key, idx_replace);
-				
-				if (idx_finish === -1) {
-					JSUS.log('Error. Could not find closing key: ' + key);
-					continue;
-				}
-				
-				spans[idx_start] = key;
-				
-				break;
-			
-			case '@': // replace and sanitize
-				string = string.replace(key, escape(args[key]));
-				break;
-				
-			case '!': // replace and not sanitize
-				string = string.replace(key, args[key]);
-				break;
-				
-			default:
-				JSUS.log('Identifier not in [!,@,%]: ' + key[0]);
-		
-			}
-		}
-	}
-	
-	// No span to creates
-	if (!JSUS.size(spans)) {
-		return document.createTextNode(string);
-	}
-	
-	// Re-assamble the string
-	
-	idxs = JSUS.keys(spans).sort(function(a,b){return a-b;});
-	idx_finish = 0;
-	for (var i = 0; i < idxs.length; i++) {
-		
-		// add span
-		key = spans[idxs[i]];
-		idx_start = string.indexOf(key);
-		
-		// add fragments of string
-		if (idx_finish !== idx_start-1) {
-			root.appendChild(document.createTextNode(string.substring(idx_finish, idx_start)));
-		}
-		
-		idx_replace = idx_start + key.length;
-		idx_finish = string.indexOf(key, idx_replace);
-		
-		span = W.getElement('span', null, args[key]);
+    /**
+     * ### DOM.sprintf
+     *
+     * Builds up a decorated HTML text element
+     *
+     * Performs string substitution from an args object where the first
+     * character of the key bears the following semantic:
+     *
+     * - '@': variable substitution with escaping
+     * - '!': variable substitution without variable escaping
+     * - '%': wraps a portion of string into a _span_ element to which is
+     *        possible to associate a css class or id. Alternatively,
+     *        it also possible to add in-line style. E.g.:
+     *
+     * ```javascript
+     *      sprintf('%sImportant!%s An error has occurred: %pre@err%pre', {
+     *              '%pre': {
+     *                      style: 'font-size: 12px; font-family: courier;'
+     *              },
+     *              '%s': {
+     *                      id: 'myId',
+     *                      'class': 'myClass',
+     *              },
+     *              '@err': 'file not found',
+     *      }, document.body);
+     * ```
+     *
+     * @param {string} string A text to transform
+     * @param {object} args Optional. An object containing string transformations
+     * @param {Element} root Optional. An HTML element to which append the
+     *    string. Defaults, a new _span_ element
+     *
+     * @return {Element} root The root element.
+     */
+    DOM.sprintf = function(string, args, root) {
 
-		text = string.substring(idx_replace, idx_finish);
-		
-		span.appendChild(document.createTextNode(text));
-		
-		root.appendChild(span);
-		idx_finish = idx_finish + key.length;
-	}
-	
-	// add the final part of the string
-	if (idx_finish !== string.length) {
-		root.appendChild(document.createTextNode(string.substring(idx_finish)));
-	}
-	
-	return root;
-}
+        var text, textNode, span, idx_start, idx_finish, idx_replace, idxs;
+        var spans, key, i, returnElement;
 
-
-/**
- * ### DOM.isNode
- * 
- * Returns TRUE if the object is a DOM node
- * 
- */
-DOM.isNode = function(o){
-    return (
-        typeof Node === "object" ? o instanceof Node : 
-        typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
-    );
-};
-
-/**
- * ### DOM.isElement
- * 
- * Returns TRUE if the object is a DOM element 
- * 
- */   
-DOM.isElement = function(o) {
-    return (
-        typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
-        typeof o === "object" && o.nodeType === 1 && typeof o.nodeName === "string"
-    );
-};
-
-/**
- * ### DOM.getElement
- * 
- * Creates a generic HTML element with id and attributes as specified,
- * and returns it.
- * 
- * @see DOM.addAttributes2Elem
- * 
- */
-DOM.getElement = function (elem, id, attributes) {
-    var e = document.createElement(elem);
-    if ('undefined' !== typeof id) {
-        e.id = id;
-    }
-    return this.addAttributes2Elem(e, attributes);
-};
-
-/**
- * ### DOM.addElement
- * 
- * Creates a generic HTML element with id and attributes as specified, 
- * appends it to the root element, and returns it.
- * 
- * @see DOM.getElement
- * @see DOM.addAttributes2Elem
- * 
- */
-DOM.addElement = function (elem, root, id, attributes) {
-    var el = this.getElement(elem, id, attributes);
-    return root.appendChild(el);
-};
-
-/**
- * ### DOM.addAttributes2Elem
- * 
- * Adds attributes to an HTML element and returns it.
- * 
- * Attributes are defined as key-values pairs. 
- * Attributes 'style', and 'label' are ignored.
- * 
- * @see DOM.style
- * @see DOM.addLabel
- * 
- */
-DOM.addAttributes2Elem = function (e, a) {
-    if (!e || !a) return e;
-    if ('object' != typeof a) return e;
-    var specials = ['id', 'label'];
-    for (var key in a) {
-        if (a.hasOwnProperty(key)) {
-            if (!JSUS.in_array(key, specials)) {
-                e.setAttribute(key,a[key]);
-            } else if (key === 'id') {
-                e.id = a[key];
-            }
-            
-            // TODO: handle special cases
-            // <!--
-//                else {
-//            
-//                    // If there is no parent node, the legend cannot be created
-//                    if (!e.parentNode) {
-//                        node.log('Cannot add label: no parent element found', 'ERR');
-//                        continue;
-//                    }
-//                    
-//                    this.addLabel(e.parentNode, e, a[key]);
-//                }
-            // -->
+        // If no formatting arguments are provided, just create a string
+        // and inserted into a span tag. If a root element is provided, add it.
+        if (!args) {
+            returnElement = document.createElement('span');
+            returnElement.appendChild(document.createTextNode(string));
+            return root ? root.appendChild(returnElement) : returnElement;
         }
-    }
-    return e;
-};
 
-/**
- * ### DOM.populateSelect
- * 
- * Appends a list of options into a HTML select element.
- * The second parameter list is an object containing 
- * a list of key-values pairs as text-value attributes for
- * the option.
- *  
- */
-DOM.populateSelect = function (select, list) {
-    if (!select || !list) return;
-    for (var key in list) {
-        if (list.hasOwnProperty(key)) {
-            var opt = document.createElement('option');
-            opt.value = list[key];
-            opt.appendChild(document.createTextNode(key));
-            select.appendChild(opt);
-        }
-    }
-};
+        root = root || document.createElement('span');
+        spans = {};
 
-/**
- * ### DOM.removeChildrenFromNode
- * 
- * Removes all children from a node.
- * 
- */
-DOM.removeChildrenFromNode = function (e) {
-    
-    if (!e) return false;
-    
-    while (e.hasChildNodes()) {
-        e.removeChild(e.firstChild);
-    }
-    return true;
-};
+        // Transform arguments before inserting them.
+        for (key in args) {
+            if (args.hasOwnProperty(key)) {
 
-/**
- * ### DOM.insertAfter
- * 
- * Insert a node element after another one.
- * 
- * The first parameter is the node to add.
- * 
- */
-DOM.insertAfter = function (node, referenceNode) {
-      referenceNode.insertBefore(node, referenceNode.nextSibling);
-};
+                // Pattern not found.
+                if (idx_start === -1) continue;
 
-/**
- * ### DOM.generateUniqueId
- * 
- * Generate a unique id for the page (frames included).
- * 
- * TODO: now it always create big random strings, it does not actually
- * check if the string exists.
- * 
- */
-DOM.generateUniqueId = function (prefix) {
-    var search = [window];
-    if (window.frames) {
-        search = search.concat(window.frames);
-    }
-    
-    function scanDocuments(id) {
-        var found = true;
-        while (found) {
-            for (var i=0; i < search.length; i++) {
-                found = search[i].document.getElementById(id);
-                if (found) {
-                    id = '' + id + '_' + JSUS.randomInt(0, 1000);
+                switch(key[0]) {
+
+                case '%': // Span.
+
+                    idx_start = string.indexOf(key);
+                    idx_replace = idx_start + key.length;
+                    idx_finish = string.indexOf(key, idx_replace);
+
+                    if (idx_finish === -1) {
+                        JSUS.log('Error. Could not find closing key: ' + key);
+                        continue;
+                    }
+
+                    spans[idx_start] = key;
+
                     break;
+
+                case '@': // Replace and sanitize.
+                    string = string.replace(key, escape(args[key]));
+                    break;
+
+                case '!': // Replace and not sanitize.
+                    string = string.replace(key, args[key]);
+                    break;
+
+                default:
+                    JSUS.log('Identifier not in [!,@,%]: ' + key[0]);
+
                 }
             }
         }
-        return id;
+
+        // No span to creates.
+        if (!JSUS.size(spans)) {
+            return root.appendChild(document.createTextNode(string));
+        }
+
+        // Re-assamble the string.
+
+        idxs = JSUS.keys(spans).sort(function(a, b){ return a - b; });
+        idx_finish = 0;
+        for (i = 0; i < idxs.length; i++) {
+
+            // Add span.
+            key = spans[idxs[i]];
+            idx_start = string.indexOf(key);
+
+            // Add fragments of string.
+            if (idx_finish !== idx_start-1) {
+                root.appendChild(document.createTextNode(
+                    string.substring(idx_finish, idx_start)));
+            }
+
+            idx_replace = idx_start + key.length;
+            idx_finish = string.indexOf(key, idx_replace);
+
+            span = JSUS.getElement('span', null, args[key]);
+
+            text = string.substring(idx_replace, idx_finish);
+
+            span.appendChild(document.createTextNode(text));
+
+            root.appendChild(span);
+            idx_finish = idx_finish + key.length;
+        }
+
+        // Add the final part of the string.
+        if (idx_finish !== string.length) {
+            root.appendChild(document.createTextNode(
+                string.substring(idx_finish)));
+        }
+
+        return root;
+    }
+
+    /**
+     * ### DOM.isNode
+     *
+     * Returns TRUE if the object is a DOM node
+     *
+     */
+    DOM.isNode = function(o){
+        return (
+            typeof Node === "object" ? o instanceof Node :
+                typeof o === "object" &&
+                typeof o.nodeType === "number" &&
+                typeof o.nodeName === "string"
+        );
     };
 
-    
-    return scanDocuments(prefix + '_' + JSUS.randomInt(0, 10000000));
-    //return scanDocuments(prefix);
-};
+    /**
+     * ### DOM.isElement
+     *
+     * Returns TRUE if the object is a DOM element
+     *
+     */
+    DOM.isElement = function(o) {
+        return (
+            typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+            typeof o === "object" &&
+                o.nodeType === 1 &&
+                typeof o.nodeName === "string"
+        );
+    };
 
-/**
- * ### DOM.getBlankPage
- * 
- * Creates a blank HTML page with the html and body 
- * elements already appended.
- * 
- */
-DOM.getBlankPage = function() {
-    var html = document.createElement('html');
-    html.appendChild(document.createElement('body'));
-    return html;
-};
-    
-//    DOM.findLastElement = function(o) {
-//        if (!o) return;
-//        
-//        if (o.lastChild) {
-//            var e 
-//            JSUS.isElement(e)) return DOM.findLastElement(e);
-//        
-//            var e = e.previousSibling;
-//            if (e && JSUS.isElement(e)) return DOM.findLastElement(e);
-//        
-//        return o;
-//    };
+    /**
+     * ## DOM.shuffleNodes
+     *
+     * Shuffles the children nodes
+     *
+     * @param {Node} parent The parent node
+     */
+    DOM.shuffleNodes = function(parent, order) {
+        var i, len;
+        if (!JSUS.isNode(parent)) {
+            throw new TypeError('DOM.shuffleNodes: parent must node.');
+        }
+        if (!parent.children || !parent.children.length) {
+            JSUS.log('DOM.shuffleNodes: parent has no children.', 'ERR');
+            return false;
+        }
+        if (order) {
+            if (!J.isArray(order)) {
+                throw new TypeError('DOM.shuffleNodes: order must array.');
+            }
+            if (order.length !== parent.children.length) {
+                throw new Error('DOM.shuffleNodes: order length must match ' +
+                                'the number of children nodes.');
+            }
+        }
 
-// ## GET/ADD
+        len = parent.children.length;
 
-/**
- * ### DOM.getButton
- * 
- */
-DOM.getButton = function (id, text, attributes) {
-    var sb = document.createElement('button');
-    sb.id = id;
-    sb.appendChild(document.createTextNode(text || 'Send'));    
-    return this.addAttributes2Elem(sb, attributes);
-};
+        if (!order) order = JSUS.sample(0,len);
+        for (i = 0 ; i < len; i++) {
+            parent.appendChild(parent.children[order[i]]);
+        }
 
-/**
- * ### DOM.addButton
- * 
- */
-DOM.addButton = function (root, id, text, attributes) {
-    var b = this.getButton(id, text, attributes);
-    return root.appendChild(b);
-};
+        return true;
+    };
 
-/**
- * ### DOM.getFieldset
- * 
- */
-DOM.getFieldset = function (id, legend, attributes) {
-    var f = this.getElement('fieldset', id, attributes);
-    var l = document.createElement('Legend');
-    l.appendChild(document.createTextNode(legend));    
-    f.appendChild(l);
-    return f;
-};
+    /**
+     * ### DOM.getElement
+     *
+     * Creates a generic HTML element with id and attributes as specified,
+     * and returns it.
+     *
+     * @see DOM.addAttributes2Elem
+     */
+    DOM.getElement = function(elem, id, attributes) {
+        var e = document.createElement(elem);
+        if ('undefined' !== typeof id) {
+            e.id = id;
+        }
+        return this.addAttributes2Elem(e, attributes);
+    };
 
-/**
- * ### DOM.addFieldset
- * 
- */
-DOM.addFieldset = function (root, id, legend, attributes) {
-    var f = this.getFieldset(id, legend, attributes);
-    return root.appendChild(f);
-};
+    /**
+     * ### DOM.addElement
+     *
+     * Creates a generic HTML element with id and attributes as specified,
+     * appends it to the root element, and returns it.
+     *
+     * @see DOM.getElement
+     * @see DOM.addAttributes2Elem
+     *
+     */
+    DOM.addElement = function(elem, root, id, attributes) {
+        var el = this.getElement(elem, id, attributes);
+        return root.appendChild(el);
+    };
 
-/**
- * ### DOM.getTextInput
- * 
- */
-DOM.getTextInput = function (id, attributes) {
-	var ti =  document.createElement('input');
-	if ('undefined' !== typeof id) ti.id = id;
-	ti.setAttribute('type', 'text');
-	return this.addAttributes2Elem(ti, attributes);
-};
+    /**
+     * ### DOM.addAttributes2Elem
+     *
+     * Adds attributes to an HTML element and returns it.
+     *
+     * Attributes are defined as key-values pairs.
+     * Attributes 'style', and 'label' are ignored.
+     *
+     * @see DOM.style
+     * @see DOM.addLabel
+     *
+     */
+    DOM.addAttributes2Elem = function(e, a) {
+        if (!e || !a) return e;
+        if ('object' != typeof a) return e;
+        var specials = ['id', 'label'];
+        for (var key in a) {
+            if (a.hasOwnProperty(key)) {
+                if (!JSUS.in_array(key, specials)) {
+                    e.setAttribute(key,a[key]);
+                } else if (key === 'id') {
+                    e.id = a[key];
+                }
 
-/**
- * ### DOM.addTextInput
- * 
- */
-DOM.addTextInput = function (root, id, attributes) {
-	var ti = this.getTextInput(id, attributes);
-	return root.appendChild(ti);
-};
+                // TODO: handle special cases
+                // <!--
+                //                else {
+                //
+                //                    // If there is no parent node, the legend cannot be created
+                //                    if (!e.parentNode) {
+                //                        node.log('Cannot add label: no parent element found', 'ERR');
+                //                        continue;
+                //                    }
+                //
+                //                    this.addLabel(e.parentNode, e, a[key]);
+                //                }
+                // -->
+            }
+        }
+        return e;
+    };
 
-/**
- * ### DOM.getTextArea
- * 
- */
-DOM.getTextArea = function (id, attributes) {
-	var ta =  document.createElement('textarea');
-	if ('undefined' !== typeof id) ta.id = id;
-	return this.addAttributes2Elem(ta, attributes);
-};
+    /**
+     * ### DOM.populateSelect
+     *
+     * Appends a list of options into a HTML select element.
+     * The second parameter list is an object containing
+     * a list of key-values pairs as text-value attributes for
+     * the option.
+     *
+     */
+    DOM.populateSelect = function(select, list) {
+        if (!select || !list) return;
+        for (var key in list) {
+            if (list.hasOwnProperty(key)) {
+                var opt = document.createElement('option');
+                opt.value = list[key];
+                opt.appendChild(document.createTextNode(key));
+                select.appendChild(opt);
+            }
+        }
+    };
 
-/**
- * ### DOM.addTextArea
- * 
- */
-DOM.addTextArea = function (root, id, attributes) {
-	var ta = this.getTextArea(id, attributes);
-	return root.appendChild(ta);
-};
+    /**
+     * ### DOM.removeChildrenFromNode
+     *
+     * Removes all children from a node.
+     *
+     */
+    DOM.removeChildrenFromNode = function(e) {
 
-/**
- * ### DOM.getCanvas
- * 
- */
-DOM.getCanvas = function (id, attributes) {
-    var canvas = document.createElement('canvas');
-    var context = canvas.getContext('2d');
-        
-    if (!context) {
-        alert('Canvas is not supported');
-        return false;
-    }
-    
-    canvas.id = id;
-    return this.addAttributes2Elem(canvas, attributes);
-};
+        if (!e) return false;
 
-/**
- * ### DOM.addCanvas
- * 
- */
-DOM.addCanvas = function (root, id, attributes) {
-    var c = this.getCanvas(id, attributes);
-    return root.appendChild(c);
-};
-  
-/**
- * ### DOM.getSlider
- * 
- */
-DOM.getSlider = function (id, attributes) {
-    var slider = document.createElement('input');
-    slider.id = id;
-    slider.setAttribute('type', 'range');
-    return this.addAttributes2Elem(slider, attributes);
-};
+        while (e.hasChildNodes()) {
+            e.removeChild(e.firstChild);
+        }
+        return true;
+    };
 
-/**
- * ### DOM.addSlider
- * 
- */
-DOM.addSlider = function (root, id, attributes) {
-    var s = this.getSlider(id, attributes);
-    return root.appendChild(s);
-};
+    /**
+     * ### DOM.insertAfter
+     *
+     * Insert a node element after another one.
+     *
+     * The first parameter is the node to add.
+     *
+     */
+    DOM.insertAfter = function(node, referenceNode) {
+        referenceNode.insertBefore(node, referenceNode.nextSibling);
+    };
 
-/**
- * ### DOM.getRadioButton
- * 
- */
-DOM.getRadioButton = function (id, attributes) {
-    var radio = document.createElement('input');
-    radio.id = id;
-    radio.setAttribute('type', 'radio');
-    return this.addAttributes2Elem(radio, attributes);
-};
+    /**
+     * ### DOM.generateUniqueId
+     *
+     * Generate a unique id for the page (frames included).
+     *
+     * TODO: now it always create big random strings, it does not actually
+     * check if the string exists.
+     *
+     */
+    DOM.generateUniqueId = function(prefix) {
+        var search = [window];
+        if (window.frames) {
+            search = search.concat(window.frames);
+        }
 
-/**
- * ### DOM.addRadioButton
- * 
- */
-DOM.addRadioButton = function (root, id, attributes) {
-    var rb = this.getRadioButton(id, attributes);
-    return root.appendChild(rb);
-};
-
-/**
- * ### DOM.getLabel
- * 
- */
-DOM.getLabel = function (forElem, id, labelText, attributes) {
-    if (!forElem) return false;
-    var label = document.createElement('label');
-    label.id = id;
-    label.appendChild(document.createTextNode(labelText));
-    
-    if ('undefined' === typeof forElem.id) {
-        forElem.id = this.generateUniqueId();
-    }
-    
-    label.setAttribute('for', forElem.id);
-    this.addAttributes2Elem(label, attributes);
-    return label;
-};
-
-/**
- * ### DOM.addLabel
- * 
- */
-DOM.addLabel = function (root, forElem, id, labelText, attributes) {
-    if (!root || !forElem || !labelText) return false;        
-    var l = this.getLabel(forElem, id, labelText, attributes);
-    root.insertBefore(l, forElem);
-    return l;
-};
-
-/**
- * ### DOM.getSelect
- * 
- */
-DOM.getSelect = function (id, attributes) {
-    return this.getElement('select', id, attributes);
-};
-
-/**
- * ### DOM.addSelect
- * 
- */
-DOM.addSelect = function (root, id, attributes) {
-    return this.addElement('select', root, id, attributes);
-};
-
-/**
- * ### DOM.getIFrame
- * 
- */
-DOM.getIFrame = function (id, attributes) {
-    var attributes = {'name' : id}; // For Firefox
-    return this.getElement('iframe', id, attributes);
-};
-
-/**
- * ### DOM.addIFrame
- * 
- */
-DOM.addIFrame = function (root, id, attributes) {
-    var ifr = this.getIFrame(id, attributes);
-    return root.appendChild(ifr);
-};
-
-/**
- * ### DOM.addBreak
- * 
- */
-DOM.addBreak = function (root, rc) {
-    var RC = rc || 'br';
-    var br = document.createElement(RC);
-    return root.appendChild(br);
-    //return this.insertAfter(br,root);
-};
-
-/**
- * ### DOM.getDiv
- * 
- */
-DOM.getDiv = function (id, attributes) {
-    return this.getElement('div', id, attributes);
-};
-
-/**
- * ### DOM.addDiv
- * 
- */
-DOM.addDiv = function (root, id, attributes) {
-    return this.addElement('div', root, id, attributes);
-};
-
-// ## CSS / JS
-
-/**
- * ### DOM.addCSS
- * 
- * If no root element is passed, it tries to add the CSS 
- * link element to document.head, document.body, and 
- * finally document. If it fails, returns FALSE.
- * 
- */
-DOM.addCSS = function (root, css, id, attributes) {
-    var root = root || document.head || document.body || document;
-    if (!root) return false;
-    
-    attributes = attributes || {};
-    
-    attributes = JSUS.merge(attributes, {rel : 'stylesheet',
-                                        type: 'text/css',
-                                        href: css
-    });
-    
-    return this.addElement('link', root, id, attributes);
-};
-
-/**
- * ### DOM.addJS
- * 
- */
-DOM.addJS = function (root, js, id, attributes) {
-	var root = root || document.head || document.body || document;
-    if (!root) return false;
-    
-    attributes = attributes || {};
-    
-    attributes = JSUS.merge(attributes, {charset : 'utf-8',
-                                        type: 'text/javascript',
-                                        src: js
-    });
-    
-    return this.addElement('script', root, id, attributes);
-};
+        function scanDocuments(id) {
+            var found = true;
+            while (found) {
+                for (var i=0; i < search.length; i++) {
+                    found = search[i].document.getElementById(id);
+                    if (found) {
+                        id = '' + id + '_' + JSUS.randomInt(0, 1000);
+                        break;
+                    }
+                }
+            }
+            return id;
+        };
 
 
-/**
- * ### DOM.highlight
- * 
- * Provides a simple way to highlight an HTML element
- * by adding a colored border around it.
- * 
- * Three pre-defined modes are implemented: 
- * 
- * - OK: green
- * - WARN: yellow
- * - ERR: red (default)
- * 
- * Alternatively, it is possible to specify a custom
- * color as HEX value. Examples:
- * 
- * ```javascript
- * highlight(myDiv, 'WARN'); // yellow border
- * highlight(myDiv);          // red border
- * highlight(myDiv, '#CCC'); // grey border
- * ```
- *  
- * 	@see DOM.addBorder
- *	@see DOM.style
- * 
- */
-DOM.highlight = function (elem, code) {
-    if (!elem) return;
-    
-    // default value is ERR        
-    switch (code) {    
+        return scanDocuments(prefix + '_' + JSUS.randomInt(0, 10000000));
+        //return scanDocuments(prefix);
+    };
+
+    /**
+     * ### DOM.getBlankPage
+     *
+     * Creates a blank HTML page with the html and body
+     * elements already appended.
+     *
+     */
+    DOM.getBlankPage = function() {
+        var html = document.createElement('html');
+        html.appendChild(document.createElement('body'));
+        return html;
+    };
+
+    //    DOM.findLastElement = function(o) {
+    //        if (!o) return;
+    //
+    //        if (o.lastChild) {
+    //            var e
+    //            JSUS.isElement(e)) return DOM.findLastElement(e);
+    //
+    //            var e = e.previousSibling;
+    //            if (e && JSUS.isElement(e)) return DOM.findLastElement(e);
+    //
+    //        return o;
+    //    };
+
+    // ## GET/ADD
+
+    /**
+     * ### DOM.getButton
+     *
+     */
+    DOM.getButton = function(id, text, attributes) {
+        var sb = document.createElement('button');
+        sb.id = id;
+        sb.appendChild(document.createTextNode(text || 'Send'));
+        return this.addAttributes2Elem(sb, attributes);
+    };
+
+    /**
+     * ### DOM.addButton
+     *
+     */
+    DOM.addButton = function(root, id, text, attributes) {
+        var b = this.getButton(id, text, attributes);
+        return root.appendChild(b);
+    };
+
+    /**
+     * ### DOM.getFieldset
+     *
+     */
+    DOM.getFieldset = function(id, legend, attributes) {
+        var f = this.getElement('fieldset', id, attributes);
+        var l = document.createElement('Legend');
+        l.appendChild(document.createTextNode(legend));
+        f.appendChild(l);
+        return f;
+    };
+
+    /**
+     * ### DOM.addFieldset
+     *
+     */
+    DOM.addFieldset = function(root, id, legend, attributes) {
+        var f = this.getFieldset(id, legend, attributes);
+        return root.appendChild(f);
+    };
+
+    /**
+     * ### DOM.getTextInput
+     *
+     */
+    DOM.getTextInput = function(id, attributes) {
+        var ti =  document.createElement('input');
+        if ('undefined' !== typeof id) ti.id = id;
+        ti.setAttribute('type', 'text');
+        return this.addAttributes2Elem(ti, attributes);
+    };
+
+    /**
+     * ### DOM.addTextInput
+     *
+     */
+    DOM.addTextInput = function(root, id, attributes) {
+        var ti = this.getTextInput(id, attributes);
+        return root.appendChild(ti);
+    };
+
+    /**
+     * ### DOM.getTextArea
+     *
+     */
+    DOM.getTextArea = function(id, attributes) {
+        var ta =  document.createElement('textarea');
+        if ('undefined' !== typeof id) ta.id = id;
+        return this.addAttributes2Elem(ta, attributes);
+    };
+
+    /**
+     * ### DOM.addTextArea
+     *
+     */
+    DOM.addTextArea = function(root, id, attributes) {
+        var ta = this.getTextArea(id, attributes);
+        return root.appendChild(ta);
+    };
+
+    /**
+     * ### DOM.getCanvas
+     *
+     */
+    DOM.getCanvas = function(id, attributes) {
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+
+        if (!context) {
+            alert('Canvas is not supported');
+            return false;
+        }
+
+        canvas.id = id;
+        return this.addAttributes2Elem(canvas, attributes);
+    };
+
+    /**
+     * ### DOM.addCanvas
+     *
+     */
+    DOM.addCanvas = function(root, id, attributes) {
+        var c = this.getCanvas(id, attributes);
+        return root.appendChild(c);
+    };
+
+    /**
+     * ### DOM.getSlider
+     *
+     */
+    DOM.getSlider = function(id, attributes) {
+        var slider = document.createElement('input');
+        slider.id = id;
+        slider.setAttribute('type', 'range');
+        return this.addAttributes2Elem(slider, attributes);
+    };
+
+    /**
+     * ### DOM.addSlider
+     *
+     */
+    DOM.addSlider = function(root, id, attributes) {
+        var s = this.getSlider(id, attributes);
+        return root.appendChild(s);
+    };
+
+    /**
+     * ### DOM.getRadioButton
+     *
+     */
+    DOM.getRadioButton = function(id, attributes) {
+        var radio = document.createElement('input');
+        radio.id = id;
+        radio.setAttribute('type', 'radio');
+        return this.addAttributes2Elem(radio, attributes);
+    };
+
+    /**
+     * ### DOM.addRadioButton
+     *
+     */
+    DOM.addRadioButton = function(root, id, attributes) {
+        var rb = this.getRadioButton(id, attributes);
+        return root.appendChild(rb);
+    };
+
+    /**
+     * ### DOM.getLabel
+     *
+     */
+    DOM.getLabel = function(forElem, id, labelText, attributes) {
+        if (!forElem) return false;
+        var label = document.createElement('label');
+        label.id = id;
+        label.appendChild(document.createTextNode(labelText));
+
+        if ('undefined' === typeof forElem.id) {
+            forElem.id = this.generateUniqueId();
+        }
+
+        label.setAttribute('for', forElem.id);
+        this.addAttributes2Elem(label, attributes);
+        return label;
+    };
+
+    /**
+     * ### DOM.addLabel
+     *
+     */
+    DOM.addLabel = function(root, forElem, id, labelText, attributes) {
+        if (!root || !forElem || !labelText) return false;
+        var l = this.getLabel(forElem, id, labelText, attributes);
+        root.insertBefore(l, forElem);
+        return l;
+    };
+
+    /**
+     * ### DOM.getSelect
+     *
+     */
+    DOM.getSelect = function(id, attributes) {
+        return this.getElement('select', id, attributes);
+    };
+
+    /**
+     * ### DOM.addSelect
+     *
+     */
+    DOM.addSelect = function(root, id, attributes) {
+        return this.addElement('select', root, id, attributes);
+    };
+
+    /**
+     * ### DOM.getIFrame
+     *
+     */
+    DOM.getIFrame = function(id, attributes) {
+        var attributes = {'name' : id}; // For Firefox
+        return this.getElement('iframe', id, attributes);
+    };
+
+    /**
+     * ### DOM.addIFrame
+     *
+     */
+    DOM.addIFrame = function(root, id, attributes) {
+        var ifr = this.getIFrame(id, attributes);
+        return root.appendChild(ifr);
+    };
+
+    /**
+     * ### DOM.addBreak
+     *
+     */
+    DOM.addBreak = function(root, rc) {
+        var RC = rc || 'br';
+        var br = document.createElement(RC);
+        return root.appendChild(br);
+        //return this.insertAfter(br,root);
+    };
+
+    /**
+     * ### DOM.getDiv
+     *
+     */
+    DOM.getDiv = function(id, attributes) {
+        return this.getElement('div', id, attributes);
+    };
+
+    /**
+     * ### DOM.addDiv
+     *
+     */
+    DOM.addDiv = function(root, id, attributes) {
+        return this.addElement('div', root, id, attributes);
+    };
+
+    // ## CSS / JS
+
+    /**
+     * ### DOM.addCSS
+     *
+     * If no root element is passed, it tries to add the CSS
+     * link element to document.head, document.body, and
+     * finally document. If it fails, returns FALSE.
+     *
+     */
+    DOM.addCSS = function(root, css, id, attributes) {
+        var root = root || document.head || document.body || document;
+        if (!root) return false;
+
+        attributes = attributes || {};
+
+        attributes = JSUS.merge(attributes, {rel : 'stylesheet',
+                                             type: 'text/css',
+                                             href: css
+                                            });
+
+        return this.addElement('link', root, id, attributes);
+    };
+
+    /**
+     * ### DOM.addJS
+     *
+     */
+    DOM.addJS = function(root, js, id, attributes) {
+        var root = root || document.head || document.body || document;
+        if (!root) return false;
+
+        attributes = attributes || {};
+
+        attributes = JSUS.merge(attributes, {charset : 'utf-8',
+                                             type: 'text/javascript',
+                                             src: js
+                                            });
+
+        return this.addElement('script', root, id, attributes);
+    };
+
+
+    /**
+     * ### DOM.highlight
+     *
+     * Provides a simple way to highlight an HTML element
+     * by adding a colored border around it.
+     *
+     * Three pre-defined modes are implemented:
+     *
+     * - OK: green
+     * - WARN: yellow
+     * - ERR: red (default)
+     *
+     * Alternatively, it is possible to specify a custom
+     * color as HEX value. Examples:
+     *
+     * ```javascript
+     * highlight(myDiv, 'WARN'); // yellow border
+     * highlight(myDiv);          // red border
+     * highlight(myDiv, '#CCC'); // grey border
+     * ```
+     *
+     *  @see DOM.addBorder
+     *  @see DOM.style
+     *
+     */
+    DOM.highlight = function(elem, code) {
+        if (!elem) return;
+
+        // default value is ERR
+        switch (code) {
         case 'OK':
             var color =  'green';
             break;
@@ -2401,124 +2445,139 @@ DOM.highlight = function (elem, code) {
             else {
                 var color = 'red';
             }
-    }
-    
-    return this.addBorder(elem, color);
-};
+        }
 
-/**
- * ### DOM.addBorder
- * 
- * Adds a border around the specified element. Color,
- * width, and type can be specified.
- * 
- */
-DOM.addBorder = function (elem, color, witdh, type) {
-    if (!elem) return;
-    
-    var color = color || 'red';
-    var width = width || '5px';
-    var type = type || 'solid';
-    
-    var properties = { border: width + ' ' + type + ' ' + color };
-    return this.style(elem,properties);
-};
-
-/**
- * ### DOM.style
- * 
- * Styles an element as an in-line css. 
- * Takes care to add new styles, and not overwriting previuous
- * attributes.
- * 
- * Returns the element.
- * 
- * @see DOM.setAttribute
- */
-DOM.style = function (elem, properties) {
-    if (!elem || !properties) return;
-    if (!DOM.isElement(elem)) return;
-    
-    var style = '';
-    for (var i in properties) {
-        style += i + ': ' + properties[i] + '; ';
+        return this.addBorder(elem, color);
     };
-    return elem.setAttribute('style', style);
-};
 
-/**
- * ### DOM.removeClass
- * 
- * Removes a specific class from the class attribute
- * of a given element.
- * 
- * Returns the element.
- */
-DOM.removeClass = function (el, c) {
-    if (!el || !c) return;
-    var regexpr = '/(?:^|\s)' + c + '(?!\S)/';
-    var o = el.className = el.className.replace( regexpr, '' );
-    return el;
-};
+    /**
+     * ### DOM.addBorder
+     *
+     * Adds a border around the specified element. Color,
+     * width, and type can be specified.
+     */
+    DOM.addBorder = function(elem, color, witdh, type) {
+        var properties;
+        if (!elem) return;
 
-/**
- * ### DOM.addClass
- * 
- * Add a class to the class attribute of the given element.
- * 
- * Takes care not to overwrite already existing classes
- * 
- */
-DOM.addClass = function (el, c) {
-    if (!el || !c) return;
-    if (c instanceof Array) c = c.join(' ');
-    if ('undefined' === typeof el.className) {
-        el.className = c;
-    } else {
-        el.className += ' ' + c;
-    }
-    return el;
-  };
+        color = color || 'red';
+        width = width || '5px';
+        type = type || 'solid';
+
+        properties = { border: width + ' ' + type + ' ' + color };
+        return this.style(elem,properties);
+    };
+
+    /**
+     * ### DOM.style
+     *
+     * Styles an element as an in-line css.
+     * Takes care to add new styles, and not overwriting previuous
+     * attributes.
+     *
+     * Returns the element.
+     *
+     * @see DOM.setAttribute
+     */
+    DOM.style = function(elem, properties) {
+        if (!elem || !properties) return;
+        if (!DOM.isElement(elem)) return;
+
+        var style = '';
+        for (var i in properties) {
+            style += i + ': ' + properties[i] + '; ';
+        };
+        return elem.setAttribute('style', style);
+    };
+
+    /**
+     * ### DOM.removeClass
+     *
+     * Removes a specific class from the class attribute
+     * of a given element.
+     *
+     * Returns the element.
+     */
+    DOM.removeClass = function(el, c) {
+        if (!el || !c) return;
+        var regexpr = '/(?:^|\s)' + c + '(?!\S)/';
+        var o = el.className = el.className.replace( regexpr, '' );
+        return el;
+    };
+
+    /**
+     * ### DOM.addClass
+     *
+     * Add a class to the class attribute of the given element.
+     *
+     * Takes care not to overwrite already existing classes
+     *
+     */
+    DOM.addClass = function(el, c) {
+        if (!el || !c) return;
+        if (c instanceof Array) c = c.join(' ');
+        if ('undefined' === typeof el.className) {
+            el.className = c;
+        } else {
+            el.className += ' ' + c;
+        }
+        return el;
+    };
     
-JSUS.extend(DOM);
-    
+    /**
+     * ## DOM.getIFrameDocument
+     *
+     * Returns a reference to the document of an iframe object 
+     *
+     * @param {HTMLIFrameElement} iframe The iframe object
+     * @return {HTMLDocument|undefined} The document of the iframe, or
+     *   undefined if not found.
+     */
+    DOM.getIFrameDocument = function(iframe) {
+        if (!iframe) return;
+        return iframe.contentDocument || iframe.contentWindow.document;
+    };
+
+    JSUS.extend(DOM);
+
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 /**
  * # EVAL
- *  
- * Copyright(c) 2012 Stefano Balietti
+ *
+ * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
- * 
+ *
  * Collection of static functions related to the evaluation
  * of strings as javascript commands
- * 
+ * ---
  */
 
-(function (JSUS) {
-    
+(function(JSUS) {
+
 function EVAL(){};
 
 /**
  * ## EVAL.eval
- * 
- * Allows to execute the eval function within a given 
- * context. 
- * 
- * If no context is passed a reference, ```this``` is used.
- * 
+ *
+ * Allows to execute the eval function within a given
+ * context.
+ *
+ * If no context is passed a reference, `this` is used.
+ *
  * @param {string} str The command to executes
- * @param {object} context Optional. The context of execution. Defaults ```this```
+ * @param {object} context Optional. The context of execution. Defaults, `this`
  * @return {mixed} The return value of the executed commands
- * 
- * 	@see eval
- * 	@see JSON.parse
+ *
+ * @see eval
+ * @see JSON.parse
  */
-EVAL.eval = function (str, context) {
+EVAL.eval = function(str, context) {
+    var func;
     if (!str) return;
-	context = context || this;
+    context = context || this;
     // Eval must be called indirectly
     // i.e. eval.call is not possible
-    var func = function (str) {
+    func = function(str) {
         // TODO: Filter str
         return eval(str);
     }
@@ -2526,1068 +2585,1152 @@ EVAL.eval = function (str, context) {
 };
 
 JSUS.extend(EVAL);
-    
+
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 /**
- * # OBJ
- *  
- * Copyright(c) 2012 Stefano Balietti
+ * # JSUS.OBJ
+ * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
- * 
- * Collection of static functions to manipulate javascript objects
- * 
+ *
+ * Collection of static functions to manipulate javascript objects.
+ * ---
  */
-(function (JSUS) {
+(function(JSUS) {
 
+    function OBJ(){};
 
-    
-function OBJ(){};
+    var compatibility = null;
 
-var compatibility = null;
+    if ('undefined' !== typeof JSUS.compatibility) {
+        compatibility = JSUS.compatibility();
+    }
 
-if ('undefined' !== typeof JSUS.compatibility) {
-	compatibility = JSUS.compatibility();
-}
+    /**
+     * ## OBJ.equals
+     *
+     * Checks for deep equality between two objects, strings or primitive types
+     *
+     * All nested properties are checked, and if they differ in at least
+     * one returns FALSE, otherwise TRUE.
+     *
+     * Takes care of comparing the following special cases:
+     *
+     * - undefined
+     * - null
+     * - NaN
+     * - Infinity
+     * - {}
+     * - falsy values
+     *
+     * @param {object} o1 The first object
+     * @param {object} o2 The second object
+     * @return {boolean} TRUE if the objects are deeply equal.
+     */
+    OBJ.equals = function(o1, o2) {
+        var type1, type2, primitives, p;
+        type1 = typeof o1;
+        type2 = typeof o2;
 
+        if (type1 !== type2) return false;
 
-/**
- * ## OBJ.equals
- * 
- * Checks for deep equality between two objects, string 
- * or primitive types.
- * 
- * All nested properties are checked, and if they differ 
- * in at least one returns FALSE, otherwise TRUE.
- * 
- * Takes care of comparing the following special cases: 
- * 
- * - undefined
- * - null
- * - NaN
- * - Infinity
- * - {}
- * - falsy values
- * 
- * 
- */
-OBJ.equals = function (o1, o2) {	
-	var type1 = typeof o1, type2 = typeof o2;
-	
-	if (type1 !== type2) return false;
-	
-	if ('undefined' === type1 || 'undefined' === type2) {
-		return (o1 === o2);
-	}
-	if (o1 === null || o2 === null) {
-		return (o1 === o2);
-	}
-	if (('number' === type1 && isNaN(o1)) && ('number' === type2 && isNaN(o2)) ) {
-		return (isNaN(o1) && isNaN(o2));
-	}
-	
-    // Check whether arguments are not objects
-	var primitives = {number: '', string: '', boolean: ''}
-    if (type1 in primitives) {
-    	return o1 === o2;
-    } 
-	
-	if ('function' === type1) {
-		return o1.toString() === o2.toString();
-	}
+        if ('undefined' === type1 || 'undefined' === type2) {
+            return (o1 === o2);
+        }
+        if (o1 === null || o2 === null) {
+            return (o1 === o2);
+        }
+        if (('number' === type1 && isNaN(o1)) &&
+            ('number' === type2 && isNaN(o2))) {
+            return (isNaN(o1) && isNaN(o2));
+        }
 
-    for (var p in o1) {
-        if (o1.hasOwnProperty(p)) {
-          
-            if ('undefined' === typeof o2[p] && 'undefined' !== typeof o1[p]) return false;
-            if (!o2[p] && o1[p]) return false; // <!-- null --> 
-            
-            switch (typeof o1[p]) {
+        // Check whether arguments are not objects
+        primitives = {number: '', string: '', boolean: ''}
+        if (type1 in primitives) {
+            return o1 === o2;
+        }
+
+        if ('function' === type1) {
+            return o1.toString() === o2.toString();
+        }
+
+        for (p in o1) {
+            if (o1.hasOwnProperty(p)) {
+
+                if ('undefined' === typeof o2[p] &&
+                    'undefined' !== typeof o1[p]) return false;
+
+                if (!o2[p] && o1[p]) return false;
+
+                switch (typeof o1[p]) {
                 case 'function':
-                        if (o1[p].toString() !== o2[p].toString()) return false;
-                        
-                    default:
-                    	if (!OBJ.equals(o1[p], o2[p])) return false; 
-              }
-          } 
-      }
-  
-      // Check whether o2 has extra properties
-  // TODO: improve, some properties have already been checked!
-  for (p in o2) {
-      if (o2.hasOwnProperty(p)) {
-          if ('undefined' === typeof o1[p] && 'undefined' !== typeof o2[p]) return false;
-          if (!o1[p] && o2[p]) return false; // <!-- null --> 
-      }
-  }
+                    if (o1[p].toString() !== o2[p].toString()) return false;
 
-  return true;
-};
-
-/**
- * ## OBJ.isEmpty
- * 
- * Returns TRUE if an object has no own properties, 
- * FALSE otherwise
- * 
- * Does not check properties of the prototype chain.
- * 
- * @param {object} o The object to check
- * @return {boolean} TRUE, if the object has no properties
- * 
- */
-OBJ.isEmpty = function (o) {
-	if ('undefined' === typeof o) return true;
-	
-    for (var key in o) {
-        if (o.hasOwnProperty(key)) {
-        	return false;
-        }
-    }
-
-    return true;
-};
-
-
-/**
- * ## OBJ.size
- * 
- * Counts the number of own properties of an object.
- * 
- * Prototype chain properties are excluded.
- * 
- * @param {object} obj The object to check
- * @return {number} The number of properties in the object
- */
-OBJ.size = OBJ.getListSize = function (obj) {
-	if (!obj) return 0;
-	if ('number' === typeof obj) return 0;
-	if ('string' === typeof obj) return 0;
-	
-    var n = 0;
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            n++;
-        }
-    }
-    return n;
-};
-
-/**
- * ## OBJ._obj2Array
- * 
- * Explodes an object into an array of keys and values,
- * according to the specified parameters.
-
- * A fixed level of recursion can be set.
- * 
- * @api private
- * @param {object} obj The object to convert in array
- * @param {boolean} keyed TRUE, if also property names should be included. Defaults FALSE
- * @param {number} level Optional. The level of recursion. Defaults undefined
- * @return {array} The converted object
- */
-OBJ._obj2Array = function(obj, keyed, level, cur_level) {
-    if ('object' !== typeof obj) return [obj];
-    
-    if (level) {
-        cur_level = ('undefined' !== typeof cur_level) ? cur_level : 1;
-        if (cur_level > level) return [obj];
-        cur_level = cur_level + 1;
-    }
-    
-    var result = [];
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-        	if (keyed) result.push(key);
-            if ('object' === typeof obj[key]) {
-                result = result.concat(OBJ._obj2Array(obj[key], keyed, level, cur_level));
-            } else {
-                result.push(obj[key]);
+                default:
+                    if (!OBJ.equals(o1[p], o2[p])) return false;
+                }
             }
-           
         }
-    }      
-    
-    return result;
-};
 
-/**
- * ## OBJ.obj2Array
- * 
- * Converts an object into an array, keys are lost
- * 
- * Recursively put the values of the properties of an object into 
- * an array and returns it.
- * 
- * The level of recursion can be set with the parameter level. 
- * By default recursion has no limit, i.e. that the whole object 
- * gets totally unfolded into an array.
- * 
- * @param {object} obj The object to convert in array
- * @param {number} level Optional. The level of recursion. Defaults, undefined
- * @return {array} The converted object
- * 
- * 	@see OBJ._obj2Array
- *	@see OBJ.obj2KeyedArray
- * 
- */
-OBJ.obj2Array = function (obj, level) {
-    return OBJ._obj2Array(obj, false, level);
-};
+        // Check whether o2 has extra properties
+        // TODO: improve, some properties have already been checked!
+        for (p in o2) {
+            if (o2.hasOwnProperty(p)) {
+                if ('undefined' === typeof o1[p] &&
+                    'undefined' !== typeof o2[p]) return false;
 
-/**
- * ## OBJ.obj2KeyedArray
- * 
- * Converts an object into array, keys are preserved
- * 
- * Creates an array containing all keys and values of an object and 
- * returns it.
- * 
- * @param {object} obj The object to convert in array
- * @param {number} level Optional. The level of recursion. Defaults, undefined
- * @return {array} The converted object
- * 
- * @see OBJ.obj2Array 
- * 
- */
-OBJ.obj2KeyedArray = OBJ.obj2KeyArray = function (obj, level) {
-    return OBJ._obj2Array(obj, true, level);
-};
-
-/**
- * ## OBJ.keys
- * 
- * Scans an object an returns all the keys of the properties,
- * into an array. 
- * 
- * The second paramter controls the level of nested objects 
- * to be evaluated. Defaults 0 (nested properties are skipped).
- * 
- * @param {object} obj The object from which extract the keys
- * @param {number} level Optional. The level of recursion. Defaults 0
- * @return {array} The array containing the extracted keys
- * 
- * 	@see Object.keys
- * 
- */
-OBJ.keys = OBJ.objGetAllKeys = function (obj, level, curLevel) {
-    if (!obj) return [];
-    level = ('number' === typeof level && level >= 0) ? level : 0; 
-    curLevel = ('number' === typeof curLevel && curLevel >= 0) ? curLevel : 0;
-    var result = [];
-    for (var key in obj) {
-       if (obj.hasOwnProperty(key)) {
-           result.push(key);
-           if (curLevel < level) {
-               if ('object' === typeof obj[key]) {
-                   result = result.concat(OBJ.objGetAllKeys(obj[key], (curLevel+1)));
-               }
-           }
-       }
-    }
-    return result;
-};
-
-/**
- * ## OBJ.implode
- * 
- * Separates each property into a new objects and returns
- * them into an array
- * 
- * E.g.
- * 
- * ```javascript
- * var a = { b:2, c: {a:1}, e:5 };
- * OBJ.implode(a); // [{b:2}, {c:{a:1}}, {e:5}]
- * ```
- * 
- * @param {object} obj The object to implode
- * @return {array} result The array containig all the imploded properties
- * 
- */
-OBJ.implode = OBJ.implodeObj = function (obj) {
-	if (!obj) return [];
-    var result = [];
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            var o = {};
-            o[key] = obj[key];
-            result.push(o);
+                if (!o1[p] && o2[p]) return false;
+            }
         }
-    }
-    return result;
-};
- 
-/**
- * ## OBJ.clone
- * 
- * Creates a perfect copy of the object passed as parameter
- * 
- * Recursively scans all the properties of the object to clone.
- * Properties of the prototype chain are copied as well.
- * 
- * Primitive types and special values are returned as they are.
- *  
- * @param {object} obj The object to clone
- * @return {object} clone The clone of the object
- */
-OBJ.clone = function (obj) {
-	if (!obj) return obj;
-	if ('number' === typeof obj) return obj;
-	if ('string' === typeof obj) return obj;
-	if ('boolean' === typeof obj) return obj;
-	if (obj === NaN) return obj;
-	if (obj === Infinity) return obj;
-	
-	var clone;
-	if ('function' === typeof obj) {
-//		clone = obj;
-		// <!-- Check when and if we need this -->
-		clone = function() { return obj.apply(clone, arguments); };
-	}
-	else {
-		clone = (Object.prototype.toString.call(obj) === '[object Array]') ? [] : {};
-	}
-	
-	for (var i in obj) {
-		var value;
-		// TODO: index i is being updated, so apply is called on the 
-		// last element, instead of the correct one.
-//		if ('function' === typeof obj[i]) {
-//			value = function() { return obj[i].apply(clone, arguments); };
-//		}
-		// It is not NULL and it is an object
-		if (obj[i] && 'object' === typeof obj[i]) {
-			// is an array
-			if (Object.prototype.toString.call(obj[i]) === '[object Array]') {
-				value = obj[i].slice(0);
-			}
-			// is an object
-			else {
-				value = OBJ.clone(obj[i]);
-			}
-		}
-		else {
-			value = obj[i];
-		} 
-	 	
-	    if (obj.hasOwnProperty(i)) {
-	    	clone[i] = value;
-	    }
-	    else {
-	    	// we know if object.defineProperty is available
-	    	if (compatibility && compatibility.defineProperty) {
-		    	Object.defineProperty(clone, i, {
-		    		value: value,
-	         		writable: true,
-	         		configurable: true
-	         	});
-	    	}
-	    	else {
-	    		// or we try...
-	    		try {
-	    			Object.defineProperty(clone, i, {
-			    		value: value,
-		         		writable: true,
-		         		configurable: true
-		         	});
-	    		}
-		    	catch(e) {
-		    		clone[i] = value;
-		    	}
-	    	}
-	    }
-    }
-    return clone;
-};
-    
-/**
- * ## OBJ.join
- * 
- * Performs a *left* join on the keys of two objects
- * 
- * Creates a copy of obj1, and in case keys overlap 
- * between obj1 and obj2, the values from obj2 are taken. 
- * 
- * Returns a new object, the original ones are not modified.
- *  
- * E.g.
- * 
- * ```javascript
- * var a = { b:2, c:3, e:5 };
- * var b = { a:10, b:2, c:100, d:4 };
- * OBJ.join(a, b); // { b:2, c:100, e:5 }
- * ```
- *  
- * @param {object} obj1 The object where the merge will take place
- * @param {object} obj2 The merging object
- * @return {object} clone The joined object
- * 
- * 	@see OBJ.merge
- */
-OBJ.join = function (obj1, obj2) {
-    var clone = OBJ.clone(obj1);
-    if (!obj2) return clone;
-    for (var i in clone) {
-        if (clone.hasOwnProperty(i)) {
-            if ('undefined' !== typeof obj2[i]) {
-                if ('object' === typeof obj2[i]) {
-                    clone[i] = OBJ.join(clone[i], obj2[i]);
+
+        return true;
+    };
+
+    /**
+     * ## OBJ.isEmpty
+     *
+     * Returns TRUE if an object has no own properties
+     *
+     * Does not check properties of the prototype chain.
+     *
+     * @param {object} o The object to check
+     * @return {boolean} TRUE, if the object has no properties
+     */
+    OBJ.isEmpty = function(o) {
+        var key;
+        if ('undefined' === typeof o) return true;
+        for (key in o) {
+            if (o.hasOwnProperty(key)) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+
+    /**
+     * ## OBJ.size
+     *
+     * Counts the number of own properties of an object.
+     *
+     * Prototype chain properties are excluded.
+     *
+     * @param {object} obj The object to check
+     * @return {number} The number of properties in the object
+     */
+    OBJ.size = OBJ.getListSize = function(obj) {
+        var n, key;
+        if (!obj) return 0;
+        if ('number' === typeof obj) return 0;
+        if ('string' === typeof obj) return 0;
+
+        n = 0;
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                n++;
+            }
+        }
+        return n;
+    };
+
+    /**
+     * ## OBJ._obj2Array
+     *
+     * Explodes an object into an array of keys and values,
+     * according to the specified parameters.
+     *
+     * A fixed level of recursion can be set.
+     *
+     * @api private
+     * @param {object} obj The object to convert in array
+     * @param {boolean} keyed TRUE, if also property names should be included.
+     *   Defaults, FALSE
+     * @param {number} level Optional. The level of recursion.
+     *   Defaults, undefined
+     * @return {array} The converted object
+     */
+    OBJ._obj2Array = function(obj, keyed, level, cur_level) {
+        var result, key;
+        if ('object' !== typeof obj) return [obj];
+
+        if (level) {
+            cur_level = ('undefined' !== typeof cur_level) ? cur_level : 1;
+            if (cur_level > level) return [obj];
+            cur_level = cur_level + 1;
+        }
+
+        result = [];
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                if (keyed) result.push(key);
+                if ('object' === typeof obj[key]) {
+                    result = result.concat(OBJ._obj2Array(obj[key], keyed,
+                                                          level, cur_level));
+                }
+                else {
+                    result.push(obj[key]);
+                }
+            }
+        }
+        return result;
+    };
+
+    /**
+     * ## OBJ.obj2Array
+     *
+     * Converts an object into an array, keys are lost
+     *
+     * Recursively put the values of the properties of an object into
+     * an array and returns it.
+     *
+     * The level of recursion can be set with the parameter level.
+     * By default recursion has no limit, i.e. that the whole object
+     * gets totally unfolded into an array.
+     *
+     * @param {object} obj The object to convert in array
+     * @param {number} level Optional. The level of recursion. Defaults,
+     *   undefined
+     * @return {array} The converted object
+     *
+     * @see OBJ._obj2Array
+     * @see OBJ.obj2KeyedArray
+     */
+    OBJ.obj2Array = function(obj, level) {
+        return OBJ._obj2Array(obj, false, level);
+    };
+
+    /**
+     * ## OBJ.obj2KeyedArray
+     *
+     * Converts an object into array, keys are preserved
+     *
+     * Creates an array containing all keys and values of an object and
+     * returns it.
+     *
+     * @param {object} obj The object to convert in array
+     * @param {number} level Optional. The level of recursion. Defaults,
+     *   undefined
+     * @return {array} The converted object
+     *
+     * @see OBJ.obj2Array
+     */
+    OBJ.obj2KeyedArray = OBJ.obj2KeyArray = function(obj, level) {
+        return OBJ._obj2Array(obj, true, level);
+    };
+
+    /**
+     * ## OBJ.keys
+     *
+     * Scans an object an returns all the keys of the properties,
+     * into an array.
+     *
+     * The second paramter controls the level of nested objects
+     * to be evaluated. Defaults 0 (nested properties are skipped).
+     *
+     * @param {object} obj The object from which extract the keys
+     * @param {number} level Optional. The level of recursion. Defaults 0
+     * @return {array} The array containing the extracted keys
+     *
+     * @see Object.keys
+     */
+    OBJ.keys = OBJ.objGetAllKeys = function(obj, level, curLevel) {
+        var result, key;
+        if (!obj) return [];
+        level = 'number' === typeof level && level >= 0 ? level : 0;
+        curLevel = 'number' === typeof curLevel && curLevel >= 0 ? curLevel : 0;
+        result = [];
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                result.push(key);
+                if (curLevel < level) {
+                    if ('object' === typeof obj[key]) {
+                        result = result.concat(OBJ.objGetAllKeys(obj[key],
+                                                                 (curLevel+1)));
+                    }
+                }
+            }
+        }
+        return result;
+    };
+
+    /**
+     * ## OBJ.implode
+     *
+     * Separates each property into a new object and returns them into an array
+     *
+     * E.g.
+     *
+     * ```javascript
+     * var a = { b:2, c: {a:1}, e:5 };
+     * OBJ.implode(a); // [{b:2}, {c:{a:1}}, {e:5}]
+     * ```
+     *
+     * @param {object} obj The object to implode
+     * @return {array} result The array containig all the imploded properties
+     */
+    OBJ.implode = OBJ.implodeObj = function(obj) {
+        var result, key, o;
+        if (!obj) return [];
+        result = [];
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                o = {};
+                o[key] = obj[key];
+                result.push(o);
+            }
+        }
+        return result;
+    };
+
+    /**
+     * ## OBJ.clone
+     *
+     * Creates a perfect copy of the object passed as parameter
+     *
+     * Recursively scans all the properties of the object to clone.
+     * Properties of the prototype chain are copied as well.
+     *
+     * Primitive types and special values are returned as they are.
+     *
+     * @param {object} obj The object to clone
+     * @return {object} clone The clone of the object
+     */
+    OBJ.clone = function(obj) {
+        var clone, i, value;
+        if (!obj) return obj;
+        if ('number' === typeof obj) return obj;
+        if ('string' === typeof obj) return obj;
+        if ('boolean' === typeof obj) return obj;
+        if (obj === NaN) return obj;
+        if (obj === Infinity) return obj;
+
+        if ('function' === typeof obj) {
+            //          clone = obj;
+            // <!-- Check when and if we need this -->
+            clone = function() { return obj.apply(clone, arguments); };
+        }
+        else {
+            clone = Object.prototype.toString.call(obj) === '[object Array]' ?
+                [] : {};
+        }
+
+        for (i in obj) {
+            // TODO: index i is being updated, so apply is called on the
+            // last element, instead of the correct one.
+            //          if ('function' === typeof obj[i]) {
+            //                  value = function() { return obj[i].apply(clone, arguments); };
+            //          }
+            // It is not NULL and it is an object
+            if (obj[i] && 'object' === typeof obj[i]) {
+                // Is an array.
+                if (Object.prototype.toString.call(obj[i]) === '[object Array]') {
+                    value = obj[i].slice(0);
+                }
+                // Is an object.
+                else {
+                    value = OBJ.clone(obj[i]);
+                }
+            }
+            else {
+                value = obj[i];
+            }
+
+            if (obj.hasOwnProperty(i)) {
+                clone[i] = value;
+            }
+            else {
+                // We know if object.defineProperty is available.
+                if (compatibility && compatibility.defineProperty) {
+                    Object.defineProperty(clone, i, {
+                        value: value,
+                        writable: true,
+                        configurable: true
+                    });
+                }
+                else {
+                    // or we try...
+                    try {
+                        Object.defineProperty(clone, i, {
+                            value: value,
+                            writable: true,
+                            configurable: true
+                        });
+                    }
+                    catch(e) {
+                        clone[i] = value;
+                    }
+                }
+            }
+        }
+        return clone;
+    };
+
+    /**
+     * ## OBJ.join
+     *
+     * Performs a *left* join on the keys of two objects
+     *
+     * Creates a copy of obj1, and in case keys overlap
+     * between obj1 and obj2, the values from obj2 are taken.
+     *
+     * Returns a new object, the original ones are not modified.
+     *
+     * E.g.
+     *
+     * ```javascript
+     * var a = { b:2, c:3, e:5 };
+     * var b = { a:10, b:2, c:100, d:4 };
+     * OBJ.join(a, b); // { b:2, c:100, e:5 }
+     * ```
+     *
+     * @param {object} obj1 The object where the merge will take place
+     * @param {object} obj2 The merging object
+     * @return {object} clone The joined object
+     *
+     * @see OBJ.merge
+     */
+    OBJ.join = function(obj1, obj2) {
+        var clone, i;
+        clone = OBJ.clone(obj1);
+        if (!obj2) return clone;
+        for (i in clone) {
+            if (clone.hasOwnProperty(i)) {
+                if ('undefined' !== typeof obj2[i]) {
+                    if ('object' === typeof obj2[i]) {
+                        clone[i] = OBJ.join(clone[i], obj2[i]);
+                    } else {
+                        clone[i] = obj2[i];
+                    }
+                }
+            }
+        }
+        return clone;
+    };
+
+    /**
+     * ## OBJ.merge
+     *
+     * Merges two objects in one
+     *
+     * In case keys overlap the values from obj2 are taken.
+     *
+     * Only own properties are copied.
+     *
+     * Returns a new object, the original ones are not modified.
+     *
+     * E.g.
+     *
+     * ```javascript
+     * var a = { a:1, b:2, c:3 };
+     * var b = { a:10, b:2, c:100, d:4 };
+     * OBJ.merge(a, b); // { a: 10, b: 2, c: 100, d: 4 }
+     * ```
+     *
+     * @param {object} obj1 The object where the merge will take place
+     * @param {object} obj2 The merging object
+     * @return {object} clone The merged object
+     *
+     * @see OBJ.join
+     * @see OBJ.mergeOnKey
+     */
+    OBJ.merge = function(obj1, obj2) {
+        var clone, i;
+        // Checking before starting the algorithm
+        if (!obj1 && !obj2) return false;
+        if (!obj1) return OBJ.clone(obj2);
+        if (!obj2) return OBJ.clone(obj1);
+
+        clone = OBJ.clone(obj1);
+        for (i in obj2) {
+
+            if (obj2.hasOwnProperty(i)) {
+                // it is an object and it is not NULL
+                if ( obj2[i] && 'object' === typeof obj2[i] ) {
+                    // If we are merging an object into
+                    // a non-object, we need to cast the
+                    // type of obj1
+                    if ('object' !== typeof clone[i]) {
+                        if (Object.prototype.toString.call(obj2[i]) === '[object Array]') {
+                            clone[i] = [];
+                        }
+                        else {
+                            clone[i] = {};
+                        }
+                    }
+                    clone[i] = OBJ.merge(clone[i], obj2[i]);
                 } else {
                     clone[i] = obj2[i];
                 }
             }
         }
-    }
-    return clone;
-};
+        return clone;
+    };
 
-/**
- * ## OBJ.merge
- * 
- * Merges two objects in one
- * 
- * In case keys overlap the values from obj2 are taken. 
- * 
- * Only own properties are copied.
- * 
- * Returns a new object, the original ones are not modified.
- * 
- * E.g.
- * 
- * ```javascript
- * var a = { a:1, b:2, c:3 };
- * var b = { a:10, b:2, c:100, d:4 };
- * OBJ.merge(a, b); // { a: 10, b: 2, c: 100, d: 4 }
- * ```
- * 
- * @param {object} obj1 The object where the merge will take place
- * @param {object} obj2 The merging object
- * @return {object} clone The merged object
- * 
- * 	@see OBJ.join
- * 	@see OBJ.mergeOnKey
- */
-OBJ.merge = function (obj1, obj2) {
-	// Checking before starting the algorithm
-	if (!obj1 && !obj2) return false;
-	if (!obj1) return OBJ.clone(obj2);
-	if (!obj2) return OBJ.clone(obj1);
-	
-    var clone = OBJ.clone(obj1);
-    for (var i in obj2) {
-    	
-        if (obj2.hasOwnProperty(i)) {
-        	// it is an object and it is not NULL
-            if ( obj2[i] && 'object' === typeof obj2[i] ) {
-            	// If we are merging an object into  
-            	// a non-object, we need to cast the 
-            	// type of obj1
-            	if ('object' !== typeof clone[i]) {
-            		if (Object.prototype.toString.call(obj2[i]) === '[object Array]') {
-            			clone[i] = [];
-            		}
-            		else {
-            			clone[i] = {};
-            		}
-            	}
-                clone[i] = OBJ.merge(clone[i], obj2[i]);
-            } else {
-                clone[i] = obj2[i];
+    /**
+     * ## OBJ.mixin
+     *
+     * Adds all the properties of obj2 into obj1
+     *
+     * Original object is modified.
+     *
+     * @param {object} obj1 The object to which the new properties will be added
+     * @param {object} obj2 The mixin-in object
+     */
+    OBJ.mixin = function(obj1, obj2) {
+        var i;
+        if (!obj1 && !obj2) return;
+        if (!obj1) return obj2;
+        if (!obj2) return obj1;
+        for (i in obj2) {
+            obj1[i] = obj2[i];
+        }
+    };
+
+    /**
+     * ## OBJ.mixout
+     *
+     * Copies only non-overlapping properties from obj2 to obj1
+     *
+     * Original object is modified
+     *
+     * @param {object} obj1 The object to which the new properties will be added
+     * @param {object} obj2 The mixin-in object
+     */
+    OBJ.mixout = function(obj1, obj2) {
+        var i;
+        if (!obj1 && !obj2) return;
+        if (!obj1) return obj2;
+        if (!obj2) return obj1;
+        for (i in obj2) {
+            if (!obj1[i]) obj1[i] = obj2[i];
+        }
+    };
+
+    /**
+     * ## OBJ.mixcommon
+     *
+     * Copies only overlapping properties from obj2 to obj1
+     *
+     * Original object is modified
+     *
+     * @param {object} obj1 The object to which the new properties will be added
+     * @param {object} obj2 The mixin-in object
+     */
+    OBJ.mixcommon = function(obj1, obj2) {
+        var i;
+        if (!obj1 && !obj2) return;
+        if (!obj1) return obj2;
+        if (!obj2) return obj1;
+        for (i in obj2) {
+            if (obj1[i]) obj1[i] = obj2[i];
+        }
+    };
+
+    /**
+     * ## OBJ.mergeOnKey
+     *
+     * Merges the properties of obj2 into a new property named 'key' in obj1.
+     *
+     * Returns a new object, the original ones are not modified.
+     *
+     * This method is useful when we want to merge into a larger
+     * configuration (e.g. with properties min, max, value) object, another one
+     * that contains just a subset of properties (e.g. value).
+     *
+     * @param {object} obj1 The object where the merge will take place
+     * @param {object} obj2 The merging object
+     * @param {string} key The name of property under which the second object
+     *   will be merged
+     * @return {object} clone The merged object
+     *
+     * @see OBJ.merge
+     */
+    OBJ.mergeOnKey = function(obj1, obj2, key) {
+        var clone, i;
+        clone = OBJ.clone(obj1);
+        if (!obj2 || !key) return clone;
+        for (i in obj2) {
+            if (obj2.hasOwnProperty(i)) {
+                if (!clone[i] || 'object' !== typeof clone[i]) {
+                    clone[i] = {};
+                }
+                clone[i][key] = obj2[i];
+            }
+        }
+        return clone;
+    };
+
+    /**
+     * ## OBJ.subobj
+     *
+     * Creates a copy of an object containing only the properties
+     * passed as second parameter
+     *
+     * The parameter select can be an array of strings, or the name
+     * of a property.
+     *
+     * Use '.' (dot) to point to a nested property, however if a property
+     * with a '.' in the name is found, it will be used first.
+     *
+     * @param {object} o The object to dissect
+     * @param {string|array} select The selection of properties to extract
+     * @return {object} out The subobject with the properties from the parent
+     *
+     * @see OBJ.getNestedValue
+     */
+    OBJ.subobj = function(o, select) {
+        var out, i, key
+        if (!o) return false;
+        out = {};
+        if (!select) return out;
+        if (!(select instanceof Array)) select = [select];
+        for (i=0; i < select.length; i++) {
+            key = select[i];
+            if (o.hasOwnProperty(key)) {
+                out[key] = o[key];
+            }
+            else if (OBJ.hasOwnNestedProperty(key, o)) {
+                OBJ.setNestedValue(key, OBJ.getNestedValue(key, o), out);
+            }
+        }
+        return out;
+    };
+
+    /**
+     * ## OBJ.skim
+     *
+     * Creates a copy of an object with some of the properties removed
+     *
+     * The parameter `remove` can be an array of strings, or the name
+     * of a property.
+     *
+     * Use '.' (dot) to point to a nested property, however if a property
+     * with a '.' in the name is found, it will be deleted first.
+     *
+     * @param {object} o The object to dissect
+     * @param {string|array} remove The selection of properties to remove
+     * @return {object} out The subobject with the properties from the parent
+     *
+     * @see OBJ.getNestedValue
+     */
+    OBJ.skim = function(o, remove) {
+        var out, i;
+        if (!o) return false;
+        out = OBJ.clone(o);
+        if (!remove) return out;
+        if (!(remove instanceof Array)) remove = [remove];
+        for (i = 0; i < remove.length; i++) {
+            if (out.hasOwnProperty(i)) {
+                delete out[i];
+            }
+            else {
+                OBJ.deleteNestedKey(remove[i], out);
+            }
+        }
+        return out;
+    };
+
+
+    /**
+     * ## OBJ.setNestedValue
+     *
+     * Sets the value of a nested property of an object and returns it.
+     *
+     * If the object is not passed a new one is created.
+     * If the nested property is not existing, a new one is created.
+     *
+     * Use '.' (dot) to point to a nested property.
+     *
+     * The original object is modified.
+     *
+     * @param {string} str The path to the value
+     * @param {mixed} value The value to set
+     * @return {object|boolean} obj The modified object, or FALSE if error
+     *   occurrs
+     *
+     * @see OBJ.getNestedValue
+     * @see OBJ.deleteNestedKey
+     */
+    OBJ.setNestedValue = function(str, value, obj) {
+        var keys, k;
+        if (!str) {
+            JSUS.log('Cannot set value of undefined property', 'ERR');
+            return false;
+        }
+        obj = ('object' === typeof obj) ? obj : {};
+        keys = str.split('.');
+        if (keys.length === 1) {
+            obj[str] = value;
+            return obj;
+        }
+        k = keys.shift();
+        obj[k] = OBJ.setNestedValue(keys.join('.'), value, obj[k]);
+        return obj;
+    };
+
+    /**
+     * ## OBJ.getNestedValue
+     *
+     * Returns the value of a property of an object, as defined
+     * by a path string.
+     *
+     * Use '.' (dot) to point to a nested property.
+     *
+     * Returns undefined if the nested property does not exist.
+     *
+     * E.g.
+     *
+     * ```javascript
+     * var o = { a:1, b:{a:2} };
+     * OBJ.getNestedValue('b.a', o); // 2
+     * ```
+     *
+     * @param {string} str The path to the value
+     * @param {object} obj The object from which extract the value
+     * @return {mixed} The extracted value
+     *
+     * @see OBJ.setNestedValue
+     * @see OBJ.deleteNestedKey
+     */
+    OBJ.getNestedValue = function(str, obj) {
+        var keys, k;
+        if (!obj) return;
+        keys = str.split('.');
+        if (keys.length === 1) {
+            return obj[str];
+        }
+        k = keys.shift();
+        return OBJ.getNestedValue(keys.join('.'), obj[k]);
+    };
+
+    /**
+     * ## OBJ.deleteNestedKey
+     *
+     * Deletes a property from an object, as defined by a path string
+     *
+     * Use '.' (dot) to point to a nested property.
+     *
+     * The original object is modified.
+     *
+     * E.g.
+     *
+     * ```javascript
+     * var o = { a:1, b:{a:2} };
+     * OBJ.deleteNestedKey('b.a', o); // { a:1, b: {} }
+     * ```
+     *
+     * @param {string} str The path string
+     * @param {object} obj The object from which deleting a property
+     * @param {boolean} TRUE, if the property was existing, and then deleted
+     *
+     * @see OBJ.setNestedValue
+     * @see OBJ.getNestedValue
+     */
+    OBJ.deleteNestedKey = function(str, obj) {
+        var keys, k;
+        if (!obj) return;
+        keys = str.split('.');
+        if (keys.length === 1) {
+            delete obj[str];
+            return true;
+        }
+        k = keys.shift();
+        if ('undefined' === typeof obj[k]) {
+            return false;
+        }
+        return OBJ.deleteNestedKey(keys.join('.'), obj[k]);
+    };
+
+    /**
+     * ## OBJ.hasOwnNestedProperty
+     *
+     * Returns TRUE if a (nested) property exists
+     *
+     * Use '.' to specify a nested property.
+     *
+     * E.g.
+     *
+     * ```javascript
+     * var o = { a:1, b:{a:2} };
+     * OBJ.hasOwnNestedProperty('b.a', o); // TRUE
+     * ```
+     *
+     * @param {string} str The path of the (nested) property
+     * @param {object} obj The object to test
+     * @return {boolean} TRUE, if the (nested) property exists
+     */
+    OBJ.hasOwnNestedProperty = function(str, obj) {
+        var keys, k;
+        if (!obj) return false;
+        keys = str.split('.');
+        if (keys.length === 1) {
+            return obj.hasOwnProperty(str);
+        }
+        k = keys.shift();
+        return OBJ.hasOwnNestedProperty(keys.join('.'), obj[k]);
+    };
+
+
+    /**
+     * ## OBJ.split
+     *
+     * Splits an object along a specified dimension, and returns
+     * all the copies in an array.
+     *
+     * It creates as many new objects as the number of properties
+     * contained in the specified dimension. The object are identical,
+     * but for the given dimension, which was split. E.g.
+     *
+     * ```javascript
+     *  var o = { a: 1,
+     *            b: {c: 2,
+     *                d: 3
+     *            },
+     *            e: 4
+     *  };
+     *
+     *  o = OBJ.split(o, 'b');
+     *
+     *  // o becomes:
+     *
+     *  [{ a: 1,
+     *     b: {c: 2},
+     *     e: 4
+     *  },
+     *  { a: 1,
+     *    b: {d: 3},
+     *    e: 4
+     *  }];
+     * ```
+     *
+     * @param {object} o The object to split
+     * @param {sting} key The name of the property to split
+     * @return {object} A copy of the object with split values
+     */
+    OBJ.split = function(o, key) {
+        var out, model, splitValue;
+        if (!o) return;
+        if (!key || 'object' !== typeof o[key]) {
+            return JSUS.clone(o);
+        }
+
+        out = [];
+        model = JSUS.clone(o);
+        model[key] = {};
+
+        splitValue = function(value) {
+            var i, copy;
+            for (i in value) {
+                copy = JSUS.clone(model);
+                if (value.hasOwnProperty(i)) {
+                    if ('object' === typeof value[i]) {
+                        out = out.concat(splitValue(value[i]));
+                    }
+                    else {
+                        copy[key][i] = value[i];
+                        out.push(copy);
+                    }
+                }
+            }
+            return out;
+        };
+
+        return splitValue(o[key]);
+    };
+
+    /**
+     * ## OBJ.melt
+     *
+     * Creates a new object with the specified combination of
+     * properties - values
+     *
+     * The values are assigned cyclically to the properties, so that
+     * they do not need to have the same length. E.g.
+     *
+     * ```javascript
+     *  J.createObj(['a','b','c'], [1,2]); // { a: 1, b: 2, c: 1 }
+     * ```
+     * @param {array} keys The names of the keys to add to the object
+     * @param {array} values The values to associate to the keys
+     * @return {object} A new object with keys and values melted together
+     */
+    OBJ.melt = function(keys, values) {
+        var o = {}, valen = values.length;
+        for (var i = 0; i < keys.length; i++) {
+            o[keys[i]] = values[i % valen];
+        }
+        return o;
+    };
+
+    /**
+     * ## OBJ.uniqueKey
+     *
+     * Creates a random unique key name for a collection
+     *
+     * User can specify a tentative unique key name, and if already
+     * existing an incremental index will be added as suffix to it.
+     *
+     * Notice: the method does not actually create the key
+     * in the object, but it just returns the name.
+     *
+     * @param {object} obj The collection for which a unique key will be created
+     * @param {string} prefixName Optional. A tentative key name. Defaults,
+     *   a 15-digit random number
+     * @param {number} stop Optional. The number of tries before giving up
+     *   searching for a unique key name. Defaults, 1000000.
+     *
+     * @return {string|undefined} The unique key name, or undefined if it was not found
+     */
+    OBJ.uniqueKey = function(obj, prefixName, stop) {
+        var name;
+        var duplicateCounter = 1;
+        if (!obj) {
+            JSUS.log('Cannot find unique name in undefined object', 'ERR');
+            return;
+        }
+        prefixName = '' + (prefixName ||
+                           Math.floor(Math.random()*1000000000000000));
+        stop = stop || 1000000;
+        name = prefixName;
+        while (obj[name]) {
+            name = prefixName + duplicateCounter;
+            duplicateCounter++;
+            if (duplicateCounter > stop) {
+                return;
+            }
+        }
+        return name;
+    }
+
+    /**
+     * ## OBJ.augment
+     *
+     * Pushes the values of the properties of an object into another one
+     *
+     * User can specifies the subset of keys from both objects
+     * that will subject to augmentation. The values of the other keys
+     * will not be changed
+     *
+     * Notice: the method modifies the first input paramteer
+     *
+     * E.g.
+     *
+     * ```javascript
+     * var a = { a:1, b:2, c:3 };
+     * var b = { a:10, b:2, c:100, d:4 };
+     * OBJ.augment(a, b); // { a: [1, 10], b: [2, 2], c: [3, 100]}
+     *
+     * OBJ.augment(a, b, ['b', 'c', 'd']);
+     * // { a: 1, b: [2, 2], c: [3, 100], d: [4]});
+     *
+     * ```
+     *
+     * @param {object} obj1 The object whose properties will be augmented
+     * @param {object} obj2 The augmenting object
+     * @param {array} key Optional. Array of key names common to both objects
+     *   taken as the set of properties to augment
+     */
+    OBJ.augment = function(obj1, obj2, keys) {
+        var i, k, keys = keys || OBJ.keys(obj1);
+
+        for (i = 0 ; i < keys.length; i++) {
+            k = keys[i];
+            if ('undefined' !== typeof obj1[k] &&
+                Object.prototype.toString.call(obj1[k]) !== '[object Array]') {
+                obj1[k] = [obj1[k]];
+            }
+            if ('undefined' !== obj2[k]) {
+                if (!obj1[k]) obj1[k] = [];
+                obj1[k].push(obj2[k]);
             }
         }
     }
-    
-    return clone;
-};
 
-/**
- * ## OBJ.mixin
- * 
- * Adds all the properties of obj2 into obj1
- * 
- * Original object is modified
- * 
- * @param {object} obj1 The object to which the new properties will be added
- * @param {object} obj2 The mixin-in object
- */
-OBJ.mixin = function (obj1, obj2) {
-	if (!obj1 && !obj2) return;
-	if (!obj1) return obj2;
-	if (!obj2) return obj1;
-	
-	for (var i in obj2) {
-		obj1[i] = obj2[i];
-	}
-};
 
-/**
- * ## OBJ.mixout
- * 
- * Copies only non-overlapping properties from obj2 to obj1
- * 
- * Original object is modified
- * 
- * @param {object} obj1 The object to which the new properties will be added
- * @param {object} obj2 The mixin-in object
- */
-OBJ.mixout = function (obj1, obj2) {
-	if (!obj1 && !obj2) return;
-	if (!obj1) return obj2;
-	if (!obj2) return obj1;
-	
-	for (var i in obj2) {
-		if (!obj1[i]) obj1[i] = obj2[i];
-	}
-};
+    /**
+     * ## OBJ.pairwiseWalk
+     *
+     * Executes a callback on all pairs of  attributes with the same name
+     *
+     * The results of each callback are aggregated in a new object under the
+     * same property name.
+     *
+     * Does not traverse nested objects, and properties of the prototype
+     * are excluded.
+     *
+     * Returns a new object, the original ones are not modified.
+     *
+     * E.g.
+     *
+     * ```javascript
+     * var a = { b:2, c:3, d:5 };
+     * var b = { a:10, b:2, c:100, d:4 };
+     * var sum = function(a,b) {
+     *     if ('undefined' !== typeof a) {
+     *         return 'undefined' !== typeof b ? a + b : a;
+     *     }
+     *     return b;
+     * };
+     * OBJ.pairwiseWalk(a, b, sum); // { a:10, b:4, c:103, d:9 }
+     * ```
+     *
+     * @param {object} o1 The first object
+     * @param {object} o2 The second object
+     * @return {object} clone The object aggregating the results
+     *
+     */
+    OBJ.pairwiseWalk = function(o1, o2, cb) {
+        var i, out;
+        if (!o1 && !o2) return;
+        if (!o1) return o2;
+        if (!o2) return o1;
 
-/**
- * ## OBJ.mixcommon
- * 
- * Copies only overlapping properties from obj2 to obj1
- * 
- * Original object is modified
- * 
- * @param {object} obj1 The object to which the new properties will be added
- * @param {object} obj2 The mixin-in object
- */
-OBJ.mixcommon = function (obj1, obj2) {
-	if (!obj1 && !obj2) return;
-	if (!obj1) return obj2;
-	if (!obj2) return obj1;
-	
-	for (var i in obj2) {
-		if (obj1[i]) obj1[i] = obj2[i];
-	}
-};
-
-/**
- * ## OBJ.mergeOnKey
- * 
- * Appends / merges the values of the properties of obj2 into a 
- * a new property named 'key' in obj1.
- * 
- * Returns a new object, the original ones are not modified.
- * 
- * This method is useful when we want to merge into a larger 
- * configuration (e.g. min, max, value) object another one that 
- * contains just the values for one of the properties (e.g. value). 
- * 
- * @param {object} obj1 The object where the merge will take place
- * @param {object} obj2 The merging object
- * @param {string} key The name of property under which merging the second object
- * @return {object} clone The merged object
- * 	
- * 	@see OBJ.merge
- * 
- */
-OBJ.mergeOnKey = function (obj1, obj2, key) {
-    var clone = OBJ.clone(obj1);
-    if (!obj2 || !key) return clone;        
-    for (var i in obj2) {
-        if (obj2.hasOwnProperty(i)) {
-            if (!clone[i] || 'object' !== typeof clone[i]) {
-            	clone[i] = {};
-            } 
-            clone[i][key] = obj2[i];
+        out = {};
+        for (i in o1) {
+            if (o1.hasOwnProperty(i)) {
+                out[i] = o2.hasOwnProperty(i) ? cb(o1[i], o2[i]) : cb(o1[i]);
+            }
         }
-    }
-    return clone;
-};
-    
-/**
- * ## OBJ.subobj
- * 
- * Creates a copy of an object containing only the properties 
- * passed as second parameter
- * 
- * The parameter select can be an array of strings, or the name 
- * of a property. 
- * 
- * Use '.' (dot) to point to a nested property.
- * 
- * @param {object} o The object to dissect
- * @param {string|array} select The selection of properties to extract
- * @return {object} out The subobject with the properties from the parent one 
- * 
- * 	@see OBJ.getNestedValue
- */
-OBJ.subobj = function (o, select) {
-    if (!o) return false;
-    var out = {};
-    if (!select) return out;
-    if (!(select instanceof Array)) select = [select];
-    for (var i=0; i < select.length; i++) {
-        var key = select[i];
-        if (OBJ.hasOwnNestedProperty(key, o)) {
-        	OBJ.setNestedValue(key, OBJ.getNestedValue(key, o), out);
-        }
-    }
-    return out;
-};
-  
-/**
- * ## OBJ.skim
- * 
- * Creates a copy of an object where a set of selected properties
- * have been removed
- * 
- * The parameter `remove` can be an array of strings, or the name 
- * of a property. 
- * 
- * Use '.' (dot) to point to a nested property.
- * 
- * @param {object} o The object to dissect
- * @param {string|array} remove The selection of properties to remove
- * @return {object} out The subobject with the properties from the parent one 
- * 
- * 	@see OBJ.getNestedValue
- */
-OBJ.skim = function (o, remove) {
-    if (!o) return false;
-    var out = OBJ.clone(o);
-    if (!remove) return out;
-    if (!(remove instanceof Array)) remove = [remove];
-    for (var i=0; i < remove.length; i++) {
-    	OBJ.deleteNestedKey(remove[i], out);
-    }
-    return out;
-};
 
-
-/**
- * ## OBJ.setNestedValue
- * 
- * Sets the value of a nested property of an object,
- * and returns it.
- *
- * If the object is not passed a new one is created.
- * If the nested property is not existing, a new one is created.
- * 
- * Use '.' (dot) to point to a nested property.
- *
- * The original object is modified.
- *
- * @param {string} str The path to the value
- * @param {mixed} value The value to set
- * @return {object|boolean} obj The modified object, or FALSE if error occurred
- * 
- * @see OBJ.getNestedValue
- * @see OBJ.deleteNestedKey
- *  
- */
-OBJ.setNestedValue = function (str, value, obj) {
-	if (!str) {
-		JSUS.log('Cannot set value of undefined property', 'ERR');
-		return false;
-	}
-	obj = ('object' === typeof obj) ? obj : {};
-    var keys = str.split('.');
-    if (keys.length === 1) {
-    	obj[str] = value;
-        return obj;
-    }
-    var k = keys.shift();
-    obj[k] = OBJ.setNestedValue(keys.join('.'), value, obj[k]);
-    return obj;
-};
-
-/**
- * ## OBJ.getNestedValue
- * 
- * Returns the value of a property of an object, as defined
- * by a path string. 
- * 
- * Use '.' (dot) to point to a nested property.
- *  
- * Returns undefined if the nested property does not exist.
- * 
- * E.g.
- * 
- * ```javascript
- * var o = { a:1, b:{a:2} };
- * OBJ.getNestedValue('b.a', o); // 2
- * ```
- * 
- * @param {string} str The path to the value
- * @param {object} obj The object from which extract the value
- * @return {mixed} The extracted value
- * 
- * @see OBJ.setNestedValue
- * @see OBJ.deleteNestedKey
- */
-OBJ.getNestedValue = function (str, obj) {
-    if (!obj) return;
-    var keys = str.split('.');
-    if (keys.length === 1) {
-        return obj[str];
-    }
-    var k = keys.shift();
-    return OBJ.getNestedValue(keys.join('.'), obj[k]); 
-};
-
-/**
- * ## OBJ.deleteNestedKey
- * 
- * Deletes a property from an object, as defined by a path string 
- * 
- * Use '.' (dot) to point to a nested property.
- *  
- * The original object is modified.
- * 
- * E.g.
- * 
- * ```javascript
- * var o = { a:1, b:{a:2} };
- * OBJ.deleteNestedKey('b.a', o); // { a:1, b: {} }
- * ```
- * 
- * @param {string} str The path string
- * @param {object} obj The object from which deleting a property
- * @param {boolean} TRUE, if the property was existing, and then deleted
- * 
- * @see OBJ.setNestedValue
- * @see OBJ.getNestedValue
- */
-OBJ.deleteNestedKey = function (str, obj) {
-    if (!obj) return;
-    var keys = str.split('.');
-    if (keys.length === 1) {
-		delete obj[str];
-        return true;
-    }
-    var k = keys.shift();
-    if ('undefined' === typeof obj[k]) {
-    	return false;
-    }
-    return OBJ.deleteNestedKey(keys.join('.'), obj[k]); 
-};
-
-/**
- * ## OBJ.hasOwnNestedProperty
- * 
- * Returns TRUE if a (nested) property exists
- * 
- * Use '.' to specify a nested property.
- * 
- * E.g.
- * 
- * ```javascript
- * var o = { a:1, b:{a:2} };
- * OBJ.hasOwnNestedProperty('b.a', o); // TRUE
- * ```
- * 
- * @param {string} str The path of the (nested) property
- * @param {object} obj The object to test
- * @return {boolean} TRUE, if the (nested) property exists
- * 
- */
-OBJ.hasOwnNestedProperty = function (str, obj) {
-    if (!obj) return false;
-    var keys = str.split('.');
-    if (keys.length === 1) {
-        return obj.hasOwnProperty(str);
-    }
-    var k = keys.shift();
-    return OBJ.hasOwnNestedProperty(keys.join('.'), obj[k]); 
-};
-
-
-/**
- * ## OBJ.split
- *
- * Splits an object along a specified dimension, and returns 
- * all the copies in an array.
- *  
- * It creates as many new objects as the number of properties 
- * contained in the specified dimension. The object are identical,
- * but for the given dimension, which was split. E.g.
- * 
- * ```javascript
- *  var o = { a: 1,
- *            b: {c: 2,
- *                d: 3
- *            },
- *            e: 4
- *  };
- *  
- *  o = OBJ.split(o, 'b');
- *  
- *  // o becomes:
- *  
- *  [{ a: 1,
- *     b: {c: 2},
- *     e: 4
- *  },
- *  { a: 1,
- *    b: {d: 3},
- *    e: 4
- *  }];
- * ```
- * 
- * @param {object} o The object to split
- * @param {sting} key The name of the property to split
- * @return {object} A copy of the object with split values
- */
-OBJ.split = function (o, key) {        
-    if (!o) return;
-    if (!key || 'object' !== typeof o[key]) {
-        return JSUS.clone(o);
-    }
-    
-    var out = [];
-    var model = JSUS.clone(o);
-    model[key] = {};
-    
-    var splitValue = function (value) {
-        for (var i in value) {
-            var copy = JSUS.clone(model);
-            if (value.hasOwnProperty(i)) {
-                if ('object' === typeof value[i]) {
-                    out = out.concat(splitValue(value[i]));
-                }
-                else {
-                    copy[key][i] = value[i]; 
-                    out.push(copy);
+        for (i in o2) {
+            if (o2.hasOwnProperty(i)) {
+                if ('undefined' === typeof out[i]) {
+                    out[i] = cb(undefined, o2[i]);
                 }
             }
         }
         return out;
     };
-    
-    return splitValue(o[key]);
-};
 
-/**
- * ## OBJ.melt
- * 
- * Creates a new object with the specified combination of
- * properties - values
- * 
- * The values are assigned cyclically to the properties, so that
- * they do not need to have the same length. E.g.
- * 
- * ```javascript
- * 	J.createObj(['a','b','c'], [1,2]); // { a: 1, b: 2, c: 1 }
- * ```
- * @param {array} keys The names of the keys to add to the object
- * @param {array} values The values to associate to the keys  
- * @return {object} A new object with keys and values melted together
- */
-OBJ.melt = function(keys, values) {
-	var o = {}, valen = values.length;
-	for (var i = 0; i < keys.length; i++) {
-		o[keys[i]] = values[i % valen];
-	}
-	return o;
-};
+    JSUS.extend(OBJ);
 
-/**
- * ## OBJ.uniqueKey
- * 
- * Creates a random unique key name for a collection
- * 
- * User can specify a tentative unique key name, and if already
- * existing an incremental index will be added as suffix to it. 
- * 
- * Notice: the method does not actually creates the key
- * in the object, but it just returns the name.
- * 
- * 
- * @param {object} obj The collection for which a unique key name will be created
- * @param {string} name Optional. A tentative key name. Defaults, a 10-digit random number
- * @param {number} stop Optional. The number of tries before giving up searching
- * 	for a unique key name. Defaults, 1000000.
- * 
- * @return {string|undefined} The unique key name, or undefined if it was not found
- */
-OBJ.uniqueKey = function(obj, name, stop) {
-	if (!obj) {
-		JSUS.log('Cannot find unique name in undefined object', 'ERR');
-		return;
-	}
-	name = name || '' + Math.floor(Math.random()*10000000000);
-	stop = stop || 1000000;
-	var duplicateCounter = 1;
-	while (obj[name]) {
-		name = name + '' + duplicateCounter;
-		duplicateCounter++;
-		if (duplicateCounter > stop) {
-			return;
-		}
-	}
-	return name;
-}
-
-/**
- * ## OBJ.augment
- * 
- * Creates an object containing arrays of all the values of 
- * 
- * User can specifies the subset of keys from both objects 
- * that will subject to augmentation. The values of the other keys 
- * will not be changed
- * 
- * Notice: the method modifies the first input paramteer
- * 
- * E.g.
- * 
- * ```javascript
- * var a = { a:1, b:2, c:3 };
- * var b = { a:10, b:2, c:100, d:4 };
- * OBJ.augment(a, b); // { a: [1, 10], b: [2, 2], c: [3, 100]}
- * 
- * OBJ.augment(a, b, ['b', 'c', 'd']); // { a: 1, b: [2, 2], c: [3, 100], d: [4]});
- * 
- * ```
- * 
- * @param {object} obj1 The object whose properties will be augmented
- * @param {object} obj2 The augmenting object
- * @param {array} key Optional. Array of key names common to both objects taken as
- * 	the set of properties to augment
- */
-OBJ.augment = function(obj1, obj2, keys) {  
-	var i, k, keys = keys || OBJ.keys(obj1);
-	
-	for (i = 0 ; i < keys.length; i++) {
-		k = keys[i];
-		if ('undefined' !== typeof obj1[k] && Object.prototype.toString.call(obj1[k]) !== '[object Array]') {
-			obj1[k] = [obj1[k]];
-		}
-		if ('undefined' !== obj2[k]) {
-			if (!obj1[k]) obj1[k] = []; 
-			obj1[k].push(obj2[k]);
-		}
-	}
-}
-
-
-JSUS.extend(OBJ);
-    
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
+
 /**
  * # RANDOM
- *  
- * Copyright(c) 2012 Stefano Balietti
+ * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
- * 
- * Collection of static functions related to the generation of 
- * pseudo-random numbers
- * 
+ *
+ * Collection of static functions related to the generation of
+ * pseudo-random numbers.
+ * ---
  */
+(function(JSUS) {
 
-(function (JSUS) {
-    
-function RANDOM(){};
+    function RANDOM(){};
 
-/**
- * ## RANDOM.random
- * 
- * Generates a pseudo-random floating point number between 
- * (a,b), both a and b exclusive.
- * 
- * @param {number} a The lower limit 
- * @param {number} b The upper limit
- * @return {number} A random floating point number in (a,b)
- */
-RANDOM.random = function (a, b) {
-	a = ('undefined' === typeof a) ? 0 : a;
-	b = ('undefined' === typeof b) ? 0 : b;
-	if (a === b) return a;
-	
-	if (b < a) {
-		var c = a;
-		a = b;
-		b = c;
-	}
-	return (Math.random() * (b - a)) + a
-};
+    /**
+     * ## RANDOM.random
+     *
+     * Generates a pseudo-random floating point number between
+     * (a,b), both a and b exclusive.
+     *
+     * @param {number} a The lower limit
+     * @param {number} b The upper limit
+     * @return {number} A random floating point number in (a,b)
+     */
+    RANDOM.random = function(a, b) {
+        a = ('undefined' === typeof a) ? 0 : a;
+        b = ('undefined' === typeof b) ? 0 : b;
+        if (a === b) return a;
 
-/**
- * ## RANDOM.randomInt
- * 
- * Generates a pseudo-random integer between 
- * (a,b] a exclusive, b inclusive.
- * 
- * @param {number} a The lower limit 
- * @param {number} b The upper limit
- * @return {number} A random integer in (a,b]
- * 
- * @see RANDOM.random
- */
-RANDOM.randomInt = function (a, b) {
-	if (a === b) return a;
-    return Math.floor(RANDOM.random(a, b) + 1);
-};
+        if (b < a) {
+            var c = a;
+            a = b;
+            b = c;
+        }
+        return (Math.random() * (b - a)) + a
+    };
 
+    /**
+     * ## RANDOM.randomInt
+     *
+     * Generates a pseudo-random integer between
+     * (a,b] a exclusive, b inclusive.
+     *
+     * @param {number} a The lower limit
+     * @param {number} b The upper limit
+     * @return {number} A random integer in (a,b]
+     *
+     * @see RANDOM.random
+     */
+    RANDOM.randomInt = function(a, b) {
+        if (a === b) return a;
+        return Math.floor(RANDOM.random(a, b) + 1);
+    };
 
-JSUS.extend(RANDOM);
-    
+    RANDOM.sample = function(a, b) {
+        var out;
+        out = JSUS.seq(a,b)
+        if (!out) return false;
+        return JSUS.shuffle(out);
+    }
+
+    JSUS.extend(RANDOM);
+
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 /**
  * # TIME
- *  
- * Copyright(c) 2012 Stefano Balietti
+ *
+ * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
- * 
- * Collection of static functions related to the generation, 
+ *
+ * Collection of static functions related to the generation,
  * manipulation, and formatting of time strings in javascript
- * 
+ * ---
  */
-
 (function (JSUS) {
-    
+
 function TIME() {};
 
 /**
  * ## TIME.getDate
- * 
- * Returns a string representation of the current date 
+ *
+ * Returns a string representation of the current date
  * and time formatted as follows:
- * 
+ *
  * dd-mm-yyyy hh:mm:ss milliseconds
- * 
+ *
  * @return {string} date Formatted time string hh:mm:ss
  */
 TIME.getDate = TIME.getFullDate = function() {
     var d = new Date();
-    var date = d.getUTCDate() + '-' + (d.getUTCMonth()+1) + '-' + d.getUTCFullYear() + ' ' 
-            + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + ' ' 
-            + d.getMilliseconds();
-    
+    var date = d.getUTCDate() + '-' + (d.getUTCMonth()+1) + '-' +
+        d.getUTCFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() +
+        ':' + d.getSeconds() + ' ' + d.getMilliseconds();
+
     return date;
 };
 
 /**
  * ## TIME.getTime
- * 
+ *
  * Returns a string representation of the current time
  * formatted as follows:
- * 
+ *
  * hh:mm:ss
- * 
+ *
  * @return {string} time Formatted time string hh:mm:ss
  */
 TIME.getTime = function() {
     var d = new Date();
     var time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-    
+
     return time;
 };
 
 /**
  * ## TIME.parseMilliseconds
- * 
- * Parses an integer number representing milliseconds, 
+ *
+ * Parses an integer number representing milliseconds,
  * and returns an array of days, hours, minutes and seconds
- * 
+ *
  * @param {number} ms Integer representing milliseconds
  * @return {array} result Milleconds parsed in days, hours, minutes, and seconds
- * 
  */
 TIME.parseMilliseconds = function (ms) {
-	if ('number' !== typeof ms) return;
-	
+    if ('number' !== typeof ms) return;
+
     var result = [];
     var x = ms / 1000;
     result[4] = x;
@@ -3602,248 +3745,249 @@ TIME.parseMilliseconds = function (ms) {
     var x = x / 24;
     var days = x;
     result[1] = Math.floor(days);
-    
+
     return result;
 };
 
 JSUS.extend(TIME);
-    
+
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 /**
  * # PARSE
- *  
- * Copyright(c) 2012 Stefano Balietti
- * MIT Licensed
- * 
- * Collection of static functions related to parsing strings
- * 
- */
-(function (JSUS) {
-    
-function PARSE(){};
-
-/**
- * ## PARSE.stringify_prefix
- * 
- * Prefix used by PARSE.stringify and PARSE.parse
- * to decode strings with special meaning
- * 
- * @see PARSE.stringify
- * @see PARSE.parse
- */
-PARSE.stringify_prefix = '!?_';
-
-PARSE.marker_func = PARSE.stringify_prefix + 'function';
-PARSE.marker_null = PARSE.stringify_prefix + 'null';
-PARSE.marker_und = PARSE.stringify_prefix + 'undefined';
-PARSE.marker_nan = PARSE.stringify_prefix + 'NaN';
-PARSE.marker_inf = PARSE.stringify_prefix + 'Infinity';
-PARSE.marker_minus_inf = PARSE.stringify_prefix + '-Infinity';
-
-/**
- * ## PARSE.getQueryString
- * 
- * Parses the current querystring and returns it full or a specific variable.
- * Return false if the requested variable is not found.
- * 
- * @param {string} variable Optional. If set, returns only the value associated
- *   with this variable
- *   
- * @return {string|boolean} The querystring, or a part of it, or FALSE
- */
-PARSE.getQueryString = function (variable) {
-    var query = window.location.search.substring(1);
-    if ('undefined' === typeof variable) return query;
-    
-    var vars = query.split("&");
-    for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split("=");
-        if (pair[0] === variable) {
-            return unescape(pair[1]);
-        }
-    }
-    return false;
-};
-
-/**
- * ## PARSE.tokenize
- * 
- * Splits a string in tokens that users can specified as input parameter.
- * Additional options can be specified with the modifiers parameter
- * 
- * - limit: An integer that specifies the number of splits, 
- * 		items after the split limit will not be included in the array
- * 
- * @param {string} str The string to split
- * @param {array} separators Array containing the separators words
- * @param {object} modifiers Optional. Configuration options for the tokenizing
- * 
- * @return {array} Tokens in which the string was split
- * 
- */
-PARSE.tokenize = function (str, separators, modifiers) {
-    if (!str) return;
-    if (!separators || !separators.length) return [str];
-    modifiers = modifiers || {};
-    
-    var pattern = '[';
-    
-    JSUS.each(separators, function(s) {
-	if (s === ' ') s = '\\s';
-	
-	pattern += s;
-    });
-    
-    pattern += ']+';
-    
-    var regex = new RegExp(pattern);
-    return str.split(regex, modifiers.limit);
-};
-
-/**
- * ## PARSE.stringify
- * 
- * Stringifies objects, functions, primitive, undefined or null values
- * 
- * Makes uses `JSON.stringify` with a special reviver function, that 
- * strinfifies also functions, undefined, and null values.
- * 
- * A special prefix is prepended to avoid name collisions.
- * 
- * @param {mixed} o The value to stringify
- * @param {number} spaces Optional the number of indentation spaces. Defaults, 0
- * 
- * @return {string} The stringified result
- * 
- * @see JSON.stringify
- * @see PARSE.stringify_prefix
- */
-PARSE.stringify = function(o, spaces) {
-    return JSON.stringify(o, function(key, value){
-	var type = typeof value;
-	if ('function' === type) {
-	    return PARSE.stringify_prefix + value.toString()
-	}
-	
-	if ('undefined' === type) return PARSE.marker_und;
-	if (value === null) return PARSE.marker_null;
-        if ('number' === type && isNaN(value)) return PARSE.marker_nan;
-	if (value == Number.POSITIVE_INFINITY) return PARSE.marker_inf;
-	if (value == Number.NEGATIVE_INFINITY) return PARSE.marker_minus_inf;
-	
-	return value;
-	
-    }, spaces);
-};
-
-/**
- * ## PARSE.stringifyAll
- * 
- * Copies all the properties of the prototype before stringifying
  *
- * Notice: The original object is modified!
- * 
- * @param {mixed} o The value to stringify
- * @param {number} spaces Optional the number of indentation spaces. Defaults, 0
- * 
- * @return {string} The stringified result
- * 
- * @see PARSE.stringify
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
+ * Collection of static functions related to parsing strings
+ * ---
  */
-PARSE.stringifyAll = function(o, spaces) {
-    for (var i in o) {
-	if (!o.hasOwnProperty(i)) {
-	    if ('object' === typeof o[i]) {
-		o[i] = PARSE.stringifyAll(o[i]);
-	    }
-	    else {
-		o[i] = o[i];
-	    }
-	}
-    }
-    return PARSE.stringify(o);
-};
+(function(JSUS) {
 
-/**
- * ## PARSE.parse
- * 
- * Decodes strings in objects and other values
- * 
- * Uses `JSON.parse` and then looks  for special strings 
- * encoded by `PARSE.stringify`
- * 
- * @param {string} str The string to decode
- * @return {mixed} The decoded value 
- * 
- * @see JSON.parse
- * @see PARSE.stringify_prefix
- */
-PARSE.parse = function(str) {
-	
-    var len_prefix = PARSE.stringify_prefix.length,
+    function PARSE(){};
+
+    /**
+     * ## PARSE.stringify_prefix
+     *
+     * Prefix used by PARSE.stringify and PARSE.parse
+     * to decode strings with special meaning
+     *
+     * @see PARSE.stringify
+     * @see PARSE.parse
+     */
+    PARSE.stringify_prefix = '!?_';
+
+    PARSE.marker_func = PARSE.stringify_prefix + 'function';
+    PARSE.marker_null = PARSE.stringify_prefix + 'null';
+    PARSE.marker_und = PARSE.stringify_prefix + 'undefined';
+    PARSE.marker_nan = PARSE.stringify_prefix + 'NaN';
+    PARSE.marker_inf = PARSE.stringify_prefix + 'Infinity';
+    PARSE.marker_minus_inf = PARSE.stringify_prefix + '-Infinity';
+
+    /**
+     * ## PARSE.getQueryString
+     *
+     * Parses the current querystring and returns it full or a specific variable.
+     * Return false if the requested variable is not found.
+     *
+     * @param {string} variable Optional. If set, returns only the value
+     *    associated with this variable
+     *
+     * @return {string|boolean} The querystring, or a part of it, or FALSE
+     */
+    PARSE.getQueryString = function(variable) {
+        var query = window.location.search.substring(1);
+        if ('undefined' === typeof variable) return query;
+
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] === variable) {
+                return unescape(pair[1]);
+            }
+        }
+        return false;
+    };
+
+    /**
+     * ## PARSE.tokenize
+     *
+     * Splits a string in tokens that users can specified as input parameter.
+     * Additional options can be specified with the modifiers parameter
+     *
+     * - limit: An integer that specifies the number of split items 
+     *     after the split limit will not be included in the array
+     *
+     * @param {string} str The string to split
+     * @param {array} separators Array containing the separators words
+     * @param {object} modifiers Optional. Configuration options 
+     *   for the tokenizing
+     *
+     * @return {array} Tokens in which the string was split
+     */
+    PARSE.tokenize = function(str, separators, modifiers) {
+        if (!str) return;
+        if (!separators || !separators.length) return [str];
+        modifiers = modifiers || {};
+
+        var pattern = '[';
+
+        JSUS.each(separators, function(s) {
+            if (s === ' ') s = '\\s';
+
+            pattern += s;
+        });
+
+        pattern += ']+';
+
+        var regex = new RegExp(pattern);
+        return str.split(regex, modifiers.limit);
+    };
+
+    /**
+     * ## PARSE.stringify
+     *
+     * Stringifies objects, functions, primitive, undefined or null values
+     *
+     * Makes uses `JSON.stringify` with a special reviver function, that
+     * strinfifies also functions, undefined, and null values.
+     *
+     * A special prefix is prepended to avoid name collisions.
+     *
+     * @param {mixed} o The value to stringify
+     * @param {number} spaces Optional the number of indentation spaces.
+     *   Defaults, 0
+     *
+     * @return {string} The stringified result
+     *
+     * @see JSON.stringify
+     * @see PARSE.stringify_prefix
+     */
+    PARSE.stringify = function(o, spaces) {
+        return JSON.stringify(o, function(key, value){
+            var type = typeof value;
+            if ('function' === type) {
+                return PARSE.stringify_prefix + value.toString()
+            }
+
+            if ('undefined' === type) return PARSE.marker_und;
+            if (value === null) return PARSE.marker_null;
+            if ('number' === type && isNaN(value)) return PARSE.marker_nan;
+            if (value == Number.POSITIVE_INFINITY) return PARSE.marker_inf;
+            if (value == Number.NEGATIVE_INFINITY) return PARSE.marker_minus_inf;
+
+            return value;
+
+        }, spaces);
+    };
+
+    /**
+     * ## PARSE.stringifyAll
+     *
+     * Copies all the properties of the prototype before stringifying
+     *
+     * Notice: The original object is modified!
+     *
+     * @param {mixed} o The value to stringify
+     * @param {number} spaces Optional the number of indentation spaces.
+     *   Defaults, 0
+     *
+     * @return {string} The stringified result
+     *
+     * @see PARSE.stringify
+     */
+    PARSE.stringifyAll = function(o, spaces) {
+        for (var i in o) {
+            if (!o.hasOwnProperty(i)) {
+                if ('object' === typeof o[i]) {
+                    o[i] = PARSE.stringifyAll(o[i]);
+                }
+                else {
+                    o[i] = o[i];
+                }
+            }
+        }
+        return PARSE.stringify(o);
+    };
+
+    /**
+     * ## PARSE.parse
+     *
+     * Decodes strings in objects and other values
+     *
+     * Uses `JSON.parse` and then looks  for special strings
+     * encoded by `PARSE.stringify`
+     *
+     * @param {string} str The string to decode
+     * @return {mixed} The decoded value
+     *
+     * @see JSON.parse
+     * @see PARSE.stringify_prefix
+     */
+    PARSE.parse = function(str) {
+
+        var len_prefix = PARSE.stringify_prefix.length,
         len_func = PARSE.marker_func.length,
         len_null = PARSE.marker_null.length,
         len_und = PARSE.marker_und.length,
         len_nan = PARSE.marker_nan.length,
         len_inf = PARSE.marker_inf.length,
         len_inf = PARSE.marker_minus_inf.length;
-       
-	
-    var o = JSON.parse(str);
-    return walker(o);
-	
-    function walker(o) {
-	if ('object' !== typeof o) return reviver(o);
-		
-	for (var i in o) {
-	    if (o.hasOwnProperty(i)) {
-		if ('object' === typeof o[i]) {
-		    walker(o[i]);
-		}
-		else {
-		    o[i] = reviver(o[i]);
-		}
-	    }
-	}
-	
-	return o;
+
+
+        var o = JSON.parse(str);
+        return walker(o);
+
+        function walker(o) {
+            if ('object' !== typeof o) return reviver(o);
+
+            for (var i in o) {
+                if (o.hasOwnProperty(i)) {
+                    if ('object' === typeof o[i]) {
+                        walker(o[i]);
+                    }
+                    else {
+                        o[i] = reviver(o[i]);
+                    }
+                }
+            }
+
+            return o;
+        }
+
+        function reviver(value) {
+            var type = typeof value;
+
+            if (type === 'string') {
+                if (value.substring(0, len_prefix) !== PARSE.stringify_prefix) {
+                    return value;
+                }
+                else if (value.substring(0, len_func) === PARSE.marker_func) {
+                    return eval('('+value.substring(len_prefix)+')');
+                }
+                else if (value.substring(0, len_null) === PARSE.marker_null) {
+                    return null;
+                }
+                else if (value.substring(0, len_und) === PARSE.marker_und) {
+                    return undefined;
+                }
+
+                else if (value.substring(0, len_nan) === PARSE.marker_nan) {
+                    return NaN;
+                }
+                else if (value.substring(0, len_inf) === PARSE.marker_inf) {
+                    return Infinity;
+                }
+                else if (value.substring(0, len_inf) === PARSE.marker_minus_inf) {
+                    return -Infinity;
+                }
+
+            }
+            return value;
+        };
     }
-	
-    function reviver(value) {
-	var type = typeof value;
-	
-	if (type === 'string') {
-	    if (value.substring(0, len_prefix) !== PARSE.stringify_prefix) {
-		return value;
-	    }
-	    else if (value.substring(0, len_func) === PARSE.marker_func) {
-		return eval('('+value.substring(len_prefix)+')');
-	    }
-	    else if (value.substring(0, len_null) === PARSE.marker_null) {
-		return null;
-	    }
-	    else if (value.substring(0, len_und) === PARSE.marker_und) {
-		return undefined;
-	    }
 
-	    else if (value.substring(0, len_nan) === PARSE.marker_nan) {
-		return NaN;
-	    }
-	    else if (value.substring(0, len_inf) === PARSE.marker_inf) {
-		return Infinity;
-	    }
-	    else if (value.substring(0, len_inf) === PARSE.marker_minus_inf) {
-		return -Infinity;
-	    }
+    JSUS.extend(PARSE);
 
-	}		
-	return value;
-    };
-}
-
-
-JSUS.extend(PARSE);
-    
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 /**
  * # NDDB: N-Dimensional Database
@@ -13131,6 +13275,7 @@ JSUS.extend(PARSE);
             });
         }
 
+        node.timer.setTimestamp('paused');
         this.node.emit('PAUSED');
         
         // broadcast?
@@ -13168,6 +13313,7 @@ JSUS.extend(PARSE);
 
         // Reset the Socket's message handler to the default:
         node.socket.setMsgListener();
+        node.timer.setTimestamp('resumed');
         node.emit('RESUMED');
 
         // broadcast?
@@ -13881,18 +14027,31 @@ JSUS.extend(PARSE);
     GameMsgGenerator = node.GameMsgGenerator,
     J = node.JSUS;
 
-    //Exposing constructor
+    // Exposing constructor.
     exports.GameSession = GameSession;
     exports.GameSession.SessionManager = SessionManager;
 
     GameSession.prototype = new SessionManager();
     GameSession.prototype.constructor = GameSession;
 
+    /**
+     * ## GameSession constructor
+     *
+     * Creates a new instance of GameSession
+     *
+     * @param {NodeGameClient} node A reference to the node object. 
+     */
     function GameSession(node) {
         SessionManager.call(this);
 
+        /**
+         * ## GameSession.node
+         *
+         * The reference to the node object.
+         */
         this.node = node;
 
+        // Register default variables in the session.
         this.register('player', {
             set: function(p) {
                 node.createPlayer(p);
@@ -13918,10 +14077,10 @@ JSUS.extend(PARSE);
                 node.events.history.history.importDB(value);
             },
             get: function() {
-                return (node.events.history) ? node.events.history.history.fetch() : null;
+                return node.events.history ? 
+                    node.events.history.history.fetch() : null;
             }
         });
-
 
         this.register('game.currentStepObj', {
             set: GameSession.restoreStage,
@@ -13931,7 +14090,6 @@ JSUS.extend(PARSE);
         });
 
         this.register('node.env');
-
     }
 
 
@@ -13968,51 +14126,80 @@ JSUS.extend(PARSE);
 
     };
 
-
-    /// Session Manager
-
+    /**
+     * ## Session Manager constructor
+     *
+     * Creates a new session manager.
+     */ 
     function SessionManager() {
+        
+        /**
+         * ## SessionManager.session
+         *
+         * Container of all variables registered in the session.
+         */
         this.session = {};
     }
 
+    /**
+     * ## SessionManager.getVariable (static)
+     *
+     * Default session getter.
+     *
+     * @param {string} p The path to a variable included in _node_
+     * @return {mixed} The requested variable
+     */
     SessionManager.getVariable = function(p) {
-        J.getNestedValue(p, node);
+        return J.getNestedValue(p, node);
     };
 
+    /**
+     * ## SessionManager.setVariable (static)
+     *
+     * Default session setter.
+     *
+     * @param {string} p The path to the variable to set in _node_
+     * @param {mixed} value The value to set
+     * @return {mixed} The requested variable
+     */
     SessionManager.setVariable = function(p, value) {
         J.setNestedValue(p, value, node);
     };
 
     SessionManager.prototype.register = function(path, options) {
-        if (!path) {
-            node.err('cannot add an empty path to session');
-            return false;
+        if ('string' !== typeof path) {
+            throw new TypeError('SessionManager.register: path must be ' +
+                                'string.');
+        }
+        if (options && 'object' !== typeof options) {
+            throw new TypeError('SessionManager.register: options must be ' +
+                                'object or undefined.');
         }
 
         this.session[path] = {
 
-            get: (options && options.get) ? options.get
-                : function() {
+            get: (options && options.get) ? 
+                options.get : function() {
                     return J.getNestedValue(path, node);
                 },
 
-            set: (options && options.set) ? options.set
-                : function(value) {
+            set: (options && options.set) ? 
+                options.set : function(value) {
                     J.setNestedValue(path, value, node);
                 }
-
         };
 
-        return true;
+        return this.session[path];
     };
 
     SessionManager.prototype.unregister = function(path) {
-        if (!path) {
-            node.err('cannot delete an empty path from session');
-            return false;
+        if ('string' !== typeof path) {
+            throw new TypeError('SessionManager.unregister: path must be ' +
+                                'string.');
         }
         if (!this.session[path]) {
-            node.err(path + ' is not registered in the session');
+            node.warn('SessionManager.unregister: path is not registered ' +
+                      'in the session: ' + path + '.');
             return false;
         }
 
@@ -14022,18 +14209,22 @@ JSUS.extend(PARSE);
 
     SessionManager.prototype.get = function(path) {
         var session = {};
-
-        if (path) {
-            return (this.session[path]) ? this.session[path].get() : undefined;
+        // Returns one variable.
+        if ('string' === typeof path) {
+            return this.session[path] ? this.session[path].get() : undefined;
         }
-        else {
+        // Returns all registered variables.
+        else if ('undefined' === typeof path) {
             for (path in this.session) {
                 if (this.session.hasOwnProperty(path)) {
                     session[path] = this.session[path].get();
                 }
             }
-
             return session;
+        }
+        else {
+            throw new TypeError('SessionManager.get: path must be string or ' +
+                                'undefined.');
         }
     };
 
@@ -14997,8 +15188,24 @@ JSUS.extend(PARSE);
      *
      * The event handlers listening on PAUSED/RESUMED that are attached to
      * the given GameTimer object are removed.
+     *
+     * @param {object|string} gameTimer The gameTimer object or the name of
+     *   the gameTimer created with Timer.createTimer
      */
     Timer.prototype.destroyTimer = function(gameTimer) {
+        if ('string' === typeof gameTimer) {
+            if (!this.timers[gameTimer]) {
+                throw new Error('node.timer.destroyTimer: gameTimer not ' +
+                                'found: ' + gameTimer + '.');
+            }
+            gameTimer = this.timers[gameTimer];
+            
+        }
+        if ('object' !== typeof gameTimer) {
+            throw new Error('node.timer.destroyTimer: gameTimer must be ' +
+                            'string or object.');
+        }
+        
         // Stop timer:
         if (!gameTimer.isStopped()) {
             gameTimer.stop();
@@ -15147,6 +15354,8 @@ JSUS.extend(PARSE);
      *
      * @return {number|null} The time since the timestamp in ms,
      *   NULL if it doesn't exist
+     *
+     * @see Timer.getTimeDiff
      */
     Timer.prototype.getTimeSince = function(name) {
         var currentTime;
@@ -15156,7 +15365,7 @@ JSUS.extend(PARSE);
 
         // Check input:
         if ('string' !== typeof name) {
-            throw new Error('Timer.getTimeSince: name must be a string');
+            throw new TypeError('Timer.getTimeSince: name must be string.');
         }
 
         if (this.timestamps.hasOwnProperty(name)) {
@@ -15165,6 +15374,62 @@ JSUS.extend(PARSE);
         else {
             return null;
         }
+    };
+
+    /**
+     * ### Timer.getTimeDiff
+     *
+     * Returns the time difference between two registered timestamps
+     *
+     * @param {string} nameFrom The name of the first timestamp
+     * @param {string} nameTo The name of the second timestamp
+     *
+     * @return {number} The time difference between the timestamps
+     */
+    Timer.prototype.getTimeDiff = function(nameFrom, nameTo) {
+        var timeFrom, timeTo;
+
+        // Check input:
+        if ('string' !== typeof nameFrom) {
+            throw new TypeError('Timer.getTimeDiff: nameFrom must be string.');
+        }
+        if ('string' !== typeof nameTo) {
+            throw new TypeError('Timer.getTimeDiff: nameTo must be string.');
+        }
+
+        timeFrom = this.timestamps[nameFrom];
+        
+        if ('undefined' === typeof timeFrom || timeFrom === null) {            
+            throw new Error('Timer.getTimeDiff: nameFrom does not resolve to ' +
+                            'a valid timestamp.');
+        }
+
+        timeTo = this.timestamps[nameTo];
+        
+        if ('undefined' === typeof timeTo || timeTo === null) {            
+            throw new Error('Timer.getTimeDiff: nameTo does not resolve to ' +
+                            'a valid timestamp.');
+        }
+        
+        return timeTo - timeFrom;
+    };
+
+
+    /**
+     * ### Timer.getTimer
+     *
+     * Returns a reference to a previosly registered game timer.
+     *
+     * @param {string} name The name of the timer
+     *
+     * @return {GameTimer|null} The game timer with the given name, or
+     *   null if none is found
+     */
+    Timer.prototype.getTimer = function(name) {
+        if ('string' !== typeof name) {
+            throw new TypeError('Timer.getTimer: name must be string.');
+        }
+        return this.timers[name] || null;
     };
 
     /**
@@ -16076,6 +16341,47 @@ JSUS.extend(PARSE);
         this.registerSetup('player', function(player) {
             if (!player) return null;
             return this.createPlayer(player);
+        });
+
+        /**
+         * ### node.setup.timer
+         *
+         * Setup a timer object
+         *
+         * @see node.timer
+         * @see node.GameTimer
+         */
+        this.registerSetup('timer', function(name, data) {
+            var timer;
+            if (!name) return null;
+            timer = this.timer.timers[name];
+            if (!timer) return null;
+            if (timer.options) {
+                timer.init(data.options);
+            }
+            
+            switch (timer.action) {
+            case 'start':
+                timer.start();
+                break;
+            case 'stop': 
+                timer.stop();
+                break;
+            case 'restart':
+                timer.restart();
+                break;
+            case 'pause':
+                timer.pause();
+                break;
+            case 'resume':
+                timer.resume();
+            }
+            
+            // Last configured timer options.
+            return {
+                name: name,
+                data: data
+            };
         });
 
         /**
@@ -17678,7 +17984,6 @@ JSUS.extend(PARSE);
         return true;
     };
 
-
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
@@ -18218,8 +18523,7 @@ JSUS.extend(PARSE);
  *
  * Defines a number of profiles associated with special page layout.
  *
- * Depends on nodegame-client.
- * GameWindow.Table and GameWindow.List depend on NDDB and JSUS.
+ * Depends on JSUS and nodegame-client.
  * ---
  */
 (function(window, node) {
@@ -18228,19 +18532,21 @@ JSUS.extend(PARSE);
 
     var J = node.JSUS;
 
-    var constants = node.constants;
-    var windowLevels = constants.windowLevels;
-
-    var Player = node.Player,
-        PlayerList = node.PlayerList,
-        GameMsg = node.GameMsg,
-        GameMsgGenerator = node.GameMsgGenerator;
+    if (!J) {
+        throw new Error('GameWindow: JSUS object not found. Aborting');
+    }
 
     var DOM = J.get('DOM');
 
     if (!DOM) {
-        throw new Error('JSUS DOM object not found. Aborting');
+        throw new Error('GameWindow: JSUS DOM object not found. Aborting.');
     }
+
+    var constants = node.constants;
+    var windowLevels = constants.windowLevels;
+
+    // Allows just one update at the time to the counter of loading frames.
+    var lockedUpdate = false;
 
     GameWindow.prototype = DOM;
     GameWindow.prototype.constructor = GameWindow;
@@ -18268,35 +18574,73 @@ JSUS.extend(PARSE);
         this.setStateLevel('UNINITIALIZED');
 
         if ('undefined' === typeof window) {
-            throw new Error('nodeWindow: no DOM found. Are you in a browser?');
+            throw new Error('GameWindow: no window found. Are you in a ' +
+                            'browser?');
         }
 
         if ('undefined' === typeof node) {
-            throw new Error('nodeWindow: nodeGame not found');
+            throw new Error('GameWindow: nodeGame not found');
         }
 
-        node.log('nodeWindow: loading...');
+        node.log('node-window: loading...');
 
         // ## GameWindow properties
 
         /**
-         * ### GameWindow.mainframe
+         * ### GameWindow.frameName
          *
          * The name (and also id) of the iframe where the pages are loaded
          */
-        this.mainframe = null;
+        this.frameName = null;
 
         /**
-         * ### GameWindow.frame
+         * ### GameWindow.frameElement
          *
-         * A reference to the iframe document
+         * A reference to the iframe object of type _HTMLIFrameElement_
+         *
+         * You can this element also by:
+         *
+         * - document.getElementById(this.frameName)
+         *
+         * This is the element that contains the _Window_ object of the iframe.
+         *
+         * @see this.frameName
+         * @see this.frameWindow
+         * @see this.frameDocument
          */
-        this.frame = null;
+        this.frameElement = null;
+
+        /**
+         * ### GameWindow.frameWindow
+         *
+         * A reference to the iframe Window object
+         *
+         * You can get this element also by:
+         *
+         * - window.frames[this.frameName]
+         */
+        this.frameWindow = null;
+
+        /**
+         * ### GameWindow.frameDocument
+         *
+         * A reference to the iframe Document object
+         *
+         * You can get this element also by:
+         *
+         * - JSUS.getIFrameDocument(this.frameElement)
+         *
+         * @see this.frameElement
+         * @see this.frameWindow
+         */
+        this.frameDocument = null;
 
         /**
          * ### GameWindow.root
          *
-         * A reference to the top element in the iframe, usually the `body` tag
+         * A reference to the HTML element to which the iframe is appended
+         *
+         * By default, this element is a reference to document.body.
          */
         this.root = null;
 
@@ -18320,6 +18664,7 @@ JSUS.extend(PARSE);
          * Cache for loaded iframes
          *
          * Maps URI to a cache object with the following properties:
+         *
          * - `contents` (the innerHTML property or null if not cached)
          * - optionally 'cacheOnClose' (a bool telling whether to cache
          *   the frame when it is replaced by a new one)
@@ -18332,9 +18677,10 @@ JSUS.extend(PARSE);
          * Currently loaded URIs in the internal frames
          *
          * Maps frame names (e.g. 'mainframe') to the URIs they are showing.
+         *
+         * @see GameWindow.preCache
          */
         this.currentURIs = {};
-
 
         /**
          * ### GameWindow.globalLibs
@@ -18368,7 +18714,7 @@ JSUS.extend(PARSE);
         /**
          * ### GameWindow.waitScreen
          *
-         * Reference to the _WaitScreen_ widget, if one is appended in the page 
+         * Reference to the _WaitScreen_ widget, if one is appended in the page
          *
          * @see node.widgets.WaitScreen
          */
@@ -18396,7 +18742,7 @@ JSUS.extend(PARSE);
         options = options || {};
         this.conf = J.merge(GameWindow.defaults, options);
 
-        this.mainframe = options.mainframe || 'mainframe';
+        this.frameName = options.frameName || 'mainframe';
 
         if (this.conf.promptOnleave) {
             this.promptOnleave();
@@ -18449,65 +18795,182 @@ JSUS.extend(PARSE);
     };
 
     /**
-     * ### GameWindow.getElementById
+     * ### GameWindow.isReady
      *
-     * Returns the element with the given id
+     * Returns whether the GameWindow is ready
      *
-     * Looks first into the iframe and then into the rest of the page.
+     * Returns TRUE if the state is either INITIALIZED or LOADED or LOCKED.
      *
-     * @param {string} id The id of the element
-     * @return {Element|null} The element in the page, or null if none is found
-     *
-     * @see GameWindow.getElementsByTagName
+     * @return {boolean} Whether the window is ready
      */
-    GameWindow.prototype.getElementById = function(id) {
-        var el;
-
-        el = null;
-        if (this.frame && this.frame.getElementById) {
-            el = this.frame.getElementById(id);
-        }
-        if (!el) {
-            el = document.getElementById(id);
-        }
-        return el;
+    GameWindow.prototype.isReady = function() {
+        return this.state === windowLevels.INITIALIZED ||
+            this.state === windowLevels.LOADED ||
+            this.state === windowLevels.LOCKED;
     };
 
     /**
-     * ### GameWindow.getElementsByTagName
+     * ### GameWindow.getFrame
      *
-     * Returns a list of elements with the given tag name
+     * Returns a reference to the HTML element of the frame of the game
      *
-     * Looks first into the iframe and then into the rest of the page.
+     * If no reference is found, tries to retrieve and update it using the
+     * _frameName_ variable.
      *
-     * @param {string} tag The tag of the elements
-     * @return {array|null} The elements in the page, or null if none is found
+     * @return {HTMLIFrameElement} The iframe element of the game
      *
-     * @see GameWindow.getElementById
+     * @see GameWindow.frameName
      */
-    GameWindow.prototype.getElementsByTagName = function(tag) {
-        return this.frame ?
-            this.frame.getElementsByTagName(tag) :
-            document.getElementsByTagName(tag);
+    GameWindow.prototype.getFrame = function() {
+        if (!this.frameElement) {
+            this.frameElement = document.getElementById(this.frameName);
+        }
+        return this.frameElement;
     };
 
     /**
-     * ### GameWindow.setup
+     * ### GameWindow.getFrameWindow
+     *
+     * Returns a reference to the window object of the frame of the game
+     *
+     * @return {Window} The window object of the iframe of the game
+     */
+    GameWindow.prototype.getFrameWindow = function() {
+        return this.frameWindow ? this.frameWindow :
+            document.getElementById(this.frameName);
+    };
+
+    /**
+     * ### GameWindow.getFrameDocument
+     *
+     * Returns a reference to the document object of the iframe
+     *
+     * @return {Document} The document object of the iframe of the game
+     */
+    GameWindow.prototype.getFrameDocument = function() {
+        return this.frameDocument ? this.frameDocument :
+            this.getIFrameDocument(this.getFrame());
+    };
+
+    /**
+     * ### GameWindow.getFrameRoot
+     *
+     * Returns a reference to the root element for the iframe
+     *
+     * If none is found returns a reference to _document.body_.
+     *
+     * @return {Element} The root element in the iframe
+     */
+    GameWindow.prototype.getFrameRoot = function() {
+        return this.root || document.body;
+    };
+
+    /**
+     * ### GameWindow.generateFrame
+     *
+     * Appends a new iframe to _documents.body_ and sets it as the default one
+     *
+     * @param {Element} root Optional. The HTML element to which the iframe
+     *   will be appended. Defaults, this.root or document.body.
+     * @param {string} frameName Optional. The name of the iframe. Defaults,
+     *   this.frameName.
+     * @return {IFrameElement} The newly created iframe
+     *
+     * @see GameWindow.frameElement
+     * @see GameWindow.frameWindow
+     * @see GameWindow.frameDocument
+     * @see GameWindow.clearFrame
+     * @see GameWindow.destroyFrame
+     */
+    GameWindow.prototype.generateFrame = function(root, frameName) {
+        var iframe;
+        if (this.frameElement) {
+            throw new Error('GameWindow.generateFrame: a frame element is ' +
+                            'already existing. It cannot be duplicated.');
+        }
+
+        root = root || this.root || document.body;
+
+        if (!J.isElement(root)) {
+            throw new Error('GameWindow.generateFrame: invalid root element.');
+        }
+
+        frameName = frameName || this.frameName;
+
+        if ('string' !== typeof frameName) {
+            throw new Error('GameWindow.generateFrame: frameName must be ' +
+                            'string.');
+        }
+
+        iframe = W.addIFrame(root, frameName);
+        iframe.src = 'about:blank';
+        
+        this.root = root;
+        this.frameName = frameName;
+        this.frameElement = iframe;
+        this.frameWindow = window.frames[frameName];
+        this.frameDocument = W.getIFrameDocument(iframe);
+
+        return iframe;
+    };
+
+    /**
+     * ### GameWindow.destroyFrame
+     *
+     * Clears the content of the frame and removes the element from the page
+     *
+     * @see GameWindow.clearFrame
+     */
+    GameWindow.prototype.destroyFrame = function() {
+        this.clearFrame();
+        this.frameRoot.removeChild(this.frameElement);
+    };
+
+    /**
+     * ### GameWindow.clearFrame
+     *
+     * Clears the content of the frame
+     */
+    GameWindow.prototype.clearFrame = function() {
+        var iframe, frameName;
+        iframe = this.getFrame();
+        if (!iframe) {
+            throw new Error('GameWindow.clearFrame: cannot detect frame.');
+        }
+        frameName = iframe.name || iframe.id;
+        iframe.onload = null;
+        iframe.src = 'about:blank';
+        this.frameElement = iframe;
+        this.frameWindow = window.frames[frameName];
+        this.frameDocument = W.getIFrameDocument(iframe);
+    };
+
+    /**
+     * ### GameWindow.setupFrame
      *
      * Sets up the page with a predefined configuration of widgets
      *
-     * @param {string} type The type of page to setup ('MONITOR'|'PLAYER')
+     * Available setup profiles are:
+     *
+     * - MONITOR: frame
+     * - PLAYER: header + frame
+     * - SOLO_PLAYER: (like player without header)
+     *
+     * @param {string} type The type of setup
      */
-    GameWindow.prototype.setup = function(type) {
-        var initPage;
+    GameWindow.prototype.setupFrame = function(profile) {
 
-        if (!this.root) {
-            this.root = document.body;
+        if ('string' !== typeof profile) {
+            throw new TypeError('GameWindow.setup: profile must be string.');
         }
 
-        switch (type) {
+        switch (profile) {
 
         case 'MONITOR':
+
+            if (!this.getFrame()) {
+                this.generateFrame();
+            }
 
             node.widgets.append('NextPreviousState');
             node.widgets.append('GameSummary');
@@ -18544,18 +19007,11 @@ JSUS.extend(PARSE);
         case 'SOLO_PLAYER':
 
             if (!this.getFrame()) {
-                this.addIFrame(this.getFrameRoot(), this.mainframe);
-                // At this point, there is no document in the iframe yet.
-                this.frame = window.frames[this.mainframe];
-                initPage = this.getBlankPage();
-                if (this.conf.noEscape) {
-                    // TODO: inject the no escape code here
-                }
-                window.frames[this.mainframe].src = initPage;
+                this.generateFrame();
             }
 
             // Adding the WaitScreen.
-            node.game.waitScreen = node.widgets.append('WaitScreen');
+            node.widgets.append('WaitScreen');
 
             // Add default CSS.
             if (node.conf.host) {
@@ -18564,125 +19020,19 @@ JSUS.extend(PARSE);
             }
 
             break;
-        }
 
+        default:
+            throw new Error('GameWindow.setupFrame: unknown profile type: ' +
+                            profile + '.');
+        }
     };
-
-    /**
-     * ### removeLibraries
-     *
-     * Removes injected scripts from iframe
-     *
-     * Takes out all the script tags with the className "injectedlib"
-     * that were inserted by injectLibraries.
-     *
-     * @param {NodeGameClient} frameNode The node object of the iframe
-     *
-     * @see injectLibraries
-     *
-     * @api private
-     */
-    function removeLibraries(frameNode) {
-        var idx;
-        var contentDocument;
-        var scriptNodes, scriptNode;
-
-        contentDocument = frameNode.contentDocument ?
-            frameNode.contentDocument : frameNode.contentWindow.document;
-
-        scriptNodes = contentDocument.getElementsByClassName('injectedlib');
-        for (idx = 0; idx < scriptNodes.length; idx++) {
-            scriptNode = scriptNodes[idx];
-            scriptNode.parentNode.removeChild(scriptNode);
-        }
-    }
-
-
-    /**
-     * ### reloadScripts
-     *
-     * Reloads all script nodes in iframe
-     *
-     * Deletes and reinserts all the script tags, effectively reloading the
-     * scripts. The placement of the tags can change, but the order is kept.
-     *
-     * @param {NodeGameClient} frameNode The node object of the iframe
-     *
-     * @api private
-     */
-    function reloadScripts(frameNode) {
-        var contentDocument;
-        var headNode;
-        var tag, scriptNodes, scriptNodeIdx, scriptNode;
-        var attrIdx, attr;
-
-        contentDocument = frameNode.contentDocument ?
-            frameNode.contentDocument : frameNode.contentWindow.document;
-
-        headNode = contentDocument.getElementsByTagName('head')[0];
-
-        scriptNodes = contentDocument.getElementsByTagName('script');
-        for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length;
-                scriptNodeIdx++) {
-
-            // Remove tag:
-            tag = scriptNodes[scriptNodeIdx];
-            tag.parentNode.removeChild(tag);
-
-            // Reinsert tag for reloading:
-            scriptNode = document.createElement('script');
-            if (tag.innerHTML) scriptNode.innerHTML = tag.innerHTML;
-            for (attrIdx = 0; attrIdx < tag.attributes.length; attrIdx++) {
-                attr = tag.attributes[attrIdx];
-                scriptNode.setAttribute(attr.name, attr.value);
-            }
-            headNode.appendChild(scriptNode);
-        }
-    }
-
-
-    /**
-     * ### injectLibraries
-     *
-     * Injects scripts into the iframe
-     *
-     * First removes all old injected script tags.
-     * Then injects `<script class="injectedlib" src="...">` lines into given
-     * iframe object, one for every given library.
-     *
-     * @param {NodeGameClient} frameNode The node object of the iframe
-     * @param {array} libs An array of strings giving the "src" attribute for
-     *   the `<script>` lines to insert
-     *
-     * @api private
-     */
-    function injectLibraries(frameNode, libs) {
-        var contentDocument;
-        var headNode;
-        var scriptNode;
-        var libIdx, lib;
-
-        contentDocument = frameNode.contentDocument ?
-            frameNode.contentDocument : frameNode.contentWindow.document;
-
-        headNode = contentDocument.getElementsByTagName('head')[0];
-
-        for (libIdx = 0; libIdx < libs.length; libIdx++) {
-            lib = libs[libIdx];
-            scriptNode = document.createElement('script');
-            scriptNode.className = 'injectedlib';
-            scriptNode.src = lib;
-            headNode.appendChild(scriptNode);
-        }
-    }
-
 
     /**
      * ### GameWindow.initLibs
      *
      * Specifies the libraries to be loaded automatically in the iframes
      *
-     * This method must be called before any calls to GameWindow.loadFrame.
+     * This method must be called before any call to GameWindow.loadFrame.
      *
      * @param {array} globalLibs Array of strings describing absolute library
      *   paths that should be loaded in every iframe
@@ -18715,8 +19065,17 @@ JSUS.extend(PARSE);
             uris = [ uris ];
         }
 
-        // Don't preload if no URIs are given:
-        if (!uris || !uris.length) {
+        if (!J.isArray(uris)) {
+            throw new TypeError('GameWindow.preCache: uris must be string ' +
+                                'or array.');
+        }
+        if (callback && 'function' !== typeof callback) {
+            throw new TypeError('GameWindow.preCache: callback must be ' +
+                                'function or undefined.');
+        }
+            
+        // Don't preload if an empty array is passed.
+        if (!uris.length) {
             if (callback) callback();
             return;
         }
@@ -18742,10 +19101,7 @@ JSUS.extend(PARSE);
                 return function() {
                     var frameDocumentElement;
 
-                    frameDocumentElement =
-                        (thisIframe.contentDocument ?
-                         thisIframe.contentDocument :
-                         thisIframe.contentWindow.document)
+                    frameDocumentElement = W.getIFrameDocument(thisIframe)
                         .documentElement;
 
                     // Store the contents in the cache:
@@ -18779,310 +19135,7 @@ JSUS.extend(PARSE);
     GameWindow.prototype.clearCache = function() {
         this.cache = {};
     };
-
-
-    /**
-     * ### handleFrameLoad
-     *
-     * Handles iframe contents loading
-     *
-     * A helper method of GameWindow.loadFrame.
-     * Puts cached contents into the iframe or caches new contents if requested.
-     * Handles reloading of script tags and injected libraries.
-     * Must be called with the current GameWindow instance.
-     *
-     * @param {GameWindow} that The GameWindow instance
-     * @param {uri} uri URI to load
-     * @param {string} frame ID of GameWindow's frame
-     * @param {bool} loadCache Whether to load from cache
-     * @param {bool} storeCache Whether to store to cache
-     *
-     * @see GameWindow.loadFrame
-     *
-     * @api private
-     */
-    function handleFrameLoad(that, uri, frame, loadCache, storeCache) {
-        var frameNode;
-        var frameDocumentElement;
-
-        frameNode = document.getElementById(frame);
-        frameDocumentElement =
-            (frameNode.contentDocument ?
-             frameNode.contentDocument : frameNode.contentWindow.document)
-            .documentElement;
-
-        if (loadCache) {
-            // Load frame from cache:
-            frameDocumentElement.innerHTML = that.cache[uri].contents;
-        }
-
-        // (Re-)Inject libraries and reload scripts:
-        removeLibraries(frameNode);
-        if (loadCache) {
-            reloadScripts(frameNode);
-        }
-        injectLibraries(frameNode, that.globalLibs.concat(
-                that.frameLibs.hasOwnProperty(uri) ? that.frameLibs[uri] : []));
-
-        if (storeCache) {
-            // Store frame in cache:
-            that.cache[uri].contents = frameDocumentElement.innerHTML;
-        }
-    }
-
-    var lockedUpdate = false;
-    function updateAreLoading(update) {
-        var that;
-        if (!lockedUpdate) {
-            lockedUpdate = true;
-            this.areLoading = this.areLoading + update;
-            lockedUpdate = false;
-        }
-        else {
-            that = this;
-            setTimeout(function() {
-                updateAreLoading.call(that, update);
-            }, 300);
-        }
-    }
-
-    /**
-     * ### GameWindow.loadFrame
-     *
-     * Loads content from an uri (remote or local) into the iframe,
-     * and after it is loaded executes the callback function
-     *
-     * The third parameter is an options object with the following fields
-     * (any fields left out assume the default setting):
-     *
-     *  - frame (string): The name of the frame in which to load the uri
-     *    (default: default iframe of the game)
-     *  - cache (object): Caching options.  Fields:
-     *      * loadMode (string):
-     *          'cache' (default; get the page from cache if possible),
-     *          'reload' (reload page without the cache)
-     *      * storeMode (string):
-     *          'off' (default; don't cache page),
-     *          'onLoad' (cache given page after it is loaded),
-     *          'onClose' (cache given page after it is replaced by a new page)
-     *
-     * Warning: Security policies may block this method if the
-     * content is coming from another domain.
-     *
-     * @param {string} uri The uri to load
-     * @param {function} func Optional. The function to call once the DOM is
-     *   ready
-     * @param {object} opts Optional. The options object
-     */
-    GameWindow.prototype.loadFrame = function(uri, func, opts) {
-        var that;
-        var frame;
-        var loadCache;
-        var storeCacheNow, storeCacheLater;
-        var iframe;
-        var frameNode, frameDocumentElement, frameReady;
-        var lastURI;
-
-        if ('string' !== typeof uri) {
-            throw new TypeError('GameWindow.loadFrame: uri must be string.');
-        }
-        this.setStateLevel('LOADING');
-
-        that = this;
-
-        // Default options:
-        frame = this.mainframe;
-        loadCache = GameWindow.defaults.cacheDefaults.loadCache;
-        storeCacheNow = GameWindow.defaults.cacheDefaults.storeCacheNow;
-        storeCacheLater = GameWindow.defaults.cacheDefaults.storeCacheLater;
-
-        // Get options:
-        if (opts) {
-            if (opts.frame) frame = opts.frame;
-
-            if (opts.cache) {
-                if (opts.cache.loadMode === 'reload') loadCache = false;
-                else if (opts.cache.loadMode === 'cache') loadCache = true;
-
-                if (opts.cache.storeMode === 'off') {
-                    storeCacheNow = false;
-                    storeCacheLater = false;
-                }
-                else if (opts.cache.storeMode === 'onLoad') {
-                    storeCacheNow = true;
-                    storeCacheLater = false;
-                }
-                else if (opts.cache.storeMode === 'onClose') {
-                    storeCacheNow = false;
-                    storeCacheLater = true;
-                }
-            }
-        }
-
-        // Get the internal frame object:
-        iframe = document.getElementById(frame);
-        // Query readiness (so we know whether onload is going to be called):
-        frameReady = iframe.contentWindow.document.readyState;
-        // ...reduce it to a boolean:
-        frameReady = frameReady === 'interactive' || frameReady === 'complete';
-
-        // If the last frame requested to be cached on closing, do that:
-        lastURI = this.currentURIs[frame];
-
-        if (this.cache.hasOwnProperty(lastURI) &&
-                this.cache[lastURI].cacheOnClose) {
-
-            frameNode = document.getElementById(frame);
-            frameDocumentElement =
-                (frameNode.contentDocument ?
-                 frameNode.contentDocument : frameNode.contentWindow.document)
-                .documentElement;
-
-            this.cache[lastURI].contents = frameDocumentElement.innerHTML;
-        }
-
-        // Create entry for this URI in cache object
-        // and store cacheOnClose flag:
-        if (!this.cache.hasOwnProperty(uri)) {
-            this.cache[uri] = { contents: null, cacheOnClose: false };
-        }
-        this.cache[uri].cacheOnClose = storeCacheLater;
-
-        // Disable loadCache if contents aren't cached:
-        if (this.cache[uri].contents === null) loadCache = false;
-
-        // Update frame's currently showing URI:
-        this.currentURIs[frame] = uri;
-
-        // Keep track of nested call to loadFrame.
-        updateAreLoading.call(this, 1);
-
-        // Add the onload event listener:
-        iframe.onload = function() {
-            handleFrameLoad(that, uri, frame, loadCache, storeCacheNow);
-            that.updateLoadFrameState(func, frame);
-        };
-
-        // Cache lookup:
-        if (loadCache) {
-            // Load iframe contents at this point only if the iframe is already
-            // "ready" (see definition of frameReady), otherwise the contents
-            // would be cleared once the iframe becomes ready.  In that case,
-            // iframe.onload handles the filling of the contents.
-            // TODO: Fix code duplication between here and onload function.
-            if (frameReady) {
-                handleFrameLoad(this, uri, frame, loadCache, storeCacheNow);
-
-                // Update status (onload not called if frame was already ready):
-                this.updateLoadFrameState(func, frame);
-            }
-        }
-        else {
-            // Update the frame location:
-            window.frames[frame].location = uri;
-        }
-
-        // Adding a reference to nodeGame also in the iframe
-        window.frames[frame].window.node = node;
-    };
-
-    /**
-     * ### GameWindow.loadFrameState
-     *
-     * Cleans up the window state after an iframe has been loaded
-     *
-     * The method performs the following operations:
-     *
-     *  - executes a given callback function
-     *  - decrements the counter of loading iframes
-     *  - set the window state as loaded (eventually)
-     *
-     * @param {function} Optional. A callback function
-     * @param {object} The iframe of reference
-     */
-    GameWindow.prototype.updateLoadFrameState = function(func, frame) {
-        // Update the reference to the frame obj
-        this.frame = window.frames[frame].document;
-        if (func) {
-            func.call(node.game); // TODO: Pass the right this reference
-        }
-
-        updateAreLoading.call(this, -1);
-
-        if (this.areLoading === 0) {
-            this.setStateLevel('LOADED');
-            node.emit('WINDOW_LOADED');
-            // The listener will take care of emitting PLAYING,
-            // if all conditions are met.
-        }
-        else {
-            node.silly('GameWindow.updateState: ' + this.areLoading +
-                       ' loadFrame processes open.');
-        }
-    };
-
-    /**
-     * ### GameWindow.getFrame
-     *
-     * Returns a reference to the frame (mainframe)
-     *
-     * @return {Element} The mainframe
-     */
-    GameWindow.prototype.getFrame = function() {
-        return document.getElementById(this.mainframe);
-    };
-
-    /**
-     * ### GameWindow.getFrameRoot
-     *
-     * Returns a reference to the root element in the iframe
-     *
-     * @return {Element} The root element in the iframe
-     */
-    GameWindow.prototype.getFrameRoot = function() {
-        return this.root;
-    };
-
-    /**
-     * ### GameWindow.getFrameRoot
-     *
-     * Returns a reference to the document object of the iframe
-     *
-     * @return {object} The document object of the iframe
-     */
-    GameWindow.prototype.getFrameDocument = function() {
-        return this.frame;
-    };
-
-    /**
-     * ### GameWindow.clearFrame
-     *
-     * Clear the content of the frame
-     */
-    GameWindow.prototype.clearFrame = function() {
-        var mainframe;
-        mainframe = this.getFrame();
-        if (!mainframe) {
-            throw new Error('GameWindow.clearFrame: cannot detect frame');
-        }
-        mainframe.onload = null;
-        mainframe.src = 'about:blank';
-    };
-
-    /**
-     * ### GameWindow.isReady
-     *
-     * Returns whether the GameWindow is ready
-     *
-     * Returns TRUE if the state is either INITIALIZED or LOADED.
-     *
-     * @return {boolean} Whether the window is ready
-     */
-    GameWindow.prototype.isReady = function() {
-        return this.state === windowLevels.INITIALIZED ||
-               this.state === windowLevels.LOADED;
-    };
-
+    
     /**
      * ### GameWindow.generateHeader
      *
@@ -19118,181 +19171,615 @@ JSUS.extend(PARSE);
         return this.header;
     };
 
-    // Overriding Document.write and DOM.writeln and DOM.write
-    GameWindow.prototype._write = DOM.write;
-    GameWindow.prototype._writeln = DOM.writeln;
-
     /**
-     * ### GameWindow.write
+     * ### GameWindow.getElementById
      *
-     * Appends content inside a root element
+     * Returns the element with the given id
      *
-     * The content can be a text string, an HTML node or element.
-     * If no root element is specified, the default screen is used.
+     * Looks first into the iframe and then into the rest of the page.
      *
-     * @param {string|object} text The content to write
-     * @param {Element} root The root element
-     * @return {string|object} The content written
+     * @param {string} id The id of the element
+     * @return {Element|null} The element in the page, or null if none is found
      *
-     * @see GameWindow.writeln
+     * @see GameWindow.getElementsByTagName
      */
-    GameWindow.prototype.write = function(text, root) {
-        root = root || this.getScreen();
-        if (!root) {
-            throw new
-                Error('GameWindow.write: could not determine where to write');
+    GameWindow.prototype.getElementById = function(id) {
+        var el, frameDocument;
+        
+        frameDocument = this.getFrameDocument(), el = null;
+        if (frameDocument && frameDocument.getElementById) {
+            el = frameDocument.getElementById(id);
         }
-        return this._write(root, text);
+        if (!el) {
+            el = document.getElementById(id);
+        }
+        return el;
     };
 
     /**
-     * ### GameWindow.writeln
+     * ### GameWindow.getElementsByTagName
      *
-     * Appends content inside a root element followed by a break element
+     * Returns a list of elements with the given tag name
      *
-     * The content can be a text string, an HTML node or element.
-     * If no root element is specified, the default screen is used.
+     * Looks first into the iframe and then into the rest of the page.
      *
-     * @param {string|object} text The content to write
-     * @param {Element} root The root element
-     * @return {string|object} The content written
+     * @param {string} tag The tag of the elements
+     * @return {array|null} The elements in the page, or null if none is found
      *
-     * @see GameWindow.write
+     * @see GameWindow.getElementById
      */
-    GameWindow.prototype.writeln = function(text, root, br) {
-        root = root || this.getScreen();
-        if (!root) {
-            throw new
-                Error('GameWindow.writeln: could not determine where to write');
+    GameWindow.prototype.getElementsByTagName = function(tag) {
+        var frameDocument;
+        frameDocument = this.getFrameDocument();
+        return frameDocument ? frameDocument.getElementsByTagName(tag) :
+            document.getElementsByTagName(tag);
+    };
+
+
+// THIS CONTAINS CODE TO PERFORM TO CATCH THE ONLOAD EVENT UNDER DIFFERENT
+// BROWSERS
+
+//    var onLoad, detach, completed;
+//
+//    var iframeTest = document.createElement('iframe');
+//    iframe.style.display = 'none';
+//    document.body.appendChild(iframeTest);
+//
+//    // The ready event handler.
+//    completed = function(event) {
+//
+//      // readyState === "complete" works also in oldIE.
+//      if (document.addEventListener ||
+//            event.type === "load" ||
+//            document.readyState === 'complete') {
+//
+//          detach();
+//
+//
+//      }
+//    };
+//
+//
+//
+//    // Standards-based browsers support DOMContentLoaded.
+//    if (document.addEventListener) {
+//
+//        detach = function() {
+//            document.removeEventListener('DOMContentLoaded', completed, false);
+//          window.removeEventListener('load', completed, false);
+//        };
+//
+//        onLoad = function() {
+//          // Use the handy event callback
+//          document.addEventListener('DOMContentLoaded', completed, false);
+//
+//          // A fallback to window.onload, that will always work
+//          window.addEventListener('load', completed, false);
+//        };
+//
+//
+//    }
+//    // If IE event model is used.
+//    else {
+//
+//        detach = function() {
+//            document.detachEvent('onreadystatechange', completed );
+//          window.detachEvent('onload', completed );
+//        };
+//
+//        onLoad = function() {
+//            // Ensure firing before onload, maybe late but safe also for iframes.
+//          document.attachEvent('onreadystatechange', completed );
+//
+//          // A fallback to window.onload, that will always work.
+//          window.attachEvent('onload', completed );
+//        };
+
+
+
+
+    /**
+     * ### GameWindow.loadFrame
+     *
+     * Loads content from an uri (remote or local) into the iframe,
+     * and after it is loaded executes the callback function
+     *
+     * The third parameter is an options object with the following fields
+     * (any fields left out assume the default setting):
+     *
+     *  - cache (object): Caching options.  Fields:
+     *      * loadMode (string):
+     *          'cache' (default; get the page from cache if possible),
+     *          'reload' (reload page without the cache)
+     *      * storeMode (string):
+     *          'off' (default; don't cache page),
+     *          'onLoad' (cache given page after it is loaded),
+     *          'onClose' (cache given page after it is replaced by a new page)
+     *
+     * Warning: Security policies may block this method if the
+     * content is coming from another domain.
+     *
+     * @param {string} uri The uri to load
+     * @param {function} func Optional. The function to call once the DOM is
+     *   ready
+     * @param {object} opts Optional. The options object
+     */
+    GameWindow.prototype.loadFrame = function(uri, func, opts) {
+        var that;
+        var loadCache;
+        var storeCacheNow, storeCacheLater;
+        var iframe, iframeName, iframeDocument;
+        var frameDocumentElement, frameReady;
+        var lastURI;
+        
+        if ('string' !== typeof uri) {
+            throw new TypeError('GameWindow.loadFrame: uri must be string.');
         }
-        return this._writeln(root, text, br);
+        if (func && 'function' !== typeof func) {
+            throw new TypeError('GameWindow.loadFrame: func must be function ' +
+                                'or undefined.');
+        }
+        if (opts && 'object' !== typeof opts) {
+            throw new TypeError('GameWindow.loadFrame: opts must be object ' +
+                                'or undefined.');
+        }
+
+        // Get the internal frame object:
+        iframe = this.getFrame();
+
+        if (!iframe) {
+            throw new Error('GameWindow.loadFrame: no frame found.');
+        }
+
+        this.setStateLevel('LOADING');
+
+        iframeName = this.frameName;
+        that = this;
+
+        // Default options:
+        loadCache = GameWindow.defaults.cacheDefaults.loadCache;
+        storeCacheNow = GameWindow.defaults.cacheDefaults.storeCacheNow;
+        storeCacheLater = GameWindow.defaults.cacheDefaults.storeCacheLater;
+
+        // Get options:
+        if (opts) {
+
+            if (opts.cache) {
+                if (opts.cache.loadMode === 'reload') loadCache = false;
+                else if (opts.cache.loadMode === 'cache') loadCache = true;
+
+                if (opts.cache.storeMode === 'off') {
+                    storeCacheNow = false;
+                    storeCacheLater = false;
+                }
+                else if (opts.cache.storeMode === 'onLoad') {
+                    storeCacheNow = true;
+                    storeCacheLater = false;
+                }
+                else if (opts.cache.storeMode === 'onClose') {
+                    storeCacheNow = false;
+                    storeCacheLater = true;
+                }
+            }
+        }
+
+        // Query readiness (so we know whether onload is going to be called):
+        iframeDocument = W.getIFrameDocument(iframe);
+        frameReady = iframeDocument.readyState;
+        // ...reduce it to a boolean:
+        frameReady = frameReady === 'interactive' || frameReady === 'complete';
+
+        // If the last frame requested to be cached on closing, do that:
+        lastURI = this.currentURIs[iframeName];
+
+        if (this.cache.hasOwnProperty(lastURI) &&
+                this.cache[lastURI].cacheOnClose) {
+
+            frameDocumentElement = iframeDocument.documentElement;
+            this.cache[lastURI].contents = frameDocumentElement.innerHTML;
+        }
+
+        // Create entry for this URI in cache object
+        // and store cacheOnClose flag:
+        if (!this.cache.hasOwnProperty(uri)) {
+            this.cache[uri] = { contents: null, cacheOnClose: false };
+        }
+        this.cache[uri].cacheOnClose = storeCacheLater;
+
+        // Disable loadCache if contents aren't cached:
+        if (this.cache[uri].contents === null) loadCache = false;
+
+        // Update frame's currently showing URI:
+        this.currentURIs[iframeName] = uri;
+
+        // Keep track of nested call to loadFrame.
+        updateAreLoading(1);
+
+        // Add the onload event listener:
+        iframe.onload = function() {
+            // Updates references to frame window and document.
+            that.frameWindow = window.frames[iframeName];
+            that.frameDocument =  W.getIFrameDocument(that.getFrame());
+
+            // Remove onload hanlder for this frame.
+            // Buggy Opera 11.52 fires the onload twice.
+            // Not fixed yet. The second time is actually the right one...
+            iframe.onload = null;
+
+            handleFrameLoad(that, uri, iframeName, loadCache, storeCacheNow);
+            that.updateLoadFrameState(func);
+        };
+
+        // Cache lookup:
+        if (loadCache) {
+            // Load iframe contents at this point only if the iframe is already
+            // "ready" (see definition of frameReady), otherwise the contents
+            // would be cleared once the iframe becomes ready.  In that case,
+            // iframe.onload handles the filling of the contents.
+            if (frameReady) {
+                handleFrameLoad(this, uri, iframeName, loadCache, 
+                                storeCacheNow);
+
+                // Update status (onload not called if frame was already ready):
+                this.updateLoadFrameState(func);
+            }
+        }
+        else {
+            // Update the frame location:
+            window.frames[iframeName].location = uri;
+        }
+        
+        // Adding a reference to nodeGame also in the iframe
+        // TODO: is this working?
+        window.frames[iframeName].window.node = node;
     };
 
     /**
-     * ### GameWindow.getLoadingDots
+     * ### GameWindow.updateLoadFrameState
      *
-     * Creates and returns a span element with incrementing dots inside
+     * Sets window state after a new frame has been loaded
      *
-     * New dots are added every second until the limit is reached, then it
-     * starts from the beginning.
+     * The method performs the following operations:
      *
-     * Gives the impression of a loading time.
+     * - executes a given callback function
+     * - decrements the counter of loading iframes
+     * - set the window state as loaded (eventually)
      *
-     * @param {number} len Optional. The maximum length of the loading dots.
-     *   Defaults, 5
-     * @param {string} id Optional The id of the span
-     * @return {object} An object containing two properties: the span element
-     *   and a method stop, that clears the interval.
+     * @param {function} func Optional. A callback function
+     *
+     * @see updateAreLoading
      */
-    GameWindow.prototype.getLoadingDots = function(len, id) {
-        var span_dots, i, limit, intervalId;
-        if (len & len < 0) {
-            throw new Error('GameWindow.getLoadingDots: len < 0.');
-        }
-        len = len || 5;
-        span_dots = document.createElement('span');
-        span_dots.id = id || 'span_dots';
-        limit = '';
-        for (i = 0; i < len; i++) {
-            limit = limit + '.';
-        }
-        // Refreshing the dots...
-        intervalId = setInterval(function() {
-            if (span_dots.innerHTML !== limit) {
-                span_dots.innerHTML = span_dots.innerHTML + '.';
-            }
-            else {
-                span_dots.innerHTML = '.';
-            }
-        }, 1000);
-
-        function stop() {
-            span_dots.innerHTML = '.';
-            clearInterval(intervalId);
+    GameWindow.prototype.updateLoadFrameState = function(func) {
+        if (func) {
+            func.call(node.game);
         }
 
-        return {
-            span: span_dots,
-            stop: stop
+        updateAreLoading(-1);
+
+        if (this.areLoading === 0) {
+            this.setStateLevel('LOADED');
+            node.emit('WINDOW_LOADED');
+            // The listener will take care of emitting PLAYING,
+            // if all conditions are met.
+        }
+        else {
+            node.silly('GameWindow.updateLoadFrameState: ' + this.areLoading +
+                       ' loadFrame processes open.');
+        }
+    };
+
+    /* Private helper functions follow */
+
+    /**
+     * ### handleFrameLoad
+     *
+     * Handles iframe contents loading
+     *
+     * A helper method of GameWindow.loadFrame.
+     * Puts cached contents into the iframe or caches new contents if requested.
+     * Handles reloading of script tags and injected libraries.
+     * Must be called with the current GameWindow instance.
+     *
+     * @param {GameWindow} that The GameWindow instance
+     * @param {uri} uri URI to load
+     * @param {string} frameName ID of the iframe
+     * @param {bool} loadCache Whether to load from cache
+     * @param {bool} storeCache Whether to store to cache
+     *
+     * @see GameWindow.loadFrame
+     *
+     * @api private
+     */
+    function handleFrameLoad(that, uri, frameName, loadCache, storeCache) {
+        var iframe, iframeDocumentElement;
+
+        iframe = document.getElementById(frameName);
+        iframeDocumentElement = W.getIFrameDocument(iframe).documentElement;
+
+        if (loadCache) {
+            // Load frame from cache:
+            iframeDocumentElement.innerHTML = that.cache[uri].contents;
+            // Update references to frameWindow and frameDocument
+            // if this was the frame of the game.
+            if (frameName === that.frameName) {
+                that.frameWindow = iframe.contentWindow;
+                that.frameDocument = that.getIFrameDocument(iframe);
+            }
+        }
+
+        // (Re-)Inject libraries and reload scripts:
+        removeLibraries(iframe);
+        if (loadCache) {
+            reloadScripts(iframe);
+        }
+        injectLibraries(iframe, that.globalLibs.concat(
+                that.frameLibs.hasOwnProperty(uri) ? that.frameLibs[uri] : []));
+
+        if (storeCache) {
+            // Store frame in cache:
+            that.cache[uri].contents = iframeDocumentElement.innerHTML;
+        }
+    }
+
+    /**
+     * ### removeLibraries
+     *
+     * Removes injected scripts from iframe
+     *
+     * Takes out all the script tags with the className "injectedlib"
+     * that were inserted by injectLibraries.
+     *
+     * @param {HTMLIFrameElement} iframe The target iframe
+     *
+     * @see injectLibraries
+     *
+     * @api private
+     */
+    function removeLibraries(iframe) {
+        var idx;
+        var contentDocument;
+        var scriptNodes, scriptNode;
+
+        contentDocument = W.getIFrameDocument(iframe);
+
+        scriptNodes = contentDocument.getElementsByClassName('injectedlib');
+        for (idx = 0; idx < scriptNodes.length; idx++) {
+            scriptNode = scriptNodes[idx];
+            scriptNode.parentNode.removeChild(scriptNode);
+        }
+    }
+
+    /**
+     * ### reloadScripts
+     *
+     * Reloads all script nodes in iframe
+     *
+     * Deletes and reinserts all the script tags, effectively reloading the
+     * scripts. The placement of the tags can change, but the order is kept.
+     *
+     * @param {HTMLIFrameElement} iframe The target iframe
+     *
+     * @api private
+     */
+    function reloadScripts(iframe) {
+        var contentDocument;
+        var headNode;
+        var tag, scriptNodes, scriptNodeIdx, scriptNode;
+        var attrIdx, attr;
+
+        contentDocument = W.getIFrameDocument(iframe);
+
+        headNode = contentDocument.getElementsByTagName('head')[0];
+
+        scriptNodes = contentDocument.getElementsByTagName('script');
+        for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length;
+                scriptNodeIdx++) {
+
+            // Remove tag:
+            tag = scriptNodes[scriptNodeIdx];
+            tag.parentNode.removeChild(tag);
+
+            // Reinsert tag for reloading:
+            scriptNode = document.createElement('script');
+            if (tag.innerHTML) scriptNode.innerHTML = tag.innerHTML;
+            for (attrIdx = 0; attrIdx < tag.attributes.length; attrIdx++) {
+                attr = tag.attributes[attrIdx];
+                scriptNode.setAttribute(attr.name, attr.value);
+            }
+            headNode.appendChild(scriptNode);
+        }
+    }
+
+    /**
+     * ### injectLibraries
+     *
+     * Injects scripts into the iframe
+     *
+     * First removes all old injected script tags.
+     * Then injects `<script class="injectedlib" src="...">` lines into given
+     * iframe object, one for every given library.
+     *
+     * @param {HTMLIFrameElement} iframe The target iframe
+     * @param {array} libs An array of strings giving the "src" attribute for
+     *   the `<script>` lines to insert
+     *
+     * @api private
+     */
+    function injectLibraries(iframe, libs) {
+        var contentDocument;
+        var headNode;
+        var scriptNode;
+        var libIdx, lib;
+
+        contentDocument = W.getIFrameDocument(iframe);
+
+        headNode = contentDocument.getElementsByTagName('head')[0];
+
+        for (libIdx = 0; libIdx < libs.length; libIdx++) {
+            lib = libs[libIdx];
+            scriptNode = document.createElement('script');
+            scriptNode.className = 'injectedlib';
+            scriptNode.src = lib;
+            headNode.appendChild(scriptNode);
+        }
+    }
+
+    /**
+     * ### updateAreLoading
+     *
+     * Updates the counter of loading frames in a secure way
+     *
+     * Ensure atomicity of the operation by using the _lockedUpdate_ semaphore.
+     *
+     * @param {GameWindow} that A reference to the GameWindow instance
+     * @param {number} update The number to add to the counter
+     *
+     * @see GameWindow.lockedUpdate
+     * @api private
+     */
+    function updateAreLoading(that, update) {
+        if (!lockedUpdate) {
+            lockedUpdate = true;
+            that.areLoading = that.areLoading + update;
+            lockedUpdate = false;
+        }
+        else {
+            setTimeout(function() {
+                updateAreLoading.call(that, update);
+            }, 300);
+        }
+    }
+
+    //Expose GameWindow prototype to the global object.
+    node.GameWindow = GameWindow;
+
+})(
+    // GameWindow works only in the browser environment. The reference
+    // to the node.js module object is for testing purpose only
+    ('undefined' !== typeof window) ? window : module.parent.exports.window,
+    ('undefined' !== typeof window) ? window.node : module.parent.exports.node
+);
+
+/**
+ * # GameWindow event button module
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
+ * Handles default behavior of the browser on certain DOM Events.
+ *
+ * http://www.nodegame.org
+ * ---
+ */
+(function(window, node) {
+
+    "use strict";
+
+    var GameWindow = node.GameWindow;
+
+    /**
+     * ### GameWindow.noEscape
+     *
+     * Binds the ESC key to a function that always returns FALSE
+     *
+     * This prevents socket.io to break the connection with the server.
+     *
+     * @param {object} windowObj Optional. The window container in which
+     *   to bind the ESC key
+     */
+    GameWindow.prototype.noEscape = function(windowObj) {
+        windowObj = windowObj || window;
+        windowObj.document.onkeydown = function(e) {
+            var keyCode = (window.event) ? event.keyCode : e.keyCode;
+            if (keyCode === 27) {
+                return false;
+            }
         };
     };
 
     /**
-     * ### GameWindow.addLoadingDots
+     * ### GameWindow.restoreEscape
      *
-     * Appends _loading dots_ to an HTML element
+     * Removes the the listener on the ESC key
      *
-     * By invoking this method you lose access to the _stop_ function of the
-     * _loading dots_ element.
+     * @param {object} windowObj Optional. The window container in which
+     *   to bind the ESC key
      *
-     * @param {HTMLElement} root The element to which the loading dots will be
-     *   appended.
-     * @param {number} len Optional. The maximum length of the loading dots.
-     *   Defaults, 5
-     * @param {string} id Optional The id of the span
-     * @return {object} The span with the loading dots.
-     *
-     * @see GameWindow.getLoadingDots
+     * @see GameWindow.noEscape()
      */
-    GameWindow.prototype.addLoadingDots = function(root, len, id) {
-        return root.appendChild(this.getLoadingDots(len, id).span);
+    GameWindow.prototype.restoreEscape = function(windowObj) {
+        windowObj = windowObj || window;
+        windowObj.document.onkeydown = null;
     };
 
     /**
-     * ### GameWindow.toggleInputs
+     * ### GameWindow.promptOnleave
      *
-     * Enables / disables the input forms
+     * Captures the onbeforeunload event and warns the user that leaving the
+     * page may halt the game.
      *
-     * If an id is provided, only children of the element with the specified
-     * id are toggled.
+     * @param {object} windowObj Optional. The window container in which
+     *   to bind the ESC key
+     * @param {string} text Optional. A text to be displayed with the alert
      *
-     * If id is given it will use _GameWindow.getFrameDocument()_ to determine the
-     * forms to toggle.
-     *
-     * If a state parameter is given, all the input forms will be either
-     * disabled or enabled (and not toggled).
-     *
-     * @param {string} id The id of the element container of the forms.
-     * @param {boolean} state The state enabled / disabled for the forms.
+     * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
      */
-    GameWindow.prototype.toggleInputs = function(id, state) {
-        var container, inputTags, j, len, i, inputs, nInputs;
-
-        if ('undefined' !== typeof id) {
-            container = this.getElementById(id);
-            if (!container) {
-                throw new Error('GameWindow.toggleInputs: no elements found ' +
-                                'with id ' + id + '.');
+    GameWindow.prototype.promptOnleave = function(windowObj, text) {
+        windowObj = windowObj || window;
+        text = ('undefined' === typeof text) ? this.conf.textOnleave : text;
+        windowObj.onbeforeunload = function(e) {
+            e = e || window.event;
+            // For IE<8 and Firefox prior to version 4
+            if (e) {
+                e.returnValue = text;
             }
-        }
-        else {
-            container = this.getFrameDocument();
-            if (!container || !container.getElementsByTagName) {
-                // Frame either not existing or not ready. No warning.
-                return;
-            }
-        }
-
-        inputTags = ['button', 'select', 'textarea', 'input'];
-        len = inputTags.length;
-        for (j = 0; j < len; j++) {
-            inputs = container.getElementsByTagName(inputTags[j]);
-            nInputs = inputs.length;
-            for (i = 0; i < nInputs; i++) {
-                // Set to state, or toggle.
-                if ('undefined' === typeof state) {
-                    state = inputs[i].disabled ? false : true;
-                }
-                if (state) {
-                    inputs[i].disabled = state;
-                }
-                else {
-                    inputs[i].removeAttribute('disabled');
-                }
-            }
-        }
+            // For Chrome, Safari, IE8+ and Opera 12+
+            return text;
+        };
     };
 
+    /**
+     * ### GameWindow.restoreOnleave
+     *
+     * Removes the onbeforeunload event listener
+     *
+     * @param {object} windowObj Optional. The window container in which
+     *   to bind the ESC key
+     *
+     * @see GameWindow.promptOnleave
+     * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
+     */
+    GameWindow.prototype.restoreOnleave = function(windowObj) {
+        windowObj = windowObj || window;
+        windowObj.onbeforeunload = null;
+    };
+
+})(
+    // GameWindow works only in the browser environment. The reference
+    // to the node.js module object is for testing purpose only
+    ('undefined' !== typeof window) ? window : module.parent.exports.window,
+    ('undefined' !== typeof window) ? window.node : module.parent.exports.node
+);
+
+/**
+ * # GameWindow selector module
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
+ * Utility functions to create and manipulate meaninful HTML select lists for
+ * nodeGame.
+ *
+ * http://www.nodegame.org
+ * ---
+ */
+(function(window, node) {
+
+    "use strict";
+
+    var J = node.JSUS;
+
+    var GameWindow = node.GameWindow;
+    var windowLevels = node.constants.windowLevels;
+    
     /**
      * ### GameWindow.lockFrame
      *
@@ -19312,9 +19799,12 @@ JSUS.extend(PARSE);
             throw new TypeError('GameWindow.lockFrame: text must be string ' +
                                 'or undefined');
         }
+        if (!this.isReady()) {
+            throw new Error('GameWindow.lockFrame: window not ready.');
+        }
         this.setStateLevel('LOCKING');
         text = text || 'Screen locked. Please wait...';
-        node.game.waitScreen.lock(text);
+        this.waitScreen.lock(text);
         this.setStateLevel('LOCKED');
     };
 
@@ -19326,155 +19816,128 @@ JSUS.extend(PARSE);
      * Requires the waitScreen widget to be loaded.
      */
     GameWindow.prototype.unlockFrame = function() {
-        if (!node.game.waitScreen) {
+        if (!this.waitScreen) {
             throw new Error('GameWindow.unlockFrame: waitScreen not found.');
         }
         if (this.getStateLevel() !== windowLevels.LOCKED) {
             throw new Error('GameWindow.unlockFrame: frame is not locked.');
         }
         this.setStateLevel('UNLOCKING');
-        node.game.waitScreen.unlock();
+        this.waitScreen.unlock();
         this.setStateLevel('LOADED');
     };
 
     /**
-     * ### GameWindow.getScreenInfo
+     * ### GameWindow.isFrameLocked
      *
-     * Returns information about the screen in which nodeGame is running
+     * TRUE, if the frame is locked.
      *
-     * @return {object} A object containing the scren info
+     * @see GameWindow.state
      */
-    GameWindow.prototype.getScreenInfo = function() {
-        var screen = window.screen;
-        return {
-            height: screen.height,
-            widht: screen.width,
-            availHeight: screen.availHeight,
-            availWidth: screen.availWidht,
-            colorDepth: screen.colorDepth,
-            pixelDepth: screen.pixedDepth
-        };
+    GameWindow.prototype.isFrameLocked = function() {
+        return this.getStateLevel() === windowLevels.LOCKED;
     };
+})(
+    // GameWindow works only in the browser environment. The reference
+    // to the node.js module object is for testing purpose only
+    ('undefined' !== typeof window) ? window : module.parent.exports.window,
+    ('undefined' !== typeof window) ? window.node : module.parent.exports.node
+);
 
-    /**
-     * ### GameWindow._generateRoot
-     *
-     * Creates a div element with the given id
-     *
-     * After creation it tries to append the element in the following order to:
-     *
-     *      - the specified root element
-     *      - the body element
-     *      - the last element of the document
-     *
-     * If it fails, it creates a new body element, appends it
-     * to the document, and then appends the div element to it.
-     *
-     * @param {Element} root Optional. The root element
-     * @param {string} id The id
-     * @return {Element} The newly created root element
-     *
-     * @api private
-     */
-    GameWindow.prototype._generateRoot = function(root, id) {
-        root = root || document.body || document.lastElementChild;
-        if (!root) {
-            this.addElement('body', document);
-            root = document.body;
+/**
+ * # GameWindow listeners
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
+ * www.nodegame.org
+ * ---
+ */
+(function(node) {
+
+    "use strict";
+
+    function getElement(idOrObj, prefix) {
+        var el;
+        if ('string' === typeof idOrObj) {
+            el = W.getElementById(idOrObj);
+            if (!el) {
+                throw new Error(prefix + ': could not find element ' +
+                                'with id ' + idOrObj);
+            }
         }
-        this.root = this.addElement('div', root, id);
-        return this.root;
-    };
-
-    /**
-     * ### GameWindow.generateNodeGameRoot
-     *
-     * Creates a div element with id 'nodegame'
-     *
-     * @param {Element} root Optional. The root element
-     * @return {Element} The newly created element
-     *
-     * @see GameWindow._generateRoot()
-     */
-    GameWindow.prototype.generateNodeGameRoot = function(root) {
-        return this._generateRoot(root, 'nodegame');
-    };
-
-    /**
-     * ### GameWindow.generateRandomRoot
-     *
-     * Creates a div element with a unique random id
-     *
-     * @param {Element} root Optional. The root element
-     * @return {Element} The newly created root element
-     *
-     * @see GameWindow._generateRoot()
-     */
-    GameWindow.prototype.generateRandomRoot = function(root) {
-        return this._generateRoot(root, this.generateUniqueId());
-    };
-
-
-
-    // Useful
-
-    /**
-     * ### GameWindow.getEventButton
-     *
-     * Creates an HTML button element that will emit an event when clicked
-     *
-     * @param {string} event The event to emit when clicked
-     * @param {string} text Optional. The text on the button
-     * @param {string} id The id of the button
-     * @param {object} attributes Optional. The attributes of the button
-     * @return {Element} The newly created button
-     */
-    GameWindow.prototype.getEventButton =
-    function(event, text, id, attributes) {
-        var b;
-
-        if (!event) return;
-
-        b = this.getButton(id, text, attributes);
-        b.onclick = function() {
-            node.emit(event);
-        };
-        return b;
-    };
-
-    /**
-     * ### GameWindow.addEventButton
-     *
-     * Adds an EventButton to the specified root element
-     *
-     * If no valid root element is provided, it is append as last element
-     * in the current screen.
-     *
-     * @param {string} event The event to emit when clicked
-     * @param {string} text Optional. The text on the button
-     * @param {Element} root Optional. The root element
-     * @param {string} id The id of the button
-     * @param {object} attributes Optional. The attributes of the button
-     * @return {Element} The newly created button
-     *
-     * @see GameWindow.getEventButton
-     */
-    GameWindow.prototype.addEventButton =
-    function(event, text, root, id, attributes) {
-        var eb;
-
-        if (!event) return;
-        if (!root) {
-            root = this.getScreen();
+        else if (J.isElement(idOrObj)) {
+            el = idOrObj;
         }
+        else {
+            throw new TypeError(prefix + ': idOrObj must be string ' +
+                                ' or HTML Element.');
+        }
+        return el;
+    }
 
-        eb = this.getEventButton(event, text, id, attributes);
+    node.on('NODEGAME_GAME_CREATED', function() {
+        W.init(node.conf.window);
+    });
 
-        return root.appendChild(eb);
-    };
+    node.on('HIDE', function(idOrObj) {
+        var el = getElement(idOrObj, 'GameWindow.on.HIDE');
+        el.style.display = 'none';
+    });
 
+    node.on('SHOW', function(idOrObj) {
+        var el = getElement(idOrObj, 'GameWindow.on.SHOW');
+        el.style.display = '';
+    });
 
-    // Useful API
+    node.on('TOGGLE', function(idOrObj) {
+        var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
+        
+        if (el.style.display === 'none') {
+            el.style.display = '';
+        }
+        else {
+            el.style.display = 'none';
+        }
+    });
+
+    // Disable all the input forms found within a given id element.
+    node.on('INPUT_DISABLE', function(id) {
+        W.toggleInputs(id, true);
+    });
+    
+    // Disable all the input forms found within a given id element.
+    node.on('INPUT_ENABLE', function(id) {
+        W.toggleInputs(id, false);
+    });
+    
+    // Disable all the input forms found within a given id element.
+    node.on('INPUT_TOGGLE', function(id) {
+        W.toggleInputs(id);
+    });
+    
+    node.log('node-window: listeners added.');
+    
+})(
+    'undefined' !== typeof node ? node : undefined
+);
+/**
+ * # GameWindow selector module
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
+ * Utility functions to create and manipulate meaninful HTML select lists for
+ * nodeGame.
+ *
+ * http://www.nodegame.org
+ * ---
+ */
+(function(window, node) {
+
+    "use strict";
+    
+    var J = node.JSUS;
+    var constants = node.constants;
+    var GameWindow = node.GameWindow;
 
     /**
      * ### GameWindow.getRecipientSelector
@@ -19700,8 +20163,101 @@ JSUS.extend(PARSE);
         return root.appendChild(stateSelector);
     };
 
+})(
+    // GameWindow works only in the browser environment. The reference
+    // to the node.js module object is for testing purpose only
+    ('undefined' !== typeof window) ? window : module.parent.exports.window,
+    ('undefined' !== typeof window) ? window.node : module.parent.exports.node
+);
 
-    // Do we need it?
+/**
+ * # GameWindow extras
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
+ * http://www.nodegame.org
+ * ---
+ */
+(function(window, node) {
+
+    "use strict";
+
+    var GameWindow = node.GameWindow;
+
+    var J = node.JSUS;
+    var DOM = J.get('DOM');
+    
+    /**
+     * ### GameWindow.getScreen
+     *
+     * Returns the screen of the game, i.e. the innermost element
+     * inside which to display content
+     *
+     * In the following order the screen can be:
+     *
+     * - the body element of the iframe
+     * - the document element of the iframe
+     * - the body element of the document
+     * - the last child element of the document
+     *
+     * @return {Element} The screen
+     */
+    GameWindow.prototype.getScreen = function() {
+        var el = this.getFrameDocument();
+        if (el) {
+            el = el.body || el;
+        }
+        else {
+            el = document.body || document.lastElementChild;
+        }
+        return el;
+    };
+
+    /**
+     * ### GameWindow.write
+     *
+     * Appends content inside a root element
+     *
+     * The content can be a text string, an HTML node or element.
+     * If no root element is specified, the default screen is used.
+     *
+     * @param {string|object} text The content to write
+     * @param {Element} root The root element
+     * @return {string|object} The content written
+     *
+     * @see GameWindow.writeln
+     */
+    GameWindow.prototype.write = function(text, root) {
+        root = root || this.getScreen();
+        if (!root) {
+            throw new
+                Error('GameWindow.write: could not determine where to write.');
+        }
+        return DOM.write(root, text);
+    };
+
+    /**
+     * ### GameWindow.writeln
+     *
+     * Appends content inside a root element followed by a break element
+     *
+     * The content can be a text string, an HTML node or element.
+     * If no root element is specified, the default screen is used.
+     *
+     * @param {string|object} text The content to write
+     * @param {Element} root The root element
+     * @return {string|object} The content written
+     *
+     * @see GameWindow.write
+     */
+    GameWindow.prototype.writeln = function(text, root, br) {
+        root = root || this.getScreen();
+        if (!root) {
+            throw new
+                Error('GameWindow.writeln: could not determine where to write.');
+        }
+        return DOM.writeln(root, text, br);
+    };
 
     /**
      * ### GameWindow.generateUniqueId
@@ -19729,116 +20285,206 @@ JSUS.extend(PARSE);
         return id;
     };
 
-    // Where to place them?
-
     /**
-     * ### GameWindow.noEscape
+     * ### GameWindow.toggleInputs
      *
-     * Binds the ESC key to a function that always returns FALSE
+     * Enables / disables the input forms
      *
-     * This prevents socket.io to break the connection with the server.
+     * If an id is provided, only children of the element with the specified
+     * id are toggled.
      *
-     * @param {object} windowObj Optional. The window container in which
-     *   to bind the ESC key
+     * If id is given it will use _GameWindow.getFrameDocument()_ to determine the
+     * forms to toggle.
+     *
+     * If a state parameter is given, all the input forms will be either
+     * disabled or enabled (and not toggled).
+     *
+     * @param {string} id The id of the element container of the forms.
+     * @param {boolean} state The state enabled / disabled for the forms.
      */
-    GameWindow.prototype.noEscape = function(windowObj) {
-        windowObj = windowObj || window;
-        windowObj.document.onkeydown = function(e) {
-            var keyCode = (window.event) ? event.keyCode : e.keyCode;
-            if (keyCode === 27) {
-                return false;
+    GameWindow.prototype.toggleInputs = function(id, state) {
+        var container, inputTags, j, len, i, inputs, nInputs;
+
+        if ('undefined' !== typeof id) {
+            container = this.getElementById(id);
+            if (!container) {
+                throw new Error('GameWindow.toggleInputs: no elements found ' +
+                                'with id ' + id + '.');
             }
-        };
-    };
-
-    /**
-     * ### GameWindow.restoreEscape
-     *
-     * Removes the the listener on the ESC key
-     *
-     * @param {object} windowObj Optional. The window container in which
-     *   to bind the ESC key
-     *
-     * @see GameWindow.noEscape()
-     */
-    GameWindow.prototype.restoreEscape = function(windowObj) {
-        windowObj = windowObj || window;
-        windowObj.document.onkeydown = null;
-    };
-
-    /**
-     * ### GameWindow.promptOnleave
-     *
-     * Captures the onbeforeunload event and warns the user that leaving the
-     * page may halt the game.
-     *
-     * @param {object} windowObj Optional. The window container in which
-     *   to bind the ESC key
-     * @param {string} text Optional. A text to be displayed with the alert
-     *
-     * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
-     */
-    GameWindow.prototype.promptOnleave = function(windowObj, text) {
-        windowObj = windowObj || window;
-        text = ('undefined' === typeof text) ? this.conf.textOnleave : text;
-        windowObj.onbeforeunload = function(e) {
-            e = e || window.event;
-            // For IE<8 and Firefox prior to version 4
-            if (e) {
-                e.returnValue = text;
-            }
-            // For Chrome, Safari, IE8+ and Opera 12+
-            return text;
-        };
-    };
-
-    /**
-     * ### GameWindow.restoreOnleave
-     *
-     * Removes the onbeforeunload event listener
-     *
-     * @param {object} windowObj Optional. The window container in which
-     *   to bind the ESC key
-     *
-     * @see GameWindow.promptOnleave
-     * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
-     */
-    GameWindow.prototype.restoreOnleave = function(windowObj) {
-        windowObj = windowObj || window;
-        windowObj.onbeforeunload = null;
-    };
-
-    // Do we need these?
-
-    /**
-     * ### GameWindow.getScreen
-     *
-     * Returns the screen of the game, i.e. the innermost element
-     * inside which to display content
-     *
-     * In the following order the screen can be:
-     *
-     *      - the body element of the iframe
-     *      - the document element of the iframe
-     *      - the body element of the document
-     *      - the last child element of the document
-     *
-     * @return {Element} The screen
-     */
-    GameWindow.prototype.getScreen = function() {
-        var el = this.frame;
-        if (el) {
-            el = this.frame.body || el;
         }
         else {
-            el = document.body || document.lastElementChild;
+            container = this.getFrameDocument();
+            if (!container || !container.getElementsByTagName) {
+                // Frame either not existing or not ready. No warning.
+                return;
+            }
         }
-        return el;
+
+        inputTags = ['button', 'select', 'textarea', 'input'];
+        len = inputTags.length;
+        for (j = 0; j < len; j++) {
+            inputs = container.getElementsByTagName(inputTags[j]);
+            nInputs = inputs.length;
+            for (i = 0; i < nInputs; i++) {
+                // Set to state, or toggle.
+                if ('undefined' === typeof state) {
+                    state = inputs[i].disabled ? false : true;
+                }
+                if (state) {
+                    inputs[i].disabled = state;
+                }
+                else {
+                    inputs[i].removeAttribute('disabled');
+                }
+            }
+        }
     };
 
-    //Expose nodeGame to the global object
-    node.window = new GameWindow();
-    if ('undefined' !== typeof window) window.W = node.window;
+    /**
+     * ### GameWindow.getScreenInfo
+     *
+     * Returns information about the screen in which nodeGame is running
+     *
+     * @return {object} A object containing the scren info
+     */
+    GameWindow.prototype.getScreenInfo = function() {
+        var screen = window.screen;
+        return {
+            height: screen.height,
+            widht: screen.width,
+            availHeight: screen.availHeight,
+            availWidth: screen.availWidht,
+            colorDepth: screen.colorDepth,
+            pixelDepth: screen.pixedDepth
+        };
+    };
+
+    /**
+     * ### GameWindow.getLoadingDots
+     *
+     * Creates and returns a span element with incrementing dots inside
+     *
+     * New dots are added every second until the limit is reached, then it
+     * starts from the beginning.
+     *
+     * Gives the impression of a loading time.
+     *
+     * @param {number} len Optional. The maximum length of the loading dots.
+     *   Defaults, 5
+     * @param {string} id Optional The id of the span
+     * @return {object} An object containing two properties: the span element
+     *   and a method stop, that clears the interval.
+     */
+    GameWindow.prototype.getLoadingDots = function(len, id) {
+        var span_dots, i, limit, intervalId;
+        if (len & len < 0) {
+            throw new Error('GameWindow.getLoadingDots: len < 0.');
+        }
+        len = len || 5;
+        span_dots = document.createElement('span');
+        span_dots.id = id || 'span_dots';
+        limit = '';
+        for (i = 0; i < len; i++) {
+            limit = limit + '.';
+        }
+        // Refreshing the dots...
+        intervalId = setInterval(function() {
+            if (span_dots.innerHTML !== limit) {
+                span_dots.innerHTML = span_dots.innerHTML + '.';
+            }
+            else {
+                span_dots.innerHTML = '.';
+            }
+        }, 1000);
+
+        function stop() {
+            span_dots.innerHTML = '.';
+            clearInterval(intervalId);
+        }
+
+        return {
+            span: span_dots,
+            stop: stop
+        };
+    };
+
+    /**
+     * ### GameWindow.addLoadingDots
+     *
+     * Appends _loading dots_ to an HTML element
+     *
+     * By invoking this method you lose access to the _stop_ function of the
+     * _loading dots_ element.
+     *
+     * @param {HTMLElement} root The element to which the loading dots will be
+     *   appended.
+     * @param {number} len Optional. The maximum length of the loading dots.
+     *   Defaults, 5
+     * @param {string} id Optional The id of the span
+     * @return {object} The span with the loading dots.
+     *
+     * @see GameWindow.getLoadingDots
+     */
+    GameWindow.prototype.addLoadingDots = function(root, len, id) {
+        return root.appendChild(this.getLoadingDots(len, id).span);
+    };
+
+     /**
+     * ### GameWindow.getEventButton
+     *
+     * Creates an HTML button element that will emit an event when clicked
+     *
+     * @param {string} event The event to emit when clicked
+     * @param {string} text Optional. The text on the button
+     * @param {string} id The id of the button
+     * @param {object} attributes Optional. The attributes of the button
+     * @return {Element} The newly created button
+     */
+    GameWindow.prototype.getEventButton =
+    function(event, text, id, attributes) {
+    
+        var b;
+        if ('string' !== typeof event) {
+            throw new TypeError('GameWindow.getEventButton: event must ' +
+                                'be string.');
+        }
+        b = this.getButton(id, text, attributes);
+        b.onclick = function() {
+            node.emit(event);
+        };
+        return b;
+    };
+
+    /**
+     * ### GameWindow.addEventButton
+     *
+     * Adds an EventButton to the specified root element
+     *
+     * If no valid root element is provided, it is append as last element
+     * in the current screen.
+     *
+     * @param {string} event The event to emit when clicked
+     * @param {string} text Optional. The text on the button
+     * @param {Element} root Optional. The root element
+     * @param {string} id The id of the button
+     * @param {object} attributes Optional. The attributes of the button
+     * @return {Element} The newly created button
+     *
+     * @see GameWindow.getEventButton
+     */
+    GameWindow.prototype.addEventButton =
+    function(event, text, root, id, attributes) {
+        var eb;
+
+        if (!event) return;
+        if (!root) {
+            root = this.getScreen();
+        }
+
+        eb = this.getEventButton(event, text, id, attributes);
+
+        return root.appendChild(eb);
+    };
 
 })(
     // GameWindow works only in the browser environment. The reference
@@ -19847,83 +20493,13 @@ JSUS.extend(PARSE);
     ('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
 
-/**
- * # GameWindow listeners
- * Copyright(c) 2013 Stefano Balietti
- * MIT Licensed
- *
- * www.nodegame.org
- * ---
- */
-(function(node, window) {
-
+// Creates a new GameWindow instance in the global scope.
+(function() {
     "use strict";
+    node.window = new node.GameWindow();
+    if ('undefined' !== typeof window) window.W = node.window;
+})();
 
-    function getElement(idOrObj, prefix) {
-        var el;
-        if ('string' === typeof idOrObj) {
-            el = window.getElementById(idOrObj);
-            if (!el) {
-                throw new Error(prefix + ': could not find element ' +
-                                'with id ' + idOrObj);
-            }
-        }
-        else if (J.isElement(idOrObj)) {
-            el = idOrObj;
-        }
-        else {
-            throw new TypeError(prefix + ': idOrObj must be string ' +
-                                ' or HTML Element.');
-        }
-        return el;
-    }
-
-    node.on('NODEGAME_GAME_CREATED', function() {
-        window.init(node.conf.window);
-    });
-
-    node.on('HIDE', function(idOrObj) {
-        var el = getElement(idOrObj, 'GameWindow.on.HIDE');
-        el.style.display = 'none';
-    });
-
-    node.on('SHOW', function(idOrObj) {
-        var el = getElement(idOrObj, 'GameWindow.on.SHOW');
-        el.style.display = '';
-    });
-
-    node.on('TOGGLE', function(idOrObj) {
-        var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-        
-        if (el.style.display === 'none') {
-            el.style.display = '';
-        }
-        else {
-            el.style.display = 'none';
-        }
-    });
-
-    // Disable all the input forms found within a given id element.
-    node.on('INPUT_DISABLE', function(id) {
-        window.toggleInputs(id, true);
-    });
-
-    // Disable all the input forms found within a given id element.
-    node.on('INPUT_ENABLE', function(id) {
-        window.toggleInputs(id, false);
-    });
-
-    // Disable all the input forms found within a given id element.
-    node.on('INPUT_TOGGLE', function(id) {
-        window.toggleInputs(id);
-    });
-
-    node.log('node-window: listeners added.');
-
-})(
-    'undefined' !== typeof node ? node : undefined
- ,  'undefined' !== typeof node.window ? node.window : undefined
-);
 /**
  * # Canvas class for nodeGame window
  * Copyright(c) 2013 Stefano Balietti
@@ -20104,7 +20680,7 @@ JSUS.extend(PARSE);
      * @param {object} options Optional. Configuration object
      *
      */
-    HTMLRenderer.prototype.init = function (options) {
+    HTMLRenderer.prototype.init = function(options) {
         options = options || this.options;
         this.options = options;
 
@@ -20128,7 +20704,7 @@ JSUS.extend(PARSE);
      * pipeline
      *
      */
-    HTMLRenderer.prototype.reset = function () {
+    HTMLRenderer.prototype.reset = function() {
         this.clear(true);
         this.addDefaultPipeline();
     };
@@ -20144,7 +20720,7 @@ JSUS.extend(PARSE);
             return document.createTextNode(el.content);
         });
 
-        this.tm.addTrigger(function (el) {
+        this.tm.addTrigger(function(el) {
             if (!el) return;
             if (el.content && 'object' === typeof el.content) {
                 var div = document.createElement('div');
@@ -20159,9 +20735,10 @@ JSUS.extend(PARSE);
             }
         });
 
-        this.tm.addTrigger(function (el) {
+        this.tm.addTrigger(function(el) {
             if (!el) return;
-            if (el.content && el.content.parse && 'function' === typeof el.content.parse) {
+            if (el.content && el.content.parse 
+                && 'function' === typeof el.content.parse) {
                 var html = el.content.parse();
                 if (JSUS.isElement(html) || JSUS.isNode(html)) {
                     return html;
@@ -20169,7 +20746,7 @@ JSUS.extend(PARSE);
             }
         });
 
-        this.tm.addTrigger(function (el) {
+        this.tm.addTrigger(function(el) {
             if (!el) return;
             if (JSUS.isElement(el.content) || JSUS.isNode(el.content)) {
                 return el.content;
@@ -20186,7 +20763,7 @@ JSUS.extend(PARSE);
      * @param {boolean} clear TRUE, to confirm the clearing
      * @return {boolean} TRUE, if clearing is successful
      */
-    HTMLRenderer.prototype.clear = function (clear) {
+    HTMLRenderer.prototype.clear = function(clear) {
         return this.tm.clear(clear);
     };
 
@@ -20199,7 +20776,7 @@ JSUS.extend(PARSE);
      * @param {number} pos Optional. The position of the renderer in the pipeline
      * @return {boolean} TRUE, if insertion is successful
      */
-    HTMLRenderer.prototype.addRenderer = function (renderer, pos) {
+    HTMLRenderer.prototype.addRenderer = function(renderer, pos) {
         return this.tm.addTrigger(renderer, pos);
     };
 
@@ -20211,7 +20788,7 @@ JSUS.extend(PARSE);
      * @param {function} renderer The function to remove
      * @return {boolean} TRUE, if removal is successful
      */
-    HTMLRenderer.prototype.removeRenderer = function (renderer) {
+    HTMLRenderer.prototype.removeRenderer = function(renderer) {
         return this.tm.removeTrigger(renderer);
     };
 
@@ -20225,7 +20802,7 @@ JSUS.extend(PARSE);
      *
      * @see TriggerManager.pullTriggers
      */
-    HTMLRenderer.prototype.render = function (o) {
+    HTMLRenderer.prototype.render = function(o) {
         return this.tm.pullTriggers(o);
     };
 
@@ -20236,7 +20813,7 @@ JSUS.extend(PARSE);
      *
      * @return {number} The number of render functions in the pipeline
      */
-    HTMLRenderer.prototype.size = function () {
+    HTMLRenderer.prototype.size = function() {
         return this.tm.triggers.length;
     };
 
@@ -20254,16 +20831,16 @@ JSUS.extend(PARSE);
      *
      * @param {object} The object to transform in entity
      */
-    function Entity (e) {
+    function Entity(e) {
         e = e || {};
         this.content = ('undefined' !== typeof e.content) ? e.content : '';
         this.className = ('undefined' !== typeof e.style) ? e.style : null;
     }
 
 })(
-    ('undefined' !== typeof node) ? node.window || node : module.exports, // Exports
-    ('undefined' !== typeof window) ? window : module.parent.exports.window, // window
-    ('undefined' !== typeof node) ? node : module.parent.exports.node // node
+    ('undefined' !== typeof node) ? node.window || node : module.exports,
+    ('undefined' !== typeof window) ? window : module.parent.exports.window,
+    ('undefined' !== typeof node) ? node : module.parent.exports.node
 );
 /**
  * # List class for nodeGame window
@@ -20483,38 +21060,65 @@ JSUS.extend(PARSE);
     exports.Table = Table;
     exports.Table.Cell = Cell;
 
-    // For simple testing
-    // module.exports = Table;
-
-    var JSUS = node.JSUS;
+    var J = node.JSUS;
     var NDDB = node.NDDB;
     var HTMLRenderer = node.window.HTMLRenderer;
     var Entity = node.window.HTMLRenderer.Entity;
 
-
-    Table.prototype = JSUS.clone(NDDB.prototype);
-    //Table.prototype = new NDDB();
+    Table.prototype = new NDDB();
     Table.prototype.constructor = Table;
 
-    Table.H = ['x','y','z'];
-    Table.V = ['y','x', 'z'];
+    Table.H = ['x', 'y', 'z'];
+    Table.V = ['y', 'x', 'z'];
 
     Table.log = node.log;
 
-    function Table(options, data, parent) {
+    /**
+     * Table constructor
+     *
+     * Creates a new Table object
+     *
+     * @param {object} options Optional. Configuration for NDDB
+     * @param {array} data Optional. Array of initial items
+     */
+    function Table(options, data) {
         options = options || {};
+        // Updates indexes on the fly.
+        if (!options.update) options.update = {};
+        if ('undefined' === typeof options.update.indexes) {
+            options.update.indexes = true;
+        }
 
-        Table.log = options.log || Table.log;
+        NDDB.call(this, options, data);
+
+        if (!this.row) {
+            this.index('row', function(c) {
+                return c.x;
+            });
+        }
+        if (!this.col) {
+            this.index('col', function(c) {
+                return c.y;
+            });
+        }
+        if (!this.rowcol) {
+            this.index('rowcol', function(c) {
+                return c.x + '_' + c.y;
+            });
+        }
+
         this.defaultDim1 = options.defaultDim1 || 'x';
         this.defaultDim2 = options.defaultDim2 || 'y';
         this.defaultDim3 = options.defaultDim3 || 'z';
 
         this.table = options.table || document.createElement('table');
-        this.id = options.id || 'table_' + Math.round(Math.random() * 1000);
+        this.id = options.id ||
+            'table_' + Math.round(Math.random() * 1000);
 
-        this.auto_update = ('undefined' !== typeof options.auto_update) ? options.auto_update : false;
+        this.auto_update = 'undefined' !== typeof options.auto_update ?
+            options.auto_update : false;
 
-        // Class for missing cells
+        // Class for missing cells.
         this.missing = options.missing || 'missing';
         this.pointers = {
             x: options.pointerX || 0,
@@ -20528,36 +21132,36 @@ JSUS.extend(PARSE);
         this.left = [];
         this.right = [];
 
-
-        NDDB.call(this, options, data, parent);
-
-        // From NDDB
-        this.options = this.__options;
-    }
-
-    // TODO: improve init
-    Table.prototype.init = function (options) {
-        NDDB.prototype.init.call(this, options);
-
-        options = options || this.options;
         if ('undefined' !== typeof options.id) {
-
             this.table.id = options.id;
             this.id = options.id;
         }
         if (options.className) {
             this.table.className = options.className;
         }
-        this.initRenderer(options.render);
-    };
 
-    Table.prototype.initRenderer = function (options) {
+        // Init renderer.
+        this.initRenderer(options.render);
+    }
+
+    /**
+     * Table.initRenderer
+     *
+     * Inits the `HTMLRenderer` object and adds a renderer for objects.
+     *
+     * @param {object} options Optional. Configuration for the renderer
+     *
+     * @see HTMLRenderer
+     * @see HTMLRenderer.addRenderer
+     */
+    Table.prototype.initRenderer = function(options) {
         options = options || {};
         this.htmlRenderer = new HTMLRenderer(options);
         this.htmlRenderer.addRenderer(function(el) {
+            var tbl, key;
             if ('object' === typeof el.content) {
-                var tbl = new Table();
-                for (var key in el.content) {
+                tbl = new Table();
+                for (key in el.content) {
                     if (el.content.hasOwnProperty(key)){
                         tbl.addRow([key,el.content[key]]);
                     }
@@ -20567,24 +21171,55 @@ JSUS.extend(PARSE);
         }, 2);
     };
 
-    // TODO: make it 3D
-    Table.prototype.get = function (x, y) {
-        var out = this;
-        if ('undefined' !== typeof x) {
-            out = this.select('x','=',x);
+    /**
+     * Table.get
+     *
+     * Returns the element at row column (x,y)
+     *
+     * @param {number} row The row number
+     * @param {number} col The column number
+     *
+     * @see HTMLRenderer
+     * @see HTMLRenderer.addRenderer
+     */
+    Table.prototype.get = function(row, col) {
+        if ('undefined' !== typeof row && 'number' !== typeof row) {
+            throw new TypeError('Table.get: row must be number.');
         }
-        if ('undefined' !== typeof y) {
-            out = out.select('y','=',y);
+        if ('undefined' !== typeof col && 'number' !== typeof col) {
+            throw new TypeError('Table.get: col must be number.');
         }
 
-        return out.fetch();
+        if ('undefined' === typeof row) {
+            return this.col.get(col);
+        }
+        if ('undefined' === typeof col) {
+            return this.row.get(row);
+        }
+
+        return this.rowcol.get(row + '_' + col);
     };
 
-    Table.prototype.addClass = function (c) {
-        if (!c) return;
-        if (c instanceof Array) c = c.join(' ');
-        this.forEach(function (el) {
-            node.window.addClass(el, c);
+    /**
+     * ## Table.addClass
+     *
+     * Adds a CSS class to each element cell in the table
+     *
+     * @param {string|array} The name of the class/classes.
+     *
+     * return {Table} This instance for chaining.
+     */
+    Table.prototype.addClass = function(className) {
+        if ('string' !== typeof className && !J.isArray(className)) {
+            throw new TypeError('Table.addClass: className must be string or ' +
+                                'array.');
+        }
+        if (J.isArray(className)) {
+            className = className.join(' ');
+        }
+
+        this.each(function(el) {
+            W.addClass(el, className);
         });
 
         if (this.auto_update) {
@@ -20594,24 +21229,35 @@ JSUS.extend(PARSE);
         return this;
     };
 
-    // Depends on node.window
-    Table.prototype.removeClass = function (c) {
-        if (!c) return;
-
+    /**
+     * ## Table.removeClass
+     *
+     * Removes a CSS class from each element cell in the table
+     *
+     * @param {string|array} The name of the class/classes.
+     *
+     * return {Table} This instance for chaining.
+     */
+    Table.prototype.removeClass = function(className) {
         var func;
-        if (c instanceof Array) {
-            func = function(el, c) {
-                for (var i=0; i< c.length; i++) {
-                    node.window.removeClass(el, c[i]);
+        if ('string' !== typeof className && !J.isArray(className)) {
+            throw new TypeError('Table.removeClass: className must be string ' +
+                                'or array.');
+        }
+
+        if (J.isArray(className)) {
+            func = function(el, className) {
+                for (var i = 0; i < className.length; i++) {
+                    W.removeClass(el, className[i]);
                 }
             };
         }
         else {
-            func = node.window.removeClass;
+            func = W.removeClass;
         }
 
-        this.forEach(function (el) {
-            func.call(this,el,c);
+        this.each(function(el) {
+            func.call(this, el, className);
         });
 
         if (this.auto_update) {
@@ -20621,50 +21267,58 @@ JSUS.extend(PARSE);
         return this;
     };
 
-    Table.prototype._addSpecial = function (data, type) {
+    
+    Table.prototype._addSpecial = function(data, type) {
+        var out, i;
         if (!data) return;
         type = type || 'header';
         if ('object' !== typeof data) {
             return {content: data, type: type};
         }
 
-        var out = [];
-        for (var i=0; i < data.length; i++) {
+        out = [];
+        for (i = 0; i < data.length; i++) {
             out.push({content: data[i], type: type});
         }
         return out;
     };
 
-
-    Table.prototype.setHeader = function (header) {
-        this.header = this._addSpecial(header);
+    /**
+     * ## Table.setHeader
+     *
+     * Set the headers for the table
+     *
+     * @param {string|array} Array of strings representing the header
+     */
+    Table.prototype.setHeader = function(header) {
+        this.header = this._addSpecial(header, 'header');
     };
 
-    Table.prototype.add2Header = function (header) {
+    Table.prototype.add2Header = function(header) {
         this.header = this.header.concat(this._addSpecial(header));
     };
 
-    Table.prototype.setLeft = function (left) {
+    Table.prototype.setLeft = function(left) {
         this.left = this._addSpecial(left, 'left');
     };
 
-    Table.prototype.add2Left = function (left) {
+    Table.prototype.add2Left = function(left) {
         this.left = this.left.concat(this._addSpecial(left, 'left'));
     };
 
     // TODO: setRight
-    //Table.prototype.setRight = function (left) {
+    //Table.prototype.setRight = function(left) {
     //  this.right = this._addSpecial(left, 'right');
     //};
 
-    Table.prototype.setFooter = function (footer) {
+    Table.prototype.setFooter = function(footer) {
         this.footer = this._addSpecial(footer, 'footer');
     };
 
-    Table._checkDim123 = function (dims) {
+    Table._checkDim123 = function(dims) {
         var t = Table.H.slice(0);
         for (var i=0; i< dims.length; i++) {
-            if (!JSUS.removeElement(dims[i],t)) return false;
+            if (!J.removeElement(dims[i],t)) return false;
         }
         return true;
     };
@@ -20674,9 +21328,9 @@ JSUS.extend(PARSE);
      *
      * @param
      */
-    Table.prototype.updatePointer = function (pointer, value) {
+    Table.prototype.updatePointer = function(pointer, value) {
         if (!pointer) return false;
-        if (!JSUS.in_array(pointer, Table.H)) {
+        if (!J.in_array(pointer, Table.H)) {
             Table.log('Cannot update invalid pointer: ' + pointer, 'ERR');
             return false;
         }
@@ -20688,7 +21342,7 @@ JSUS.extend(PARSE);
 
     };
 
-    Table.prototype._add = function (data, dims, x, y, z) {
+    Table.prototype._add = function(data, dims, x, y, z) {
         if (!data) return false;
         if (dims) {
             if (!Table._checkDim123(dims)) {
@@ -20700,21 +21354,21 @@ JSUS.extend(PARSE);
             dims = Table.H;
         }
 
-        var insertCell = function (content){
+        var insertCell = function(content) {
             //Table.log('content');
             //Table.log(x + ' ' + y + ' ' + z);
             //Table.log(i + ' ' + j + ' ' + h);
 
             var cell = {};
             cell[dims[0]] = i; // i always defined
-            cell[dims[1]] = (j) ? y+j : y;
-            cell[dims[2]] = (h) ? z+h : z;
+            cell[dims[1]] = (j) ? y + j : y;
+            cell[dims[2]] = (h) ? z + h : z;
             cell.content = content;
             //Table.log(cell);
             this.insert(new Cell(cell));
-            this.updatePointer(dims[0],cell[dims[0]]);
-            this.updatePointer(dims[1],cell[dims[1]]);
-            this.updatePointer(dims[2],cell[dims[2]]);
+            this.updatePointer(dims[0], cell[dims[0]]);
+            this.updatePointer(dims[1], cell[dims[1]]);
+            this.updatePointer(dims[2], cell[dims[2]]);
         };
 
         // By default, only the second dimension is incremented
@@ -20766,7 +21420,7 @@ JSUS.extend(PARSE);
 
     };
 
-    Table.prototype.add = function (data, x, y) {
+    Table.prototype.add = function(data, x, y) {
         if (!data) return;
         var cell = (data instanceof Cell) ? data : new Cell({
             x: x,
@@ -20782,33 +21436,37 @@ JSUS.extend(PARSE);
         return result;
     };
 
-    Table.prototype.addColumn = function (data, x, y) {
+    Table.prototype.addColumn = function(data, x, y) {
         if (!data) return false;
         return this._add(data, Table.V, x, y);
     };
 
-    Table.prototype.addRow = function (data, x, y) {
+    Table.prototype.addRow = function(data, x, y) {
         if (!data) return false;
         return this._add(data, Table.H, x, y);
     };
 
-    //Table.prototype.bind = function (dim, property) {
+    //Table.prototype.bind = function(dim, property) {
     //this.binds[property] = dim;
     //};
 
     // TODO: Only 2D for now
     // TODO: improve algorithm, rewrite
-    Table.prototype.parse = function () {
+    Table.prototype.parse = function() {
+        var TABLE, TR, TD, THEAD, TBODY, TFOOT;
+        var i, trid, f, old_x, old_left;
+        var diff, j;
 
         // Create a cell element (td,th...)
         // and fill it with the return value of a
         // render value.
-        var fromCell2TD = function (cell, el) {
+        var fromCell2TD = function(cell, el) {
+            var TD, content;
             if (!cell) return;
             el = el || 'td';
-            var TD = document.createElement(el);
-            var content = this.htmlRenderer.render(cell);
-            //var content = (!JSUS.isNode(c) || !JSUS.isElement(c)) ? document.createTextNode(c) : c;
+            TD = document.createElement(el);
+            content = this.htmlRenderer.render(cell);
+            //var content = (!J.isNode(c) || !J.isElement(c)) ? document.createTextNode(c) : c;
             TD.appendChild(content);
             if (cell.className) TD.className = cell.className;
             return TD;
@@ -20820,41 +21478,34 @@ JSUS.extend(PARSE);
             }
         }
 
-        var TABLE = this.table,
-        TR,
-        TD,
-        i;
+        TABLE = this.table;
 
         // HEADER
         if (this.header && this.header.length > 0) {
-            var THEAD = document.createElement('thead');
+            THEAD = document.createElement('thead');
             TR = document.createElement('tr');
-            // Add an empty cell to balance the left header column
+            // Add an empty cell to balance the left header column.
             if (this.left && this.left.length > 0) {
                 TR.appendChild(document.createElement('th'));
             }
             for (i=0; i < this.header.length; i++) {
-                TR.appendChild(fromCell2TD.call(this, this.header[i],'th'));
+                TR.appendChild(fromCell2TD.call(this, this.header[i], 'th'));
             }
             THEAD.appendChild(TR);
-            i=0;
             TABLE.appendChild(THEAD);
+            i = 0;
         }
 
-        //console.log(this.table);
-        //console.log(this.id);
-        //console.log(this.db.length);
-
         // BODY
-        if (this.length) {
-            var TBODY = document.createElement('tbody');
+        if (this.size()) {
+            TBODY = document.createElement('tbody');
 
             this.sort(['y','x']); // z to add first
-            var trid = -1;
+            trid = -1;
             // TODO: What happens if the are missing at the beginning ??
-            var f = this.first();
-            var old_x = f.x;
-            var old_left = 0;
+            f = this.first();
+            old_x = f.x;
+            old_left = 0;
 
             for (i=0; i < this.db.length; i++) {
                 //console.log('INSIDE TBODY LOOP');
@@ -20866,7 +21517,7 @@ JSUS.extend(PARSE);
                     //Table.log(trid);
                     old_x = f.x - 1; // must start exactly from the first
 
-                    // Insert left header, if any
+                    // Insert left header, if any.
                     if (this.left && this.left.length) {
                         TD = document.createElement('td');
                         //TD.className = this.missing;
@@ -20875,28 +21526,28 @@ JSUS.extend(PARSE);
                     }
                 }
 
-                // Insert missing cells
+                // Insert missing cells.
                 if (this.db[i].x > old_x + 1) {
-                    var diff = this.db[i].x - (old_x + 1);
-                    for (var j=0; j < diff; j++ ) {
+                    diff = this.db[i].x - (old_x + 1);
+                    for (j = 0; j < diff; j++ ) {
                         TD = document.createElement('td');
                         TD.className = this.missing;
                         TR.appendChild(TD);
                     }
                 }
-                // Normal Insert
+                // Normal Insert.
                 TR.appendChild(fromCell2TD.call(this, this.db[i]));
 
-                // Update old refs
+                // Update old refs.
                 old_x = this.db[i].x;
             }
             TABLE.appendChild(TBODY);
         }
 
 
-        //FOOTER
+        // FOOTER.
         if (this.footer && this.footer.length > 0) {
-            var TFOOT = document.createElement('tfoot');
+            TFOOT = document.createElement('tfoot');
             TR = document.createElement('tr');
             for (i=0; i < this.header.length; i++) {
                 TR.appendChild(fromCell2TD.call(this, this.footer[i]));
@@ -20908,7 +21559,18 @@ JSUS.extend(PARSE);
         return TABLE;
     };
 
-    Table.prototype.resetPointers = function (pointers) {
+    /**
+     * ## Table.resetPointers
+     *
+     * Reset all pointers to 0 or to the value of the input parameter
+     *
+     * @param {object} pointers Optional. Objects contains the new pointers
+     */
+    Table.prototype.resetPointers = function(pointers) {
+        if (pointers && 'object' !== typeof pointers) {
+            throw new TypeError('Table.resetPointers: pointers must be ' +
+                                'object or undefined.');
+        }
         pointers = pointers || {};
         this.pointers = {
             x: pointers.pointerX || 0,
@@ -20917,8 +21579,16 @@ JSUS.extend(PARSE);
         };
     };
 
-
-    Table.prototype.clear = function (confirm) {
+    /**
+     * ## Table.clear
+     *
+     * Removes all entries and indexes, and resets the pointers
+     *
+     * @param {boolean} confirm TRUE, to confirm the operation.
+     *
+     * @see NDDB.clear
+     */
+    Table.prototype.clear = function(confirm) {
         if (NDDB.prototype.clear.call(this, confirm)) {
             this.resetPointers();
         }
@@ -20928,7 +21598,16 @@ JSUS.extend(PARSE);
     Cell.prototype = new Entity();
     Cell.prototype.constructor = Cell;
 
-    function Cell (cell){
+    /**
+     * ## Cell.
+     *
+     * Creates a new Cell
+     *
+     * @param {object} cell An object containing the coordinates in the table
+     *
+     * @see Entity
+     */
+    function Cell(cell) {
         Entity.call(this, cell);
         this.x = ('undefined' !== typeof cell.x) ? cell.x : null;
         this.y = ('undefined' !== typeof cell.y) ? cell.y : null;
@@ -20936,9 +21615,9 @@ JSUS.extend(PARSE);
     }
 
 })(
-    ('undefined' !== typeof node) ? node.window || node : module.exports, // Exports
-    ('undefined' !== typeof window) ? window : module.parent.exports.window, // window
-    ('undefined' !== typeof node) ? node : module.parent.exports.node // node
+    ('undefined' !== typeof node) ? node.window || node : module.exports,
+    ('undefined' !== typeof window) ? window : module.parent.exports.window,
+    ('undefined' !== typeof node) ? node : module.parent.exports.node
 );
 /**
  * # Widget
@@ -21261,6 +21940,7 @@ JSUS.extend(PARSE);
     ('undefined' !== typeof window) ? window : module.parent.exports.window,
     ('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
+
 /**
  * # Chat widget for nodeGame
  * Copyright(c) 2013 Stefano Balietti
@@ -23352,8 +24032,9 @@ JSUS.extend(PARSE);
 	var sendButton, textInput, dataInput;
 
 	sendButton = W.addButton(root);
-	W.writeln('Text');
+	//W.writeln('Text');
 	textInput = W.addTextInput(root, 'data-bar-text');
+	W.addLabel(root, textInput, undefined, 'Text');
 	W.writeln('Data');
 	dataInput = W.addTextInput(root, 'data-bar-data');
 
@@ -23371,7 +24052,7 @@ JSUS.extend(PARSE);
 
 	    node.log('Parsed Data: ' + JSON.stringify(data));
 
-	    node.say(data, text, to);
+	    node.say(text, to, data);
 	};
 
 	node.on('UPDATED_PLIST', function() {
@@ -23383,6 +24064,7 @@ JSUS.extend(PARSE);
     };
 
 })(node);
+
 /**
  * # Dynamic Table widget for nodeGame
  * Copyright(c) 2013 Stefano Balietti
@@ -25354,7 +26036,7 @@ JSUS.extend(PARSE);
 
     node.widgets.register('VisualTimer', VisualTimer);
 
-    var JSUS = node.JSUS;
+    var J = node.JSUS;
 
     // ## Defaults
 
@@ -25368,7 +26050,8 @@ JSUS.extend(PARSE);
     // ## Meta-data
 
     VisualTimer.version = '0.3.3';
-    VisualTimer.description = 'Display a timer for the game. Timer can trigger events. Only for countdown smaller than 1h.';
+    VisualTimer.description = 'Display a timer for the game. Timer can ' +
+        'trigger events. Only for countdown smaller than 1h.';
 
     // ## Dependencies
 
@@ -25379,19 +26062,28 @@ JSUS.extend(PARSE);
 
     function VisualTimer(options) {
         this.options = options;
+        this.options.update = ('undefined' === typeof this.options.update) ?
+            1000 : this.options.update;
+
         this.id = options.id;
 
         this.gameTimer = null;
+        
         // The DIV in which to display the timer.
         this.timerDiv = null;   
+        
         // The parent element.
-        this.root = null;               
+        this.root = null;
 
         this.init(this.options);
     }
 
     VisualTimer.prototype.init = function(options) {
-        options = options || this.options;
+        var t;
+        
+        J.mixout(options, this.options);
+
+        console.log(options);
 
         if (options.hooks) {
             if (!options.hooks instanceof Array) {
@@ -25417,6 +26109,25 @@ JSUS.extend(PARSE);
             this.timerDiv.className = options.className || '';
         }
 
+        t = this.gameTimer;
+        node.session.register('visualtimer', {
+            set: function(p) {
+                // TODO.
+            },
+            get: function() {
+                return {
+                    startPaused: t.startPaused,
+	            status: t.status,
+                    timeLeft: t.timeLeft,
+                    timePassed: t.timePassed,
+                    update: t.update,
+                    updateRemaining: t.updateRemaining,
+                    updateStart: t. updateStart
+                };
+            }
+        });
+        
+        this.options = options;
     };
 
     VisualTimer.prototype.getRoot = function() {
@@ -25437,7 +26148,7 @@ JSUS.extend(PARSE);
             return;
         }
         time = this.gameTimer.milliseconds - this.gameTimer.timePassed;
-        time = JSUS.parseMilliseconds(time);
+        time = J.parseMilliseconds(time);
         minutes = (time[2] < 10) ? '' + '0' + time[2] : time[2];
         seconds = (time[3] < 10) ? '' + '0' + time[3] : time[3];
         this.timerDiv.innerHTML = minutes + ':' + seconds;
@@ -25445,6 +26156,7 @@ JSUS.extend(PARSE);
 
     VisualTimer.prototype.start = function() {
         this.updateDisplay();
+        console.log(this.gameTimer);
         this.gameTimer.start();
     };
 
@@ -25463,46 +26175,22 @@ JSUS.extend(PARSE);
         this.gameTimer.resume();
     };
 
+    VisualTimer.prototype.setToZero = function() {
+        this.stop();
+        this.timerDiv.innerHTML = '0:0';
+    };
+
     VisualTimer.prototype.listeners = function() {
         var that = this;
         node.on('PLAYING', function() {
-            var stepObj = node.game.getCurrentStep();
+            var stepObj, timer, options;
+            stepObj = node.game.getCurrentStep();
             if (!stepObj) return;
-            var timer = stepObj.timer;
+            timer = stepObj.timer;
             if (timer) {
-                timer = JSUS.clone(timer);
+                options = processOptions(timer, this.options);
+                that.gameTimer.init(timer);
                 that.timerDiv.className = '';
-                var options = {},
-                typeoftimer = typeof timer;
-                switch (typeoftimer) {
-
-                case 'number':
-                    options.milliseconds = timer;
-                    break;
-                case 'object':
-                    options = timer;
-                    break;
-                case 'function':
-                    options.milliseconds = timer;
-                    break;
-                case 'string':
-                    options.milliseconds = Number(timer);
-                    break;
-                }
-
-                if (!options.milliseconds) return;
-
-                options.update = 1000;
-
-                if ('function' === typeof options.milliseconds) {
-                    options.milliseconds = options.milliseconds.call(node.game);
-                }
-
-                if (!options.timeup) {
-                    options.timeup = 'DONE';
-                }
-
-                that.gameTimer.init(options);
                 that.start();
             }
         });
@@ -25511,7 +26199,55 @@ JSUS.extend(PARSE);
             that.stop();
             that.timerDiv.className = 'strike';
         });
+
+        node.on
     };
+
+    /**
+     * ## processOptions
+     *
+     * Clones and mixes in user options with current options
+     *
+     * Return object is transformed accordingly.
+     *
+     * @param {object} Configuration options
+     * @return {object} Clean, valid configuration object.
+     */
+    function processOptions(options, curOptions) {
+        var typeoftimer;
+        options = J.clone(options);
+        J.mixin(options, curOptions);
+        typeoftimer = typeof timer;
+        switch (typeoftimer) {
+
+        case 'number':
+            options.milliseconds = timer;
+            break;
+        case 'object':
+            options = timer;
+            break;
+        case 'function':
+            options.milliseconds = timer;
+            break;
+        case 'string':
+            options.milliseconds = Number(timer);
+            break;
+        }
+
+        if (!options.milliseconds) {
+            throw new Error('VisualTimer processOptions: milliseconds cannot ' +
+                            'be 0 or undefined.');
+        }
+
+        if ('function' === typeof options.milliseconds) {
+            options.milliseconds = options.milliseconds.call(node.game);
+        }
+
+        if (!options.timeup) {
+            options.timeup = 'DONE';
+        }
+        return options;
+    }
 
 })(node);
 
@@ -25598,9 +26334,14 @@ JSUS.extend(PARSE);
             that.unlock(text || that.text.stepping)
         });
 
-        node.on('PLAYING', function(text) {
+        node.on('PLAYING', function() {
             that.unlock();
         });
+
+        node.on('RESUMED', function() {
+            that.unlock();
+        });
+
     };
 
     WaitScreen.prototype.destroy = function() {

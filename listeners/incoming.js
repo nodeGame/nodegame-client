@@ -311,7 +311,6 @@
         return true;
     };
 
-
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
