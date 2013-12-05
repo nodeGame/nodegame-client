@@ -11162,7 +11162,7 @@ JSUS.extend(TIME);
         if (stager) {
             if ('object' !== typeof stager) {
                 throw new NodeGameMisconfiguredGameError(
-                    'GamePlot.init: called with invalid stager');
+                    'GamePlot.init: called with invalid stager.');
             }
             this.stager = stager;
         }
@@ -11170,18 +11170,18 @@ JSUS.extend(TIME);
             this.stager = null;
         }
     };
-    
+
     /**
      * ### GamePlot.next
      *
      * Returns the next stage in the stager
      *
-     * If the step in `curStage` is an integer and out of bounds, that bound is assumed.
+     * If the step in `curStage` is an integer and out of bounds,
+     * that bound is assumed.
      *
-     * @param {GameStage} curStage Optional. The GameStage object from which to get
-     *  the next one. Defaults to returning the first stage.
-     *
-     * @return {GameStage|string} The GameStage describing the next stage
+     * @param {GameStage} curStage The GameStage of reference
+     * @return {GameStage|string} The GameStage coming after _curStage_
+     * in the plot
      *
      * @see GameStage
      */
@@ -11221,7 +11221,9 @@ JSUS.extend(TIME);
             stageObj = this.stager.stages[curStage.stage];
 
             if ('undefined' === typeof stageObj) {
-                throw new NodeGameRunTimeError('GamePlot.next: received nonexistent stage: ' + curStage.stage);
+                throw new NodeGameRunTimeError(
+                    'GamePlot.next: received nonexistent stage: ' +
+                        curStage.stage);
             }
 
             // Find step number:
@@ -11232,7 +11234,8 @@ JSUS.extend(TIME);
                 stepNo = stageObj.steps.indexOf(curStage.step) + 1;
             }
             if (stepNo < 1) {
-                throw new NodeGameRunTimeError('GamePlot.next: received nonexistent step: ' +
+                throw new NodeGameRunTimeError(
+                    'GamePlot.next: received nonexistent step: ' +
                           stageObj.id + '.' + curStage.step);
             }
 
@@ -11280,8 +11283,7 @@ JSUS.extend(TIME);
             // Get normalized GameStage:
             normStage = this.normalizeGameStage(curStage);
             if (normStage === null) {
-                throw new ('next received invalid stage: ' + curStage);
-                return null;
+                throw new Error('next received invalid stage: ' + curStage);
             }
             stageNo  = normStage.stage;
             stepNo   = normStage.step;
@@ -11308,7 +11310,9 @@ JSUS.extend(TIME);
             }
 
             // Handle looping blocks:
-            if ((seqObj.type === 'doLoop' || seqObj.type === 'loop') && seqObj.cb()) {
+            if ((seqObj.type === 'doLoop' || seqObj.type === 'loop') &&
+                seqObj.cb()) {
+
                 return new GameStage({
                     stage: stageNo,
                     step:  1,
@@ -11321,8 +11325,11 @@ JSUS.extend(TIME);
                 // Skip over loops if their callbacks return false:
                 while (this.stager.sequence[stageNo].type === 'loop' &&
                        !this.stager.sequence[stageNo].cb()) {
+
                     stageNo++;
-                    if (stageNo >= this.stager.sequence.length) return GamePlot.END_SEQ;
+                    if (stageNo >= this.stager.sequence.length) {
+                        return GamePlot.END_SEQ;
+                    }
                 }
 
                 // Handle gameover:
@@ -11350,9 +11357,8 @@ JSUS.extend(TIME);
      * Works only in simple mode.
      * Behaves on loops the same as `GamePlot.next`, with round=1 always.
      *
-     * @param {GameStage} curStage The GameStage object from which to get the previous one
-     *
-     * @return {GameStage} The GameStage describing the previous stage
+     * @param {GameStage} curStage The GameStage of reference
+     * @return {GameStage} The GameStage coming before _curStage_ in the plot
      *
      * @see GameStage
      */
@@ -11398,7 +11404,9 @@ JSUS.extend(TIME);
             }
 
             // Handle looping blocks:
-            if ((seqObj.type === 'doLoop' || seqObj.type === 'loop') && seqObj.cb()) {
+            if ((seqObj.type === 'doLoop' || seqObj.type === 'loop') &&
+                seqObj.cb()) {
+
                 return new GameStage({
                     stage: stageNo,
                     step:  stageObj.steps.length,
@@ -11463,7 +11471,7 @@ JSUS.extend(TIME);
      * Uses `GamePlot.previous` and `GamePlot.next` for stepping.
      * If a sequence end is reached, returns immediately.
      *
-     * @param {GameStage} curStage The GameStage object from which to get the offset one
+     * @param {GameStage} curStage The GameStage of reference
      * @param {number} delta The offset. Negative number for backward stepping.
      *
      * @return {GameStage|string} The GameStage describing the distant stage
@@ -11505,7 +11513,8 @@ JSUS.extend(TIME);
      * @param {GameStage|string} gameStage The GameStage object,
      *  or its string representation
      *
-     * @return {number|null} The number of steps to go, minimum 1. NULL on error.
+     * @return {number|null} The number of steps to go, minimum 1.
+     *  NULL on error.
      */
     GamePlot.prototype.stepsToNextStage = function(gameStage) {
         var stageObj, stepNo;
@@ -11536,7 +11545,8 @@ JSUS.extend(TIME);
      * @param {GameStage|string} gameStage The GameStage object,
      *  or its string representation
      *
-     * @return {number|null} The number of steps to go, minimum 1. NULL on error.
+     * @return {number|null} The number of steps to go, minimum 1.
+     *  NULL on error.
      */
     GamePlot.prototype.stepsToPreviousStage = function(gameStage) {
         var stageObj, stepNo;
@@ -11601,7 +11611,8 @@ JSUS.extend(TIME);
         gameStage = new GameStage(gameStage);
         if ('number' === typeof gameStage.step) {
             stageObj = this.getStage(gameStage);
-            return stageObj ? this.stager.steps[stageObj.steps[gameStage.step - 1]] : null;
+            return stageObj ?
+                this.stager.steps[stageObj.steps[gameStage.step - 1]] : null;
         }
         else {
             return this.stager.steps[gameStage.step] || null;
@@ -11636,7 +11647,7 @@ JSUS.extend(TIME);
         if (gameStage.stage === 0) {
             return function() { return false; };
         }
-        
+
         stageObj = this.getStage(gameStage);
         stepObj  = this.getStep(gameStage);
 
@@ -11644,23 +11655,23 @@ JSUS.extend(TIME);
             // TODO is this an error?
             return null;
         }
-        
+
         // return a step-defined rule
         if ('string' === typeof stepObj.steprule) {
-            rule =  node.stepRules.get(stepObj.steprule);        
+            rule = parent.stepRules[stepObj.steprule];
         }
         else if ('function' === typeof stepObj.steprule) {
             rule = stepObj.steprule;
-        }    
+        }
         if ('function' === typeof rule) return rule;
 
         // return a stage-defined rule
         if ('string' === typeof stageObj.steprule) {
-            rule =  node.stepRules.get(stageObj.steprule);        
+            rule = parent.stepRules[stageObj.steprule];
         }
         else if ('function' === typeof stageObj.steprule) {
             rule = stageObj.steprule;
-        }    
+        }
         if ('function' === typeof rule) return rule;
 
         // Default rule
@@ -11692,7 +11703,7 @@ JSUS.extend(TIME);
     GamePlot.prototype.getGlobal = function(gameStage, globalVar) {
         var stepObj, stageObj;
         var stepGlobals, stageGlobals, defaultGlobals;
-        
+
         gameStage = new GameStage(gameStage);
 
         // Look in current step:
@@ -11839,7 +11850,8 @@ JSUS.extend(TIME);
             stageNo = seqIdx + 1;
         }
         if (stageNo < 1 || stageNo > this.stager.sequence.length) {
-            node.warn('normalizeGameStage received nonexistent stage: ' + gameStage.stage);
+            node.warn('normalizeGameStage received nonexistent stage: ' +
+                      gameStage.stage);
             return null;
         }
 
@@ -11896,7 +11908,7 @@ JSUS.extend(TIME);
      */
     GamePlot.prototype.isFlexibleMode = function() {
         return this.stager.sequence.length === 0;
-    }
+    };
 
     // ## Closure
 })(
@@ -18701,7 +18713,7 @@ JSUS.extend(TIME);
         //            iframe.onload = null;
         //            if (cb) cb();
         //        }
-        
+
         var iframeWin;
         iframeWin = iframe.contentWindow;
 
@@ -18721,19 +18733,19 @@ JSUS.extend(TIME);
         // A fallback to window.onload, that will always work
         iframeWin.addEventListener('load', completed, false);
     }
-    
+
     function onLoadIE(iframe, cb) {
         var iframeWin, iframeDoc;
         iframeWin = iframe.contentWindow;
-        iframeDoc = W.getIFrameDocument(iframe)
+        iframeDoc = W.getIFrameDocument(iframe);
 
         function completed(event) {
-	    // readyState === "complete" works also in oldIE.
-	    if (event.type === 'load' ||
+            // readyState === "complete" works also in oldIE.
+            if (event.type === 'load' ||
                 iframeDoc.readyState === 'complete') {
-	        detach();
+                detach();
                 if (cb) cb();
-	    }
+            }
         }
 
         function detach() {
@@ -19101,7 +19113,7 @@ JSUS.extend(TIME);
 
         iframe = W.addIFrame(root, frameName);
         iframe.src = 'about:blank';
-        
+
         this.root = root;
         this.frameName = frameName;
         this.frameElement = iframe;
@@ -19270,7 +19282,7 @@ JSUS.extend(TIME);
             throw new TypeError('GameWindow.preCache: callback must be ' +
                                 'function or undefined.');
         }
-            
+
         // Don't preload if an empty array is passed.
         if (!uris.length) {
             if (callback) callback();
@@ -19284,7 +19296,7 @@ JSUS.extend(TIME);
 
         for (uriIdx = 0; uriIdx < uris.length; uriIdx++) {
             currentUri = uris[uriIdx];
-            
+
             // Create an invisible internal frame for the current URI:
             iframe = document.createElement('iframe');
             iframe.style.display = 'none';
@@ -19296,10 +19308,10 @@ JSUS.extend(TIME);
             (function(uri, thisIframe) {
                 onLoad(thisIframe, function() {
                     var frameDocumentElement;
-                    
+
                     frameDocumentElement = W.getIFrameDocument(thisIframe)
                         .documentElement;
-                    
+
                     // Store the contents in the cache:
                     that.cache[uri] = {
                         contents: frameDocumentElement.innerHTML,
@@ -19357,7 +19369,7 @@ JSUS.extend(TIME);
     GameWindow.prototype.clearCache = function() {
         this.cache = {};
     };
-    
+
     /**
      * ### GameWindow.generateHeader
      *
@@ -19407,8 +19419,9 @@ JSUS.extend(TIME);
      */
     GameWindow.prototype.getElementById = function(id) {
         var el, frameDocument;
-        
-        frameDocument = this.getFrameDocument(), el = null;
+
+        frameDocument = this.getFrameDocument();
+        el = null;
         if (frameDocument && frameDocument.getElementById) {
             el = frameDocument.getElementById(id);
         }
@@ -19470,7 +19483,7 @@ JSUS.extend(TIME);
         var iframe, iframeName, iframeDocument;
         var frameDocumentElement, frameReady;
         var lastURI;
-        
+
         if ('string' !== typeof uri) {
             throw new TypeError('GameWindow.loadFrame: uri must be string.');
         }
@@ -19519,6 +19532,7 @@ JSUS.extend(TIME);
                     storeCacheNow = false;
                     storeCacheLater = true;
                 }
+                // TODO: Throw error here if option is invalid
             }
         }
 
@@ -19552,13 +19566,13 @@ JSUS.extend(TIME);
         this.currentURIs[iframeName] = uri;
 
         // Keep track of nested call to loadFrame.
-        updateAreLoading(1);
-     
+        updateAreLoading(this, 1);
+
         // Add the onload event listener:
 //       iframe.onload = function() {
 //           // Updates references to frame window and document.
 //           that.frameWindow = window.frames[iframeName];
-//           that.frameDocument =  W.getIFrameDocument(that.getFrame());
+//           that.frameDocument = W.getIFrameDocument(that.getFrame());
 //
 //           // Remove onload hanlder for this frame.
 //           // Buggy Opera 11.52 fires the onload twice.
@@ -19569,15 +19583,17 @@ JSUS.extend(TIME);
 //           that.updateLoadFrameState(func);
 //       };
 
-        onLoad(iframe, function() {                       
-            // Updates references to frame window and document.
-            that.frameWindow = window.frames[iframeName];
-            that.frameDocument =  W.getIFrameDocument(that.getFrame());
-            // Handles caching.
-            handleFrameLoad(that, uri, iframeName, loadCache, storeCacheNow);
-            // Executes callback and updates GameWindow state.
-            that.updateLoadFrameState(func);
-        });
+        if (!loadCache || !frameReady) {
+            onLoad(iframe, function() {
+                // Updates references to frame window and document.
+                that.frameWindow = window.frames[iframeName];
+                that.frameDocument = W.getIFrameDocument(that.getFrame());
+                // Handles caching.
+                handleFrameLoad(that, uri, iframeName, loadCache, storeCacheNow);
+                // Executes callback and updates GameWindow state.
+                that.updateLoadFrameState(func);
+            });
+        }
 
         // Cache lookup:
         if (loadCache) {
@@ -19586,10 +19602,10 @@ JSUS.extend(TIME);
             // would be cleared once the iframe becomes ready.  In that case,
             // iframe.onload handles the filling of the contents.
             if (frameReady) {
-                handleFrameLoad(this, uri, iframeName, loadCache, 
+                handleFrameLoad(this, uri, iframeName, loadCache,
                                 storeCacheNow);
 
-                // Update status (onload not called if frame was already ready):
+                // Update status:
                 this.updateLoadFrameState(func);
             }
         }
@@ -19597,7 +19613,7 @@ JSUS.extend(TIME);
             // Update the frame location:
             window.frames[iframeName].location = uri;
         }
-        
+
         // Adding a reference to nodeGame also in the iframe
         window.frames[iframeName].node = node;
     };
@@ -19622,7 +19638,7 @@ JSUS.extend(TIME);
             func.call(node.game);
         }
 
-        updateAreLoading(-1);
+        updateAreLoading(this, -1);
 
         if (this.areLoading === 0) {
             this.setStateLevel('LOADED');
