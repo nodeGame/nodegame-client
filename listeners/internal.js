@@ -51,6 +51,16 @@
             return false;
         }
 
+        function done() {
+            node.game.willBeDone = false;
+            node.emit('BEFORE_DONE');
+            node.game.setStageLevel(stageLevels.DONE);
+            // Step forward, if allowed.
+            if (node.game.shouldStep()) {
+                node.game.step();
+            }
+        }
+
         /**
          * ## DONE
          *
@@ -64,23 +74,23 @@
          */
         this.events.ng.on('DONE', function() {
             // Execute done handler before updating stage.
-            var ok, done;
+            var ok, doneCb, stageLevel;
             ok = true;
-            done = node.game.plot.getProperty(node.game.getCurrentGameStage(),
-                                              'done');
+            doneCb = node.game.plot.getProperty(node.game.getCurrentGameStage(),
+                                                'done');
 
-            if (done) ok = done.apply(node.game, arguments);
+            if (doneCb) ok = doneCb.apply(node.game, arguments);
             if (!ok) return;
-            node.game.setStageLevel(stageLevels.DONE);
+                   
+            stageLevel = node.game.getStageLevel();
 
-            // Call all the functions that want to do
-            // something before changing stage.
-            node.emit('BEFORE_DONE');
-
-            // Step forward, if allowed.
-            if (node.game.shouldStep()){
-                node.game.step();
+            if (stageLevel >= stageLevels.PLAYING) {
+                done();
             }
+            else {
+                node.game.willBeDone = true;
+            }
+
         });
 
         /**
@@ -137,6 +147,12 @@
             node.timer.setTimestamp(node.game.getCurrentGameStage().toString(),
                                     currentTime);
             node.timer.setTimestamp('step', currentTime);
+            
+            // DONE was previously emitted, we just execute done handler.
+            if (node.game.willBeDone) {
+                done();
+            }
+            
         });
 
         /**
@@ -152,8 +168,8 @@
                          'Use restart if you want to start the game again');
                 return;
             }
-
-            node.game.start();
+            
+            node.game.start(options);
         });
 
         /**

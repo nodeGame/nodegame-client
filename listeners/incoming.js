@@ -306,6 +306,19 @@
             }
         });
 
+        /**
+         * ## in.get.SESSION
+         *
+         * Gets the value of a variable registered in the session
+         *
+         * If msg.text is undefined returns all session variables
+         *
+         * @see GameSession.get
+         */
+        node.events.ng.on( IN + get + 'SESSION', function(msg) {
+            return node.session.get(msg.text);
+        });
+
         node.incomingAdded = true;
         node.silly('incoming listeners added');
         return true;

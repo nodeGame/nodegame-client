@@ -8610,9 +8610,9 @@ JSUS.extend(TIME);
  *
  * Representation of the stage of a game:
  *
- *  `stage`: the higher-level building blocks of a game
- *  `step`: the sub-unit of a stage
- *  `round`: the number of repetition for a stage. Defaults round = 1
+ * - `stage`: the higher-level building blocks of a game
+ * - `step`: the sub-unit of a stage
+ * - `round`: the number of repetition for a stage. Defaults round = 1
  *
  * @see GamePlot
  * ---
@@ -13097,7 +13097,30 @@ JSUS.extend(TIME);
         // Setting to stage 0.0.0 and starting.
         this.setCurrentGameStage(new GameStage(), true);
         this.setStateLevel(constants.stateLevels.STARTING, true);
+
+        /**
+         * ### Game.paused
+         *
+         * TRUE, if the game is paused
+         *
+         * @see Game.pause
+         * @see Game.resume
+         */
         this.paused = false;
+
+        /**
+         * ### Game.willBeDone
+         *
+         * TRUE, if DONE was emitted during the execution of the step callback
+         *
+         * If already TRUE, when PLAYING is emitted the game will try to step 
+         * immediately.
+         *
+         * @see Game.pause
+         * @see Game.resume
+         */
+        this.willBeDone = false;
+        
     }
 
     // ## Game methods
@@ -13112,12 +13135,17 @@ JSUS.extend(TIME);
      * Important: it does not use `Game.publishUpdate` because that is
      * just for change of state after the game has started
      */
-    Game.prototype.start = function() {
-        var onInit, rc, node;
+    Game.prototype.start = function(options) {
+        var onInit, node, startStage;
         node = this.node;
+        if (options && 'object' !== typeof options) {
+            throw new TypeError('Game.start: options must be object or ' +
+                                'undefined.');
+        }
+        options = options || {};
 
         // Store time:
-        this.node.timer.setTimestamp('start');
+        node.timer.setTimestamp('start');
 
         if (node.player.placeholder) {
             throw new node.NodeGameMisconfiguredGameError(
@@ -13146,10 +13174,17 @@ JSUS.extend(TIME);
         }
         this.setStateLevel(constants.stateLevels.INITIALIZED);
 
-        this.setCurrentGameStage(new GameStage(), true);
-        rc = this.step();
+        // Starts from beginning (default) or from a predefined stage
+        // This options is useful when a player reconnets.
+        startStage = options.startStage || new GameStage();
+
+        this.setCurrentGameStage(startStage, true);
 
         node.log('game started.');
+        
+        if (options.step !== false) {
+            this.step();
+        }
     };
 
     /**
@@ -13398,7 +13433,7 @@ JSUS.extend(TIME);
         var minCallback = null, maxCallback = null, exactCallback = null;
 
         if (this.getStateLevel() < constants.stateLevels.INITIALIZED) {
-            throw new node.NodeGameMisconfiguredGameError(
+            throw new this.node.NodeGameMisconfiguredGameError(
                 'Game.gotoStep: game was not started yet.');
         }
 
@@ -13632,7 +13667,6 @@ JSUS.extend(TIME);
      */
     Game.prototype.execStep = function(stage) {
         var cb, res, node;
-
         node = this.node;
 
         if (!stage || 'object' !== typeof stage) {
@@ -13804,11 +13838,11 @@ JSUS.extend(TIME);
      */
     Game.prototype.setStageLevel = function(stageLevel, silent) {
         var node;
+        node = this.node;
         if ('number' !== typeof stageLevel) {
             throw new node.NodeGameMisconfiguredGameError(
                 'setStageLevel called with invalid parameter: ' + stageLevel);
         }
-        node = this.node;
         // console.log(stageLevel);
         // Important: First publish, then actually update.
         if (!silent) {
@@ -14082,10 +14116,12 @@ JSUS.extend(TIME);
             }
         });
 
-        this.register('game.currentStepObj', {
-            set: GameSession.restoreStage,
+        this.register('stage', {
+            set: function() {
+                // GameSession.restoreStage
+            },
             get: function() {
-                return node.game.getCurrentStep();
+                return node.player.stage;
             }
         });
 
@@ -14093,38 +14129,38 @@ JSUS.extend(TIME);
     }
 
 
-    GameSession.prototype.restoreStage = function(stage) {
-
-        try {
-            // GOTO STATE
-            node.game.execStage(node.plot.getStep(stage));
-
-            var discard = ['LOG',
-                           'STATECHANGE',
-                           'WINDOW_LOADED',
-                           'BEFORE_LOADING',
-                           'LOADED',
-                           'in.say.STATE',
-                           'UPDATED_PLIST',
-                           'NODEGAME_READY',
-                           'out.say.STATE',
-                           'out.set.STATE',
-                           'in.say.PLIST',
-                           'STAGEDONE', // maybe not here
-                           'out.say.HI'
-                          ];
-
-            // RE-EMIT EVENTS
-            node.events.history.remit(node.game.getStateLevel(), discard);
-            node.info('game stage restored');
-            return true;
-        }
-        catch(e) {
-            node.err('could not restore game stage. An error has occurred: ' + e);
-            return false;
-        }
-
-    };
+//    GameSession.prototype.restoreStage = function(stage) {
+//
+//        try {
+//            // GOTO STATE
+//            node.game.execStage(node.plot.getStep(stage));
+//
+//            var discard = ['LOG',
+//                           'STATECHANGE',
+//                           'WINDOW_LOADED',
+//                           'BEFORE_LOADING',
+//                           'LOADED',
+//                           'in.say.STATE',
+//                           'UPDATED_PLIST',
+//                           'NODEGAME_READY',
+//                           'out.say.STATE',
+//                           'out.set.STATE',
+//                           'in.say.PLIST',
+//                           'STAGEDONE', // maybe not here
+//                           'out.say.HI'
+//                          ];
+//
+//            // RE-EMIT EVENTS
+//            node.events.history.remit(node.game.getStateLevel(), discard);
+//            node.info('game stage restored');
+//            return true;
+//        }
+//        catch(e) {
+//            node.err('could not restore game stage. An error has occurred: ' + e);
+//            return false;
+//        }
+//
+//    };
 
     /**
      * ## Session Manager constructor
@@ -14160,31 +14196,54 @@ JSUS.extend(TIME);
      *
      * @param {string} p The path to the variable to set in _node_
      * @param {mixed} value The value to set
-     * @return {mixed} The requested variable
      */
     SessionManager.setVariable = function(p, value) {
         J.setNestedValue(p, value, node);
     };
 
-    SessionManager.prototype.register = function(path, options) {
+    /**
+     * ## SessionManager.register
+     *
+     * Register a new variable to the session
+     *
+     * Overwrites previously registered variables with the same name.
+     *
+     * Usage example:
+     *
+     * ```javascript
+     * node.session.register('player', {
+     *       set: function(p) {
+     *           node.createPlayer(p);
+     *       },
+     *       get: function() {
+     *           return node.player;
+     *       }
+     * });
+     * ```
+     *
+     * @param {string} path A string containing a path to a variable
+     * @param {object} conf Optional. Configuration object containing setters
+     *   and getters
+     */
+    SessionManager.prototype.register = function(path, conf) {
         if ('string' !== typeof path) {
             throw new TypeError('SessionManager.register: path must be ' +
                                 'string.');
         }
-        if (options && 'object' !== typeof options) {
-            throw new TypeError('SessionManager.register: options must be ' +
+        if (conf && 'object' !== typeof conf) {
+            throw new TypeError('SessionManager.register: conf must be ' +
                                 'object or undefined.');
         }
 
         this.session[path] = {
 
-            get: (options && options.get) ? 
-                options.get : function() {
+            get: (conf && conf.get) ? 
+                conf.get : function() {
                     return J.getNestedValue(path, node);
                 },
 
-            set: (options && options.set) ? 
-                options.set : function(value) {
+            set: (conf && conf.set) ? 
+                conf.set : function(value) {
                     J.setNestedValue(path, value, node);
                 }
         };
@@ -14192,6 +14251,16 @@ JSUS.extend(TIME);
         return this.session[path];
     };
 
+    /**
+     * ## SessionManager.unregister
+     *
+     * Unegister a variable from session 
+     *
+     * @param {string} path A string containing a path to a variable previously
+     *   registered.
+     *
+     * @see SessionManager.register
+     */   
     SessionManager.prototype.unregister = function(path) {
         if ('string' !== typeof path) {
             throw new TypeError('SessionManager.unregister: path must be ' +
@@ -14206,7 +14275,28 @@ JSUS.extend(TIME);
         delete this.session[path];
         return true;
     };
-
+    
+    /**
+     * ## SessionManager.clear
+     *
+     * Unegister all registered session variables
+     *
+     * @see SessionManager.unregister
+     */ 
+    SessionManager.prototype.clear = function() {
+        this.session = {};
+    };
+    
+    /**
+     * ## SessionManager.get
+     *
+     * Returns the value/s of one/all registered session variable/s
+     *
+     * @param {string|undefined} path A previously registred variable or
+     *   undefined to return all values
+     *
+     * @see SessionManager.register
+     */ 
     SessionManager.prototype.get = function(path) {
         var session = {};
         // Returns one variable.
@@ -14228,7 +14318,38 @@ JSUS.extend(TIME);
         }
     };
 
-    SessionManager.prototype.save = function() {
+    /**
+     * ## SessionManager.isRegistered
+     *
+     * Returns TRUE, if a variable is registred
+     *
+     * @param {string} path A previously registred variable
+     * @param {boolean} TRUE, if the variable is registered
+     *
+     * @see SessionManager.register
+     * @see SessionManager.unregister
+     */ 
+    SessionManager.prototype.isRegistered = function(path) {
+        if ('string' !== typeof path) {
+            throw new TypeError('SessionManager.isRegistered: path must be ' +
+                                'string.');
+        }
+        return this.session.hasOwnProperty(path);
+    };
+
+    /**
+     * ## SessionManager.serialize
+     *
+     * Returns an object containing that can be to restore the session 
+     *
+     * The serialized session is an object containing _getter_, _setter_, and
+     * current value of each of the registered session variables.
+     *
+     * @return {object} session The serialized session
+     *
+     * @see SessionManager.restore
+     */
+    SessionManager.prototype.serialize = function() {
         var session = {};
         for (var path in this.session) {
             if (this.session.hasOwnProperty(path)) {
@@ -14241,50 +14362,34 @@ JSUS.extend(TIME);
         }
         return session;
     };
-
-    SessionManager.prototype.load = function(session) {
-        for (var i in session) {
+    
+    /**
+     * ## SessionManager.restore
+     *
+     * Restore a previously serialized session object  
+     *
+     * @param {object} session A serialized session object
+     * @param {boolean} register Optional. If TRUE, every path is also
+     *    registered before being restored.
+     */
+    SessionManager.prototype.restore = function(session, register) {
+        var i;
+        if ('object' !== typeof session) {
+            throw new TypeError('SessionManager.restore: session must be ' +
+                                'object.');
+        }
+        register = 'undefined' !== typeof register ? register : true;
+        for (i in session) {
             if (session.hasOwnProperty(i)) {
-                this.register(i, session[i]);
+                if (register) this.register(i, session[i]);
+                session[i].set(session[i].value);
             }
         }
     };
 
-    SessionManager.prototype.clear = function() {
-        this.session = {};
-    };
-
-    SessionManager.prototype.restore = function(sessionObj) {
-        if (!sessionObj) {
-            node.err('cannot restore empty session object');
-            return ;
-        }
-
-        for (var i in sessionObj) {
-            if (sessionObj.hasOwnProperty(i)) {
-                sessionObj[i].set(sessionObj[i].value);
-            }
-        }
-
-        return true;
-    };
-
-    SessionManager.prototype.store = function() {
-        //node.store(node.socket.id, this.get());
-    };
-
-    SessionManager.prototype.store = function() {
-        //node.store(node.socket.id, this.get());
-    };
-
-    // Helping functions
-
-    //function isReference(value) {
-    //    var type = typeof(value);
-    //    if ('function' === type) return true;
-    //    if ('object' === type) return true;
-    //    return false;
-    //}
+//    SessionManager.prototype.store = function() {
+//        //node.store(node.socket.id, this.get());
+//    };
 
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -15697,7 +15802,6 @@ JSUS.extend(TIME);
      * @see GameTimer.status
      * @see GameTimer.timeup
      * @see GameTimer.fire
-     *
      */
     GameTimer.prototype.start = function() {
         // Check validity of state
@@ -15731,7 +15835,6 @@ JSUS.extend(TIME);
 
     /**
      * ### GameTimer.addHook
-     *
      *
      * Add an hook to the hook list after performing conformity checks.
      * The first parameter hook can be a string, a function, or an object
@@ -17979,6 +18082,19 @@ JSUS.extend(TIME);
             }
         });
 
+        /**
+         * ## in.get.SESSION
+         *
+         * Gets the value of a variable registered in the session
+         *
+         * If msg.text is undefined returns all session variables
+         *
+         * @see GameSession.get
+         */
+        node.events.ng.on( IN + get + 'SESSION', function(msg) {
+            return node.session.get(msg.text);
+        });
+
         node.incomingAdded = true;
         node.silly('incoming listeners added');
         return true;
@@ -18042,6 +18158,16 @@ JSUS.extend(TIME);
             return false;
         }
 
+        function done() {
+            node.game.willBeDone = false;
+            node.emit('BEFORE_DONE');
+            node.game.setStageLevel(stageLevels.DONE);
+            // Step forward, if allowed.
+            if (node.game.shouldStep()) {
+                node.game.step();
+            }
+        }
+
         /**
          * ## DONE
          *
@@ -18055,23 +18181,23 @@ JSUS.extend(TIME);
          */
         this.events.ng.on('DONE', function() {
             // Execute done handler before updating stage.
-            var ok, done;
+            var ok, doneCb, stageLevel;
             ok = true;
-            done = node.game.plot.getProperty(node.game.getCurrentGameStage(),
-                                              'done');
+            doneCb = node.game.plot.getProperty(node.game.getCurrentGameStage(),
+                                                'done');
 
-            if (done) ok = done.apply(node.game, arguments);
+            if (doneCb) ok = doneCb.apply(node.game, arguments);
             if (!ok) return;
-            node.game.setStageLevel(stageLevels.DONE);
+                   
+            stageLevel = node.game.getStageLevel();
 
-            // Call all the functions that want to do
-            // something before changing stage.
-            node.emit('BEFORE_DONE');
-
-            // Step forward, if allowed.
-            if (node.game.shouldStep()){
-                node.game.step();
+            if (stageLevel >= stageLevels.PLAYING) {
+                done();
             }
+            else {
+                node.game.willBeDone = true;
+            }
+
         });
 
         /**
@@ -18128,6 +18254,12 @@ JSUS.extend(TIME);
             node.timer.setTimestamp(node.game.getCurrentGameStage().toString(),
                                     currentTime);
             node.timer.setTimestamp('step', currentTime);
+            
+            // DONE was previously emitted, we just execute done handler.
+            if (node.game.willBeDone) {
+                done();
+            }
+            
         });
 
         /**
@@ -18143,8 +18275,8 @@ JSUS.extend(TIME);
                          'Use restart if you want to start the game again');
                 return;
             }
-
-            node.game.start();
+            
+            node.game.start(options);
         });
 
         /**
@@ -18562,6 +18694,71 @@ JSUS.extend(TIME);
         storeCacheNow:   false,
         storeCacheLater: false
     };
+
+    function onLoadStd(iframe, cb) {
+
+        //        iframe.onload = function() {
+        //            iframe.onload = null;
+        //            if (cb) cb();
+        //        }
+        
+        var iframeWin;
+        iframeWin = iframe.contentWindow;
+
+        function completed(event) {
+            detach();
+            if (cb) cb();
+        }
+
+        function detach() {
+            iframe.removeEventListener('load', completed, false);
+            iframeWin.removeEventListener('load', completed, false);
+        }
+
+        // Use the handy event callback
+        iframe.addEventListener('load', completed, false);
+
+        // A fallback to window.onload, that will always work
+        iframeWin.addEventListener('load', completed, false);
+    }
+    
+    function onLoadIE(iframe, cb) {
+        var iframeWin, iframeDoc;
+        iframeWin = iframe.contentWindow;
+        iframeDoc = W.getIFrameDocument(iframe)
+
+        function completed(event) {
+	    // readyState === "complete" works also in oldIE.
+	    if (event.type === 'load' ||
+                iframeDoc.readyState === 'complete') {
+	        detach();
+                if (cb) cb();
+	    }
+        }
+
+        function detach() {
+            iframe.detachEvent('onreadystatechange', completed );
+            iframeWin.detachEvent('onload', completed );
+        }
+
+        // Ensure firing before onload, maybe late but safe also for iframes.
+        iframe.attachEvent('onreadystatechange', completed );
+
+        // A fallback to window.onload, that will always work.
+        iframeWin.attachEvent('onload', completed );
+    }
+
+    function onLoad(iframe, cb) {
+        // IE
+        if (iframe.attachEvent) {
+        //if (iframe.addEventListener) {
+            onLoadIE(iframe, cb);
+        }
+        // Standards-based browsers support DOMContentLoaded.
+        else {
+            onLoadStd(iframe, cb);
+        }
+    }
 
     /**
      * ## GameWindow constructor
@@ -19087,7 +19284,7 @@ JSUS.extend(TIME);
 
         for (uriIdx = 0; uriIdx < uris.length; uriIdx++) {
             currentUri = uris[uriIdx];
-
+            
             // Create an invisible internal frame for the current URI:
             iframe = document.createElement('iframe');
             iframe.style.display = 'none';
@@ -19096,14 +19293,13 @@ JSUS.extend(TIME);
             iframe.name = iframeName;
             document.body.appendChild(iframe);
 
-            // Register the onload handler:
-            iframe.onload = (function(uri, thisIframe) {
-                return function() {
+            (function(uri, thisIframe) {
+                onLoad(thisIframe, function() {
                     var frameDocumentElement;
-
+                    
                     frameDocumentElement = W.getIFrameDocument(thisIframe)
                         .documentElement;
-
+                    
                     // Store the contents in the cache:
                     that.cache[uri] = {
                         contents: frameDocumentElement.innerHTML,
@@ -19119,8 +19315,34 @@ JSUS.extend(TIME);
                         // All requested URIs have been loaded at this point.
                         if (callback) callback();
                     }
-                };
+                });
             })(currentUri, iframe);
+
+//            // Register the onload handler:
+//            iframe.onload = (function(uri, thisIframe) {
+//                return function() {
+//                    var frameDocumentElement;
+//
+//                    frameDocumentElement = W.getIFrameDocument(thisIframe)
+//                        .documentElement;
+//
+//                    // Store the contents in the cache:
+//                    that.cache[uri] = {
+//                        contents: frameDocumentElement.innerHTML,
+//                        cacheOnClose: false
+//                    };
+//
+//                    // Remove the internal frame:
+//                    document.body.removeChild(thisIframe);
+//
+//                    // Increment loaded URIs counter:
+//                    loadedCount++;
+//                    if (loadedCount >= uris.length) {
+//                        // All requested URIs have been loaded at this point.
+//                        if (callback) callback();
+//                    }
+//                };
+//            })(currentUri, iframe);
 
             // Start loading the page:
             window.frames[iframeName].location = currentUri;
@@ -19214,69 +19436,6 @@ JSUS.extend(TIME);
         return frameDocument ? frameDocument.getElementsByTagName(tag) :
             document.getElementsByTagName(tag);
     };
-
-
-// THIS CONTAINS CODE TO PERFORM TO CATCH THE ONLOAD EVENT UNDER DIFFERENT
-// BROWSERS
-
-//    var onLoad, detach, completed;
-//
-//    var iframeTest = document.createElement('iframe');
-//    iframe.style.display = 'none';
-//    document.body.appendChild(iframeTest);
-//
-//    // The ready event handler.
-//    completed = function(event) {
-//
-//      // readyState === "complete" works also in oldIE.
-//      if (document.addEventListener ||
-//            event.type === "load" ||
-//            document.readyState === 'complete') {
-//
-//          detach();
-//
-//
-//      }
-//    };
-//
-//
-//
-//    // Standards-based browsers support DOMContentLoaded.
-//    if (document.addEventListener) {
-//
-//        detach = function() {
-//            document.removeEventListener('DOMContentLoaded', completed, false);
-//          window.removeEventListener('load', completed, false);
-//        };
-//
-//        onLoad = function() {
-//          // Use the handy event callback
-//          document.addEventListener('DOMContentLoaded', completed, false);
-//
-//          // A fallback to window.onload, that will always work
-//          window.addEventListener('load', completed, false);
-//        };
-//
-//
-//    }
-//    // If IE event model is used.
-//    else {
-//
-//        detach = function() {
-//            document.detachEvent('onreadystatechange', completed );
-//          window.detachEvent('onload', completed );
-//        };
-//
-//        onLoad = function() {
-//            // Ensure firing before onload, maybe late but safe also for iframes.
-//          document.attachEvent('onreadystatechange', completed );
-//
-//          // A fallback to window.onload, that will always work.
-//          window.attachEvent('onload', completed );
-//        };
-
-
-
 
     /**
      * ### GameWindow.loadFrame
@@ -19394,21 +19553,31 @@ JSUS.extend(TIME);
 
         // Keep track of nested call to loadFrame.
         updateAreLoading(1);
-
+     
         // Add the onload event listener:
-        iframe.onload = function() {
+//       iframe.onload = function() {
+//           // Updates references to frame window and document.
+//           that.frameWindow = window.frames[iframeName];
+//           that.frameDocument =  W.getIFrameDocument(that.getFrame());
+//
+//           // Remove onload hanlder for this frame.
+//           // Buggy Opera 11.52 fires the onload twice.
+//           // Not fixed yet. The second time is actually the right one...
+//           iframe.onload = null;
+//
+//           handleFrameLoad(that, uri, iframeName, loadCache, storeCacheNow);
+//           that.updateLoadFrameState(func);
+//       };
+
+        onLoad(iframe, function() {                       
             // Updates references to frame window and document.
             that.frameWindow = window.frames[iframeName];
             that.frameDocument =  W.getIFrameDocument(that.getFrame());
-
-            // Remove onload hanlder for this frame.
-            // Buggy Opera 11.52 fires the onload twice.
-            // Not fixed yet. The second time is actually the right one...
-            iframe.onload = null;
-
+            // Handles caching.
             handleFrameLoad(that, uri, iframeName, loadCache, storeCacheNow);
+            // Executes callback and updates GameWindow state.
             that.updateLoadFrameState(func);
-        };
+        });
 
         // Cache lookup:
         if (loadCache) {
@@ -19430,8 +19599,7 @@ JSUS.extend(TIME);
         }
         
         // Adding a reference to nodeGame also in the iframe
-        // TODO: is this working?
-        window.frames[iframeName].window.node = node;
+        window.frames[iframeName].node = node;
     };
 
     /**
@@ -26189,7 +26357,7 @@ JSUS.extend(TIME);
             timer = stepObj.timer;
             if (timer) {
                 options = processOptions(timer, this.options);
-                that.gameTimer.init(timer);
+                that.gameTimer.init(options);
                 that.timerDiv.className = '';
                 that.start();
             }
@@ -26210,37 +26378,36 @@ JSUS.extend(TIME);
      *
      * Return object is transformed accordingly.
      *
-     * @param {object} Configuration options
+     * @param {object} options Configuration options
+     * @param {object} curOptions Current configuration of VisualTimer
      * @return {object} Clean, valid configuration object.
      */
-    function processOptions(options, curOptions) {
-        var typeoftimer;
-        options = J.clone(options);
-        J.mixin(options, curOptions);
-        typeoftimer = typeof timer;
-        switch (typeoftimer) {
+    function processOptions(inOptions, curOptions) {
+        var options, typeofOptions;
+        options = {};
+        inOptions = J.clone(inOptions);
+        typeofOptions = typeof inOptions;
+        switch (typeofOptions) {
 
         case 'number':
-            options.milliseconds = timer;
+            options.milliseconds = inOptions;
             break;
         case 'object':
-            options = timer;
+            options = inOptions;
             break;
         case 'function':
-            options.milliseconds = timer;
+            options.milliseconds = inOptions.call(node.game);
             break;
         case 'string':
-            options.milliseconds = Number(timer);
+            options.milliseconds = Number(inOptions);
             break;
         }
+
+        J.mixout(options, curOptions || {});
 
         if (!options.milliseconds) {
             throw new Error('VisualTimer processOptions: milliseconds cannot ' +
                             'be 0 or undefined.');
-        }
-
-        if ('function' === typeof options.milliseconds) {
-            options.milliseconds = options.milliseconds.call(node.game);
         }
 
         if (!options.timeup) {

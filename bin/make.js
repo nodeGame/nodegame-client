@@ -203,7 +203,7 @@ program
             ' index.js index.browser.js closure.browser.js lib/ listeners/ ' +
             'addons/ examples/ -o ' + rootDir + 'docs/';
 
-	var child = exec(command, function (error, stdout, stderr) {
+	var child = exec(command, function(error, stdout, stderr) {
 	    util.print(stdout);
 	    util.print(stderr);
 	    if (error !== null) {
