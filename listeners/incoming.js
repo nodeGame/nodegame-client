@@ -67,7 +67,7 @@
          */
         node.events.ng.on( IN + say + 'PDISCONNECT', function(msg) {
             if (!msg.data) return;
-            node.game.pl.remove(msg.data.id);
+            node.game.pl.remove(msg.data.id);           
             node.emit('UPDATED_PLIST');
         });
 
@@ -174,9 +174,8 @@
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
-            //console.log('PLAYER_UPDATE', msg.data, msg.from);
-            node.game.pl.updatePlayer(msg.from, msg.data);
+        node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {            
+            node.game.pl.updatePlayer(msg.from, msg.data);           
             node.emit('UPDATED_PLIST');
             if (node.game.shouldStep()) {
                 node.game.step();
