@@ -1874,8 +1874,10 @@ if (JSUS.isNodeJS()) {
      *
      * Returns TRUE if the object is a DOM node
      *
+     * @param {mixed} The variable to check
+     * @param {boolean} TRUE, if the the object is a DOM node
      */
-    DOM.isNode = function(o){
+    DOM.isNode = function(o) {
         return (
             typeof Node === "object" ? o instanceof Node :
                 typeof o === "object" &&
@@ -1889,6 +1891,8 @@ if (JSUS.isNodeJS()) {
      *
      * Returns TRUE if the object is a DOM element
      *
+     * @param {mixed} The variable to check
+     * @param {boolean} TRUE, if the the object is a DOM element
      */
     DOM.isElement = function(o) {
         return (
@@ -1905,6 +1909,7 @@ if (JSUS.isNodeJS()) {
      * Shuffles the children nodes
      *
      * @param {Node} parent The parent node
+     * @param {array} order Optional. A pre-specified order. Defaults, random
      */
     DOM.shuffleNodes = function(parent, order) {
         var i, len;
@@ -1959,7 +1964,6 @@ if (JSUS.isNodeJS()) {
      *
      * @see DOM.getElement
      * @see DOM.addAttributes2Elem
-     *
      */
     DOM.addElement = function(elem, root, id, attributes) {
         var el = this.getElement(elem, id, attributes);
@@ -2398,7 +2402,6 @@ if (JSUS.isNodeJS()) {
         return this.addElement('script', root, id, attributes);
     };
 
-
     /**
      * ### DOM.highlight
      *
@@ -2420,9 +2423,8 @@ if (JSUS.isNodeJS()) {
      * highlight(myDiv, '#CCC'); // grey border
      * ```
      *
-     *  @see DOM.addBorder
-     *  @see DOM.style
-     *
+     * @see DOM.addBorder
+     * @see DOM.style
      */
     DOM.highlight = function(elem, code) {
         if (!elem) return;
@@ -2493,32 +2495,40 @@ if (JSUS.isNodeJS()) {
     /**
      * ### DOM.removeClass
      *
-     * Removes a specific class from the class attribute
-     * of a given element.
+     * Removes a specific class from the classNamex attribute of a given element
      *
-     * Returns the element.
+     * @param {HTMLElement} el An HTML element
+     * @param {string} c The name of a CSS class already in the element
+     * @return {HTMLElement|undefined} el The HTML element with the removed
+     *   class, or undefined input are misspecified.
      */
     DOM.removeClass = function(el, c) {
+        var regexpr, o;
         if (!el || !c) return;
-        var regexpr = '/(?:^|\s)' + c + '(?!\S)/';
-        var o = el.className = el.className.replace( regexpr, '' );
+        regexpr = '/(?:^|\s)' + c + '(?!\S)/';
+        o = el.className = el.className.replace( regexpr, '' );
         return el;
     };
 
     /**
      * ### DOM.addClass
      *
-     * Add a class to the class attribute of the given element.
+     * Adds one or more classes to the className attribute of the given element
      *
-     * Takes care not to overwrite already existing classes
+     * Takes care not to overwrite already existing classes.
      *
+     * @param {HTMLElement} el An HTML element
+     * @param {string|array} c The name/s of CSS class/es
+     * @return {HTMLElement|undefined} el The HTML element with the additional
+     *   class, or undefined input are misspecified.
      */
     DOM.addClass = function(el, c) {
         if (!el || !c) return;
         if (c instanceof Array) c = c.join(' ');
         if ('undefined' === typeof el.className) {
             el.className = c;
-        } else {
+        }
+        else {
             el.className += ' ' + c;
         }
         return el;
@@ -2536,6 +2546,25 @@ if (JSUS.isNodeJS()) {
     DOM.getIFrameDocument = function(iframe) {
         if (!iframe) return;
         return iframe.contentDocument || iframe.contentWindow.document;
+    };
+
+    /**
+     * ### DOM.getIFrameAnyChild
+     *
+     * Gets the first available child of an IFrame
+     *
+     * Tries head, body, lastChild and the HTML element
+     *
+     * @param {HTMLIFrameElement} iframe The iframe object
+     * @return {HTMLElement|undefined} The child, or undefined if none is found
+     */
+    DOM.getIFrameAnyChild = function(iframe) {
+        var contentDocument;
+        if (!iframe) return;
+        contentDocument = W.getIFrameDocument(iframe);
+        return contentDocument.head || contentDocument.body ||
+            contentDocument.lastChild ||
+            contentDocument.getElementsByTagName('html')[0];
     };
 
     JSUS.extend(DOM);
@@ -18695,10 +18724,10 @@ JSUS.extend(TIME);
     GameWindow.prototype = DOM;
     GameWindow.prototype.constructor = GameWindow;
 
-    // Configuration object
+    // Configuration object.
     GameWindow.defaults = {};
 
-    // Default settings
+    // Default settings.
     GameWindow.defaults.promptOnleave = true;
     GameWindow.defaults.noEscape = true;
     GameWindow.defaults.cacheDefaults = {
@@ -18708,23 +18737,18 @@ JSUS.extend(TIME);
     };
 
     function onLoadStd(iframe, cb) {
-
-        //        iframe.onload = function() {
-        //            iframe.onload = null;
-        //            if (cb) cb();
-        //        }
-
         var iframeWin;
         iframeWin = iframe.contentWindow;
 
         function completed(event) {
-            detach();
-            if (cb) cb();
-        }
-
-        function detach() {
+            // Detaching the function to avoid double execution.
             iframe.removeEventListener('load', completed, false);
             iframeWin.removeEventListener('load', completed, false);
+            if (cb) {
+                // Some browsers fires onLoad too early.
+                // A small timeout is enough.                
+                setTimeout(function() { cb(); }, 120);
+            }
         }
 
         // Use the handy event callback
@@ -18743,14 +18767,17 @@ JSUS.extend(TIME);
             // readyState === "complete" works also in oldIE.
             if (event.type === 'load' ||
                 iframeDoc.readyState === 'complete') {
-                detach();
-                if (cb) cb();
-            }
-        }
 
-        function detach() {
-            iframe.detachEvent('onreadystatechange', completed );
-            iframeWin.detachEvent('onload', completed );
+                // Detaching the function to avoid double execution.
+                iframe.detachEvent('onreadystatechange', completed );
+                iframeWin.detachEvent('onload', completed );
+
+                if (cb) {
+                    // Some browsers fires onLoad too early.
+                    // A small timeout is enough.
+                    setTimeout(function() { cb(); }, 120);
+                }
+            }
         }
 
         // Ensure firing before onload, maybe late but safe also for iframes.
@@ -18763,7 +18790,6 @@ JSUS.extend(TIME);
     function onLoad(iframe, cb) {
         // IE
         if (iframe.attachEvent) {
-        //if (iframe.addEventListener) {
             onLoadIE(iframe, cb);
         }
         // Standards-based browsers support DOMContentLoaded.
@@ -18849,9 +18875,31 @@ JSUS.extend(TIME);
          *
          * A reference to the HTML element to which the iframe is appended
          *
-         * By default, this element is a reference to document.body.
+         * Under normal circumstances, this element is a reference to
+         * _document.body_.
          */
-        this.root = null;
+        this.frameRoot = null;
+
+        /**
+         * ### GameWindow.headerElement
+         *
+         * A reference to the HTMLDivElement representing the header
+         */
+        this.headerElement = null;
+
+        /**
+         * ### GameWindow.headerName
+         *
+         * The name (id) of the header element
+         */
+        this.headerName = null;
+
+        /**
+         * ### GameWindow.headerRoot
+         *
+         * The name (id) of the header element
+         */
+        this.headerRoot = null;
 
         /**
          * ### GameWindow.conf
@@ -18951,8 +18999,6 @@ JSUS.extend(TIME);
         options = options || {};
         this.conf = J.merge(GameWindow.defaults, options);
 
-        this.frameName = options.frameName || 'mainframe';
-
         if (this.conf.promptOnleave) {
             this.promptOnleave();
         }
@@ -19032,9 +19078,32 @@ JSUS.extend(TIME);
      */
     GameWindow.prototype.getFrame = function() {
         if (!this.frameElement) {
-            this.frameElement = document.getElementById(this.frameName);
+            if (this.frameName) {
+                this.frameElement = document.getElementById(this.frameName);
+            }
         }
         return this.frameElement;
+    };
+
+    /**
+     * ### GameWindow.getFrameName
+     *
+     * Returns the name of the frame of the game
+     *
+     * If no name is found, tries to retrieve and update it using the
+     *  _GameWindow.getFrame()_.
+     *
+     * @return {string} The name of the frame of the game.
+     *
+     * @see GameWindow.getFrame
+     */
+    GameWindow.prototype.getFrameName = function() {
+        var iframe;
+        if (!this.frameName) {
+            iframe = this.getFrame();
+            this.frameName = iframe ?iframe.name || iframe.id : null;
+        }
+        return this.frameName;
     };
 
     /**
@@ -19042,11 +19111,20 @@ JSUS.extend(TIME);
      *
      * Returns a reference to the window object of the frame of the game
      *
+     * If no reference is found, tries to retrieve and update it using
+     * _GameWindow.getFrame()_.
+     *
      * @return {Window} The window object of the iframe of the game
+     *
+     * @see GameWindow.getFrame
      */
     GameWindow.prototype.getFrameWindow = function() {
-        return this.frameWindow ? this.frameWindow :
-            document.getElementById(this.frameName);
+        var iframe;
+        if (!this.frameWindow) {
+            iframe = this.getFrame();
+            this.frameWindow = iframe ? iframe.contentWindow : null;
+        }
+        return this.frameWindow;
     };
 
     /**
@@ -19054,11 +19132,22 @@ JSUS.extend(TIME);
      *
      * Returns a reference to the document object of the iframe
      *
+     * If no reference is found, tries to retrieve and update it using the
+     * _GameWindow.getFrame()_.
+     *
      * @return {Document} The document object of the iframe of the game
+     *
+     * @see GameWindow.getFrame
      */
     GameWindow.prototype.getFrameDocument = function() {
-        return this.frameDocument ? this.frameDocument :
-            this.getIFrameDocument(this.getFrame());
+        var iframe;
+        if (!this.frameDocument) {
+            iframe = this.getFrame();
+            this.frameDocument = iframe ? this.getIFrameDocument(iframe) :
+                null;
+        }
+        return this.frameDocument;
+            
     };
 
     /**
@@ -19066,12 +19155,18 @@ JSUS.extend(TIME);
      *
      * Returns a reference to the root element for the iframe
      *
-     * If none is found returns a reference to _document.body_.
+     * If none is found tries to retrieve and update it using 
+     * _GameWindow.getFrame()_.
      *
      * @return {Element} The root element in the iframe
      */
     GameWindow.prototype.getFrameRoot = function() {
-        return this.root || document.body;
+        var iframe;
+        if (!this.frameRoot) {
+            iframe = this.getFrame();
+            this.frameRoot = iframe ? iframe.parentNode : null;
+        }
+        return this.frameRoot;
     };
 
     /**
@@ -19080,44 +19175,77 @@ JSUS.extend(TIME);
      * Appends a new iframe to _documents.body_ and sets it as the default one
      *
      * @param {Element} root Optional. The HTML element to which the iframe
-     *   will be appended. Defaults, this.root or document.body.
+     *   will be appended. Defaults, this.frameRoot or document.body.
      * @param {string} frameName Optional. The name of the iframe. Defaults,
-     *   this.frameName.
+     *   'mainframe'.
+     * @param {boolean} force Optional. Will create the frame even if an
+     *   existing one is found. Defaults, FALSE.
      * @return {IFrameElement} The newly created iframe
      *
      * @see GameWindow.frameElement
      * @see GameWindow.frameWindow
      * @see GameWindow.frameDocument
+     * @see GameWindow.setFrame
      * @see GameWindow.clearFrame
      * @see GameWindow.destroyFrame
      */
-    GameWindow.prototype.generateFrame = function(root, frameName) {
+    GameWindow.prototype.generateFrame = function(root, frameName, force) {
         var iframe;
-        if (this.frameElement) {
+        if (!force && this.frameElement) {
             throw new Error('GameWindow.generateFrame: a frame element is ' +
                             'already existing. It cannot be duplicated.');
         }
 
-        root = root || this.root || document.body;
+        root = root || this.frameRoot || document.body;
 
         if (!J.isElement(root)) {
             throw new Error('GameWindow.generateFrame: invalid root element.');
         }
 
-        frameName = frameName || this.frameName;
+        frameName = frameName || 'mainframe';
 
         if ('string' !== typeof frameName) {
             throw new Error('GameWindow.generateFrame: frameName must be ' +
                             'string.');
         }
 
+        if (document.getElementById(frameName)) {
+            throw new Error('GameWindow.generateFrame: frameName must be ' +
+                            'unique.');
+        }
+
         iframe = W.addIFrame(root, frameName);
         iframe.src = 'about:blank';
 
-        this.root = root;
-        this.frameName = frameName;
+        return this.setFrame(iframe, frameName, root);
+    };
+
+    /**
+     * ### GameWindow.setFrame
+     *
+     * Sets the new default frame and update other references
+     *
+     * @param {IFrameElement} iframe. The new default frame.
+     * @param {string} frameName The name of the iframe. 
+     * @param {Element} root The HTML element to which the iframe is appended.
+     * @return {IFrameElement} The new default iframe
+     * @see GameWindow.generateFrame
+     */
+    GameWindow.prototype.setFrame = function(iframe, iframeName, root) {
+        if (!J.isElement(iframe)) {
+            throw new Error('GameWindow.setFrame: iframe must be HTMLElement.');
+        }
+        if ('string' !== typeof iframeName) {
+            throw new Error('GameWindow.setFrame: iframeName must be string.');
+        }
+        if (!J.isElement(root)) {
+            throw new Error('GameWindow.setFrame: invalid root element.');
+        }
+
+        this.frameRoot = root;
+        this.frameName = iframeName;
         this.frameElement = iframe;
-        this.frameWindow = window.frames[frameName];
+        this.frameWindow = iframe.contentWindow;
         this.frameDocument = W.getIFrameDocument(iframe);
 
         return iframe;
@@ -19133,6 +19261,10 @@ JSUS.extend(TIME);
     GameWindow.prototype.destroyFrame = function() {
         this.clearFrame();
         this.frameRoot.removeChild(this.frameElement);
+        this.frameElement = null;
+        this.frameWindow = null;
+        this.frameDocument = null;
+        this.frameRoot = null;
     };
 
     /**
@@ -19152,6 +19284,157 @@ JSUS.extend(TIME);
         this.frameElement = iframe;
         this.frameWindow = window.frames[frameName];
         this.frameDocument = W.getIFrameDocument(iframe);
+    };
+
+    /**
+     * ### GameWindow.generateHeader
+     *
+     * Adds a a div element and sets it as the header of the page.
+     *
+     * @param {Element} root Optional. The HTML element to which the header
+     *   will be appended. Defaults, _ document.body_ or
+     *   _document.lastElementChild_.
+     * @param {string} headerName Optional. The name (id) of the header.
+     *   Defaults, 'gn_header'..
+     * @param {boolean} force Optional. Will create the header even if an
+     *   existing one is found. Defaults, FALSE.
+     * @return {Element} The header element
+     */
+    GameWindow.prototype.generateHeader = function(root, headerName, force) {
+        var header;
+
+        if (!force && this.headerElement) {
+            throw new Error('GameWindow.generateHeader: a header element is ' +
+                            'already existing. It cannot be duplicated.'); 
+        }
+        
+        root = root || document.body || document.lastElementChild;
+
+        if (!J.isElement(root)) {
+            throw new Error('GameWindow.generateHeader: invalid root element.');
+        }
+        
+        headerName = headerName || 'gn_header';
+
+        if ('string' !== typeof headerName) {
+            throw new Error('GameWindow.generateHeader: headerName must be ' +
+                            'string.');
+        }
+        
+        if (document.getElementById(headerName)) {
+            throw new Error('GameWindow.generateHeader: headerName must be ' +
+                            'unique.');
+        }
+        
+        header = this.addElement('div', root, headerName);
+
+        return this.setHeader(header, headerName, root);
+    };
+
+    /**
+     * ### GameWindow.setHeader
+     *
+     * Sets the new header element and update related references
+     *
+     * @param {Element} header. The new header.
+     * @param {string} headerName The name of the header.
+     * @param {Element} root The HTML element to which the header is appended.
+     * @return {Element} The new header
+     *
+     * @see GameWindow.generateHeader
+     */
+    GameWindow.prototype.setHeader = function(header, headerName, root) {
+        if (!J.isElement(header)) {
+            throw new Error('GameWindow.setHeader: header must be HTMLElement.');
+        }
+        if ('string' !== typeof headerName) {
+            throw new Error('GameWindow.setHeader: headerName must be string.');
+        }
+        if (!J.isElement(root)) {
+            throw new Error('GameWindow.setHeader: invalid root element.');
+        }
+ 
+        this.headerElement = header;
+        this.headerName = headerName;
+        this.headerRoot = root;
+            
+        return this.headerElement;
+    };
+
+    /**
+     * ### GameWindow.getHeader
+     *
+     * Returns a reference to the header element, if defined
+     *
+     * @return {Element} The header element
+     */
+    GameWindow.prototype.getHeader = function() {
+        if (!this.headerElement) {
+            this.headerElement = this.headerName ? 
+                document.getElementById(this.headerName) : null;
+        }
+        return this.headerElement;
+    };
+    
+    /**
+     * ### GameWindow.getHeaderName
+     *
+     * Returns the name (id) of the header element
+     *
+     * @return {string} The name (id) of the header
+     */
+    GameWindow.prototype.getHeaderName = function() {
+        var header;
+        if (!this.headerName) {
+            header = this.getHeader();
+            this.headerName = header ? header.id : null;
+        }
+        return this.headerName;
+    };
+
+    /**
+     * ### GameWindow.getHeaderRoot
+     *
+     * Returns the HTML element to which the header is appended
+     *
+     * @return {HTMLElement} The HTML element to which the header is appended
+     */
+    GameWindow.prototype.getHeaderRoot = function() {
+        var header;
+        if (!this.headerRoot) {
+            header = this.getHeader();
+            this.headerRoot = header ? header.parentNode: null;
+        }
+        return this.headerRoot;
+    };
+
+    /**
+     * ### GameWindow.destroyHeader
+     *
+     * Clears the content of the header and removes the element from the page
+     *
+     * @see GameWindow.clearHeader
+     */
+    GameWindow.prototype.destroyHeader = function() {
+        this.clearHeader();
+        this.headerRoot.removeChild(this.headerElement);
+        this.headerElement = null;
+        this.headerName = null;
+        this.headerRoot = null;
+    };
+
+    /**    
+     * ### GameWindow.clearHeader
+     *
+     * Clears the content of the header
+     */
+    GameWindow.prototype.clearHeader = function() {
+        var header;
+        header = this.getHeader();
+        if (!header) {
+            throw new Error('GameWindow.clearHeadr: cannot detect header.');
+        }
+        this.headerElement.innerHTML = '';
     };
 
     /**
@@ -19204,11 +19487,11 @@ JSUS.extend(TIME);
             this.generateHeader();
 
             node.game.visualState = node.widgets.append('VisualState',
-                    this.header);
+                    this.headerElement);
             node.game.timer = node.widgets.append('VisualTimer',
-                    this.header);
+                    this.headerElement);
             node.game.stateDisplay = node.widgets.append('StateDisplay',
-                    this.header);
+                    this.headerElement);
 
             // Will continue in SOLO_PLAYER.
 
@@ -19306,11 +19589,12 @@ JSUS.extend(TIME);
             document.body.appendChild(iframe);
 
             (function(uri, thisIframe) {
+                // Register the onLoad handler:
                 onLoad(thisIframe, function() {
-                    var frameDocumentElement;
+                    var frameDocument, frameDocumentElement;
 
-                    frameDocumentElement = W.getIFrameDocument(thisIframe)
-                        .documentElement;
+                    frameDocument = W.getIFrameDocument(thisIframe);
+                    frameDocumentElement = frameDocument.documentElement;
 
                     // Store the contents in the cache:
                     that.cache[uri] = {
@@ -19330,32 +19614,6 @@ JSUS.extend(TIME);
                 });
             })(currentUri, iframe);
 
-//            // Register the onload handler:
-//            iframe.onload = (function(uri, thisIframe) {
-//                return function() {
-//                    var frameDocumentElement;
-//
-//                    frameDocumentElement = W.getIFrameDocument(thisIframe)
-//                        .documentElement;
-//
-//                    // Store the contents in the cache:
-//                    that.cache[uri] = {
-//                        contents: frameDocumentElement.innerHTML,
-//                        cacheOnClose: false
-//                    };
-//
-//                    // Remove the internal frame:
-//                    document.body.removeChild(thisIframe);
-//
-//                    // Increment loaded URIs counter:
-//                    loadedCount++;
-//                    if (loadedCount >= uris.length) {
-//                        // All requested URIs have been loaded at this point.
-//                        if (callback) callback();
-//                    }
-//                };
-//            })(currentUri, iframe);
-
             // Start loading the page:
             window.frames[iframeName].location = currentUri;
         }
@@ -19369,42 +19627,7 @@ JSUS.extend(TIME);
     GameWindow.prototype.clearCache = function() {
         this.cache = {};
     };
-
-    /**
-     * ### GameWindow.generateHeader
-     *
-     * Adds a container div with id 'gn_header' to the root element
-     *
-     * If a header element already exists, deletes its content
-     * and returns it.
-     *
-     * @return {Element} The header element
-     */
-    GameWindow.prototype.generateHeader = function() {
-        var root, header;
-        header = this.getHeader();
-        if (header) {
-            header.innerHTML = '';
-        }
-        else {
-            root = this.getFrameRoot();
-            this.header = this.addElement('div', root, 'gn_header');
-            header = this.header;
-        }
-        return header;
-    };
-
-    /**
-     * ### GameWindow.getHeader
-     *
-     * Returns a reference to the header element, if defined
-     *
-     * @return {Element} The header element
-     */
-    GameWindow.prototype.getHeader = function() {
-        return this.header;
-    };
-
+  
     /**
      * ### GameWindow.getElementById
      *
@@ -19468,8 +19691,8 @@ JSUS.extend(TIME);
      *          'onLoad' (cache given page after it is loaded),
      *          'onClose' (cache given page after it is replaced by a new page)
      *
-     * Warning: Security policies may block this method if the
-     * content is coming from another domain.
+     * Warning: Security policies may block this method if the content is
+     * coming from another domain.
      *
      * @param {string} uri The uri to load
      * @param {function} func Optional. The function to call once the DOM is
@@ -19480,7 +19703,7 @@ JSUS.extend(TIME);
         var that;
         var loadCache;
         var storeCacheNow, storeCacheLater;
-        var iframe, iframeName, iframeDocument;
+        var iframe, iframeName, iframeDocument, iframeWindow;
         var frameDocumentElement, frameReady;
         var lastURI;
 
@@ -19495,31 +19718,43 @@ JSUS.extend(TIME);
             throw new TypeError('GameWindow.loadFrame: opts must be object ' +
                                 'or undefined.');
         }
+        opts = opts || {};
 
-        // Get the internal frame object:
         iframe = this.getFrame();
+        iframeName = this.frameName;
 
         if (!iframe) {
             throw new Error('GameWindow.loadFrame: no frame found.');
         }
+        
+        if (!iframeName) {
+            throw new Error('GameWindow.loadFrame: frame has no name.');
+        }
 
         this.setStateLevel('LOADING');
-
-        iframeName = this.frameName;
         that = this;
 
-        // Default options:
+        // Default options.
         loadCache = GameWindow.defaults.cacheDefaults.loadCache;
         storeCacheNow = GameWindow.defaults.cacheDefaults.storeCacheNow;
         storeCacheLater = GameWindow.defaults.cacheDefaults.storeCacheLater;
 
-        // Get options:
-        if (opts) {
-
-            if (opts.cache) {
-                if (opts.cache.loadMode === 'reload') loadCache = false;
-                else if (opts.cache.loadMode === 'cache') loadCache = true;
-
+        // Caching options.
+        if (opts.cache) {
+            if (opts.cache.loadMode) {
+                
+                if (opts.cache.loadMode === 'reload') {
+                    loadCache = false;
+                }
+                else if (opts.cache.loadMode === 'cache') {
+                    loadCache = true;
+                }
+                else {
+                    throw new Error('GameWindow.loadFrame: unkown cache ' +
+                                    'load mode: ' + opts.cache.loadMode + '.');
+                }
+            }
+            if (opts.cache.storeMode) {
                 if (opts.cache.storeMode === 'off') {
                     storeCacheNow = false;
                     storeCacheLater = false;
@@ -19532,10 +19767,14 @@ JSUS.extend(TIME);
                     storeCacheNow = false;
                     storeCacheLater = true;
                 }
-                // TODO: Throw error here if option is invalid
+                else {
+                    throw new Error('GameWindow.loadFrame: unkown cache ' +
+                                    'store mode: ' + opts.cache.storeMode + '.');
+                }
             }
         }
-
+        // Save ref to iframe window for later.
+        iframeWindow = iframe.contentWindow;
         // Query readiness (so we know whether onload is going to be called):
         iframeDocument = W.getIFrameDocument(iframe);
         frameReady = iframeDocument.readyState;
@@ -19568,28 +19807,12 @@ JSUS.extend(TIME);
         // Keep track of nested call to loadFrame.
         updateAreLoading(this, 1);
 
-        // Add the onload event listener:
-//       iframe.onload = function() {
-//           // Updates references to frame window and document.
-//           that.frameWindow = window.frames[iframeName];
-//           that.frameDocument = W.getIFrameDocument(that.getFrame());
-//
-//           // Remove onload hanlder for this frame.
-//           // Buggy Opera 11.52 fires the onload twice.
-//           // Not fixed yet. The second time is actually the right one...
-//           iframe.onload = null;
-//
-//           handleFrameLoad(that, uri, iframeName, loadCache, storeCacheNow);
-//           that.updateLoadFrameState(func);
-//       };
-
+        // Add the onLoad event listener:
         if (!loadCache || !frameReady) {
             onLoad(iframe, function() {
-                // Updates references to frame window and document.
-                that.frameWindow = window.frames[iframeName];
-                that.frameDocument = W.getIFrameDocument(that.getFrame());
                 // Handles caching.
-                handleFrameLoad(that, uri, iframeName, loadCache, storeCacheNow);
+                handleFrameLoad(that, uri, iframe, iframeName, loadCache,
+                                storeCacheNow);
                 // Executes callback and updates GameWindow state.
                 that.updateLoadFrameState(func);
             });
@@ -19602,20 +19825,21 @@ JSUS.extend(TIME);
             // would be cleared once the iframe becomes ready.  In that case,
             // iframe.onload handles the filling of the contents.
             if (frameReady) {
-                handleFrameLoad(this, uri, iframeName, loadCache,
+                // Handles chaching.
+                handleFrameLoad(this, uri, iframe, iframeName, loadCache,
                                 storeCacheNow);
 
-                // Update status:
+                // Executes callback and updates GameWindow state.
                 this.updateLoadFrameState(func);
             }
         }
         else {
             // Update the frame location:
-            window.frames[iframeName].location = uri;
+            iframeWindow.location = uri;
         }
 
-        // Adding a reference to nodeGame also in the iframe
-        window.frames[iframeName].node = node;
+        // Adding a reference to nodeGame also in the iframe.
+        iframeWindow.node = node;
     };
 
     /**
@@ -19663,6 +19887,8 @@ JSUS.extend(TIME);
      * Puts cached contents into the iframe or caches new contents if requested.
      * Handles reloading of script tags and injected libraries.
      * Must be called with the current GameWindow instance.
+     * Updates the references to _frameWindow_ and _frameDocument_ if the
+     * iframe name is equal to _frameName_.
      *
      * @param {GameWindow} that The GameWindow instance
      * @param {uri} uri URI to load
@@ -19674,23 +19900,26 @@ JSUS.extend(TIME);
      *
      * @api private
      */
-    function handleFrameLoad(that, uri, frameName, loadCache, storeCache) {
-        var iframe, iframeDocumentElement;
+    function handleFrameLoad(that, uri, iframe, frameName, loadCache,
+                             storeCache) {
 
-        iframe = document.getElementById(frameName);
+        var iframeDocumentElement;
+
+        // iframe = W.getElementById(frameName);
         iframeDocumentElement = W.getIFrameDocument(iframe).documentElement;
 
         if (loadCache) {
             // Load frame from cache:
             iframeDocumentElement.innerHTML = that.cache[uri].contents;
-            // Update references to frameWindow and frameDocument
-            // if this was the frame of the game.
-            if (frameName === that.frameName) {
-                that.frameWindow = iframe.contentWindow;
-                that.frameDocument = that.getIFrameDocument(iframe);
-            }
         }
-
+        
+        // Update references to frameWindow and frameDocument
+        // if this was the frame of the game.
+        if (frameName === that.frameName) {
+            that.frameWindow = iframe.contentWindow;
+            that.frameDocument = that.getIFrameDocument(iframe);
+        }
+        
         // (Re-)Inject libraries and reload scripts:
         removeLibraries(iframe);
         if (loadCache) {
@@ -19753,7 +19982,7 @@ JSUS.extend(TIME);
 
         contentDocument = W.getIFrameDocument(iframe);
 
-        headNode = contentDocument.getElementsByTagName('head')[0];
+        headNode = W.getIFrameAnyChild(iframe);
 
         scriptNodes = contentDocument.getElementsByTagName('script');
         for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length;
@@ -19797,7 +20026,7 @@ JSUS.extend(TIME);
 
         contentDocument = W.getIFrameDocument(iframe);
 
-        headNode = contentDocument.getElementsByTagName('head')[0];
+        headNode = W.getIFrameAnyChild(iframe);
 
         for (libIdx = 0; libIdx < libs.length; libIdx++) {
             lib = libs[libIdx];
@@ -25587,7 +25816,8 @@ JSUS.extend(TIME);
             catch(e) {
                 this.updateStillChecking(-1);
                 errors.push('An exception occurred in requirement ' + 
-                            (this.callbacks[i].name || 'n.' + i) + ': ' + e );
+                            (this.callbacks[i].name || 'n.' + (i + 1)) +
+                            ': ' + e );
                 
             }
             if (cbErrors) {
@@ -25754,8 +25984,9 @@ JSUS.extend(TIME);
         var that = this;
     };
 
-    Requirements.prototype.nodeGameRequirements = function() {
-        var errors = [];
+    Requirements.prototype.nodeGameRequirements = function(result) {
+        var errors, db;
+        errors = [];
    
         if ('undefined' === typeof NDDB) {
             errors.push('NDDB not found.');
@@ -25779,7 +26010,7 @@ JSUS.extend(TIME);
         
         if ('undefined' !== typeof NDDB) {
             try {
-                var db = new NDDB();
+                db = new NDDB();
             }
             catch(e) {
                 errors.push('An error occurred manipulating the NDDB object: ' +
@@ -25790,6 +26021,36 @@ JSUS.extend(TIME);
         return errors;
     };
 
+    Requirements.prototype.loadFrameTest = function(result) {
+        var errors, that, testIframe, root;
+        var oldIframe, oldIframeName, oldIframeRoot;
+        errors = [];
+        that = this;
+        oldIframe = W.getFrame();
+        oldIframeName = W.getFrameName();
+        oldIframeRoot = W.getFrameRoot();
+        root = W.getIFrameAnyChild(oldIframe || document);
+        try {
+            testIframe = W.addIFrame(root, 'testIFrame');
+            W.setFrame(testIframe, 'testIframe', root);
+            W.loadFrame('/pages/accessdenied.htm', function() {
+                var found;
+                found = W.getElementById('root');
+                if (oldIframe) {
+                    W.setFrame(oldIframe, oldIframeName, oldIframeRoot);
+                }
+                if (!found) {
+                    errors.push('W.loadFrame failed to load a test frame correctly.');
+                }
+                root.removeChild(testIframe);
+                result(errors);
+            });
+        }
+        catch(e) {
+            errors.push('W.loadFrame raised an error: ' + e);
+            return errors;
+        }        
+    };
 
     node.widgets.register('Requirements', Requirements);
 
