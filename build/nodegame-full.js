@@ -12078,6 +12078,7 @@ JSUS.extend(TIME);
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # SocketFactory
  *
@@ -13703,8 +13704,8 @@ JSUS.extend(TIME);
 
                     if (nPlayers < minThreshold) {
                         if (minCallback && !node.game.minPlayerCbCalled) {
-                            minCallback.call(node.game);
                             node.game.minPlayerCbCalled = true;
+                            minCallback.call(node.game);
                         }
                     }
                     else {
@@ -13713,8 +13714,8 @@ JSUS.extend(TIME);
 
                     if (nPlayers > maxThreshold) {
                         if (maxCallback && !node.game.maxPlayerCbCalled) {
-                            maxCallback.call(node.game);
                             node.game.maxPlayerCbCalled = true;
+                            maxCallback.call(node.game);
                         }
                     }
                     else {
@@ -13723,8 +13724,8 @@ JSUS.extend(TIME);
 
                     if (nPlayers !== exactThreshold) {
                         if (exactCallback && !node.game.exactPlayerCbCalled) {
-                            exactCallback.call(node.game);
                             node.game.exactPlayerCbCalled = true;
+                            exactCallback.call(node.game);
                         }
                     }
                     else {
@@ -13742,7 +13743,11 @@ JSUS.extend(TIME);
 
                 // Set bounds-checking function:
                 this.checkPlistSize = function() {
-                    var nPlayers = node.game.pl.size() + 1;
+                    var nPlayers = node.game.pl.size();
+                    // Players should count themselves too.
+                    if (!node.player.admin) {
+                        nPlayers++;
+                    }
 
                     if (minCallback && nPlayers < minThreshold) {
                         return false;
@@ -20946,6 +20951,9 @@ JSUS.extend(TIME);
      * TODO: check if this can be called in any stage.
      */
     GameWindow.prototype.lockFrame = function(text) {
+        var that;
+        that = this;
+
         if (!this.waitScreen) {
             throw new Error('GameWindow.lockFrame: waitScreen not found.');
         }
@@ -20954,7 +20962,9 @@ JSUS.extend(TIME);
                                 'or undefined');
         }
         if (!this.isReady()) {
-            throw new Error('GameWindow.lockFrame: window not ready.');
+console.log('*** GameWindow.lockFrame: SETTING TIMEOUT');
+            setTimeout(function() { that.lockFrame(text); }, 100);
+            //throw new Error('GameWindow.lockFrame: window not ready.');
         }
         this.setStateLevel('LOCKING');
         text = text || 'Screen locked. Please wait...';
