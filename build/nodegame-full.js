@@ -13195,7 +13195,39 @@ JSUS.extend(TIME);
          * @see Game.resume
          */
         this.willBeDone = false;
-        
+
+        /**
+         * ### Game.minPlayerCbCalled
+         *
+         * TRUE, if the mininum-player callback has already been called
+         *
+         * This is reset when the min-condition is satisfied again.
+         *
+         * @see Game.gotoStep
+         */
+        this.minPlayerCbCalled = false;
+
+        /**
+         * ### Game.maxPlayerCbCalled
+         *
+         * TRUE, if the maxinum-player callback has already been called
+         *
+         * This is reset when the max-condition is satisfied again.
+         *
+         * @see Game.gotoStep
+         */
+        this.maxPlayerCbCalled = false;
+
+        /**
+         * ### Game.exactPlayerCbCalled
+         *
+         * TRUE, if the exact-player callback has already been called
+         *
+         * This is reset when the exact-condition is satisfied again.
+         *
+         * @see Game.gotoStep
+         */
+        this.exactPlayerCbCalled = false;
     }
 
     // ## Game methods
@@ -13669,16 +13701,34 @@ JSUS.extend(TIME);
                         nPlayers++;
                     }
 
-                    if (minCallback && nPlayers < minThreshold) {
-                        minCallback.call(node.game);
+                    if (nPlayers < minThreshold) {
+                        if (minCallback && !node.game.minPlayerCbCalled) {
+                            minCallback.call(node.game);
+                            node.game.minPlayerCbCalled = true;
+                        }
+                    }
+                    else {
+                        node.game.minPlayerCbCalled = false;
                     }
 
-                    if (maxCallback && nPlayers > maxThreshold) {
-                        maxCallback.call(node.game);
+                    if (nPlayers > maxThreshold) {
+                        if (maxCallback && !node.game.maxPlayerCbCalled) {
+                            maxCallback.call(node.game);
+                            node.game.maxPlayerCbCalled = true;
+                        }
+                    }
+                    else {
+                        node.game.maxPlayerCbCalled = false;
                     }
 
-                    if (exactCallback && nPlayers !== exactThreshold) {
-                        exactCallback.call(node.game);
+                    if (nPlayers !== exactThreshold) {
+                        if (exactCallback && !node.game.exactPlayerCbCalled) {
+                            exactCallback.call(node.game);
+                            node.game.exactPlayerCbCalled = true;
+                        }
+                    }
+                    else {
+                        node.game.exactPlayerCbCalled = false;
                     }
                 };
 
@@ -13728,7 +13778,7 @@ JSUS.extend(TIME);
 
         }
         return this.execStep(this.getCurrentStep());
-    }
+    };
 
     /**
      * ### Game.execStep
@@ -14108,7 +14158,7 @@ JSUS.extend(TIME);
         syncOnLoaded = this.plot.getProperty(curGameStage, 'syncOnLoaded');
         if (!syncOnLoaded) return true;
         return node.game.pl.isStepLoaded(curGameStage);
-    }
+    };
     // ## Closure
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -16604,6 +16654,7 @@ JSUS.extend(TIME);
             this.updateRemaining = timestamp - this.updateStart;
         }
         else if (this.status === GameTimer.STOPPED) {
+            // If the timer was explicitly stopped, we ignore the pause:
             return;
         }
         else if (!this.isPaused()) {
