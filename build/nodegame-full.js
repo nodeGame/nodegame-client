@@ -71,8 +71,13 @@ store.addType = function (type, storage) {
 	}
 };
 
-store.error = function() {
-	return "shelf quota exceeded"; 
+// TODO: create unit test
+store.onquotaerror = undefined;
+store.error = function() {	
+	console.log("shelf quota exceeded"); 
+	if ('function' === typeof store.onquotaerror) {
+		store.onquotaerror(null);
+	}
 };
 
 store.log = function(text) {
@@ -187,6 +192,16 @@ store.parse = function(o) {
 /**
  * ## Amplify storage for Shelf.js
  * 
+ * ---
+ * 
+ * v. 1.1.0 22.05.2013 a275f32ee7603fbae6607c4e4f37c4d6ada6c3d5
+ * 
+ * Important! When updating to next Amplify.JS release, remember to change 
+ * 
+ * JSON.stringify -> store.stringify
+ * 
+ * to keep support for ciclyc objects
+ * 
  */
 
 (function(exports) {
@@ -205,13 +220,13 @@ if ('undefined' === typeof window) {
 
 //var rprefix = /^__shelf__/;
 var regex = new RegExp("^" + store.name); 
-function createFromStorageInterface(storageType, storage) {
-	store.addType(storageType, function(key, value, options) {
+function createFromStorageInterface( storageType, storage ) {
+	store.addType( storageType, function( key, value, options ) {
 		var storedValue, parsed, i, remove,
 			ret = value,
 			now = (new Date()).getTime();
 
-		if (!key) {
+		if ( !key ) {
 			ret = {};
 			remove = [];
 			i = 0;
@@ -223,52 +238,51 @@ function createFromStorageInterface(storageType, storage) {
 				// https://bugzilla.mozilla.org/show_bug.cgi?id=662511
 				key = storage.length;
 
-				while (key = storage.key(i++)) {
-					if (regex.test(key)) {
-						parsed = store.parse(storage.getItem(key));
-						if (parsed.expires && parsed.expires <= now) {
-							remove.push(key);
+				while ( key = storage.key( i++ ) ) {
+					if ( rprefix.test( key ) ) {
+						parsed = JSON.parse( storage.getItem( key ) );
+						if ( parsed.expires && parsed.expires <= now ) {
+							remove.push( key );
 						} else {
-							ret[key.replace(rprefix, "")] = parsed.data;
+							ret[ key.replace( rprefix, "" ) ] = parsed.data;
 						}
 					}
 				}
-				while (key = remove.pop()) {
-					storage.removeItem(key);
+				while ( key = remove.pop() ) {
+					storage.removeItem( key );
 				}
-			} catch (error) {}
+			} catch ( error ) {}
 			return ret;
 		}
 
 		// protect against name collisions with direct storage
-		key = store.name + key;
+		key = "__amplify__" + key;
 
-
-		if (value === undefined) {
-			storedValue = storage.getItem(key);
-			parsed = storedValue ? store.parse(storedValue) : { expires: -1 };
-			if (parsed.expires && parsed.expires <= now) {
-				storage.removeItem(key);
+		if ( value === undefined ) {
+			storedValue = storage.getItem( key );
+			parsed = storedValue ? JSON.parse( storedValue ) : { expires: -1 };
+			if ( parsed.expires && parsed.expires <= now ) {
+				storage.removeItem( key );
 			} else {
 				return parsed.data;
 			}
 		} else {
-			if (value === null) {
-				storage.removeItem(key);
+			if ( value === null ) {
+				storage.removeItem( key );
 			} else {
 				parsed = store.stringify({
 					data: value,
 					expires: options.expires ? now + options.expires : null
 				});
 				try {
-					storage.setItem(key, parsed);
+					storage.setItem( key, parsed );
 				// quota exceeded
-				} catch(error) {
+				} catch( error ) {
 					// expire old data and try again
-					store[storageType]();
+					store[ storageType ]();
 					try {
-						storage.setItem(key, parsed);
-					} catch(error) {
+						storage.setItem( key, parsed );
+					} catch( error ) {
 						throw store.error();
 					}
 				}
@@ -279,85 +293,88 @@ function createFromStorageInterface(storageType, storage) {
 	});
 }
 
-// ## localStorage + sessionStorage
+// localStorage + sessionStorage
 // IE 8+, Firefox 3.5+, Safari 4+, Chrome 4+, Opera 10.5+, iPhone 2+, Android 2+
-for (var webStorageType in { localStorage: 1, sessionStorage: 1 }) {
-	// try/catch for file protocol in Firefox
+for ( var webStorageType in { localStorage: 1, sessionStorage: 1 } ) {
+	// try/catch for file protocol in Firefox and Private Browsing in Safari 5
 	try {
-		if (window[webStorageType].getItem) {
-			createFromStorageInterface(webStorageType, window[webStorageType]);
-		}
-	} catch(e) {}
+		// Safari 5 in Private Browsing mode exposes localStorage
+		// but doesn't allow storing data, so we attempt to store and remove an item.
+		// This will unfortunately give us a false negative if we're at the limit.
+		window[ webStorageType ].setItem( "__amplify__", "x" );
+		window[ webStorageType ].removeItem( "__amplify__" );
+		createFromStorageInterface( webStorageType, window[ webStorageType ] );
+	} catch( e ) {}
 }
 
-// ## globalStorage
+// globalStorage
 // non-standard: Firefox 2+
 // https://developer.mozilla.org/en/dom/storage#globalStorage
-if (!store.types.localStorage && window.globalStorage) {
+if ( !store.types.localStorage && window.globalStorage ) {
 	// try/catch for file protocol in Firefox
 	try {
-		createFromStorageInterface("globalStorage",
-			window.globalStorage[window.location.hostname]);
+		createFromStorageInterface( "globalStorage",
+			window.globalStorage[ window.location.hostname ] );
 		// Firefox 2.0 and 3.0 have sessionStorage and globalStorage
 		// make sure we default to globalStorage
 		// but don't default to globalStorage in 3.5+ which also has localStorage
-		if (store.type === "sessionStorage") {
+		if ( store.type === "sessionStorage" ) {
 			store.type = "globalStorage";
 		}
-	} catch(e) {}
+	} catch( e ) {}
 }
 
-// ## userData
+// userData
 // non-standard: IE 5+
 // http://msdn.microsoft.com/en-us/library/ms531424(v=vs.85).aspx
 (function() {
 	// IE 9 has quirks in userData that are a huge pain
 	// rather than finding a way to detect these quirks
 	// we just don't register userData if we have localStorage
-	if (store.types.localStorage) {
+	if ( store.types.localStorage ) {
 		return;
 	}
 
 	// append to html instead of body so we can do this from the head
-	var div = document.createElement("div"),
-		attrKey = "shelf";
+	var div = document.createElement( "div" ),
+		attrKey = "amplify";
 	div.style.display = "none";
-	document.getElementsByTagName("head")[0].appendChild(div);
+	document.getElementsByTagName( "head" )[ 0 ].appendChild( div );
 
 	// we can't feature detect userData support
 	// so just try and see if it fails
 	// surprisingly, even just adding the behavior isn't enough for a failure
 	// so we need to load the data as well
 	try {
-		div.addBehavior("#default#userdata");
-		div.load(attrKey);
-	} catch(e) {
-		div.parentNode.removeChild(div);
+		div.addBehavior( "#default#userdata" );
+		div.load( attrKey );
+	} catch( e ) {
+		div.parentNode.removeChild( div );
 		return;
 	}
 
-	store.addType("userData", function(key, value, options) {
-		div.load(attrKey);
+	store.addType( "userData", function( key, value, options ) {
+		div.load( attrKey );
 		var attr, parsed, prevValue, i, remove,
 			ret = value,
 			now = (new Date()).getTime();
 
-		if (!key) {
+		if ( !key ) {
 			ret = {};
 			remove = [];
 			i = 0;
-			while (attr = div.XMLDocument.documentElement.attributes[i++]) {
-				parsed = store.parse(attr.value);
-				if (parsed.expires && parsed.expires <= now) {
-					remove.push(attr.name);
+			while ( attr = div.XMLDocument.documentElement.attributes[ i++ ] ) {
+				parsed = JSON.parse( attr.value );
+				if ( parsed.expires && parsed.expires <= now ) {
+					remove.push( attr.name );
 				} else {
-					ret[attr.name] = parsed.data;
+					ret[ attr.name ] = parsed.data;
 				}
 			}
-			while (key = remove.pop()) {
-				div.removeAttribute(key);
+			while ( key = remove.pop() ) {
+				div.removeAttribute( key );
 			}
-			div.save(attrKey);
+			div.save( attrKey );
 			return ret;
 		}
 
@@ -365,54 +382,54 @@ if (!store.types.localStorage && window.globalStorage) {
 		// http://www.w3.org/TR/REC-xml/#NT-Name
 		// simplified to assume the starting character is valid
 		// also removed colon as it is invalid in HTML attribute names
-		key = key.replace(/[^-._0-9A-Za-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u37f-\u1fff\u200c-\u200d\u203f\u2040\u2070-\u218f]/g, "-");
+		key = key.replace( /[^\-._0-9A-Za-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c-\u200d\u203f\u2040\u2070-\u218f]/g, "-" );
 		// adjust invalid starting character to deal with our simplified sanitization
-		key = key.replace(/^-/, "_-");
+		key = key.replace( /^-/, "_-" );
 
-		if (value === undefined) {
-			attr = div.getAttribute(key);
-			parsed = attr ? store.parse(attr) : { expires: -1 };
-			if (parsed.expires && parsed.expires <= now) {
-				div.removeAttribute(key);
+		if ( value === undefined ) {
+			attr = div.getAttribute( key );
+			parsed = attr ? JSON.parse( attr ) : { expires: -1 };
+			if ( parsed.expires && parsed.expires <= now ) {
+				div.removeAttribute( key );
 			} else {
 				return parsed.data;
 			}
 		} else {
-			if (value === null) {
-				div.removeAttribute(key);
+			if ( value === null ) {
+				div.removeAttribute( key );
 			} else {
 				// we need to get the previous value in case we need to rollback
-				prevValue = div.getAttribute(key);
+				prevValue = div.getAttribute( key );
 				parsed = store.stringify({
 					data: value,
 					expires: (options.expires ? (now + options.expires) : null)
 				});
-				div.setAttribute(key, parsed);
+				div.setAttribute( key, parsed );
 			}
 		}
 
 		try {
-			div.save(attrKey);
+			div.save( attrKey );
 		// quota exceeded
-		} catch (error) {
+		} catch ( error ) {
 			// roll the value back to the previous value
-			if (prevValue === null) {
-				div.removeAttribute(key);
+			if ( prevValue === null ) {
+				div.removeAttribute( key );
 			} else {
-				div.setAttribute(key, prevValue);
+				div.setAttribute( key, prevValue );
 			}
 
 			// expire old data and try again
 			store.userData();
 			try {
-				div.setAttribute(key, parsed);
-				div.save(attrKey);
-			} catch (error) {
+				div.setAttribute( key, parsed );
+				div.save( attrKey );
+			} catch ( error ) {
 				// roll the value back to the previous value
-				if (prevValue === null) {
-					div.removeAttribute(key);
+				if ( prevValue === null ) {
+					div.removeAttribute( key );
 				} else {
-					div.setAttribute(key, prevValue);
+					div.setAttribute( key, prevValue );
 				}
 				throw store.error();
 			}
@@ -423,6 +440,7 @@ if (!store.types.localStorage && window.globalStorage) {
 
 
 }(this));
+
 /**
  * ## Cookie storage for Shelf.js
  * 
@@ -2458,7 +2476,7 @@ if (JSUS.isNodeJS()) {
      * Adds a border around the specified element. Color,
      * width, and type can be specified.
      */
-    DOM.addBorder = function(elem, color, witdh, type) {
+    DOM.addBorder = function(elem, color, width, type) {
         var properties;
         if (!elem) return;
 
@@ -2467,7 +2485,7 @@ if (JSUS.isNodeJS()) {
         type = type || 'solid';
 
         properties = { border: width + ' ' + type + ' ' + color };
-        return this.style(elem,properties);
+        return DOM.style(elem, properties);
     };
 
     /**
@@ -2482,11 +2500,12 @@ if (JSUS.isNodeJS()) {
      * @see DOM.setAttribute
      */
     DOM.style = function(elem, properties) {
+        var style, i;
         if (!elem || !properties) return;
         if (!DOM.isElement(elem)) return;
 
-        var style = '';
-        for (var i in properties) {
+        style = '';
+        for (i in properties) {
             style += i + ': ' + properties[i] + '; ';
         };
         return elem.setAttribute('style', style);
@@ -4076,7 +4095,6 @@ JSUS.extend(TIME);
      *
      * @param {object} options Optional. Configuration options
      * @param {db} db Optional. An initial set of items to import
-     *
      */
     function NDDB(options, db) {
         var that;
@@ -4233,7 +4251,7 @@ JSUS.extend(TIME);
      *
      *  - d: dimension of comparison
      *  - value: second-term of comparison
-     *  - comparator: the comparator function as defined by `NDDB.c`
+     *  - comparator: the comparator function as defined by `NDDB.comparator`
      *
      * and return a function that execute the desired operation.
      *
@@ -4259,7 +4277,7 @@ JSUS.extend(TIME);
         var that;
         that = this;
 
-        // Exists
+        // Exists.
         this.filters['E'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
@@ -4294,16 +4312,22 @@ JSUS.extend(TIME);
             }
         };
 
-        // (strict) Equals
+        // (strict) Equals.
         this.filters['=='] = function(d, value, comparator) {
             return function(elem) {
-
                 if (comparator(elem, value, 0) === 0) return elem;
             };
         };
 
+        // (strict) Not Equals.
+        this.filters['!='] = function(d, value, comparator) {
+            return function(elem) {
+                debugger
+                if (comparator(elem, value, 0) !== 0) return elem;
+            };
+        };
 
-        // Smaller than
+        // Smaller than.
         this.filters['>'] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -4318,7 +4342,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // Greater than
+        // Greater than.
         this.filters['>='] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -4335,7 +4359,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // Smaller than
+        // Smaller than.
         this.filters['<'] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -4350,7 +4374,7 @@ JSUS.extend(TIME);
             }
         };
 
-        //  Smaller or equal than
+        //  Smaller or equal than.
         this.filters['<='] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -4367,7 +4391,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // Between
+        // Between.
         this.filters['><'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
@@ -4406,7 +4430,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // Not Between
+        // Not Between.
         this.filters['<>'] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -4427,7 +4451,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // In Array
+        // In Array.
         this.filters['in'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
@@ -4454,7 +4478,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // Not In Array
+        // Not In Array.
         this.filters['!in'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
@@ -4483,7 +4507,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // Supports `_` and `%` wildcards 
+        // Supports `_` and `%` wildcards.
         function generalLike(d, value, comparator, sensitive) {
             var regex;
 
@@ -4603,9 +4627,9 @@ JSUS.extend(TIME);
                     this.__shared[sh] = options.shared[sh];
                 }
             }
-            // Delete from options to avoid copy.
-            delete this.__options.shared;
         }
+        // Delete the shared object, it must not be copied by _cloneSettings_.
+        delete this.__options.shared;
 
         if (options.log) {
             this.initLog(options.log, options.logCtx);
@@ -4829,7 +4853,7 @@ JSUS.extend(TIME);
      */
     NDDB.prototype.cloneSettings = function(leaveOut) {
         var i, options, keepShared;
-        var logCopy, logCtxCopy, sharedCopy;
+        var logCopy, logCtxCopy;
         options = this.__options || {};
         keepShared = true;
 
@@ -4912,14 +4936,15 @@ JSUS.extend(TIME);
      * @see JSUS.stringify
      */
     NDDB.prototype.stringify = function(compressed) {
-        if (!this.length) return '[]';
+        var spaces, out;
+        if (!this.size()) return '[]';
         compressed = ('undefined' === typeof compressed) ? true : compressed;
 
-        var spaces = compressed ? 0 : 4;
+        spaces = compressed ? 0 : 4;
 
-        var out = '[';
+        out = '[';
         this.each(function(e) {
-            // decycle, if possible
+            // Decycle, if possible
             e = NDDB.decycle(e);
             out += J.stringify(e, spaces) + ', ';
         });
@@ -5484,13 +5509,13 @@ JSUS.extend(TIME);
 
     // ## Sort and Select
 
-    function queryError(d, op, value) {
+    function queryError(text, d, op, value) {
         var miss, err;
         miss = '(?)';
-        err = 'Malformed query: ' + d || miss + ' ' + op || miss +
-            ' ' + value || miss;
-        this.log(err, 'WARN');
-        return false;
+        err = this._getConstrName() + '._analyzeQuery: ' + text + 
+            '. Malformed query: ' + d || miss + ' ' + op || miss + 
+            ' ' + value || miss + '.';
+        throw new Error(err);
     }
 
     /**
@@ -5506,34 +5531,32 @@ JSUS.extend(TIME);
      *   if an error was detected
      */
     NDDB.prototype._analyzeQuery = function(d, op, value) {
-        var that, i, len, newValue;
-        that = this;
+        var i, len, newValue, errText;
 
         if ('undefined' === typeof d) {
-            return queryError.call(this, d, op,value);
+            queryError.call(this, 'undefined dimension', d, op, value);
         }
 
-        // Verify input
+        // Verify input.
         if ('undefined' !== typeof op) {
 
             if (op === '=') {
                 op = '==';
             }
-
-//            if (!(op in this.query.operators)) {
-            if (!(op in this.filters)) {
-                this.log('Query error. Invalid operator detected: ' + op,
-                         'WARN');
-                return false;
+            else if (op === '!==') {
+                op = '!=';
             }
 
-            // Range-queries need an array as third parameter instance of Array
+            if (!(op in this.filters)) {
+                queryError.call(this, 'unknown operator ' + op, d, op, value);
+            }
+
+            // Range-queries need an array as third parameter instance of Array.
             if (J.in_array(op,['><', '<>', 'in', '!in'])) {
 
                 if (!(value instanceof Array)) {
-                    this.log('Range-queries need an array as third parameter',
-                             'WARN');
-                    queryError.call(this, d,op,value);
+                    errText = 'range-queries need an array as third parameter';                        
+                    queryError.call(this, errText, d, op, value);
                 }
                 if (op === '<>' || op === '><') {
 
@@ -5546,10 +5569,11 @@ JSUS.extend(TIME);
                 }
             }
 
-            else if (J.in_array(op, ['>', '==', '>=', '<', '<='])){
-                // Comparison queries need a third parameter
+            else if (J.in_array(op, ['!=', '>', '==', '>=', '<', '<='])){
+                // Comparison queries need a third parameter.
                 if ('undefined' === typeof value) {
-                    queryError.call(this, d, op, value);
+                    errText = 'value cannot be undefined in comparison queries';
+                    queryError.call(this, errText, d, op, value);
                 }
                 // TODO: when to nest and when keep the '.' in the name?
                 // Comparison queries need to have the same
@@ -5571,14 +5595,15 @@ JSUS.extend(TIME);
 
         }
         else if ('undefined' !== typeof value) {
-            queryError.call(this, d, op, value);
+            errText = 'undefined filter and defined value';
+            queryError.call(this, errText, d, op, value);
         }
         else {
             op = 'E'; // exists
             value = '';
         }
 
-        return {d:d,op:op,value:value};
+        return { d:d, op:op, value:value };
     };
 
     /**
@@ -5591,8 +5616,8 @@ JSUS.extend(TIME);
      * @return {NDDB} A copy of the current selection without duplicated entries
      *
      * @see NDDB.select()
-     *  @see NDDB.fetch()
-     *  @see NDDB.fetchValues()
+     * @see NDDB.fetch()
+     * @see NDDB.fetchValues()
      */
     NDDB.prototype.distinct = function() {
         return this.breed(J.distinct(this.db));
@@ -5628,7 +5653,6 @@ JSUS.extend(TIME);
      * @see NDDB.or
      * @see NDDB.execute()
      * @see NDDB.fetch()
-     *
      */
     NDDB.prototype.select = function(d, op, value) {
         this.query.reset();
@@ -5658,7 +5682,6 @@ JSUS.extend(TIME);
         //      else {
         var q, cb;
         q = this._analyzeQuery(d, op, value);
-        if (!q) return false;
         cb = this.filters[q.op](q.d, q.value, this.getComparator(q.d));
         this.query.addCondition('AND', cb);
         //      }
@@ -5688,7 +5711,6 @@ JSUS.extend(TIME);
         //      else {
         var q, cb;
         q = this._analyzeQuery(d, op, value);
-        if (!q) return false;
         cb = this.filters[q.op](q.d, q.value, this.getComparator(q.d));
         this.query.addCondition('OR', cb);
         //this.query.addCondition('OR', condition, this.getComparator(d));
@@ -9002,12 +9024,18 @@ JSUS.extend(TIME);
     function PlayerList(options, db) {
         options = options || {};
         
+        options.name = options.name || 'plist';
+
         // Updates indexes on the fly.
         if (!options.update) options.update = {};
         if ('undefined' === typeof options.update.indexes) {
             options.update.indexes = true;
         }
    
+        // The internal counter that will be used to assing the `count`
+        // property to each inserted player.
+        this.pcounter = 0;
+
         // Invoking NDDB constructor.
         NDDB.call(this, options);
         
@@ -9026,10 +9054,6 @@ JSUS.extend(TIME);
 
         // Assigns a global comparator function.
         this.globalCompare = PlayerList.comparePlayers;
-
-        // The internal counter that will be used to assing the `count`
-        // property to each inserted player
-        this.pcounter = this.db.length || 0;
     }
 
     // ## PlayerList methods
@@ -9068,16 +9092,16 @@ JSUS.extend(TIME);
      */
     PlayerList.prototype.add = function(player) {
         if (!(player instanceof Player)) {
-            if (!player || 'undefined' === typeof player.id) {
+            if (!player || 'string' !== typeof player.id) {
                 throw new NodeGameRuntimeError(
-                        'PlayerList.add: player.id was not given');
+                        'PlayerList.add: player.id must be string.');
             }
             player = new Player(player);
         }
 
         if (this.exist(player.id)) {
             throw new NodeGameRuntimeError(
-                'PlayerList.add: Player already exists (id ' + player.id + ')');
+                'PlayerList.add: player already exists (id ' + player.id + ')');
         }
         this.insert(player);
         player.count = this.pcounter;
@@ -9121,14 +9145,12 @@ JSUS.extend(TIME);
      */
     PlayerList.prototype.remove = function(id) {
         var player;
-        if ('undefined' === typeof id) {
-            throw new NodeGameRuntimeError(
-                'PlayerList.remove: id was not given');
+        if ('string' !== typeof id) {
+            throw new TypeError('PlayerList.remove: id must be string.');
         }
-        player = this.id.pop(id);
+        player = this.id.remove(id);
         if (!player) {
-            throw new NodeGameRuntimeError(
-                'PlayerList.remove: Player not found (id ' + id + ')');
+            throw new Error('PlayerList.remove: player not found: ' + id + '.');
         }
         return player;
     };
@@ -9187,11 +9209,19 @@ JSUS.extend(TIME);
             throw new TypeError(
                 'PlayerList.updatePlayer: update must be object.');
         }
+
+        if ('undefined' !== typeof update.id) {
+            throw new Error('PlayerList.updatePlayer: update cannot change ' +
+                            'the player id.');
+        }
+
         // var player = this.id.get(id);
         // J.mixin(player, update);
         // return player;
         // This creates some problems with the _autoUpdate...to be investigated.
-        return this.id.update(id, update);
+        this.id.update(id, update);
+
+        
     };
 
     /**
@@ -12717,6 +12747,8 @@ JSUS.extend(TIME);
      */
     function GameDB(options, db) {
         options = options || {};
+        options.name = options.name || 'gamedb';
+
         if (!options.update) options.update = {};
 
         // Auto build indexes by default.
@@ -13071,7 +13103,8 @@ JSUS.extend(TIME);
          */
         this.pl = new PlayerList({
             log: this.node.log,
-            logCtx: this.node
+            logCtx: this.node,
+            name: 'pl_' + this.node.nodename
         });
 
         this.pl.on('insert', function(p) {
@@ -13090,7 +13123,8 @@ JSUS.extend(TIME);
          */
         this.ml = new PlayerList({
             log: this.node.log,
-            logCtx: this.node
+            logCtx: this.node,
+            name: 'ml_' + this.node.nodename
         });
 
 
@@ -14439,23 +14473,403 @@ JSUS.extend(TIME);
 /**
  * # GroupManager
  * Copyright(c) 2013 Stefano Balietti
- * MIT Licensed 
- * 
+ * MIT Licensed
+ *
  * `nodeGame` group manager.
  * @experimental
  * ---
  */
 (function(exports, node) {
-   
+
     "use strict";
 
     // ## Global scope
     var J = node.JSUS;
+    var NDDB = node.NDDB;
+    var PlayerList = node.PlayerList;
 
     exports.GroupManager = GroupManager;
+    exports.Group = Group;
 
+    /**
+     * ## GroupManager constructor
+     *
+     * Creates a new instance of Group Manager
+     *
+     */
     function GroupManager() {
-        // TODO GroupManager
+        var that = this;
+
+        /**
+         * ## GroupManager.elements
+         *
+         * Elements that will be used to creates groups
+         *
+         * An element can be any valid javascript primitive type or object.
+         * However, using objects makes the matching slower, and it can
+         * might create problems with advanced matching features.
+         */
+        this.elements = [];
+        
+        /**
+         * ## GroupManager.groups
+         *
+         * The current database of groups
+         *
+         * @see NDDB
+         * @see Group
+         */
+        this.groups = new NDDB({ update: { indexes: true } });
+        this.groups.index('name', function(g) { return g.name; });
+        this.groups.on('insert', function(g) {
+            if (that.groups.name && that.groups.name.get(g.name)) {
+                throw new Error('GroupManager.insert: group name must be ' +
+                                'unique: ' + g.name + '.');
+            }
+        });
+
+        /**
+         * ## GroupManager.scratch.
+         *
+         * A temporary storage object used by matching algorithms
+         *
+         * For example, when a matching function is used across multiple
+         * game stages, it can use this space to store information.
+         *
+         * This object will be cleared when changing matching algorithm. 
+         */
+        this.scratch = {};
+
+        /**
+         * ## GroupManager.matchFunctions
+         *
+         * Objects literals with all available matching functions 
+         *
+         * @see GroupManager.addDefaultMatchFunctions
+         * @see GroupManager.addMatchFunction
+         */
+        this.matchFunctions = {};
+
+        /**
+         * ## GroupManager.lastMatchType
+         *
+         * The last type of matching run. 
+         *
+         * @see GroupManager.match
+         */
+        this.lastMatchType = null;
+
+        // Adds the default matching functions.
+        this.addDefaultMatchFunctions();
+
+    }
+
+    /**
+     * ## GroupManager.create
+     *
+     * Creates a new set of groups in the Group Manager
+     *
+     * Group names must be unique, or an error will be thrown.
+     *
+     * @param {array} groups The new set of groups.
+     */
+    GroupManager.prototype.create = function(groups) {
+        var i, len, name;
+        if (!J.isArray(groups)) {
+            throw new TypeError('node.group.create: groups must be array.');
+        }
+        if (!groups.length) {
+            throw new TypeError('node.group.create: groups is an empty array.');
+        }
+
+        i = -1, len = groups.length;
+        for ( ; ++i < len ; ) {
+            name = groups[i];
+            // TODO: what if a group is already existing with the same name
+            this.groups.insert(new Group({
+                name: name
+            }));
+        }
+    };
+
+    /**
+     * ## GroupManager.get
+     *
+     * Returns the group with the specified name
+     *
+     * @param {string} groupName The name of the group
+     * @return {Group|null} The requested group, or null if none is found
+     */
+    GroupManager.prototype.get = function(groupName) {
+        if ('string' !== typeof groupName) {
+            throw new TypeError('GroupManager.get: groupName must be string.');
+        }
+        return this.groups.name.get(groupName) || null;
+    };
+
+    /**
+     * ## GroupManager.removeAll
+     *
+     * Removes all existing groups
+     */
+    GroupManager.prototype.removeAll = function() {
+        this.groups.clear(true);
+    };
+
+
+    /**
+     * ## GroupManager.addElements
+     *
+     * Adds new elements to the group manager
+     *
+     * The uniqueness of each element is not checked, and depending on the
+     * matching algorithm used, it may or may not be a problem.
+     *
+     * @param {array} The set of elements to later match
+     */
+    GroupManager.prototype.addElements = function(elements) {
+        this.elements = this.elements.concat(elements);
+    };
+
+    /**
+     * ## GroupManager.createNGroups
+     *
+     * Creates N new groups
+     *
+     * The name of each group is 'Group' + its ordinal position in the array
+     * of current groups.
+     *
+     * @param {number} N The requested number of groups
+     * @return {array} out The names of the created groups
+     */
+    GroupManager.prototype.createNGroups = function(N) {
+        var i, len, name, out;
+        if ('number' !== typeof N) {
+            throw new TypeError('node.group.createNGroups: N must be number.');
+        }
+        if (N < 1) {
+            throw new TypeError('node.group.create: N must be greater than 0.');
+        }
+
+        out = [], i = -1, len = this.groups.size();
+        for ( ; ++i < N ; ) {
+            name = 'Group' + ++len;
+            // TODO: what if a group is already existing with the same name
+            this.groups.insert(new Group({
+                name: name
+            }));
+            out.push(name);
+        }
+
+        return out;
+    };
+
+    /**
+     * ## GroupManager.assign2Group
+     *
+     * Manually assign one or more elements to a group
+     *
+     * The group must be already existing.
+     *
+     * @param {string} groupName The name of the group
+     * @param {string|array|PlayerList} The elements to assign to a group
+     * @return {Group} The updated group
+     */
+    GroupManager.prototype.assign2Group = function(groupName, elements) {
+        var i, len, name, group;
+        if ('string' !== typeof groupName) {
+            throw new TypeError('node.group.assign2Group: groupName must be ' +
+                                'string.');
+        }
+        group = this.groups.name.get(groupName);
+        if (!group) {
+            throw new Error('node.group.assign2Group: group not found: ' +
+                            groupName + '.');
+        }
+
+        if ('string' === typeof elements) {
+            elements = [elements];
+        }
+        else if ('object' === typeof elements &&
+                 elements instanceof PlayerList) {
+
+            elements = elements.id.getAllKeys();
+        }
+        else if (!J.isArray(elements)) {
+            throw new TypeError('node.group.assign2Group: elements must be ' +
+                                'string, array, or instance of PlayerList.');
+        }
+
+        i = -1, len = elements.length;
+        for ( ; ++i < len ; ) {
+            add2Group(group, elements[i], 'assign2Group');
+        }
+        return group;
+    };
+
+    /**
+     * ## GroupManager.addMatchFunction
+     *
+     * Adds a new matching function to the set of available ones 
+     *
+     * New matching functions can be called with the _match_ method.
+     *
+     * Callback functions are called with the GroupManager context, so that
+     * they can access the current  _groups_ and _elements_ objects. They also
+     * receives any other paremeter passed along the _match_ method.
+     *
+     * Computation that needs to last between two subsequent executions of the
+     * same matching algorithm should be stored in _GroupManager.scratch_
+     *
+     * @param {string} name The name of the matchig algorithm
+     * @param {function} cb The matching callback function
+     *
+     * @see GroupManager.match
+     * @see GroupManager.scratch
+     * @see GroupManager.addDefaultMatchFunctions
+     */
+    GroupManager.prototype.addMatchFunction = function(name, cb) {
+        var i, len, name, group;
+        if ('string' !== typeof name) {
+            throw new TypeError('node.group.addMatchFunction: name must be ' +
+                                'string.');
+        }
+        if ('function' !== typeof cb) {
+            throw new TypeError('node.group.addMatchingFunction: cb must be ' +
+                                'function.');
+        }
+
+        this.matchFunctions[name] = cb;
+    };
+
+    /**
+     * ## GroupManager.match
+     *
+     * Performs a match, given the current _groups_ and _elements_ objects 
+     *
+     * It stores the type of matching in the variable _lastMatchType_. If it 
+     * is different from previous matching type, the _scratch_ object is
+     * cleared.
+     *
+     * @see Group
+     * @see GroupManager.groups
+     * @see GroupManager.elements
+     * @see GroupManager.scratch
+     */
+    GroupManager.prototype.match = function() {
+        var type;
+        type = Array.prototype.splice.call(arguments, 0, 1)[0];
+        if ('string' !== typeof type) {
+            throw new TypeError('node.group.match: match type must be string.');
+        }
+        if (!this.matchFunctions[type]) {
+            throw new Error('node.group.match: unknown match type: ' + type +
+                            '.');
+        }        
+        if (this.lastMatchType && this.lastMatchType !== type) {
+            // Clearing scratch.
+            this.scratch = {};
+            // Setting last match type.
+            this.lasMatchType = type;
+        }
+        // Running match function.
+        this.matchFunctions[type].apply(this, arguments);
+    };
+
+    /**
+     * ## GroupManager.addDefaultMatchFunctions
+     *
+     * Adds default matching functions.
+     */
+    GroupManager.prototype.addDefaultMatchFunctions = function() {
+
+        this.matchFunctions['RANDOM'] = function() {
+            var i, len, order, nGroups;
+            var g, elem;
+            
+            nGroups = this.groups.size();
+
+            if (!nGroups) {
+                throw new Error('RANDOM match: no groups found.');
+            }
+
+            len = this.elements.length;
+
+            if (!len) {
+                throw new Error('RANDOM match: no elements to match.');
+            }
+
+            this.resetMemberships();
+
+            order = J.sample(0, len-1);
+
+            for (i = -1 ; ++i < len ; ) {
+                g = this.groups.db[i % nGroups];
+                elem = this.elements[order[i]];
+                add2Group(g, elem, 'match("RANDOM")');
+            }
+
+        };
+    };
+
+    /**
+     * ## GroupManager.resetMemberships
+     *
+     * Removes all memberships, but keeps the current groups and elements
+     *
+     * @see Group.reset
+     */
+    GroupManager.prototype.resetMemberships = function() {
+        this.groups.each(function(g) {
+            g.reset(true);
+        });
+    };
+
+    /**
+     * ## GroupManager.getMemberships
+     *
+     * Returns current memberships as an array or object
+     *
+     * @return {array|object} Array or object literals of arrays of memberships
+     */
+    GroupManager.prototype.getMemberships = function(array) {
+        var i, len, g, members;
+        i = -1, len = this.groups.db.length;
+        out = array ? [] : {};
+        for ( ; ++i < len ; ) {
+            g = this.groups.db[i];
+            members = g.getMembers();
+            array ? out.push(members) : out[g.name] = members;
+        }
+        return out;            
+    };
+
+    /**
+     * ## GroupManager.getGroups
+     *
+     * Returns the current groups
+     *
+     * @return {array} The array of groups
+     * @see Group
+     */
+    GroupManager.prototype.getGroups = function() {
+        return this.groups.db;
+    };
+    
+    /**
+     * ## GroupManager.getGroupsNames
+     *
+     * Returns the current group names
+     *
+     * @return {array} The array of group names
+     */
+    GroupManager.prototype.getGroupNames = function() {
+        return this.groups.name.getAllKeys();
+    };
+
+    function add2Group(group, item, methodName) {
+        // TODO: see if we still need a separate method.
+        group.addMember(item);
     }
 
     // Here follows previous implementation of GroupManager, called RMatcher - scarcely commented.
@@ -14466,6 +14880,11 @@ JSUS.extend(TIME);
     // pools: array of array. it is set of preferences (elements from the first array will be used first
 
     // Groups.rowLimit determines how many unique elements per row
+
+    // Group.match returns an array of length N, where N is the length of _elements_.
+    // The t-th position in the matched array is the match for t-th element in the _elements_ array.
+    // The matching is done trying to follow the preference in the pool.
+    
 
     exports.RMatcher = RMatcher;
     exports.Group = Group;
@@ -14508,7 +14927,7 @@ JSUS.extend(TIME);
     /**
      * ## RMatcher.addGroup
      *
-     * Adds a group in the group array 
+     * Adds a group in the group array
      *
      * @param Group group The group to addx
      */
@@ -14522,7 +14941,7 @@ JSUS.extend(TIME);
     /**
      * ## RMatcher.match
      *
-     * Does the matching according to pre-specified criteria 
+     * Does the matching according to pre-specified criteria
      *
      * @return array The result of the matching
      */
@@ -14550,9 +14969,9 @@ JSUS.extend(TIME);
     /**
      * ## RMatcher.inverMatched
      *
-     * 
      *
-     * @return 
+     *
+     * @return
      */
     RMatcher.prototype.invertMatched = function() {
 
@@ -14565,13 +14984,13 @@ JSUS.extend(TIME);
             }
         });
 
-        return { 
+        return {
             elements: elements,
             inverted: inverted
         };
     };
 
-    
+
     RMatcher.prototype.allGroupsDone = function() {
         return this.doneCounter === this.groups.length;
     };
@@ -14708,36 +15127,127 @@ JSUS.extend(TIME);
      */
     function Group(options) {
 
+        /**
+         * ## Group.name
+         *
+         * The name of the group 
+         *
+         * Must be unique amongst groups
+         */
+        this.name = null;
+
+        /**
+         * ## Group.elements
+         *
+         * The elements belonging to this group
+         *
+         * They can be matched with other elements contained in the _pool_.
+         *
+         * @see Group.pool
+         * @see Group.matched
+         */
         this.elements = [];
-        
+
+        /**
+         * ## Group.pool
+         *
+         * Sets of elements that to match with the group members sequentially
+         *
+         * It is an array of arrays, and elements in ealier sets are more
+         * likely to be matched than subsequent ones.
+         *
+         * @see Group.elements
+         * @see Group.matched
+         */           
         this.pool = [];
 
+        /**
+         * ## Group.matched
+         *
+         * Array of arrays of matched elements
+         *
+         * Each index in the parent array corresponds to a group member,
+         * and each array are the matched element for such a member.
+         *
+         * @see Group.elements
+         * @see Group.pool
+         */
         this.matched = [];
 
+        /**
+         * ## Group.leftOver
+         *
+         * Array of elements from the pool that could not be matched
+         */
         this.leftOver = [];
 
+        /**
+         * ## Group.pointer
+         *
+         * Index of the row we are trying to complete currently
+         */
         this.pointer = 0;
 
+        /**
+         * ## Group.matches
+         *
+         * Summary of matching results 
+         *
+         */
         this.matches = {
             total: 0,
             requested: 0,
             done: false
         };
 
+        /**
+         * ## Group.rowLimit
+         *
+         * Number of elements necessary to a row
+         *
+         * Each group member will be matched with _rowLimit_ elements from
+         * the _pool_ elements.
+         */
         this.rowLimit = 1;
 
+        /**
+         * ## Group.noSelf
+         *
+         * If TRUE, a group member cannot be matched with himself.
+         */
         this.noSelf = true;
-
+        
+        /**
+         * ## Group.shuffle
+         *
+         * If TRUE, all elements of the pool will be randomly shuffled.
+         */
         this.shuffle = true;
 
+        /**
+         * ## Group.stretch
+         *
+         * If TRUE,  each element in the pool will be replicated 
+         * as many times as the _rowLimit_ variable.
+         */
         this.stretch = true;
-        debugger
+
+        // Init user options.
         this.init(options);
     }
 
-    
+    /**
+     * ## Group.init
+     *
+     * Mixes in default and user options 
+     *
+     * @param {object} options User options
+     */
     Group.prototype.init = function(options) {
-        
+
+        this.name = 'undefined' === typeof options.name ?
+            this.name : options.name;
+
         this.noSelf = 'undefined' === typeof options.noSelf ?
             this.noSelf : options.noSelf;
 
@@ -14757,9 +15267,18 @@ JSUS.extend(TIME);
         if (options.pool) {
             this.setPool(options.pool);
         }
-
     };
 
+    /**
+     * ## Group.setElements
+     *
+     * Sets the elements of the group 
+     *
+     * Updates the number of requested matches, and creates a new matched
+     * array for each element.
+     *
+     * @param {array} elements The elements of the group
+     */
     Group.prototype.setElements = function(elements) {
         var i;
 
@@ -14781,6 +15300,47 @@ JSUS.extend(TIME);
         this.matches.requested = this.elements.length * this.rowLimit;
     };
 
+    /**
+     * ## Group.addMember
+     *
+     * Adds a single member to the group 
+     *
+     * @param {mixed} member The member to add
+     */
+    Group.prototype.addMember = function(member) {
+        var len;
+        if ('undefined' === typeof member) {
+            throw new TypeError('Group.addMember: member cannot be undefined.');
+        }
+        this.elements.push(member);
+        len = this.elements.length;
+
+        this.matches.done = false;
+        this.matched[len -1] = [];
+        this.matches.requested = len * this.rowLimit;
+    };
+
+    /**
+     * ## Group.setPool
+     *
+     * Sets the pool of the group 
+     *
+     * A pool can contain external elements not included in the _elements_.
+     *
+     * If the _stretch_ option is on, each element in the pool will be copied
+     * and added as many times as the _rowLimit_ variable.
+     *
+     * If the _shuffle_ option is on, all elements of the pool (also those 
+     * created by the _stretch_ options, will be randomly shuffled.
+     *
+     * Notice: the pool is cloned, cyclic references in the pool object
+     * are not allowed.
+     *
+     * @param {array} pool The pool of the group
+     *
+     * @see Group.shuffle
+     * @see Group.stretch
+     */
     Group.prototype.setPool = function(pool) {
         var i;
 
@@ -14800,54 +15360,111 @@ JSUS.extend(TIME);
         }
     };
 
-
-
     /**
-     * The same as canAdd, but does not consider row limit
+     * ## Group.getMembers
+     *
+     * Returns the members of the group 
+     *
+     * @return {array} The elements of the group
      */
-    Group.prototype.canSwitchIn = function(x, row) {
-        // Element already matched
-        if (J.in_array(x, this.matched[row])) return false;
-        // No self
-        if (this.noSelf && this.elements[row] === x) return false;
-
-        return true;
+    Group.prototype.getMembers = function() {
+        return this.elements;
     };
 
+    /**
+     * ## Group.canSwitchIn
+     *
+     * Returns TRUE, if an element has the requisite to enter a row-match
+     *
+     * To be eligible of a row match, the element must:
+     * 
+     * - not be already present in the row,
+     * - be different from the row index (if the _noSelf_ option is on).
+     *
+     * This function is the same as _canAdd_, but does not consider row limit.
+     * 
+     * @param {number} x The element to add
+     * @param {number} row The row index
+     * @return {boolean} TRUE, if the element can be added
+     */
+    Group.prototype.canSwitchIn = function(x, row) {
+        // Element already matched.
+        if (J.in_array(x, this.matched[row])) return false;
+        // No self.
+        return !(this.noSelf && this.elements[row] === x);
+    };
 
+    /**
+     * ## Group.canAdd
+     *
+     * Returns TRUE, if an element can be added to a row 
+     *
+     * An element can be added if the number of elements in the row is less
+     * than the _rowLimit_ property, and if _canSwitchIn_ returns TRUE.
+     *
+     * @param {number} x The element to add
+     * @param {number} row The row index
+     * @return {boolean} TRUE, if the element can be added
+     */
     Group.prototype.canAdd = function(x, row) {
-        // Row limit reached
+        // Row limit reached.
         if (this.matched[row].length >= this.rowLimit) return false;
-
         return this.canSwitchIn(x, row);
     };
 
-    Group.prototype.shouldSwitch = function(x, fromRow) {
+    /**
+     * ## Group.shouldSwitch
+     *
+     * Returns TRUE if the matching is not complete
+     *
+     * @see Group.leftOver
+     * @see Group.matched
+     */
+    Group.prototype.shouldSwitch = function() {
         if (!this.leftOver.length) return false;
-        if (this.matched.length < 2) return false;
-        //	var actualLeftOver = this.leftOver.length;
-        return true;
-
+        return this.matched.length > 1;
     };
 
-    // If there is a hole, not in the last position, the algorithm fails
+    /**
+     * ## Group.switchIt
+     *
+     * Tries to complete the rows of the match with missing elements
+     *
+     * Notice: If there is a hole, not in the last position, the algorithm fails
+     */
     Group.prototype.switchIt = function() {
-
-        for (var i = 0; i < this.elements.length ; i++) {
+        var i;
+        for ( i = 0; i < this.elements.length ; i++) {
             if (this.matched[i].length < this.rowLimit) {
                 this.completeRow(i);
             }
         }
-
     };
 
+    /**
+     * ## Group.completeRow
+     *
+     * Completes the rows with missing elements switching elements between rows
+     *
+     * Iterates through all the _leftOver_ elements and through all rows.
+     * _leftOver_ size is reduced at every successful match.
+     *
+     * @param {number} row The row index
+     * @param {array} leftOver The array of elements left to insert in the row
+     * @return {boolean} TRUE, if an element from leftOver is inserted in any
+     *   row.
+     */
     Group.prototype.completeRow = function(row, leftOver) {
+        var clone, i, j;
         leftOver = leftOver || this.leftOver;
-        var clone = leftOver.slice(0);
-        for (var i = 0 ; i < clone.length; i++) {
-            for (var j = 0 ; j < this.elements.length; j++) {
-                if (this.switchItInRow(clone[i], j, row)){
-                    leftOver.splice(i,1);
+        clone = leftOver.slice(0);
+        for (i = 0 ; i < clone.length; i++) {
+            for (j = 0 ; j < this.elements.length; j++) {
+                // Added.
+                if (row == j) continue;
+                if (this.switchItInRow(clone[i], j, row)) {
+                    // Removes matched element from leftOver.
+                    leftOver.splice(i, 1);
                     return true;
                 }
                 this.updatePointer();
@@ -14857,26 +15474,43 @@ JSUS.extend(TIME);
     };
 
 
+    /**
+     * ## Group.switchItInRow
+     *
+     * Returns TRUE if an element can be inserted in a row (even a complete one)
+     *
+     * If a row is complete one of the elements already matched will be 
+     * added to a row with empty slots.
+     *
+     * @param {number} x The element to add
+     * @param {number} toRow The row to which the element will be added
+     * @param {number} fromRow The row with whom triying to switch elements
+     */
     Group.prototype.switchItInRow = function(x, toRow, fromRow) {
-        if (!this.canSwitchIn(x, toRow)) {
-            //console.log('cannot switch ' + x + ' ' + toRow)
-            return false;
-        }
-        //console.log('can switch: ' + x + ' ' + toRow + ' from ' + fromRow)
-        // Check if we can insert any of the element of the 'toRow'
-        // inside the 'toRow'
-        for (var i = 0 ; i < this.matched[toRow].length; i++) {
-            var switched = this.matched[toRow][i];
-            if (this.canAdd(switched, fromRow)) {
-                this.matched[toRow][i] = x;
-                this.addToRow(switched, fromRow);
-                return true;
+        var i, switched;
+        
+        if (this.canSwitchIn(x, toRow)) {        
+            // Check if we can insert any element of 'toRow' in 'fromRow'.
+            for (i = 0 ; i < this.matched[toRow].length; i++) {
+                switched = this.matched[toRow][i];
+                if (this.canAdd(switched, fromRow)) {
+                    this.matched[toRow][i] = x;
+                    this.addToRow(switched, fromRow);
+                    return true;
+                }
             }
         }
-
         return false;
     };
 
+    /**
+     * ## Group.addToRow
+     *
+     * Adds an element to a row and updates the matched count
+     *
+     * @param {number} x The element to add
+     * @param {number} toRow The row to which the element will be added 
+     */
     Group.prototype.addToRow = function(x, row) {
         this.matched[row].push(x);
         this.matches.total++;
@@ -14885,9 +15519,23 @@ JSUS.extend(TIME);
         }
     };
 
+    /**
+     * ## Group.addIt
+     *
+     * Tries to add an element to any of the rows
+     *
+     * @param {mixed} x The element to add
+     * @return {boolean} TRUE, if the element was matched
+     *
+     * @see Group.canAdd
+     * @see Group.addToRow
+     * @see Group.pointer
+     */
     Group.prototype.addIt = function(x) {
-        var counter = 0, added = false;
-        while (counter < this.elements.length && !added) {
+        var counter, added, len;
+        len = this.elements.length, counter = 0, added = false;
+        // Try to add an element in any row.
+        while (counter < len && !added) {
             if (this.canAdd(x, this.pointer)) {
                 this.addToRow(x, this.pointer);
                 added = true;
@@ -14897,30 +15545,48 @@ JSUS.extend(TIME);
         }
         return added;
     };
-
-
+    
+    /**
+     * ## Group.matchBatch
+     *
+     * Tries to add a batch of elements to each of the elements of the group
+     *
+     * Batch elements that could not be added as a match are returned as
+     * leftover.
+     *
+     * @param {array} pool The array of elements to match
+     * @param {array} leftOver The elements from the pool that could not be
+     *   matched
+     *
+     * @see Group.addIt
+     */
     Group.prototype.matchBatch = function(pool) {
-        var leftOver = [];
-        for (var i = 0 ; i < pool.length ; i++) {
-            if (this.matches.done || !this.addIt(pool[i])) {
-                // if we could not add it as a match, it becomes leftover
+        var leftOver, i;
+        leftOver = [];
+        for (i = 0 ; i < pool.length ; i++) {
+            if (this.matches.done || !this.addIt(pool[i])) {      
                 leftOver.push(pool[i]);
             }
         }
         return leftOver;
     };
 
+    /**
+     * ## Group.match
+     *
+     * Matches each group member with elements from the a pool
+     *
+     * @param {array} pool A pool of preferences for the  
+     */
     Group.prototype.match = function(pool) {
+        var i, leftOver;
         pool = pool || this.pool;
-        //	console.log('matching pool');
-        //	console.log(pool)
         if (!J.isArray(pool)) {
             pool = [pool];
         }
-        // Loop through the pools: elements in lower
-        // indexes-pools have more chances to be used
-        var leftOver;
-        for (var i = 0 ; i < pool.length ; i++) {
+        // Loop through the pools (array of array):
+        // elements in earlier pools have more chances to be used
+        for (i = 0 ; i < pool.length ; i++) {
             leftOver = this.matchBatch(pool[i]);
             if (leftOver.length) {
                 this.leftOver = this.leftOver.concat(leftOver);
@@ -14946,6 +15612,31 @@ JSUS.extend(TIME);
 
     Group.prototype.invertMatched = function() {
         return J.transpose(this.matched);
+    };
+
+    /**
+     * ## Group.reset
+     *
+     * Resets match and possibly also elements and pool.
+     *
+     * @param {boolean} all If TRUE, also _elements_ and _pool_ will be deletedx
+     */
+    Group.prototype.reset = function(all) {
+
+        this.matched = [];
+        this.leftOver = [];
+        this.pointer = 0;
+        this.matches = {
+            total: 0,
+            requested: 0,
+            done: false
+        };
+
+        if (all) {
+            this.elements = [];
+            this.pool = [];
+        }
+
     };
 
     // Testing functions
@@ -15181,14 +15872,11 @@ JSUS.extend(TIME);
 
 
 
-
-
-    // ## Closure	
+    // ## Closure
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
-
 /**
  * # RoleMapper
  * 
@@ -15913,7 +16601,10 @@ JSUS.extend(TIME);
 
             // Save time of pausing:
             timestamp = (new Date()).getTime();
-            this.updateRemaining -= timestamp - this.updateStart;
+            this.updateRemaining = timestamp - this.updateStart;
+        }
+        else if (this.status === GameTimer.STOPPED) {
+            return;
         }
         else if (!this.isPaused()) {
             // pause() was called before start(); remember it:
@@ -17884,7 +18575,7 @@ JSUS.extend(TIME);
          */
         node.events.ng.on( IN + say + 'PDISCONNECT', function(msg) {
             if (!msg.data) return;
-            node.game.pl.remove(msg.data.id);
+            node.game.pl.remove(msg.data.id);           
             node.emit('UPDATED_PLIST');
         });
 
@@ -17991,9 +18682,8 @@ JSUS.extend(TIME);
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
-            //console.log('PLAYER_UPDATE', msg.data, msg.from);
-            node.game.pl.updatePlayer(msg.from, msg.data);
+        node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {            
+            node.game.pl.updatePlayer(msg.from, msg.data);           
             node.emit('UPDATED_PLIST');
             if (node.game.shouldStep()) {
                 node.game.step();
@@ -25816,8 +26506,7 @@ JSUS.extend(TIME);
             catch(e) {
                 this.updateStillChecking(-1);
                 errors.push('An exception occurred in requirement ' + 
-                            (this.callbacks[i].name || 'n.' + (i + 1)) +
-                            ': ' + e );
+                            (this.callbacks[i].name || 'n.' + i) + ': ' + e );
                 
             }
             if (cbErrors) {
@@ -25985,7 +26674,7 @@ JSUS.extend(TIME);
     };
 
     Requirements.prototype.nodeGameRequirements = function(result) {
-        var errors, db;
+        var errors, testIFrame, db, that;
         errors = [];
    
         if ('undefined' === typeof NDDB) {
@@ -26018,39 +26707,42 @@ JSUS.extend(TIME);
             }
         }
         
+        that = this;
+        testIframe = W.addIFrame('testIFrame', this.root);
+
+       try {
+           W.loadFrame('/pages/accessdenied.html', function() {
+               if (!W.getElementById('root')) {
+                   result('W.loadFrame failed to load a test frame correctly.');
+               }
+               that.root.removeChild(testIframe);
+               result();
+           }
+           , { iframe: testIframe , iframeName: 'testIframe' });
+       }
+       catch(e) {
+           errors.push('W.loadFrame raised an error: ' + e);
+       }
+         
         return errors;
     };
 
-    Requirements.prototype.loadFrameTest = function(result) {
-        var errors, that, testIframe, root;
-        var oldIframe, oldIframeName, oldIframeRoot;
-        errors = [];
-        that = this;
-        oldIframe = W.getFrame();
-        oldIframeName = W.getFrameName();
-        oldIframeRoot = W.getFrameRoot();
-        root = W.getIFrameAnyChild(oldIframe || document);
-        try {
-            testIframe = W.addIFrame(root, 'testIFrame');
-            W.setFrame(testIframe, 'testIframe', root);
-            W.loadFrame('/pages/accessdenied.htm', function() {
-                var found;
-                found = W.getElementById('root');
-                if (oldIframe) {
-                    W.setFrame(oldIframe, oldIframeName, oldIframeRoot);
-                }
-                if (!found) {
-                    errors.push('W.loadFrame failed to load a test frame correctly.');
-                }
-                root.removeChild(testIframe);
-                result(errors);
-            });
+    Requirements.prototype.nodeGameRequirements = function() {
+        var errors = [];
+   
+        if ('undefined' !== typeof NDDB) {
+            try {
+                var db = new NDDB();
+            }
+            catch(e) {
+                errors.push('An error occurred manipulating the NDDB object: ' +
+                            e.message);
+            }
         }
-        catch(e) {
-            errors.push('W.loadFrame raised an error: ' + e);
-            return errors;
-        }        
+        
+        return errors;
     };
+
 
     node.widgets.register('Requirements', Requirements);
 
