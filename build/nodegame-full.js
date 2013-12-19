@@ -16053,7 +16053,8 @@ JSUS.extend(TIME);
         this.node.on('PAUSED', pausedCb);
 
         resumedCb = function() {
-            if (gameTimer.isPaused()) {
+            // startPaused=true also counts as a "paused" state:
+            if (gameTimer.isPaused() || gameTimer.startPaused) {
                 gameTimer.resume();
             }
         };
@@ -16542,7 +16543,11 @@ JSUS.extend(TIME);
             }
         }
 
-        this.status = GameTimer.INITIALIZED;
+        // Only set status to INITIALIZED if all of the state is valid and
+        // ready to be used by this.start etc.
+        if (checkInitialized(this) === null) {
+            this.status = GameTimer.INITIALIZED;
+        }
     };
 
 
@@ -16588,16 +16593,19 @@ JSUS.extend(TIME);
      * @see GameTimer.fire
      */
     GameTimer.prototype.start = function() {
+        var error;
+
         // Check validity of state
-        if ('number' !== typeof this.milliseconds) {
-            throw new Error('GameTimer.start: this.milliseconds must be a number');
-        }
-        if (this.update > this.milliseconds) {
-            throw new Error('GameTimer.start: this.update must not be greater ' +
-                            'than this.milliseconds');
+        error = checkInitialized(this);
+        if (error !== null) {
+            throw new Error('GameTimer.start: ' + error);
         }
 
         this.status = GameTimer.LOADING;
+
+        // Remember time of start (used by this.pause, so set it before calling
+        // that):
+        this.updateStart = (new Date()).getTime();
 
         if (this.startPaused) {
             this.pause();
@@ -16610,8 +16618,6 @@ JSUS.extend(TIME);
             return;
         }
 
-        // Remember time of start:
-        this.updateStart = (new Date()).getTime();
         this.updateRemaining = this.update;
 
         this.timerId = setInterval(updateCallback, this.update, this);
@@ -16683,7 +16689,13 @@ JSUS.extend(TIME);
     GameTimer.prototype.resume = function() {
         var that = this;
 
-        if (!this.isPaused()) {
+        // Don't start if the initialization is incomplete (invalid state):
+        if (this.status === GameTimer.UNINITIALIZED) {
+            this.startPaused = false;
+            return;
+        }
+
+        if (!this.isPaused() && !this.startPaused) {
             throw new Error('GameTimer.resume: timer was not paused');
         }
 
@@ -16801,6 +16813,19 @@ JSUS.extend(TIME);
         else {
             return true;
         }
+    }
+
+    // Check whether the timer has a valid initialized state.
+    // Returns null if true, an error string otherwise.
+    function checkInitialized(that) {
+        if ('number' !== typeof that.milliseconds) {
+            return 'this.milliseconds must be a number';
+        }
+        if (that.update > that.milliseconds) {
+            return 'this.update must not be greater than this.milliseconds';
+        }
+
+        return null;
     }
 
 
