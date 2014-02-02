@@ -12424,6 +12424,7 @@ JSUS.extend(TIME);
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # SocketFactory
  *
@@ -13541,7 +13542,39 @@ JSUS.extend(TIME);
          * @see Game.resume
          */
         this.willBeDone = false;
-        
+
+        /**
+         * ### Game.minPlayerCbCalled
+         *
+         * TRUE, if the mininum-player callback has already been called
+         *
+         * This is reset when the min-condition is satisfied again.
+         *
+         * @see Game.gotoStep
+         */
+        this.minPlayerCbCalled = false;
+
+        /**
+         * ### Game.maxPlayerCbCalled
+         *
+         * TRUE, if the maxinum-player callback has already been called
+         *
+         * This is reset when the max-condition is satisfied again.
+         *
+         * @see Game.gotoStep
+         */
+        this.maxPlayerCbCalled = false;
+
+        /**
+         * ### Game.exactPlayerCbCalled
+         *
+         * TRUE, if the exact-player callback has already been called
+         *
+         * This is reset when the exact-condition is satisfied again.
+         *
+         * @see Game.gotoStep
+         */
+        this.exactPlayerCbCalled = false;
     }
 
     // ## Game methods
@@ -14015,16 +14048,34 @@ JSUS.extend(TIME);
                         nPlayers++;
                     }
 
-                    if (minCallback && nPlayers < minThreshold) {
-                        minCallback.call(node.game);
+                    if (nPlayers < minThreshold) {
+                        if (minCallback && !node.game.minPlayerCbCalled) {
+                            node.game.minPlayerCbCalled = true;
+                            minCallback.call(node.game);
+                        }
+                    }
+                    else {
+                        node.game.minPlayerCbCalled = false;
                     }
 
-                    if (maxCallback && nPlayers > maxThreshold) {
-                        maxCallback.call(node.game);
+                    if (nPlayers > maxThreshold) {
+                        if (maxCallback && !node.game.maxPlayerCbCalled) {
+                            node.game.maxPlayerCbCalled = true;
+                            maxCallback.call(node.game);
+                        }
+                    }
+                    else {
+                        node.game.maxPlayerCbCalled = false;
                     }
 
-                    if (exactCallback && nPlayers !== exactThreshold) {
-                        exactCallback.call(node.game);
+                    if (nPlayers !== exactThreshold) {
+                        if (exactCallback && !node.game.exactPlayerCbCalled) {
+                            node.game.exactPlayerCbCalled = true;
+                            exactCallback.call(node.game);
+                        }
+                    }
+                    else {
+                        node.game.exactPlayerCbCalled = false;
                     }
                 };
 
@@ -14038,7 +14089,11 @@ JSUS.extend(TIME);
 
                 // Set bounds-checking function:
                 this.checkPlistSize = function() {
-                    var nPlayers = node.game.pl.size() + 1;
+                    var nPlayers = node.game.pl.size();
+                    // Players should count themselves too.
+                    if (!node.player.admin) {
+                        nPlayers++;
+                    }
 
                     if (minCallback && nPlayers < minThreshold) {
                         return false;
@@ -14074,7 +14129,7 @@ JSUS.extend(TIME);
 
         }
         return this.execStep(this.getCurrentStep());
-    }
+    };
 
     /**
      * ### Game.execStep
@@ -14454,7 +14509,7 @@ JSUS.extend(TIME);
         syncOnLoaded = this.plot.getProperty(curGameStage, 'syncOnLoaded');
         if (!syncOnLoaded) return true;
         return node.game.pl.isStepLoaded(curGameStage);
-    }
+    };
     // ## Closure
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -16343,7 +16398,8 @@ JSUS.extend(TIME);
         this.node.on('PAUSED', pausedCb);
 
         resumedCb = function() {
-            if (gameTimer.isPaused()) {
+            // startPaused=true also counts as a "paused" state:
+            if (gameTimer.isPaused() || gameTimer.startPaused) {
                 gameTimer.resume();
             }
         };
@@ -16831,7 +16887,11 @@ JSUS.extend(TIME);
             }
         }
 
-        this.status = GameTimer.INITIALIZED;
+        // Only set status to INITIALIZED if all of the state is valid and
+        // ready to be used by this.start etc.
+        if (checkInitialized(this) === null) {
+            this.status = GameTimer.INITIALIZED;
+        }
     };
 
 
@@ -16877,17 +16937,19 @@ JSUS.extend(TIME);
      * @see GameTimer.fire
      */
     GameTimer.prototype.start = function() {
-        var that;
-        // Checks validity of state.
-        if ('number' !== typeof this.milliseconds) {
-            throw new Error('GameTimer.start: this.milliseconds must be number');
-        }
-        if (this.update > this.milliseconds) {
-            throw new Error('GameTimer.start: this.update must not be greater ' +
-                            'than this.milliseconds');
+        var error, that;
+
+        // Check validity of state
+        error = checkInitialized(this);
+        if (error !== null) {
+            throw new Error('GameTimer.start: ' + error);
         }
 
         this.status = GameTimer.LOADING;
+
+        // Remember time of start (used by this.pause, so set it before calling
+        // that):
+        this.updateStart = (new Date()).getTime();
 
         if (this.startPaused) {
             this.pause();
@@ -16900,8 +16962,6 @@ JSUS.extend(TIME);
             return;
         }
 
-        // Remembers time of start:
-        this.updateStart = (new Date()).getTime();
         this.updateRemaining = this.update;
 
         that = this;
@@ -16951,7 +17011,11 @@ JSUS.extend(TIME);
 
             // Save time of pausing:
             timestamp = (new Date()).getTime();
-            this.updateRemaining -= timestamp - this.updateStart;
+            this.updateRemaining = timestamp - this.updateStart;
+        }
+        else if (this.status === GameTimer.STOPPED) {
+            // If the timer was explicitly stopped, we ignore the pause:
+            return;
         }
         else if (!this.isPaused()) {
             // pause() was called before start(); remember it:
@@ -16974,7 +17038,13 @@ JSUS.extend(TIME);
     GameTimer.prototype.resume = function() {
         var that = this;
 
-        if (!this.isPaused()) {
+        // Don't start if the initialization is incomplete (invalid state):
+        if (this.status === GameTimer.UNINITIALIZED) {
+            this.startPaused = false;
+            return;
+        }
+
+        if (!this.isPaused() && !this.startPaused) {
             throw new Error('GameTimer.resume: timer was not paused');
         }
 
@@ -17092,6 +17162,19 @@ JSUS.extend(TIME);
         else {
             return true;
         }
+    }
+
+    // Check whether the timer has a valid initialized state.
+    // Returns null if true, an error string otherwise.
+    function checkInitialized(that) {
+        if ('number' !== typeof that.milliseconds) {
+            return 'this.milliseconds must be a number';
+        }
+        if (that.update > that.milliseconds) {
+            return 'this.update must not be greater than this.milliseconds';
+        }
+
+        return null;
     }
 
 
