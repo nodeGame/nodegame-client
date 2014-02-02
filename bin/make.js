@@ -131,7 +131,7 @@ program
     .option('-w, --widgets', 'with nodegame-widgets')
     .option('-d, --addons', 'with nodegame-client addons')
     .option('-s, --shelf', 'with Shelf.js')
-    .option('-e, --es5', 'with support for old browsers')
+    .option('-e, --ie', 'with support for old Internet Explorer')
     .option('-a, --all', 'full build of nodeGame-client')
     .option('-C, --clean', 'clean build directory')
     .option('-A, --analyse', 'analyse build')

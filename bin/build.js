@@ -2,11 +2,6 @@
 
 /**
  * # nodegame-client build script
- * 
- */
-
-/**
- * Export build
  */
 
 module.exports.build = build;
@@ -18,7 +13,6 @@ J = require('JSUS').JSUS;
 
 var pkg = require('../package.json'),
 version = pkg.version;
-
 
 var rootDir = path.resolve(__dirname, '..') + '/';
 var distDir =  rootDir + 'build/';
@@ -80,9 +74,7 @@ var ng_client = [
 
 // ng-addons
 var ng_addons = [           
-    rootDir + "addons/TriggerManager.js",
-    // 	rootDir + "addons/GameSession.js",
-    // 	rootDir + "addons/WaitingRoom.js",
+    rootDir + "addons/TriggerManager.js"
 ];
 
 // jsus
@@ -121,14 +113,6 @@ var ng_widgets = [
     
 ];
 
-// es5-shim
-
-// es5-shim
-var es5Dir = J.resolveModuleDir('es5-shim',__dirname);
-var ng_es5 = [
-    es5Dir + "es5-shim.js",       
-];
-
 //shelf.js
 var shelfDir = J.resolveModuleDir('shelf.js', __dirname);
 var ng_shelf = [
@@ -137,7 +121,8 @@ var ng_shelf = [
 
 function build(options) {
 
-    if (!options.bare && !options.JSUS && !options.NDDB && !options.shelf && !options.all && !options.cycle && !options.only) {
+    if (!options.bare && !options.JSUS && !options.NDDB && !options.shelf &&
+        !options.all && !options.cycle && !options.only) {
 	options.standard = true;
     }
     
@@ -148,15 +133,10 @@ function build(options) {
     // CREATING build array
     var files = [];
 
-    // 0. ES5-shim
-    if (options.es5) {
-	if (!path.existsSync(es5Dir)) {
-	    console.log('  - ERR: es5-shim not found!');
-	}
-	else {
-	    console.log('  - es5-shim');
-	    files = files.concat(ng_es5);
-	}
+    // -1. IE - shim
+    if (options.ie) {
+	console.log('  - old IE support');
+	files = files.concat(rootDir + 'ie.support.js');
 	
     }
     
@@ -271,11 +251,12 @@ function build(options) {
 function build_support(options) {
     
     if (options.all) {
-	options.only = ['es5', 'shelf', 'jsus', 'nddb', 'addons', 'window', 'widgets'];
+	options.only = ['ie', 'shelf', 'jsus', 'nddb', 'addons', 'window',
+                        'widgets'];
     }
     
-    var library, out, files;
-    for (var i = 0; i < options.only.length; i++) {
+    var library, out, files, i;
+    for (i = 0; i < options.only.length; i++) {
 	library = options.only[i];
 	
 	out = (options.output) ? options.output : "nodegame-" + library;
@@ -289,14 +270,9 @@ function build_support(options) {
 	switch (library) {
 	    
 	    
-	case 'es5': 
-	    if (!path.existsSync(es5Dir)) {
-		console.log('  - ERR: es5-shim not found!');
-	    }
-	    else {
-		console.log('  - es5-shim');
-		files = files.concat(ng_es5);
-	    }
+	case 'ie':
+            console.log('  - old IE support');
+	    files = files.concat(rootDir + 'ie.support.js');
 	    break;
 	    
 	case 'shelf':
