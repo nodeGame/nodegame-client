@@ -134,21 +134,20 @@ function build(options) {
     var files = [];
 
     // -1. IE - shim
-    if (options.ie) {
+    if (options.ie || options.all) {
 	console.log('  - old IE support');
-	files = files.concat(rootDir + 'ie.support.js');
-	
+	files = files.concat(rootDir + 'ie.support.js');	
     }
     
     // 0. Shelf.js
     if (options.shelf || options.all) {
-	if (!path.existsSync(shelfDir)) {
+	if (!J.existsSync(shelfDir)) {
 	    console.log('  - ERR: shelf.js not found!');
 	}
 	else {
 	    var shelfjs = shelfDir + 'build/shelf.js';
 	    // Build custom shelf.js if not existing
-	    if (!path.existsSync(shelfjs)) {
+	    if (!J.existsSync(shelfjs)) {
 		var shelfjs_build = shelfDir + 'bin/build.js';
 		console.log("\n  - building custom shelf.js")
 		var buildShelf = require(shelfjs_build);
@@ -168,7 +167,7 @@ function build(options) {
     }
     
     
-    // 1. JSUS
+    // 1. J
     if (options.JSUS || options.all || options.standard) {
 	console.log('  - JSUS');
 	files = files.concat(ng_jsus);
@@ -196,14 +195,14 @@ function build(options) {
 
     // 5. nodegame-window
     if (options.window || options.all) {
-	if (!path.existsSync(ngWdir)) {
+	if (!J.existsSync(ngWdir)) {
 	    console.log('  - ERR: nodegame-window not found!');
 	}
 	else {
 	    console.log('  - nodegame-window');
 	    
 	    // Build custom shelf.js if not existing
-	    if (!path.existsSync(ngWdir + 'build/nodegame-window.js')) {
+	    if (!J.existsSync(ngWdir + 'build/nodegame-window.js')) {
 		var window_build = ngWdir + 'bin/build.js';
 		console.log("\n  - building custom nodegame-window.js")
 		var buildWindow = require(window_build);
@@ -217,14 +216,14 @@ function build(options) {
 
     //5. nodegame-widgets
     if (options.widgets || options.all) {
-	if (!path.existsSync(ngWdgdir)) {
+	if (!J.existsSync(ngWdgdir)) {
 	    console.log('  - ERR: nodegame-widgets not found!');
 	}
 	else {
 	    console.log('  - nodegame-widgets');
 	    
 	    // Build custom shelf.js if not existing
-	    if (!path.existsSync(ngWdgdir + 'build/nodegame-widgets.js')) {
+	    if (!J.existsSync(ngWdgdir + 'build/nodegame-widgets.js')) {
 		var widgets_build = ngWdgdir + 'bin/build.js';
 		console.log("\n  - building custom nodegame-widgets.js")
 		var buildWidgets = require(widgets_build);
@@ -277,13 +276,13 @@ function build_support(options) {
 	    
 	case 'shelf':
 	    
-	    if (!path.existsSync(shelfDir)) {
+	    if (!J.existsSync(shelfDir)) {
 		console.log('  - ERR: shelf.js not found!');
 	    }
 	    else {
 		var shelfjs = shelfDir + 'build/shelf.js';
 		// Build custom shelf.js if not existing
-		if (!path.existsSync(shelfjs)) {
+		if (!J.existsSync(shelfjs)) {
 		    var shelfjs_build = shelfDir + 'bin/build.js';
 		    console.log("\n  - building custom shelf.js")
 		    var buildShelf = require(shelfjs_build);
@@ -324,14 +323,14 @@ function build_support(options) {
 	    
 	case 'window':
 	    
-	    if (!path.existsSync(ngWdir)) {
+	    if (!J.existsSync(ngWdir)) {
 		console.log('  - ERR: nodegame-window not found!');
 	    }
 	    else {
 		console.log('  - nodegame-window');
 		
 		// Build custom shelf.js if not existing
-		if (!path.existsSync(ngWdir + 'build/nodegame-window.js')) {
+		if (!J.existsSync(ngWdir + 'build/nodegame-window.js')) {
 		    var window_build = ngWdir + 'bin/build.js';
 		    console.log("\n  - building custom nodegame-window.js")
 		    var buildWindow = require(window_build);
@@ -345,14 +344,14 @@ function build_support(options) {
 
 	case 'widgets':
 	    
-	    if (!path.existsSync(ngWdgdir)) {
+	    if (!J.existsSync(ngWdgdir)) {
 		console.log('  - ERR: nodegame-widgets not found!');
 	    }
 	    else {
 		console.log('  - nodegame-widgets');
 		
 		// Build custom shelf.js if not existing
-		if (!path.existsSync(ngWdgdir + 'build/nodegame-widgets.js')) {
+		if (!J.existsSync(ngWdgdir + 'build/nodegame-widgets.js')) {
 		    var widgets_build = ngWdgdir + 'bin/build.js';
 		    console.log("\n  - building custom nodegame-widgets.js")
 		    var buildWidgets = require(widgets_build);

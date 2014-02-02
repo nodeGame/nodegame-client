@@ -1,4 +1,358 @@
 /**
+ * # nodeGame IE support
+ * Copyright(c) 2014 Stefano Balietti
+ * MIT Licensed
+ *
+ * Shims of methods required by nodeGame, but missing in old IE browsers
+ * 
+ * ---
+ */
+
+String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/g, '');
+};
+
+if (typeof console == "undefined") {
+    this.console = {log: function() {}};
+}
+
+/**
+   JSON2
+   http://www.JSON.org/json2.js
+   2011-02-23
+*/
+
+var JSON;
+if (!JSON) {
+    JSON = {};
+}
+
+(function () {
+    "use strict";
+
+    var global = Function('return this')()
+      , JSON = global.JSON
+      ;
+
+    if (!JSON) {
+      JSON = {};
+    }
+
+    function f(n) {
+        // Format integers to have at least two digits.
+        return n < 10 ? '0' + n : n;
+    }
+
+    if (typeof Date.prototype.toJSON !== 'function') {
+
+        Date.prototype.toJSON = function (key) {
+
+            return isFinite(this.valueOf()) ?
+                this.getUTCFullYear()     + '-' +
+                f(this.getUTCMonth() + 1) + '-' +
+                f(this.getUTCDate())      + 'T' +
+                f(this.getUTCHours())     + ':' +
+                f(this.getUTCMinutes())   + ':' +
+                f(this.getUTCSeconds())   + 'Z' : null;
+        };
+
+        String.prototype.toJSON      =
+            Number.prototype.toJSON  =
+            Boolean.prototype.toJSON = function (key) {
+                return this.valueOf();
+            };
+    }
+
+    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+        escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+        gap,
+        indent,
+        meta = {    // table of character substitutions
+            '\b': '\\b',
+            '\t': '\\t',
+            '\n': '\\n',
+            '\f': '\\f',
+            '\r': '\\r',
+            '"' : '\\"',
+            '\\': '\\\\'
+        },
+        rep;
+
+
+    function quote(string) {
+
+// If the string contains no control characters, no quote characters, and no
+// backslash characters, then we can safely slap some quotes around it.
+// Otherwise we must also replace the offending characters with safe escape
+// sequences.
+
+        escapable.lastIndex = 0;
+        return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
+            var c = meta[a];
+            return typeof c === 'string' ? c :
+                '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+        }) + '"' : '"' + string + '"';
+    }
+
+
+    function str(key, holder) {
+
+// Produce a string from holder[key].
+
+        var i,          // The loop counter.
+            k,          // The member key.
+            v,          // The member value.
+            length,
+            mind = gap,
+            partial,
+            value = holder[key];
+
+// If the value has a toJSON method, call it to obtain a replacement value.
+
+        if (value && typeof value === 'object' &&
+                typeof value.toJSON === 'function') {
+            value = value.toJSON(key);
+        }
+
+// If we were called with a replacer function, then call the replacer to
+// obtain a replacement value.
+
+        if (typeof rep === 'function') {
+            value = rep.call(holder, key, value);
+        }
+
+// What happens next depends on the value's type.
+
+        switch (typeof value) {
+        case 'string':
+            return quote(value);
+
+        case 'number':
+
+// JSON numbers must be finite. Encode non-finite numbers as null.
+
+            return isFinite(value) ? String(value) : 'null';
+
+        case 'boolean':
+        case 'null':
+
+// If the value is a boolean or null, convert it to a string. Note:
+// typeof null does not produce 'null'. The case is included here in
+// the remote chance that this gets fixed someday.
+
+            return String(value);
+
+// If the type is 'object', we might be dealing with an object or an array or
+// null.
+
+        case 'object':
+
+// Due to a specification blunder in ECMAScript, typeof null is 'object',
+// so watch out for that case.
+
+            if (!value) {
+                return 'null';
+            }
+
+// Make an array to hold the partial results of stringifying this object value.
+
+            gap += indent;
+            partial = [];
+
+// Is the value an array?
+
+            if (Object.prototype.toString.apply(value) === '[object Array]') {
+
+// The value is an array. Stringify every element. Use null as a placeholder
+// for non-JSON values.
+
+                length = value.length;
+                for (i = 0; i < length; i += 1) {
+                    partial[i] = str(i, value) || 'null';
+                }
+
+// Join all of the elements together, separated with commas, and wrap them in
+// brackets.
+
+                v = partial.length === 0 ? '[]' : gap ?
+                    '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']' :
+                    '[' + partial.join(',') + ']';
+                gap = mind;
+                return v;
+            }
+
+// If the replacer is an array, use it to select the members to be stringified.
+
+            if (rep && typeof rep === 'object') {
+                length = rep.length;
+                for (i = 0; i < length; i += 1) {
+                    if (typeof rep[i] === 'string') {
+                        k = rep[i];
+                        v = str(k, value);
+                        if (v) {
+                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                        }
+                    }
+                }
+            } else {
+
+// Otherwise, iterate through all of the keys in the object.
+
+                for (k in value) {
+                    if (Object.prototype.hasOwnProperty.call(value, k)) {
+                        v = str(k, value);
+                        if (v) {
+                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                        }
+                    }
+                }
+            }
+
+// Join all of the member texts together, separated with commas,
+// and wrap them in braces.
+
+            v = partial.length === 0 ? '{}' : gap ?
+                '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}' :
+                '{' + partial.join(',') + '}';
+            gap = mind;
+            return v;
+        }
+    }
+
+// If the JSON object does not yet have a stringify method, give it one.
+
+    if (typeof JSON.stringify !== 'function') {
+        JSON.stringify = function (value, replacer, space) {
+
+// The stringify method takes a value and an optional replacer, and an optional
+// space parameter, and returns a JSON text. The replacer can be a function
+// that can replace values, or an array of strings that will select the keys.
+// A default replacer method can be provided. Use of the space parameter can
+// produce text that is more easily readable.
+
+            var i;
+            gap = '';
+            indent = '';
+
+// If the space parameter is a number, make an indent string containing that
+// many spaces.
+
+            if (typeof space === 'number') {
+                for (i = 0; i < space; i += 1) {
+                    indent += ' ';
+                }
+
+// If the space parameter is a string, it will be used as the indent string.
+
+            } else if (typeof space === 'string') {
+                indent = space;
+            }
+
+// If there is a replacer, it must be a function or an array.
+// Otherwise, throw an error.
+
+            rep = replacer;
+            if (replacer && typeof replacer !== 'function' &&
+                    (typeof replacer !== 'object' ||
+                    typeof replacer.length !== 'number')) {
+                throw new Error('JSON.stringify');
+            }
+
+// Make a fake root object containing our value under the key of ''.
+// Return the result of stringifying the value.
+
+            return str('', {'': value});
+        };
+    }
+
+
+// If the JSON object does not yet have a parse method, give it one.
+
+    if (typeof JSON.parse !== 'function') {
+        JSON.parse = function (text, reviver) {
+
+// The parse method takes a text and an optional reviver function, and returns
+// a JavaScript value if the text is a valid JSON text.
+
+            var j;
+
+            function walk(holder, key) {
+
+// The walk method is used to recursively walk the resulting structure so
+// that modifications can be made.
+
+                var k, v, value = holder[key];
+                if (value && typeof value === 'object') {
+                    for (k in value) {
+                        if (Object.prototype.hasOwnProperty.call(value, k)) {
+                            v = walk(value, k);
+                            if (v !== undefined) {
+                                value[k] = v;
+                            } else {
+                                delete value[k];
+                            }
+                        }
+                    }
+                }
+                return reviver.call(holder, key, value);
+            }
+
+
+// Parsing happens in four stages. In the first stage, we replace certain
+// Unicode characters with escape sequences. JavaScript handles many characters
+// incorrectly, either silently deleting them, or treating them as line endings.
+
+            text = String(text);
+            cx.lastIndex = 0;
+            if (cx.test(text)) {
+                text = text.replace(cx, function (a) {
+                    return '\\u' +
+                        ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+                });
+            }
+
+// In the second stage, we run the text against regular expressions that look
+// for non-JSON patterns. We are especially concerned with '()' and 'new'
+// because they can cause invocation, and '=' because it can cause mutation.
+// But just to be safe, we want to reject all unexpected forms.
+
+// We split the second stage into 4 regexp operations in order to work around
+// crippling inefficiencies in IE's and Safari's regexp engines. First we
+// replace the JSON backslash pairs with '@' (a non-JSON character). Second, we
+// replace all simple value tokens with ']' characters. Third, we delete all
+// open brackets that follow a colon or comma or that begin the text. Finally,
+// we look to see that the remaining characters are only whitespace or ']' or
+// ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
+
+            if (/^[\],:{}\s]*$/
+                    .test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@')
+                        .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
+                        .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+
+// In the third stage we use the eval function to compile the text into a
+// JavaScript structure. The '{' operator is subject to a syntactic ambiguity
+// in JavaScript: it can begin a block or an object literal. We wrap the text
+// in parens to eliminate the ambiguity.
+
+                j = eval('(' + text + ')');
+
+// In the optional fourth stage, we recursively walk the new structure, passing
+// each name/value pair to a reviver function for possible transformation.
+
+                return typeof reviver === 'function' ?
+                    walk({'': j}, '') : j;
+            }
+
+// If the text is not JSON parseable, then a SyntaxError is thrown.
+
+            throw new SyntaxError('JSON.parse');
+        };
+    }
+
+    global.JSON = JSON;
+}());
+
+/**
  * # Shelf.JS 
  * 
  * Persistent Client-Side Storage @VERSION
@@ -1875,15 +2229,13 @@ if (JSUS.isNodeJS()) {
      * Returns TRUE if the object is a DOM node
      *
      * @param {mixed} The variable to check
-     * @param {boolean} TRUE, if the the object is a DOM node
+     * @return {boolean} TRUE, if the the object is a DOM node
      */
     DOM.isNode = function(o) {
-        return (
-            typeof Node === "object" ? o instanceof Node :
-                typeof o === "object" &&
-                typeof o.nodeType === "number" &&
-                typeof o.nodeName === "string"
-        );
+        return 'object' === typeof Node ? o instanceof Node :
+            'object' === typeof o &&
+            'number' === typeof o.nodeType &&
+            'string' === typeof o.nodeName;
     };
 
     /**
@@ -1891,16 +2243,15 @@ if (JSUS.isNodeJS()) {
      *
      * Returns TRUE if the object is a DOM element
      *
+     * Notice: instanceof HTMLElement is not reliable in Safari, even if
+     * the method is defined.
+     *
      * @param {mixed} The variable to check
-     * @param {boolean} TRUE, if the the object is a DOM element
+     * @return {boolean} TRUE, if the the object is a DOM element
      */
     DOM.isElement = function(o) {
-        return (
-            typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
-            typeof o === "object" &&
-                o.nodeType === 1 &&
-                typeof o.nodeName === "string"
-        );
+        return 'object' === typeof o && o.nodeType === 1 &&
+            'string' === typeof o.nodeName;
     };
 
     /**
@@ -2458,7 +2809,7 @@ if (JSUS.isNodeJS()) {
      * Adds a border around the specified element. Color,
      * width, and type can be specified.
      */
-    DOM.addBorder = function(elem, color, witdh, type) {
+    DOM.addBorder = function(elem, color, width, type) {
         var properties;
         if (!elem) return;
 
@@ -2467,7 +2818,7 @@ if (JSUS.isNodeJS()) {
         type = type || 'solid';
 
         properties = { border: width + ' ' + type + ' ' + color };
-        return this.style(elem,properties);
+        return DOM.style(elem, properties);
     };
 
     /**
@@ -2482,11 +2833,12 @@ if (JSUS.isNodeJS()) {
      * @see DOM.setAttribute
      */
     DOM.style = function(elem, properties) {
+        var style, i;
         if (!elem || !properties) return;
         if (!DOM.isElement(elem)) return;
 
-        var style = '';
-        for (var i in properties) {
+        style = '';
+        for (i in properties) {
             style += i + ': ' + properties[i] + '; ';
         };
         return elem.setAttribute('style', style);
@@ -3674,8 +4026,7 @@ JSUS.extend(EVAL);
     /**
      * ## RANDOM.randomInt
      *
-     * Generates a pseudo-random integer between
-     * (a,b] a exclusive, b inclusive.
+     * Generates a pseudo-random integer between (a,b] a exclusive, b inclusive
      *
      * @param {number} a The lower limit
      * @param {number} b The upper limit
@@ -3688,12 +4039,25 @@ JSUS.extend(EVAL);
         return Math.floor(RANDOM.random(a, b) + 1);
     };
 
+    /**
+     * ## RANDOM.sample
+     *
+     * Generates a randomly shuffled sequence of numbers in (a,b)
+     *
+     * Both _a_ and _b_ are inclued in the interval.
+     *
+     * @param {number} a The lower limit
+     * @param {number} b The upper limit
+     * @return {array} The randomly shuffled sequence.
+     *
+     * @see JSUS.seq
+     */
     RANDOM.sample = function(a, b) {
         var out;
         out = JSUS.seq(a,b)
         if (!out) return false;
         return JSUS.shuffle(out);
-    }
+    };
 
     JSUS.extend(RANDOM);
 
@@ -4076,7 +4440,6 @@ JSUS.extend(TIME);
      *
      * @param {object} options Optional. Configuration options
      * @param {db} db Optional. An initial set of items to import
-     *
      */
     function NDDB(options, db) {
         var that;
@@ -4233,7 +4596,7 @@ JSUS.extend(TIME);
      *
      *  - d: dimension of comparison
      *  - value: second-term of comparison
-     *  - comparator: the comparator function as defined by `NDDB.c`
+     *  - comparator: the comparator function as defined by `NDDB.comparator`
      *
      * and return a function that execute the desired operation.
      *
@@ -4259,7 +4622,7 @@ JSUS.extend(TIME);
         var that;
         that = this;
 
-        // Exists
+        // Exists.
         this.filters['E'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
@@ -4294,16 +4657,22 @@ JSUS.extend(TIME);
             }
         };
 
-        // (strict) Equals
+        // (strict) Equals.
         this.filters['=='] = function(d, value, comparator) {
             return function(elem) {
-
                 if (comparator(elem, value, 0) === 0) return elem;
             };
         };
 
+        // (strict) Not Equals.
+        this.filters['!='] = function(d, value, comparator) {
+            return function(elem) {
+                debugger
+                if (comparator(elem, value, 0) !== 0) return elem;
+            };
+        };
 
-        // Smaller than
+        // Smaller than.
         this.filters['>'] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -4318,7 +4687,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // Greater than
+        // Greater than.
         this.filters['>='] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -4335,7 +4704,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // Smaller than
+        // Smaller than.
         this.filters['<'] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -4350,7 +4719,7 @@ JSUS.extend(TIME);
             }
         };
 
-        //  Smaller or equal than
+        //  Smaller or equal than.
         this.filters['<='] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -4367,7 +4736,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // Between
+        // Between.
         this.filters['><'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
@@ -4406,7 +4775,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // Not Between
+        // Not Between.
         this.filters['<>'] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -4427,7 +4796,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // In Array
+        // In Array.
         this.filters['in'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
@@ -4454,7 +4823,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // Not In Array
+        // Not In Array.
         this.filters['!in'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
@@ -4483,7 +4852,7 @@ JSUS.extend(TIME);
             }
         };
 
-        // Supports `_` and `%` wildcards 
+        // Supports `_` and `%` wildcards.
         function generalLike(d, value, comparator, sensitive) {
             var regex;
 
@@ -4603,9 +4972,9 @@ JSUS.extend(TIME);
                     this.__shared[sh] = options.shared[sh];
                 }
             }
-            // Delete from options to avoid copy.
-            delete this.__options.shared;
         }
+        // Delete the shared object, it must not be copied by _cloneSettings_.
+        delete this.__options.shared;
 
         if (options.log) {
             this.initLog(options.log, options.logCtx);
@@ -4829,7 +5198,7 @@ JSUS.extend(TIME);
      */
     NDDB.prototype.cloneSettings = function(leaveOut) {
         var i, options, keepShared;
-        var logCopy, logCtxCopy, sharedCopy;
+        var logCopy, logCtxCopy;
         options = this.__options || {};
         keepShared = true;
 
@@ -4912,14 +5281,15 @@ JSUS.extend(TIME);
      * @see JSUS.stringify
      */
     NDDB.prototype.stringify = function(compressed) {
-        if (!this.length) return '[]';
+        var spaces, out;
+        if (!this.size()) return '[]';
         compressed = ('undefined' === typeof compressed) ? true : compressed;
 
-        var spaces = compressed ? 0 : 4;
+        spaces = compressed ? 0 : 4;
 
-        var out = '[';
+        out = '[';
         this.each(function(e) {
-            // decycle, if possible
+            // Decycle, if possible
             e = NDDB.decycle(e);
             out += J.stringify(e, spaces) + ', ';
         });
@@ -5484,13 +5854,13 @@ JSUS.extend(TIME);
 
     // ## Sort and Select
 
-    function queryError(d, op, value) {
+    function queryError(text, d, op, value) {
         var miss, err;
         miss = '(?)';
-        err = 'Malformed query: ' + d || miss + ' ' + op || miss +
-            ' ' + value || miss;
-        this.log(err, 'WARN');
-        return false;
+        err = this._getConstrName() + '._analyzeQuery: ' + text + 
+            '. Malformed query: ' + d || miss + ' ' + op || miss + 
+            ' ' + value || miss + '.';
+        throw new Error(err);
     }
 
     /**
@@ -5506,34 +5876,32 @@ JSUS.extend(TIME);
      *   if an error was detected
      */
     NDDB.prototype._analyzeQuery = function(d, op, value) {
-        var that, i, len, newValue;
-        that = this;
+        var i, len, newValue, errText;
 
         if ('undefined' === typeof d) {
-            return queryError.call(this, d, op,value);
+            queryError.call(this, 'undefined dimension', d, op, value);
         }
 
-        // Verify input
+        // Verify input.
         if ('undefined' !== typeof op) {
 
             if (op === '=') {
                 op = '==';
             }
-
-//            if (!(op in this.query.operators)) {
-            if (!(op in this.filters)) {
-                this.log('Query error. Invalid operator detected: ' + op,
-                         'WARN');
-                return false;
+            else if (op === '!==') {
+                op = '!=';
             }
 
-            // Range-queries need an array as third parameter instance of Array
+            if (!(op in this.filters)) {
+                queryError.call(this, 'unknown operator ' + op, d, op, value);
+            }
+
+            // Range-queries need an array as third parameter instance of Array.
             if (J.in_array(op,['><', '<>', 'in', '!in'])) {
 
                 if (!(value instanceof Array)) {
-                    this.log('Range-queries need an array as third parameter',
-                             'WARN');
-                    queryError.call(this, d,op,value);
+                    errText = 'range-queries need an array as third parameter';                        
+                    queryError.call(this, errText, d, op, value);
                 }
                 if (op === '<>' || op === '><') {
 
@@ -5546,10 +5914,11 @@ JSUS.extend(TIME);
                 }
             }
 
-            else if (J.in_array(op, ['>', '==', '>=', '<', '<='])){
-                // Comparison queries need a third parameter
+            else if (J.in_array(op, ['!=', '>', '==', '>=', '<', '<='])){
+                // Comparison queries need a third parameter.
                 if ('undefined' === typeof value) {
-                    queryError.call(this, d, op, value);
+                    errText = 'value cannot be undefined in comparison queries';
+                    queryError.call(this, errText, d, op, value);
                 }
                 // TODO: when to nest and when keep the '.' in the name?
                 // Comparison queries need to have the same
@@ -5571,14 +5940,15 @@ JSUS.extend(TIME);
 
         }
         else if ('undefined' !== typeof value) {
-            queryError.call(this, d, op, value);
+            errText = 'undefined filter and defined value';
+            queryError.call(this, errText, d, op, value);
         }
         else {
             op = 'E'; // exists
             value = '';
         }
 
-        return {d:d,op:op,value:value};
+        return { d:d, op:op, value:value };
     };
 
     /**
@@ -5591,8 +5961,8 @@ JSUS.extend(TIME);
      * @return {NDDB} A copy of the current selection without duplicated entries
      *
      * @see NDDB.select()
-     *  @see NDDB.fetch()
-     *  @see NDDB.fetchValues()
+     * @see NDDB.fetch()
+     * @see NDDB.fetchValues()
      */
     NDDB.prototype.distinct = function() {
         return this.breed(J.distinct(this.db));
@@ -5628,7 +5998,6 @@ JSUS.extend(TIME);
      * @see NDDB.or
      * @see NDDB.execute()
      * @see NDDB.fetch()
-     *
      */
     NDDB.prototype.select = function(d, op, value) {
         this.query.reset();
@@ -5658,7 +6027,6 @@ JSUS.extend(TIME);
         //      else {
         var q, cb;
         q = this._analyzeQuery(d, op, value);
-        if (!q) return false;
         cb = this.filters[q.op](q.d, q.value, this.getComparator(q.d));
         this.query.addCondition('AND', cb);
         //      }
@@ -5688,7 +6056,6 @@ JSUS.extend(TIME);
         //      else {
         var q, cb;
         q = this._analyzeQuery(d, op, value);
-        if (!q) return false;
         cb = this.filters[q.op](q.d, q.value, this.getComparator(q.d));
         this.query.addCondition('OR', cb);
         //this.query.addCondition('OR', condition, this.getComparator(d));
@@ -7510,7 +7877,7 @@ JSUS.extend(TIME);
  * nodeGame is a free, open source, event-driven javascript framework for on line,
  * multiplayer games in the browser.
  */
-(function (exports) {
+(function(exports) {
 
     if ('undefined' !== typeof JSUS) exports.JSUS = JSUS;
     if ('undefined' !== typeof NDDB) exports.NDDB = NDDB;
@@ -7518,6 +7885,7 @@ JSUS.extend(TIME);
     exports.support = JSUS.compatibility();        
     
 })('object' === typeof module ? module.exports : (window.node = {}));
+
 /**
  * # Variables
  * Copyright(c) 2013 Stefano Balietti
@@ -8849,8 +9217,8 @@ JSUS.extend(TIME);
         properties = ['stage', 'step', 'round'];
 
         for (i = 0; i < str.length; i++) {
-            idx = symbols.indexOf(str[i]);
-            hash += (idx < 0) ? str[i] : gs[properties[idx]];
+            idx = symbols.indexOf(str.charAt(i));
+            hash += (idx < 0) ? str.charAt(i) : gs[properties[idx]];
         }
         return hash;
     };
@@ -9002,12 +9370,18 @@ JSUS.extend(TIME);
     function PlayerList(options, db) {
         options = options || {};
         
+        options.name = options.name || 'plist';
+
         // Updates indexes on the fly.
         if (!options.update) options.update = {};
         if ('undefined' === typeof options.update.indexes) {
             options.update.indexes = true;
         }
    
+        // The internal counter that will be used to assing the `count`
+        // property to each inserted player.
+        this.pcounter = 0;
+
         // Invoking NDDB constructor.
         NDDB.call(this, options);
         
@@ -9026,10 +9400,6 @@ JSUS.extend(TIME);
 
         // Assigns a global comparator function.
         this.globalCompare = PlayerList.comparePlayers;
-
-        // The internal counter that will be used to assing the `count`
-        // property to each inserted player
-        this.pcounter = this.db.length || 0;
     }
 
     // ## PlayerList methods
@@ -9068,16 +9438,16 @@ JSUS.extend(TIME);
      */
     PlayerList.prototype.add = function(player) {
         if (!(player instanceof Player)) {
-            if (!player || 'undefined' === typeof player.id) {
+            if (!player || 'string' !== typeof player.id) {
                 throw new NodeGameRuntimeError(
-                        'PlayerList.add: player.id was not given');
+                        'PlayerList.add: player.id must be string.');
             }
             player = new Player(player);
         }
 
         if (this.exist(player.id)) {
             throw new NodeGameRuntimeError(
-                'PlayerList.add: Player already exists (id ' + player.id + ')');
+                'PlayerList.add: player already exists (id ' + player.id + ')');
         }
         this.insert(player);
         player.count = this.pcounter;
@@ -9121,14 +9491,12 @@ JSUS.extend(TIME);
      */
     PlayerList.prototype.remove = function(id) {
         var player;
-        if ('undefined' === typeof id) {
-            throw new NodeGameRuntimeError(
-                'PlayerList.remove: id was not given');
+        if ('string' !== typeof id) {
+            throw new TypeError('PlayerList.remove: id must be string.');
         }
-        player = this.id.pop(id);
+        player = this.id.remove(id);
         if (!player) {
-            throw new NodeGameRuntimeError(
-                'PlayerList.remove: Player not found (id ' + id + ')');
+            throw new Error('PlayerList.remove: player not found: ' + id + '.');
         }
         return player;
     };
@@ -9187,11 +9555,19 @@ JSUS.extend(TIME);
             throw new TypeError(
                 'PlayerList.updatePlayer: update must be object.');
         }
+
+        if ('undefined' !== typeof update.id) {
+            throw new Error('PlayerList.updatePlayer: update cannot change ' +
+                            'the player id.');
+        }
+
         // var player = this.id.get(id);
         // J.mixin(player, update);
         // return player;
         // This creates some problems with the _autoUpdate...to be investigated.
-        return this.id.update(id, update);
+        this.id.update(id, update);
+
+        
     };
 
     /**
@@ -9826,7 +10202,7 @@ JSUS.extend(TIME);
             this.target + SPT + TAB : this.target + SPT : UNKNOWN;
         line += this.from ?
             this.from.length < 6  ?
-            this.from + SPT + TAB : this.from + SPT : UKNOWN;
+            this.from + SPT + TAB : this.from + SPT : UNKNOWN;
         line += this.to ?
             this.to.length < 6  ?
             this.to + SPT + TAB : this.to + SPT : UNKNOWN;
@@ -12717,6 +13093,8 @@ JSUS.extend(TIME);
      */
     function GameDB(options, db) {
         options = options || {};
+        options.name = options.name || 'gamedb';
+
         if (!options.update) options.update = {};
 
         // Auto build indexes by default.
@@ -12985,7 +13363,7 @@ JSUS.extend(TIME);
 );
 /**
  * # Game
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Handles the flow of the game.
@@ -13071,7 +13449,8 @@ JSUS.extend(TIME);
          */
         this.pl = new PlayerList({
             log: this.node.log,
-            logCtx: this.node
+            logCtx: this.node,
+            name: 'pl_' + this.node.nodename
         });
 
         this.pl.on('insert', function(p) {
@@ -13090,7 +13469,8 @@ JSUS.extend(TIME);
          */
         this.ml = new PlayerList({
             log: this.node.log,
-            logCtx: this.node
+            logCtx: this.node,
+            name: 'ml_' + this.node.nodename
         });
 
 
@@ -14439,23 +14819,403 @@ JSUS.extend(TIME);
 /**
  * # GroupManager
  * Copyright(c) 2013 Stefano Balietti
- * MIT Licensed 
- * 
+ * MIT Licensed
+ *
  * `nodeGame` group manager.
  * @experimental
  * ---
  */
 (function(exports, node) {
-   
+
     "use strict";
 
     // ## Global scope
     var J = node.JSUS;
+    var NDDB = node.NDDB;
+    var PlayerList = node.PlayerList;
 
     exports.GroupManager = GroupManager;
+    exports.Group = Group;
 
+    /**
+     * ## GroupManager constructor
+     *
+     * Creates a new instance of Group Manager
+     *
+     */
     function GroupManager() {
-        // TODO GroupManager
+        var that = this;
+
+        /**
+         * ## GroupManager.elements
+         *
+         * Elements that will be used to creates groups
+         *
+         * An element can be any valid javascript primitive type or object.
+         * However, using objects makes the matching slower, and it can
+         * might create problems with advanced matching features.
+         */
+        this.elements = [];
+        
+        /**
+         * ## GroupManager.groups
+         *
+         * The current database of groups
+         *
+         * @see NDDB
+         * @see Group
+         */
+        this.groups = new NDDB({ update: { indexes: true } });
+        this.groups.index('name', function(g) { return g.name; });
+        this.groups.on('insert', function(g) {
+            if (that.groups.name && that.groups.name.get(g.name)) {
+                throw new Error('GroupManager.insert: group name must be ' +
+                                'unique: ' + g.name + '.');
+            }
+        });
+
+        /**
+         * ## GroupManager.scratch.
+         *
+         * A temporary storage object used by matching algorithms
+         *
+         * For example, when a matching function is used across multiple
+         * game stages, it can use this space to store information.
+         *
+         * This object will be cleared when changing matching algorithm. 
+         */
+        this.scratch = {};
+
+        /**
+         * ## GroupManager.matchFunctions
+         *
+         * Objects literals with all available matching functions 
+         *
+         * @see GroupManager.addDefaultMatchFunctions
+         * @see GroupManager.addMatchFunction
+         */
+        this.matchFunctions = {};
+
+        /**
+         * ## GroupManager.lastMatchType
+         *
+         * The last type of matching run. 
+         *
+         * @see GroupManager.match
+         */
+        this.lastMatchType = null;
+
+        // Adds the default matching functions.
+        this.addDefaultMatchFunctions();
+
+    }
+
+    /**
+     * ## GroupManager.create
+     *
+     * Creates a new set of groups in the Group Manager
+     *
+     * Group names must be unique, or an error will be thrown.
+     *
+     * @param {array} groups The new set of groups.
+     */
+    GroupManager.prototype.create = function(groups) {
+        var i, len, name;
+        if (!J.isArray(groups)) {
+            throw new TypeError('node.group.create: groups must be array.');
+        }
+        if (!groups.length) {
+            throw new TypeError('node.group.create: groups is an empty array.');
+        }
+
+        i = -1, len = groups.length;
+        for ( ; ++i < len ; ) {
+            name = groups[i];
+            // TODO: what if a group is already existing with the same name
+            this.groups.insert(new Group({
+                name: name
+            }));
+        }
+    };
+
+    /**
+     * ## GroupManager.get
+     *
+     * Returns the group with the specified name
+     *
+     * @param {string} groupName The name of the group
+     * @return {Group|null} The requested group, or null if none is found
+     */
+    GroupManager.prototype.get = function(groupName) {
+        if ('string' !== typeof groupName) {
+            throw new TypeError('GroupManager.get: groupName must be string.');
+        }
+        return this.groups.name.get(groupName) || null;
+    };
+
+    /**
+     * ## GroupManager.removeAll
+     *
+     * Removes all existing groups
+     */
+    GroupManager.prototype.removeAll = function() {
+        this.groups.clear(true);
+    };
+
+
+    /**
+     * ## GroupManager.addElements
+     *
+     * Adds new elements to the group manager
+     *
+     * The uniqueness of each element is not checked, and depending on the
+     * matching algorithm used, it may or may not be a problem.
+     *
+     * @param {array} The set of elements to later match
+     */
+    GroupManager.prototype.addElements = function(elements) {
+        this.elements = this.elements.concat(elements);
+    };
+
+    /**
+     * ## GroupManager.createNGroups
+     *
+     * Creates N new groups
+     *
+     * The name of each group is 'Group' + its ordinal position in the array
+     * of current groups.
+     *
+     * @param {number} N The requested number of groups
+     * @return {array} out The names of the created groups
+     */
+    GroupManager.prototype.createNGroups = function(N) {
+        var i, len, name, out;
+        if ('number' !== typeof N) {
+            throw new TypeError('node.group.createNGroups: N must be number.');
+        }
+        if (N < 1) {
+            throw new TypeError('node.group.create: N must be greater than 0.');
+        }
+
+        out = [], i = -1, len = this.groups.size();
+        for ( ; ++i < N ; ) {
+            name = 'Group' + ++len;
+            // TODO: what if a group is already existing with the same name
+            this.groups.insert(new Group({
+                name: name
+            }));
+            out.push(name);
+        }
+
+        return out;
+    };
+
+    /**
+     * ## GroupManager.assign2Group
+     *
+     * Manually assign one or more elements to a group
+     *
+     * The group must be already existing.
+     *
+     * @param {string} groupName The name of the group
+     * @param {string|array|PlayerList} The elements to assign to a group
+     * @return {Group} The updated group
+     */
+    GroupManager.prototype.assign2Group = function(groupName, elements) {
+        var i, len, name, group;
+        if ('string' !== typeof groupName) {
+            throw new TypeError('node.group.assign2Group: groupName must be ' +
+                                'string.');
+        }
+        group = this.groups.name.get(groupName);
+        if (!group) {
+            throw new Error('node.group.assign2Group: group not found: ' +
+                            groupName + '.');
+        }
+
+        if ('string' === typeof elements) {
+            elements = [elements];
+        }
+        else if ('object' === typeof elements &&
+                 elements instanceof PlayerList) {
+
+            elements = elements.id.getAllKeys();
+        }
+        else if (!J.isArray(elements)) {
+            throw new TypeError('node.group.assign2Group: elements must be ' +
+                                'string, array, or instance of PlayerList.');
+        }
+
+        i = -1, len = elements.length;
+        for ( ; ++i < len ; ) {
+            add2Group(group, elements[i], 'assign2Group');
+        }
+        return group;
+    };
+
+    /**
+     * ## GroupManager.addMatchFunction
+     *
+     * Adds a new matching function to the set of available ones 
+     *
+     * New matching functions can be called with the _match_ method.
+     *
+     * Callback functions are called with the GroupManager context, so that
+     * they can access the current  _groups_ and _elements_ objects. They also
+     * receives any other paremeter passed along the _match_ method.
+     *
+     * Computation that needs to last between two subsequent executions of the
+     * same matching algorithm should be stored in _GroupManager.scratch_
+     *
+     * @param {string} name The name of the matchig algorithm
+     * @param {function} cb The matching callback function
+     *
+     * @see GroupManager.match
+     * @see GroupManager.scratch
+     * @see GroupManager.addDefaultMatchFunctions
+     */
+    GroupManager.prototype.addMatchFunction = function(name, cb) {
+        var i, len, name, group;
+        if ('string' !== typeof name) {
+            throw new TypeError('node.group.addMatchFunction: name must be ' +
+                                'string.');
+        }
+        if ('function' !== typeof cb) {
+            throw new TypeError('node.group.addMatchingFunction: cb must be ' +
+                                'function.');
+        }
+
+        this.matchFunctions[name] = cb;
+    };
+
+    /**
+     * ## GroupManager.match
+     *
+     * Performs a match, given the current _groups_ and _elements_ objects 
+     *
+     * It stores the type of matching in the variable _lastMatchType_. If it 
+     * is different from previous matching type, the _scratch_ object is
+     * cleared.
+     *
+     * @see Group
+     * @see GroupManager.groups
+     * @see GroupManager.elements
+     * @see GroupManager.scratch
+     */
+    GroupManager.prototype.match = function() {
+        var type;
+        type = Array.prototype.splice.call(arguments, 0, 1)[0];
+        if ('string' !== typeof type) {
+            throw new TypeError('node.group.match: match type must be string.');
+        }
+        if (!this.matchFunctions[type]) {
+            throw new Error('node.group.match: unknown match type: ' + type +
+                            '.');
+        }        
+        if (this.lastMatchType && this.lastMatchType !== type) {
+            // Clearing scratch.
+            this.scratch = {};
+            // Setting last match type.
+            this.lasMatchType = type;
+        }
+        // Running match function.
+        this.matchFunctions[type].apply(this, arguments);
+    };
+
+    /**
+     * ## GroupManager.addDefaultMatchFunctions
+     *
+     * Adds default matching functions.
+     */
+    GroupManager.prototype.addDefaultMatchFunctions = function() {
+
+        this.matchFunctions['RANDOM'] = function() {
+            var i, len, order, nGroups;
+            var g, elem;
+            
+            nGroups = this.groups.size();
+
+            if (!nGroups) {
+                throw new Error('RANDOM match: no groups found.');
+            }
+
+            len = this.elements.length;
+
+            if (!len) {
+                throw new Error('RANDOM match: no elements to match.');
+            }
+
+            this.resetMemberships();
+
+            order = J.sample(0, len-1);
+
+            for (i = -1 ; ++i < len ; ) {
+                g = this.groups.db[i % nGroups];
+                elem = this.elements[order[i]];
+                add2Group(g, elem, 'match("RANDOM")');
+            }
+
+        };
+    };
+
+    /**
+     * ## GroupManager.resetMemberships
+     *
+     * Removes all memberships, but keeps the current groups and elements
+     *
+     * @see Group.reset
+     */
+    GroupManager.prototype.resetMemberships = function() {
+        this.groups.each(function(g) {
+            g.reset(true);
+        });
+    };
+
+    /**
+     * ## GroupManager.getMemberships
+     *
+     * Returns current memberships as an array or object
+     *
+     * @return {array|object} Array or object literals of arrays of memberships
+     */
+    GroupManager.prototype.getMemberships = function(array) {
+        var i, len, g, members;
+        i = -1, len = this.groups.db.length;
+        out = array ? [] : {};
+        for ( ; ++i < len ; ) {
+            g = this.groups.db[i];
+            members = g.getMembers();
+            array ? out.push(members) : out[g.name] = members;
+        }
+        return out;            
+    };
+
+    /**
+     * ## GroupManager.getGroups
+     *
+     * Returns the current groups
+     *
+     * @return {array} The array of groups
+     * @see Group
+     */
+    GroupManager.prototype.getGroups = function() {
+        return this.groups.db;
+    };
+    
+    /**
+     * ## GroupManager.getGroupsNames
+     *
+     * Returns the current group names
+     *
+     * @return {array} The array of group names
+     */
+    GroupManager.prototype.getGroupNames = function() {
+        return this.groups.name.getAllKeys();
+    };
+
+    function add2Group(group, item, methodName) {
+        // TODO: see if we still need a separate method.
+        group.addMember(item);
     }
 
     // Here follows previous implementation of GroupManager, called RMatcher - scarcely commented.
@@ -14466,6 +15226,11 @@ JSUS.extend(TIME);
     // pools: array of array. it is set of preferences (elements from the first array will be used first
 
     // Groups.rowLimit determines how many unique elements per row
+
+    // Group.match returns an array of length N, where N is the length of _elements_.
+    // The t-th position in the matched array is the match for t-th element in the _elements_ array.
+    // The matching is done trying to follow the preference in the pool.
+    
 
     exports.RMatcher = RMatcher;
     exports.Group = Group;
@@ -14508,7 +15273,7 @@ JSUS.extend(TIME);
     /**
      * ## RMatcher.addGroup
      *
-     * Adds a group in the group array 
+     * Adds a group in the group array
      *
      * @param Group group The group to addx
      */
@@ -14522,7 +15287,7 @@ JSUS.extend(TIME);
     /**
      * ## RMatcher.match
      *
-     * Does the matching according to pre-specified criteria 
+     * Does the matching according to pre-specified criteria
      *
      * @return array The result of the matching
      */
@@ -14550,9 +15315,9 @@ JSUS.extend(TIME);
     /**
      * ## RMatcher.inverMatched
      *
-     * 
      *
-     * @return 
+     *
+     * @return
      */
     RMatcher.prototype.invertMatched = function() {
 
@@ -14565,13 +15330,13 @@ JSUS.extend(TIME);
             }
         });
 
-        return { 
+        return {
             elements: elements,
             inverted: inverted
         };
     };
 
-    
+
     RMatcher.prototype.allGroupsDone = function() {
         return this.doneCounter === this.groups.length;
     };
@@ -14708,36 +15473,127 @@ JSUS.extend(TIME);
      */
     function Group(options) {
 
+        /**
+         * ## Group.name
+         *
+         * The name of the group 
+         *
+         * Must be unique amongst groups
+         */
+        this.name = null;
+
+        /**
+         * ## Group.elements
+         *
+         * The elements belonging to this group
+         *
+         * They can be matched with other elements contained in the _pool_.
+         *
+         * @see Group.pool
+         * @see Group.matched
+         */
         this.elements = [];
-        
+
+        /**
+         * ## Group.pool
+         *
+         * Sets of elements that to match with the group members sequentially
+         *
+         * It is an array of arrays, and elements in ealier sets are more
+         * likely to be matched than subsequent ones.
+         *
+         * @see Group.elements
+         * @see Group.matched
+         */           
         this.pool = [];
 
+        /**
+         * ## Group.matched
+         *
+         * Array of arrays of matched elements
+         *
+         * Each index in the parent array corresponds to a group member,
+         * and each array are the matched element for such a member.
+         *
+         * @see Group.elements
+         * @see Group.pool
+         */
         this.matched = [];
 
+        /**
+         * ## Group.leftOver
+         *
+         * Array of elements from the pool that could not be matched
+         */
         this.leftOver = [];
 
+        /**
+         * ## Group.pointer
+         *
+         * Index of the row we are trying to complete currently
+         */
         this.pointer = 0;
 
+        /**
+         * ## Group.matches
+         *
+         * Summary of matching results 
+         *
+         */
         this.matches = {
             total: 0,
             requested: 0,
             done: false
         };
 
+        /**
+         * ## Group.rowLimit
+         *
+         * Number of elements necessary to a row
+         *
+         * Each group member will be matched with _rowLimit_ elements from
+         * the _pool_ elements.
+         */
         this.rowLimit = 1;
 
+        /**
+         * ## Group.noSelf
+         *
+         * If TRUE, a group member cannot be matched with himself.
+         */
         this.noSelf = true;
-
+        
+        /**
+         * ## Group.shuffle
+         *
+         * If TRUE, all elements of the pool will be randomly shuffled.
+         */
         this.shuffle = true;
 
+        /**
+         * ## Group.stretch
+         *
+         * If TRUE,  each element in the pool will be replicated 
+         * as many times as the _rowLimit_ variable.
+         */
         this.stretch = true;
-        debugger
+
+        // Init user options.
         this.init(options);
     }
 
-    
+    /**
+     * ## Group.init
+     *
+     * Mixes in default and user options 
+     *
+     * @param {object} options User options
+     */
     Group.prototype.init = function(options) {
-        
+
+        this.name = 'undefined' === typeof options.name ?
+            this.name : options.name;
+
         this.noSelf = 'undefined' === typeof options.noSelf ?
             this.noSelf : options.noSelf;
 
@@ -14757,9 +15613,18 @@ JSUS.extend(TIME);
         if (options.pool) {
             this.setPool(options.pool);
         }
-
     };
 
+    /**
+     * ## Group.setElements
+     *
+     * Sets the elements of the group 
+     *
+     * Updates the number of requested matches, and creates a new matched
+     * array for each element.
+     *
+     * @param {array} elements The elements of the group
+     */
     Group.prototype.setElements = function(elements) {
         var i;
 
@@ -14781,6 +15646,47 @@ JSUS.extend(TIME);
         this.matches.requested = this.elements.length * this.rowLimit;
     };
 
+    /**
+     * ## Group.addMember
+     *
+     * Adds a single member to the group 
+     *
+     * @param {mixed} member The member to add
+     */
+    Group.prototype.addMember = function(member) {
+        var len;
+        if ('undefined' === typeof member) {
+            throw new TypeError('Group.addMember: member cannot be undefined.');
+        }
+        this.elements.push(member);
+        len = this.elements.length;
+
+        this.matches.done = false;
+        this.matched[len -1] = [];
+        this.matches.requested = len * this.rowLimit;
+    };
+
+    /**
+     * ## Group.setPool
+     *
+     * Sets the pool of the group 
+     *
+     * A pool can contain external elements not included in the _elements_.
+     *
+     * If the _stretch_ option is on, each element in the pool will be copied
+     * and added as many times as the _rowLimit_ variable.
+     *
+     * If the _shuffle_ option is on, all elements of the pool (also those 
+     * created by the _stretch_ options, will be randomly shuffled.
+     *
+     * Notice: the pool is cloned, cyclic references in the pool object
+     * are not allowed.
+     *
+     * @param {array} pool The pool of the group
+     *
+     * @see Group.shuffle
+     * @see Group.stretch
+     */
     Group.prototype.setPool = function(pool) {
         var i;
 
@@ -14800,54 +15706,111 @@ JSUS.extend(TIME);
         }
     };
 
-
-
     /**
-     * The same as canAdd, but does not consider row limit
+     * ## Group.getMembers
+     *
+     * Returns the members of the group 
+     *
+     * @return {array} The elements of the group
      */
-    Group.prototype.canSwitchIn = function(x, row) {
-        // Element already matched
-        if (J.in_array(x, this.matched[row])) return false;
-        // No self
-        if (this.noSelf && this.elements[row] === x) return false;
-
-        return true;
+    Group.prototype.getMembers = function() {
+        return this.elements;
     };
 
+    /**
+     * ## Group.canSwitchIn
+     *
+     * Returns TRUE, if an element has the requisite to enter a row-match
+     *
+     * To be eligible of a row match, the element must:
+     * 
+     * - not be already present in the row,
+     * - be different from the row index (if the _noSelf_ option is on).
+     *
+     * This function is the same as _canAdd_, but does not consider row limit.
+     * 
+     * @param {number} x The element to add
+     * @param {number} row The row index
+     * @return {boolean} TRUE, if the element can be added
+     */
+    Group.prototype.canSwitchIn = function(x, row) {
+        // Element already matched.
+        if (J.in_array(x, this.matched[row])) return false;
+        // No self.
+        return !(this.noSelf && this.elements[row] === x);
+    };
 
+    /**
+     * ## Group.canAdd
+     *
+     * Returns TRUE, if an element can be added to a row 
+     *
+     * An element can be added if the number of elements in the row is less
+     * than the _rowLimit_ property, and if _canSwitchIn_ returns TRUE.
+     *
+     * @param {number} x The element to add
+     * @param {number} row The row index
+     * @return {boolean} TRUE, if the element can be added
+     */
     Group.prototype.canAdd = function(x, row) {
-        // Row limit reached
+        // Row limit reached.
         if (this.matched[row].length >= this.rowLimit) return false;
-
         return this.canSwitchIn(x, row);
     };
 
-    Group.prototype.shouldSwitch = function(x, fromRow) {
+    /**
+     * ## Group.shouldSwitch
+     *
+     * Returns TRUE if the matching is not complete
+     *
+     * @see Group.leftOver
+     * @see Group.matched
+     */
+    Group.prototype.shouldSwitch = function() {
         if (!this.leftOver.length) return false;
-        if (this.matched.length < 2) return false;
-        //	var actualLeftOver = this.leftOver.length;
-        return true;
-
+        return this.matched.length > 1;
     };
 
-    // If there is a hole, not in the last position, the algorithm fails
+    /**
+     * ## Group.switchIt
+     *
+     * Tries to complete the rows of the match with missing elements
+     *
+     * Notice: If there is a hole, not in the last position, the algorithm fails
+     */
     Group.prototype.switchIt = function() {
-
-        for (var i = 0; i < this.elements.length ; i++) {
+        var i;
+        for ( i = 0; i < this.elements.length ; i++) {
             if (this.matched[i].length < this.rowLimit) {
                 this.completeRow(i);
             }
         }
-
     };
 
+    /**
+     * ## Group.completeRow
+     *
+     * Completes the rows with missing elements switching elements between rows
+     *
+     * Iterates through all the _leftOver_ elements and through all rows.
+     * _leftOver_ size is reduced at every successful match.
+     *
+     * @param {number} row The row index
+     * @param {array} leftOver The array of elements left to insert in the row
+     * @return {boolean} TRUE, if an element from leftOver is inserted in any
+     *   row.
+     */
     Group.prototype.completeRow = function(row, leftOver) {
+        var clone, i, j;
         leftOver = leftOver || this.leftOver;
-        var clone = leftOver.slice(0);
-        for (var i = 0 ; i < clone.length; i++) {
-            for (var j = 0 ; j < this.elements.length; j++) {
-                if (this.switchItInRow(clone[i], j, row)){
-                    leftOver.splice(i,1);
+        clone = leftOver.slice(0);
+        for (i = 0 ; i < clone.length; i++) {
+            for (j = 0 ; j < this.elements.length; j++) {
+                // Added.
+                if (row == j) continue;
+                if (this.switchItInRow(clone[i], j, row)) {
+                    // Removes matched element from leftOver.
+                    leftOver.splice(i, 1);
                     return true;
                 }
                 this.updatePointer();
@@ -14857,26 +15820,43 @@ JSUS.extend(TIME);
     };
 
 
+    /**
+     * ## Group.switchItInRow
+     *
+     * Returns TRUE if an element can be inserted in a row (even a complete one)
+     *
+     * If a row is complete one of the elements already matched will be 
+     * added to a row with empty slots.
+     *
+     * @param {number} x The element to add
+     * @param {number} toRow The row to which the element will be added
+     * @param {number} fromRow The row with whom triying to switch elements
+     */
     Group.prototype.switchItInRow = function(x, toRow, fromRow) {
-        if (!this.canSwitchIn(x, toRow)) {
-            //console.log('cannot switch ' + x + ' ' + toRow)
-            return false;
-        }
-        //console.log('can switch: ' + x + ' ' + toRow + ' from ' + fromRow)
-        // Check if we can insert any of the element of the 'toRow'
-        // inside the 'toRow'
-        for (var i = 0 ; i < this.matched[toRow].length; i++) {
-            var switched = this.matched[toRow][i];
-            if (this.canAdd(switched, fromRow)) {
-                this.matched[toRow][i] = x;
-                this.addToRow(switched, fromRow);
-                return true;
+        var i, switched;
+        
+        if (this.canSwitchIn(x, toRow)) {        
+            // Check if we can insert any element of 'toRow' in 'fromRow'.
+            for (i = 0 ; i < this.matched[toRow].length; i++) {
+                switched = this.matched[toRow][i];
+                if (this.canAdd(switched, fromRow)) {
+                    this.matched[toRow][i] = x;
+                    this.addToRow(switched, fromRow);
+                    return true;
+                }
             }
         }
-
         return false;
     };
 
+    /**
+     * ## Group.addToRow
+     *
+     * Adds an element to a row and updates the matched count
+     *
+     * @param {number} x The element to add
+     * @param {number} toRow The row to which the element will be added 
+     */
     Group.prototype.addToRow = function(x, row) {
         this.matched[row].push(x);
         this.matches.total++;
@@ -14885,9 +15865,23 @@ JSUS.extend(TIME);
         }
     };
 
+    /**
+     * ## Group.addIt
+     *
+     * Tries to add an element to any of the rows
+     *
+     * @param {mixed} x The element to add
+     * @return {boolean} TRUE, if the element was matched
+     *
+     * @see Group.canAdd
+     * @see Group.addToRow
+     * @see Group.pointer
+     */
     Group.prototype.addIt = function(x) {
-        var counter = 0, added = false;
-        while (counter < this.elements.length && !added) {
+        var counter, added, len;
+        len = this.elements.length, counter = 0, added = false;
+        // Try to add an element in any row.
+        while (counter < len && !added) {
             if (this.canAdd(x, this.pointer)) {
                 this.addToRow(x, this.pointer);
                 added = true;
@@ -14897,30 +15891,48 @@ JSUS.extend(TIME);
         }
         return added;
     };
-
-
+    
+    /**
+     * ## Group.matchBatch
+     *
+     * Tries to add a batch of elements to each of the elements of the group
+     *
+     * Batch elements that could not be added as a match are returned as
+     * leftover.
+     *
+     * @param {array} pool The array of elements to match
+     * @param {array} leftOver The elements from the pool that could not be
+     *   matched
+     *
+     * @see Group.addIt
+     */
     Group.prototype.matchBatch = function(pool) {
-        var leftOver = [];
-        for (var i = 0 ; i < pool.length ; i++) {
-            if (this.matches.done || !this.addIt(pool[i])) {
-                // if we could not add it as a match, it becomes leftover
+        var leftOver, i;
+        leftOver = [];
+        for (i = 0 ; i < pool.length ; i++) {
+            if (this.matches.done || !this.addIt(pool[i])) {      
                 leftOver.push(pool[i]);
             }
         }
         return leftOver;
     };
 
+    /**
+     * ## Group.match
+     *
+     * Matches each group member with elements from the a pool
+     *
+     * @param {array} pool A pool of preferences for the  
+     */
     Group.prototype.match = function(pool) {
+        var i, leftOver;
         pool = pool || this.pool;
-        //	console.log('matching pool');
-        //	console.log(pool)
         if (!J.isArray(pool)) {
             pool = [pool];
         }
-        // Loop through the pools: elements in lower
-        // indexes-pools have more chances to be used
-        var leftOver;
-        for (var i = 0 ; i < pool.length ; i++) {
+        // Loop through the pools (array of array):
+        // elements in earlier pools have more chances to be used
+        for (i = 0 ; i < pool.length ; i++) {
             leftOver = this.matchBatch(pool[i]);
             if (leftOver.length) {
                 this.leftOver = this.leftOver.concat(leftOver);
@@ -14946,6 +15958,31 @@ JSUS.extend(TIME);
 
     Group.prototype.invertMatched = function() {
         return J.transpose(this.matched);
+    };
+
+    /**
+     * ## Group.reset
+     *
+     * Resets match and possibly also elements and pool.
+     *
+     * @param {boolean} all If TRUE, also _elements_ and _pool_ will be deletedx
+     */
+    Group.prototype.reset = function(all) {
+
+        this.matched = [];
+        this.leftOver = [];
+        this.pointer = 0;
+        this.matches = {
+            total: 0,
+            requested: 0,
+            done: false
+        };
+
+        if (all) {
+            this.elements = [];
+            this.pool = [];
+        }
+
     };
 
     // Testing functions
@@ -15181,14 +16218,11 @@ JSUS.extend(TIME);
 
 
 
-
-
-    // ## Closure	
+    // ## Closure
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
-
 /**
  * # RoleMapper
  * 
@@ -15302,7 +16336,6 @@ JSUS.extend(TIME);
 
         // Attach pause / resume listeners:
         pausedCb = function() {
-            // TODO: Possible problem: Pausing before starting?
             if (!gameTimer.isPaused()) {
                 gameTimer.pause();
             }
@@ -15607,7 +16640,6 @@ JSUS.extend(TIME);
     Timer.prototype.randomExec = function(func, maxWait) {
         randomFire.call(this, func, maxWait, false);
     };
-    
 
     /**
      * # GameTimer Class
@@ -15845,9 +16877,10 @@ JSUS.extend(TIME);
      * @see GameTimer.fire
      */
     GameTimer.prototype.start = function() {
-        // Check validity of state
+        var that;
+        // Checks validity of state.
         if ('number' !== typeof this.milliseconds) {
-            throw new Error('GameTimer.start: this.milliseconds must be a number');
+            throw new Error('GameTimer.start: this.milliseconds must be number');
         }
         if (this.update > this.milliseconds) {
             throw new Error('GameTimer.start: this.update must not be greater ' +
@@ -15861,17 +16894,22 @@ JSUS.extend(TIME);
             return;
         }
 
-        // fire the event immediately if time is zero
+        // Fires the event immediately if time is zero.
         if (this.options.milliseconds === 0) {
             this.fire(this.timeup);
             return;
         }
 
-        // Remember time of start:
+        // Remembers time of start:
         this.updateStart = (new Date()).getTime();
         this.updateRemaining = this.update;
 
-        this.timerId = setInterval(updateCallback, this.update, this);
+        that = this;
+        // It is not possible to pass extra parameters to updateCallback,
+        // by adding them after _this.update_. In IE does not work.
+        this.timerId = setInterval(function() {
+            updateCallback(that);
+        }, this.update);
     };
 
     /**
@@ -17884,7 +18922,7 @@ JSUS.extend(TIME);
          */
         node.events.ng.on( IN + say + 'PDISCONNECT', function(msg) {
             if (!msg.data) return;
-            node.game.pl.remove(msg.data.id);
+            node.game.pl.remove(msg.data.id);           
             node.emit('UPDATED_PLIST');
         });
 
@@ -17991,9 +19029,8 @@ JSUS.extend(TIME);
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
-            //console.log('PLAYER_UPDATE', msg.data, msg.from);
-            node.game.pl.updatePlayer(msg.from, msg.data);
+        node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {            
+            node.game.pl.updatePlayer(msg.from, msg.data);           
             node.emit('UPDATED_PLIST');
             if (node.game.shouldStep()) {
                 node.game.step();
@@ -19215,7 +20252,8 @@ JSUS.extend(TIME);
         }
 
         iframe = W.addIFrame(root, frameName);
-        iframe.src = 'about:blank';
+        // Method .replace does not add the uri to the history.
+        iframe.contentWindow.location.replace('about:blank');
 
         return this.setFrame(iframe, frameName, root);
     };
@@ -19280,7 +20318,8 @@ JSUS.extend(TIME);
         }
         frameName = iframe.name || iframe.id;
         iframe.onload = null;
-        iframe.src = 'about:blank';
+        // Method .replace does not add the uri to the history.
+        iframe.contentWindow.location.replace('about:blank');
         this.frameElement = iframe;
         this.frameWindow = window.frames[frameName];
         this.frameDocument = W.getIFrameDocument(iframe);
@@ -19615,7 +20654,8 @@ JSUS.extend(TIME);
             })(currentUri, iframe);
 
             // Start loading the page:
-            window.frames[iframeName].location = currentUri;
+            // Method .replace does not add the uri to the history.
+            window.frames[iframeName].location.replace(currentUri);
         }
     };
 
@@ -19835,7 +20875,7 @@ JSUS.extend(TIME);
         }
         else {
             // Update the frame location:
-            iframeWindow.location = uri;
+            iframeWindow.location.replace(uri);
         }
 
         // Adding a reference to nodeGame also in the iframe.
@@ -20205,6 +21245,9 @@ JSUS.extend(TIME);
      * TODO: check if this can be called in any stage.
      */
     GameWindow.prototype.lockFrame = function(text) {
+        var that;
+        that = this;
+
         if (!this.waitScreen) {
             throw new Error('GameWindow.lockFrame: waitScreen not found.');
         }
@@ -20213,7 +21256,8 @@ JSUS.extend(TIME);
                                 'or undefined');
         }
         if (!this.isReady()) {
-            throw new Error('GameWindow.lockFrame: window not ready.');
+            setTimeout(function() { that.lockFrame(text); }, 100);
+            //throw new Error('GameWindow.lockFrame: window not ready.');
         }
         this.setStateLevel('LOCKING');
         text = text || 'Screen locked. Please wait...';
@@ -24767,7 +25811,7 @@ JSUS.extend(TIME);
     // ## Dependencies
 
     Feedback.dependencies = {
-        JSUS: {},
+        JSUS: {}
     };
 
     function Feedback(options) {

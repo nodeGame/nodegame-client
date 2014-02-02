@@ -1,7 +1,11 @@
 /**
- * ## nodeGame IE support
+ * # nodeGame IE support
+ * Copyright(c) 2014 Stefano Balietti
+ * MIT Licensed
  *
  * Shims of methods required by nodeGame, but missing in old IE browsers
+ * 
+ * ---
  */
 
 String.prototype.trim = function() {
