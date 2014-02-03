@@ -53,7 +53,7 @@
 
         function done() {
             node.game.willBeDone = false;
-            node.emit('BEFORE_DONE');
+            node.emit('REALLY_DONE');
             node.game.setStageLevel(stageLevels.DONE);
             // Step forward, if allowed.
             if (node.game.shouldStep()) {
@@ -67,10 +67,9 @@
          * Registers the stageLevel _DONE_ and eventually steps forward.
          *
          * If a DONE handler is defined in the game-plot, it will execute it. 
-         * In case it returns FALSE, the update
-         * process is stopped.
+         * In case it returns FALSE, the update process is stopped.
          *
-         * @emit BEFORE_DONE
+         * @emit REALLY_DONE
          */
         this.events.ng.on('DONE', function() {
             // Execute done handler before updating stage.
