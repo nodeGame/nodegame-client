@@ -8,11 +8,13 @@
  * ---
  */
 
-String.prototype.trim = function() {
-    return this.replace(/^\s+|\s+$/g, '');
-};
+if ('undefined' === typeof String.prototype.trim) {
+    String.prototype.trim = function() {
+        return this.replace(/^\s+|\s+$/g, '');
+    };
+}
 
-if (typeof console == "undefined") {
+if ('undefined' === typeof console) {
     this.console = {log: function() {}};
 }
 
@@ -7880,28 +7882,23 @@ JSUS.extend(TIME);
     , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store
 );
 /**
- * # nodeGame
- *
- * Social Experiments in the Browser
- *
- * Copyright(c) 2013 Stefano Balietti
+ * # nodeGame: Social Experiments in the Browser
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * nodeGame is a free, open source, event-driven javascript framework for on line,
- * multiplayer games in the browser.
+ * nodeGame is a free, open source, event-driven javascript framework,
+ * for on line multiplayer games in the browser.
  */
 (function(exports) {
-
     if ('undefined' !== typeof JSUS) exports.JSUS = JSUS;
     if ('undefined' !== typeof NDDB) exports.NDDB = NDDB;
     if ('undefined' !== typeof store) exports.store = store;
-    exports.support = JSUS.compatibility();        
-    
+    exports.support = JSUS.compatibility();
 })('object' === typeof module ? module.exports : (window.node = {}));
 
 /**
  * # Variables
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` variables and constants module
@@ -8208,8 +8205,7 @@ JSUS.extend(TIME);
 
 /**
  * # Stepping Rules
- *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Collections of rules to determine whether the game should step.
@@ -8278,8 +8274,7 @@ JSUS.extend(TIME);
 );
 /**
  * # ErrorManager
- *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Handles the runtime errors.
@@ -8425,7 +8420,7 @@ JSUS.extend(TIME);
  *
  * Event emitter engine for `nodeGame`
  *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Keeps a register of events listeners.
@@ -9030,7 +9025,7 @@ JSUS.extend(TIME);
 /**
  * # GameStage
  *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Representation of the stage of a game:
@@ -9313,8 +9308,7 @@ JSUS.extend(TIME);
 );
 /**
  * # PlayerList
- *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Handles a collection of `Player` objects.
@@ -10020,7 +10014,7 @@ JSUS.extend(TIME);
 /**
  * # GameMsg
  *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` exchangeable data format.
@@ -10344,8 +10338,7 @@ JSUS.extend(TIME);
 
 /**
  * # Stager
- *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` container and builder of the game sequence
@@ -11537,7 +11530,7 @@ JSUS.extend(TIME);
 
 /**
  * # GamePlot
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` container of game stages functions.
@@ -12352,7 +12345,7 @@ JSUS.extend(TIME);
 /**
  * # GameMsgGenerator
  *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` component rensponsible creating messages
@@ -12520,8 +12513,7 @@ JSUS.extend(TIME);
 );
 /**
  * # Socket
- *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` component responsible for dispatching events and messages.
@@ -13072,8 +13064,7 @@ JSUS.extend(TIME);
 );
 /**
  * # GameDB
- * 
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed 
  * 
  * ### Provides a simple, lightweight NO-SQL database for nodeGame
@@ -13141,6 +13132,7 @@ JSUS.extend(TIME);
         if (!this.stage) {
             this.hash('stage', function(gb) {
                 if (gb.stage) {
+                    debugger
                     return GameStage.toHash(gb.stage, 'S.s.r');
                 }
             });
@@ -14547,7 +14539,7 @@ JSUS.extend(TIME);
 /**
  * # GameSession
  *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` session manager
@@ -14901,7 +14893,7 @@ JSUS.extend(TIME);
 );
 /**
  * # GroupManager
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` group manager.
@@ -16309,7 +16301,7 @@ JSUS.extend(TIME);
 /**
  * # RoleMapper
  * 
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed 
  * 
  * `nodeGame` manager of player ids and aliases.
@@ -16728,7 +16720,7 @@ JSUS.extend(TIME);
     /**
      * # GameTimer Class
      *
-     * Copyright(c) 2013 Stefano Balietti
+     * Copyright(c) 2014 Stefano Balietti
      * MIT Licensed
      *
      * Creates a controllable timer object for nodeGame.
@@ -17214,7 +17206,7 @@ JSUS.extend(TIME);
 
 /**
  * # nodeGame: Social Experiments in the Browser!
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` is a free, open source javascript framework for on line,
@@ -17858,8 +17850,7 @@ JSUS.extend(TIME);
 );
 /**
  * # Log
- *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` logging module
@@ -17958,8 +17949,7 @@ JSUS.extend(TIME);
 );
 /**
  * # Setup
- *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` configuration module
@@ -18109,8 +18099,7 @@ JSUS.extend(TIME);
 
 /**
  * # Alias
- * 
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed 
  * 
  * `nodeGame` aliasing module
@@ -18197,8 +18186,7 @@ JSUS.extend(TIME);
 );
 /**
  * # Connect module
- * 
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed 
  * 
  * `nodeGame` connect module
@@ -18243,8 +18231,7 @@ JSUS.extend(TIME);
 );
 /**
  * # Player related functions
- *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  * ---
  */
@@ -18295,8 +18282,7 @@ JSUS.extend(TIME);
 );
 /**
  * # NodeGameClient Events Handling  
- *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * ---
@@ -18423,8 +18409,7 @@ JSUS.extend(TIME);
 
 /**
  * # NodeGameClient: SAY, SET, GET, DONE
- *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  * ---
  */
@@ -18650,8 +18635,7 @@ JSUS.extend(TIME);
 );
 /**
  * # NodeGameClient Events Handling  
- *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * ---
@@ -18764,9 +18748,8 @@ JSUS.extend(TIME);
 );
 
 /**
- * # Extra
- * 
- * Copyright(c) 2013 Stefano Balietti
+ * # Extra 
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed 
  * 
  * `nodeGame` extra functions
@@ -18848,8 +18831,7 @@ JSUS.extend(TIME);
 
 /**
  * # NodeGameClient JSON fetching  
- *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * ---
@@ -18966,7 +18948,7 @@ JSUS.extend(TIME);
 );
 /**
  * # Listeners for incoming messages.
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  * ---
  */
@@ -19296,7 +19278,7 @@ JSUS.extend(TIME);
 
 /**
  * # Listeners for incoming messages.
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  * 
  * Internal listeners are not directly associated to messages,
@@ -19820,12 +19802,10 @@ JSUS.extend(TIME);
 /**
  * Exposing the node object
  */
-(function () {
-
+(function() {
     var tmp = new window.node.NodeGameClient();
     JSUS.mixin(tmp, window.node)
     window.node = tmp;
-
 })();
 /**
  * # GameWindow
@@ -27555,7 +27535,7 @@ JSUS.extend(TIME);
 })(node);
 /**
  * # StateDisplay widget for nodeGame
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Display information about the state of a player.
@@ -27649,12 +27629,18 @@ JSUS.extend(TIME);
 
     StateDisplay.prototype.listeners = function() {
 	var that = this;
-
 	node.on('STEP_CALLBACK_EXECUTED', function() {
 	    that.updateAll();
-	});
+        });
     };
 
+    StateDisplay.prototype.destroy = function() {
+        if (this.table) {
+            this.root.removeChild(this.table.table);
+            this.table = null;
+        }
+        // node.off('STEP_CALLBACK_EXECUTED', updateTable);
+    };
 })(node);
 /**
  * # VisualState widget for nodeGame

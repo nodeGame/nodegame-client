@@ -7,12 +7,38 @@
  * 
  * ---
  */
+   
+// See https://gist.github.com/E01T/6088383
+if ('undefined' === typeof document.getElementsByClassName) {
+    document.getElementsByClassName = function(className, nodeName) {
+        var result, node, tag, seek, i, rightClass;
+        result = [], tag = nodeName || '*';
+        if (document.evaluate) {
+            seek = '//'+ tag +'[@class="'+ className +'"]';
+            seek = document.evaluate( seek, document, null, 0, null );
+            while ((node = seek.iterateNext())) {
+                result.push(node);
+            }
+        }
+        else {
+            rightClass = new RegExp( '(^| )'+ className +'( |$)' );
+            seek = document.getElementsByTagName( tag );
+            for (i = 0; i < seek.length; i++)
+                if (rightClass.test((node = seek[i]).className )) {
+                    result.push(seek[i]);
+                }
+        }
+        return result;
+    };
+} 
 
-String.prototype.trim = function() {
-    return this.replace(/^\s+|\s+$/g, '');
-};
+if ('undefined' === typeof String.prototype.trim) {
+    String.prototype.trim = function() {
+        return this.replace(/^\s+|\s+$/g, '');
+    };
+}
 
-if (typeof console == "undefined") {
+if ('undefined' === typeof console) {
     this.console = {log: function() {}};
 }
 
