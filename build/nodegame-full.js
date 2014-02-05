@@ -7,30 +7,6 @@
  * 
  * ---
  */
-   
-// See https://gist.github.com/E01T/6088383
-if ('undefined' === typeof document.getElementsByClassName) {
-    document.getElementsByClassName = function(className, nodeName) {
-        var result, node, tag, seek, i, rightClass;
-        result = [], tag = nodeName || '*';
-        if (document.evaluate) {
-            seek = '//'+ tag +'[@class="'+ className +'"]';
-            seek = document.evaluate( seek, document, null, 0, null );
-            while ((node = seek.iterateNext())) {
-                result.push(node);
-            }
-        }
-        else {
-            rightClass = new RegExp( '(^| )'+ className +'( |$)' );
-            seek = document.getElementsByTagName( tag );
-            for (i = 0; i < seek.length; i++)
-                if (rightClass.test((node = seek[i]).className )) {
-                    result.push(seek[i]);
-                }
-        }
-        return result;
-    };
-} 
 
 if ('undefined' === typeof String.prototype.trim) {
     String.prototype.trim = function() {
@@ -2187,7 +2163,7 @@ if (JSUS.isNodeJS()) {
                 // Pattern not found.
                 if (idx_start === -1) continue;
 
-                switch(key[0]) {
+                switch(key.charAt(0)) {
 
                 case '%': // Span.
 
@@ -2366,23 +2342,34 @@ if (JSUS.isNodeJS()) {
      * Adds attributes to an HTML element and returns it.
      *
      * Attributes are defined as key-values pairs.
-     * Attributes 'style', and 'label' are ignored.
+     * Attributes 'label' is ignored.
      *
-     * @see DOM.style
      * @see DOM.addLabel
-     *
      */
     DOM.addAttributes2Elem = function(e, a) {
+        var key;
         if (!e || !a) return e;
         if ('object' != typeof a) return e;
-        var specials = ['id', 'label'];
-        for (var key in a) {
+        for (key in a) {
             if (a.hasOwnProperty(key)) {
-                if (!JSUS.in_array(key, specials)) {
-                    e.setAttribute(key,a[key]);
-                } else if (key === 'id') {
+                if (key === 'id') {
                     e.id = a[key];
                 }
+                else if (key === 'class') {
+                    DOM.addClass(e, a[key]);
+                }
+                else if (key === 'style') {
+                    DOM.style(e, a[key]);
+                }
+                else if (key === 'label') {
+                    // Handle the case.
+                    JSUS.log('DOM.addAttributes2Elem: label attribute is not ' +
+                             'supported. Use DOM.addLabel instead.');
+                }
+                else {
+                    e.setAttribute(key, a[key]);
+                }
+
 
                 // TODO: handle special cases
                 // <!--
@@ -2410,12 +2397,15 @@ if (JSUS.isNodeJS()) {
      * a list of key-values pairs as text-value attributes for
      * the option.
      *
+     * @param {HTMLElement} select HTML select element
+     * @param {object} list Options to add to the select element
      */
     DOM.populateSelect = function(select, list) {
+        var key, opt;
         if (!select || !list) return;
-        for (var key in list) {
+        for (key in list) {
             if (list.hasOwnProperty(key)) {
-                var opt = document.createElement('option');
+                opt = document.createElement('option');
                 opt.value = list[key];
                 opt.appendChild(document.createTextNode(key));
                 select.appendChild(opt);
@@ -2428,6 +2418,7 @@ if (JSUS.isNodeJS()) {
      *
      * Removes all children from a node.
      *
+     * @param {HTMLElement} e HTML element.
      */
     DOM.removeChildrenFromNode = function(e) {
 
@@ -2710,7 +2701,10 @@ if (JSUS.isNodeJS()) {
      *
      */
     DOM.getIFrame = function(id, attributes) {
-        var attributes = {'name' : id}; // For Firefox
+        attributes = attributes || {};
+        if (!attributes.name) {
+            attributes.name = id; // For Firefox
+        }
         return this.getElement('iframe', id, attributes);
     };
 
@@ -2816,26 +2810,27 @@ if (JSUS.isNodeJS()) {
      * @see DOM.addBorder
      * @see DOM.style
      */
-    DOM.highlight = function(elem, code) {
+     DOM.highlight = function(elem, code) {
+        var color;
         if (!elem) return;
 
         // default value is ERR
         switch (code) {
         case 'OK':
-            var color =  'green';
+            color =  'green';
             break;
         case 'WARN':
-            var color = 'yellow';
+            color = 'yellow';
             break;
         case 'ERR':
-            var color = 'red';
+            color = 'red';
             break;
         default:
-            if (code[0] === '#') {
-                var color = code;
+            if (code.charAt(0) === '#') {
+                color = code;
             }
             else {
-                var color = 'red';
+                color = 'red';
             }
         }
 
@@ -2864,23 +2859,24 @@ if (JSUS.isNodeJS()) {
      * ### DOM.style
      *
      * Styles an element as an in-line css.
-     * Takes care to add new styles, and not overwriting previuous
-     * attributes.
      *
-     * Returns the element.
+     * Existing style properties are maintained, and new ones added.
      *
-     * @see DOM.setAttribute
+     * @param {HTMLElement} elem The element to style
+     * @param {object} Objects containing the properties to add.
+     * @return {HTMLElement} elem The styled element
      */
     DOM.style = function(elem, properties) {
-        var style, i;
+        var i;
         if (!elem || !properties) return;
         if (!DOM.isElement(elem)) return;
 
-        style = '';
         for (i in properties) {
-            style += i + ': ' + properties[i] + '; ';
-        };
-        return elem.setAttribute('style', style);
+            if (properties.hasOwnProperty(i)) {
+                elem.style[i] = properties[i];
+            }
+        }
+        return elem;
     };
 
     /**
@@ -2924,11 +2920,11 @@ if (JSUS.isNodeJS()) {
         }
         return el;
     };
-    
+
     /**
      * ## DOM.getIFrameDocument
      *
-     * Returns a reference to the document of an iframe object 
+     * Returns a reference to the document of an iframe object
      *
      * @param {HTMLIFrameElement} iframe The iframe object
      * @return {HTMLDocument|undefined} The document of the iframe, or
@@ -2958,53 +2954,98 @@ if (JSUS.isNodeJS()) {
             contentDocument.getElementsByTagName('html')[0];
     };
 
+    /**
+     * ### DOM.getElementsByClassName
+     *
+     * Gets the first available child of an IFrame
+     *
+     * Tries head, body, lastChild and the HTML element
+     *
+     * @param {object} document The document object of a window or iframe
+     * @param {string} className The requested className
+     * @param {string}  nodeName Optional. If set only elements with
+     *   the specified tag name will be searched
+     * @return {array} Array of elements with the requested class name
+     *
+     * @see https://gist.github.com/E01T/6088383
+     */
+    DOM.getElementsByClassName = function(document, className, nodeName) {
+        var result, node, tag, seek, i, rightClass;
+        result = [], tag = nodeName || '*';
+        if (document.evaluate) {
+            seek = '//'+ tag +'[@class="'+ className +'"]';
+            seek = document.evaluate(seek, document, null, 0, null );
+            while ((node = seek.iterateNext())) {
+                result.push(node);
+            }
+        }
+        else {
+            rightClass = new RegExp( '(^| )'+ className +'( |$)' );
+            seek = document.getElementsByTagName(tag);
+            for (i = 0; i < seek.length; i++)
+                if (rightClass.test((node = seek[i]).className )) {
+                    result.push(seek[i]);
+                }
+        }
+        return result;
+    };
+
     JSUS.extend(DOM);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 /**
  * # EVAL
  *
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions related to the evaluation
  * of strings as javascript commands
  * ---
  */
-
 (function(JSUS) {
 
-function EVAL(){};
+    function EVAL(){};
 
-/**
- * ## EVAL.eval
- *
- * Allows to execute the eval function within a given
- * context.
- *
- * If no context is passed a reference, `this` is used.
- *
- * @param {string} str The command to executes
- * @param {object} context Optional. The context of execution. Defaults, `this`
- * @return {mixed} The return value of the executed commands
- *
- * @see eval
- * @see JSON.parse
- */
-EVAL.eval = function(str, context) {
-    var func;
-    if (!str) return;
-    context = context || this;
-    // Eval must be called indirectly
-    // i.e. eval.call is not possible
-    func = function(str) {
-        // TODO: Filter str
-        return eval(str);
-    }
-    return func.call(context, str);
-};
+    /**
+     * ## EVAL.eval
+     *
+     * Cross-browser eval function with context.
+     *
+     * If no context is passed a reference, `this` is used.
+     *
+     * In old IEs it will use _window.execScript_ instead.
+     *
+     * @param {string} str The command to executes
+     * @param {object} context Optional. Execution context. Defaults, `this`
+     * @return {mixed} The return value of the executed commands
+     *
+     * @see eval
+     * @see execScript
+     * @see JSON.parse
+     */
+    EVAL.eval = function(str, context) {
+        var func;
+        if (!str) return;
+        context = context || this;
+        // Eval must be called indirectly
+        // i.e. eval.call is not possible
+        func = function(str) {
+            // TODO: Filter str.
+            str = '(' + str + ')';
+            if (window && window.execScript) {
+                // Notice: execScript doesn’t return anything.
+                window.execScript('__my_eval__ = ' + str);
+                return __my_eval__;
+            }
+            else {
+                return eval(str);
+            }
+        }
+        return func.call(context, str);
+    };
 
-JSUS.extend(EVAL);
+    JSUS.extend(EVAL);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 /**
@@ -4089,7 +4130,7 @@ JSUS.extend(EVAL);
      * @param {number} b The upper limit
      * @return {array} The randomly shuffled sequence.
      *
-     * @see JSUS.seq
+     * @see RANDOM.seq
      */
     RANDOM.sample = function(a, b) {
         var out;
@@ -4097,6 +4138,220 @@ JSUS.extend(EVAL);
         if (!out) return false;
         return JSUS.shuffle(out);
     };
+
+    /**
+     * ## RANDOM.sample
+     *
+     * Returns a new generator of normally distributed pseudo random numbers
+     *
+     * The generator is independent from RANDOM.nextNormal
+     * 
+     * @return {function} An independent generator 
+     * 
+     * @see RANDOM.nextNormal
+     */
+    RANDOM.getNormalGenerator = function() {
+
+        return (function() {
+
+            var oldMu, oldSigma;    
+            var x2, multiplier, genReady;    
+            
+            return function normal(mu, sigma) {
+                
+                var x1, u1, u2, v1, v2, s;
+                
+                if ('number' !== typeof mu) {
+                    throw new TypeError('nextNormal: mu must be number.');
+                }
+                if ('number' !== typeof sigma) {
+                    throw new TypeError('nextNormal: sigma must be number.');
+                }
+
+                if (mu !== oldMu || sigma !== oldSigma) {
+                    genReady = false;
+                    oldMu = mu;
+                    oldSigma = sigma;
+                }
+
+                if (genReady) {     
+                    genReady = false;
+                    return (sigma * x2) + mu;
+                }
+                
+                u1 = Math.random();
+                u2 = Math.random();
+                
+                // Normalize between -1 and +1.
+                v1 = (2 * u1) - 1;
+                v2 = (2 * u2) - 1; 
+                
+                s = (v1 * v1) + (v2 * v2);
+                
+                // Condition is true on average 1.27 times, 
+                // with variance equal to 0.587.
+                if (s >= 1) {
+                    return normal(mu, sigma);
+                }
+                
+                multiplier = Math.sqrt(-2 * Math.log(s) / s);
+                
+                x1 = v1 * multiplier;
+                x2 = v2 * multiplier;
+                
+                genReady = true;
+                
+                return (sigma * x1) + mu;
+                
+            }
+        })();
+    }
+
+    /**
+     * Generates random numbers with Normal Gaussian distribution.
+     *
+     * User must specify the expected mean, and standard deviation a input 
+     * parameters.
+     *
+     * Implements the Polar Method by Knuth, "The Art Of Computer
+     * Programming", p. 117.
+     * 
+     * @param {number} mu The mean of the distribution
+     * param {number} sigma The standard deviation of the distribution
+     * @return {number} A random number following a Normal Gaussian distribution
+     *
+     * @see RANDOM.getNormalGenerator
+     */
+    RANDOM.nextNormal = RANDOM.getNormalGenerator();
+
+    /**
+     * Generates random numbers with LogNormal distribution.
+     *
+     * User must specify the expected mean, and standard deviation of the
+     * underlying gaussian distribution as input parameters.
+     * 
+     * @param {number} mu The mean of the gaussian distribution
+     * @param {number} sigma The standard deviation of the gaussian distribution
+     * @return {number} A random number following a LogNormal distribution
+     *
+     * @see RANDOM.nextNormal 
+     */
+    RANDOM.nextLogNormal = function(mu, sigma) {
+        if ('number' !== typeof mu) {
+            throw new TypeError('nextLogNormal: mu must be number.');
+        }
+        if ('number' !== typeof sigma) {
+            throw new TypeError('nextLogNormal: sigma must be number.');
+        }
+        return Math.exp(nextNormal(mu, sigma));
+    }
+
+    /**
+     * Generates random numbers with Exponential distribution.
+     *
+     * User must specify the lambda the _rate parameter_ of the distribution.
+     * The expected mean of the distribution is equal to `Math.pow(lamba, -1)`. 
+     * 
+     * @param {number} lambda The rate parameter
+     * @return {number} A random number following an Exponential distribution
+     */
+    RANDOM.nextExponential = function(lambda) {
+        if ('number' !== typeof lambda) {
+            throw new TypeError('nextExponential: lambda must be number.');
+        }
+        if (lambda <= 0) {
+            throw new TypeError('nextExponential: lambda must be greater than 0.');
+        }
+        return - Math.log(1 - Math.random()) / lambda;
+    }
+    
+    /**
+     * Generates random numbers following the Binomial distribution.
+     *
+     * User must specify the probability of success and the number of trials.
+     * 
+     * @param {number} p The probability of success
+     * @param {number} trials The number of trials
+     * @return {number} sum The sum of successes in n trials
+     */
+    RANDOM.nextBinomial = function(p, trials) {
+        var counter, sum;
+
+        if ('number' !== typeof p) {
+            throw new TypeError('nextBinomial: p must be number.');
+        }
+        if ('number' !== typeof trials) {
+            throw new TypeError('nextBinomial: trials must be number.');
+        }
+        if (p < 0 || p > 1) {
+            throw new TypeError('nextBinomial: p must between 0 and 1.');
+        }
+        if (trials < 1) {
+            throw new TypeError('nextBinomial: trials must be greater than 0.');
+        }
+        
+        counter = 0;
+        sum = 0;
+        
+        while(counter < trials){
+	    if (Math.random() < p) {	
+	        sum += 1;
+            }
+	    counter++;
+        }
+	
+        return sum;
+    };
+
+    /**
+     * Generates random numbers following the Gamma distribution.
+     *
+     * This function is experimental and untested. No documentation.
+     *
+     * @experimental
+     */
+    RANDOM.nextGamma = function(alpha, k) {
+        var intK, kDiv, alphaDiv;
+        var u1, u2, u3;
+        var x, i, len, tmp;
+
+        if ('number' !== typeof alpha) {
+            throw new TypeError('nextGamma: alpha must be number.');
+        }
+        if ('number' !== typeof k) {
+            throw new TypeError('nextGamma: k must be number.');
+        }
+        if (alpha < 1) {
+            throw new TypeError('nextGamma: alpha must be greater than 1.');
+        }
+        if (k < 1) {
+            throw new TypeError('nextGamma: k must be greater than 1.');
+        }
+
+        u1 = Math.random();
+        u2 = Math.random();
+        u3 = Math.random();
+
+        intK = Math.floor(k) + 3;
+        kDiv = 1 / k;
+        
+        alphaDiv = 1 / alpha;
+
+        x = 0;
+        for (i = 3 ; ++i < intK ; ) {
+            x += Math.log(Math.random());
+        }
+
+        x *= - alphaDiv; 
+
+        tmp = Math.log(u3) * 
+            (Math.pow(u1, kDiv) /
+             ((Math.pow(u1, kDiv) + Math.pow(u2, 1 / (1 - k)))));
+        
+        tmp *=  - alphaDiv;
+        
+        return x + tmp;
+    }
 
     JSUS.extend(RANDOM);
 
@@ -4394,7 +4649,7 @@ JSUS.extend(TIME);
                     return value;
                 }
                 else if (value.substring(0, len_func) === PARSE.marker_func) {
-                    return eval('('+value.substring(len_prefix)+')');
+                    return JSUS.eval(value.substring(len_prefix));
                 }
                 else if (value.substring(0, len_null) === PARSE.marker_null) {
                     return null;
@@ -8106,7 +8361,9 @@ JSUS.extend(TIME);
         stop: 'stop',
         restart: 'restart',
         step: 'step',
-        goto_step: 'goto_step'
+        goto_step: 'goto_step',
+        clear_buffer: 'clear_buffer',
+        erase_buffer: 'erase_buffer'
     };
 
     /**
@@ -8588,7 +8845,7 @@ JSUS.extend(TIME);
         ctx = node.game;
 
         // Useful for debugging.
-        if (this.node.conf.events.dumpEvents) {
+        if (this.node.conf.events && this.node.conf.events.dumpEvents) {
             this.node.log('F - ' + this.name + ': ' + type);
         }
 
@@ -12892,6 +13149,19 @@ JSUS.extend(TIME);
     };
 
     /**
+     * ### Socket.eraseBuffer
+     *
+     * Removes all messages currently in the buffer
+     *
+     * This operation is not reversible
+     *
+     * @see Socket.clearBuffer
+     */
+    Socket.prototype.eraseBuffer = function() {
+        this.buffer = [];
+    };
+
+    /**
      * ### Socket.startSession
      *
      * Initializes a nodeGame session
@@ -13156,7 +13426,6 @@ JSUS.extend(TIME);
         if (!this.stage) {
             this.hash('stage', function(gb) {
                 if (gb.stage) {
-                    debugger
                     return GameStage.toHash(gb.stage, 'S.s.r');
                 }
             });
@@ -19523,6 +19792,24 @@ JSUS.extend(TIME);
             node.game.gotoStep(new GameStage(step));
         });
 
+        /**
+         * ## NODEGAME_GAMECOMMAND: clear_buffer
+         *
+         */
+        this.events.ng.on(CMD + gcommands.clear_buffer, function() {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
+            node.socket.clearBuffer();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: erase_buffer
+         *
+         */
+        this.events.ng.on(CMD + gcommands.erase_buffer, function() {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
+            node.socket.eraseBuffer();
+        });
+
         this.internalAdded = true;
         this.silly('internal listeners added');
         return true;
@@ -21256,8 +21543,9 @@ JSUS.extend(TIME);
         var scriptNodes, scriptNode;
 
         contentDocument = W.getIFrameDocument(iframe);
-
-        scriptNodes = contentDocument.getElementsByClassName('injectedlib');
+        
+        scriptNodes = W.getElementsByClassName(contentDocument, 'injectedlib', 'script');
+        // scriptNodes = contentDocument.getElementsByClassName('injectedlib');
         for (idx = 0; idx < scriptNodes.length; idx++) {
             scriptNode = scriptNodes[idx];
             scriptNode.parentNode.removeChild(scriptNode);
@@ -26976,7 +27264,7 @@ JSUS.extend(TIME);
 })(node);
 /**
  * # Requirements widget for nodeGame
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Checks a list of requirements and displays the results.
@@ -27000,7 +27288,7 @@ JSUS.extend(TIME);
     
     // ## Meta-data
 
-    Requirements.version = '0.1';
+    Requirements.version = '0.2.0';
     Requirements.description = 'Checks a set of requirements and display the ' +
         'results';
 
@@ -27058,10 +27346,17 @@ JSUS.extend(TIME);
                                     'success-icon.png' : 'delete-icon.png');
             img = document.createElement('img');
             img.src = imgPath;
+
+            // Might be the full exception object.
+            if ('object' === typeof o.content.text) {
+                o.content.text = extractErrorMsg(o.content.text);
+            }
+
             text = document.createTextNode(o.content.text);
             span = document.createElement('span');
             span.className = 'requirement';
             span.appendChild(img);
+            
             span.appendChild(text);
             return span;
         }
@@ -27104,9 +27399,26 @@ JSUS.extend(TIME);
         return that.callbacks[i](update);
     }
 
+    function extractErrorMsg(e) {
+        var errMsg;
+        if (e.msg) {
+            errMsg = e.msg;
+        }
+        else if (e.message) {
+            errMsg = e.message;
+        }
+        else if (e.description) {
+            errMsg.description;
+        }
+        else {
+            errMsg = e.toString();
+        }
+        return errMsg;
+    }
+
     Requirements.prototype.checkRequirements = function(display) {
         var i, len;
-        var errors, cbErrors;
+        var errors, cbErrors, cbName, errMsg;
         if (!this.callbacks.length) {
             throw new Error('Requirements.checkRequirements: no callback ' +
                             'found.');
@@ -27121,11 +27433,16 @@ JSUS.extend(TIME);
                 cbErrors = resultCb(this, i);
             }
             catch(e) {
+                errMsg = extractErrorMsg(e);
                 this.updateStillChecking(-1);
-                errors.push('An exception occurred in requirement ' + 
-                            (this.callbacks[i].name || 'n.' + (i + 1)) +
-                            ': ' + e );
-                
+                if (this.callbacks[i] && this.callbacks[i].name) { 
+                    cbName = this.callbacks[i].name;
+                }
+                else {
+                    cbName = i + 1;
+                }
+                errors.push('An exception occurred in requirement n.' +
+                            cbName + ': ' + errMsg);                            
             }
             if (cbErrors) {
                 this.updateStillChecking(-1);
@@ -27268,7 +27585,8 @@ JSUS.extend(TIME);
         this.root = root;
         
         this.summary = document.createElement('span');
-        this.summary.appendChild(document.createTextNode('Evaluating requirements'));
+        this.summary.appendChild(
+            document.createTextNode('Evaluating requirements'));
         
         this.summaryUpdate = document.createElement('span');
         this.summary.appendChild(this.summaryUpdate);
@@ -27325,6 +27643,11 @@ JSUS.extend(TIME);
             }
         }
         
+        // We need to test node.Stager because it will be used in other tests.
+        if ('undefined' === typeof node.Stager) {
+            errors.push('node.Stager not found.');
+        }
+
         return errors;
     };
 
@@ -27334,11 +27657,19 @@ JSUS.extend(TIME);
         errors = [];
         that = this;
         oldIframe = W.getFrame();
-        oldIframeName = W.getFrameName();
-        oldIframeRoot = W.getFrameRoot();
-        root = W.getIFrameAnyChild(oldIframe || document);
+
+        if (oldIframe) {
+            oldIframeName = W.getFrameName();
+            oldIframeRoot = W.getFrameRoot();
+            root = W.getIFrameAnyChild(oldIframe);
+        }
+        else {
+            root = document.body;
+        }
+
         try {
-            testIframe = W.addIFrame(root, 'testIFrame');
+            testIframe = W.addIFrame(root, 'testIFrame', {
+                style: { display: 'none' } } );
             W.setFrame(testIframe, 'testIframe', root);
             W.loadFrame('/pages/testpage.htm', function() {
                 var found;
@@ -27347,17 +27678,20 @@ JSUS.extend(TIME);
                     W.setFrame(oldIframe, oldIframeName, oldIframeRoot);
                 }
                 if (!found) {
-                    errors.push('W.loadFrame failed to load a test frame correctly.');
+                    errors.push('W.loadFrame failed to load a test frame ' +
+                                'correctly.');
                 }
                 root.removeChild(testIframe);
                 result(errors);
             });
         }
         catch(e) {
-            errors.push('W.loadFrame raised an error: ' + e);
+            errors.push('W.loadFrame raised an error: ' + extractErrorMsg(e));
             return errors;
         }        
     };
+
+    
 
     node.widgets.register('Requirements', Requirements);
 

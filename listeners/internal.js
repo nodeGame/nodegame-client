@@ -221,6 +221,24 @@
             node.game.gotoStep(new GameStage(step));
         });
 
+        /**
+         * ## NODEGAME_GAMECOMMAND: clear_buffer
+         *
+         */
+        this.events.ng.on(CMD + gcommands.clear_buffer, function() {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
+            node.socket.clearBuffer();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: erase_buffer
+         *
+         */
+        this.events.ng.on(CMD + gcommands.erase_buffer, function() {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
+            node.socket.eraseBuffer();
+        });
+
         this.internalAdded = true;
         this.silly('internal listeners added');
         return true;
