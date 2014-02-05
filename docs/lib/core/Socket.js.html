@@ -88,6 +88,9 @@
         <a href="#socket.clearbuffer">Socket.clearBuffer</a>
       </div>
       <div class="heading h3">
+        <a href="#socket.erasebuffer">Socket.eraseBuffer</a>
+      </div>
+      <div class="heading h3">
         <a href="#socket.startsession">Socket.startSession</a>
       </div>
       <div class="heading h3">
@@ -115,11 +118,11 @@
   </h1>
 </div>
 
-  </div>
-  <div class="body"><p>Copyright(c) 2013 Stefano Balietti
+
+<p>Copyright(c) 2014 Stefano Balietti
 MIT Licensed</p>
-
-
+  </div>
+  <div class="body">
 <div class="pilwrap" id="nodegame-component-responsible-for-dispatching-events-and-messages.">
   <h2>
     <a href="#nodegame-component-responsible-for-dispatching-events-and-messages." class="pilcrow">&#182;</a>
@@ -915,6 +918,35 @@ occurs, already emitted messages are out of the way.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="socket.erasebuffer">
+  <h3>
+    <a href="#socket.erasebuffer" class="pilcrow">&#182;</a>
+    Socket.eraseBuffer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Removes all messages currently in the buffer</p>
+
+<p>This operation is not reversible</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Socket.clearBuffer
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">eraseBuffer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="socket.startsession">
   <h3>
     <a href="#socket.startsession" class="pilcrow">&#182;</a>
@@ -959,7 +991,7 @@ stores the session ids in the session object</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Extracts server info from the first msg.</p>
         </td>
@@ -976,7 +1008,7 @@ stores the session ids in the session object</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Do not store player cookie if client failed authorization.
 Note: if a client is trying to open multiple connections
@@ -1032,7 +1064,7 @@ it will have both the player cookie and the auth_failed cookie.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>Setting global info</p>
         </td>
@@ -1042,7 +1074,7 @@ it will have both the player cookie and the auth_failed cookie.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>Keep serverid = msg.from for now</p>
         </td>
@@ -1125,7 +1157,7 @@ and sent out whenever the connection is available again.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>TODO: add conf variable node.emitOutMsg</p>
         </td>
@@ -1142,7 +1174,7 @@ and sent out whenever the connection is available again.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>helping methods</p>
         </td>

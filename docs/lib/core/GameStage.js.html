@@ -77,14 +77,16 @@
 </div>
 
   </div>
-  <div class="body"><p>Copyright(c) 2013 Stefano Balietti
+  <div class="body"><p>Copyright(c) 2014 Stefano Balietti
 MIT Licensed</p>
 
 <p>Representation of the stage of a game:</p>
 
-<p><code>stage</code>: the higher-level building blocks of a game
- <code>step</code>: the sub-unit of a stage
- <code>round</code>: the number of repetition for a stage. Defaults round = 1</p>
+<ul>
+<li><code>stage</code>: the higher-level building blocks of a game</li>
+<li><code>step</code>: the sub-unit of a stage</li>
+<li><code>round</code>: the number of repetition for a stage. Defaults round = 1</li>
+</ul>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -512,8 +514,8 @@ according to the input string.</p>
         <span class="nx">properties</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="s1">&#39;round&#39;</span><span class="p">];</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">idx</span> <span class="o">=</span> <span class="nx">symbols</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">str</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-            <span class="nx">hash</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">str</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">:</span> <span class="nx">gs</span><span class="p">[</span><span class="nx">properties</span><span class="p">[</span><span class="nx">idx</span><span class="p">]];</span>
+            <span class="nx">idx</span> <span class="o">=</span> <span class="nx">symbols</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">str</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">i</span><span class="p">));</span>
+            <span class="nx">hash</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">str</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">:</span> <span class="nx">gs</span><span class="p">[</span><span class="nx">properties</span><span class="p">[</span><span class="nx">idx</span><span class="p">]];</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">hash</span><span class="p">;</span>
     <span class="p">};</span></pre></div>

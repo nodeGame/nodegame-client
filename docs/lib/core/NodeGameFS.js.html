@@ -56,7 +56,7 @@
 </div>
 
   </div>
-  <div class="body"><p>Copyright(c) 2013 Stefano Balietti
+  <div class="body"><p>Copyright(c) 2014 Stefano Balietti
 MIT Licensed</p>
 
 
@@ -251,6 +251,11 @@ be specified in the <code>options</code> parameter.</p>
       <span class="dox_type">options</span>
       <span>Optional. Configuration options</span>
     </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gamedb</span>
+      <span class="dox_type">gamedb</span>
+      <span>Optional. Dumps gamedb instead of node.game.memory</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">NodeGameFS.writeCsv
@@ -259,7 +264,9 @@ be specified in the <code>options</code> parameter.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveMemory</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveMemory</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">gamedb</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">memory</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.saveMemory: format must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
@@ -278,9 +285,15 @@ be specified in the <code>options</code> parameter.</p>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>        
+        <span class="k">if</span> <span class="p">(</span><span class="nx">gamedb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gamedb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: gamedb must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;instance of GameDB or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
+        <span class="nx">memory</span> <span class="o">=</span> <span class="nx">gamedb</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="nx">format</span> <span class="o">===</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetch</span><span class="p">(),</span> <span class="nx">options</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">memory</span><span class="p">.</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetch</span><span class="p">(),</span> <span class="nx">options</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span></pre></div>
         </td>
@@ -292,7 +305,7 @@ be specified in the <code>options</code> parameter.</p>
 </div>
 <p>Params: path, callback, compress.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">memory</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -333,6 +346,11 @@ stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
       <span class="dox_type">options</span>
       <span>Optional. Configuration options</span>
     </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gamedb</span>
+      <span class="dox_type">gamedb</span>
+      <span>Optional. Dumps gamedb instead of node.game.memory</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">NodeGameFS.memory2csv</span>
@@ -345,10 +363,11 @@ stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveMemoryIndexes</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">dir</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveMemoryIndexes</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">dir</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> 
+                                                      <span class="nx">gamedb</span><span class="p">)</span> <span class="p">{</span>
+
         <span class="kd">var</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">ipath</span><span class="p">,</span> <span class="nx">indexData</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">memory</span><span class="p">;</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
-        <span class="nx">memory</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: format must be &#39;</span> <span class="o">+</span>
@@ -364,19 +383,26 @@ stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: dir must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: options must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: no index found.&#39;</span><span class="p">);</span>
-            <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
         
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="nx">dir</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: dir is not  &#39;</span> <span class="o">+</span>
                             <span class="s1">&#39;existing or not readable: &#39;</span> <span class="o">+</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">gamedb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gamedb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: gamedb must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;instance of GameDB or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">memory</span> <span class="o">=</span> <span class="nx">gamedb</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: no index found.&#39;</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">dir</span><span class="p">[</span><span class="nx">dir</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="nx">dir</span> <span class="o">=</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
@@ -390,7 +416,6 @@ stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
                             <span class="nx">indexData</span> <span class="o">=</span> <span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">][</span><span class="nx">index</span><span class="p">];</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">format</span> <span class="o">===</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span> <span class="p">{</span>
                                 <span class="nx">ipath</span> <span class="o">+=</span> <span class="s1">&#39;.csv&#39;</span><span class="p">;</span>
-                                <span class="kr">debugger</span>
                                 <span class="nx">node</span><span class="p">.</span><span class="nx">fs</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">ipath</span><span class="p">,</span>
                                                  <span class="nx">indexData</span><span class="p">.</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetch</span><span class="p">(),</span>
                                                  <span class="nx">options</span><span class="p">);</span>

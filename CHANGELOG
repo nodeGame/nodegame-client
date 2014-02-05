@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## 0.9.0
+  - Change log new version starts here
+
 ## Above 0.6.2
 
   - Full msg listeners are attached immediately after receiving a HI msg, that could lead to losing the first messages.

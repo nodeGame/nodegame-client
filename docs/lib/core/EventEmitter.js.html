@@ -91,7 +91,7 @@
   </div>
   <div class="body"><p>Event emitter engine for <code>nodeGame</code></p>
 
-<p>Copyright(c) 2013 Stefano Balietti
+<p>Copyright(c) 2014 Stefano Balietti
 MIT Licensed</p>
 
 
@@ -412,7 +412,7 @@ Such overhead is anyway very small, and can be neglected (for now).</p>
 </div>
 <p>Useful for debugging.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">dumpEvents</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">dumpEvents</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;F - &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">);</span>
         <span class="p">}</span>
 

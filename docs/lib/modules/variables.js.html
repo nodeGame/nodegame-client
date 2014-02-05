@@ -115,7 +115,10 @@
         <a href="#node.constants.stagelevels">node.constants.stageLevels</a>
       </div>
       <div class="heading h3">
-        <a href="#node.constants.stagelevels">node.constants.stageLevels</a>
+        <a href="#node.constants.windowlevels">node.constants.windowLevels</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.constants.screenstate">node.constants.screenState</a>
       </div>
       <div class="heading h3">
         <a href="#node.constants.undefined_player">node.constants.UNDEFINED_PLAYER</a>
@@ -143,7 +146,7 @@
 </div>
 
 
-<p>Copyright(c) 2013 Stefano Balietti
+<p>Copyright(c) 2014 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body">
@@ -634,7 +637,9 @@ information carried in the message.</p>
         <span class="nx">stop</span><span class="o">:</span> <span class="s1">&#39;stop&#39;</span><span class="p">,</span>
         <span class="nx">restart</span><span class="o">:</span> <span class="s1">&#39;restart&#39;</span><span class="p">,</span>
         <span class="nx">step</span><span class="o">:</span> <span class="s1">&#39;step&#39;</span><span class="p">,</span>
-        <span class="nx">goto_step</span><span class="o">:</span> <span class="s1">&#39;goto_step&#39;</span>
+        <span class="nx">goto_step</span><span class="o">:</span> <span class="s1">&#39;goto_step&#39;</span><span class="p">,</span>
+        <span class="nx">clear_buffer</span><span class="o">:</span> <span class="s1">&#39;clear_buffer&#39;</span><span class="p">,</span>
+        <span class="nx">erase_buffer</span><span class="o">:</span> <span class="s1">&#39;erase_buffer&#39;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -725,15 +730,26 @@ information carried in the message.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.constants.stagelevels">
+<div class="pilwrap" id="node.constants.windowlevels">
   <h3>
-    <a href="#node.constants.stagelevels" class="pilcrow">&#182;</a>
-    node.constants.stageLevels
+    <a href="#node.constants.windowlevels" class="pilcrow">&#182;</a>
+    node.constants.windowLevels
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Levels associated with the states of the stages of the Game</p>
+  <div class="body"><p>Levels associated with the loading of the GameWindow object.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.state
+  </span>
+    </div>
   </div>
 </div>
         </td>
@@ -742,10 +758,41 @@ information carried in the message.</p>
         <span class="nx">INITIALIZING</span><span class="o">:</span>   <span class="mi">1</span><span class="p">,</span> <span class="c1">// Executing init.</span>
         <span class="nx">INITIALIZED</span><span class="o">:</span>    <span class="mi">5</span><span class="p">,</span> <span class="c1">// Init executed.</span>
         <span class="nx">LOADING</span><span class="o">:</span>       <span class="mi">30</span><span class="p">,</span> <span class="c1">// Loading a new Frame.</span>
-        <span class="nx">LOADED</span><span class="o">:</span>        <span class="mi">40</span><span class="p">,</span> <span class="c1">// Frame Loaded.</span>
-        <span class="nx">LOCKING</span><span class="o">:</span>       <span class="mi">50</span><span class="p">,</span> <span class="c1">// The screen is about to be locked. </span>
-        <span class="nx">LOCKED</span><span class="o">:</span>        <span class="mi">60</span><span class="p">,</span> <span class="c1">// The screen is locked.</span>
-        <span class="nx">UNLOCKING</span><span class="o">:</span>     <span class="mi">65</span>  <span class="c1">// The screen is about to be unlocked.</span>
+        <span class="nx">LOADED</span><span class="o">:</span>        <span class="mi">40</span>  <span class="c1">// Frame Loaded.</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.constants.screenstate">
+  <h3>
+    <a href="#node.constants.screenstate" class="pilcrow">&#182;</a>
+    node.constants.screenState
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Levels describing whether the user can interact with the screen.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.screenState</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.lockFrame
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">screenLevels</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">ACTIVE</span><span class="o">:</span>        <span class="mi">1</span><span class="p">,</span>  <span class="c1">// User can interact with screen (if LOADED)</span>
+        <span class="nx">UNLOCKING</span><span class="o">:</span>     <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="c1">// The screen is about to be unlocked.</span>
+        <span class="nx">LOCKING</span><span class="o">:</span>       <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="c1">// The screen is about to be locked. </span>
+        <span class="nx">LOCKED</span><span class="o">:</span>        <span class="o">-</span><span class="mi">3</span>  <span class="c1">// The screen is locked.</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>

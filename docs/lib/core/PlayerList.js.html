@@ -160,11 +160,11 @@
   </h1>
 </div>
 
-  </div>
-  <div class="body"><p>Copyright(c) 2013 Stefano Balietti
+
+<p>Copyright(c) 2014 Stefano Balietti
 MIT Licensed</p>
-
-
+  </div>
+  <div class="body">
 <div class="pilwrap" id="handles-a-collection-of-player-objects.">
   <h2>
     <a href="#handles-a-collection-of-player-objects." class="pilcrow">&#182;</a>
@@ -363,7 +363,8 @@ array of PlayerList instances and returns it.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">PlayerList</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-        </pre></div>
+        
+        <span class="nx">options</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;plist&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -385,6 +386,17 @@ array of PlayerList instances and returns it.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
 </div>
+<p>The internal counter that will be used to assing the <code>count</code>
+property to each inserted player.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">pcounter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
 <p>Invoking NDDB constructor.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">NDDB</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
@@ -394,7 +406,7 @@ array of PlayerList instances and returns it.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
 <p>We check if the index are not existing already because
 it could be that the constructor is called by the breed function
@@ -411,7 +423,7 @@ and in such case we would duplicate them.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>Importing initial items
 (should not be done in constructor of NDDB) </p>
@@ -422,22 +434,11 @@ and in such case we would duplicate them.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>Assigns a global comparator function.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">globalCompare</span> <span class="o">=</span> <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">comparePlayers</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
-</div>
-<p>The internal counter that will be used to assing the <code>count</code>
-property to each inserted player</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">pcounter</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">globalCompare</span> <span class="o">=</span> <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">comparePlayers</span><span class="p">;</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -526,16 +527,16 @@ the internal <code>pcounter</code> variable is incremented.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">player</span> <span class="k">instanceof</span> <span class="nx">Player</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span> <span class="o">||</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span> <span class="o">||</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
-                        <span class="s1">&#39;PlayerList.add: player.id was not given&#39;</span><span class="p">);</span>
+                        <span class="s1">&#39;PlayerList.add: player.id must be string.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="nx">player</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Player</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
-                <span class="s1">&#39;PlayerList.add: Player already exists (id &#39;</span> <span class="o">+</span> <span class="nx">player</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
+                <span class="s1">&#39;PlayerList.add: player already exists (id &#39;</span> <span class="o">+</span> <span class="nx">player</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
         <span class="nx">player</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">pcounter</span><span class="p">;</span>
@@ -623,14 +624,12 @@ the internal <code>pcounter</code> variable is incremented.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">player</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
-                <span class="s1">&#39;PlayerList.remove: id was not given&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;PlayerList.remove: id must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="nx">player</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+        <span class="nx">player</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span>
-                <span class="s1">&#39;PlayerList.remove: Player not found (id &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;PlayerList.remove: player not found: &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">player</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -777,6 +776,11 @@ TODO remove after transition is complete</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span>
                 <span class="s1">&#39;PlayerList.updatePlayer: update must be object.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;PlayerList.updatePlayer: update cannot change &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;the player id.&#39;</span><span class="p">);</span>
         <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -790,7 +794,9 @@ J.mixin(player, update);
 return player;
 This creates some problems with the _autoUpdate...to be investigated.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span>
+
+        
     <span class="p">};</span></pre></div>
         </td>
       </tr>

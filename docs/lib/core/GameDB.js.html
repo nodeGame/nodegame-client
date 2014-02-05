@@ -82,11 +82,11 @@
   </h1>
 </div>
 
-  </div>
-  <div class="body"><p>Copyright(c) 2013 Stefano Balietti
+
+<p>Copyright(c) 2014 Stefano Balietti
 MIT Licensed </p>
-
-
+  </div>
+  <div class="body">
 <div class="pilwrap" id="provides-a-simple--lightweight-no-sql-database-for-nodegame">
   <h3>
     <a href="#provides-a-simple--lightweight-no-sql-database-for-nodegame" class="pilcrow">&#182;</a>
@@ -198,6 +198,8 @@ MIT Licensed </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">GameDB</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;gamedb&#39;</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
