@@ -1,6 +1,6 @@
 /**
  * # TriggerManager
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Manages a collection of trigger functions to be called sequentially
@@ -170,7 +170,9 @@
      */
     TriggerManager.prototype.resetTriggers = function() {
         this.triggers = [];
-        this.initTriggers(this.options.triggers);
+        if ('undefined' !== typeof this.options.triggers) {
+            this.initTriggers(this.options.triggers);
+        }
     };
 
     /**
