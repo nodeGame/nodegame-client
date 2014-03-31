@@ -2,6 +2,11 @@
  * # Listeners for incoming messages.
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
+ *
+ * TODO: PRECONNECT events are not handled, just emitted.
+ * Maybe some default support should be given, or some
+ * default handlers provided.
+ *
  * ---
  */
 (function(exports, parent) {
@@ -54,6 +59,9 @@
         node.events.ng.on( IN + say + 'PCONNECT', function(msg) {
             if (!msg.data) return;
             node.game.pl.add(new Player(msg.data));
+            if (node.game.shouldStep()) {
+                node.game.step();
+            }
             node.emit('UPDATED_PLIST');
         });
 
@@ -67,7 +75,11 @@
          */
         node.events.ng.on( IN + say + 'PDISCONNECT', function(msg) {
             if (!msg.data) return;
-            node.game.pl.remove(msg.data.id);           
+            node.game.pl.remove(msg.data.id);
+            debugger
+            if (node.game.shouldStep()) {
+                node.game.step();
+            }
             node.emit('UPDATED_PLIST');
         });
 
@@ -316,6 +328,34 @@
          */
         node.events.ng.on( IN + get + 'SESSION', function(msg) {
             return node.session.get(msg.text);
+        });
+
+        /**
+         * ## in.get.PLOT
+         *
+         * Gets the current plot sequence or the full plot state.
+         *
+         * @see GamePlot
+         * @see Stager
+         */
+        node.events.ng.on( IN + get + 'PLOT', function(msg) {
+            if (!node.game.plot.stager) return null;
+            if (msg.text === 'state') {
+                return node.game.plot.stager.getState();
+            }
+            return node.game.plot.stager.getSequence();            
+        });
+
+        /**
+         * ## in.get.PLIST
+         *
+         * Gets the current _PlayerList_ object
+         *
+         * @see PlayerList
+         * @see node.game.pl
+         */
+        node.events.ng.on( IN + get + 'PLIST', function() {
+            return node.game.pl.db;             
         });
 
         node.incomingAdded = true;
