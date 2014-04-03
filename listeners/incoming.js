@@ -76,7 +76,6 @@
         node.events.ng.on( IN + say + 'PDISCONNECT', function(msg) {
             if (!msg.data) return;
             node.game.pl.remove(msg.data.id);
-            debugger
             if (node.game.shouldStep()) {
                 node.game.step();
             }
