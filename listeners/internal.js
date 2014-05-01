@@ -159,15 +159,14 @@
          *
          */
         this.events.ng.on(CMD + gcommands.start, function(options) {
-            node.emit('BEFORE_GAMECOMMAND', gcommands.start, options);
-
             if (node.game.getCurrentStep() &&
                 node.game.getCurrentStep().stage !== 0) {
                 node.err('Game already started. ' +
-                         'Use restart if you want to start the game again');
+                         'Use restart if you want to start the game again.');
                 return;
             }
             
+            node.emit('BEFORE_GAMECOMMAND', gcommands.start, options);
             node.game.start(options);
         });
 
