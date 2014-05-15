@@ -2276,10 +2276,9 @@ if (!JSON) {
      *
      * @param {Node} parent The parent node
      * @param {array} order Optional. A pre-specified order. Defaults, random
-     * @return {array} The order used to shuffle the nodes.
      */
     DOM.shuffleNodes = function(parent, order) {
-        var i, len, idOrder;
+        var i, len;
         if (!JSUS.isNode(parent)) {
             throw new TypeError('DOM.shuffleNodes: parent must node.');
         }
@@ -2292,24 +2291,19 @@ if (!JSON) {
                 throw new TypeError('DOM.shuffleNodes: order must array.');
             }
             if (order.length !== parent.children.length) {
-                throw new Error('DOM.shuffleNodes: order length must match ' + 
+                throw new Error('DOM.shuffleNodes: order length must match ' +
                                 'the number of children nodes.');
             }
         }
-        
-        len = parent.children.length, idOrder = [];
+
+        len = parent.children.length;
+
         if (!order) order = JSUS.sample(0,len);
         for (i = 0 ; i < len; i++) {
-            idOrder.push(parent.children[order[i]].id);
+            parent.appendChild(parent.children[order[i]]);
         }
-        // Two fors are necessary to follow the real sequence.
-        // However parent.children is a special object, so the sequence
-        // could be unreliable.
-        for (i = 0 ; i < len; i++) {
-            parent.appendChild(parent.children[idOrder[i]]);
-        }
-        
-        return idOrder;
+
+        return true;
     };
 
     /**
@@ -4486,7 +4480,7 @@ JSUS.extend(TIME);
      */
     PARSE.getQueryString = function(name) {
         var regex;
-        if ('undefined' === typeof name) return window.location.search;
+        if ('undefined' === name) return window.location.search;
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
         regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
         results = regex.exec(location.search);
@@ -4682,6 +4676,12 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
+ *
+ * TODO: When using index.update() and the update is suppose to remove the element
+ * from view and hashes, for example becausea property is deleted. index.update()
+ * fails doing so. Should be fixed. At the moment the only solution seems to
+ * reintroduce a global index for all items and to use that to quickly lookup items
+ * in views and hashes.
  *
  * See README.md for help.
  * ---
@@ -5981,7 +5981,7 @@ JSUS.extend(TIME);
     NDDB.prototype._indexIt = function(o, dbidx, oldIdx) {
         var func, id, index, key;
         if (!o || J.isEmpty(this.__I)) return;
-        oldIdx = undefined;
+
         for (key in this.__I) {
             if (this.__I.hasOwnProperty(key)) {
                 func = this.__I[key];
@@ -9555,7 +9555,7 @@ JSUS.extend(TIME);
         if ('undefined' === typeof gs2) return 1;
         if ('undefined' === typeof gs1) return -1;
 
-        // Convert the parameters to objects, if an hash string was passed
+        // Convert the parameters to objects, if an hash string was passed.
         if ('string' === typeof gs1) gs1 = new GameStage(gs1);
         if ('string' === typeof gs2) gs2 = new GameStage(gs2);
 
@@ -12728,7 +12728,8 @@ JSUS.extend(TIME);
                  msg.target === constants.target.REDIRECT ||
                  msg.target === constants.target.PCONNECT ||
                  msg.target === constants.target.PDISCONNECT ||
-                 msg.target === constants.target.PRECONNECT) {
+                 msg.target === constants.target.PRECONNECT ||
+                 msg.target === constants.target.SETUP) {
 
             priority = 1;
         }
@@ -14005,9 +14006,8 @@ JSUS.extend(TIME);
             throw new Error('Game.start: plot is not ready.');
         }
 
-        if (this.getStateLevel() >= constants.stateLevels.INITIALIZING) {
-            node.err('Game.start: game is already running. Call stop first.');
-            return false;
+        if (!this.isStartable()) {
+            throw new Error('Game.start: game cannot be started.');
         }
 
         // INIT the game.
@@ -14067,8 +14067,8 @@ JSUS.extend(TIME);
         var node;
 
         node = this.node;
-        if (this.getStateLevel() <= constants.stateLevels.INITIALIZING) {
-            throw new Error('Game.stop: game is not runnning.');
+        if (!this.isStoppable()) {
+            throw new Error('Game.stop: game cannot be stopped.');
         }
         // Destroy currently running timers.
         node.timer.destroyAllTimers(true);
@@ -14078,20 +14078,32 @@ JSUS.extend(TIME);
         node.events.ee.stage.clear();
         node.events.ee.step.clear();
 
-        // Remove loaded frame, if one is found.
-        if (node.window && node.window.getFrame()) {
-            node.window.destroyFrame();
-        }
-
-        // Remove header, if one is found.
-        if (node.window && node.window.getHeader()) {
-            node.window.destroyHeader();
-        }
-
+        // Clear memory.
         this.memory.clear(true);
+
+        // If a _GameWindow_ object is found, clears it.
         if (node.window) {
+            // Remove loaded frame, if one is found.
+            if (node.window.getFrame()) {
+                node.window.destroyFrame();
+            }
+
+            // Remove header, if one is found.
+            if (node.window.getHeader()) {
+                node.window.destroyHeader();
+            }
+            
+            // Unlock screen, if currently locked.
+            if (node.window.isScreenLocked()) {
+                node.window.unlockScreen();
+            }
+
+            node.window.areLoading = 0;
+
+            // Clear all caches.
             node.window.clearCache();
         }
+
         // Update state/stage levels and game stage.
         this.setStateLevel(constants.stateLevels.STARTING, true);
         this.setStageLevel(constants.stageLevels.UNINITIALIZED, true);
@@ -14151,8 +14163,8 @@ JSUS.extend(TIME);
     Game.prototype.pause = function() {
         var msgHandler, node;
 
-        if (this.paused) {
-            throw new Error('Game.pause: called while already paused');
+        if (!this.isPausable()) {
+            throw new Error('Game.pause: game cannot be paused.');
         }
 
         node = this.node;
@@ -14190,8 +14202,8 @@ JSUS.extend(TIME);
     Game.prototype.resume = function() {
         var msgHandler, node;
 
-        if (!this.paused) {
-            throw new Error('Game.resume: called while not paused');
+        if (!this.isResumable()) {
+            throw new Error('Game.resume: game cannot be resumed.');
         }
         
         node = this.node;
@@ -14299,9 +14311,9 @@ JSUS.extend(TIME);
         var minThreshold, maxThreshold, exactThreshold;
         var minCallback = null, maxCallback = null, exactCallback = null;
 
-        if (this.getStateLevel() < constants.stateLevels.INITIALIZED) {
+        if (!this.isSteppable()) {
             throw new this.node.NodeGameMisconfiguredGameError(
-                'Game.gotoStep: game was not started yet.');
+                'Game.gotoStep: game cannot be stepped.');
         }
 
         if ('string' !== typeof nextStep && 'object' !== typeof nextStep) {
@@ -14889,6 +14901,68 @@ JSUS.extend(TIME);
         // Check if there is a gameWindow obj and whether it is loading
         return node.window ? node.window.isReady() : true;
     };
+
+    /**
+     * ### Game.isStartable
+     *
+     * Returns TRUE if Game.start can be called
+     *
+     * @return {boolean} TRUE if the game can be started.
+     */
+    Game.prototype.isStartable = function() {
+        return this.getStateLevel() < constants.stateLevels.INITIALIZING;
+    };
+
+
+    /**
+     * ### Game.isStoppable
+     *
+     * Returns TRUE if Game.stop can be called
+     *
+     * @return {boolean} TRUE if the game can be stopped.
+     */
+    Game.prototype.isStoppable = function() {
+        return this.getStateLevel() > constants.stateLevels.INITIALIZING;
+    };
+
+
+    /**
+     * ### Game.isPausable
+     *
+     * Returns TRUE if Game.pause can be called
+     *
+     * @return {boolean} TRUE if the game can be paused.
+     */
+    Game.prototype.isPausable = function() {
+        return !this.paused &&
+            this.getStateLevel() > constants.stateLevels.INITIALIZING;
+    };
+
+
+    /**
+     * ### Game.isResumable
+     *
+     * Returns TRUE if Game.resume can be called
+     *
+     * @return {boolean} TRUE if the game can be resumed.
+     */
+    Game.prototype.isResumable = function() {
+        return this.paused &&
+            this.getStateLevel() > constants.stateLevels.INITIALIZING;
+    };
+
+
+    /**
+     * ### Game.isSteppable
+     *
+     * Returns TRUE if Game.step and Game.gotoStep can be called
+     *
+     * @return {boolean} TRUE if the game can be stepped.
+     */
+    Game.prototype.isSteppable = function() {
+        return this.getStateLevel() > constants.stateLevels.INITIALIZING;
+    };
+
 
     /**
      * ### Game.shouldEmitPlaying
@@ -19857,15 +19931,12 @@ JSUS.extend(TIME);
          *
          */
         this.events.ng.on(CMD + gcommands.start, function(options) {
-            node.emit('BEFORE_GAMECOMMAND', gcommands.start, options);
-
-            if (node.game.getCurrentStep() &&
-                node.game.getCurrentStep().stage !== 0) {
-                node.err('Game already started. ' +
-                         'Use restart if you want to start the game again');
+            if (!node.game.isStartable()) {
+                node.err('Game cannot be started.');
                 return;
             }
             
+            node.emit('BEFORE_GAMECOMMAND', gcommands.start, options);
             node.game.start(options);
         });
 
@@ -19874,8 +19945,12 @@ JSUS.extend(TIME);
          *
          */
         this.events.ng.on(CMD + gcommands.pause, function(options) {
+            if (!node.game.isPausable()) {
+                node.err('Game cannot be paused.');
+                return;
+            }
+
             node.emit('BEFORE_GAMECOMMAND', gcommands.pause, options);
-            // TODO: check conditions
             node.game.pause();
         });
 
@@ -19884,8 +19959,12 @@ JSUS.extend(TIME);
          *
          */
         this.events.ng.on(CMD + gcommands.resume, function(options) {
+            if (!node.game.isResumable()) {
+                node.err('Game cannot be resumed.');
+                return;
+            }
+
             node.emit('BEFORE_GAMECOMMAND', gcommands.resume, options);
-            // TODO: check conditions.
             node.game.resume();
         });
 
@@ -19894,8 +19973,12 @@ JSUS.extend(TIME);
          *
          */
         this.events.ng.on(CMD + gcommands.step, function(options) {
+            if (!node.game.isSteppable()) {
+                node.err('Game cannot be stepped.');
+                return;
+            }
+
             node.emit('BEFORE_GAMECOMMAND', gcommands.step, options);
-            // TODO: check conditions.
             node.game.step();
         });
 
@@ -19904,8 +19987,12 @@ JSUS.extend(TIME);
          *
          */
         this.events.ng.on(CMD + gcommands.stop, function(options) {
+            if (!node.game.isStoppable()) {
+                node.err('Game cannot be stopped.');
+                return;
+            }
+
             node.emit('BEFORE_GAMECOMMAND', gcommands.stop, options);
-            // Conditions checked inside stop.
             node.game.stop();
         });
 
@@ -19914,8 +20001,12 @@ JSUS.extend(TIME);
          *
          */
         this.events.ng.on(CMD + gcommands.goto_step, function(step) {
+            if (!node.game.isSteppable()) {
+                node.err('Game cannot be stepped.');
+                return;
+            }
+
             node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step);
-            // Conditions checked inside gotoStep.
             node.game.gotoStep(new GameStage(step));
         });
 
@@ -19945,6 +20036,7 @@ JSUS.extend(TIME);
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # TriggerManager
  * Copyright(c) 2014 Stefano Balietti

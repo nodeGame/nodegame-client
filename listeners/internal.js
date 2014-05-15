@@ -159,10 +159,8 @@
          *
          */
         this.events.ng.on(CMD + gcommands.start, function(options) {
-            if (node.game.getCurrentStep() &&
-                node.game.getCurrentStep().stage !== 0) {
-                node.err('Game already started. ' +
-                         'Use restart if you want to start the game again.');
+            if (!node.game.isStartable()) {
+                node.err('Game cannot be started.');
                 return;
             }
             
@@ -175,8 +173,12 @@
          *
          */
         this.events.ng.on(CMD + gcommands.pause, function(options) {
+            if (!node.game.isPausable()) {
+                node.err('Game cannot be paused.');
+                return;
+            }
+
             node.emit('BEFORE_GAMECOMMAND', gcommands.pause, options);
-            // TODO: check conditions
             node.game.pause();
         });
 
@@ -185,8 +187,12 @@
          *
          */
         this.events.ng.on(CMD + gcommands.resume, function(options) {
+            if (!node.game.isResumable()) {
+                node.err('Game cannot be resumed.');
+                return;
+            }
+
             node.emit('BEFORE_GAMECOMMAND', gcommands.resume, options);
-            // TODO: check conditions.
             node.game.resume();
         });
 
@@ -195,8 +201,12 @@
          *
          */
         this.events.ng.on(CMD + gcommands.step, function(options) {
+            if (!node.game.isSteppable()) {
+                node.err('Game cannot be stepped.');
+                return;
+            }
+
             node.emit('BEFORE_GAMECOMMAND', gcommands.step, options);
-            // TODO: check conditions.
             node.game.step();
         });
 
@@ -205,8 +215,12 @@
          *
          */
         this.events.ng.on(CMD + gcommands.stop, function(options) {
+            if (!node.game.isStoppable()) {
+                node.err('Game cannot be stopped.');
+                return;
+            }
+
             node.emit('BEFORE_GAMECOMMAND', gcommands.stop, options);
-            // Conditions checked inside stop.
             node.game.stop();
         });
 
@@ -215,8 +229,12 @@
          *
          */
         this.events.ng.on(CMD + gcommands.goto_step, function(step) {
+            if (!node.game.isSteppable()) {
+                node.err('Game cannot be stepped.');
+                return;
+            }
+
             node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step);
-            // Conditions checked inside gotoStep.
             node.game.gotoStep(new GameStage(step));
         });
 
