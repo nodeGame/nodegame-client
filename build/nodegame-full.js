@@ -14083,25 +14083,7 @@ JSUS.extend(TIME);
 
         // If a _GameWindow_ object is found, clears it.
         if (node.window) {
-            // Remove loaded frame, if one is found.
-            if (node.window.getFrame()) {
-                node.window.destroyFrame();
-            }
-
-            // Remove header, if one is found.
-            if (node.window.getHeader()) {
-                node.window.destroyHeader();
-            }
-            
-            // Unlock screen, if currently locked.
-            if (node.window.isScreenLocked()) {
-                node.window.unlockScreen();
-            }
-
-            node.window.areLoading = 0;
-
-            // Clear all caches.
-            node.window.clearCache();
+            node.window.reset();
         }
 
         // Update state/stage levels and game stage.
@@ -20747,6 +20729,35 @@ JSUS.extend(TIME);
     };
 
     /**
+     * ### GameWindow.reset
+     *
+     * Resets the GameWindow to the initial state
+     *
+     * Clears the frame, header, lock and cache.
+     */
+    GameWindow.prototype.reset = function() {
+        // Remove loaded frame, if one is found.
+        if (this.getFrame()) {
+            this.destroyFrame();
+        }
+
+        // Remove header, if one is found.
+        if (this.getHeader()) {
+            this.destroyHeader();
+        }
+        
+        // Unlock screen, if currently locked.
+        if (this.isScreenLocked()) {
+            this.unlockScreen();
+        }
+
+        this.areLoading = 0;
+
+        // Clear all caches.
+        this.clearCache();
+    };
+
+    /**
      * ### GameWindow.setStateLevel
      *
      * Validates and sets window's state level
@@ -21200,7 +21211,7 @@ JSUS.extend(TIME);
         var header;
         header = this.getHeader();
         if (!header) {
-            throw new Error('GameWindow.clearHeadr: cannot detect header.');
+            throw new Error('GameWindow.clearHeader: cannot detect header.');
         }
         this.headerElement.innerHTML = '';
     };
@@ -22263,7 +22274,7 @@ JSUS.extend(TIME);
     /**
      * ### GameWindow.addStandardRecipients
      *
-     * Adds an ALL and a SERVER option to a specified select element.
+     * Adds valid _to_ recipient options to a specified select element.
      *
      * @param {object} toSelector An HTML `<select>` element
      *
@@ -22277,6 +22288,16 @@ JSUS.extend(TIME);
         opt = document.createElement('option');
         opt.value = 'ALL';
         opt.appendChild(document.createTextNode('ALL'));
+        toSelector.appendChild(opt);
+
+        opt = document.createElement('option');
+        opt.value = 'CHANNEL';
+        opt.appendChild(document.createTextNode('CHANNEL'));
+        toSelector.appendChild(opt);
+
+        opt = document.createElement('option');
+        opt.value = 'ROOM';
+        opt.appendChild(document.createTextNode('ROOM'));
         toSelector.appendChild(opt);
 
         opt = document.createElement('option');
