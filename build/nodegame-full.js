@@ -1252,6 +1252,7 @@ if (!JSON) {
         require('./lib/dom');
         require('./lib/random');
         require('./lib/parse');
+        require('./lib/queue');
         require('./lib/fs');
     }
     // end node
@@ -1559,10 +1560,10 @@ if (!JSON) {
      *  @see JSUS.equals
      */
     ARRAY.inArray = ARRAY.in_array = function(needle, haystack) {
-        if (!haystack) return false;
-        
-        var func = JSUS.equals;    
-        for (var i = 0; i < haystack.length; i++) {
+        var func, i, len;
+        if (!haystack) return false;        
+        func = JSUS.equals, len = haystack.length;
+        for (i = 0; i < len; i++) {
             if (func.call(this, needle, haystack[i])) {
                 return true;
             }
@@ -2270,15 +2271,18 @@ if (!JSON) {
     };
 
     /**
-     * ## DOM.shuffleNodes
+     * ### DOM.shuffleNodes
      *
      * Shuffles the children nodes
      *
+     * All children must have the id attribute.
+     *
      * @param {Node} parent The parent node
      * @param {array} order Optional. A pre-specified order. Defaults, random
+     * @return {array} The order used to shuffle the nodes.
      */
     DOM.shuffleNodes = function(parent, order) {
-        var i, len;
+        var i, len, idOrder;
         if (!JSUS.isNode(parent)) {
             throw new TypeError('DOM.shuffleNodes: parent must node.');
         }
@@ -2291,19 +2295,24 @@ if (!JSON) {
                 throw new TypeError('DOM.shuffleNodes: order must array.');
             }
             if (order.length !== parent.children.length) {
-                throw new Error('DOM.shuffleNodes: order length must match ' +
+                throw new Error('DOM.shuffleNodes: order length must match ' + 
                                 'the number of children nodes.');
             }
         }
-
-        len = parent.children.length;
-
+        
+        len = parent.children.length, idOrder = [];
         if (!order) order = JSUS.sample(0,len);
         for (i = 0 ; i < len; i++) {
-            parent.appendChild(parent.children[order[i]]);
+            idOrder.push(parent.children[order[i]].id);
         }
-
-        return true;
+        // Two fors are necessary to follow the real sequence.
+        // However parent.children is a special object, so the sequence
+        // could be unreliable.
+        for (i = 0 ; i < len; i++) {
+            parent.appendChild(parent.children[idOrder[i]]);
+        }
+        
+        return idOrder;
     };
 
     /**
@@ -2354,8 +2363,8 @@ if (!JSON) {
      * Adds attributes to an HTML element and returns it.
      *
      * Attributes are defined as key-values pairs.
-     * Attributes 'label' is ignored, attribute 'class' and 'style' are
-     * special and are delegated to special methods.
+     * Attributes 'label' is ignored, attribute 'className' ('class') and
+     * 'style' are special and are delegated to special methods.
      *
      * @param {HTMLElement} e The element to decorate
      * @param {object} a Object containing attributes to add to the element
@@ -2375,7 +2384,7 @@ if (!JSON) {
                 if (key === 'id') {
                     e.id = a[key];
                 }
-                else if (key === 'class') {
+                else if (key === 'class' || key === 'className') {
                     DOM.addClass(e, a[key]);
                 }
                 else if (key === 'style') {
@@ -2882,7 +2891,7 @@ if (!JSON) {
     DOM.removeClass = function(el, c) {
         var regexpr, o;
         if (!el || !c) return;
-        regexpr = '/(?:^|\s)' + c + '(?!\S)/';
+        regexpr = new RegExp('(?:^|\\s)' + c + '(?!\\S)');
         o = el.className = el.className.replace( regexpr, '' );
         return el;
     };
@@ -2902,46 +2911,13 @@ if (!JSON) {
     DOM.addClass = function(el, c) {
         if (!el || !c) return;
         if (c instanceof Array) c = c.join(' ');
-        if ('undefined' === typeof el.className) {
+        if (el.className === '' || 'undefined' === typeof el.className) {
             el.className = c;
         }
         else {
             el.className += ' ' + c;
         }
         return el;
-    };
-
-    /**
-     * ## DOM.getIFrameDocument
-     *
-     * Returns a reference to the document of an iframe object
-     *
-     * @param {HTMLIFrameElement} iframe The iframe object
-     * @return {HTMLDocument|undefined} The document of the iframe, or
-     *   undefined if not found.
-     */
-    DOM.getIFrameDocument = function(iframe) {
-        if (!iframe) return;
-        return iframe.contentDocument || iframe.contentWindow.document;
-    };
-
-    /**
-     * ### DOM.getIFrameAnyChild
-     *
-     * Gets the first available child of an IFrame
-     *
-     * Tries head, body, lastChild and the HTML element
-     *
-     * @param {HTMLIFrameElement} iframe The iframe object
-     * @return {HTMLElement|undefined} The child, or undefined if none is found
-     */
-    DOM.getIFrameAnyChild = function(iframe) {
-        var contentDocument;
-        if (!iframe) return;
-        contentDocument = W.getIFrameDocument(iframe);
-        return contentDocument.head || contentDocument.body ||
-            contentDocument.lastChild ||
-            contentDocument.getElementsByTagName('html')[0];
     };
 
     /**
@@ -2980,9 +2956,46 @@ if (!JSON) {
         return result;
     };
 
+    // ## IFRAME
+    
+    /**
+     * ### DOM.getIFrameDocument
+     *
+     * Returns a reference to the document of an iframe object
+     *
+     * @param {HTMLIFrameElement} iframe The iframe object
+     * @return {HTMLDocument|undefined} The document of the iframe, or
+     *   undefined if not found.
+     */
+    DOM.getIFrameDocument = function(iframe) {
+        if (!iframe) return;
+        return iframe.contentDocument || iframe.contentWindow.document;
+    };
+
+    /**
+     * ### DOM.getIFrameAnyChild
+     *
+     * Gets the first available child of an IFrame
+     *
+     * Tries head, body, lastChild and the HTML element
+     *
+     * @param {HTMLIFrameElement} iframe The iframe object
+     * @return {HTMLElement|undefined} The child, or undefined if none is found
+     */
+    DOM.getIFrameAnyChild = function(iframe) {
+        var contentDocument;
+        if (!iframe) return;
+        contentDocument = W.getIFrameDocument(iframe);
+        return contentDocument.head || contentDocument.body ||
+            contentDocument.lastChild ||
+            contentDocument.getElementsByTagName('html')[0];
+    };
+
+
     JSUS.extend(DOM);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
+
 /**
  * # EVAL
  *
@@ -3953,7 +3966,7 @@ if (!JSON) {
             }
         }
         return name;
-    }
+    };
 
     /**
      * ## OBJ.augment
@@ -3997,7 +4010,7 @@ if (!JSON) {
                 obj1[k].push(obj2[k]);
             }
         }
-    }
+    };
 
 
     /**
@@ -4083,12 +4096,13 @@ if (!JSON) {
      * @return {number} A random floating point number in (a,b)
      */
     RANDOM.random = function(a, b) {
+        var c;
         a = ('undefined' === typeof a) ? 0 : a;
         b = ('undefined' === typeof b) ? 0 : b;
         if (a === b) return a;
 
         if (b < a) {
-            var c = a;
+            c = a;
             a = b;
             b = c;
         }
@@ -4467,23 +4481,29 @@ JSUS.extend(TIME);
      *
      * Parses current querystring and returns the requested variable.
      *
-     * If no variable is specified, returns the full query string.
+     * If no variable name is specified, returns the full query string.
      * If requested variable is not found returns false.
      *
-     * @param {string} variable Optional. If set, returns only the value
-     *    associated with this variable
+     * @param {string} name Optional. If set, returns only the value
+     *   associated with this variable
+     * @param {string} referer Optional. If set, searches this string
      *
      * @return {string|boolean} The querystring, or a part of it, or FALSE
      *
      * Kudos:
      * @see http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
      */
-    PARSE.getQueryString = function(name) {
+    PARSE.getQueryString = function(name, referer) {
         var regex;
-        if ('undefined' === name) return window.location.search;
+        if (referer && 'string' !== typeof referer) {
+            throw new TypeError('JSUS.getQueryString: referer must be string ' +
+                                'or undefined.');
+        }
+        referer = referer || window.location.search;
+        if ('undefined' === typeof name) return referer;
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
         regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
+        results = regex.exec(referer);
         return results == null ? false : 
             decodeURIComponent(results[1].replace(/\+/g, " "))
     };
@@ -4676,12 +4696,6 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
- *
- * TODO: When using index.update() and the update is suppose to remove the element
- * from view and hashes, for example becausea property is deleted. index.update()
- * fails doing so. Should be fixed. At the moment the only solution seems to
- * reintroduce a global index for all items and to use that to quickly lookup items
- * in views and hashes.
  *
  * See README.md for help.
  * ---
@@ -5981,7 +5995,7 @@ JSUS.extend(TIME);
     NDDB.prototype._indexIt = function(o, dbidx, oldIdx) {
         var func, id, index, key;
         if (!o || J.isEmpty(this.__I)) return;
-
+        oldIdx = undefined;
         for (key in this.__I) {
             if (this.__I.hasOwnProperty(key)) {
                 func = this.__I[key];
@@ -14001,11 +14015,6 @@ JSUS.extend(TIME);
             throw new Error('Game.start: no player defined.');
         }
 
-        // Check for the existence of stager contents:
-        if (!this.plot.isReady()) {
-            throw new Error('Game.start: plot is not ready.');
-        }
-
         if (!this.isStartable()) {
             throw new Error('Game.start: game cannot be started.');
         }
@@ -14892,7 +14901,8 @@ JSUS.extend(TIME);
      * @return {boolean} TRUE if the game can be started.
      */
     Game.prototype.isStartable = function() {
-        return this.getStateLevel() < constants.stateLevels.INITIALIZING;
+        return this.plot.isReady() &&
+            this.getStateLevel() < constants.stateLevels.INITIALIZING;
     };
 
 
@@ -16841,6 +16851,7 @@ JSUS.extend(TIME);
      * the respective events.
      *
      * @param {object} options The options that are given to GameTimer
+     * @return {GameTimer} timer The requested timer
      *
      * @see GameTimer
      */
@@ -17318,10 +17329,15 @@ JSUS.extend(TIME);
      * The configuration object is of the type
      *
      *  var options = {
-     *      milliseconds: 4000, // The length of the interval
-     *      update: 1000, // How often to update the time counter. Defaults to milliseconds
-     *      timeup: 'MY_EVENT', // An event or function to fire when the timer expires
-     *      hooks: [ myFunc, // Array of functions or events to fire at every update
+     *      // The length of the interval.
+     *      milliseconds: 4000,
+     *      // How often to update the time counter. Defaults, milliseconds.
+     *      update: 1000,
+     *      // An event or function to fire when the timer expires.
+     *      timeup: 'MY_EVENT',
+     *      hooks: [
+     *              // Array of functions or events to fire at every update.
+     *              myFunc,
      *              'MY_EVENT_UPDATE',
      *              { hook: myFunc2,
      *                ctx: that, },
@@ -18517,8 +18533,6 @@ JSUS.extend(TIME);
 
         return this.socket.send(msg);
     };
-
-
   
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -20571,7 +20585,7 @@ JSUS.extend(TIME);
          * Flag that marks whether caching is supported by the browser
          *
          * Caching requires to modify the documentElement.innerHTML property
-         * of the iframe document. This property is read-only in IE < 9.
+         * of the iframe document, which is read-only in IE < 9.
          */
         this.cacheSupported = null;
 
@@ -20632,7 +20646,7 @@ JSUS.extend(TIME);
         /**
          * ### GameWindow.waitScreen
          *
-         * Reference to the _WaitScreen_ widget, if one is appended in the page
+         * Reference to the _WaitScreen_ module
          *
          * @see node.widgets.WaitScreen
          */
@@ -20650,7 +20664,6 @@ JSUS.extend(TIME);
          * @see node.constants.screenLevels
          */
         this.screenState = node.constants.screenLevels.ACTIVE;
-
 
         /**
          * ### GamwWindow.textOnleave
@@ -20725,6 +20738,19 @@ JSUS.extend(TIME);
         else if (this.conf.noEscape === false) {
             this.restoreEscape();
         }
+        
+        if (this.conf.waitScreen !== false) {
+            if (this.waitScreen) {
+                this.waitScreen.destroy();
+                this.waitScreen = null;
+            }
+            this.waitScreen = new node.WaitScreen(this.conf.waitScreen);            
+        }
+        else if (this.waitScreen) {
+            this.waitScreen.destroy();
+            this.waitScreen = null;
+        }
+
         this.setStateLevel('INITIALIZED');
     };
 
@@ -20733,9 +20759,21 @@ JSUS.extend(TIME);
      *
      * Resets the GameWindow to the initial state
      *
-     * Clears the frame, header, lock and cache.
+     * Clears the frame, header, lock, widgets and cache.
+     *
+     * @see Widgets.destroyAll
      */
     GameWindow.prototype.reset = function() {
+        // Unlock screen, if currently locked.
+        if (this.isScreenLocked()) {
+            this.unlockScreen();
+        }
+
+        // Remove widgets, if Widgets exists.
+        if (node.widgets) {
+            node.widgets.destroyAll();
+        }
+
         // Remove loaded frame, if one is found.
         if (this.getFrame()) {
             this.destroyFrame();
@@ -20744,11 +20782,6 @@ JSUS.extend(TIME);
         // Remove header, if one is found.
         if (this.getHeader()) {
             this.destroyHeader();
-        }
-        
-        // Unlock screen, if currently locked.
-        if (this.isScreenLocked()) {
-            this.unlockScreen();
         }
 
         this.areLoading = 0;
@@ -21093,7 +21126,7 @@ JSUS.extend(TIME);
             throw new Error('GameWindow.generateHeader: invalid root element.');
         }
         
-        headerName = headerName || 'gn_header';
+        headerName = headerName || 'ng_header';
 
         if ('string' !== typeof headerName) {
             throw new Error('GameWindow.generateHeader: headerName must be ' +
@@ -21281,13 +21314,10 @@ JSUS.extend(TIME);
                 this.generateFrame();
             }
 
-            // Adding the WaitScreen.
-            node.widgets.append('WaitScreen');
-
             // Add default CSS.
             if (node.conf.host) {
                 this.addCSS(this.getFrameRoot(),
-                            node.conf.host + '/stylesheets/player.css');
+                            node.conf.host + '/stylesheets/nodegame.css');
             }
 
             break;
@@ -22204,6 +22234,158 @@ JSUS.extend(TIME);
 })(
     'undefined' !== typeof node ? node : undefined
 );
+/**
+ * # WaitScreen for nodeGame Window
+ * Copyright(c) 2014 Stefano Balietti
+ * MIT Licensed
+ *
+ * Covers the screen with a grey layer and displays a message
+ *
+ * www.nodegame.org
+ * ---
+ */
+
+(function(exports, window) {
+
+    "use strict";
+
+    // Append under window.node.
+    exports.WaitScreen = WaitScreen;
+
+    // ## Meta-data
+
+    WaitScreen.version = '0.7.0';
+    WaitScreen.description = 'Show a standard waiting screen';
+
+    // Helper functions
+
+    function event_REALLY_DONE(text) {
+        text = text || W.waitScreen.text.waiting;
+        if (W.isScreenLocked()) {
+            W.waitScreen.updateText(text);
+        }
+        else {
+            W.lockScreen(text);
+        }
+    }
+
+    function event_STEPPING(text) {
+        text = text || W.waitScreen.text.stepping;
+        if (W.isScreenLocked()) {
+            W.waitScreen.updateText(text);
+        }
+        else {
+            W.lockScreen(text);
+        }
+    }
+     
+    function event_PLAYING() {
+        if (W.isScreenLocked()) {
+            W.unlockScreen();
+        }
+    }
+
+    function event_PAUSED(text) {
+        text = text || W.waitScreen.text.paused;
+        W.lockScreen(text);
+    }
+    
+    function event_RESUMED() {
+        if (W.isScreenLocked()) {
+            W.unlockScreen();
+        }
+    }
+
+    /**
+     * ## WaitScreen constructor
+     *
+     * Instantiates a new WaitScreen object 
+     *
+     * @param {object} options Optional. Configuration options.
+     */
+    function WaitScreen(options) {
+        options = options || {};
+	this.id = options.id || 'ng_waitScreen';
+        this.root = options.root || null;
+
+	this.text = {
+            waiting: options.waitingText ||
+                'Waiting for other players to be done...',
+            stepping: options.steppingText ||
+                'Initializing game step, will be ready soon...',
+            paused: options.pausedText ||
+                'Game is paused. Please wait.'
+        };
+        
+	this.waitingDiv = null;
+        this.enable();
+    }
+    
+    WaitScreen.prototype.lock = function(text) {
+        if (!this.waitingDiv) {
+            if (!this.root) {
+                this.root = W.getFrameRoot() || document.body;
+            }
+	    this.waitingDiv = W.addDiv(this.root, this.id);
+	}
+	if (this.waitingDiv.style.display === 'none') {
+	    this.waitingDiv.style.display = '';
+	}
+	this.waitingDiv.innerHTML = text;
+    };
+
+    WaitScreen.prototype.unlock = function() {
+        if (this.waitingDiv) {
+            if (this.waitingDiv.style.display === '') {
+                this.waitingDiv.style.display = 'none';
+            }
+        }
+    };
+
+    WaitScreen.prototype.updateText = function(text, append) {
+        append = append || false;
+        if ('string' !== typeof text) {
+            throw new TypeError('WaitScreen.updateText: text must be string.');
+        }
+        if (append) {
+            this.waitingDiv.appendChild(document.createTextNode(text));
+        }
+        else {
+            this.waitingDiv.innerHTML = text;
+        }
+    };
+
+    WaitScreen.prototype.enable = function(disable) {
+        if (disable === false || disable === null) {
+            node.off('REALLY_DONE', event_REALLY_DONE);
+            node.off('STEPPING', event_STEPPING);
+            node.off('PLAYING', event_PLAYING);
+            node.off('RESUMED', event_PAUSED);
+            node.off('RESUMED', event_RESUMED);
+        }
+        else {
+            node.on('REALLY_DONE', event_REALLY_DONE);
+            node.on('STEPPING', event_STEPPING);
+            node.on('PLAYING', event_PLAYING);
+            node.on('RESUMED', event_PAUSED);
+            node.on('RESUMED', event_RESUMED);
+        }
+    };
+
+    WaitScreen.prototype.destroy = function() {
+        if (W.isScreenLocked()) {
+            this.unlock();
+        }
+        if (this.waitingDiv) {
+            this.waitingDiv.parentNode.removeChild(this.waitingDiv);
+        }
+    };
+
+})(
+    ('undefined' !== typeof node) ? node : module.parent.exports.node,
+    ('undefined' !== typeof window) ? window : module.parent.exports.window
+);
+
 /**
  * # GameWindow selector module
  * Copyright(c) 2014 Stefano Balietti
@@ -23919,6 +24101,11 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * Prototype of a widget class.
+ *
+ * The methods of the prototype will be injected in every new widget, if missing.
+ * Properties: _headingDiv_, _bodyDiv_, and _footer_ might be automatically
+ * added as well, depending on widget configuration.
+ *
  * ---
  */
 (function(node) {
@@ -23927,24 +24114,11 @@ JSUS.extend(TIME);
 
     node.Widget = Widget;
 
-    function Widget() {
-        this.root = null;
-    }
+    function Widget() {}
 
     Widget.prototype.dependencies = {};
 
-    Widget.prototype.defaults = {};
-
-    Widget.prototype.defaults.fieldset = {
-        legend: 'Widget'
-    };
-
-
     Widget.prototype.listeners = function() {};
-
-    Widget.prototype.getRoot = function() {
-        return this.root;
-    };
 
     Widget.prototype.getValues = function() {};
 
@@ -23952,18 +24126,73 @@ JSUS.extend(TIME);
 
     Widget.prototype.init = function() {};
 
-    Widget.prototype.getRoot = function() {};
-
-    Widget.prototype.listeners = function() {};
-
     Widget.prototype.getAllValues = function() {};
 
     Widget.prototype.highlight = function() {};
+
+    Widget.prototype.destroy = function() {};
+
+    Widget.prototype.setTitle = function(title) {
+        if (!this.panelDiv) {
+            throw new Error('Widget.setTitle: panelDiv is missing.');
+        }
+
+        // Remove heading with false-ish argument.
+        if (!title) {
+            if (this.headingDiv) {
+                this.panelDiv.removeChild(this.headingDiv);
+                delete this.headingDiv;
+            }
+        }
+        else {
+            if (!this.headingDiv) {
+                // Add heading.
+                this.headingDiv = W.addDiv(this.panelDiv, undefined,
+                        {className: 'panel-heading'});
+                // Move it to before the body.
+                this.panelDiv.insertBefore(this.headingDiv, this.bodyDiv);
+            }
+
+            // Set title.
+            this.headingDiv.innerHTML = title;
+        }
+    };
+
+    Widget.prototype.setFooter = function(footer) {
+        if (!this.panelDiv) {
+            throw new Error('Widget.setFooter: panelDiv is missing.');
+        }
+
+        // Remove footer with false-ish argument.
+        if (!footer) {
+            if (this.footerDiv) {
+                this.panelDiv.removeChild(this.footerDiv);
+                delete this.footerDiv;
+            }
+        }
+        else {
+            if (!this.footerDiv) {
+                // Add footer.
+                this.footerDiv = W.addDiv(this.panelDiv, undefined,
+                        {className: 'panel-footer'});
+            }
+
+            // Set footer contents.
+            this.footerDiv.innerHTML = footer;
+        }
+    };
+
+    Widget.prototype.setContext = function(context) {
+        // TODO: Check parameter
+        W.removeClass(this.panelDiv, 'panel-[a-z]*');
+        W.addClass(this.panelDiv, 'panel-' + context);
+    };
 
 })(
     // Widgets works only in the browser environment.
     ('undefined' !== typeof node) ? node : module.parent.exports.node
 );
+
 /**
  * # Widgetss
  * Copyright(c) 2014 Stefano Balietti
@@ -23983,11 +24212,20 @@ JSUS.extend(TIME);
         /**
          * ## Widgets.widgets
          *
-         * Container of currently registered widgets 
+         * Container of currently registered widgets
          *
          * @see Widgets.register
          */
         this.widgets = {};
+
+        /**
+         * ## Widgets.widgets
+         *
+         * Container of appended widget instances
+         *
+         * @see Widgets.append
+         */
+        this.instances = [];
     }
 
     /**
@@ -23996,14 +24234,14 @@ JSUS.extend(TIME);
      * Registers a new widget in the collection
      *
      * A name and a prototype class must be provided. All properties
-     * that are presetn in `node.Widget`, but missing in the prototype
+     * that are present in `node.Widget`, but missing in the prototype
      * are added.
      *
      * Registered widgets can be loaded with Widgets.get or Widgets.append.
      *
-     * @param {string} name The id under which registering the widget
+     * @param {string} name The id under which to register the widget
      * @param {function} w The widget to add
-     * @return {object|boolean} The registered widget, 
+     * @return {object|boolean} The registered widget,
      *   or FALSE if an error occurs
      */
     Widgets.prototype.register = function(name, w) {
@@ -24015,12 +24253,7 @@ JSUS.extend(TIME);
             throw new TypeError('Widgets.register: w must be function.');
         }
         // Add default properties to widget prototype
-        for (i in node.Widget.prototype) {
-            if (!w[i] && !w.prototype[i]
-                && !(w.prototype.__proto__ && w.prototype.__proto__[i])) {
-                w.prototype[i] = J.clone(node.Widget.prototype[i]);
-            }
-        }
+        J.mixout(w.prototype, new node.Widget());
         this.widgets[name] = w;
         return this.widgets[name];
     };
@@ -24056,28 +24289,33 @@ JSUS.extend(TIME);
             throw new TypeError('Widgets.get: options must be object or ' +
                                 'undefined.');
         }
-        
+
         that = this;
-	options = options || {};
+        options = options || {};
 
-	wProto = J.getNestedValue(w_str, this.widgets);
-	
-	if (!wProto) {
+        wProto = J.getNestedValue(w_str, this.widgets);
+
+        if (!wProto) {
             throw new Error('Widgets.get: ' + w_str + ' not found.');
-	}
+        }
 
-	node.info('registering ' + wProto.name + ' v.' +  wProto.version);
+        node.info('registering ' + wProto.name + ' v.' +  wProto.version);
 
-	if (!this.checkDependencies(wProto)) {
+        if (!this.checkDependencies(wProto)) {
             throw new Error('Widgets.get: ' + w_str + ' has unmet dependecies.');
         }
 
-	// Add missing properties to the user options
-	J.mixout(options, J.clone(wProto.defaults));
+        // Add missing properties to the user options
+        J.mixout(options, J.clone(wProto.defaults));
 
         widget = new wProto(options);
         // Re-inject defaults
         widget.defaults = options;
+
+        widget.title = wProto.title;
+        widget.footer = wProto.footer;
+        widget.className = wProto.className;
+        widget.context = wProto.context;
 
         // Call listeners
         widget.listeners.call(widget);
@@ -24085,7 +24323,7 @@ JSUS.extend(TIME);
         // user listeners
         attachListeners(options, widget);
 
-	return widget;
+        return widget;
     };
 
     /**
@@ -24115,7 +24353,7 @@ JSUS.extend(TIME);
     Widgets.prototype.append = Widgets.prototype.add = function(w, root,
                                                                 options) {
         if ('string' !== typeof w && 'object' !== typeof w) {
-            throw new TypeError('Widgets.append: w must be string or object');
+            throw new TypeError('Widgets.append: w must be string or object.');
         }
         if (root && !J.isElement(root)) {
             throw new TypeError('Widgets.append: root must be HTMLElement ' +
@@ -24125,7 +24363,7 @@ JSUS.extend(TIME);
             throw new TypeError('Widgets.append: options must be object or ' +
                                 'undefined.');
         }
-        
+
         // Init default values.
         root = root || W.getFrameRoot() || document.body;
         options = options || {};
@@ -24137,15 +24375,75 @@ JSUS.extend(TIME);
             w = this.get(w, options);
         }
 
-        // If fieldset option is null, no fieldset is added.
+        // If fieldset option is null, a div is added instead.
         // If fieldset option is undefined, default options are used.
-        if (options.fieldset !== null) {
-            root = appendFieldset(root, options.fieldset ||
-                                  w.defaults.fieldset, w);
+        //if (options.fieldset !== null) {
+        //    root = appendFieldset(root, options.fieldset ||
+        //                          w.defaults.fieldset, w);
+        //}
+        w.panelDiv = appendDiv(root, {
+            attributes: {
+                className: ['ng_widget', 'panel', 'panel-default', w.className]
+            }
+        });
+
+        // Optionally add title.
+        if (w.title) {
+            w.setTitle(w.title);
         }
-        w.append(root);
+
+        // Add body.
+        w.bodyDiv = appendDiv(w.panelDiv, {
+            attributes: {className: 'panel-body'}
+        });
+
+        // Optionally add footer.
+        if (w.footer) {
+            w.setFooter(w.footer);
+        }
+
+        // Optionally set context.
+        if (w.context) {
+            w.setContext(w.context);
+        }
+
+        w.append();
+
+        // Store widget instance for destruction.
+        this.instances.push(w);
 
         return w;
+    };
+
+    /**
+     * ### Widgets.destroyAll
+     *
+     * Removes all widgets that have been appended with Widgets.append
+     *
+     * Exceptions thrown in the widgets' destroy methods are caught.
+     *
+     * @see Widgets.append
+     */
+    Widgets.prototype.destroyAll = function() {
+        var i, widget;
+
+        for (i in this.instances) {
+            if (this.instances.hasOwnProperty(i)) {
+                widget = this.instances[i];
+
+                try {
+                    widget.destroy();
+
+                    // Remove the widget's div from its parent:
+                    widget.panelDiv.parentNode.removeChild(widget.panelDiv);
+                }
+                catch (e) {
+                    node.warn('Widgets.destroyAll: Error caught. ' + e + '.');
+                }
+            }
+        }
+
+        this.instances = [];
     };
 
     /**
@@ -24168,13 +24466,8 @@ JSUS.extend(TIME);
      * @return {boolean} TRUE, if all dependencies are met
      */
     Widgets.prototype.checkDependencies = function(w, quiet) {
-        var errMsg, parents, d, lib, found, i; 
+        var parents, d, lib, found, i;
         if (!w.dependencies) return true;
-
-        errMsg = function(w, d) {
-            var name = w.name || w.id;// || w.toString();
-            node.log(d + ' not found. ' + name + ' cannot be loaded.', 'ERR');
-        };
 
         parents = [window, node, this.widgets, node.window];
 
@@ -24189,7 +24482,7 @@ JSUS.extend(TIME);
                     }
                 }
                 if (!found) {
-                    if (!quiet) errMsg(w, lib);
+                    if (!quiet) checkDepErrMsg(w, lib);
                     return false;
                 }
             }
@@ -24197,40 +24490,49 @@ JSUS.extend(TIME);
         return true;
     };
 
-    
+
     // #### Helper functions.
-    
-    function appendFieldset(root, options, w) {
-        var idFieldset, legend;
-        if (!options) return root;
-        idFieldset = options.id || w.id + '_fieldset';
-        legend = options.legend || w.legend;
-        return W.addFieldset(root, idFieldset, legend, options.attributes);
-    };
+
+    //function appendFieldset(root, options, w) {
+    //    var idFieldset, legend;
+    //    if (!options) return root;
+    //    idFieldset = options.id || w.id + '_fieldset';
+    //    legend = options.legend || w.legend;
+    //    return W.addFieldset(root, idFieldset, legend, options.attributes);
+    //}
+
+    function appendDiv(root, options) {
+        // TODO: Check every parameter
+        return W.addDiv(root, undefined, options.attributes);
+    }
 
     function createListenerFunction(w, e, l) {
-	if (!w || !e || !l) return;
-	w.getRoot()[e] = function() {
-	    l.call(w);
-	};
-    };
+        if (!w || !e || !l) return;
+        w.panelDiv[e] = function() {
+            l.call(w);
+        };
+    }
 
     function attachListeners(options, w) {
         var events, isEvent, i;
-	if (!options || !w) return;
+        if (!options || !w) return;
         isEvent = false;
-        events = ['onclick', 'onfocus', 'onblur', 'onchange', 
-                  'onsubmit', 'onload', 'onunload', 'onmouseover'];	
-	for (i in options) {
-	    if (options.hasOwnProperty(i)) {
-		isEvent = J.in_array(i, events);
-		if (isEvent && 'function' === typeof options[i]) {
-		    createListenerFunction(w, i, options[i]);
-		}
-	    }
-	};
-    };
+        events = ['onclick', 'onfocus', 'onblur', 'onchange',
+                  'onsubmit', 'onload', 'onunload', 'onmouseover'];
+        for (i in options) {
+            if (options.hasOwnProperty(i)) {
+                isEvent = J.in_array(i, events);
+                if (isEvent && 'function' === typeof options[i]) {
+                    createListenerFunction(w, i, options[i]);
+                }
+            }
+        }
+    }
 
+    function checkDepErrMsg(w, d) {
+        var name = w.name || w.id;// || w.toString();
+        node.err(d + ' not found. ' + name + ' cannot be loaded.');
+    }
 
     //Expose Widgets to the global object
     node.widgets = new Widgets();
@@ -24329,7 +24631,7 @@ JSUS.extend(TIME);
             this.recipient = {value: 'SERVER'};
             break;
         case Chat.modes.MANY_TO_ONE:
-            this.recipient = {value: 'ALL'};
+            this.recipient = {value: 'ROOM'};
             break;
         case Chat.modes.ONE_TO_ONE:
             this.recipient = {value: 'SERVER'};
@@ -24435,6 +24737,7 @@ JSUS.extend(TIME);
     node.widgets.register('Chat', Chat);
 
 })(node);
+
 /**
  * # ChernoffFaces widget for nodeGame
  * Copyright(c) 2014 Stefano Balietti
@@ -27251,7 +27554,7 @@ JSUS.extend(TIME);
             // but we should add a check
 
             var msg = that.parse();
-            node.gsc.send(msg);
+            node.socket.send(msg);
             //console.log(msg.stringify());
         };
         stubButton.onclick = function() {
@@ -27314,8 +27617,8 @@ JSUS.extend(TIME);
         node.window.getElementById(this.id + '_reliable').value = 1;
         node.window.getElementById(this.id + '_priority').value = 0;
 
-        if (node.gsc && node.gsc.session) {
-            node.window.getElementById(this.id + '_session').value = node.gsc.session;
+        if (node.socket && node.socket.session) {
+            node.window.getElementById(this.id + '_session').value = node.socket.session;
         }
 
         node.window.getElementById(this.id + '_state').value = JSON.stringify(node.state);
@@ -27325,6 +27628,7 @@ JSUS.extend(TIME);
     };
 
 })(node);
+
 /**
  * # NDDBBrowser widget for nodeGame
  * Copyright(c) 2014 Stefano Balietti
@@ -27534,7 +27838,7 @@ JSUS.extend(TIME);
 
                 // Update Others
                 stateEvent = node.OUT + node.action.SAY + '.STATE';
-                node.emit(stateEvent, state, 'ALL');
+                node.emit(stateEvent, state, 'ROOM');
             }
             else {
                 node.log('No next/previous state. Not sent', 'ERR');
@@ -27554,6 +27858,7 @@ JSUS.extend(TIME);
     };
 
 })(node);
+
 /**
  * # Requirements widget for nodeGame
  * Copyright(c) 2014 Stefano Balietti
@@ -28162,7 +28467,7 @@ JSUS.extend(TIME);
                 });
 
                 // Self Update
-                if (to === 'ALL') {
+                if (to === 'ROOM') {
                     stateEvent = node.IN + node.action.SAY + '.STATE';
                     stateMsg = node.msg.createSTATE(stateEvent, state);
                     node.emit(stateEvent, stateMsg);
@@ -28183,6 +28488,7 @@ JSUS.extend(TIME);
     };
 
 })(node);
+
 /**
  * # StateDisplay widget for nodeGame
  * Copyright(c) 2014 Stefano Balietti
@@ -28202,52 +28508,35 @@ JSUS.extend(TIME);
 
     node.widgets.register('StateDisplay', StateDisplay);
 
-    // ## Defaults
-
-    StateDisplay.defaults = {};
-    StateDisplay.defaults.id = 'statedisplay';
-    StateDisplay.defaults.fieldset = { legend: 'State Display' };
-
     // ## Meta-data
 
-    StateDisplay.version = '0.4.2';
-    StateDisplay.description = 'Display basic information about player\'s status.';
+    StateDisplay.version = '0.5.0';
+    StateDisplay.description = 'Display basic info about player\'s status.';
+
+    StateDisplay.title = 'State Display';
+    StateDisplay.className = 'statedisplay';
+
+    // ## Dependencies
+
+    StateDisplay.dependencies = {
+        Table: {}
+    };
 
     function StateDisplay(options) {
-
 	this.id = options.id;
-
-	this.root = null;
 	this.table = new Table();
     }
 
-    // TODO: Write a proper INIT method
-    StateDisplay.prototype.init = function() {};
-
-    StateDisplay.prototype.getRoot = function() {
-	return this.root;
-    };
-
-
-    StateDisplay.prototype.append = function(root) {
-	var that = this;
-	var PREF = this.id + '_';
-
-	var idFieldset = PREF + 'fieldset';
-	var idPlayer = PREF + 'player';
-	var idState = PREF + 'state';
-
-	var checkPlayerName = setInterval(function(idState,idPlayer) {
+    StateDisplay.prototype.append = function() {
+	var that, checkPlayerName;
+        that = this;
+	checkPlayerName = setInterval(function() {
 	    if (node.player && node.player.id) {
 		clearInterval(checkPlayerName);
 		that.updateAll();
 	    }
 	}, 100);
-
-	root.appendChild(this.table.table);
-	this.root = root;
-	return root;
-
+	this.bodyDiv.appendChild(this.table.table);
     };
 
     StateDisplay.prototype.updateAll = function() {
@@ -28285,11 +28574,7 @@ JSUS.extend(TIME);
     };
 
     StateDisplay.prototype.destroy = function() {
-        if (this.table) {
-            this.root.removeChild(this.table.table);
-            this.table = null;
-        }
-        // node.off('STEP_CALLBACK_EXECUTED', updateTable);
+        node.off('STEP_CALLBACK_EXECUTED', StateDisplay.prototype.updateAll);
     };
 })(node);
 /**
@@ -28311,19 +28596,13 @@ JSUS.extend(TIME);
     var JSUS = node.JSUS,
     Table = node.window.Table;
 
-    // ## Defaults
-
-    VisualState.defaults = {};
-    VisualState.defaults.id = 'visualstate';
-    VisualState.defaults.fieldset = {
-        legend: 'State',
-        id: 'visualstate_fieldset'
-    };
-
     // ## Meta-data
 
     VisualState.version = '0.2.1';
     VisualState.description = 'Visually display current, previous and next state of the game.';
+
+    VisualState.title = 'State';
+    VisualState.className = 'visualstate';
 
     // ## Dependencies
 
@@ -28334,21 +28613,14 @@ JSUS.extend(TIME);
 
     function VisualState(options) {
         this.id = options.id;
-
-        this.root = null;
         this.table = new Table();
     }
 
-    VisualState.prototype.getRoot = function() {
-        return this.root;
-    };
-
-    VisualState.prototype.append = function(root, ids) {
+    VisualState.prototype.append = function() {
         var that = this;
         var PREF = this.id + '_';
-        root.appendChild(this.table.table);
+        this.bodyDiv.appendChild(this.table.table);
         this.writeState();
-        return root;
     };
 
     VisualState.prototype.listeners = function() {
@@ -28403,6 +28675,7 @@ JSUS.extend(TIME);
     };
 
 })(node);
+
 /**
  * # VisualTimer widget for nodeGame
  * Copyright(c) 2014 Stefano Balietti
@@ -28422,20 +28695,14 @@ JSUS.extend(TIME);
 
     var J = node.JSUS;
 
-    // ## Defaults
-
-    VisualTimer.defaults = {};
-    VisualTimer.defaults.id = 'visualtimer';
-    VisualTimer.defaults.fieldset = {
-        legend: 'Time left',
-        id: 'visualtimer_fieldset'
-    };
-
     // ## Meta-data
 
     VisualTimer.version = '0.4.0';
     VisualTimer.description = 'Display a timer for the game. Timer can ' +
         'trigger events. Only for countdown smaller than 1h.';
+
+    VisualTimer.title = 'Time left';
+    VisualTimer.className = 'visualtimer';
 
     // ## Dependencies
 
@@ -28455,9 +28722,6 @@ JSUS.extend(TIME);
         
         // The DIV in which to display the timer.
         this.timerDiv = null;   
-        
-        // The parent element.
-        this.root = null;
 
         this.init(this.options);
     }
@@ -28512,15 +28776,9 @@ JSUS.extend(TIME);
         this.options = options;
     };
 
-    VisualTimer.prototype.getRoot = function() {
-        return this.root;
-    };
-
-    VisualTimer.prototype.append = function(root) {
-        this.root = root;
-        this.timerDiv = node.window.addDiv(root, this.id + '_div');
+    VisualTimer.prototype.append = function() {
+        this.timerDiv = node.window.addDiv(this.bodyDiv, this.id + '_div');
         this.updateDisplay();
-        return root;
     };
 
     VisualTimer.prototype.updateDisplay = function() {
@@ -28601,7 +28859,7 @@ JSUS.extend(TIME);
 
     VisualTimer.prototype.destroy = function() {
         node.timer.destroyTimer(this.gameTimer);
-        this.root.removeChild(this.timerDiv);
+        this.bodyDiv.removeChild(this.timerDiv);
     };
 
     /**
@@ -28654,144 +28912,6 @@ JSUS.extend(TIME);
 
 })(node);
 
-/**
- * # WaitScreen widget for nodeGame
- * Copyright(c) 2014 Stefano Balietti
- * MIT Licensed
- *
- * Display information about the state of a player.
- *
- * www.nodegame.org
- * ---
- */
-(function(node) {
-
-    "use strict";
-
-    node.widgets.register('WaitScreen', WaitScreen);
-
-    // ## Defaults
-
-    WaitScreen.defaults = {};
-    WaitScreen.defaults.id = 'waiting';
-    WaitScreen.defaults.fieldset = false;
-
-    // ## Meta-data
-
-    WaitScreen.version = '0.7.0';
-    WaitScreen.description = 'Show a standard waiting screen';
-
-    function WaitScreen(options) {
-
-	this.id = options.id;
-
-        this.root = null;
-
-	this.text = {
-            waiting: options.waitingText ||
-                'Waiting for other players to be done...',
-            stepping: options.steppingText ||
-                'Initializing game step, will be ready soon...'
-        };
-
-	this.waitingDiv = null;
-    }
-
-    WaitScreen.prototype.lock = function(text) {
-        if (!this.waitingDiv) {
-	    this.waitingDiv = W.addDiv(W.getFrameRoot(), this.id);
-	}
-	if (this.waitingDiv.style.display === 'none') {
-	    this.waitingDiv.style.display = '';
-	}
-	this.waitingDiv.innerHTML = text;
-    };
-
-    WaitScreen.prototype.unlock = function() {
-        if (this.waitingDiv) {
-            if (this.waitingDiv.style.display === '') {
-                this.waitingDiv.style.display = 'none';
-            }
-        }
-    };
-
-    WaitScreen.prototype.updateText = function(text, append) {
-        append = append || false;
-        if ('string' !== typeof text) {
-            throw new TypeError('WaitScreen.updateText: text must be string.');
-        }
-        if (append) {
-            this.waitingDiv.appendChild(document.createTextNode(text));
-        }
-        else {
-            this.waitingDiv.innerHTML = text;
-        }
-    };
-
-    WaitScreen.prototype.append = function(root) {
-        // Saves a reference of the widget in GameWindow
-        // that will use it in the GameWindow.lockScreen method.
-        W.waitScreen = this;
-        this.root = root;
-	return root;
-    };
-
-    WaitScreen.prototype.getRoot = function() {
-	return this.waitingDiv;
-    };
-
-    WaitScreen.prototype.listeners = function() {
-        var that = this;
-
-        // was using WaitScreen method before.
-        // now using GameWindow lock / unlock, so that the state level
-        // is updated. Needs some testing.
-
-        node.on('REALLY_DONE', function(text) {
-            text = text || that.text.waiting;
-            if (W.isScreenLocked()) {
-                that.updateText(text);
-            }
-            else {
-                W.lockScreen(text);
-            }
-        });
-
-        node.on('STEPPING', function(text) {
-            text = text || that.text.stepping;
-            if (W.isScreenLocked()) {
-                that.updateText(text);
-            }
-            else {
-                W.lockScreen(text);
-            }
-            // was wrong before... Check this.
-            // that.unlock(text || that.text.stepping)
-        });
-
-        node.on('PLAYING', function() {
-            if (W.isScreenLocked()) {
-                W.unlockScreen();
-            }
-        });
-
-        node.on('RESUMED', function() {
-            if (W.isScreenLocked()) {
-                W.unlockScreen();
-            }
-        });
-    };
-
-    WaitScreen.prototype.destroy = function() {
-        if (W.isScreenLocked()) {
-            this.unlock();
-        }
-        if (this.waitingDiv) {
-            this.root.removeChild(this.waitingDiv);
-        }
-        W.waitScreen = null; 
-    };
-})(node);
 /**
  * # Wall widget for nodeGame
  * Copyright(c) 2014 Stefano Balietti
