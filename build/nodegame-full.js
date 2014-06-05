@@ -16866,6 +16866,14 @@ JSUS.extend(TIME);
                             ' already existing.');
         }
 
+        // If game is paused add options startPaused, unless user
+        // specified a value in the options object.
+        if (this.node.game.paused) {
+            if ('undefined' === typeof options.startPaused) {
+                options.startPaused = true;
+            }
+        }
+
         // Create the GameTimer:
         gameTimer = new GameTimer(this.node, options);
 
@@ -17280,7 +17288,6 @@ JSUS.extend(TIME);
          * ### GameTimer.updateStart
          *
          * Timestamp of the start of the last update
-         *
          */
         this.updateStart = 0;
 
@@ -17288,9 +17295,8 @@ JSUS.extend(TIME);
          * ### GameTimer.startPaused
          *
          * Whether to enter the pause state when starting
-         *
          */
-        this.startPaused = false;
+        this.startPaused = null;
 
         /**
          * ### GameTimer.timeup
@@ -17362,6 +17368,8 @@ JSUS.extend(TIME);
         this.update = options.update || this.update || this.milliseconds;
         this.timeLeft = this.milliseconds;
         this.timePassed = 0;
+        this.updateStart = 0;
+        this.updateRemaining = 0;
         // Event to be fired when timer expires.
         this.timeup = options.timeup || 'TIMEUP';
         // TODO: update and milliseconds must be multiple now
@@ -17371,6 +17379,10 @@ JSUS.extend(TIME);
                 this.addHook(options.hooks[i]);
             }
         }
+
+        // Set startPaused option. if specified. Defaults, FALSE.        
+        this.startPaused = 'undefined' !== options.startPaused ?
+            options.startPaused : false;
 
         // Only set status to INITIALIZED if all of the state is valid and
         // ready to be used by this.start etc.
@@ -17432,14 +17444,13 @@ JSUS.extend(TIME);
 
         this.status = GameTimer.LOADING;
 
-        // Remember time of start (used by this.pause, so set it before calling
-        // that):
-        this.updateStart = (new Date()).getTime();
-
         if (this.startPaused) {
             this.pause();
             return;
         }
+
+        // Remember time of start (used by this.pause to compute remaining time)
+        this.updateStart = (new Date()).getTime();
 
         // Fires the event immediately if time is zero.
         // Double check necessary in strict mode.
@@ -17496,9 +17507,16 @@ JSUS.extend(TIME);
 
             this.status = GameTimer.PAUSED;
 
-            // Save time of pausing:
-            timestamp = (new Date()).getTime();
-            this.updateRemaining = timestamp - this.updateStart;
+            // Save time of pausing.
+            // If start was never called, or called with startPaused on.
+            if (this.updateStart === 0) {
+                this.updateRemaining = this.update;
+            }
+            else {
+                // Save the difference of time left.
+                timestamp = (new Date()).getTime();
+                this.updateRemaining = timestamp - this.updateStart;
+            }
         }
         else if (this.status === GameTimer.STOPPED) {
             // If the timer was explicitly stopped, we ignore the pause:
@@ -22698,13 +22716,18 @@ JSUS.extend(TIME);
      * If no root element is specified, the default screen is used.
      *
      * @param {string|object} text The content to write
-     * @param {Element} root The root element
+     * @param {Element|string} root Optional. The root element or its id
      * @return {string|object} The content written
      *
      * @see GameWindow.writeln
      */
     GameWindow.prototype.write = function(text, root) {
-        root = root || this.getScreen();
+        if ('string' === typeof root) {
+            root = this.getElementById(root);
+        }
+        else if (!root) {
+            root = this.getScreen();
+        }
         if (!root) {
             throw new
                 Error('GameWindow.write: could not determine where to write.');
@@ -22721,13 +22744,18 @@ JSUS.extend(TIME);
      * If no root element is specified, the default screen is used.
      *
      * @param {string|object} text The content to write
-     * @param {Element} root The root element
+     * @param {Element|string} root Optional. The root element or its id
      * @return {string|object} The content written
      *
      * @see GameWindow.write
      */
     GameWindow.prototype.writeln = function(text, root, br) {
-        root = root || this.getScreen();
+        if ('string' === typeof root) {
+            root = this.getElementById(root);
+        }
+        else if (!root) {
+            root = this.getScreen();
+        }
         if (!root) {
             throw new
                 Error('GameWindow.writeln: could not determine where to write.');
