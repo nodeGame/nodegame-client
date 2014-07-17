@@ -1,10 +1,10 @@
-var node = require('../../index.js');
+var node = require('../index.js');
 module.exports = node;
 node.verbosity = 100;
 
-var Stager = require('./Stager').Stager;
-var GamePlot = require('./GamePlot').GamePlot;
-var GameStage = require('./GameStage').GameStage;
+var Stager = require('../lib/core/Stager').Stager;
+var GamePlot = require('../lib/core/GamePlot').GamePlot;
+var GameStage = require('../lib/core/GameStage').GameStage;
 
 function makeStep(name) {
     return {
