@@ -8972,7 +8972,9 @@ JSUS.extend(TIME);
      *
      * @return Boolean TRUE, if the removal is successful
      */
-    EventEmitter.prototype.remove = function(type, listener) {
+    //EventEmitter.prototype.remove = function(type, listener) {
+    EventEmitter.prototype.remove = EventEmitter.prototype.off =
+    function(type, listener) {
 
         var listeners, len, i, type, node;
         node = this.node;
@@ -22731,11 +22733,11 @@ JSUS.extend(TIME);
      */
     WaitScreen.prototype.enable = function() {
         if (this.enabled) return;
-        node.on('REALLY_DONE', event_REALLY_DONE);
-        node.on('STEPPING', event_STEPPING);
-        node.on('PLAYING', event_PLAYING);
-        node.on('PAUSED', event_PAUSED);
-        node.on('RESUMED', event_RESUMED);
+        node.events.ee.game.on('REALLY_DONE', event_REALLY_DONE);
+        node.events.ee.game.on('STEPPING', event_STEPPING);
+        node.events.ee.game.on('PLAYING', event_PLAYING);
+        node.events.ee.game.on('PAUSED', event_PAUSED);
+        node.events.ee.game.on('RESUMED', event_RESUMED);
         this.enabled = true;
     };
 
@@ -22746,11 +22748,11 @@ JSUS.extend(TIME);
      */
     WaitScreen.prototype.disable = function() {
         if (!this.enabled) return;
-        node.off('REALLY_DONE', event_REALLY_DONE);
-        node.off('STEPPING', event_STEPPING);
-        node.off('PLAYING', event_PLAYING);
-        node.off('PAUSED', event_PAUSED);
-        node.off('RESUMED', event_RESUMED);
+        node.events.ee.game.off('REALLY_DONE', event_REALLY_DONE);
+        node.events.ee.game.off('STEPPING', event_STEPPING);
+        node.events.ee.game.off('PLAYING', event_PLAYING);
+        node.events.ee.game.off('PAUSED', event_PAUSED);
+        node.events.ee.game.off('RESUMED', event_RESUMED);
         this.enabled = false;    
     };
 
@@ -22845,7 +22847,9 @@ JSUS.extend(TIME);
      */
     WaitScreen.prototype.destroy = function() {
         if (W.isScreenLocked()) {
+            W.setScreenLevel('UNLOCKING');
             this.unlock();
+            W.setScreenLevel('ACTIVE');
         }
         if (this.waitingDiv) {
             this.waitingDiv.parentNode.removeChild(this.waitingDiv);
