@@ -9531,11 +9531,7 @@ JSUS.extend(TIME);
         else if ('number' === typeof gs) {
             if (gs % 1 !== 0) {
                throw new TypeError('GameStage constructor: gs cannot be ' +
-                                   'a non-integer number.'); 
-            }
-            if (gs < 0) {
-                throw new TypeError('GameStage constructor: gs cannot be ' +
-                                    'a negative number.');
+                                   'a non-integer number.');
             }
             this.stage = gs;
             this.step = 1;
@@ -9546,27 +9542,35 @@ JSUS.extend(TIME);
             throw new TypeError('GameStage constructor: gs must be string, ' +
                                 'object, a positive number, or undefined.');
         }
-        
+
         // Final sanity checks.
 
         if ('undefined' === typeof this.stage) {
             throw new Error('GameStage constructor: stage cannot be ' +
-                            'undefined.'); 
+                            'undefined.');
         }
         if ('undefined' === typeof this.step) {
             throw new Error('GameStage constructor: step cannot be ' +
-                            'undefined.'); 
+                            'undefined.');
         }
         if ('undefined' === typeof this.round) {
             throw new Error('GameStage constructor: round cannot be ' +
-                            'undefined.'); 
+                            'undefined.');
         }
-        
+
+        if (('number' === typeof this.stage && this.stage < 0) ||
+            ('number' === typeof this.step  && this.step < 0) ||
+            ('number' === typeof this.round && this.round < 0)) {
+
+            throw new TypeError('GameStage constructor: no field can be ' +
+                                'a negative number.');
+        }
+
         // Either 0.0.0 or no 0 is allowed.
         if (!(this.stage === 0 && this.step === 0 && this.round === 0)) {
             if (this.stage === 0 || this.step === 0 || this.round === 0) {
                 throw new Error('GameStage constructor: non-sensical game ' +
-                                'stage: ' + this.toString()); 
+                                'stage: ' + this.toString());
             }
         }
     }
@@ -9681,7 +9685,7 @@ JSUS.extend(TIME);
                 result = gs1.step - gs2.step;
             }
         }
-        
+
         return result;
     };
 
@@ -9703,6 +9707,7 @@ JSUS.extend(TIME);
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # PlayerList
  * Copyright(c) 2014 Stefano Balietti
@@ -20863,7 +20868,6 @@ JSUS.extend(TIME);
             }
             this.waitScreen = new node.WaitScreen(this.conf.waitScreen);
 
-
             stageLevels = node.constants.stageLevels;
             stageLevel = node.game.getStageLevel();
             if (stageLevel !== stageLevels.UNINITIALIZED) {
@@ -20879,8 +20883,6 @@ JSUS.extend(TIME);
                     }
                 }
             }
-
-
         }
         else if (this.waitScreen) {
             this.waitScreen.destroy();
@@ -22620,7 +22622,6 @@ JSUS.extend(TIME);
     }
 
     function event_REALLY_DONE(text) {
-console.log('*** REALLY_DONE:', node.game.getStageLevel(), node.game.paused);
         text = text || W.waitScreen.defaultTexts.waiting;
         if (W.isScreenLocked()) {
             W.waitScreen.updateText(text);
@@ -22631,7 +22632,6 @@ console.log('*** REALLY_DONE:', node.game.getStageLevel(), node.game.paused);
     }
 
     function event_STEPPING(text) {
-console.log('*** STEPPING:', node.game.getStageLevel(), node.game.paused);
         text = text || W.waitScreen.defaultTexts.stepping;
         if (W.isScreenLocked()) {
             W.waitScreen.updateText(text);
@@ -22642,14 +22642,12 @@ console.log('*** STEPPING:', node.game.getStageLevel(), node.game.paused);
     }
 
     function event_PLAYING() {
-console.log('*** PLAYING:', node.game.getStageLevel(), node.game.paused);
         if (W.isScreenLocked()) {
             W.unlockScreen();
         }
     }
 
     function event_PAUSED(text) {
-console.log('*** PAUSED:', node.game.getStageLevel(), node.game.paused);
         text = text || W.waitScreen.defaultTexts.paused;
         if (W.isScreenLocked()) {
             W.waitScreen.beforePauseInnerHTML = 
@@ -22662,7 +22660,6 @@ console.log('*** PAUSED:', node.game.getStageLevel(), node.game.paused);
     }
 
     function event_RESUMED() {
-console.log('*** RESUMED:', node.game.getStageLevel(), node.game.paused);
         if (W.isScreenLocked()) {
             if (W.waitScreen.beforePauseInnerHTML !== null) {
                 W.waitScreen.updateText(W.waitScreen.beforePauseInnerHTML);
@@ -28246,14 +28243,13 @@ console.log('*** RESUMED:', node.game.getStageLevel(), node.game.paused);
 
     // ## Meta-data
 
-    MsgBar.version = '0.5';
+    MsgBar.version = '0.6';
     MsgBar.description = 'Send a nodeGame message to players';
 
     MsgBar.title = 'Send MSG';
     MsgBar.className = 'msgbar';
 
     function MsgBar(options) {
-
         this.id = options.id || MsgBar.className;
 
         this.recipient = null;
@@ -28362,71 +28358,91 @@ console.log('*** RESUMED:', node.game.getStageLevel(), node.game.paused);
     };
 
     MsgBar.prototype.parse = function() {
-        var msg, that, key, value, gameMsg, invalid;
-        var tableFunction;
+        var msg, gameMsg
 
         msg = {};
-        that = this;
-        key = null;
-        value = null;
-        invalid = false;
 
-        tableFunction = function(e) {
-            if (invalid) return;
-
-            if (e.y === 0) {
-                key = e.content;
-                msg[key] = '';
-            }
-            else if (e.y === 1) {
-
-                value = e.content.value;
-                if (key === 'stage' || key === 'to' || key === 'data') {
-                    try {
-                        value = JSUS.parse(e.content.value);
-                    }
-                    catch (ex) {
-                        value = e.content.value;
-                    }
-                }
-
-                if (key === 'to' && 'number' === typeof value) {
-                    value = '' + value;
-                }
-
-                // Validate input.
-                if (key === 'to' &&
-                    ((!JSUS.isArray(value) && 'string' !== typeof value) ||
-                      value.trim() === '')) {
-
-                    alert('Invalid "to" field');
-                    invalid = true;
-                }
-
-                if (key === 'action' && value.trim() === '') {
-                    alert('Missing "action" field');
-                    invalid = true;
-                }
-
-                if (key === 'target' && value.trim() === '') {
-                    alert('Missing "target" field');
-                    invalid = true;
-                }
-
-                msg[key] = value;
-            }
-        };
-
-        this.table.forEach(tableFunction);
-        this.tableAdvanced.forEach(tableFunction);
-
-        if (invalid) return null;
+        this.table.forEach(validateTableMsg, msg);
+        if (msg._invalid) return null;
+        this.tableAdvanced.forEach(validateTableMsg, msg);
+        if (msg._invalid) return null;
+        delete msg._lastKey;
+        delete msg._invalid;
         gameMsg = node.msg.create(msg);
-        node.info(gameMsg, 'MsgBar sent: ');
+        node.info('MsgBar msg created. ' +  gameMsg.toSMS());
         return gameMsg;
     };
 
+
+    // # Helper Function.
+
+    function validateTableMsg(e, msg) {
+        var key, value;
+
+        if (msg._invalid) return;
+
+        if (e.y === 2) return;
+
+        if (e.y === 0) {
+            // Saving the value of last key.
+            msg._lastKey =  e.content;
+            return;
+        }
+
+        // Fetching the value of last key.
+        key = msg._lastKey;
+        value = e.content.value;
+
+        if (key === 'stage' || key === 'to' || key === 'data') {
+            try {
+                value = JSUS.parse(e.content.value);
+            }
+            catch (ex) {
+                value = e.content.value;
+            }
+        }
+
+        // Validate input.
+        if (key === 'to') {
+            if ('number' === typeof value) {
+                value = '' + value;
+            }
+
+            if ((!JSUS.isArray(value) && 'string' !== typeof value) ||
+                ('string' === typeof value && value.trim() === '')) {
+
+                alert('Invalid "to" field');
+                msg._invalid = true;
+            }
+        }
+
+        else if (key === 'action') {
+            if (value.trim() === '') {
+                alert('Missing "action" field');
+                msg._invalid = true;
+            }
+            else {
+                value = value.toLowerCase();
+            }
+
+        }
+
+        else if (key === 'target') {
+            if (value.trim() === '') {
+                alert('Missing "target" field');
+                msg._invalid = true;
+            }
+            else {
+                value = value.toUpperCase();
+            }
+        }
+
+        // Assigning the value.
+        msg[key] = value;
+    }
+
 })(node);
+
 /**
  * # NDDBBrowser widget for nodeGame
  * Copyright(c) 2014 Stefano Balietti
@@ -29201,88 +29217,59 @@ console.log('*** RESUMED:', node.game.getStageLevel(), node.game.paused);
 
     node.widgets.register('StateBar', StateBar);
 
-    // ## Defaults
-
-    StateBar.defaults = {};
-    StateBar.defaults.id = 'statebar';
-    StateBar.defaults.fieldset = { legend: 'Change Game State' };
-
     // ## Meta-data
 
     StateBar.version = '0.3.2';
-    StateBar.description = 'Provides a simple interface to change the stage of a game.';
+    StateBar.description =
+        'Provides a simple interface to change the stage of a game.';
+
+    StateBar.title = 'Change Game State';
+    StateBar.className = 'statebar';
 
     function StateBar(options) {
-        this.id = options.id;
+        this.id = options.id || StateBar.className;
         this.recipient = null;
     }
 
-    StateBar.prototype.getRoot = function () {
-        return this.root;
-    };
+    StateBar.prototype.append = function() {
+        var PREF;
+        var idButton, idStateSel, idRecipient, sendButton, stateSel, that;
 
-    StateBar.prototype.append = function (root) {
+        PREF = this.id + '_';
 
-        var PREF = this.id + '_';
-
-        var idButton = PREF + 'sendButton',
-        idStateSel = PREF + 'stateSel',
+        idButton = PREF + 'sendButton';
+        idStateSel = PREF + 'stateSel';
         idRecipient = PREF + 'recipient';
 
-        var sendButton = node.window.addButton(root, idButton);
-        var stateSel = node.window.addStateSelector(root, idStateSel);
-        this.recipient = node.window.addRecipientSelector(root, idRecipient);
+        sendButton = node.window.addButton(this.bodyDiv, idButton);
+        stateSel = node.window.addStateSelector(this.bodyDiv, idStateSel);
+        this.recipient =
+            node.window.addRecipientSelector(this.bodyDiv, idRecipient);
 
-        var that = this;
+        that = this;
 
         node.on('UPDATED_PLIST', function() {
             node.window.populateRecipientSelector(that.recipient, node.game.pl);
         });
 
         sendButton.onclick = function() {
+            var to, result;
+            var stage, step, round, stateEvent, stateMsg;
 
             // Should be within the range of valid values
             // but we should add a check
-            var to = that.recipient.value;
+            to = that.recipient.value;
 
-            // STATE.STEP:ROUND
-            var parseState = /^(\d+)(?:\.(\d+))?(?::(\d+))?$/;
-
-            var result = parseState.exec(stateSel.value);
-            var state, step, round, stateEvent, stateMsg;
-            if (result !== null) {
-                // Note: not result[0]!
-                state = result[1];
-                step = result[2] || 1;
-                round = result[3] || 1;
-
-                node.log('Parsed State: ' + result.join("|"));
-
-                state = new node.GameStage({
-                    state: state,
-                    step: step,
-                    round: round
-                });
-
-                // Self Update
-                if (to === 'ROOM') {
-                    stateEvent = node.IN + node.action.SAY + '.STATE';
-                    stateMsg = node.msg.createSTATE(stateEvent, state);
-                    node.emit(stateEvent, stateMsg);
-                }
-
+            try {
+                stage = new node.GameStage(stateSel.value);
                 // Update Others
-                stateEvent = node.OUT + node.action.SAY + '.STATE';
-                node.emit(stateEvent, state, to);
+                node.remoteCommand('goto_step', to, stage);
             }
-            else {
-                node.err('Not valid state. Not sent.');
-                node.socket.sendTXT('E: not valid state. Not sent');
+            catch (e) {
+                node.err('Invalid stage, not sent: ' + e);
+                //node.socket.sendTXT('E: invalid stage, not sent');
             }
         };
-
-        this.root = root;
-        return root;
     };
 
 })(node);
