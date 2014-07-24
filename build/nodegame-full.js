@@ -14400,7 +14400,7 @@ JSUS.extend(TIME);
      */
     Game.prototype.gotoStep = function(nextStep) {
         var curStep;
-        var nextStepObj, nextStageObj;
+        var curStageObj, nextStepObj, nextStageObj;
         var ev, node;
         var property, handler;
         var minThreshold, maxThreshold, exactThreshold;
@@ -14459,17 +14459,24 @@ JSUS.extend(TIME);
 
             node.emit('STEPPING');
 
+            // Check for stage/step existence:
+            nextStageObj = this.plot.getStage(nextStep);
+            if (!nextStageObj) return false;
+            nextStepObj = this.plot.getStep(nextStep);
+            if (!nextStepObj) return false;
+
             // stageLevel needs to be changed (silent), otherwise it stays DONE
             // for a short time in the new game stage:
             this.setStageLevel(constants.stageLevels.UNINITIALIZED, true);
             this.setCurrentGameStage(nextStep);
 
-            // If we enter a new stage (including repeating the same stage)
-            // we need to update a few things:
+            // If we enter a new stage we need to update a few things:
             //if (this.plot.stepsToNextStage(curStep) === 1) {
-            if (curStep.stage !== nextStep.stage) {
-                nextStageObj = this.plot.getStage(nextStep);
-                if (!nextStageObj) return false;
+            //if (curStep.stage !== nextStep.stage) {
+            curStageObj = this.plot.getStage(curStep);
+            if (!curStageObj || nextStageObj.id !== curStageObj.id) {
+                //nextStageObj = this.plot.getStage(nextStep);
+                //if (!nextStageObj) return false;
 
                 // Store time:
                 this.node.timer.setTimestamp('stage', (new Date()).getTime());
@@ -14491,9 +14498,6 @@ JSUS.extend(TIME);
                     }
                 }
             }
-
-            nextStepObj = this.plot.getStep(nextStep);
-            if (!nextStepObj) return false;
 
             // Execute the init function of the step, if any:
             if (nextStepObj.hasOwnProperty('init')) {
@@ -20119,13 +20123,21 @@ JSUS.extend(TIME);
          *
          */
         this.events.ng.on(CMD + gcommands.goto_step, function(step) {
+            var gs;
+
             if (!node.game.isSteppable()) {
                 node.err('Game cannot be stepped.');
                 return;
             }
 
             node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step);
-            node.game.gotoStep(new GameStage(step));
+            gs = new GameStage(step);
+            if (!node.game.plot.getStep(gs)) {
+debugger;
+                node.err('Non-existing game step.');
+                return;
+            }
+            node.game.gotoStep(gs);
         });
 
         /**
@@ -29223,7 +29235,7 @@ JSUS.extend(TIME);
     StateBar.description =
         'Provides a simple interface to change the stage of a game.';
 
-    StateBar.title = 'Change Game State';
+    StateBar.title = 'Change GameStage';
     StateBar.className = 'statebar';
 
     function StateBar(options) {
@@ -29232,42 +29244,43 @@ JSUS.extend(TIME);
     }
 
     StateBar.prototype.append = function() {
-        var PREF;
-        var idButton, idStateSel, idRecipient, sendButton, stateSel, that;
+        var PREF, that;
+        var idButton, idStageField, idRecipientField;
+        var sendButton, stageField, recipientField;
 
         PREF = this.id + '_';
 
         idButton = PREF + 'sendButton';
-        idStateSel = PREF + 'stateSel';
-        idRecipient = PREF + 'recipient';
+        idStageField = PREF + 'stageField';
+        idRecipientField = PREF + 'recipient';
 
         sendButton = node.window.addButton(this.bodyDiv, idButton);
-        stateSel = node.window.addStateSelector(this.bodyDiv, idStateSel);
-        this.recipient =
-            node.window.addRecipientSelector(this.bodyDiv, idRecipient);
+        stageField = W.getTextInput(idStageField);
+        this.bodyDiv.appendChild(stageField);
+        recipientField = W.getTextInput(idRecipientField);
+        this.bodyDiv.appendChild(recipientField);
 
         that = this;
 
-        node.on('UPDATED_PLIST', function() {
-            node.window.populateRecipientSelector(that.recipient, node.game.pl);
-        });
+        //node.on('UPDATED_PLIST', function() {
+        //    node.window.populateRecipientSelector(that.recipient, node.game.pl);
+        //});
 
         sendButton.onclick = function() {
-            var to, result;
-            var stage, step, round, stateEvent, stateMsg;
+            var to;
+            var stage;
 
             // Should be within the range of valid values
             // but we should add a check
-            to = that.recipient.value;
+            to = recipientField.value;
 
             try {
-                stage = new node.GameStage(stateSel.value);
+                stage = new node.GameStage(stageField.value);
                 // Update Others
                 node.remoteCommand('goto_step', to, stage);
             }
             catch (e) {
                 node.err('Invalid stage, not sent: ' + e);
-                //node.socket.sendTXT('E: invalid stage, not sent');
             }
         };
     };
