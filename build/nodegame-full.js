@@ -2991,61 +2991,6 @@ if (!JSON) {
             contentDocument.getElementsByTagName('html')[0];
     };
 
-    // ## RIGHT-CLICK
-
-    /**
-     * ## DOM.disableRightClick
-     *
-     * Disables the popup of the context menu by right clicking with the mouse 
-     *
-     * @param {Document} Optional. A target document object. Defaults, document
-     *
-     * @see DOM.enableRightClick
-     */
-    DOM.disableRightClick = function(doc) {
-        doc = doc || document;
-        if (doc.layers) {
-            doc.captureEvents(Event.MOUSEDOWN);
-            doc.onmousedown = function clickNS4(e) {
-                if (doc.layers || doc.getElementById && !doc.all) {
-                    if (e.which == 2 || e.which == 3) {
-                        return false;
-                    }
-                }
-            }
-        }
-        else if (doc.all && !doc.getElementById) {
-            doc.onmousedown = function clickIE4() {
-                if (event.button == 2) {
-                    return false;
-                }
-            }
-        }
-        doc.oncontextmenu = new Function("return false");
-    };
-
-    /**
-     * ## DOM.enableRightClick
-     *
-     * Enables the popup of the context menu by right clicking with the mouse 
-     *
-     * It unregisters the event handlers created by `DOM.disableRightClick` 
-     *
-     * @param {Document} Optional. A target document object. Defaults, document
-     *
-     * @see DOM.disableRightClick
-     */
-    DOM.enableRightClick = function(doc) {
-        doc = doc || document;
-        if (doc.layers) {
-            doc.releaseEvents(Event.MOUSEDOWN);
-            doc.onmousedown = null;
-        }
-        else if (doc.all && !doc.getElementById) {
-            doc.onmousedown = null;
-        }
-        doc.oncontextmenu = null;
-    };
 
     JSUS.extend(DOM);
 
@@ -4536,29 +4481,23 @@ JSUS.extend(TIME);
      *
      * Parses current querystring and returns the requested variable.
      *
-     * If no variable name is specified, returns the full query string.
+     * If no variable is specified, returns the full query string.
      * If requested variable is not found returns false.
      *
-     * @param {string} name Optional. If set, returns only the value
-     *   associated with this variable
-     * @param {string} referer Optional. If set, searches this string
+     * @param {string} variable Optional. If set, returns only the value
+     *    associated with this variable
      *
      * @return {string|boolean} The querystring, or a part of it, or FALSE
      *
      * Kudos:
      * @see http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
      */
-    PARSE.getQueryString = function(name, referer) {
+    PARSE.getQueryString = function(name) {
         var regex;
-        if (referer && 'string' !== typeof referer) {
-            throw new TypeError('JSUS.getQueryString: referer must be string ' +
-                                'or undefined.');
-        }
-        referer = referer || window.location.search;
-        if ('undefined' === typeof name) return referer;
+        if ('undefined' === typeof name) return window.location.search;
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
         regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(referer);
+        results = regex.exec(location.search);
         return results == null ? false : 
             decodeURIComponent(results[1].replace(/\+/g, " "))
     };
@@ -6039,35 +5978,22 @@ JSUS.extend(TIME);
      *
      * Indexes an element
      *
-     * Parameter _oldIdx_ is needed if indexing is updating a previously
-     * indexed item. In fact if new index is different, the old one must
-     * be deleted.
-     *
      * @param {object} o The element to index
-     * @param {number} dbidx The position of the element in the database array
-     * @param {string} oldIdx Optional. The old index name, if any.
+     * @param {object} o The position of the element in the database array
      */
-    NDDB.prototype._indexIt = function(o, dbidx, oldIdx) {
+    NDDB.prototype._indexIt = function(o, dbidx) {
         var func, id, index, key;
         if (!o || J.isEmpty(this.__I)) return;
-        oldIdx = undefined;
+
         for (key in this.__I) {
             if (this.__I.hasOwnProperty(key)) {
                 func = this.__I[key];
                 index = func(o);
-                // If the same object has been  previously
-                // added with another index delete the old one.
-                if (index !== oldIdx) {
-                    if ('undefined' !== typeof oldIdx) {
-                        if ('undefined' !== typeof this[key].resolve[oldIdx]) {
-                            delete this[key].resolve[oldIdx];
-                        }
-                    }
-                }
-                if ('undefined' !== typeof index) { 
-                    if (!this[key]) this[key] = new NDDBIndex(key, this);
-                    this[key]._add(index, dbidx);
-                }
+
+                if ('undefined' === typeof index) continue;
+
+                if (!this[key]) this[key] = new NDDBIndex(key, this);
+                this[key]._add(index, dbidx);
             }
         }
     };
@@ -6097,7 +6023,7 @@ JSUS.extend(TIME);
                     settings = this.cloneSettings({V: ''});
                     this[key] = new NDDB(settings);
                 }
-                this[key].insert(o);1
+                this[key].insert(o);
             }
         }
     };
@@ -7517,13 +7443,11 @@ JSUS.extend(TIME);
      * @see JSUS.arrayDiff
      */
     NDDB.prototype.diff = function(nddb) {
+        if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
                 nddb = nddb.db;
             }
-        }
-        if (!nddb || !nddb.length) {
-            return this.breed([]);
         }
         return this.breed(J.arrayDiff(this.db, nddb));
     };
@@ -7545,13 +7469,11 @@ JSUS.extend(TIME);
      * @see JSUS.arrayIntersect
      */
     NDDB.prototype.intersect = function(nddb) {
+        if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
-                nddb = nddb.db;
+                var nddb = nddb.db;
             }
-        }
-        if (!nddb || !nddb.length) {
-            return this.breed([]);
         }
         return this.breed(J.arrayIntersect(this.db, nddb));
     };
@@ -8175,7 +8097,7 @@ JSUS.extend(TIME);
      * @see NDDBIndex.get
      * @see NDDBIndex.remove
      */
-    NDDBIndex.prototype.update = function(idx, update) {
+        NDDBIndex.prototype.update = function(idx, update) {
         var o, dbidx, nddb;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
@@ -8186,7 +8108,7 @@ JSUS.extend(TIME);
         // We do indexes separately from the other components of _autoUpdate
         // to avoid looping through all the other elements that are unchanged.
         if (nddb.__update.indexes) {
-            nddb._indexIt(o, dbidx, idx);
+            nddb._indexIt(o, dbidx);
             nddb._hashIt(o);
             nddb._viewIt(o);
         }
@@ -17445,6 +17367,14 @@ JSUS.extend(TIME);
          * @see GameTimer.fire
          */
         this.hooks = [];
+        /**
+         * ### GameTimer.hookNames
+         *
+         * Object containing all names used for the hooks
+         *
+         * @see GameTimer.hooks
+         */
+        this.hookNames = {};
 
         // Init!
         this.init();
@@ -17609,17 +17539,46 @@ JSUS.extend(TIME);
      * The first parameter hook can be a string, a function, or an object
      * containing an hook property.
      */
-    GameTimer.prototype.addHook = function(hook, ctx) {
+    GameTimer.prototype.addHook = function(hook, ctx, name) {
+        var i;
+    
         if (!hook) {
             throw new Error('GameTimer.addHook: missing argument');
         }
-
         ctx = ctx || this.node.game;
         if (hook.hook) {
             ctx = hook.ctx || ctx;
+            if(hook.name) {
+                name = hook.name;
+            }
             hook = hook.hook;
         }
-        this.hooks.push({hook: hook, ctx: ctx});
+        if(!name) {
+            name = JSUS.uniqueKey(this.hookNames,'timerHook');
+        }
+        for (i = 0; i < this.hooks.length; i++) {
+            if (this.hooks[i].name === name) {
+                return;
+            }
+        }
+        this.hookNames[name] = true;
+        this.hooks.push({hook: hook, ctx: ctx, name: name});
+    };
+    /*
+     * ### GameTimer.removeHook
+     *
+     * Removes a hook given its' name
+     */
+    GameTimer.prototype.removeHook = function(name) {
+        var i;
+        if (this.hookNames[name]) {
+            for (i = 0; i < this.hooks.length; i++) {
+                if (this.hooks[i].name === name) {
+                    this.hooks.splice(i,1);
+                    delete this.hookNames[name];
+                }
+            }     
+        }
     };
 
     /**
@@ -20545,11 +20504,8 @@ JSUS.extend(TIME);
     GameWindow.defaults = {};
 
     // Default settings.
-    GameWindow.defaults.textOnleave = '';
     GameWindow.defaults.promptOnleave = true;
     GameWindow.defaults.noEscape = true;
-    GameWindow.defaults.waitScreen = undefined;
-    GameWindow.defaults.disableRightClick = false;
     GameWindow.defaults.cacheDefaults = {
         loadCache:       true,
         storeCacheNow:   false,
@@ -20847,6 +20803,29 @@ JSUS.extend(TIME);
         this.screenState = node.constants.screenLevels.ACTIVE;
 
         /**
+         * ### GamwWindow.textOnleave
+         *
+         * Text that displayed to the users on the _onbeforeunload_ event
+         *
+         * By default it is null, that means that it is left to the browser
+         * default.
+         *
+         * Notice: some browser do not support displaying a custom text.
+         *
+         * @see GameWindow.promptOnleave
+         */
+        this.textOnleave = null;
+
+        /**
+         * ### GamwWindow.rightClickDisabled
+         *
+         * TRUE, if the right click context menu is disabled
+         *
+         * @see GameWindow.disableRightClick
+         */
+        this.rightClickDisabled = false;
+
+        /**
          * ### node.setup.window
          *
          * Setup handler for the node.window object
@@ -20854,15 +20833,21 @@ JSUS.extend(TIME);
          * @see node.setup
          */
         node.registerSetup('window', function(conf) {
-            conf = J.merge(W.conf, conf);
-            //if ('object' === typeof conf && !J.isEmpty(conf)) {
-                this.window.init(conf);
-                return conf;
-            //}
+            conf = conf || {};
+            if ('undefined' === typeof conf.promptOnleave) {
+                conf.promptOnleave = false;
+            }
+            if ('undefined' === typeof conf.noEscape) {
+                conf.noEscape = true;
+            }
+
+            this.window.init(conf);
+
+            return conf;
         });
 
         // Init.
-        this.init(GameWindow.defaults);
+        this.init();
     }
 
     // ## GameWindow methods
@@ -20879,13 +20864,13 @@ JSUS.extend(TIME);
      * @param {object} options Optional. Configuration options
      */
     GameWindow.prototype.init = function(options) {
-        var stageLevels;
-        var stageLevel;
-
         this.setStateLevel('INITIALIZING');
         options = options || {};
-        this.conf = J.merge(this.conf, options);
+        this.conf = J.merge(GameWindow.defaults, options);
 
+        if (this.conf.textOnleave) {
+            this.textOnleave = this.conf.textOnleave;
+        }
         if (this.conf.promptOnleave) {
             this.promptOnleave();
         }
@@ -20906,22 +20891,6 @@ JSUS.extend(TIME);
                 this.waitScreen = null;
             }
             this.waitScreen = new node.WaitScreen(this.conf.waitScreen);
-
-            stageLevels = node.constants.stageLevels;
-            stageLevel = node.game.getStageLevel();
-            if (stageLevel !== stageLevels.UNINITIALIZED) {
-                if (node.game.paused) {
-                    this.lockScreen(this.waitScreen.defaultTexts.paused);
-                }
-                else {
-                    if (stageLevel === stageLevels.DONE) {
-                        this.lockScreen(this.waitScreen.defaultTexts.waiting);
-                    }
-                    else if (stageLevel !== stageLevels.PLAYING) {
-                        this.lockScreen(this.waitScreen.defaultTexts.stepping);
-                    }
-                }
-            }
         }
         else if (this.waitScreen) {
             this.waitScreen.destroy();
@@ -20933,7 +20902,7 @@ JSUS.extend(TIME);
         }
 
         if (this.conf.disableRightClick) {
-            this.disableRightClick();
+            this.disableRightClick()
         }
         else if (this.conf.disableRightClick === false) {
             this.enableRightClick();
@@ -21391,7 +21360,7 @@ JSUS.extend(TIME);
                             'not found.');
         }
 
-        W.removeClass(this.headerElement, 'ng_header_position-[a-z-]*');
+        W.removeClass(this.headerElement, 'ng_header_position-[a-z\-]*');
         W.addClass(this.headerElement, validPositions[pos]);
 
         oldPos = this.headerPosition;
@@ -22087,7 +22056,7 @@ JSUS.extend(TIME);
             that.frameWindow = iframe.contentWindow;
             that.frameDocument = that.getIFrameDocument(iframe);
             // Disable right click in loaded iframe document, if necessary.
-            if (that.conf.rightClickDisabled) {
+            if (that.rightClickDisabled) {
                 J.disableRightClick(that.frameDocument);
             }
         }
@@ -22266,13 +22235,11 @@ JSUS.extend(TIME);
              W.getFrameRoot().insertBefore(W.headerElement, W.frameElement);
         }
 
-        W.removeClass(W.frameElement, 'ng_mainframe-header-[a-z-]*');
+        W.removeClass(W.frameElement, 'ng_mainframe-header-[a-z\-]*');
         switch(position) {
-        case 'right':            
-            W.addClass(W.frameElement, 'ng_mainframe-header-vertical-r');
-            break;
+        case 'right':
         case 'left':
-            W.addClass(W.frameElement, 'ng_mainframe-header-vertical-l');
+            W.addClass(W.frameElement, 'ng_mainframe-header-vertical');
             break;
         case 'top':
             W.addClass(W.frameElement, 'ng_mainframe-header-horizontal');
@@ -22337,7 +22304,6 @@ JSUS.extend(TIME);
                 return false;
             }
         };
-        this.conf.noEscape = true;
     };
 
     /**
@@ -22353,7 +22319,6 @@ JSUS.extend(TIME);
     GameWindow.prototype.restoreEscape = function(windowObj) {
         windowObj = windowObj || window;
         windowObj.document.onkeydown = null;
-        this.conf.noEscape = false;
     };
 
     /**
@@ -22370,7 +22335,7 @@ JSUS.extend(TIME);
      */
     GameWindow.prototype.promptOnleave = function(windowObj, text) {
         windowObj = windowObj || window;
-        text = 'undefined' !== typeof text ? text : this.conf.textOnleave;
+        text = 'undefined' !== typeof text ? text : this.textOnleave;
         
         windowObj.onbeforeunload = function(e) {
             e = e || window.event;
@@ -22381,8 +22346,6 @@ JSUS.extend(TIME);
             // For Chrome, Safari, IE8+ and Opera 12+
             return text;
         };
-
-        this.conf.promptOnleave = true;
     };
 
     /**
@@ -22399,7 +22362,6 @@ JSUS.extend(TIME);
     GameWindow.prototype.restoreOnleave = function(windowObj) {
         windowObj = windowObj || window;
         windowObj.onbeforeunload = null;
-        this.conf.promptOnleave = false;
     };
 
     /**
@@ -22415,7 +22377,7 @@ JSUS.extend(TIME);
             J.disableRightClick(this.getFrameDocument());
         }
         J.disableRightClick(document);
-        this.conf.rightClickDisabled = true;
+        this.rightClickDisabled = true;
     };
 
     /**
@@ -22431,7 +22393,7 @@ JSUS.extend(TIME);
              J.enableRightClick(this.getFrameDocument());
         }
         J.enableRightClick(document);
-        this.conf.rightClickDisabled = false;
+        this.rightClickDisabled = false;
     };
 
 })(
@@ -22797,11 +22759,11 @@ JSUS.extend(TIME);
      */
     WaitScreen.prototype.enable = function() {
         if (this.enabled) return;
-        node.events.ee.game.on('REALLY_DONE', event_REALLY_DONE);
-        node.events.ee.game.on('STEPPING', event_STEPPING);
-        node.events.ee.game.on('PLAYING', event_PLAYING);
-        node.events.ee.game.on('PAUSED', event_PAUSED);
-        node.events.ee.game.on('RESUMED', event_RESUMED);
+        node.on('REALLY_DONE', event_REALLY_DONE);
+        node.on('STEPPING', event_STEPPING);
+        node.on('PLAYING', event_PLAYING);
+        node.on('PAUSED', event_PAUSED);
+        node.on('RESUMED', event_RESUMED);
         this.enabled = true;
     };
 
@@ -22812,11 +22774,11 @@ JSUS.extend(TIME);
      */
     WaitScreen.prototype.disable = function() {
         if (!this.enabled) return;
-        node.events.ee.game.off('REALLY_DONE', event_REALLY_DONE);
-        node.events.ee.game.off('STEPPING', event_STEPPING);
-        node.events.ee.game.off('PLAYING', event_PLAYING);
-        node.events.ee.game.off('PAUSED', event_PAUSED);
-        node.events.ee.game.off('RESUMED', event_RESUMED);
+        node.off('REALLY_DONE', event_REALLY_DONE);
+        node.off('STEPPING', event_STEPPING);
+        node.off('PLAYING', event_PLAYING);
+        node.off('PAUSED', event_PAUSED);
+        node.off('RESUMED', event_RESUMED);
         this.enabled = false;    
     };
 
@@ -22911,9 +22873,7 @@ JSUS.extend(TIME);
      */
     WaitScreen.prototype.destroy = function() {
         if (W.isScreenLocked()) {
-            W.setScreenLevel('UNLOCKING');
             this.unlock();
-            W.setScreenLevel('ACTIVE');
         }
         if (this.waitingDiv) {
             this.waitingDiv.parentNode.removeChild(this.waitingDiv);
@@ -22926,7 +22886,6 @@ JSUS.extend(TIME);
     ('undefined' !== typeof node) ? node : module.parent.exports.node,
     ('undefined' !== typeof window) ? window : module.parent.exports.window
 );
-
 /**
  * # GameWindow selector module
  * Copyright(c) 2014 Stefano Balietti
@@ -24230,13 +24189,12 @@ JSUS.extend(TIME);
     function addSpecialCells(data) {
         var out, i, len;
         out = [];
-        i = -1;
-        len = data.length;
+        i = -1, len = data.length;
         for ( ; ++i < len ; ) {
             out.push({content: data[i]});
         }
         return out;
-    }
+    };
 
     /**
      * ## Table constructor
@@ -24551,8 +24509,7 @@ JSUS.extend(TIME);
         if (!J.isArray(data)) data = [data];
 
         // Loop Dim 1.
-        i = -1;
-        lenI = data.length;
+        i = -1, lenI = data.length;
         for ( ; ++i < lenI ; ) {
 
             if (!J.isArray(data[i])) {
@@ -24561,8 +24518,7 @@ JSUS.extend(TIME);
             }
             else {
                 // Loop Dim 2.
-                j = -1;
-                lenJ = data[i].length;
+                j = -1, lenJ = data[i].length;
                 for ( ; ++j < lenJ ; ) {
                     if (dim === 'x') this.add(data[i][j], x + i, y + j, 'x');
                     else this.add(data[i][j], x + j, y + i, 'y');
@@ -24583,7 +24539,7 @@ JSUS.extend(TIME);
      * @param {object} content The content of the cell or Cell object
      */
     Table.prototype.add = function(content, x, y, dim) {
-        var cell;
+        var cell, x, y;
         if (!validateInput('addData', content, x, y)) return;
         if ((dim && 'string' !== typeof dim) ||
             (dim && 'undefined' === typeof this.pointers[dim])) {
@@ -24708,8 +24664,7 @@ JSUS.extend(TIME);
             if (this.left && this.left.length) {
                 TR.appendChild(document.createElement('th'));
             }
-            i = -1;
-            len = this.header.length;
+            i = -1, len = this.header.length;
             for ( ; ++i < len ; ) {
                 TR.appendChild(this.renderCell(this.header[i], 'th'));
             }
@@ -24732,8 +24687,7 @@ JSUS.extend(TIME);
             old_left = 0;
 
 
-            i = -1;
-            len = this.db.length;
+            i = -1, len = this.db.length;
             for ( ; ++i < len ; ) {
 
                 if (trid !== this.db[i].x) {
@@ -24784,8 +24738,7 @@ JSUS.extend(TIME);
                 TR.appendChild(TD);
             }
 
-            i = -1;
-            len = this.footer.length;
+            i = -1, len = this.footer.length;
             for ( ; ++i < len ; ) {
                 TR.appendChild(this.renderCell(this.footer[i]));
             }
@@ -28301,7 +28254,6 @@ JSUS.extend(TIME);
         this.init();
     }
 
-    // TODO: Write a proper INIT method
     MsgBar.prototype.init = function() {
         var that;
         var fields, i, field;
@@ -28310,7 +28262,6 @@ JSUS.extend(TIME);
         that = this;
 
         // Create fields.
-        // TODO: separate table for fields following 'data'
         fields = ['to', 'action', 'target', 'text', 'data', 'from', 'priority',
                   'reliable', 'forward', 'session', 'stage', 'created', 'id'];
 
@@ -28397,7 +28348,7 @@ JSUS.extend(TIME);
     };
 
     MsgBar.prototype.parse = function() {
-        var msg, gameMsg
+        var msg, gameMsg;
 
         msg = {};
 
@@ -29243,8 +29194,6 @@ JSUS.extend(TIME);
  *
  * Provides a simple interface to change the game stages.
  *
- * TODO: needs refactoring
- *
  * www.nodegame.org
  * ---
  */
@@ -29539,8 +29488,21 @@ JSUS.extend(TIME);
         JSUS: {}
     };
 
+    /** 
+     *  ## VisualTimer
+     *
+     *  'VisualTimer' displays and manages a 'GameTimer'
+     *  The options it can take are:
+     
+     *  - any options that can be passed to a 'GameTimer'
+     *  - waitBoxOptions: an option object to be passed to 'TimerBox'
+     *  - mainBoxOptions: an option object to be passed to 'TimerBox'
+     *
+     *  @see TimerBox
+     *  @see GameTimer
+     */
     function VisualTimer(options) {
-        this.options = options;
+        this.options = options || {};
         this.options.update = ('undefined' === typeof this.options.update) ?
             1000 : this.options.update;
 
@@ -29555,34 +29517,64 @@ JSUS.extend(TIME);
         
         /**
          *  ### mainBox
-         *  The TimerBox which displays the main timer.
          *
-         * @see node.TimerBox
+         *  The 'TimerBox' which displays the main timer.
+         *
+         *  @see TimerBox
          */
         this.mainBox = null;   
         
         /**
-         *  ### waitDiv
-         *  The DIV in which to display the maximum waiting time left. 
+         *  ### waitBox
+         *
+         *  The 'TimerBox' which displays the wait timer.
+         *
+         *  @see TimerBox         
          */
         this.waitBox = null;
         
         /**
          *  ### activeBox
-         *  The DIV in which to display the time.
+         *
+         *  The 'TimerBox' in which to display the time.
          *  
-         *  This variable is always a reference to either 'waitDiv' or 
-         *  'timerDiv'. 
+         *  This variable is always a reference to either 'waitBox' or 
+         *  'mainBox'. 
+         *
+         *  @see TimerBox      
          */
         this.activeBox = null;
         
-
+        /**
+         *  ### isInitialized
+         *
+         *  indicates whether the instance has been initializded already   
+         */
+        this.isInitialized = false;
         this.init(this.options);
     }
-
+    
+    /** 
+     *  ## VisualTimer
+     *
+     *  Initializes the instance. When called again, adds options to current
+     *  ones.
+     *
+     *  The options it can take are:
+     *
+     *  - any options that can be passed to a 'GameTimer'
+     *  - waitBoxOptions: an option object to be passed to 'TimerBox'
+     *  - mainBoxOptions: an option object to be passed to 'TimerBox'
+     *
+     *  @see TimerBox
+     *  @see GameTimer
+     */
     VisualTimer.prototype.init = function(options) {
-        var t, mainBoxOptions, waitBoxOptions;
+        var t;
         
+        if (!options) {
+            options = {};
+        }
         J.mixout(options, this.options);
 
         if (options.hooks) {
@@ -29594,10 +29586,14 @@ JSUS.extend(TIME);
             options.hooks = [];
         }
 
-        options.hooks.push({
-            hook: this.updateDisplay,
-            ctx: this
-        });
+        // Only push this hook once.
+        if (!this.isInitialized) {
+            options.hooks.push({
+                hook: this.updateDisplay,
+                ctx: this,
+                name: 'VisualTimer.updateDisplay'
+            });
+        }
 
         if (!this.gameTimer) {
             this.gameTimer = node.timer.createTimer();
@@ -29622,29 +29618,38 @@ JSUS.extend(TIME);
                 };
             }
         });
-                
         this.options = options;
         
-
-        mainBoxOptions = {classNameBody: options.className, hideTitle: true};
-        waitBoxOptions = {title: 'Max. wait timer', 
-                classNameTitle: 'waitTimerTitle',
-                classNameBody: 'waitTimerBody', hideBox: true};
-                       
-        if (!this.mainBox) {
-            this.mainBox = new TimerBox(mainBoxOptions);
+        if(!this.options.mainBoxOptions) {
+            this.options.mainBoxOptions = {};
         }
-        else {
-            this.mainBox.init(mainBoxOptions);
-        }
-        if (!this.waitBox) {
-            this.waitBox = new TimerBox(waitBoxOptions);
-        } 
-        else {
-            this.waitBox.init(waitBoxOptions);
+        if(!this.options.waitBoxOptions) {
+            this.options.waitBoxOptions = {};
         }
         
-        this.activeBox = this.mainBox;
+        J.mixout(this.options.mainBoxOptions,
+                {classNameBody: options.className, hideTitle: true});
+        J.mixout(this.options.waitBoxOptions,
+                {title: 'Max. wait timer', 
+                classNameTitle: 'waitTimerTitle',
+                classNameBody: 'waitTimerBody', hideBox: true});
+                       
+        if (!this.mainBox) {
+            this.mainBox = new TimerBox(this.options.mainBoxOptions);
+        }
+        else {
+            this.mainBox.init(this.options.mainBoxOptions);
+        }
+        if (!this.waitBox) {
+            this.waitBox = new TimerBox(this.options.waitBoxOptions);
+        } 
+        else {
+            this.waitBox.init(this.options.waitBoxOptions);
+        }
+        
+        this.activeBox = options.activeBox || this.mainBox;
+        
+        this.isInitialized = true;
     };
 
     VisualTimer.prototype.append = function() {
@@ -29654,12 +29659,47 @@ JSUS.extend(TIME);
         this.activeBox = this.mainBox;
         this.updateDisplay();
     };
+    
+    /**
+     *  ## VisualTimer.clear
+     *
+     *  Reverts state of 'VisualTimer' to right after constructor call.
+     *
+     *  @param {object} options Configuration object
+     *
+     *  @see node.timer.destroyTimer
+     *  @see VisualTimer.init
+     */
+    VisualTimer.prototype.clear = function(options) {
+        var oldOptions = this.options;
+        if (!options) {
+            options = {};
+        }
+        
+        node.timer.destroyTimer(this.gameTimer);
+                
+        // ----- as in constructor -----
+        this.options = options;
+        this.options.update = ('undefined' === typeof this.options.update) ?
+            1000 : this.options.update;
+        this.gameTimer = null;
+
+        this.activeBox = null;
+        this.isInitialized = false;
+        this.init(this.options);
+        // ----- as in constructor ----
+        
+        return oldOptions;   
+    };
+    
     /**
      *  ## VisualTimer.updateDisplay
+     *
      *  Changes 'activeBox' to display current time of 'gameTimer'
+     *
+     *  @see TimerBox.bodyDiv      
      */
     VisualTimer.prototype.updateDisplay = function() {
-//        debugger
         var time, minutes, seconds;
         if (!this.gameTimer.milliseconds || this.gameTimer.milliseconds === 0) {
             this.activeBox.bodyDiv.innerHTML = '00:00';
@@ -29674,27 +29714,27 @@ JSUS.extend(TIME);
 
     /**
      *  ## VisualTimer.start
-     *  Starts the timer and changes the display accordingly.
      *
-     *  Starts the 'gameTimer', hides 'waitDiv', unstrikes 'timerDiv' and
-     *  sets 'activeBox' as a reference to 'timerDiv'.
+     *  Starts the timer.
      *
      *  @see VisualTimer.updateDisplay
      *  @see GameTimer.start
      */
     VisualTimer.prototype.start = function() {
-        this.updateDisplay();
+        this.updateDisplay();        
         this.gameTimer.start();
     };
 
     /**
      *  ## VisualTimer.restart
+     *
      *  Restarts the timer with new options
      *
      *  @param {object} options Configuration object
      *
      *  @see VisualTimer.init
      *  @see VisualTimer.start
+     *  @see VisualTimer.stop
      */
     VisualTimer.prototype.restart = function(options) {
         this.stop();
@@ -29704,27 +29744,12 @@ JSUS.extend(TIME);
 
     /**
      *  ## VisualTimer.stop
-     *  Stops the timer display and start displaying max. wait time.
      *
-     *  Does nothing if 'gameTimer' is stopped.
-     *  Otherwise it updates 'timeLeft' with the current time in 'gameTimer',
-     *  and changes the display according to the options object as follows.
-     *
-     *  If 'options.waitTime' is a _negative_ value, the 'gameTimer' is stopped,
-     *  'VisualTimer.updateDisplay' is called and the function is returned
-     *  If 'options' or 'options.waitTime' is _undefined_, the gameTimer is 
-     *  restarted with the current time left on the clock. 
-     *  Uf 'options.waitTime' is a _positive_ value, then the 'gameTimer' is 
-     *  restarted with that value. 
-     *  After the gameTimer has been restarted, 'waitDiv' is unhidden and 
-     *  'activeBox' is set such that 'VisualTimer.updateDisplay' updates 'waitDiv',
-     *  displaying the max. wait time.
+     *  Stops the timer display and stores the time left in 'activeBox.timeLeft'
      *
      *  @param {object} options Configuration object
      *
-     *  @see VisualTimer.updateDisplay
      *  @see GameTimer.isStopped
-     *  @see GameTimer.restart
      *  @see GameTimer.stop
      */
     VisualTimer.prototype.stop = function(options) {
@@ -29733,40 +29758,110 @@ JSUS.extend(TIME);
             this.gameTimer.stop();
         }  
     };
-    
-    VisualTimer.prototype.switchActiveBoxTo = function(box,options) {
-        var waitTime;
-        this.activeBox = box;
+    /**
+     *  ## VisualTimer.switchActiveBoxTo
+     *
+     *  Switches the display of the 'gameTimer' into the 'TimerBox' 'box'.
+     *
+     *  Stores 'gameTimer.timeLeft' into 'activeBox' and then switches
+     *  'activeBox' to reference 'box'.
+     *
+     *  @param {TimerBox} box TimerBox in which to display 'gameTimer' time
+     */
+    VisualTimer.prototype.switchActiveBoxTo = function(box) {
         this.activeBox.timeLeft = this.gameTimer.timeLeft || 0;
-        if (typeof options === 'undefined' ||
-                typeof options.waitTime === 'undefined') {
-            waitTime = this.activeBox.timeLeft;
-        }
-        else {
-            waitTime = options.waitTime;
-        }
-        if (waitTime > 0) {
-            if (!this.gameTimer.isStopped()){
-            this.gameTimer.stop();}
-            this.gameTimer.restart({milliseconds: waitTime});
-        }
+        this.activeBox = box;
         this.updateDisplay();
     };
-
+    
+    /**
+      * ## VisualTimer.startWaiting
+      *
+      * Changes the 'VisualTimer' appearance to a max. wait timer
+      *
+      * If options and/or options.milliseconds are undefined, the wait timer
+      * will start with the current time left on the 'gameTimer'. The mainBox
+      * will be striked out, the waitBox set active and unhidden. All other
+      * options are forwarded directly to 'VisualTimer.restart'.
+      *
+      * @param {object} options Configuration object
+      *
+      * @see VisualTimer.restart
+      */
+    VisualTimer.prototype.startWaiting = function(options) {
+        if(typeof options === 'undefined') {
+            options = {};
+        }
+        options = J.clone(options);
+        if (typeof options.milliseconds === 'undefined') {
+            options.milliseconds = this.gameTimer.timeLeft;
+        }
+        if(typeof options.mainBoxOptions === 'undefined') {
+            options.mainBoxOptions = {};
+        }
+        if(typeof options.waitBoxOptions === 'undefined') {
+            options.waitBoxOptions = {};
+        }
+        options.mainBoxOptions.classNameBody = 'strike';
+        options.mainBoxOptions.timeLeft = this.gameTimer.timeLeft || 0;
+        options.activeBox = this.waitBox;
+        options.waitBoxOptions.hideBox = false;
+        this.restart(options);
+    };
+    
+    /**
+      * ## VisualTimer.startTiming
+      *
+      * Changes the 'VisualTimer' appearance to a regular countdown
+      *
+      * The mainBox will be unstriked and set active, the waitBox will be
+      * hidden. All other options are forwarded directly to 
+      * 'VisualTimer.restart'.
+      *
+      * @param {object} options Configuration object
+      *
+      * @see VisualTimer.restart
+      */
+    VisualTimer.prototype.startTiming = function(options) {
+        if(typeof options === 'undefined') {
+            options = {};
+        }
+        options = J.clone(options);
+        if(typeof options.mainBoxOptions === 'undefined') {
+            options.mainBoxOptions = {};
+        }
+        if(typeof options.waitBoxOptions === 'undefined') {
+            options.waitBoxOptions = {};
+        }
+        options.activeBox = this.mainBox;
+        options.waitBoxOptions.timeLeft = this.gameTimer.timeLeft || 0;
+        options.waitBoxOptions.hideBox = true;
+        options.mainBoxOptions.classNameBody = '';
+        this.restart(options)
+    };
+    
     /**
      *  ## VisualTimer.resume
-     *  Resumes the 'gameTimer' and hides 'waitDiv'
+     *
+     *  Resumes the 'gameTimer'
      *
      *  @see GameTimer.resume
      */
     VisualTimer.prototype.resume = function() {
         this.gameTimer.resume();
     };
-
+    
+    /**
+     *  ## VisualTimer.setToZero
+     *
+     *  stops 'gameTimer' and sets 'activeBox' to display '00:00'
+     *
+     *  @see GameTimer.resume
+     */
     VisualTimer.prototype.setToZero = function() {
-        debugger
         this.stop();
         this.activeBox.bodyDiv.innerHTML = '00:00';
+        this.activeBox.setClassNameBody('strike');
     };
     
     /**
@@ -29780,7 +29875,6 @@ JSUS.extend(TIME);
      * @see GameTimer.fire
      */
     VisualTimer.prototype.doTimeUp = function() {
-        debugger
         this.stop();
         this.gameTimer.timeLeft = 0;
         this.gameTimer.fire(this.gameTimer.timeup);
@@ -29788,6 +29882,7 @@ JSUS.extend(TIME);
 
     VisualTimer.prototype.listeners = function() {
         var that = this;
+
         node.on('PLAYING', function() {
             var stepObj, timer, options;
             stepObj = node.game.getCurrentStep();
@@ -29795,26 +29890,21 @@ JSUS.extend(TIME);
             timer = stepObj.timer;
             if (timer) {
                 options = processOptions(timer, this.options);
-                that.stop();
-                that.init(options);
-                that.mainBox.setClassNameBody('');
-                that.switchActiveBoxTo(that.mainBox,-1);
-                that.mainBox.unhideBox();
-                that.waitBox.hideBox();
-                that.start();
+                that.startTiming(options);
             }
         });
 
         node.on('REALLY_DONE', function() {
-            that.mainBox.setClassNameBody('strike');
-            that.switchActiveBoxTo(that.waitBox);
-            that.waitBox.unhideBox();
+            if(!that.gameTimer.isStopped()) {
+                that.startWaiting();   
+            }
        });
     };
 
     VisualTimer.prototype.destroy = function() {
         node.timer.destroyTimer(this.gameTimer);
-        this.bodyDiv.removeChild(this.timerDiv);
+        this.bodyDiv.removeChild(this.mainBox.boxDiv);
+        this.bodyDiv.removeChild(this.waitBox.boxDiv);
     };
 
     /**
@@ -29865,11 +29955,46 @@ JSUS.extend(TIME);
         return options;
     }
     
+    /**
+     *  ## TimerBox
+     *
+     *  'TimerBox' represents a box wherein to display the timer.
+     *  The options it can take are:
+     
+     *  - hideTitle
+     *  - hideBody
+     *  - hideBox
+     *  - title
+     *  - classNameTitle
+     *  - classNameBody
+     *  - timeLeft 
+     */
     function TimerBox(options) {
+        /**
+         *  ### boxDiv
+         *  
+         *  The Div which will contain the title and body Divs
+         */
         this.boxDiv = null;
+        
+        /**
+         *  ### titleDiv
+         *  
+         *  The Div which will contain the title
+         */
         this.titleDiv = null;
+        /**
+         *  ### bodyDiv
+         *  
+         *  The Div which will contain the numbers
+         */
         this.bodyDiv = null;
         
+        /**
+         *  ### timeLeft
+         *  
+         *  Used to store the last value before focus is taken away
+         */
         this.timeLeft = null;
                 
         this.boxDiv = node.window.getDiv();
@@ -29911,30 +30036,75 @@ JSUS.extend(TIME);
         }
     };
     
+    /**
+     * ## hideBox
+     *
+     * hides entire 'TimerBox'
+     */
     TimerBox.prototype.hideBox = function() {
         this.boxDiv.style.display = 'none';
     };
+    /**
+     * ## unhideBox
+     *
+     * hides entire 'TimerBox'
+     */
     TimerBox.prototype.unhideBox = function() {
         this.boxDiv.style.display = '';
     };
+    /**
+     * ## hideTitle
+     *
+     * hides title of 'TimerBox'
+     */
     TimerBox.prototype.hideTitle = function() {
         this.titleDiv.style.display = 'none';
     };
+    /**
+     * ## unhideTitle
+     *
+     * unhides title of 'TimerBox'
+     */
     TimerBox.prototype.unhideTitle = function() {
         this.titleDiv.style.display = '';
     };
+    /**
+     * ## hideBody
+     *
+     * hides body of 'TimerBox'
+     */
     TimerBox.prototype.hideBody = function() {
         this.bodyDiv.style.display = 'none';
     };
+    /**
+     * ## unhideBody
+     *
+     * unhides Body of 'TimerBox'
+     */
     TimerBox.prototype.unhideBody = function() {
         this.bodyDiv.style.display = '';
     };
+    /**
+     * ## setTitle
+     *
+     * sets title of 'TimerBox'
+     */
     TimerBox.prototype.setTitle = function(title) {
         this.titleDiv.innerHTML = title;
     };
+    /**
+     * ## setClassNameTitle
+     *
+     * sets class name of title of 'TimerBox'
+     */
     TimerBox.prototype.setClassNameTitle = function(className) {
         this.titleDiv.className = className;
     };
+    /**
+     * ## setClassNameBody
+     *
+     * sets class name of body of 'TimerBox'
+     */
     TimerBox.prototype.setClassNameBody = function(className) {
         this.bodyDiv.className = className;
     };
