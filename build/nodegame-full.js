@@ -9552,11 +9552,7 @@ JSUS.extend(TIME);
         else if ('number' === typeof gs) {
             if (gs % 1 !== 0) {
                throw new TypeError('GameStage constructor: gs cannot be ' +
-                                   'a non-integer number.'); 
-            }
-            if (gs < 0) {
-                throw new TypeError('GameStage constructor: gs cannot be ' +
-                                    'a negative number.');
+                                   'a non-integer number.');
             }
             this.stage = gs;
             this.step = 1;
@@ -9567,27 +9563,35 @@ JSUS.extend(TIME);
             throw new TypeError('GameStage constructor: gs must be string, ' +
                                 'object, a positive number, or undefined.');
         }
-        
+
         // Final sanity checks.
 
         if ('undefined' === typeof this.stage) {
             throw new Error('GameStage constructor: stage cannot be ' +
-                            'undefined.'); 
+                            'undefined.');
         }
         if ('undefined' === typeof this.step) {
             throw new Error('GameStage constructor: step cannot be ' +
-                            'undefined.'); 
+                            'undefined.');
         }
         if ('undefined' === typeof this.round) {
             throw new Error('GameStage constructor: round cannot be ' +
-                            'undefined.'); 
+                            'undefined.');
         }
-        
+
+        if (('number' === typeof this.stage && this.stage < 0) ||
+            ('number' === typeof this.step  && this.step < 0) ||
+            ('number' === typeof this.round && this.round < 0)) {
+
+            throw new TypeError('GameStage constructor: no field can be ' +
+                                'a negative number.');
+        }
+
         // Either 0.0.0 or no 0 is allowed.
         if (!(this.stage === 0 && this.step === 0 && this.round === 0)) {
             if (this.stage === 0 || this.step === 0 || this.round === 0) {
                 throw new Error('GameStage constructor: non-sensical game ' +
-                                'stage: ' + this.toString()); 
+                                'stage: ' + this.toString());
             }
         }
     }
@@ -9702,7 +9706,7 @@ JSUS.extend(TIME);
                 result = gs1.step - gs2.step;
             }
         }
-        
+
         return result;
     };
 
@@ -9724,6 +9728,7 @@ JSUS.extend(TIME);
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # PlayerList
  * Copyright(c) 2014 Stefano Balietti
@@ -14416,7 +14421,7 @@ JSUS.extend(TIME);
      */
     Game.prototype.gotoStep = function(nextStep) {
         var curStep;
-        var nextStepObj, nextStageObj;
+        var curStageObj, nextStepObj, nextStageObj;
         var ev, node;
         var property, handler;
         var minThreshold, maxThreshold, exactThreshold;
@@ -14475,17 +14480,24 @@ JSUS.extend(TIME);
 
             node.emit('STEPPING');
 
+            // Check for stage/step existence:
+            nextStageObj = this.plot.getStage(nextStep);
+            if (!nextStageObj) return false;
+            nextStepObj = this.plot.getStep(nextStep);
+            if (!nextStepObj) return false;
+
             // stageLevel needs to be changed (silent), otherwise it stays DONE
             // for a short time in the new game stage:
             this.setStageLevel(constants.stageLevels.UNINITIALIZED, true);
             this.setCurrentGameStage(nextStep);
 
-            // If we enter a new stage (including repeating the same stage)
-            // we need to update a few things:
+            // If we enter a new stage we need to update a few things:
             //if (this.plot.stepsToNextStage(curStep) === 1) {
-            if (curStep.stage !== nextStep.stage) {
-                nextStageObj = this.plot.getStage(nextStep);
-                if (!nextStageObj) return false;
+            //if (curStep.stage !== nextStep.stage) {
+            curStageObj = this.plot.getStage(curStep);
+            if (!curStageObj || nextStageObj.id !== curStageObj.id) {
+                //nextStageObj = this.plot.getStage(nextStep);
+                //if (!nextStageObj) return false;
 
                 // Store time:
                 this.node.timer.setTimestamp('stage', (new Date()).getTime());
@@ -14507,9 +14519,6 @@ JSUS.extend(TIME);
                     }
                 }
             }
-
-            nextStepObj = this.plot.getStep(nextStep);
-            if (!nextStepObj) return false;
 
             // Execute the init function of the step, if any:
             if (nextStepObj.hasOwnProperty('init')) {
@@ -17042,7 +17051,6 @@ JSUS.extend(TIME);
                                 'found: ' + gameTimer + '.');
             }
             gameTimer = this.timers[gameTimer];
-
         }
         if ('object' !== typeof gameTimer) {
             throw new Error('node.timer.destroyTimer: gameTimer must be ' +
@@ -17726,6 +17734,9 @@ JSUS.extend(TIME);
      * @see GameTimer.init
      */
     GameTimer.prototype.restart = function(options) {
+        if (!this.isStopped()) {
+            this.stop();
+        }
         this.init(options);
         this.start();
     };
@@ -20140,13 +20151,20 @@ JSUS.extend(TIME);
          *
          */
         this.events.ng.on(CMD + gcommands.goto_step, function(step) {
+            var gs;
+
             if (!node.game.isSteppable()) {
                 node.err('Game cannot be stepped.');
                 return;
             }
 
             node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step);
-            node.game.gotoStep(new GameStage(step));
+            gs = new GameStage(step);
+            if (!node.game.plot.getStep(gs)) {
+                node.err('Non-existing game step.');
+                return;
+            }
+            node.game.gotoStep(gs);
         });
 
         /**

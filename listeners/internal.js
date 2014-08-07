@@ -229,13 +229,20 @@
          *
          */
         this.events.ng.on(CMD + gcommands.goto_step, function(step) {
+            var gs;
+
             if (!node.game.isSteppable()) {
                 node.err('Game cannot be stepped.');
                 return;
             }
 
             node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step);
-            node.game.gotoStep(new GameStage(step));
+            gs = new GameStage(step);
+            if (!node.game.plot.getStep(gs)) {
+                node.err('Non-existing game step.');
+                return;
+            }
+            node.game.gotoStep(gs);
         });
 
         /**
