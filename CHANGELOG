@@ -2,6 +2,7 @@
 
 ## 0.9.1
   - GameMsg id and session fields are not write-protected any more.
+ - `#GameTimer.start()` and `#GameTimer.stop()` do more robust checkings on initial conditions.
 
 ## 0.9.0
   - Change log new version starts here

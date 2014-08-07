@@ -22,7 +22,7 @@
         <a href="#socketdirect">SocketDirect</a>
       </div>
       <div class="heading h2">
-        <a href="#a-shared-event-emitter-object.">a shared event-emitter object.</a>
+        <a href="#http---nodegame.org">http://nodegame.org</a>
       </div>
       <div class="heading h2">
         <a href="#socketdirect.socket">SocketDirect.socket</a>
@@ -43,17 +43,18 @@
   </h1>
 </div>
 
-  </div>
-  <div class="body"><p>Copyright(c) 2013 Stefano Balietti
+
+<p>Copyright(c) 2014 Stefano Balietti
 MIT Licensed </p>
+  </div>
+  <div class="body"><p>Implementation of a direct socket communicating directly with the server
+through a shared event-emitter object.</p>
 
-<p>Implementation of a direct socket communicating directly through</p>
 
-
-<div class="pilwrap" id="a-shared-event-emitter-object.">
+<div class="pilwrap" id="http---nodegame.org">
   <h2>
-    <a href="#a-shared-event-emitter-object." class="pilcrow">&#182;</a>
-    a shared event-emitter object.
+    <a href="#http---nodegame.org" class="pilcrow">&#182;</a>
+    <a href='http://nodegame.org'>http://nodegame.org</a>
   </h2>
 </div>
 
@@ -125,7 +126,7 @@ MIT Licensed </p>
     <span class="p">};</span>
 
     <span class="nx">SocketDirect</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>        
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">onMessage</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
     <span class="p">};</span>
 
@@ -133,7 +134,6 @@ MIT Licensed </p>
         <span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">onDisconnect</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
     <span class="p">};</span>
-
 
     <span class="nx">SocketDirect</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">send</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">gameMsg</span><span class="p">;</span>
@@ -151,7 +151,6 @@ MIT Licensed </p>
 
 
     <span class="nx">parent</span><span class="p">.</span><span class="nx">SocketFactory</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;SocketDirect&#39;</span><span class="p">,</span> <span class="nx">SocketDirect</span><span class="p">);</span>
-
 
 <span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>

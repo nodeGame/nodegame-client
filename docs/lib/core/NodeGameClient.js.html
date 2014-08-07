@@ -103,9 +103,6 @@
         <a href="#node.setup.events">node.setup.events</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.window">node.setup.window</a>
-      </div>
-      <div class="heading h3">
         <a href="#node.setup.game_settings">node.setup.game_settings</a>
       </div>
       <div class="heading h3">
@@ -641,7 +638,7 @@ the default values.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;nodegame&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">setupOptions</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.nodegame: options must &#39;</span> <span class="o">+</span>
                                     <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
@@ -660,8 +657,19 @@ the default values.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>                    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;register&#39;</span> <span class="o">&amp;&amp;</span>
                         <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;nodegame&#39;</span> <span class="o">&amp;&amp;</span>
-                        <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;prototype&#39;</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                        <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;prototype&#39;</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<p>Like this browsers do not complain in strict mode.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                        <span class="nx">setupOptions</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">?</span>
+                            <span class="kc">undefined</span> <span class="o">:</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">setupOptions</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -726,7 +734,7 @@ in the browser enviroment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>URL</p>
         </td>
@@ -745,7 +753,7 @@ in the browser enviroment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>url was not of the form '/channel'</p>
         </td>
@@ -757,7 +765,7 @@ in the browser enviroment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Add a trailing slash if missing</p>
         </td>
@@ -903,51 +911,6 @@ in the browser enviroment.</p>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">dumpEvents</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">conf</span><span class="p">.</span><span class="nx">dumpEvents</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
-
-            <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
-        <span class="p">});</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.setup.window">
-  <h3>
-    <a href="#node.setup.window" class="pilcrow">&#182;</a>
-    node.setup.window
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Configure the node.window object, if existing</p>
-
-<p>TODO: move in GameWindow</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">GameWindow
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;window&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.setup.window: window not found, &#39;</span> <span class="o">+</span>
-                          <span class="s1">&#39;are you in a browser?&#39;</span><span class="p">);</span>
-                <span class="k">return</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">conf</span><span class="p">);</span>
 
             <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
         <span class="p">});</span></pre></div>
@@ -1123,19 +1086,25 @@ in the browser enviroment.</p>
 
   </div>
   <div class="body"><p>Creates the <code>node.game.plot</code> object</p>
+
+<p>It can either replace current plot object, or append to it. 
+Updates are not possible for the moment.</p>
+
+<p>TODO: allows updates in plot.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">stagerState</span>
       <span class="dox_type">object</span>
-      <span>Stager state which is passed to <code>Stager.setState</code></span>
+      <span>Stager state which is passed
+  to <code>Stager.setState</code></span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">updateRule</span>
       <span class="dox_type">string</span>
-      <span>Optional. Whether to 'replace' (default) or
- to 'append'.</span>
+      <span>Optional. Accepted: <replace>, <append>.
+  Defaults, 'replace'.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -1151,8 +1120,7 @@ in the browser enviroment.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;plot&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stagerState</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;register(&#39;plot&#39;) called before node.game was initialized&quot;</span><span class="p">);</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;node.setup.plot: node.game not found.&quot;</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="nx">stagerState</span> <span class="o">=</span> <span class="nx">stagerState</span> <span class="o">||</span> <span class="p">{};</span>
@@ -1194,8 +1162,8 @@ in the browser enviroment.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">updateRule</span>
       <span class="dox_type">string</span>
-      <span>Optional. Whether to 'replace' (default) or
- to 'append'.</span>
+      <span>Optional. Accepted: <replace>, <append>.
+  Defaults, 'replace'.</span>
     </div>
   </div>
 </div>
@@ -1228,8 +1196,8 @@ in the browser enviroment.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">updateRule</span>
       <span class="dox_type">string</span>
-      <span>Optional. Whether to 'replace' (default) or
- to 'append'.</span>
+      <span>Optional. Accepted: <replace>, <append>.
+  Defaults, 'replace'.</span>
     </div>
   </div>
 </div>

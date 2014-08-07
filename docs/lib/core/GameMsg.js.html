@@ -33,17 +33,11 @@
       <div class="heading h2">
         <a href="#gamemsg-constructor">GameMsg constructor</a>
       </div>
-      <div class="heading h2">
-        <a href="#private-properties">Private properties</a>
-      </div>
       <div class="heading h3">
         <a href="#gamemsg.id">GameMsg.id</a>
       </div>
       <div class="heading h3">
         <a href="#gamemsg.session">GameMsg.session</a>
-      </div>
-      <div class="heading h2">
-        <a href="#public-properties">Public properties</a>
       </div>
       <div class="heading h3">
         <a href="#gamemsg.stage">GameMsg.stage</a>
@@ -175,9 +169,7 @@ MIT Licensed</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">GameMsg</span>
-      <span>The cloned messaged
-
-@see JSUS.clone</span>
+      <span>The cloned messaged</span>
     </div>
   </div>
 </div>
@@ -200,23 +192,18 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>Creates an instance of GameMsg</p>
   </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gm</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Initial values for the game message fields</span>
+    </div>
+  </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">GameMsg</span><span class="p">(</span><span class="nx">gm</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">gm</span> <span class="o">=</span> <span class="nx">gm</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="private-properties">
-  <h2>
-    <a href="#private-properties" class="pilcrow">&#182;</a>
-    Private properties
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -232,25 +219,10 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>A randomly generated unique id</p>
   </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">private
-</span>
-    </span>
-  </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span><span class="o">*</span><span class="mi">1000000</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">value</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span>
-                <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-            <span class="p">});</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
-        <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">id</span> <span class="o">?</span>
+            <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span><span class="o">*</span><span class="mi">1000000</span><span class="p">)</span> <span class="o">:</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -266,38 +238,9 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>The session id in which the message was generated</p>
   </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">private
-</span>
-    </span>
-  </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">session</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">session</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">value</span><span class="o">:</span> <span class="nx">session</span><span class="p">,</span>
-                <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-            <span class="p">});</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="nx">session</span><span class="p">;</span>
-        <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="public-properties">
-  <h2>
-    <a href="#public-properties" class="pilcrow">&#182;</a>
-    Public properties
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">session</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -312,12 +255,13 @@ MIT Licensed</p>
 
   </div>
   <div class="body"><p>The game-stage in which the message was generated</p>
-
-
-<div class="highlight"><pre><code> <span class="nv">@see</span> <span class="n">GameStage</span>
-</code></pre></div>
-
-
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameStage
+  </span>
+    </div>
   </div>
 </div>
         </td>
@@ -336,12 +280,13 @@ MIT Licensed</p>
 
   </div>
   <div class="body"><p>The action of the message</p>
-
-
-<div class="highlight"><pre><code> <span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">action</span>
-</code></pre></div>
-
-
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.constants.action
+  </span>
+    </div>
   </div>
 </div>
         </td>
@@ -360,12 +305,13 @@ MIT Licensed</p>
 
   </div>
   <div class="body"><p>The target of the message</p>
-
-
-<div class="highlight"><pre><code> <span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">target</span>
-</code></pre></div>
-
-
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.constants.target
+  </span>
+    </div>
   </div>
 </div>
         </td>
@@ -384,12 +330,17 @@ MIT Licensed</p>
 
   </div>
   <div class="body"><p>The id of the sender of the message</p>
-
-
-<div class="highlight"><pre><code> <span class="nv">@see</span> <span class="n">Player</span><span class="o">.</span><span class="n">id</span>
-</code></pre></div>
-
-
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Player.id</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.player.id
+  </span>
+    </div>
   </div>
 </div>
         </td>
@@ -408,13 +359,17 @@ MIT Licensed</p>
 
   </div>
   <div class="body"><p>The id of the receiver of the message</p>
-
-
-<div class="highlight"><pre><code> <span class="nv">@see</span> <span class="n">Player</span><span class="o">.</span><span class="n">id</span>
- <span class="nv">@see</span> <span class="n">node</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">id</span>
-</code></pre></div>
-
-
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Player.id</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.player.id
+  </span>
+    </div>
   </div>
 </div>
         </td>
@@ -716,8 +671,12 @@ MIT Licensed</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
-      <span>The hash string
- @see GameMsg.toEvent</span>
+      <span>The hash string</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameMsg.toEvent
+  </span>
     </div>
   </div>
 </div>
@@ -745,8 +704,12 @@ MIT Licensed</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
-      <span>The hash string
- @see GameMsg.toEvent</span>
+      <span>The hash string</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameMsg.toEvent
+  </span>
     </div>
   </div>
 </div>

@@ -79,6 +79,11 @@ MIT Licensed </p>
 
   </div>
   <div class="body"><p>Establishes a connection with a nodeGame server</p>
+
+<p>A callback function can be executed upon connection. However,
+sending messages is disabled until a player object is created. This can
+be done manually, or automatically upon receiving a SETUP PLAYER message.
+Creation of a player emits the event <em>PLAYER_CREATED</em>.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -102,7 +107,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">socketOptions</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">socketOptions</span><span class="p">)</span> <span class="p">{</span>        
         <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.connect: cb must be function or &#39;</span> <span class="o">+</span>

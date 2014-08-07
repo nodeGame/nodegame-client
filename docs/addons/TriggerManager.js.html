@@ -92,7 +92,7 @@
 </div>
 
 
-<p>Copyright(c) 2013 Stefano Balietti
+<p>Copyright(c) 2014 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Manages a collection of trigger functions to be called sequentially</p>
@@ -441,7 +441,9 @@ contained in <code>TriggerManager.options.triggers</code>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">resetTriggers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">initTriggers</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">triggers</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">triggers</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">initTriggers</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">triggers</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
