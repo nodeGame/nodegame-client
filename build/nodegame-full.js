@@ -17538,6 +17538,15 @@ JSUS.extend(TIME);
      * Add an hook to the hook list after performing conformity checks.
      * The first parameter hook can be a string, a function, or an object
      * containing an hook property.
+     *
+     * @params {mixed} hook Either the hook to be called or an object containing
+     *  at least the hook to be called and possibly even ctx and name
+     * @params {object} ctx A reference to the context wherein the hook is
+     *  called.
+     * @params {string} name The name of the hook. If not provided, this method
+     *  provides an uniqueKey for the hook
+     *
+     * @returns {mixed} The name of the hook, if it was added; false otherwise.
      */
     GameTimer.prototype.addHook = function(hook, ctx, name) {
         var i;
@@ -17558,27 +17567,33 @@ JSUS.extend(TIME);
         }
         for (i = 0; i < this.hooks.length; i++) {
             if (this.hooks[i].name === name) {
-                return;
+                return false;
             }
         }
         this.hookNames[name] = true;
         this.hooks.push({hook: hook, ctx: ctx, name: name});
+        return name;
     };
+    
     /*
      * ### GameTimer.removeHook
      *
      * Removes a hook given its' name
+     *
+     * @param {string} name Name of the hook to be removed
+     * @return {mixed} the hook if it was removed; false otherwise.
      */
     GameTimer.prototype.removeHook = function(name) {
         var i;
         if (this.hookNames[name]) {
             for (i = 0; i < this.hooks.length; i++) {
                 if (this.hooks[i].name === name) {
-                    this.hooks.splice(i,1);
                     delete this.hookNames[name];
+                    return this.hooks.splice(i,1);
                 }
             }     
         }
+        return false;
     };
 
     /**
@@ -19204,11 +19219,12 @@ JSUS.extend(TIME);
  *
  * ---
  */
-(function(exports, parent) {
+(function(exports, node) {
 
     "use strict";
 
-    var NGC = parent.NodeGameClient;
+    var NGC = node.NodeGameClient;
+    var J = node.JSUS;
     
     /**
      * ### NodeGameClient.redirect
@@ -19262,12 +19278,12 @@ JSUS.extend(TIME);
         if ('string' !== typeof command) {
             throw new TypeError('node.remoteCommand: command must be string.');
         }
-        if (!parent.constants.gamecommands[command]) {
+        if (!node.constants.gamecommands[command]) {
             throw new Error('node.remoteCommand: unknown command: ' +
                             command + '.');
         }
-        if ('string' !== typeof to) {
-            throw new TypeError('node.remoteCommand: to must be string.');
+        if ('string' !== typeof to && !J.isArray(to)) {
+            throw new TypeError('node.remoteCommand: to must be string or array.');
         }
 
         msg = this.msg.create({
@@ -29201,13 +29217,11 @@ JSUS.extend(TIME);
 
     "use strict";
 
-    // TODO: Introduce rules for update: other vs self
-
     node.widgets.register('StateBar', StateBar);
 
     // ## Meta-data
 
-    StateBar.version = '0.3.2';
+    StateBar.version = '0.4.0';
     StateBar.description =
         'Provides a simple interface to change the stage of a game.';
 
