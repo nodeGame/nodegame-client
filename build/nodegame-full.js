@@ -2909,14 +2909,10 @@ if (!JSON) {
      *   class, or undefined input are misspecified.
      */
     DOM.addClass = function(el, c) {
-        if (!el || !c) return;
+        if (!el) return;
         if (c instanceof Array) c = c.join(' ');
-        if (el.className === '' || 'undefined' === typeof el.className) {
-            el.className = c;
-        }
-        else {
-            el.className += ' ' + c;
-        }
+        else if ('string' !== typeof c) return;
+        el.className = el.className ? el.className + ' ' + c : c;
         return el;
     };
 
@@ -2994,7 +2990,7 @@ if (!JSON) {
     // ## RIGHT-CLICK
 
     /**
-     * ## DOM.disableRightClick
+     * ### DOM.disableRightClick
      *
      * Disables the popup of the context menu by right clicking with the mouse 
      *
@@ -3025,7 +3021,7 @@ if (!JSON) {
     };
 
     /**
-     * ## DOM.enableRightClick
+     * ### DOM.enableRightClick
      *
      * Enables the popup of the context menu by right clicking with the mouse 
      *
@@ -6039,35 +6035,22 @@ JSUS.extend(TIME);
      *
      * Indexes an element
      *
-     * Parameter _oldIdx_ is needed if indexing is updating a previously
-     * indexed item. In fact if new index is different, the old one must
-     * be deleted.
-     *
      * @param {object} o The element to index
-     * @param {number} dbidx The position of the element in the database array
-     * @param {string} oldIdx Optional. The old index name, if any.
+     * @param {object} o The position of the element in the database array
      */
-    NDDB.prototype._indexIt = function(o, dbidx, oldIdx) {
+    NDDB.prototype._indexIt = function(o, dbidx) {
         var func, id, index, key;
         if (!o || J.isEmpty(this.__I)) return;
-        oldIdx = undefined;
+
         for (key in this.__I) {
             if (this.__I.hasOwnProperty(key)) {
                 func = this.__I[key];
                 index = func(o);
-                // If the same object has been  previously
-                // added with another index delete the old one.
-                if (index !== oldIdx) {
-                    if ('undefined' !== typeof oldIdx) {
-                        if ('undefined' !== typeof this[key].resolve[oldIdx]) {
-                            delete this[key].resolve[oldIdx];
-                        }
-                    }
-                }
-                if ('undefined' !== typeof index) { 
-                    if (!this[key]) this[key] = new NDDBIndex(key, this);
-                    this[key]._add(index, dbidx);
-                }
+
+                if ('undefined' === typeof index) continue;
+
+                if (!this[key]) this[key] = new NDDBIndex(key, this);
+                this[key]._add(index, dbidx);
             }
         }
     };
@@ -6097,7 +6080,7 @@ JSUS.extend(TIME);
                     settings = this.cloneSettings({V: ''});
                     this[key] = new NDDB(settings);
                 }
-                this[key].insert(o);1
+                this[key].insert(o);
             }
         }
     };
@@ -7517,13 +7500,11 @@ JSUS.extend(TIME);
      * @see JSUS.arrayDiff
      */
     NDDB.prototype.diff = function(nddb) {
+        if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
                 nddb = nddb.db;
             }
-        }
-        if (!nddb || !nddb.length) {
-            return this.breed([]);
         }
         return this.breed(J.arrayDiff(this.db, nddb));
     };
@@ -7545,13 +7526,11 @@ JSUS.extend(TIME);
      * @see JSUS.arrayIntersect
      */
     NDDB.prototype.intersect = function(nddb) {
+        if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
-                nddb = nddb.db;
+                var nddb = nddb.db;
             }
-        }
-        if (!nddb || !nddb.length) {
-            return this.breed([]);
         }
         return this.breed(J.arrayIntersect(this.db, nddb));
     };
@@ -8175,7 +8154,7 @@ JSUS.extend(TIME);
      * @see NDDBIndex.get
      * @see NDDBIndex.remove
      */
-    NDDBIndex.prototype.update = function(idx, update) {
+        NDDBIndex.prototype.update = function(idx, update) {
         var o, dbidx, nddb;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
@@ -8186,7 +8165,7 @@ JSUS.extend(TIME);
         // We do indexes separately from the other components of _autoUpdate
         // to avoid looping through all the other elements that are unchanged.
         if (nddb.__update.indexes) {
-            nddb._indexIt(o, dbidx, idx);
+            nddb._indexIt(o, dbidx);
             nddb._hashIt(o);
             nddb._viewIt(o);
         }
@@ -19245,11 +19224,12 @@ JSUS.extend(TIME);
  *
  * ---
  */
-(function(exports, parent) {
+(function(exports, node) {
 
     "use strict";
 
-    var NGC = parent.NodeGameClient;
+    var NGC = node.NodeGameClient;
+    var J = node.JSUS;
     
     /**
      * ### NodeGameClient.redirect
@@ -19303,12 +19283,12 @@ JSUS.extend(TIME);
         if ('string' !== typeof command) {
             throw new TypeError('node.remoteCommand: command must be string.');
         }
-        if (!parent.constants.gamecommands[command]) {
+        if (!node.constants.gamecommands[command]) {
             throw new Error('node.remoteCommand: unknown command: ' +
                             command + '.');
         }
-        if ('string' !== typeof to) {
-            throw new TypeError('node.remoteCommand: to must be string.');
+        if ('string' !== typeof to && !J.isArray(to)) {
+            throw new TypeError('node.remoteCommand: to must be string or array.');
         }
 
         msg = this.msg.create({
@@ -23139,47 +23119,6 @@ JSUS.extend(TIME);
         var targetSelector = this.getTargetSelector(id);
         return root.appendChild(targetSelector);
     };
-
-    /**
-     * ### GameWindow.getStateSelector
-     *
-     * Creates an HTML text input element where a nodeGame state can be inserted
-     *
-     * @param {string} id The id of the element
-     * @return {Element} The newly created element
-     *
-     * @see GameWindow.addActionSelector
-     *
-     * TODO: This method should be improved to automatically
-     *       show all the available states of a game.
-     *
-     * @experimental
-     */
-    GameWindow.prototype.getStateSelector = function(id) {
-        return this.getTextInput(id);
-    };
-
-    /**
-     * ### GameWindow.addStateSelector
-     *
-     * Appends a StateSelector to the specified root element
-     *
-     * @param {Element} root The root element
-     * @param {string} id The id of the element
-     * @return {Element} The newly created element
-     *
-     * @see GameWindow.getActionSelector
-     *
-     * @experimental
-     */
-    GameWindow.prototype.addStateSelector = function(root, id) {
-        var stateSelector;
-
-        if (!root) return;
-        stateSelector = this.getStateSelector(id);
-        return root.appendChild(stateSelector);
-    };
-
 })(
     // GameWindow works only in the browser environment. The reference
     // to the node.js module object is for testing purpose only
@@ -28301,7 +28240,6 @@ JSUS.extend(TIME);
         this.init();
     }
 
-    // TODO: Write a proper INIT method
     MsgBar.prototype.init = function() {
         var that;
         var fields, i, field;
@@ -28310,7 +28248,6 @@ JSUS.extend(TIME);
         that = this;
 
         // Create fields.
-        // TODO: separate table for fields following 'data'
         fields = ['to', 'action', 'target', 'text', 'data', 'from', 'priority',
                   'reliable', 'forward', 'session', 'stage', 'created', 'id'];
 
@@ -28397,7 +28334,7 @@ JSUS.extend(TIME);
     };
 
     MsgBar.prototype.parse = function() {
-        var msg, gameMsg
+        var msg, gameMsg;
 
         msg = {};
 
@@ -29243,8 +29180,6 @@ JSUS.extend(TIME);
  *
  * Provides a simple interface to change the game stages.
  *
- * TODO: needs refactoring
- *
  * www.nodegame.org
  * ---
  */
@@ -29555,33 +29490,37 @@ JSUS.extend(TIME);
         
         /**
          *  ### mainBox
-         *  The TimerBox which displays the main timer.
+         *  The 'TimerBox' which displays the main timer.
          *
-         * @see node.TimerBox
+         *  @see TimerBox
          */
         this.mainBox = null;   
         
         /**
-         *  ### waitDiv
-         *  The DIV in which to display the maximum waiting time left. 
+         *  ### waitBox
+         *  The 'TimerBox' which displays the wait timer.
+         *
+         *  @see TimerBox         
          */
         this.waitBox = null;
         
         /**
          *  ### activeBox
-         *  The DIV in which to display the time.
+         *  The 'TimerBox' in which to display the time.
          *  
-         *  This variable is always a reference to either 'waitDiv' or 
-         *  'timerDiv'. 
+         *  This variable is always a reference to either 'waitBox' or 
+         *  'mainBox'. 
+         *
+         *  @see TimerBox      
          */
         this.activeBox = null;
         
-
+        this.isInitialized = false;
         this.init(this.options);
     }
 
     VisualTimer.prototype.init = function(options) {
-        var t, mainBoxOptions, waitBoxOptions;
+        var t;
         
         J.mixout(options, this.options);
 
@@ -29594,10 +29533,13 @@ JSUS.extend(TIME);
             options.hooks = [];
         }
 
-        options.hooks.push({
-            hook: this.updateDisplay,
-            ctx: this
-        });
+        // only push this hook once
+        if (!this.isInitialized) {
+            options.hooks.push({
+                hook: this.updateDisplay,
+                ctx: this
+            });
+        }
 
         if (!this.gameTimer) {
             this.gameTimer = node.timer.createTimer();
@@ -29622,29 +29564,38 @@ JSUS.extend(TIME);
                 };
             }
         });
-                
         this.options = options;
         
-
-        mainBoxOptions = {classNameBody: options.className, hideTitle: true};
-        waitBoxOptions = {title: 'Max. wait timer', 
-                classNameTitle: 'waitTimerTitle',
-                classNameBody: 'waitTimerBody', hideBox: true};
-                       
-        if (!this.mainBox) {
-            this.mainBox = new TimerBox(mainBoxOptions);
+        if(!this.options.mainBoxOptions) {
+            this.options.mainBoxOptions = {};
         }
-        else {
-            this.mainBox.init(mainBoxOptions);
-        }
-        if (!this.waitBox) {
-            this.waitBox = new TimerBox(waitBoxOptions);
-        } 
-        else {
-            this.waitBox.init(waitBoxOptions);
+        if(!this.options.waitBoxOptions) {
+            this.options.waitBoxOptions = {};
         }
         
-        this.activeBox = this.mainBox;
+        J.mixout(this.options.mainBoxOptions,
+                {classNameBody: options.className, hideTitle: true});
+        J.mixout(this.options.waitBoxOptions,
+                {title: 'Max. wait timer', 
+                classNameTitle: 'waitTimerTitle',
+                classNameBody: 'waitTimerBody', hideBox: true});
+                       
+        if (!this.mainBox) {
+            this.mainBox = new TimerBox(this.options.mainBoxOptions);
+        }
+        else {
+            this.mainBox.init(this.options.mainBoxOptions);
+        }
+        if (!this.waitBox) {
+            this.waitBox = new TimerBox(this.options.waitBoxOptions);
+        } 
+        else {
+            this.waitBox.init(this.options.waitBoxOptions);
+        }
+        
+        this.activeBox = options.activeBox || this.mainBox;
+        
+        this.isInitialized = true;
     };
 
     VisualTimer.prototype.append = function() {
@@ -29657,9 +29608,10 @@ JSUS.extend(TIME);
     /**
      *  ## VisualTimer.updateDisplay
      *  Changes 'activeBox' to display current time of 'gameTimer'
+     *
+     *  @see TimerBox.bodyDiv      
      */
     VisualTimer.prototype.updateDisplay = function() {
-//        debugger
         var time, minutes, seconds;
         if (!this.gameTimer.milliseconds || this.gameTimer.milliseconds === 0) {
             this.activeBox.bodyDiv.innerHTML = '00:00';
@@ -29674,16 +29626,13 @@ JSUS.extend(TIME);
 
     /**
      *  ## VisualTimer.start
-     *  Starts the timer and changes the display accordingly.
-     *
-     *  Starts the 'gameTimer', hides 'waitDiv', unstrikes 'timerDiv' and
-     *  sets 'activeBox' as a reference to 'timerDiv'.
+     *  Starts the timer.
      *
      *  @see VisualTimer.updateDisplay
      *  @see GameTimer.start
      */
     VisualTimer.prototype.start = function() {
-        this.updateDisplay();
+        this.updateDisplay();        
         this.gameTimer.start();
     };
 
@@ -29695,6 +29644,7 @@ JSUS.extend(TIME);
      *
      *  @see VisualTimer.init
      *  @see VisualTimer.start
+     *  @see VisualTimer.stop
      */
     VisualTimer.prototype.restart = function(options) {
         this.stop();
@@ -29704,27 +29654,11 @@ JSUS.extend(TIME);
 
     /**
      *  ## VisualTimer.stop
-     *  Stops the timer display and start displaying max. wait time.
-     *
-     *  Does nothing if 'gameTimer' is stopped.
-     *  Otherwise it updates 'timeLeft' with the current time in 'gameTimer',
-     *  and changes the display according to the options object as follows.
-     *
-     *  If 'options.waitTime' is a _negative_ value, the 'gameTimer' is stopped,
-     *  'VisualTimer.updateDisplay' is called and the function is returned
-     *  If 'options' or 'options.waitTime' is _undefined_, the gameTimer is 
-     *  restarted with the current time left on the clock. 
-     *  Uf 'options.waitTime' is a _positive_ value, then the 'gameTimer' is 
-     *  restarted with that value. 
-     *  After the gameTimer has been restarted, 'waitDiv' is unhidden and 
-     *  'activeBox' is set such that 'VisualTimer.updateDisplay' updates 'waitDiv',
-     *  displaying the max. wait time.
+     *  Stops the timer displRay and stores the time left in 'activeBox.timeLeft'
      *
      *  @param {object} options Configuration object
      *
-     *  @see VisualTimer.updateDisplay
      *  @see GameTimer.isStopped
-     *  @see GameTimer.restart
      *  @see GameTimer.stop
      */
     VisualTimer.prototype.stop = function(options) {
@@ -29733,42 +29667,80 @@ JSUS.extend(TIME);
             this.gameTimer.stop();
         }  
     };
-    
-    VisualTimer.prototype.switchActiveBoxTo = function(box,options) {
-        var waitTime;
-        this.activeBox = box;
+    /**
+     *  ## VisualTimer.switchActiveBoxTo
+     *  Switches the display of the 'gameTimer' into the 'TimerBox' 'box'.
+     *
+     *  Stores 'gameTimer.timeLeft' into 'activeBox' and then switches
+     *  'activeBox' to reference 'box'.
+     *
+     *  @param {TimerBox} box TimerBox in which to display 'gameTimer' time
+     */
+    VisualTimer.prototype.switchActiveBoxTo = function(box) {
         this.activeBox.timeLeft = this.gameTimer.timeLeft || 0;
-        if (typeof options === 'undefined' ||
-                typeof options.waitTime === 'undefined') {
-            waitTime = this.activeBox.timeLeft;
-        }
-        else {
-            waitTime = options.waitTime;
-        }
-        if (waitTime > 0) {
-            if (!this.gameTimer.isStopped()){
-            this.gameTimer.stop();}
-            this.gameTimer.restart({milliseconds: waitTime});
-        }
+        this.activeBox = box;
         this.updateDisplay();
     };
-
+    
+    VisualTimer.prototype.startWaiting = function(options) {
+        if(typeof options === 'undefined') {
+            options = {};
+        }
+        options = J.clone(options);
+        if (typeof options.milliseconds === 'undefined') {
+            options.milliseconds = this.gameTimer.timeLeft;
+        }
+        if(typeof options.mainBoxOptions === 'undefined') {
+            options.mainBoxOptions = {};
+        }
+        if(typeof options.waitBoxOptions === 'undefined') {
+            options.waitBoxOptions = {};
+        }
+        options.mainBoxOptions.classNameBody = 'strike';
+        options.mainBoxOptions.timeLeft = this.gameTimer.timeLeft || 0;
+        options.activeBox = this.waitBox;
+        options.waitBoxOptions.hideBox = false;
+        this.restart(options);
+    };
+    
+    VisualTimer.prototype.startTiming = function(options) {
+        if(typeof options === 'undefined') {
+            options = {};
+        }
+        options = J.clone(options);
+        if(typeof options.mainBoxOptions === 'undefined') {
+            options.mainBoxOptions = {};
+        }
+        if(typeof options.waitBoxOptions === 'undefined') {
+            options.waitBoxOptions = {};
+        }
+        options.activeBox = this.mainBox;
+        options.waitBoxOptions.timeLeft = this.gameTimer.timeLeft || 0;
+        options.waitBoxOptions.hideBox = true;
+        options.mainBoxOptions.classNameBody = '';
+        this.restart(options)
+    };
+    
     /**
      *  ## VisualTimer.resume
-     *  Resumes the 'gameTimer' and hides 'waitDiv'
+     *  Resumes the 'gameTimer'
      *
      *  @see GameTimer.resume
      */
     VisualTimer.prototype.resume = function() {
         this.gameTimer.resume();
     };
-
+    /**
+     *  ## VisualTimer.setToZero
+     *  stops 'gameTimer' and sets 'activeBox' to display '00:00'
+     *
+     *  @see GameTimer.resume
+     */
     VisualTimer.prototype.setToZero = function() {
-        debugger
         this.stop();
         this.activeBox.bodyDiv.innerHTML = '00:00';
+        this.activeBox.setClassNameBody('strike');
     };
-    
     /**
      * ## VisualTimer.doTimeUp
      *
@@ -29780,7 +29752,6 @@ JSUS.extend(TIME);
      * @see GameTimer.fire
      */
     VisualTimer.prototype.doTimeUp = function() {
-        debugger
         this.stop();
         this.gameTimer.timeLeft = 0;
         this.gameTimer.fire(this.gameTimer.timeup);
@@ -29788,6 +29759,9 @@ JSUS.extend(TIME);
 
     VisualTimer.prototype.listeners = function() {
         var that = this;
+        /* On 'PLAYING' the 'mainBox' is switched to, unhidden and unstriked.
+         * the 'waitBox' is hidden. The timer is restarted.
+         */
         node.on('PLAYING', function() {
             var stepObj, timer, options;
             stepObj = node.game.getCurrentStep();
@@ -29795,20 +29769,14 @@ JSUS.extend(TIME);
             timer = stepObj.timer;
             if (timer) {
                 options = processOptions(timer, this.options);
-                that.stop();
-                that.init(options);
-                that.mainBox.setClassNameBody('');
-                that.switchActiveBoxTo(that.mainBox,-1);
-                that.mainBox.unhideBox();
-                that.waitBox.hideBox();
-                that.start();
+                that.startTiming(options);
             }
         });
 
         node.on('REALLY_DONE', function() {
-            that.mainBox.setClassNameBody('strike');
-            that.switchActiveBoxTo(that.waitBox);
-            that.waitBox.unhideBox();
+            if(!that.gameTimer.isStopped()) {
+                that.startWaiting();   
+            }
        });
     };
 
