@@ -191,7 +191,7 @@ program
 	console.log('Building documentation for nodegame-client v.' + version);
 	// http://nodejs.org/api.html#_child_processes
 	try {
-	    var dockerDir = J.resolveModuleDir('docker');
+	    var dockerDir = J.resolveModuleDir('docker', rootDir);
 	}
 	catch(e) {
 	    console.log('module Docker not found. Cannot build doc. ' + 

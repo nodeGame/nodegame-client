@@ -2909,14 +2909,10 @@ if (!JSON) {
      *   class, or undefined input are misspecified.
      */
     DOM.addClass = function(el, c) {
-        if (!el || !c) return;
+        if (!el) return;
         if (c instanceof Array) c = c.join(' ');
-        if (el.className === '' || 'undefined' === typeof el.className) {
-            el.className = c;
-        }
-        else {
-            el.className += ' ' + c;
-        }
+        else if ('string' !== typeof c) return;
+        el.className = el.className ? el.className + ' ' + c : c;
         return el;
     };
 
@@ -2991,6 +2987,61 @@ if (!JSON) {
             contentDocument.getElementsByTagName('html')[0];
     };
 
+    // ## RIGHT-CLICK
+
+    /**
+     * ### DOM.disableRightClick
+     *
+     * Disables the popup of the context menu by right clicking with the mouse 
+     *
+     * @param {Document} Optional. A target document object. Defaults, document
+     *
+     * @see DOM.enableRightClick
+     */
+    DOM.disableRightClick = function(doc) {
+        doc = doc || document;
+        if (doc.layers) {
+            doc.captureEvents(Event.MOUSEDOWN);
+            doc.onmousedown = function clickNS4(e) {
+                if (doc.layers || doc.getElementById && !doc.all) {
+                    if (e.which == 2 || e.which == 3) {
+                        return false;
+                    }
+                }
+            }
+        }
+        else if (doc.all && !doc.getElementById) {
+            doc.onmousedown = function clickIE4() {
+                if (event.button == 2) {
+                    return false;
+                }
+            }
+        }
+        doc.oncontextmenu = new Function("return false");
+    };
+
+    /**
+     * ### DOM.enableRightClick
+     *
+     * Enables the popup of the context menu by right clicking with the mouse 
+     *
+     * It unregisters the event handlers created by `DOM.disableRightClick` 
+     *
+     * @param {Document} Optional. A target document object. Defaults, document
+     *
+     * @see DOM.disableRightClick
+     */
+    DOM.enableRightClick = function(doc) {
+        doc = doc || document;
+        if (doc.layers) {
+            doc.releaseEvents(Event.MOUSEDOWN);
+            doc.onmousedown = null;
+        }
+        else if (doc.all && !doc.getElementById) {
+            doc.onmousedown = null;
+        }
+        doc.oncontextmenu = null;
+    };
 
     JSUS.extend(DOM);
 
@@ -4481,23 +4532,29 @@ JSUS.extend(TIME);
      *
      * Parses current querystring and returns the requested variable.
      *
-     * If no variable is specified, returns the full query string.
+     * If no variable name is specified, returns the full query string.
      * If requested variable is not found returns false.
      *
-     * @param {string} variable Optional. If set, returns only the value
-     *    associated with this variable
+     * @param {string} name Optional. If set, returns only the value
+     *   associated with this variable
+     * @param {string} referer Optional. If set, searches this string
      *
      * @return {string|boolean} The querystring, or a part of it, or FALSE
      *
      * Kudos:
      * @see http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
      */
-    PARSE.getQueryString = function(name) {
+    PARSE.getQueryString = function(name, referer) {
         var regex;
-        if ('undefined' === typeof name) return window.location.search;
+        if (referer && 'string' !== typeof referer) {
+            throw new TypeError('JSUS.getQueryString: referer must be string ' +
+                                'or undefined.');
+        }
+        referer = referer || window.location.search;
+        if ('undefined' === typeof name) return referer;
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
         regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
+        results = regex.exec(referer);
         return results == null ? false : 
             decodeURIComponent(results[1].replace(/\+/g, " "))
     };
@@ -20520,8 +20577,11 @@ JSUS.extend(TIME);
     GameWindow.defaults = {};
 
     // Default settings.
+    GameWindow.defaults.textOnleave = '';
     GameWindow.defaults.promptOnleave = true;
     GameWindow.defaults.noEscape = true;
+    GameWindow.defaults.waitScreen = undefined;
+    GameWindow.defaults.disableRightClick = false;
     GameWindow.defaults.cacheDefaults = {
         loadCache:       true,
         storeCacheNow:   false,
@@ -20819,29 +20879,6 @@ JSUS.extend(TIME);
         this.screenState = node.constants.screenLevels.ACTIVE;
 
         /**
-         * ### GamwWindow.textOnleave
-         *
-         * Text that displayed to the users on the _onbeforeunload_ event
-         *
-         * By default it is null, that means that it is left to the browser
-         * default.
-         *
-         * Notice: some browser do not support displaying a custom text.
-         *
-         * @see GameWindow.promptOnleave
-         */
-        this.textOnleave = null;
-
-        /**
-         * ### GamwWindow.rightClickDisabled
-         *
-         * TRUE, if the right click context menu is disabled
-         *
-         * @see GameWindow.disableRightClick
-         */
-        this.rightClickDisabled = false;
-
-        /**
          * ### node.setup.window
          *
          * Setup handler for the node.window object
@@ -20849,21 +20886,15 @@ JSUS.extend(TIME);
          * @see node.setup
          */
         node.registerSetup('window', function(conf) {
-            conf = conf || {};
-            if ('undefined' === typeof conf.promptOnleave) {
-                conf.promptOnleave = false;
-            }
-            if ('undefined' === typeof conf.noEscape) {
-                conf.noEscape = true;
-            }
-
-            this.window.init(conf);
-
-            return conf;
+            conf = J.merge(W.conf, conf);
+            //if ('object' === typeof conf && !J.isEmpty(conf)) {
+                this.window.init(conf);
+                return conf;
+            //}
         });
 
         // Init.
-        this.init();
+        this.init(GameWindow.defaults);
     }
 
     // ## GameWindow methods
@@ -20880,13 +20911,13 @@ JSUS.extend(TIME);
      * @param {object} options Optional. Configuration options
      */
     GameWindow.prototype.init = function(options) {
+        var stageLevels;
+        var stageLevel;
+
         this.setStateLevel('INITIALIZING');
         options = options || {};
-        this.conf = J.merge(GameWindow.defaults, options);
+        this.conf = J.merge(this.conf, options);
 
-        if (this.conf.textOnleave) {
-            this.textOnleave = this.conf.textOnleave;
-        }
         if (this.conf.promptOnleave) {
             this.promptOnleave();
         }
@@ -20907,6 +20938,22 @@ JSUS.extend(TIME);
                 this.waitScreen = null;
             }
             this.waitScreen = new node.WaitScreen(this.conf.waitScreen);
+
+            stageLevels = node.constants.stageLevels;
+            stageLevel = node.game.getStageLevel();
+            if (stageLevel !== stageLevels.UNINITIALIZED) {
+                if (node.game.paused) {
+                    this.lockScreen(this.waitScreen.defaultTexts.paused);
+                }
+                else {
+                    if (stageLevel === stageLevels.DONE) {
+                        this.lockScreen(this.waitScreen.defaultTexts.waiting);
+                    }
+                    else if (stageLevel !== stageLevels.PLAYING) {
+                        this.lockScreen(this.waitScreen.defaultTexts.stepping);
+                    }
+                }
+            }
         }
         else if (this.waitScreen) {
             this.waitScreen.destroy();
@@ -20918,7 +20965,7 @@ JSUS.extend(TIME);
         }
 
         if (this.conf.disableRightClick) {
-            this.disableRightClick()
+            this.disableRightClick();
         }
         else if (this.conf.disableRightClick === false) {
             this.enableRightClick();
@@ -21376,7 +21423,7 @@ JSUS.extend(TIME);
                             'not found.');
         }
 
-        W.removeClass(this.headerElement, 'ng_header_position-[a-z\-]*');
+        W.removeClass(this.headerElement, 'ng_header_position-[a-z-]*');
         W.addClass(this.headerElement, validPositions[pos]);
 
         oldPos = this.headerPosition;
@@ -22072,7 +22119,7 @@ JSUS.extend(TIME);
             that.frameWindow = iframe.contentWindow;
             that.frameDocument = that.getIFrameDocument(iframe);
             // Disable right click in loaded iframe document, if necessary.
-            if (that.rightClickDisabled) {
+            if (that.conf.rightClickDisabled) {
                 J.disableRightClick(that.frameDocument);
             }
         }
@@ -22251,11 +22298,13 @@ JSUS.extend(TIME);
              W.getFrameRoot().insertBefore(W.headerElement, W.frameElement);
         }
 
-        W.removeClass(W.frameElement, 'ng_mainframe-header-[a-z\-]*');
+        W.removeClass(W.frameElement, 'ng_mainframe-header-[a-z-]*');
         switch(position) {
-        case 'right':
+        case 'right':            
+            W.addClass(W.frameElement, 'ng_mainframe-header-vertical-r');
+            break;
         case 'left':
-            W.addClass(W.frameElement, 'ng_mainframe-header-vertical');
+            W.addClass(W.frameElement, 'ng_mainframe-header-vertical-l');
             break;
         case 'top':
             W.addClass(W.frameElement, 'ng_mainframe-header-horizontal');
@@ -22320,6 +22369,7 @@ JSUS.extend(TIME);
                 return false;
             }
         };
+        this.conf.noEscape = true;
     };
 
     /**
@@ -22335,6 +22385,7 @@ JSUS.extend(TIME);
     GameWindow.prototype.restoreEscape = function(windowObj) {
         windowObj = windowObj || window;
         windowObj.document.onkeydown = null;
+        this.conf.noEscape = false;
     };
 
     /**
@@ -22351,7 +22402,7 @@ JSUS.extend(TIME);
      */
     GameWindow.prototype.promptOnleave = function(windowObj, text) {
         windowObj = windowObj || window;
-        text = 'undefined' !== typeof text ? text : this.textOnleave;
+        text = 'undefined' !== typeof text ? text : this.conf.textOnleave;
         
         windowObj.onbeforeunload = function(e) {
             e = e || window.event;
@@ -22362,6 +22413,8 @@ JSUS.extend(TIME);
             // For Chrome, Safari, IE8+ and Opera 12+
             return text;
         };
+
+        this.conf.promptOnleave = true;
     };
 
     /**
@@ -22378,6 +22431,7 @@ JSUS.extend(TIME);
     GameWindow.prototype.restoreOnleave = function(windowObj) {
         windowObj = windowObj || window;
         windowObj.onbeforeunload = null;
+        this.conf.promptOnleave = false;
     };
 
     /**
@@ -22393,7 +22447,7 @@ JSUS.extend(TIME);
             J.disableRightClick(this.getFrameDocument());
         }
         J.disableRightClick(document);
-        this.rightClickDisabled = true;
+        this.conf.rightClickDisabled = true;
     };
 
     /**
@@ -22409,7 +22463,7 @@ JSUS.extend(TIME);
              J.enableRightClick(this.getFrameDocument());
         }
         J.enableRightClick(document);
-        this.rightClickDisabled = false;
+        this.conf.rightClickDisabled = false;
     };
 
 })(
@@ -22775,11 +22829,11 @@ JSUS.extend(TIME);
      */
     WaitScreen.prototype.enable = function() {
         if (this.enabled) return;
-        node.on('REALLY_DONE', event_REALLY_DONE);
-        node.on('STEPPING', event_STEPPING);
-        node.on('PLAYING', event_PLAYING);
-        node.on('PAUSED', event_PAUSED);
-        node.on('RESUMED', event_RESUMED);
+        node.events.ee.game.on('REALLY_DONE', event_REALLY_DONE);
+        node.events.ee.game.on('STEPPING', event_STEPPING);
+        node.events.ee.game.on('PLAYING', event_PLAYING);
+        node.events.ee.game.on('PAUSED', event_PAUSED);
+        node.events.ee.game.on('RESUMED', event_RESUMED);
         this.enabled = true;
     };
 
@@ -22790,11 +22844,11 @@ JSUS.extend(TIME);
      */
     WaitScreen.prototype.disable = function() {
         if (!this.enabled) return;
-        node.off('REALLY_DONE', event_REALLY_DONE);
-        node.off('STEPPING', event_STEPPING);
-        node.off('PLAYING', event_PLAYING);
-        node.off('PAUSED', event_PAUSED);
-        node.off('RESUMED', event_RESUMED);
+        node.events.ee.game.off('REALLY_DONE', event_REALLY_DONE);
+        node.events.ee.game.off('STEPPING', event_STEPPING);
+        node.events.ee.game.off('PLAYING', event_PLAYING);
+        node.events.ee.game.off('PAUSED', event_PAUSED);
+        node.events.ee.game.off('RESUMED', event_RESUMED);
         this.enabled = false;    
     };
 
@@ -22889,7 +22943,9 @@ JSUS.extend(TIME);
      */
     WaitScreen.prototype.destroy = function() {
         if (W.isScreenLocked()) {
+            W.setScreenLevel('UNLOCKING');
             this.unlock();
+            W.setScreenLevel('ACTIVE');
         }
         if (this.waitingDiv) {
             this.waitingDiv.parentNode.removeChild(this.waitingDiv);
@@ -22902,6 +22958,7 @@ JSUS.extend(TIME);
     ('undefined' !== typeof node) ? node : module.parent.exports.node,
     ('undefined' !== typeof window) ? window : module.parent.exports.window
 );
+
 /**
  * # GameWindow selector module
  * Copyright(c) 2014 Stefano Balietti
@@ -23114,47 +23171,6 @@ JSUS.extend(TIME);
         var targetSelector = this.getTargetSelector(id);
         return root.appendChild(targetSelector);
     };
-
-    /**
-     * ### GameWindow.getStateSelector
-     *
-     * Creates an HTML text input element where a nodeGame state can be inserted
-     *
-     * @param {string} id The id of the element
-     * @return {Element} The newly created element
-     *
-     * @see GameWindow.addActionSelector
-     *
-     * TODO: This method should be improved to automatically
-     *       show all the available states of a game.
-     *
-     * @experimental
-     */
-    GameWindow.prototype.getStateSelector = function(id) {
-        return this.getTextInput(id);
-    };
-
-    /**
-     * ### GameWindow.addStateSelector
-     *
-     * Appends a StateSelector to the specified root element
-     *
-     * @param {Element} root The root element
-     * @param {string} id The id of the element
-     * @return {Element} The newly created element
-     *
-     * @see GameWindow.getActionSelector
-     *
-     * @experimental
-     */
-    GameWindow.prototype.addStateSelector = function(root, id) {
-        var stateSelector;
-
-        if (!root) return;
-        stateSelector = this.getStateSelector(id);
-        return root.appendChild(stateSelector);
-    };
-
 })(
     // GameWindow works only in the browser environment. The reference
     // to the node.js module object is for testing purpose only
@@ -24205,12 +24221,13 @@ JSUS.extend(TIME);
     function addSpecialCells(data) {
         var out, i, len;
         out = [];
-        i = -1, len = data.length;
+        i = -1;
+        len = data.length;
         for ( ; ++i < len ; ) {
             out.push({content: data[i]});
         }
         return out;
-    };
+    }
 
     /**
      * ## Table constructor
@@ -24525,7 +24542,8 @@ JSUS.extend(TIME);
         if (!J.isArray(data)) data = [data];
 
         // Loop Dim 1.
-        i = -1, lenI = data.length;
+        i = -1;
+        lenI = data.length;
         for ( ; ++i < lenI ; ) {
 
             if (!J.isArray(data[i])) {
@@ -24534,7 +24552,8 @@ JSUS.extend(TIME);
             }
             else {
                 // Loop Dim 2.
-                j = -1, lenJ = data[i].length;
+                j = -1;
+                lenJ = data[i].length;
                 for ( ; ++j < lenJ ; ) {
                     if (dim === 'x') this.add(data[i][j], x + i, y + j, 'x');
                     else this.add(data[i][j], x + j, y + i, 'y');
@@ -24555,7 +24574,7 @@ JSUS.extend(TIME);
      * @param {object} content The content of the cell or Cell object
      */
     Table.prototype.add = function(content, x, y, dim) {
-        var cell, x, y;
+        var cell;
         if (!validateInput('addData', content, x, y)) return;
         if ((dim && 'string' !== typeof dim) ||
             (dim && 'undefined' === typeof this.pointers[dim])) {
@@ -24680,7 +24699,8 @@ JSUS.extend(TIME);
             if (this.left && this.left.length) {
                 TR.appendChild(document.createElement('th'));
             }
-            i = -1, len = this.header.length;
+            i = -1;
+            len = this.header.length;
             for ( ; ++i < len ; ) {
                 TR.appendChild(this.renderCell(this.header[i], 'th'));
             }
@@ -24703,7 +24723,8 @@ JSUS.extend(TIME);
             old_left = 0;
 
 
-            i = -1, len = this.db.length;
+            i = -1;
+            len = this.db.length;
             for ( ; ++i < len ; ) {
 
                 if (trid !== this.db[i].x) {
@@ -24754,7 +24775,8 @@ JSUS.extend(TIME);
                 TR.appendChild(TD);
             }
 
-            i = -1, len = this.footer.length;
+            i = -1;
+            len = this.footer.length;
             for ( ; ++i < len ; ) {
                 TR.appendChild(this.renderCell(this.footer[i]));
             }

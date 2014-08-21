@@ -235,11 +235,11 @@ MIT Licensed</p>
 <p>GameSession.prototype.restoreStage = function(stage) {</p>
 
 
-<div class="highlight"><pre><code>   <span class="n">try</span> <span class="p">{</span>
-       <span class="sr">//</span> <span class="n">GOTO</span> <span class="n">STATE</span>
-       <span class="n">node</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">execStage</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">getStep</span><span class="p">(</span><span class="n">stage</span><span class="p">));</span>
+<div class="highlight"><pre><code>   <span class="k">try</span> <span class="p">{</span>
+       <span class="o">//</span> <span class="n">GOTO</span> <span class="n">STATE</span>
+       <span class="n">node</span><span class="p">.</span><span class="n">game</span><span class="p">.</span><span class="n">execStage</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">plot</span><span class="p">.</span><span class="n">getStep</span><span class="p">(</span><span class="n">stage</span><span class="p">));</span>
 
-       <span class="n">var</span> <span class="n">discard</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;LOG&#39;</span><span class="p">,</span>
+       <span class="n">var</span> <span class="n">discard</span> <span class="p">=</span> <span class="p">[</span><span class="s">&#39;LOG&#39;</span><span class="p">,</span>
                       <span class="s">&#39;STATECHANGE&#39;</span><span class="p">,</span>
                       <span class="s">&#39;WINDOW_LOADED&#39;</span><span class="p">,</span>
                       <span class="s">&#39;BEFORE_LOADING&#39;</span><span class="p">,</span>
@@ -250,17 +250,17 @@ MIT Licensed</p>
                       <span class="s">&#39;out.say.STATE&#39;</span><span class="p">,</span>
                       <span class="s">&#39;out.set.STATE&#39;</span><span class="p">,</span>
                       <span class="s">&#39;in.say.PLIST&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;STAGEDONE&#39;</span><span class="p">,</span> <span class="sr">//</span> <span class="n">maybe</span> <span class="ow">not</span> <span class="n">here</span>
+                      <span class="s">&#39;STAGEDONE&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="n">maybe</span> <span class="n">not</span> <span class="n">here</span>
                       <span class="s">&#39;out.say.HI&#39;</span>
                      <span class="p">];</span>
 
-       <span class="sr">//</span> <span class="n">RE</span><span class="o">-</span><span class="n">EMIT</span> <span class="n">EVENTS</span>
-       <span class="n">node</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">remit</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">getStateLevel</span><span class="p">(),</span> <span class="n">discard</span><span class="p">);</span>
-       <span class="n">node</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;game stage restored&#39;</span><span class="p">);</span>
+       <span class="o">//</span> <span class="n">RE</span><span class="o">-</span><span class="n">EMIT</span> <span class="n">EVENTS</span>
+       <span class="n">node</span><span class="p">.</span><span class="k">events</span><span class="p">.</span><span class="n">history</span><span class="p">.</span><span class="n">remit</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">game</span><span class="p">.</span><span class="n">getStateLevel</span><span class="p">(),</span> <span class="n">discard</span><span class="p">);</span>
+       <span class="n">node</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;game stage restored&#39;</span><span class="p">);</span>
        <span class="k">return</span> <span class="n">true</span><span class="p">;</span>
    <span class="p">}</span>
-   <span class="n">catch</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
-       <span class="n">node</span><span class="o">.</span><span class="n">err</span><span class="p">(</span><span class="s">&#39;could not restore game stage. An error has occurred: &#39;</span> <span class="o">+</span> <span class="n">e</span><span class="p">);</span>
+   <span class="k">catch</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+       <span class="n">node</span><span class="p">.</span><span class="n">err</span><span class="p">(</span><span class="s">&#39;could not restore game stage. An error has occurred: &#39;</span> <span class="o">+</span> <span class="n">e</span><span class="p">);</span>
        <span class="k">return</span> <span class="n">false</span><span class="p">;</span>
    <span class="p">}</span>
 </code></pre></div>
