@@ -18577,6 +18577,7 @@ JSUS.extend(TIME);
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
 );
+
 /**
  * # Setup
  * Copyright(c) 2014 Stefano Balietti
@@ -24982,7 +24983,7 @@ JSUS.extend(TIME);
 );
 
 /**
- * # Widgetss
+ * # Widgets
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
@@ -28155,6 +28156,118 @@ JSUS.extend(TIME);
 
 })(node);
 
+(function(node) {
+    "use strict";
+
+    node.widgets.register('LanguageSelector', LanguageSelector);
+
+    var J = node.JSUS;
+
+    // ## Meta-data
+
+    LanguageSelector.version = '0.1.0';
+    LanguageSelector.description = 'Display information about the current ' +
+        'language and allow to change language.';
+    LanguageSelector.title = 'Language'; // change at runtime?
+    LanguageSelector.className = 'languageselector';
+
+    // ## Dependencies
+
+    LanguageSelector.dependencies = {
+        JSUS: {}
+    };
+
+    function LanguageSelector(options) {
+        this.options = options;
+
+        this.availableLanguages = null;
+        this.displayDiv = null;
+        this.formDiv = null;
+        this.textDiv = null;
+
+        this.currentLanguageIndex = null;
+        this.languagePath = null;
+
+        this.init(this.options);
+    }
+
+    LanguageSelector.prototype.init = function(options) {
+        J.mixout(options, this.options);
+        this.options = options;
+
+        this.updateAvalaibleLanguages(options);
+
+
+        this.displayDiv = node.window.getDiv();
+        this.formDiv = node.window.getDiv();
+        this.formDiv.innerHTML = '<form action="">' +
+            '<input type="radio" name="lang" value="en" onClick="node.game.lang.setLanguage(0)">English' + '<br>' +
+            '<input type="radio" name="lang" value="de" onClick="node.game.lang.setLanguage(1)">Deutsch' + '</form>';
+        this.textDiv = node.window.getDiv();
+        this.displayDiv.appendChild(this.formDiv);
+        this.displayDiv.appendChild(this.textDiv);
+
+        this.setLanguage('shortName','en');
+    };
+
+    LanguageSelector.prototype.append = function() {
+        this.bodyDiv.appendChild(this.displayDiv);
+    };
+
+    LanguageSelector.prototype.setLanguage = function(property, value) {
+        var listProperty;
+
+        // If only one argument is provided we assume it to be the index
+        if (arguments.length == 1) {
+            this.currentLanguageIndex = arguments[0];
+        }
+        else {
+            listProperty = J.map(this.availableLanguages,
+                 function(obj){return obj[property];});
+            this.currentLanguageIndex = listProperty.indexOf(value);
+        }
+
+        // Set `langPath`.
+        this.languagePath =
+            this.availableLanguages[this.currentLanguageIndex].shortName + '/';
+
+        this.updateDisplay();
+
+        // Reload current page
+
+    };
+
+    LanguageSelector.prototype.updateAvalaibleLanguages = function(options) {
+        // TODO: Do this really!
+        this.availableLanguages = [
+                {
+                    name: 'English',
+                    nativeName: 'English',
+                    shortName: 'en',
+                    flag: ''
+                },
+                {
+                    name: 'German',
+                    nativeName: 'Deutsch',
+                    shortName: 'de',
+                    flag: ''
+                },
+                {
+                    name: 'French',
+                    nativeName: 'Français',
+                    shortName: 'fr',
+                    flag: ''
+                }
+        ];
+    };
+
+    LanguageSelector.prototype.updateDisplay = function() {
+        this.textDiv.innerHTML = '<strong>' + this.availableLanguages[
+            this.currentLanguageIndex].nativeName + '</strong>';
+    };
+
+})(node);
+
 /**
  * # MoneyTalks widget for nodeGame
  * Copyright(c) 2014 Stefano Balietti
@@ -29391,6 +29504,1108 @@ JSUS.extend(TIME);
     };
 })(node);
 /**
+ * # VisualRound widget for nodeGame
+ * Copyright(c) 2014 Stefano Balietti
+ * MIT Licensed
+ *
+ * Display information about rounds and/or stage in the game.
+ * Accepts different visualization options (e.g. countdown, etc.).
+ * See `VisualRound` constructor for a list of all available options.
+ *
+ * www.nodegame.org
+ * ---
+ */
+(function(node) {
+
+    "use strict";
+
+    node.widgets.register('VisualRound', VisualRound);
+
+    var J = node.JSUS;
+
+    // ## Meta-data
+
+    VisualRound.version = '0.2.0';
+    VisualRound.description = 'Display number of current round and/or stage.' +
+        'Can also display countdown and total number of rounds and/or stages.';
+
+    VisualRound.title = 'Round and Stage info';
+    VisualRound.className = 'visualround';
+
+    // ## Dependencies
+
+    VisualRound.dependencies = {
+        GamePlot: {},
+        JSUS: {}
+    };
+
+    /**
+     * ## VisualRound constructor
+     *
+     * Displays information on the current and total rounds and stages
+     *
+     * @param {object} options Optional. Configuration options
+     *
+     * The options it can take are:
+     *
+     * - `stageOffset`: Stage displayed is the actual stage minus stageOffset.
+     * - `flexibleMode`: Set `true`, if number of rounds and/or stages can
+     *     change dynamically.
+     * - `curStage`: When (re)starting in `flexibleMode`, sets the current stage
+     * - `curRound`: When (re)starting in `flexibleMode`, sets the current round
+     * - `totStage`: When (re)starting in `flexibleMode`, sets the total
+     *     number of stages.
+     * - `totRound`: When (re)starting in `flexibleMode`, sets the total
+     *     number of rounds.
+     * - `oldStageId`: When (re)starting in `flexibleMode`, sets the id of
+     *     the current stage.
+     * - `displayModeNames`: Array of strings which determines the display style
+     *     of the widget.
+     *
+     * @see VisualRound.setDisplayMode
+     * @see GameStager
+     * @see GamePlot
+     */
+    function VisualRound(options) {
+        this.options = options;
+
+        /**
+         * ### VisualRound.displayMode
+         *
+         * Object which determines what information is displayed
+         *
+         * Set through `VisualRound.setDisplayMode` using a string to describe
+         * the displayMode.
+         *
+         * @see VisualRound.setDisplayMode
+         */
+        this.displayMode = null;
+
+        /**
+         * ### VisualRound.stager
+         *
+         * Reference to a `GameStager` object providing stage and round info
+         *
+         * @see GameStager
+         */
+        this.stager = null;
+
+        /**
+         * ### VisualRound.gamePlot
+         *
+         * `GamePlot` object to provide stage and round information
+         *
+         * @see GamePlot
+         */
+        this.gamePlot = null;
+
+        /**
+         * ### VisualRound.curStage
+         *
+         * Number of the current stage
+         */
+        this.curStage = null;
+
+        /**
+         * ### VisualRound.totStage
+         *
+         * Total number of stages. Might be null if in `flexibleMode`
+         */
+        this.totStage = null;
+
+        /**
+         * ### VisualRound.curRound
+         *
+         * Number of the current round
+         */
+        this.curRound = null;
+
+        /**
+         * ### VisualRound.totRound
+         *
+         * Total number of rounds. Might be null if in `flexibleMode`
+         */
+        this.totRound = null;
+
+        /**
+         * ### VisualRound.stageOffset
+         *
+         * Stage displayed is the actual stage minus stageOffset
+         */
+        this.stageOffset = null;
+
+        /**
+         * ### VisualRound.oldStageId
+         *
+         * Stage id of the previous stage
+         *
+         * Needed in `flexibleMode` to count rounds.
+         */
+        this.oldStageId = null;
+
+        this.init(this.options);
+    }
+
+    /**
+     * ## VisualRound.init
+     *
+     * Initializes the instance
+     *
+     * If called on running instance, options are mixed-in into current
+     * settings. See `VisualRound` constructor for which options are allowed.
+     *
+     * @param {object} options Optional. Configuration options
+     *
+     * @see VisualRound constructor
+     */
+    VisualRound.prototype.init = function(options) {
+        options = options || {};
+
+        J.mixout(options, this.options);
+        this.options = options;
+
+        this.stageOffset = this.options.stageOffset || 0;
+
+        if (this.options.flexibleMode) {
+            this.curStage = this.options.curStage || 1;
+            this.curStage -= this.options.stageOffset || 0;
+            this.curRound = this.options.curRound || 1;
+            this.totStage = this.options.totStage;
+            this.totRound = this.options.totRound;
+            this.oldStageId = this.options.oldStageId;
+        }
+
+        if (!this.gamePlot) {
+            this.gamePlot = node.game.plot;
+        }
+
+        if (!this.stager) {
+            this.stager = this.gamePlot.stager;
+        }
+
+        this.updateInformation();
+
+        if (!this.options.displayModeNames) {
+            this.setDisplayMode(['COUNT_UP_ROUNDS_TO_TOTAL',
+                'COUNT_UP_STAGES_TO_TOTAL']);
+        }
+        else {
+            this.setDisplayMode(this.options.displayModeNames);
+        }
+
+        this.updateDisplay();
+    };
+
+    VisualRound.prototype.append = function() {
+        this.activate(this.displayMode);
+        this.updateDisplay();
+    };
+
+    /**
+     * ## VisualRound.updateDisplay
+     *
+     * Updates the values displayed by forwarding the call to displayMode obj
+     *
+     * @see VisualRound.displayMode
+     */
+    VisualRound.prototype.updateDisplay = function() {
+        if (this.displayMode) {
+            this.displayMode.updateDisplay();
+        }
+    };
+
+    /**
+     * ## VisualRound.setDisplayMode
+     *
+     * Sets the `VisualRound.displayMode` value
+     *
+     * Multiple displayModes are allowed, and will be merged together into a
+     * `CompoundDisplayMode` object. The old `displayMode` is deactivated and
+     * the new one is activated.
+     *
+     * The following strings are valid display names:
+     *
+     * - `COUNT_UP_STAGES`: Display only current stage number.
+     * - `COUNT_UP_ROUNDS`: Display only current round number.
+     * - `COUNT_UP_STAGES_TO_TOTAL`: Display current and total stage number.
+     * - `COUNT_UP_ROUNDS_TO_TOTAL`: Display current and total round number.
+     * - `COUNT_DOWN_STAGES`: Display number of stages left to play.
+     * - `COUNT_DOWN_ROUNDS: Display number of rounds left in this stage.
+     *
+     * @param {array} displayModeNames Array of strings representing the names.
+     *
+     * @see VisualRound.displayMode
+     * @see CompoundDisplayMode
+     * @see VisualRound.init
+     */
+    VisualRound.prototype.setDisplayMode = function(displayModeNames) {
+        var index, compoundDisplayModeName, compoundDisplayMode, displayModes;
+
+        // Validation of input parameter.
+        if (!J.isArray(displayModeNames)) {
+            throw TypeError;
+        }
+
+        // Build compound name.
+        compoundDisplayModeName = '';
+        for (index in displayModeNames) {
+            compoundDisplayModeName += displayModeNames[index] + '&';
+        }
+
+        // Remove trailing '&'.
+        compoundDisplayModeName = compoundDisplayModeName.substr(0,
+            compoundDisplayModeName, compoundDisplayModeName.length -1);
+
+        if (this.displayMode) {
+            if (compoundDisplayModeName !== this.displayMode.name) {
+                this.deactivate(this.displayMode);
+            }
+            else {
+                return;
+            }
+        }
+
+        // Build `CompoundDisplayMode`.
+        displayModes = [];
+        for (index in displayModeNames) {
+            switch (displayModeNames[index]) {
+                case 'COUNT_UP_STAGES_TO_TOTAL':
+                    displayModes.push(new CountUpStages(this, {toTotal: true}));
+                    break;
+                case 'COUNT_UP_STAGES':
+                    displayModes.push(new CountUpStages(this));
+                    break;
+                case 'COUNT_DOWN_STAGES':
+                    displayModes.push(new CountDownStages(this));
+                    break;
+                case 'COUNT_UP_ROUNDS_TO_TOTAL':
+                    displayModes.push(new CountUpRounds(this, {toTotal: true}));
+                    break;
+                case 'COUNT_UP_ROUNDS':
+                    displayModes.push(new CountUpRounds(this));
+                    break;
+                case 'COUNT_DOWN_ROUNDS':
+                    displayModes.push(new CountDownRounds(this));
+                    break;
+            }
+        }
+        this.displayMode = new CompoundDisplayMode(this, displayModes);
+        this.activate(this.displayMode);
+    };
+
+    /**
+     * ## VisualRound.getDisplayMode
+     *
+     * Returns name of the current displayMode
+     *
+     * @return {string} Name of the current displayMode.
+     */
+    VisualRound.prototype.getDisplayModeName = function() {
+        return this.displayMode.name;
+    };
+
+    /**
+     * ## VisualRound.activate
+     *
+     * Appends the displayDiv of the given displayMode to `this.bodyDiv`
+     *
+     * Calls `displayMode.activate`, if one is defined.
+     *
+     * @param {object} displayMode DisplayMode to activate.
+     *
+     * @see VisualRound.deactivate
+     */
+    VisualRound.prototype.activate = function(displayMode) {
+        if (this.bodyDiv) {
+            this.bodyDiv.appendChild(displayMode.displayDiv);
+        }
+        if (displayMode.activate) {
+            displayMode.activate();
+        }
+    };
+
+    /**
+     * ## VisualRound.deactivate
+     *
+     * Removes the displayDiv of the given displayMode from `this.bodyDiv`
+     *
+     * Calls `displayMode.deactivate` if it is defined.
+     *
+     * @param {object} displayMode DisplayMode to deactivate.
+     *
+     * @see VisualRound.activate
+     */
+    VisualRound.prototype.deactivate = function(displayMode) {
+        this.bodyDiv.removeChild(displayMode.displayDiv);
+        if (displayMode.deactivate) {
+            displayMode.deactivate();
+        }
+    };
+
+    VisualRound.prototype.listeners = function() {
+        var that = this;
+
+        node.on('STEP_CALLBACK_EXECUTED', function() {
+            that.updateInformation();
+        });
+
+        // TODO: Game over and init?
+    };
+
+    /**
+     * ## VisualRound.updateInformation
+     *
+     * Updates information about rounds and stages and updates the display
+     *
+     * Updates `curRound`, `curStage`, `totRound`, `totStage`, `oldStageId` and
+     * calls `VisualRound.updateDisplay`.
+     *
+     * @see VisualRound.updateDisplay
+     */
+    VisualRound.prototype.updateInformation = function() {
+        var idseq, stage;
+        stage = this.gamePlot.getStage(node.player.stage);
+
+        // Flexible mode.
+        if (this.options.flexibleMode) {
+            if (stage) {
+                if (stage.id === this.oldStageId) {
+                    this.curRound += 1;
+                }
+                else if (stage.id) {
+                    this.curRound = 1;
+                    this.curStage += 1;
+                }
+                this.oldStageId = stage.id;
+            }
+        }
+
+        // Normal mode.
+        else {
+            // Extracts only id attribute from array of objects.
+            idseq = J.map(this.stager.sequence, function(obj){return obj.id;});
+
+            // Every round has an identifier.
+            this.totStage = idseq.filter(function(obj){return obj;}).length;
+            this.curRound = node.player.stage.round;
+
+            if (stage) {
+                this.curStage = idseq.indexOf(stage.id)+1;
+                this.totRound = this.stager.sequence[this.curStage -1].num || 1;
+            }
+            else {
+                this.curStage = 1;
+                this.totRound = 1;
+            }
+            this.totStage -= this.stageOffset;
+            this.curStage -= this.stageOffset;
+        }
+        this.updateDisplay();
+    };
+
+   /**
+     * # EmptyDisplayMode Class
+     *
+     * Copyright(c) 2014 Stefano Balietti
+     * MIT Licensed
+     *
+     * Defines a displayMode for the `VisualRound` which displays nothing.
+     *
+     * ---
+     */
+
+    /**
+     * ## EmptyDisplayMode constructor
+     *
+     * Display a displayMode which contains the bare minumum (nothing)
+     *
+     * @param {VisualRound} visualRound The `VisualRound` object to which the
+     *     displayMode belongs
+     * @param {object} options Optional. Configuration options
+     *
+     * @see VisualRound
+     */
+    function EmptyDisplayMode(visualRound, options) {
+
+        /**
+         * ### EmptyDisplayMode.name
+         *
+         * The name of the displayMode
+         */
+        this.name = 'EMPTY';
+        this.options = options || {};
+
+        /**
+         * ### EmptyDisplayMode.visualRound
+         *
+         * The `VisualRound` object to which the displayMode belongs
+         *
+         * @see VisualRound
+         */
+        this.visualRound = visualRound;
+
+        /**
+         * ### EmptyDisplayMode.displayDiv
+         *
+         * The DIV in which the information is displayed
+         */
+        this.displayDiv = null;
+
+        this.init(this.options);
+    }
+
+    /**
+     * ## EmptyDisplayMode.init
+     *
+     * Initializes the instance
+     *
+     * @param {object} options The options taken
+     *
+     * @see EmptyDisplayMode.updateDisplay
+     */
+    EmptyDisplayMode.prototype.init = function(options) {
+        this.displayDiv = node.window.getDiv();
+        this.displayDiv.className = 'rounddiv';
+
+        this.updateDisplay();
+    };
+
+    /**
+     * ## EmptyDisplayMode.updateDisplay
+     *
+     * Does nothing
+     *
+     * @see VisualRound.updateDisplay
+     */
+    EmptyDisplayMode.prototype.updateDisplay = function() {};
+
+    /**
+     * # CountUpStages Class
+     *
+     * Copyright(c) 2014 Stefano Balietti
+     * MIT Licensed
+     *
+     * Defines a displayMode for the `VisualRound` which displays the current
+     * and, possibly, the total number of stages.
+     *
+     * ---
+     */
+
+    /**
+     * ## CountUpStages constructor
+     *
+     * DisplayMode which displays the current number of stages
+     *
+     * Can be constructed to furthermore display the total number of stages.
+     *
+     * @param {VisualRound} visualRound The `VisualRound` object to which the
+     *      displayMode belongs.
+     * @param {object} options Optional. Configuration options.
+     *      If `options.toTotal == true`, then the total number of stages is
+     *      displayed.
+     *
+     * @see VisualRound
+     */
+    function CountUpStages(visualRound, options) {
+        this.options = options || {};
+
+        /**
+         * ### CountUpStages.name
+         *
+         * The name of the displayMode
+         */
+        this.name = 'COUNT_UP_STAGES';
+
+        if (this.options.toTotal) {
+            this.name += '_TO_TOTAL';
+        }
+
+        /**
+         * ### CountUpStages.visualRound
+         *
+         * The `VisualRound` object to which the displayMode belongs
+         *
+         * @see VisualRound
+         */
+        this.visualRound = visualRound;
+
+        /**
+         * ### CountUpStages.displayDiv
+         *
+         * The DIV in which the information is displayed
+         */
+        this.displayDiv = null;
+
+        /**
+         * ### CountUpStages.curStageNumber
+         *
+         * The span in which the current stage number is displayed
+         */
+        this.curStageNumber = null;
+
+        /**
+         * ### CountUpStages.totStageNumber
+         *
+         * The element in which the total stage number is displayed
+         */
+        this.totStageNumber = null;
+
+        /**
+         * ### CountUpStages.displayDiv
+         *
+         * The DIV in which the title is displayed
+         */
+        this.titleDiv = null;
+
+        /**
+         * ### CountUpStages.displayDiv
+         *
+         * The span in which the text ` of ` is displayed
+         */
+        this.textDiv = null;
+
+        this.init(this.options);
+    }
+
+    /**
+     * ## CountUpStages.init
+     *
+     * Initializes the instance
+     *
+     * @param {object} options Optional. Configuration options.
+     *      If `options.toTotal == true`, then the total number of stages is
+     *      displayed.
+     *
+     * @see CountUpStages.updateDisplay
+     */
+    CountUpStages.prototype.init = function(options) {
+        this.displayDiv = node.window.getDiv();
+        this.displayDiv.className = 'stagediv';
+
+        this.titleDiv = node.window.addElement('div', this.displayDiv);
+        this.titleDiv.className = 'title';
+        this.titleDiv.innerHTML = 'Stage:';
+
+        if (this.options.toTotal) {
+            this.curStageNumber = node.window.addElement('span',
+                this.displayDiv);
+            this.curStageNumber.className = 'number';
+        }
+        else {
+            this.curStageNumber = node.window.addDiv(this.displayDiv);
+            this.curStageNumber.className = 'number';
+        }
+
+        if (this.options.toTotal) {
+            this.textDiv = node.window.addElement('span', this.displayDiv);
+            this.textDiv.className = 'text';
+            this.textDiv.innerHTML = ' of ';
+
+            this.totStageNumber = node.window.addElement('span',
+                this.displayDiv);
+            this.totStageNumber.className = 'number';
+        }
+
+        this.updateDisplay();
+    };
+
+    /**
+     * ## CountUpStages.updateDisplay
+     *
+     * Updates the content of `curStageNumber` and `totStageNumber`
+     *
+     * Values are updated according to the state of `visualRound`.
+     *
+     * @see VisualRound.updateDisplay
+     */
+    CountUpStages.prototype.updateDisplay = function() {
+        this.curStageNumber.innerHTML = this.visualRound.curStage;
+        if (this.options.toTotal) {
+            this.totStageNumber.innerHTML = this.visualRound.totStage || '?';
+        }
+    };
+
+   /**
+     * # CountDownStages Class
+     *
+     * Copyright(c) 2014 Stefano Balietti
+     * MIT Licensed
+     *
+     * Defines a displayMode for the `VisualRound` which displays the remaining
+     * number of stages.
+     *
+     * ---
+     */
+
+    /**
+     * ## CountDownStages constructor
+     *
+     * Display mode which displays the remaining number of stages
+     *
+     * @param {VisualRound} visualRound The `VisualRound` object to which the
+     *     displayMode belongs.
+     * @param {object} options Optional. Configuration options
+     *
+     * @see VisualRound
+     */
+    function CountDownStages(visualRound, options) {
+
+        /**
+         * ### CountDownStages.name
+         *
+         * The name of the displayMode
+         */
+        this.name = 'COUNT_DOWN_STAGES';
+        this.options = options || {};
+
+        /**
+         * ### CountDownStages.visualRound
+         *
+         * The `VisualRound` object to which the displayMode belongs
+         *
+         * @see VisualRound
+         */
+        this.visualRound = visualRound;
+
+        /**
+         * ### CountDownStages.displayDiv
+         *
+         * The DIV in which the information is displayed
+         */
+        this.displayDiv = null;
+
+        /**
+         * ### CountDownStages.stagesLeft
+         *
+         * The DIV in which the number stages left is displayed
+         */
+        this.stagesLeft = null;
+
+        /**
+         * ### CountDownStages.displayDiv
+         *
+         * The DIV in which the title is displayed
+         */
+        this.titleDiv = null;
+
+        this.init(this.options);
+    }
+
+    /**
+     * ## CountDownStages.init
+     *
+     * Initializes the instance
+     *
+     * @param {object} options Optional. Configuration options
+     *
+     * @see CountDownStages.updateDisplay
+     */
+    CountDownStages.prototype.init = function(options) {
+        this.displayDiv = node.window.getDiv();
+        this.displayDiv.className = 'stagediv';
+
+        this.titleDiv = node.window.addDiv(this.displayDiv);
+        this.titleDiv.className = 'title';
+        this.titleDiv.innerHTML = 'Stages left: ';
+
+        this.stagesLeft = node.window.addDiv(this.displayDiv);
+        this.stagesLeft.className = 'number';
+
+        this.updateDisplay();
+    };
+
+    /**
+     * ## CountDownStages.updateDisplay
+     *
+     * Updates the content of `stagesLeft` according to `visualRound`
+     *
+     * @see VisualRound.updateDisplay
+     */
+    CountDownStages.prototype.updateDisplay = function() {
+        if (this.visualRound.totStage === this.visualRound.curStage) {
+            this.stagesLeft.innerHTML = 0;
+            return;
+        }
+        this.stagesLeft.innerHTML =
+                (this.visualRound.totStage - this.visualRound.curStage) || '?';
+    };
+
+   /**
+     * # CountUpRounds Class
+     *
+     * Copyright(c) 2014 Stefano Balietti
+     * MIT Licensed
+     *
+     * Defines a displayMode for the `VisualRound` which displays the current
+     * and possibly the total number of rounds.
+     *
+     * ---
+     */
+
+    /**
+     * ## CountUpRounds constructor
+     *
+     * Display mode which displays the current number of rounds.
+     *
+     * Can be constructed to furthermore display the total number of stages.
+     *
+     * @param {VisualRound} visualRound The `VisualRound` object to which the
+     *     displayMode belongs.
+     * @param {object} options Optional. Configuration options.
+     *      If `options.toTotal == true`, then the total number of rounds is
+     *      displayed.
+     *
+     * @see VisualRound
+     */
+    function CountUpRounds(visualRound, options) {
+        this.options = options || {};
+
+        /**
+         * ### CountUpRounds.name
+         *
+         * The name of the displayMode
+         */
+        this.name = 'COUNT_UP_ROUNDS';
+
+        if (this.options.toTotal) {
+            this.name += '_TO_TOTAL';
+        }
+
+        /**
+         * CountUpRounds.visualRound
+         *
+         * The `VisualRound` object to which the displayMode belongs
+         *
+         * @see VisualRound
+         */
+        this.visualRound = visualRound;
+
+        /**
+         * CountUpRounds.displayDiv
+         *
+         * The DIV in which the information is displayed
+         */
+        this.displayDiv = null;
+
+        /**
+         * CountUpRounds.curRoundNumber
+         *
+         * The span in which the current round number is displayed
+         */
+        this.curRoundNumber = null;
+
+        /**
+         * CountUpRounds.totRoundNumber
+         *
+         * The element in which the total round number is displayed
+         */
+        this.totRoundNumber = null;
+
+        /**
+         * CountUpRounds.displayDiv
+         *
+         * The DIV in which the title is displayed
+         */
+        this.titleDiv = null;
+
+        /**
+         * CountUpRounds.displayDiv
+         *
+         * The span in which the text ` of ` is displayed
+         */
+        this.textDiv = null;
+
+        this.init(this.options);
+    }
+
+    /**
+     * ## CountUpRounds.init
+     *
+     * Initializes the instance
+     *
+     * @param {object} options Optional. Configuration options.
+     *      If `options.toTotal == true`, then the total number of rounds is
+     *      displayed.
+     *
+     * @see CountUpRounds.updateDisplay
+     */
+    CountUpRounds.prototype.init = function(options) {
+        this.displayDiv = node.window.getDiv();
+        this.displayDiv.className = 'rounddiv';
+
+        this.titleDiv = node.window.addElement('div', this.displayDiv);
+        this.titleDiv.className = 'title';
+        this.titleDiv.innerHTML = 'Round:';
+
+        if (this.options.toTotal) {
+            this.curRoundNumber = node.window.addElement('span',
+                this.displayDiv);
+            this.curRoundNumber.className = 'number';
+        }
+        else {
+            this.curRoundNumber = node.window.addDiv(this.displayDiv);
+            this.curRoundNumber.className = 'number';
+        }
+
+        if (this.options.toTotal) {
+            this.textDiv = node.window.addElement('span', this.displayDiv);
+            this.textDiv.className = 'text';
+            this.textDiv.innerHTML = ' of ';
+
+            this.totRoundNumber = node.window.addElement('span',
+                this.displayDiv);
+            this.totRoundNumber.className = 'number';
+        }
+
+        this.updateDisplay();
+    };
+
+    /**
+     * ## CountUpRounds.updateDisplay
+     *
+     * Updates the content of `curRoundNumber` and `totRoundNumber`
+     *
+     * Values are updated according to the state of `visualRound`.
+     *
+     * @see VisualRound.updateDisplay
+     */
+    CountUpRounds.prototype.updateDisplay = function() {
+        this.curRoundNumber.innerHTML = this.visualRound.curRound;
+        if (this.options.toTotal) {
+            this.totRoundNumber.innerHTML = this.visualRound.totRound || '?';
+        }
+    };
+
+
+   /**
+     * # CountDownRounds Class
+     *
+     * Copyright(c) 2014 Stefano Balietti
+     * MIT Licensed
+     *
+     * Defines a displayMode for the `VisualRound` which displays the remaining
+     * number of rounds.
+     *
+     * ---
+     */
+
+    /**
+     * ## CountDownRounds constructor
+     *
+     * Display mode which displays the remaining number of rounds.
+     *
+     * @param {VisualRound} visualRound The `VisualRound` object to which the
+     *     displayMode belongs
+     * @param {object} options Optional. Configuration options
+     *
+     * @see VisualRound
+     */
+    function CountDownRounds(visualRound, options) {
+
+        /**
+         * ### CountDownRounds.name
+         *
+         * The name of the displayMode
+         */
+        this.name = 'COUNT_DOWN_ROUNDS';
+        this.options = options || {};
+
+        /**
+         * ### CountDownRounds.visualRound
+         *
+         * The `VisualRound` object to which the displayMode belongs
+         *
+         * @see VisualRound
+         */
+        this.visualRound = visualRound;
+
+        /**
+         * ### CountDownRounds.displayDiv
+         *
+         * The DIV in which the information is displayed
+         */
+        this.displayDiv = null;
+
+        /**
+         * ### CountDownRounds.roundsLeft
+         *
+         * The DIV in which the number rounds left is displayed
+         */
+        this.roundsLeft = null;
+
+        /**
+         * ### CountDownRounds.displayDiv
+         *
+         * The DIV in which the title is displayed
+         */
+        this.titleDiv = null;
+
+        this.init(this.options);
+    }
+
+    /**
+     * ## CountDownRounds.init
+     *
+     * Initializes the instance
+     *
+     * @param {object} options Optional. Configuration options
+     *
+     * @see CountDownRounds.updateDisplay
+     */
+    CountDownRounds.prototype.init = function(options) {
+        this.displayDiv = node.window.getDiv();
+        this.displayDiv.className = 'rounddiv';
+
+        this.titleDiv = node.window.addDiv(this.displayDiv);
+        this.titleDiv.className = 'title';
+        this.titleDiv.innerHTML = 'Round left: ';
+
+        this.roundsLeft = node.window.addDiv(this.displayDiv);
+        this.roundsLeft.className = 'number';
+
+        this.updateDisplay();
+    };
+
+    /**
+     * ## CountDownRounds.updateDisplay
+     *
+     * Updates the content of `roundsLeft` according to `visualRound`
+     *
+     * @see VisualRound.updateDisplay
+     */
+    CountDownRounds.prototype.updateDisplay = function() {
+        if (this.visualRound.totRound === this.visualRound.curRound) {
+            this.roundsLeft.innerHTML = 0;
+            return;
+        }
+        this.roundsLeft.innerHTML =
+                (this.visualRound.totRound - this.visualRound.curRound) || '?';
+    };
+
+    /**
+     * # CompoundDisplayMode Class
+     *
+     * Copyright(c) 2014 Stefano Balietti
+     * MIT Licensed
+     *
+     * Defines a displayMode for the `VisualRound` which displays the
+     * information according to multiple displayModes.
+     *
+     * ---
+     */
+
+    /**
+     * ## CompoundDisplayMode
+     *
+     * Display mode which combines multiple other display displayModes
+     *
+     * @param {VisualRound} visualRound The `VisualRound` object to which the
+     *     displayMode belongs.
+     * @param {array} displayModes Array of displayModes to be used in
+     *      combination.
+     * @param {object} options Optional. Configuration options
+     *
+     * @see VisualRound
+     */
+    function CompoundDisplayMode(visualRound, displayModes, options) {
+        var index;
+
+        /**
+         * ### CompoundDisplayMode.name
+         *
+         * The name of the displayMode
+         */
+        this.name = '';
+
+        for (index in displayModes) {
+            this.name += displayModes[index].name + '&';
+        }
+
+        this.name = this.name.substr(0, this.name.length -1);
+
+        this.options = options || {};
+
+        /**
+         * ### CompoundDisplayMode.visualRound
+         *
+         * The `VisualRound` object to which the displayMode belongs
+         *
+         * @see VisualRound
+         */
+        this.visualRound = visualRound;
+
+         /**
+         * ### CompoundDisplayMode.displayModes
+         *
+         * The array of displayModes to be used in combination
+         */
+        this.displayModes = displayModes;
+
+        /**
+         * ### CompoundDisplayMode.displayDiv
+         *
+         * The DIV in which the information is displayed
+         */
+        this.displayDiv = null;
+
+        this.init(options);
+    }
+
+    /**
+     * ## CompoundDisplayMode.init
+     *
+     * Initializes the instance
+     *
+     * @param {object} options Optional. Configuration options
+     *
+     * @see CompoundDisplayMode.updateDisplay
+     */
+     CompoundDisplayMode.prototype.init = function(options) {
+        var index;
+        this.displayDiv = node.window.getDiv();
+
+        for (index in this.displayModes) {
+            this.displayDiv.appendChild(this.displayModes[index].displayDiv);
+        }
+
+        this.updateDisplay();
+     };
+
+    /**
+     * ## CompoundDisplayMode.updateDisplay
+     *
+     * Calls `updateDisplay` for all displayModes in the combination
+     *
+     * @see VisualRound.updateDisplay
+     */
+    CompoundDisplayMode.prototype.updateDisplay = function() {
+        var index;
+        for (index in this.displayModes) {
+            this.displayModes[index].updateDisplay();
+        }
+    };
+
+    CompoundDisplayMode.prototype.activate = function() {
+        var index;
+        for (index in this.displayModes) {
+            if (this.displayModes[index].activate) {
+                this.displayModes[index].activate();
+            }
+        }
+    };
+
+    CompoundDisplayMode.prototype.deactivate = function() {
+        var index;
+        for (index in this.displayModes) {
+            if (this.displayModes[index].deactivate) {
+                this.displayMode[index].deactivate();
+            }
+        }
+    };
+
+})(node);
+
+/**
  * # VisualState widget for nodeGame
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
@@ -29494,10 +30709,11 @@ JSUS.extend(TIME);
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Display a timer for the game. Timer can trigger events. 
+ * Display a timer for the game. Timer can trigger events.
  * Only for countdown smaller than 1h.
- * 
+ *
  * www.nodegame.org
+ *
  * ---
  */
 (function(node) {
@@ -29510,7 +30726,7 @@ JSUS.extend(TIME);
 
     // ## Meta-data
 
-    VisualTimer.version = '0.4.0';
+    VisualTimer.version = '0.5.0';
     VisualTimer.description = 'Display a timer for the game. Timer can ' +
         'trigger events. Only for countdown smaller than 1h.';
 
@@ -29524,18 +30740,20 @@ JSUS.extend(TIME);
         JSUS: {}
     };
 
-    /** 
-     *  ## VisualTimer
+    /**
+     * ## VisualTimer
      *
-     *  'VisualTimer' displays and manages a 'GameTimer'
-     *  The options it can take are:
-     
-     *  - any options that can be passed to a 'GameTimer'
-     *  - waitBoxOptions: an option object to be passed to 'TimerBox'
-     *  - mainBoxOptions: an option object to be passed to 'TimerBox'
+     * `VisualTimer` displays and manages a `GameTimer`
      *
-     *  @see TimerBox
-     *  @see GameTimer
+     * @param @param {object} options Optional. Configuration options
+     * The options it can take are:
+     *
+     * - any options that can be passed to a `GameTimer`
+     * - waitBoxOptions: an option object to be passed to `TimerBox`
+     * - mainBoxOptions: an option object to be passed to `TimerBox`
+     *
+     * @see TimerBox
+     * @see GameTimer
      */
     function VisualTimer(options) {
         this.options = options || {};
@@ -29543,71 +30761,72 @@ JSUS.extend(TIME);
             1000 : this.options.update;
 
         /**
-         *  ### gameTimer
-         *  
-         *  The timer which counts down the game time.
+         * ### gameTimer
          *
-         *  @see node.timer.createTimer  
+         * The timer which counts down the game time.
+         *
+         * @see node.timer.createTimer
          */
         this.gameTimer = null;
-        
+
         /**
-         *  ### mainBox
+         * ### mainBox
          *
-         *  The 'TimerBox' which displays the main timer.
+         * The `TimerBox` which displays the main timer.
          *
-         *  @see TimerBox
+         * @see TimerBox
          */
-        this.mainBox = null;   
-        
+        this.mainBox = null;
+
         /**
-         *  ### waitBox
+         * ### waitBox
          *
-         *  The 'TimerBox' which displays the wait timer.
+         * The `TimerBox` which displays the wait timer.
          *
-         *  @see TimerBox         
+         * @see TimerBox
          */
         this.waitBox = null;
-        
+
         /**
-         *  ### activeBox
+         * ### activeBox
          *
-         *  The 'TimerBox' in which to display the time.
-         *  
-         *  This variable is always a reference to either 'waitBox' or 
-         *  'mainBox'. 
+         * The `TimerBox` in which to display the time.
          *
-         *  @see TimerBox      
+         * This variable is always a reference to either `waitBox` or
+         * `mainBox`.
+         *
+         * @see TimerBox
          */
         this.activeBox = null;
-        
+
         /**
-         *  ### isInitialized
+         * ### isInitialized
          *
-         *  indicates whether the instance has been initializded already   
+         * indicates whether the instance has been initializded already
          */
         this.isInitialized = false;
         this.init(this.options);
     }
-    
-    /** 
-     *  ## VisualTimer
+
+    /**
+     * ## VisualTimer.init
      *
-     *  Initializes the instance. When called again, adds options to current
-     *  ones.
+     * Initializes the instance. When called again, adds options to current
+     * ones.
      *
-     *  The options it can take are:
+     * The options it can take are:
      *
-     *  - any options that can be passed to a 'GameTimer'
-     *  - waitBoxOptions: an option object to be passed to 'TimerBox'
-     *  - mainBoxOptions: an option object to be passed to 'TimerBox'
+     * - any options that can be passed to a `GameTimer`
+     * - waitBoxOptions: an option object to be passed to `TimerBox`
+     * - mainBoxOptions: an option object to be passed to `TimerBox`
      *
-     *  @see TimerBox
-     *  @see GameTimer
+     * @param @param {object} options Optional. Configuration options
+     * @see TimerBox
+     * @see GameTimer
      */
     VisualTimer.prototype.init = function(options) {
         var t;
-        
+
         if (!options) {
             options = {};
         }
@@ -29636,7 +30855,7 @@ JSUS.extend(TIME);
         }
 
         this.gameTimer.init(options);
-        
+
         t = this.gameTimer;
         node.session.register('visualtimer', {
             set: function(p) {
@@ -29655,21 +30874,21 @@ JSUS.extend(TIME);
             }
         });
         this.options = options;
-        
-        if(!this.options.mainBoxOptions) {
+
+        if (!this.options.mainBoxOptions) {
             this.options.mainBoxOptions = {};
         }
-        if(!this.options.waitBoxOptions) {
+        if (!this.options.waitBoxOptions) {
             this.options.waitBoxOptions = {};
         }
-        
+
         J.mixout(this.options.mainBoxOptions,
                 {classNameBody: options.className, hideTitle: true});
         J.mixout(this.options.waitBoxOptions,
-                {title: 'Max. wait timer', 
+                {title: 'Max. wait timer',
                 classNameTitle: 'waitTimerTitle',
                 classNameBody: 'waitTimerBody', hideBox: true});
-                       
+
         if (!this.mainBox) {
             this.mainBox = new TimerBox(this.options.mainBoxOptions);
         }
@@ -29678,42 +30897,44 @@ JSUS.extend(TIME);
         }
         if (!this.waitBox) {
             this.waitBox = new TimerBox(this.options.waitBoxOptions);
-        } 
+        }
         else {
             this.waitBox.init(this.options.waitBoxOptions);
         }
-        
-        this.activeBox = options.activeBox || this.mainBox;
-        
+
+        this.activeBox = this.options.activeBox || this.mainBox;
+
         this.isInitialized = true;
     };
 
     VisualTimer.prototype.append = function() {
         this.bodyDiv.appendChild(this.mainBox.boxDiv);
         this.bodyDiv.appendChild(this.waitBox.boxDiv);
-      
+
         this.activeBox = this.mainBox;
         this.updateDisplay();
     };
-    
+
     /**
-     *  ## VisualTimer.clear
+     * ## VisualTimer.clear
      *
-     *  Reverts state of 'VisualTimer' to right after constructor call.
+     * Reverts state of `VisualTimer` to right after constructor call.
      *
-     *  @param {object} options Configuration object
+     * @param {object} options Configuration object
      *
-     *  @see node.timer.destroyTimer
-     *  @see VisualTimer.init
+     * @return {object} Old options.
+     *
+     * @see node.timer.destroyTimer
+     * @see VisualTimer.init
      */
     VisualTimer.prototype.clear = function(options) {
         var oldOptions = this.options;
         if (!options) {
             options = {};
         }
-        
+
         node.timer.destroyTimer(this.gameTimer);
-                
+
         // ----- as in constructor -----
         this.options = options;
         this.options.update = ('undefined' === typeof this.options.update) ?
@@ -29724,16 +30945,16 @@ JSUS.extend(TIME);
         this.isInitialized = false;
         this.init(this.options);
         // ----- as in constructor ----
-        
-        return oldOptions;   
+
+        return oldOptions;
     };
-    
+
     /**
-     *  ## VisualTimer.updateDisplay
+     * ## VisualTimer.updateDisplay
      *
-     *  Changes 'activeBox' to display current time of 'gameTimer'
+     * Changes `activeBox` to display current time of `gameTimer`
      *
-     *  @see TimerBox.bodyDiv      
+     * @see TimerBox.bodyDiv
      */
     VisualTimer.prototype.updateDisplay = function() {
         var time, minutes, seconds;
@@ -29749,28 +30970,28 @@ JSUS.extend(TIME);
     };
 
     /**
-     *  ## VisualTimer.start
+     * ## VisualTimer.start
      *
-     *  Starts the timer.
+     * Starts the timer.
      *
-     *  @see VisualTimer.updateDisplay
-     *  @see GameTimer.start
+     * @see VisualTimer.updateDisplay
+     * @see GameTimer.start
      */
     VisualTimer.prototype.start = function() {
-        this.updateDisplay();        
+        this.updateDisplay();
         this.gameTimer.start();
     };
 
     /**
-     *  ## VisualTimer.restart
+     * ## VisualTimer.restart
      *
-     *  Restarts the timer with new options
+     * Restarts the timer with new options
      *
-     *  @param {object} options Configuration object
+     * @param {object} options Configuration object
      *
-     *  @see VisualTimer.init
-     *  @see VisualTimer.start
-     *  @see VisualTimer.stop
+     * @see VisualTimer.init
+     * @see VisualTimer.start
+     * @see VisualTimer.stop
      */
     VisualTimer.prototype.restart = function(options) {
         this.stop();
@@ -29779,63 +31000,63 @@ JSUS.extend(TIME);
     };
 
     /**
-     *  ## VisualTimer.stop
+     * ## VisualTimer.stop
      *
-     *  Stops the timer display and stores the time left in 'activeBox.timeLeft'
+     * Stops the timer display and stores the time left in `activeBox.timeLeft`
      *
-     *  @param {object} options Configuration object
+     * @param {object} options Configuration object
      *
-     *  @see GameTimer.isStopped
-     *  @see GameTimer.stop
+     * @see GameTimer.isStopped
+     * @see GameTimer.stop
      */
     VisualTimer.prototype.stop = function(options) {
         if (!this.gameTimer.isStopped()) {
             this.activeBox.timeLeft = this.gameTimer.timeLeft;
             this.gameTimer.stop();
-        }  
+        }
     };
     /**
-     *  ## VisualTimer.switchActiveBoxTo
+     * ## VisualTimer.switchActiveBoxTo
      *
-     *  Switches the display of the 'gameTimer' into the 'TimerBox' 'box'.
+     * Switches the display of the `gameTimer` into the `TimerBox` `box`.
      *
-     *  Stores 'gameTimer.timeLeft' into 'activeBox' and then switches
-     *  'activeBox' to reference 'box'.
+     * Stores `gameTimer.timeLeft` into `activeBox` and then switches
+     * `activeBox` to reference `box`.
      *
-     *  @param {TimerBox} box TimerBox in which to display 'gameTimer' time
+     * @param {TimerBox} box TimerBox in which to display `gameTimer` time
      */
     VisualTimer.prototype.switchActiveBoxTo = function(box) {
         this.activeBox.timeLeft = this.gameTimer.timeLeft || 0;
         this.activeBox = box;
         this.updateDisplay();
     };
-    
+
     /**
       * ## VisualTimer.startWaiting
       *
-      * Changes the 'VisualTimer' appearance to a max. wait timer
+      * Changes the `VisualTimer` appearance to a max. wait timer
       *
       * If options and/or options.milliseconds are undefined, the wait timer
-      * will start with the current time left on the 'gameTimer'. The mainBox
+      * will start with the current time left on the `gameTimer`. The mainBox
       * will be striked out, the waitBox set active and unhidden. All other
-      * options are forwarded directly to 'VisualTimer.restart'.
+      * options are forwarded directly to `VisualTimer.restart`.
       *
       * @param {object} options Configuration object
       *
       * @see VisualTimer.restart
       */
     VisualTimer.prototype.startWaiting = function(options) {
-        if(typeof options === 'undefined') {
+        if (typeof options === 'undefined') {
             options = {};
         }
         options = J.clone(options);
         if (typeof options.milliseconds === 'undefined') {
             options.milliseconds = this.gameTimer.timeLeft;
         }
-        if(typeof options.mainBoxOptions === 'undefined') {
+        if (typeof options.mainBoxOptions === 'undefined') {
             options.mainBoxOptions = {};
         }
-        if(typeof options.waitBoxOptions === 'undefined') {
+        if (typeof options.waitBoxOptions === 'undefined') {
             options.waitBoxOptions = {};
         }
         options.mainBoxOptions.classNameBody = 'strike';
@@ -29844,62 +31065,62 @@ JSUS.extend(TIME);
         options.waitBoxOptions.hideBox = false;
         this.restart(options);
     };
-    
+
     /**
       * ## VisualTimer.startTiming
       *
-      * Changes the 'VisualTimer' appearance to a regular countdown
+      * Changes the `VisualTimer` appearance to a regular countdown
       *
       * The mainBox will be unstriked and set active, the waitBox will be
-      * hidden. All other options are forwarded directly to 
-      * 'VisualTimer.restart'.
+      * hidden. All other options are forwarded directly to
+      * `VisualTimer.restart`.
       *
       * @param {object} options Configuration object
       *
       * @see VisualTimer.restart
       */
     VisualTimer.prototype.startTiming = function(options) {
-        if(typeof options === 'undefined') {
+        if (typeof options === 'undefined') {
             options = {};
         }
         options = J.clone(options);
-        if(typeof options.mainBoxOptions === 'undefined') {
+        if (typeof options.mainBoxOptions === 'undefined') {
             options.mainBoxOptions = {};
         }
-        if(typeof options.waitBoxOptions === 'undefined') {
+        if (typeof options.waitBoxOptions === 'undefined') {
             options.waitBoxOptions = {};
         }
         options.activeBox = this.mainBox;
         options.waitBoxOptions.timeLeft = this.gameTimer.timeLeft || 0;
         options.waitBoxOptions.hideBox = true;
         options.mainBoxOptions.classNameBody = '';
-        this.restart(options)
+        this.restart(options);
     };
-    
+
     /**
-     *  ## VisualTimer.resume
+     * ## VisualTimer.resume
      *
-     *  Resumes the 'gameTimer'
+     * Resumes the `gameTimer`
      *
-     *  @see GameTimer.resume
+     * @see GameTimer.resume
      */
     VisualTimer.prototype.resume = function() {
         this.gameTimer.resume();
     };
-    
+
     /**
-     *  ## VisualTimer.setToZero
+     * ## VisualTimer.setToZero
      *
-     *  stops 'gameTimer' and sets 'activeBox' to display '00:00'
+     * stops `gameTimer` and sets `activeBox` to display `00:00`
      *
-     *  @see GameTimer.resume
+     * @see GameTimer.resume
      */
     VisualTimer.prototype.setToZero = function() {
         this.stop();
         this.activeBox.bodyDiv.innerHTML = '00:00';
         this.activeBox.setClassNameBody('strike');
     };
-    
+
     /**
      * ## VisualTimer.doTimeUp
      *
@@ -29931,8 +31152,8 @@ JSUS.extend(TIME);
         });
 
         node.on('REALLY_DONE', function() {
-            if(!that.gameTimer.isStopped()) {
-                that.startWaiting();   
+            if (!that.gameTimer.isStopped()) {
+                that.startWaiting();
             }
        });
     };
@@ -29990,58 +31211,71 @@ JSUS.extend(TIME);
         }
         return options;
     }
-    
-    /**
-     *  ## TimerBox
+
+   /**
+     * # TimerBox Class
      *
-     *  'TimerBox' represents a box wherein to display the timer.
-     *  The options it can take are:
-     
-     *  - hideTitle
-     *  - hideBody
-     *  - hideBox
-     *  - title
-     *  - classNameTitle
-     *  - classNameBody
-     *  - timeLeft 
+     * Copyright(c) 2014 Stefano Balietti
+     * MIT Licensed
+     *
+     * Represents a box wherin to display a `VisualTimer`.
+     *
+     * ---
+     */
+
+    /**
+     * ## TimerBox
+     *
+     * `TimerBox` represents a box wherein to display the timer.
+     *
+     * @param @param {object} options Optional. Configuration options
+     * The options it can take are:
+     *
+     * - `hideTitle`
+     * - `hideBody`
+     * - `hideBox`
+     * - `title`
+     * - `classNameTitle`
+     * - `classNameBody`
+     * - `timeLeft`
      */
     function TimerBox(options) {
         /**
-         *  ### boxDiv
-         *  
-         *  The Div which will contain the title and body Divs
+         * ### boxDiv
+         *
+         * The Div which will contain the title and body Divs
          */
         this.boxDiv = null;
-        
+
         /**
-         *  ### titleDiv
-         *  
-         *  The Div which will contain the title
+         * ### titleDiv
+         *
+         * The Div which will contain the title
          */
         this.titleDiv = null;
         /**
-         *  ### bodyDiv
-         *  
-         *  The Div which will contain the numbers
+         * ### bodyDiv
+         *
+         * The Div which will contain the numbers
          */
         this.bodyDiv = null;
-        
+
         /**
-         *  ### timeLeft
-         *  
-         *  Used to store the last value before focus is taken away
+         * ### timeLeft
+         *
+         * Used to store the last value before focus is taken away
          */
         this.timeLeft = null;
-                
+
         this.boxDiv = node.window.getDiv();
         this.titleDiv = node.window.addDiv(this.boxDiv);
         this.bodyDiv = node.window.addDiv(this.boxDiv);
-        
+
         this.init(options);
-    
+
     }
-    
-    TimerBox.prototype.init = function(options) {        
+
+    TimerBox.prototype.init = function(options) {
         if (options) {
             if (options.hideTitle) {
                 this.hideTitle();
@@ -30057,7 +31291,7 @@ JSUS.extend(TIME);
             }
             if (options.hideBox) {
                 this.hideBox();
-            }   
+            }
             else {
                 this.unhideBox();
             }
@@ -30066,80 +31300,88 @@ JSUS.extend(TIME);
         this.setTitle(options.title || '');
         this.setClassNameTitle(options.classNameTitle || '');
         this.setClassNameBody(options.classNameBody || '');
-        
-        if(options.timeLeft) {
+
+        if (options.timeLeft) {
             this.timeLeft = options.timeLeft;
         }
     };
-    
+
     /**
-     * ## hideBox
+     * ## TimerBox.hideBox
      *
-     * hides entire 'TimerBox'
+     * hides entire `TimerBox`
      */
     TimerBox.prototype.hideBox = function() {
         this.boxDiv.style.display = 'none';
     };
+
     /**
-     * ## unhideBox
+     * ## TimerBox.unhideBox
      *
-     * hides entire 'TimerBox'
+     * hides entire `TimerBox`
      */
     TimerBox.prototype.unhideBox = function() {
         this.boxDiv.style.display = '';
     };
+
     /**
-     * ## hideTitle
+     * ## TimerBox.hideTitle
      *
-     * hides title of 'TimerBox'
+     * hides title of `TimerBox`
      */
     TimerBox.prototype.hideTitle = function() {
         this.titleDiv.style.display = 'none';
     };
+
     /**
-     * ## unhideTitle
+     * ## TimerBox.unhideTitle
      *
-     * unhides title of 'TimerBox'
+     * unhides title of `TimerBox`
      */
     TimerBox.prototype.unhideTitle = function() {
         this.titleDiv.style.display = '';
     };
+
     /**
-     * ## hideBody
+     * ## TimerBox.hideBody
      *
-     * hides body of 'TimerBox'
+     * hides body of `TimerBox`
      */
     TimerBox.prototype.hideBody = function() {
         this.bodyDiv.style.display = 'none';
     };
+
     /**
-     * ## unhideBody
+     * ## TimerBox.unhideBody
      *
-     * unhides Body of 'TimerBox'
+     * unhides Body of `TimerBox`
      */
     TimerBox.prototype.unhideBody = function() {
         this.bodyDiv.style.display = '';
     };
+
     /**
-     * ## setTitle
+     * ## TimerBox.setTitle
      *
-     * sets title of 'TimerBox'
+     * sets title of `TimerBox`
      */
     TimerBox.prototype.setTitle = function(title) {
         this.titleDiv.innerHTML = title;
     };
+
     /**
-     * ## setClassNameTitle
+     * ## TimerBox.setClassNameTitle
      *
-     * sets class name of title of 'TimerBox'
+     * sets class name of title of `TimerBox`
      */
     TimerBox.prototype.setClassNameTitle = function(className) {
         this.titleDiv.className = className;
     };
+
     /**
-     * ## setClassNameBody
+     * ## TimerBox.setClassNameBody
      *
-     * sets class name of body of 'TimerBox'
+     * sets class name of body of `TimerBox`
      */
     TimerBox.prototype.setClassNameBody = function(className) {
         this.bodyDiv.className = className;
