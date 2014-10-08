@@ -6035,35 +6035,22 @@ JSUS.extend(TIME);
      *
      * Indexes an element
      *
-     * Parameter _oldIdx_ is needed if indexing is updating a previously
-     * indexed item. In fact if new index is different, the old one must
-     * be deleted.
-     *
      * @param {object} o The element to index
-     * @param {number} dbidx The position of the element in the database array
-     * @param {string} oldIdx Optional. The old index name, if any.
+     * @param {object} o The position of the element in the database array
      */
-    NDDB.prototype._indexIt = function(o, dbidx, oldIdx) {
+    NDDB.prototype._indexIt = function(o, dbidx) {
         var func, id, index, key;
         if (!o || J.isEmpty(this.__I)) return;
-        oldIdx = undefined;
+
         for (key in this.__I) {
             if (this.__I.hasOwnProperty(key)) {
                 func = this.__I[key];
                 index = func(o);
-                // If the same object has been  previously
-                // added with another index delete the old one.
-                if (index !== oldIdx) {
-                    if ('undefined' !== typeof oldIdx) {
-                        if ('undefined' !== typeof this[key].resolve[oldIdx]) {
-                            delete this[key].resolve[oldIdx];
-                        }
-                    }
-                }
-                if ('undefined' !== typeof index) { 
-                    if (!this[key]) this[key] = new NDDBIndex(key, this);
-                    this[key]._add(index, dbidx);
-                }
+
+                if ('undefined' === typeof index) continue;
+
+                if (!this[key]) this[key] = new NDDBIndex(key, this);
+                this[key]._add(index, dbidx);
             }
         }
     };
@@ -6093,7 +6080,7 @@ JSUS.extend(TIME);
                     settings = this.cloneSettings({V: ''});
                     this[key] = new NDDB(settings);
                 }
-                this[key].insert(o);1
+                this[key].insert(o);
             }
         }
     };
@@ -7513,13 +7500,11 @@ JSUS.extend(TIME);
      * @see JSUS.arrayDiff
      */
     NDDB.prototype.diff = function(nddb) {
+        if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
                 nddb = nddb.db;
             }
-        }
-        if (!nddb || !nddb.length) {
-            return this.breed([]);
         }
         return this.breed(J.arrayDiff(this.db, nddb));
     };
@@ -7541,13 +7526,11 @@ JSUS.extend(TIME);
      * @see JSUS.arrayIntersect
      */
     NDDB.prototype.intersect = function(nddb) {
+        if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
-                nddb = nddb.db;
+                var nddb = nddb.db;
             }
-        }
-        if (!nddb || !nddb.length) {
-            return this.breed([]);
         }
         return this.breed(J.arrayIntersect(this.db, nddb));
     };
@@ -8171,7 +8154,7 @@ JSUS.extend(TIME);
      * @see NDDBIndex.get
      * @see NDDBIndex.remove
      */
-    NDDBIndex.prototype.update = function(idx, update) {
+        NDDBIndex.prototype.update = function(idx, update) {
         var o, dbidx, nddb;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
@@ -8182,7 +8165,7 @@ JSUS.extend(TIME);
         // We do indexes separately from the other components of _autoUpdate
         // to avoid looping through all the other elements that are unchanged.
         if (nddb.__update.indexes) {
-            nddb._indexIt(o, dbidx, idx);
+            nddb._indexIt(o, dbidx);
             nddb._hashIt(o);
             nddb._viewIt(o);
         }
@@ -17591,7 +17574,8 @@ JSUS.extend(TIME);
         // Fires the event immediately if time is zero.
         // Double check necessary in strict mode.
         if ('undefined' !== typeof this.options.milliseconds &&
-            this.options.milliseconds === 0) {
+                this.options.milliseconds === 0) {
+            this.stop();
             this.fire(this.timeup);
             return;
         }
@@ -17696,7 +17680,8 @@ JSUS.extend(TIME);
             else {
                 // Save the difference of time left.
                 timestamp = (new Date()).getTime();
-                this.updateRemaining = timestamp - this.updateStart;
+                this.updateRemaining =
+                    this.update - (timestamp - this.updateStart);
             }
         }
         else if (this.status === GameTimer.STOPPED) {
@@ -17743,7 +17728,13 @@ JSUS.extend(TIME);
         // Run rest of this "update" interval:
         this.timerId = setTimeout(function() {
             if (updateCallback(that)) {
+                // start() needs the timer to not be running.
+                that.status = GameTimer.INITIALIZED;
+
                 that.start();
+
+                // start() sets status to LOADING, so change it back to RUNNING.
+                that.status = GameTimer.RUNNING;
             }
         }, this.updateRemaining);
     };
@@ -17764,6 +17755,7 @@ JSUS.extend(TIME);
 
         this.status = GameTimer.STOPPED;
         clearInterval(this.timerId);
+        clearTimeout(this.timerId);
         this.timerId = null;
         this.timePassed = 0;
         this.timeLeft = null;
@@ -28172,6 +28164,7 @@ JSUS.extend(TIME);
 
 })(node);
 
+<<<<<<< HEAD
 (function(node) {
     "use strict";
 
@@ -28306,6 +28299,8 @@ JSUS.extend(TIME);
 
 })(node);
 
+=======
+>>>>>>> bf6f1d964a53c85253c19035ce630b8c9b03ec0d
 /**
  * # MoneyTalks widget for nodeGame
  * Copyright(c) 2014 Stefano Balietti
