@@ -159,6 +159,7 @@
          *
          */
         this.events.ng.on(CMD + gcommands.start, function(options) {
+if (node.nodename === 'lgc100') console.log('*** STARTING LOGIC');
             if (!node.game.isStartable()) {
                 node.err('Game cannot be started.');
                 return;
