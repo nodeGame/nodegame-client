@@ -141,11 +141,11 @@
         /**
          * ## in.get.DATA
          *
-         * Emits the content 
+         * Emits the content
          */
         node.events.ng.on( IN + get + 'DATA', function(msg) {
             var res;
-            
+
             if ('string' !== typeof msg.text || msg.text === '') {
                 node.warn('node.in.get.DATA: invalid / missing event name.');
                 return;
@@ -185,8 +185,8 @@
          * @emit UPDATED_PLIST
          * @see Game.pl
          */
-        node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {            
-            node.game.pl.updatePlayer(msg.from, msg.data);           
+        node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
+            node.game.pl.updatePlayer(msg.from, msg.data);
             node.emit('UPDATED_PLIST');
             if (node.game.shouldStep()) {
                 node.game.step();
@@ -342,7 +342,7 @@
             if (msg.text === 'state') {
                 return node.game.plot.stager.getState();
             }
-            return node.game.plot.stager.getSequence();            
+            return node.game.plot.stager.getSequence();
         });
 
         /**
@@ -354,7 +354,30 @@
          * @see node.game.pl
          */
         node.events.ng.on( IN + get + 'PLIST', function() {
-            return node.game.pl.db;             
+            return node.game.pl.db;
+        });
+
+        /**
+         * ## in.get.LANG
+         *
+         * Gets the currently used language
+         *
+         * @see node.player.lang
+         */
+        node.events.ng.on( IN + get + 'LANG', function() {
+            return node.player.lang;
+        });
+
+        /**
+         * ## in.set.LANG
+         *
+         * Sets the currently used language
+         *
+         * @see NodeGameClient.setLanguage
+         * @see node.player.lang
+         */
+        node.events.ng.on( IN + set + 'LANG', function(msg) {
+            node.setLanguage(msg.data);
         });
 
         node.incomingAdded = true;
