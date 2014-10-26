@@ -32,7 +32,7 @@
 //var tm2;
 //
 //describe('TriggerManager', function() {
-//    
+//
 //    describe('#constructor. ', function() {
 //	describe('A newly created instance ', function() {
 //	    before(function(){
@@ -68,7 +68,7 @@
 //	    });
 //	});
 //    });
-//    
+//
 //    describe('#second instance should not clash with the first. ', function() {
 //	describe('A newly created instance ', function() {
 //	    before(function(){
@@ -86,5 +86,5 @@
 //	    });
 //	});
 //    });
-//    
+//
 //});

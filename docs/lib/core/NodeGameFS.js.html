@@ -270,7 +270,7 @@ be specified in the <code>options</code> parameter.</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.saveMemory: format must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">]))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.saveMemory: unknown format: &#39;</span> <span class="o">+</span>
                                 <span class="nx">format</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
@@ -285,7 +285,7 @@ be specified in the <code>options</code> parameter.</p>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="p">}</span>        
+        <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">gamedb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gamedb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: gamedb must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;instance of GameDB or undefined.&#39;</span><span class="p">);</span>
@@ -363,7 +363,7 @@ stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveMemoryIndexes</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">dir</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> 
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveMemoryIndexes</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">dir</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span>
                                                       <span class="nx">gamedb</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">ipath</span><span class="p">,</span> <span class="nx">indexData</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">memory</span><span class="p">;</span>
@@ -373,7 +373,7 @@ stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: format must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">]))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: unknown format: &#39;</span> <span class="o">+</span>
                                 <span class="nx">format</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
@@ -388,7 +388,7 @@ stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: options must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="nx">dir</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: dir is not  &#39;</span> <span class="o">+</span>
                             <span class="s1">&#39;existing or not readable: &#39;</span> <span class="o">+</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>

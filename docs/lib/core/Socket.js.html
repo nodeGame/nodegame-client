@@ -329,7 +329,7 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>The url to which the socket is connected</p>
 
-<p>It might not be meaningful for all types of sockets. For example, 
+<p>It might not be meaningful for all types of sockets. For example,
 in case of SocketDirect, it is not an real url.</p>
   </div>
 </div>
@@ -353,7 +353,7 @@ in case of SocketDirect, it is not an real url.</p>
             <span class="p">}</span>
         <span class="p">});</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">journal</span><span class="p">.</span><span class="nx">comparator</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareState</span><span class="p">);</span>
-        
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">journal</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">journal</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">gb</span><span class="p">.</span><span class="nx">to</span><span class="p">;</span>
@@ -842,7 +842,7 @@ if the game is not ready, and the message priority is low.x</p>
         <span class="k">else</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;B: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-        <span class="p">}</span>        
+        <span class="p">}</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -962,7 +962,7 @@ if the game is not ready, and the message priority is low.x</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearBuffer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msgHandler</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">nelem</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">funcCtx</span><span class="p">,</span> <span class="nx">func</span><span class="p">;</span>
-       
+
         <span class="k">if</span> <span class="p">(</span><span class="nx">msgHandler</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">funcCtx</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
             <span class="nx">func</span> <span class="o">=</span> <span class="nx">msgHandler</span><span class="p">;</span>
@@ -1221,7 +1221,7 @@ and sent out whenever the connection is available again.
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">send</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-        
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">())</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Socket.send: cannot send message. No open socket.&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>

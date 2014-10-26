@@ -76,7 +76,7 @@ var pl;
 function samePlayer(pl1, pl2) {
     pl2.should.exist;
     pl2.name.should.equal(pl1.name);
-    pl2.id.should.equal(pl1.id);	
+    pl2.id.should.equal(pl1.id);
 };
 
 function myLog(a) {
@@ -88,13 +88,13 @@ myLog.prototype.log = function(a) {
 };
 
 describe('PlayerList', function() {
-    
+
     describe('#constructor', function() {
-	it('with no parameters: player list length 0', function() {     
+	it('with no parameters: player list length 0', function() {
             pl = new PlayerList();
 	    pl.size().should.equal(0);
 	});
-        it('with a list of players: player list length 4', function() {     
+        it('with a list of players: player list length 4', function() {
             pl = new PlayerList(null, plDB);
 	    pl.size().should.equal(plDB.length);
 	});
@@ -123,9 +123,9 @@ describe('PlayerList', function() {
             ('undefined' !== typeof pl.myIdx).should.be.true;
 	});
     });
-    
+
     describe('#view initializations', function() {
-	it('outside view 1', function() {     
+	it('outside view 1', function() {
             var pl1, pl2,
             outsideView1, outsideView2;
 
@@ -139,7 +139,7 @@ describe('PlayerList', function() {
 
             outsideView1.db.should.not.equal(outsideView2.db);
 	});
-	it('outside view 2', function() {     
+	it('outside view 2', function() {
             var outsideView;
 
             pl = new PlayerList({ V: { myView : function(o) { return o.id; } } });
@@ -149,7 +149,7 @@ describe('PlayerList', function() {
             outsideView.db.should.equal(pl.myView.db);
 	});
     });
-    
+
     describe('#get()', function() {
 	before(function() {
             pl = new PlayerList();
@@ -159,27 +159,27 @@ describe('PlayerList', function() {
 	it('should return the player we have inserted before', function() {
 	    samePlayer(player, test_player);
 	});
-	
+
     });
-    
+
     describe('#pop()', function() {
 	before(function() {
 	    test_player = pl.id.pop(player.id);
 	});
-	
+
 	it('should return a player object', function() {
 	    test_player.should.exists;
 	});
-	
+
 	it('should return the player we have inserted before', function() {
 	    samePlayer(player, test_player);
 	});
-	
+
 	it('should remove the player we have inserted before', function() {
 	    pl.size().should.equal(0);
 	});
     });
-    
+
     describe('#getRandom()', function() {
 	before(function(){
 	    pl.add(player);
@@ -187,15 +187,15 @@ describe('PlayerList', function() {
 	    pl.add(player3);
 	    pl.add(player4);
 	});
-	
+
 	it('should return one random player', function() {
 	    var r = pl.getRandom();
 	    ('undefined' !== typeof r.name).should.be.true;
 	    r.should.be.a('object');
 	    [player,player2,player3,player4].should.include(r);
-	    
+
 	});
-	
+
 	it('should return two random players', function() {
 	    var set = pl.getRandom(2);
 	    set.length.should.equal(2);
@@ -208,7 +208,7 @@ describe('PlayerList', function() {
             pl.add(player);
 	    pl.add(player2);
 	});
-	
+
 	it('players should be sync on same stage 1.1.1', function() {
 	    pl.arePlayersSync('1.1.1').should.be.true;
 	});
@@ -256,7 +256,7 @@ describe('PlayerList', function() {
             pl.add(player);
 	    pl.add(player2);
 	});
-	
+
 	it('players should be DONE exactly on stage 1.1.1', function() {
 	    pl.isStepDone('1.1.1').should.be.true;
 	});
@@ -268,6 +268,6 @@ describe('PlayerList', function() {
             pl.isStepDone('1.1.1', 'STAGE').should.be.true;
 	});
     });
-    
-    
+
+
 });

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * # nodegame-client make script 
+ * # nodegame-client make script
  */
 
 if (!process.argv || !process.argv.length) {
@@ -39,77 +39,77 @@ function list(val) {
 }
 
 function copyDirTo(subDir, targetDir) {
-    
+
     var stats, inputDir;
-    
-    
+
+
     // INPUT DIR
     if (!subDir) {
 	console.log('You must specify a subdirectory of the nodegame-client ' +
                     'root folder, or use * to select all');
 	return;
     }
-    
+
     if (subDir === '.') {
 	inputDir = rootDir;
     }
     else {
 	inputDir = rootDir + subDir;
     }
-    
+
     inputDir = path.resolve(inputDir);
 
     if (!J.existsSync(inputDir)) {
 	console.log(inputDir + ' does not exists');
 	return false;
     }
-    
+
     stats = fs.lstatSync(inputDir);
     if (!stats.isDirectory()) {
 	console.log(inputDir + ' is not a directory');
 	return false;
     }
     inputDir = inputDir + '/';
-    
+
     // TARGET DIR
     if (!targetDir) {
 	console.log('You must specify a target directory');
 	return;
     }
-    
+
     targetDir = path.resolve(targetDir);
 
     if (!J.existsSync(targetDir)) {
 	console.log(targetDir + ' does not exists');
 	return false;
     }
-    
+
     stats = fs.lstatSync(targetDir);
     if (!stats.isDirectory()) {
 	console.log(targetDir + ' is not a directory');
 	return false;
     }
-    
+
     targetDir = targetDir + '/';
 
     console.log('Syncinc ' + subDir + ' directory of nodegame-client v.' +
                 version + ' with ' + targetDir);
-    
-    J.copyDirSyncRecursive(inputDir, targetDir);	
+
+    J.copyDirSyncRecursive(inputDir, targetDir);
 }
 
 
 program
     .version(version);
 
-program  
+program
     .command('clean')
     .description('Removes all files from build folder')
     .action(function(){
 	J.cleanDir(buildDir);
     });
 
-program  
+program
     .command('build-support [options]')
     .description('Creates a separate builds of nodegame-client support libraries')
     .option('-l, --lib <items>', 'choose libraries to build', list)
@@ -121,7 +121,7 @@ program
 	build_support(options);
     });
 
-program  
+program
     .command('build [options]')
     .description('Creates a nodegame-client custom build')
     .option('-B, --bare', 'bare naked nodegame-client (no dependencies, no addons)')
@@ -139,19 +139,19 @@ program
     .option('-y, --sync <path>', 'syncs the build directory with the specified path')
     .action(function(env, options){
 	build(options);
-	
+
 	if (options.sync) {
 	    copyDirTo('build/', options.sync);
 	}
     });
 
-program  
+program
     .command('multibuild [options]')
     .description('Creates pre-defined nodeGame builds')
     .option('-y, --sync <path>', 'syncs the build directory with the specified path')
     .action(function(env, options){
 	console.log('Multi-build for nodegame-client v.' + version);
-	
+
 	build({
 	    all: true,
 	    output: "nodegame-full",
@@ -164,17 +164,17 @@ program
 	build({
 	    output: "nodegame",
 	});
-	
+
         //		build_support({
         //			all: true,
         //		});
-	
+
 	if (options.sync) {
 	    copyDirTo('build/', options.sync);
 	}
     });
 
-program  
+program
     .command('sync <subdir>, <path>')
     .description('Sync the specified subdirectory of the nodegame-client ' +
                  'root tree with another target directory. If \'.\' is used ' +
@@ -194,12 +194,12 @@ program
 	    var dockerDir = J.resolveModuleDir('docker', rootDir);
 	}
 	catch(e) {
-	    console.log('module Docker not found. Cannot build doc. ' + 
+	    console.log('module Docker not found. Cannot build doc. ' +
                         'Do \'npm install docker\' to install it.');
 	    return false;
 	}
 
-	var command = dockerDir + 'docker -i ' + rootDir + 
+	var command = dockerDir + 'docker -i ' + rootDir +
             ' index.js index.browser.js closure.browser.js lib/ listeners/ ' +
             'addons/ examples/ -o ' + rootDir + 'docs/';
 

@@ -69,7 +69,7 @@
     <span class="nx">next</span><span class="p">,</span>
     <span class="nx">entries</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="nx">partialReturn</span><span class="p">;</span>
-    
+
     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">entries</span><span class="p">[</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
             <span class="nx">entries</span><span class="p">[</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[];</span>
@@ -82,7 +82,7 @@
             <span class="nx">sub</span> <span class="o">=</span> <span class="nx">combinations</span><span class="p">(</span><span class="nx">arr</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">),</span> <span class="nx">k</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
 
             <span class="k">for</span> <span class="p">(</span><span class="nx">subI</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">subI</span> <span class="o">&lt;</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">subI</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                
+
                 <span class="nx">next</span> <span class="o">=</span> <span class="nx">sub</span><span class="p">[</span><span class="nx">subI</span><span class="p">];</span>
                 <span class="nx">next</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
                 <span class="nx">entries</span><span class="p">[</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]].</span><span class="nx">push</span><span class="p">(</span><span class="nx">next</span><span class="p">);</span>
@@ -117,7 +117,7 @@
     <span class="nx">next</span><span class="p">,</span>
     <span class="nx">entries</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="nx">index</span> <span class="o">=</span> <span class="p">{};</span>
-    
+
     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">entries</span><span class="p">[</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
             <span class="nx">entries</span><span class="p">[</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[];</span>
@@ -130,7 +130,7 @@
             <span class="nx">sub</span> <span class="o">=</span> <span class="nx">combinations</span><span class="p">(</span><span class="nx">arr</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">),</span> <span class="nx">k</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
 
             <span class="k">for</span> <span class="p">(</span><span class="nx">subI</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">subI</span> <span class="o">&lt;</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">subI</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                
+
                 <span class="nx">next</span> <span class="o">=</span> <span class="nx">sub</span><span class="p">[</span><span class="nx">subI</span><span class="p">];</span>
                 <span class="nx">next</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
                 <span class="nx">entries</span><span class="p">[</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]].</span><span class="nx">push</span><span class="p">(</span><span class="nx">next</span><span class="p">);</span>
@@ -159,7 +159,7 @@
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
-    
+
     <span class="k">return</span> <span class="p">{</span>
         <span class="nx">entries</span><span class="o">:</span> <span class="nx">entries</span><span class="p">,</span>
         <span class="nx">index</span><span class="o">:</span> <span class="nx">index</span><span class="p">,</span>
@@ -199,20 +199,20 @@
         <span class="k">while</span> <span class="p">(</span><span class="nx">leftOver</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">pool</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
             <span class="nx">elem</span> <span class="o">=</span> <span class="nx">shuffledPool</span><span class="p">[</span><span class="o">++</span><span class="nx">i</span><span class="p">];</span>
-            
+
             <span class="k">if</span> <span class="p">(</span><span class="nx">matched</span><span class="p">[</span><span class="nx">elem</span><span class="p">])</span> <span class="k">continue</span><span class="p">;</span>
             <span class="nx">thisComb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
             <span class="nx">I</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-            
+
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">entries</span><span class="p">[</span><span class="nx">elem</span><span class="p">])</span> <span class="p">{</span>
                 <span class="kr">debugger</span><span class="p">;</span>
             <span class="p">}</span>
-            
+
 
             <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="nx">thisComb</span> <span class="o">&amp;&amp;</span> <span class="nx">I</span> <span class="o">&lt;</span> <span class="nx">entries</span><span class="p">[</span><span class="nx">elem</span><span class="p">].</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">I</span><span class="o">++</span><span class="p">;</span>
                 <span class="nx">thisComb</span> <span class="o">=</span> <span class="nx">entries</span><span class="p">[</span><span class="nx">elem</span><span class="p">][</span><span class="nx">I</span><span class="p">];</span>
-                
+
                 <span class="k">if</span> <span class="p">(</span><span class="nx">I</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">)</span> <span class="kr">debugger</span>
 
                 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">I</span><span class="p">);</span>
@@ -242,7 +242,7 @@
             <span class="p">}</span>
 
             <span class="nx">outRow</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">thisComb</span><span class="p">);</span>
-            
+
             <span class="nx">leftOver</span><span class="o">-=</span> <span class="nx">k</span><span class="p">;</span>
             </pre></div>
         </td>
@@ -295,7 +295,7 @@
 
 <span class="nx">latinSquare</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">seq</span><span class="p">,</span> <span class="nx">N</span><span class="p">,</span> <span class="nx">self</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">latin</span><span class="p">,</span> <span class="nx">idx</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">limit</span><span class="p">,</span> <span class="nx">extracted</span><span class="p">;</span>
-    
+
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">seq</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;latinSquare: seq must be array.&#39;</span><span class="p">);</span>
     <span class="p">}</span>
@@ -305,7 +305,7 @@
 
     <span class="nx">S</span> <span class="o">=</span> <span class="nx">seq</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
     <span class="nx">self</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">self</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="nx">self</span><span class="p">;</span>
-    
+
     <span class="k">if</span> <span class="p">(</span><span class="nx">N</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;latinSquare: N must be number or undefined.&#39;</span><span class="p">);</span>
     <span class="p">}</span>
@@ -315,7 +315,7 @@
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">S</span> <span class="o">&lt;</span> <span class="nx">N</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;latinSquare: infinite loop detected for N &gt; &#39;</span> <span class="o">+</span> 
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;latinSquare: infinite loop detected for N &gt; &#39;</span> <span class="o">+</span>
                         <span class="s1">&#39;seq.length.&#39;</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -354,7 +354,7 @@
 
         <span class="nx">extracted</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">thisSeq</span><span class="p">[</span><span class="nx">idx</span><span class="p">]);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">thisSeq</span><span class="p">[</span><span class="nx">idx</span><span class="p">])</span> <span class="kr">debugger</span>
-        
+
         <span class="k">if</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">latin</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">thisSeq</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">idx</span><span class="p">);</span>
             <span class="nx">latin</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">thisSeq</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>

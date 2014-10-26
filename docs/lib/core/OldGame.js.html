@@ -136,7 +136,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
+        <td class="code highlight"><div class="highlight"><pre>
 <span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
   </pre></div>
         </td>
@@ -151,7 +151,7 @@ MIT Licensed </p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
+        <td class="code highlight"><div class="highlight"><pre>
 <span class="kd">var</span> <span class="nx">GameState</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span><span class="p">,</span>
   <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
   <span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameDB</span><span class="p">,</span>
@@ -235,7 +235,7 @@ MIT Licensed </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">name</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;A nodeGame game&#39;</span><span class="p">;</span>
-  
+
   <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">support</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">)</span> <span class="p">{</span>
     <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="p">{</span>
       <span class="nx">value</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
@@ -475,7 +475,7 @@ other clients.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">observer</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">observer</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">observer</span> 
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">observer</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">observer</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">observer</span>
                                 <span class="o">:</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -490,22 +490,22 @@ other clients.</p>
 </div>
 
   </div>
-  <div class="body"><p>If TRUE, automatically advances to the next state if all the players 
+  <div class="body"><p>If TRUE, automatically advances to the next state if all the players
 have completed the same state</p>
 
-<p>After a successful STATEDONE event is fired, the client will automatically 
+<p>After a successful STATEDONE event is fired, the client will automatically
 goes to the next function in the game-loop without waiting for a STATE
 message from the server. </p>
 
 <p>Depending on the configuration settings, it can still perform additional
-checkings (e.g.wheter the mininum number of players is connected) 
+checkings (e.g.wheter the mininum number of players is connected)
 before stepping to the next state.</p>
 
 <p>Defaults: true</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">auto_step</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_step</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_step</span> 
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">auto_step</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_step</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_step</span>
                                <span class="o">:</span> <span class="kc">true</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -529,7 +529,7 @@ to access the screen and displays a message to the player.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">auto_wait</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_wait</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_wait</span> 
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">auto_wait</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_wait</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">auto_wait</span>
                                  <span class="o">:</span> <span class="kc">false</span><span class="p">;</span> </pre></div>
         </td>
       </tr>
@@ -546,7 +546,7 @@ to access the screen and displays a message to the player.</p>
   </div>
   <div class="body"><p>If TRUE, automatically advances to the next state upon completion of a state</p>
 
-<p>After a successful DONE event is fired, the client will automatically 
+<p>After a successful DONE event is fired, the client will automatically
 goes to the next function in the game-loop without waiting for a STATE
 message from the server, or checking the STATE of the other players. </p>
 
@@ -554,7 +554,7 @@ message from the server, or checking the STATE of the other players. </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">solo_mode</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">solo_mode</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">solo_mode</span> 
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">solo_mode</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">solo_mode</span><span class="p">)</span> <span class="o">?</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">solo_mode</span>
                                <span class="o">:</span> <span class="kc">false</span><span class="p">;</span> </pre></div>
         </td>
       </tr>
@@ -567,7 +567,7 @@ message from the server, or checking the STATE of the other players. </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">minPlayers</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">minPlayers</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">maxPlayers</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">maxPlayers</span> <span class="o">||</span> <span class="mi">1000</span><span class="p">;</span>
-  
+
   <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">init</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">init</span><span class="p">;</span>
   <span class="p">}</span></pre></div>
@@ -594,8 +594,8 @@ automatically inserted in this object</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">memory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameDB</span><span class="p">();</span>
-  
-  <span class="k">this</span><span class="p">.</span><span class="nx">player</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span> 
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">player</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">();</span>
 
 <span class="p">}</span> <span class="c1">// &lt;!-- ends constructor --&gt;</span></pre></div>
@@ -716,7 +716,7 @@ just for change of state after the game has started</p>
 <p>this.state.is = node.is.LOADED;
 node.socket.sendSTATE(node.action.SAY, node.game.state);</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
+        <td class="code highlight"><div class="highlight"><pre>
   <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;game started&#39;</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -776,10 +776,10 @@ node.socket.sendSTATE(node.action.SAY, node.game.state);</p>
 </div>
 
   </div>
-  <div class="body"><p>Notifies internal listeners, the server and other connected clients 
+  <div class="body"><p>Notifies internal listeners, the server and other connected clients
 of the current game-state</p>
 
-<p>If the <em>observer</em> flag is set, external notification is inhibited, 
+<p>If the <em>observer</em> flag is set, external notification is inhibited,
 but the STATECHANGE event is emitted anyway </p>
   </div>
   <div class="details">
@@ -806,12 +806,12 @@ but the STATECHANGE event is emitted anyway </p>
 <!-- Important: SAY -->
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">observer</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">stateEvent</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">OUT</span> <span class="o">+</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">+</span> <span class="s1">&#39;.STATE&#39;</span><span class="p">;</span> 
+    <span class="kd">var</span> <span class="nx">stateEvent</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">OUT</span> <span class="o">+</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">+</span> <span class="s1">&#39;.STATE&#39;</span><span class="p">;</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">stateEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="s1">&#39;ALL&#39;</span><span class="p">);</span>
   <span class="p">}</span>
-  
+
   <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;STATECHANGE&#39;</span><span class="p">);</span>
-  
+
   <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;New State = &#39;</span> <span class="o">+</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">));</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -840,20 +840,20 @@ but the STATECHANGE event is emitted anyway </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateState</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
-  
+
   <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;Updating state to &#39;</span> <span class="o">+</span> <span class="k">new</span> <span class="nx">GameState</span><span class="p">(</span><span class="nx">state</span><span class="p">));</span>
 
   <span class="kd">var</span> <span class="nx">res</span><span class="p">;</span>
-  
+
   <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">execStage</span><span class="p">();</span>
-  
+
   <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">()</span> <span class="o">==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADED</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
     <span class="p">}</span>
-  <span class="p">}</span>   
+  <span class="p">}</span>
   <span class="k">else</span> <span class="p">{</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Error in stepping&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span></pre></div>
         </td>
@@ -908,7 +908,7 @@ but the STATECHANGE event is emitted anyway </p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">nextStage</span><span class="p">;</span>
-  
+
   <span class="nx">nextStage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentStage</span><span class="p">);</span>
   </pre></div>
         </td>
@@ -924,9 +924,9 @@ but the STATECHANGE event is emitted anyway </p>
     <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;GAMEOVER&#39;</span><span class="p">);</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">gameover</span><span class="p">();</span> <span class="c1">// can throw Errors</span>
   <span class="p">}</span>
-  
+
   <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">execStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
-  
+
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -946,10 +946,10 @@ but the STATECHANGE event is emitted anyway </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">execStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-  
+
   <span class="kd">var</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">err</span><span class="p">;</span>
-  
-  <span class="nx">cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getFunction</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span> 
+
+  <span class="nx">cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getFunction</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
       </pre></div>
         </td>
       </tr>
@@ -958,11 +958,11 @@ but the STATECHANGE event is emitted anyway </p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
-<p>Local Listeners from previous state are erased 
+<p>Local Listeners from previous state are erased
 before proceeding to next one</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">clearState</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentStage</span><span class="p">);</span>
-      
+
   <span class="nx">node</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADING</span><span class="p">;</span>
   </pre></div>
         </td>
@@ -976,19 +976,19 @@ before proceeding to next one</p>
 but now causes problems of multiple update</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">publishState</span><span class="p">();</span>
-      
+
   <span class="k">try</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-  <span class="p">}</span> 
+  <span class="p">}</span>
   <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">err</span> <span class="o">=</span> <span class="s1">&#39;An error occurred while executing a custom callback&#39;</span><span class="p">;</span> <span class="c1">//  </span>
-      
+
     <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-    
+
     <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span><span class="p">();</span>
     <span class="p">}</span>
-        
+
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
   <span class="p">}</span>
 <span class="p">};</span></pre></div>
@@ -1007,14 +1007,14 @@ but now causes problems of multiple update</p>
   </div>
   <div class="body"><p>Returns TRUE if the nodeGame engine is fully loaded</p>
 
-<p>As soon as the nodegame-client library is loaded 
+<p>As soon as the nodegame-client library is loaded
 <code>node.game.state</code> is equal to 0.0.0. In this situation the
-game will be considered READY unless the nodegame-window 
+game will be considered READY unless the nodegame-window
 says otherwise</p>
 
 <p>During stepping between functions in the game-loop
-the flag is temporarily turned to FALSE, and all events 
-are queued and fired only after nodeGame is ready to 
+the flag is temporarily turned to FALSE, and all events
+are queued and fired only after nodeGame is ready to
 handle them again.</p>
 
 <p>If the browser does not support the method object setters,
@@ -1043,7 +1043,7 @@ instead.</p>
 </div>
 <p>Check if there is a gameWindow obj and whether it is loading</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>  
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">state</span> <span class="o">&gt;=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADED</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>

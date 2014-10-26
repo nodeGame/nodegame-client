@@ -12,8 +12,8 @@
 //node.game = new node.Game();
 //node.game.init = function(){};
 //
-//var check1 = 0, 
-//	check2 = 0, 
+//var check1 = 0,
+//	check2 = 0,
 //	check3 = 0;
 //
 //
@@ -36,17 +36,17 @@
 //
 //describe('#node.setup', function() {
 //	before(function(){
-//		
+//
 //		node.setup('nodegame', {
 //			env: {
 //				auto: true,
 //				debug: false,
 //			},
 //			socket: {
-//				
+//
 //			}
 //		});
-//		
+//
 //	});
 //
 //	it("should setup glob", function() {
@@ -57,7 +57,7 @@
 //});
 //
 //describe('#node.env', function() {
-//	
+//
 //	it("node.env('auto') should run the function", function() {
 //		//console.log(node.env);
 //		node.env('auto', func1);
@@ -70,7 +70,7 @@
 //	it("node.env('foo') should NOT run the function", function() {
 //		node.env('foo', func2);
 //		check2.should.be.eql(0);
-//	});	
+//	});
 //	it("node.env('auto', func, ctx) should run the function with a special context", function() {
 //		//console.log(node.env);
 //		node.env('auto', function(){

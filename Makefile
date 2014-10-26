@@ -1,7 +1,7 @@
 multibuild:
 	@./bin/make.js multibuild
 
-build:	
+build:
 	@./bin/make.js build
 
 doc:

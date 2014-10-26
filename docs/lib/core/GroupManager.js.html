@@ -753,7 +753,7 @@ same matching algorithm should be stored in <em>GroupManager.scratch</em></p>
   </div>
   <div class="body"><p>Performs a match, given the current <em>groups</em> and <em>elements</em> objects </p>
 
-<p>It stores the type of matching in the variable <em>lastMatchType</em>. If it 
+<p>It stores the type of matching in the variable <em>lastMatchType</em>. If it
 is different from previous matching type, the <em>scratch</em> object is
 cleared.</p>
   </div>
@@ -787,7 +787,7 @@ cleared.</p>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">matchFunctions</span><span class="p">[</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.group.match: unknown match type: &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span>
                             <span class="s1">&#39;.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>        
+        <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">lastMatchType</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">lastMatchType</span> <span class="o">!==</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
@@ -843,7 +843,7 @@ cleared.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">matchFunctions</span><span class="p">[</span><span class="s1">&#39;RANDOM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">order</span><span class="p">,</span> <span class="nx">nGroups</span><span class="p">;</span>
             <span class="kd">var</span> <span class="nx">g</span><span class="p">,</span> <span class="nx">elem</span><span class="p">;</span>
-            
+
             <span class="nx">nGroups</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">nGroups</span><span class="p">)</span> <span class="p">{</span>
@@ -932,7 +932,7 @@ cleared.</p>
             <span class="nx">members</span> <span class="o">=</span> <span class="nx">g</span><span class="p">.</span><span class="nx">getMembers</span><span class="p">();</span>
             <span class="nx">array</span> <span class="o">?</span> <span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">members</span><span class="p">)</span> <span class="o">:</span> <span class="nx">out</span><span class="p">[</span><span class="nx">g</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">members</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>            
+        <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1053,7 +1053,7 @@ pools: array of array. it is set of preferences (elements from the first array w
 The t-th position in the matched array is the match for t-th element in the <em>elements</em> array.
 The matching is done trying to follow the preference in the pool.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    
+        <td class="code highlight"><div class="highlight"><pre>
 
     <span class="nx">exports</span><span class="p">.</span><span class="nx">RMatcher</span> <span class="o">=</span> <span class="nx">RMatcher</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">Group</span> <span class="o">=</span> <span class="nx">Group</span><span class="p">;</span></pre></div>
@@ -1694,7 +1694,7 @@ the <em>pool</em> elements.</p>
 </div>
 
   </div>
-  <div class="body"><p>If TRUE,  each element in the pool will be replicated 
+  <div class="body"><p>If TRUE,  each element in the pool will be replicated
 as many times as the <em>rowLimit</em> variable.</p>
   </div>
 </div>
@@ -1866,7 +1866,7 @@ array for each element.</p>
 <p>If the <em>stretch</em> option is on, each element in the pool will be copied
 and added as many times as the <em>rowLimit</em> variable.</p>
 
-<p>If the <em>shuffle</em> option is on, all elements of the pool (also those 
+<p>If the <em>shuffle</em> option is on, all elements of the pool (also those
 created by the <em>stretch</em> options, will be randomly shuffled.</p>
 
 <p>Notice: the pool is cloned, cyclic references in the pool object
@@ -2204,7 +2204,7 @@ than the <em>rowLimit</em> property, and if <em>canSwitchIn</em> returns TRUE.</
   </div>
   <div class="body"><p>Returns TRUE if an element can be inserted in a row (even a complete one)</p>
 
-<p>If a row is complete one of the elements already matched will be 
+<p>If a row is complete one of the elements already matched will be
 added to a row with empty slots.</p>
   </div>
   <div class="details">
@@ -2229,7 +2229,7 @@ added to a row with empty slots.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Group</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">switchItInRow</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">toRow</span><span class="p">,</span> <span class="nx">fromRow</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">switched</span><span class="p">;</span>
-        
+
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">canSwitchIn</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">toRow</span><span class="p">))</span> <span class="p">{</span>        </pre></div>
         </td>
       </tr>
@@ -2398,7 +2398,7 @@ leftover.</p>
         <span class="kd">var</span> <span class="nx">leftOver</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="nx">leftOver</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">pool</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">done</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">addIt</span><span class="p">(</span><span class="nx">pool</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>      
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">done</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">addIt</span><span class="p">(</span><span class="nx">pool</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
                 <span class="nx">leftOver</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">pool</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
             <span class="p">}</span>
         <span class="p">}</span>

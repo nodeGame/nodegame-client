@@ -77,7 +77,7 @@ function samePlayer(pl1, pl2) {
 };
 
 describe('GameDB', function() {
-    
+
     describe('#add(key, value, player, state)', function() {
 	before(function(){
 	    db.add('foo', 'bar', player, gs_321);
@@ -91,9 +91,9 @@ describe('GameDB', function() {
 	    db.add('foo4', 'bar4', player4, gs_321);
 	    db.length.should.equal(4);
 	});
-	
+
     });
-    
+
 //    describe('#select()', function() {
 //	before(function(){
 //	    test_db = null;
@@ -104,8 +104,8 @@ describe('GameDB', function() {
 //	it("db.select('player', '=', player4) should consist of 1 item", function() {
 //	    db.select('player', '=', player4).length.should.equal(1);
 //	});
-//	
+//
 //	// TODO: try different combinations
 //    });
-    
+
 });

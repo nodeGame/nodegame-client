@@ -74,7 +74,7 @@
 
     // ## TriggerManager methods
 
-    
+
     /**
      * ### TriggerManager.size
      *
@@ -103,7 +103,7 @@
      */
     TriggerManager.prototype.init = function(options) {
         if (options && 'object' !== typeof options) {
-            throw new TypeError('TriggerManager.init: options must be ' + 
+            throw new TypeError('TriggerManager.init: options must be ' +
                                 'object or undefined.');
         }
 
@@ -113,11 +113,11 @@
             }
             this.options = options;
         }
-        
+
         this.resetTriggers();
     };
 
-   
+
     /**
      * ### TriggerManager.setReturnAt
      *
@@ -140,13 +140,13 @@
         }
         this.returnAt = returnAt;
     };
-        
+
     /**
      * ### TriggerManager.initTriggers
      *
      * Adds a collection of trigger functions to the trigger array
      *
-     * @param {function|array} triggers An array of trigger functions 
+     * @param {function|array} triggers An array of trigger functions
      *   or a single function.
      */
     TriggerManager.prototype.initTriggers = function(triggers) {
@@ -187,7 +187,7 @@
      */
     TriggerManager.prototype.clear = function(clear) {
         if (!clear) {
-            node.warn('Do you really want to clear the current ' + 
+            node.warn('Do you really want to clear the current ' +
                       'TriggerManager obj? Please use clear(true)');
             return false;
         }

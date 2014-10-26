@@ -1740,7 +1740,7 @@ containing an hook property.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addHook</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">hook</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
-    
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">hook</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameTimer.addHook: missing argument&#39;</span><span class="p">);</span>
         <span class="p">}</span>
@@ -1804,7 +1804,7 @@ containing an hook property.</p>
                     <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">hookNames</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
                     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
                 <span class="p">}</span>
-            <span class="p">}</span>     
+            <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">};</span></pre></div>

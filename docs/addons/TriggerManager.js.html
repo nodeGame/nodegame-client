@@ -320,7 +320,7 @@ in <code>this.options</code>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;TriggerManager.init: options must be &#39;</span> <span class="o">+</span> 
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;TriggerManager.init: options must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -330,7 +330,7 @@ in <code>this.options</code>.</p>
             <span class="p">}</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
         <span class="p">}</span>
-        
+
         <span class="k">this</span><span class="p">.</span><span class="nx">resetTriggers</span><span class="p">();</span>
     <span class="p">};</span>
 
@@ -403,7 +403,7 @@ in <code>this.options</code>.</p>
       <span class="dox_tag_name">triggers</span>
       <span class="dox_type">function</span>
       <span class="dox_type">array</span>
-      <span>An array of trigger functions 
+      <span>An array of trigger functions
   or a single function.</span>
     </div>
   </div>
@@ -480,7 +480,7 @@ contained in <code>TriggerManager.options.triggers</code>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Do you really want to clear the current &#39;</span> <span class="o">+</span> 
+            <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Do you really want to clear the current &#39;</span> <span class="o">+</span>
                       <span class="s1">&#39;TriggerManager obj? Please use clear(true)&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
