@@ -4,7 +4,7 @@
  * MIT Licensed
  *
  * Shims of methods required by nodeGame, but missing in old IE browsers
- * 
+ *
  * ---
  */
 

@@ -23,12 +23,12 @@
 
   - Remote setup of clients
   - setup method to configure all important properties of the game
-  - connect and play methodsare now separated. It is possible 
+  - connect and play methodsare now separated. It is possible
 	to play without connecting, and connecting without playing
   - nodegame-client can connect to the server via the Socket interface: direct or sio
   - GameSession object enhanced
   - Automated tests on integration server travis-ci
-  - Standardized variable naming: 
+  - Standardized variable naming:
 	node.iss -> node.is,
 	node.actions -> node.action
 

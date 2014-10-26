@@ -28,10 +28,10 @@ describe('GroupManager', function() {
             }
             catch(e) {
                 true.should.be.true;
-            }            
+            }
         });
     });
- 
+
     describe('#removeAll', function() {
         before(function() {
             gm.removeAll();
@@ -105,6 +105,6 @@ describe('GroupManager', function() {
             g = gm.get('Group3').elements.should.be.eql(['A','B']);
         });
      });
-    
+
 
 });

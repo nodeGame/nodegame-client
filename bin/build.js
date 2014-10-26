@@ -20,13 +20,13 @@ var distDir =  rootDir + 'build/';
 // nodegame-client
 var ng_client = [
     rootDir + "index.browser.js",
-    
+
     // Constants.
 
     rootDir + "lib/modules/variables.js",
     rootDir + "lib/modules/stepRules.js",
 
-    
+
     // Libs.
 
     rootDir + "lib/core/ErrorManager.js",
@@ -37,24 +37,24 @@ var ng_client = [
     rootDir + "lib/core/Stager.js",
     rootDir + "lib/core/GamePlot.js",
     rootDir + "lib/core/GameMsgGenerator.js",
-    
+
     rootDir + "lib/core/SocketFactory.js",
     rootDir + "lib/core/Socket.js",
     rootDir + "lib/sockets/SocketIo.js",
-    
+
     rootDir + "lib/core/GameDB.js",
-    rootDir + "lib/core/Game.js", 
+    rootDir + "lib/core/Game.js",
     rootDir + "lib/core/Session.js",
-    
+
     rootDir + "lib/core/GroupManager.js",
     rootDir + "lib/core/RoleMapper.js",
 
     rootDir + "lib/core/Timer.js",
-    
+
     // NodeGameClient.
 
     rootDir + "lib/core/NodeGameClient.js",
-    
+
     // Extending NodeGameClient prototype.
 
     rootDir + "lib/modules/log.js",
@@ -67,13 +67,13 @@ var ng_client = [
     rootDir + "lib/modules/commands.js",
     rootDir + "lib/modules/extra.js",
     rootDir + "lib/modules/getJSON.js",
-    
+
     rootDir + "listeners/incoming.js",
     rootDir + "listeners/internal.js",
 ];
 
 // ng-addons
-var ng_addons = [           
+var ng_addons = [
     rootDir + "addons/TriggerManager.js"
 ];
 
@@ -95,7 +95,7 @@ var ng_jsus = [
 // nddb
 var NDDBdir = J.resolveModuleDir('NDDB', __dirname);
 var ng_nddb = [
-    NDDBdir + "nddb.js",           
+    NDDBdir + "nddb.js",
 ];
 
 // nodegame-window
@@ -103,14 +103,14 @@ var ngWdir = J.resolveModuleDir('nodegame-window', __dirname);
 
 var ng_window = [
     ngWdir + "build/nodegame-window.js",
-]; 
+];
 
 // nodegame-widgets
 var ngWdgdir = J.resolveModuleDir('nodegame-widgets', __dirname);
 
 var ng_widgets = [
     ngWdgdir + 'build/nodegame-widgets.js',
-    
+
 ];
 
 //shelf.js
@@ -125,9 +125,9 @@ function build(options) {
         !options.all && !options.cycle && !options.only) {
 	options.standard = true;
     }
-    
+
     var out = options.output || "nodegame";
-    
+
     console.log('Building nodeGame-client v.' + version + ' with:');
 
     // CREATING build array
@@ -136,9 +136,9 @@ function build(options) {
     // -1. IE - shim
     if (options.ie || options.all) {
 	console.log('  - old IE support');
-	files = files.concat(rootDir + 'ie.support.js');	
+	files = files.concat(rootDir + 'ie.support.js');
     }
-    
+
     // 0. Shelf.js
     if (options.shelf || options.all) {
 	if (!J.existsSync(shelfDir)) {
@@ -152,7 +152,7 @@ function build(options) {
 		console.log("\n  - building custom shelf.js")
 		var buildShelf = require(shelfjs_build);
 		buildShelf.build({cycle: true});
-		
+
 		// building shelf.js FS as well
 		buildShelf.build({
 		    lib: ['fs'],
@@ -160,13 +160,13 @@ function build(options) {
 		    cycle: true,
 		});
 	    }
-	    
+
 	    console.log('  - shelf.js');
 	    files = files.concat(ng_shelf);
 	}
     }
-    
-    
+
+
     // 1. J
     if (options.JSUS || options.all || options.standard) {
 	console.log('  - JSUS');
@@ -178,7 +178,7 @@ function build(options) {
 	console.log('  - NDDB');
 	files = files.concat(ng_nddb);
     }
-    
+
     // 3. nodegame-client core: always built
     console.log('  - nodegame-client core');
     files = files.concat(ng_client);
@@ -191,7 +191,7 @@ function build(options) {
 
     // 3.B closure
     files.push(rootDir + "closure.browser.js");
-    
+
 
     // 5. nodegame-window
     if (options.window || options.all) {
@@ -200,7 +200,7 @@ function build(options) {
 	}
 	else {
 	    console.log('  - nodegame-window');
-	    
+
 	    // Build custom shelf.js if not existing
 	    if (!J.existsSync(ngWdir + 'build/nodegame-window.js')) {
 		var window_build = ngWdir + 'bin/build.js';
@@ -208,10 +208,10 @@ function build(options) {
 		var buildWindow = require(window_build);
 		buildWindow.build({all: true});
 	    }
-	    
+
 	    files = files.concat(ng_window);
 	}
-	
+
     }
 
     //5. nodegame-widgets
@@ -221,7 +221,7 @@ function build(options) {
 	}
 	else {
 	    console.log('  - nodegame-widgets');
-	    
+
 	    // Build custom shelf.js if not existing
 	    if (!J.existsSync(ngWdgdir + 'build/nodegame-widgets.js')) {
 		var widgets_build = ngWdgdir + 'bin/build.js';
@@ -229,37 +229,37 @@ function build(options) {
 		var buildWidgets = require(widgets_build);
 		buildWidgets.build({all: true});
 	    }
-	    
+
 	    files = files.concat(ng_widgets);
 	}
     }
 
     console.log("\n");
-    
+
     var conf = {
 	text: 'nodeGame-client build created!',
 	options: options,
 	out: out,
 	files: files,
     };
-    
+
     smooshIt(conf);
 }
 
 
 function build_support(options) {
-    
+
     if (options.all) {
 	options.only = ['ie', 'shelf', 'jsus', 'nddb', 'addons', 'window',
                         'widgets'];
     }
-    
+
     var library, out, files, i;
     for (i = 0; i < options.only.length; i++) {
 	library = options.only[i];
-	
+
 	out = (options.output) ? options.output : "nodegame-" + library;
-	
+
 	console.log('Building support library: ');
 
 
@@ -267,15 +267,15 @@ function build_support(options) {
 	files = [];
 
 	switch (library) {
-	    
-	    
+
+
 	case 'ie':
             console.log('  - old IE support');
 	    files = files.concat(rootDir + 'ie.support.js');
 	    break;
-	    
+
 	case 'shelf':
-	    
+
 	    if (!J.existsSync(shelfDir)) {
 		console.log('  - ERR: shelf.js not found!');
 	    }
@@ -287,7 +287,7 @@ function build_support(options) {
 		    console.log("\n  - building custom shelf.js")
 		    var buildShelf = require(shelfjs_build);
 		    buildShelf.build({cycle: true});
-		    
+
 		    // building shelf.js FS as well
 		    buildShelf.build({
 			lib: ['fs'],
@@ -295,40 +295,40 @@ function build_support(options) {
 			cycle: true,
 		    });
 		}
-		
+
 		console.log('  - shelf.js');
 		files = files.concat(ng_shelf);
 	    }
 	    break;
-	    
+
 	case 'jsus':
 	    console.log('  - JSUS');
 	    files = files.concat(ng_jsus);
 	    break;
-	    
 
-	    
+
+
 	case 'nddb':
-	    
+
 	    console.log('  - NDDB');
 	    files = files.concat(ng_nddb);
 	    break;
-	    
-	    
+
+
 	case 'addons':
-	    
+
 	    console.log('  - nodegame-client addons');
 	    files = files.concat(ng_addons);
 	    break;
-	    
+
 	case 'window':
-	    
+
 	    if (!J.existsSync(ngWdir)) {
 		console.log('  - ERR: nodegame-window not found!');
 	    }
 	    else {
 		console.log('  - nodegame-window');
-		
+
 		// Build custom shelf.js if not existing
 		if (!J.existsSync(ngWdir + 'build/nodegame-window.js')) {
 		    var window_build = ngWdir + 'bin/build.js';
@@ -336,20 +336,20 @@ function build_support(options) {
 		    var buildWindow = require(window_build);
 		    buildWindow.build({all: true});
 		}
-		
+
 		files = files.concat(ng_window);
 	    }
 	    break;
 
 
 	case 'widgets':
-	    
+
 	    if (!J.existsSync(ngWdgdir)) {
 		console.log('  - ERR: nodegame-widgets not found!');
 	    }
 	    else {
 		console.log('  - nodegame-widgets');
-		
+
 		// Build custom shelf.js if not existing
 		if (!J.existsSync(ngWdgdir + 'build/nodegame-widgets.js')) {
 		    var widgets_build = ngWdgdir + 'bin/build.js';
@@ -357,14 +357,14 @@ function build_support(options) {
 		    var buildWidgets = require(widgets_build);
 		    buildWidgets.build({all: true});
 		}
-		
+
 		files = files.concat(ng_widgets);
 	    }
 	    break;
 	}
 
 	console.log("\n");
-	
+
 
 	var conf = {
 	    text: out + ' build created!',
@@ -372,10 +372,10 @@ function build_support(options) {
 	    out: out,
 	    files: files,
 	};
-	
+
 	smooshIt(conf);
     }
-    
+
     console.log('All additional nodeGame libraries created');
 }
 
@@ -393,45 +393,45 @@ function smooshIt(conf) {
 	console.log('No files to smoosh. Aborting.');
 	return false;
     }
-    
+
     var text = conf.text || 'Build created!',
     options = conf.options || {},
     files = conf.files,
-    out = (path.extname(conf.out) === '.js') ? path.basename(conf.out, '.js') 
+    out = (path.extname(conf.out) === '.js') ? path.basename(conf.out, '.js')
 	: conf.out;
-    
-    
+
+
     // Configurations for file smooshing.
     var config = {
-	
+
 	// Use JSHINT to spot code irregularities.
 	JSHINT_OPTS: {
 	    boss: true,
 	    forin: true,
 	    browser: true,
 	},
-	
+
 	JAVASCRIPT: {
 	    DIST_DIR: '/' + distDir,
 	}
     };
-    
+
     config.JAVASCRIPT[out] = files;
 
     var run_it = function(){
 	// https://github.com/fat/smoosh
 	// hand over configurations made above
 	var smooshed = smoosh.config(config);
-	
+
 	// removes all files from the build folder
 	if (options.clean) {
 	    smooshed.clean();
 	}
-	
+
 	// builds both uncompressed and compressed files
-        //	    smooshed.build(); 
+        //	    smooshed.build();
 	smooshed.build('uncompressed');
-	
+
     	if (options.analyse) {
     	    smooshed.run(); // runs jshint on full build
     	    smooshed.analyze(); // analyzes everything

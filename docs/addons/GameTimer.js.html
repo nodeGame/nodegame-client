@@ -130,9 +130,9 @@ MIT Licensed </p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
+        <td class="code highlight"><div class="highlight"><pre>
   <span class="nx">exports</span><span class="p">.</span><span class="nx">GameTimer</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">;</span>
-  
+
   <span class="kd">var</span> <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -217,7 +217,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">;</span>  
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">;</span>
   </pre></div>
         </td>
       </tr>
@@ -309,7 +309,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span> 
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
   </pre></div>
         </td>
       </tr>
@@ -330,7 +330,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">=</span> <span class="s1">&#39;TIMEUP&#39;</span><span class="p">;</span> 
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">=</span> <span class="s1">&#39;TIMEUP&#39;</span><span class="p">;</span>
   </pre></div>
         </td>
       </tr>
@@ -354,7 +354,7 @@ MIT Licensed </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span> <span class="o">=</span> <span class="p">[];</span>
-  
+
   <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span></pre></div>
         </td>
       </tr>
@@ -395,7 +395,7 @@ MIT Licensed </p>
   </div>
   <div class="body"><p>Inits the GameTimer</p>
 
-<p>Takes the configuration as an input parameter or 
+<p>Takes the configuration as an input parameter or
 recycles the settings in <code>this.options</code>.</p>
 
 <p>The configuration object is of the type</p>
@@ -405,11 +405,11 @@ recycles the settings in <code>this.options</code>.</p>
     update: 1000, // How often to update the time counter. Defaults every 1sec
     timeup: 'MY_EVENT', // An event ot function to fire when the timer expires
     hooks: [ myFunc, // Array of functions or events to fire at every update
-        'MY_EVENT_UPDATE', 
+        'MY_EVENT_UPDATE',
         { hook: myFunc2,
           ctx: that, }, <br />
-        ], 
-  } 
+        ],
+  }
   // Units are in milliseconds </p>
   </div>
   <div class="details">
@@ -447,7 +447,7 @@ recycles the settings in <code>this.options</code>.</p>
       <span class="k">this</span><span class="p">.</span><span class="nx">addHook</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
     <span class="p">}</span>
   <span class="p">}</span>
-  
+
   <span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
@@ -465,7 +465,7 @@ recycles the settings in <code>this.options</code>.</p>
   </div>
   <div class="body"><p>Fires a registered hook</p>
 
-<p>If it is a string it is emitted as an event, 
+<p>If it is a string it is emitted as an event,
 otherwise it called as a function.</p>
   </div>
   <div class="details">
@@ -487,7 +487,7 @@ otherwise it called as a function.</p>
   <span class="p">}</span>
   <span class="k">else</span> <span class="p">{</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">hook</span><span class="p">);</span>
-  <span class="p">}</span> 
+  <span class="p">}</span>
 <span class="p">};</span>
   </pre></div>
         </td>
@@ -506,7 +506,7 @@ otherwise it called as a function.</p>
   <div class="body"><p>Starts the timer</p>
 
 <p>Updates the status of the timer and calls <code>setInterval</code>
-At every update all the registered hooks are fired, and 
+At every update all the registered hooks are fired, and
 time left is checked. </p>
 
 <p>When the timer expires the timeup event is fired, and the
@@ -575,7 +575,7 @@ timer is stopped</p>
       <span class="nx">that</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">timeup</span><span class="p">);</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;time is up: &#39;</span> <span class="o">+</span> <span class="nx">that</span><span class="p">.</span><span class="nx">timeup</span><span class="p">,</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">,</span> <span class="s1">&#39;GameTimer: &#39;</span><span class="p">);</span>
     <span class="p">}</span>
-    
+
   <span class="p">},</span> <span class="k">this</span><span class="p">.</span><span class="nx">update</span><span class="p">);</span>
 <span class="p">};</span>
   </pre></div>
@@ -713,7 +713,7 @@ and time left properties</p>
   </div>
   <div class="body"><p>Restarts the timer</p>
 
-<p>Uses the input parameter as configuration object, 
+<p>Uses the input parameter as configuration object,
 or the current settings, if undefined </p>
   </div>
   <div class="details">
@@ -810,7 +810,7 @@ or the current settings, if undefined </p>
     });
 --></p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
+        <td class="code highlight"><div class="highlight"><pre>
 <span class="p">};</span></pre></div>
         </td>
       </tr>

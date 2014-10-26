@@ -47,7 +47,7 @@
 //		state: {round: 1},
 //		ip:	'1.2.3.7',
 //	});
-//	
+//
 //var items = [
 //	 {
 //		 painter: "Jesus",
@@ -79,7 +79,7 @@
 //         painter: "Manet",
 //         title: "Olympia",
 //         year: 1863
-//     },          
+//     },
 //];
 //
 //var painters_list = ['Jesus', 'Dali', 'Monet', 'Manet'];
@@ -102,7 +102,7 @@
 ////		else {
 ////			fs.unlinkSync(file);
 ////		}
-////		
+////
 ////	}
 ////};
 //
@@ -119,18 +119,18 @@
 //var checkCsvFile = function (check) {
 //	check = check || {};
 //	var file = check.filename || filename;
-//	
+//
 //	it('file should be found', function(){
 //		J.existsSync(file).should.be.true;
 //	});
-//	
+//
 //	var reader = csv.createCsvFileReader(file, {
 //	    'separator': ',',
 //	    'quote': '"',
-//	    'escape': '"',       
+//	    'escape': '"',
 //	    'comment': ''
 //	});
-//	
+//
 //	var read = [];
 //	reader.addListener('data', function(data) {
 ////		console.log(data)
@@ -141,7 +141,7 @@
 //		if (check.headers) {
 //			read[0].should.be.eql(check.headers);
 //		}
-//		
+//
 //	    if (check.csv_length) {
 ////	    	if (check.csv_length !== read.length) {
 ////		    	console.log(read)
@@ -150,37 +150,37 @@
 //
 //	    	read.length.should.be.eql(check.csv_length);
 //	    }
-//	    
+//
 //	    if (check.items) {
 //	    	for (var i = 0; i < check.items.length; i++) {
 //	    		if (!J.isArray(check.items[i])) {
-//	    			check.items[i] = J.obj2Array(check.items[i]);	    		
+//	    			check.items[i] = J.obj2Array(check.items[i]);
 //	    		}
 //	    		stringifyValues(check.items[i]);
 //	    		read[(check.headers) ? i+1 : i].should.be.eql(check.items[i]);
 //	    	}
 //	    }
-//	    
+//
 //	});
 //};
 //
 //var checkJSONFile = function (check) {
 //	check = check || {};
 //	var file = check.filename || filename;
-//	
+//
 //	it('file should be found', function(){
 //		J.existsSync(file).should.be.true;
 //	});
-//	
+//
 //	var db = new NDDB();
-//	
+//
 //	db.load(file);
-//	
-//		
+//
+//
 //	if (check.nitems) {
 //	   db.length.should.be.eql(check.nitems);
 //	}
-//	    
+//
 //	if (check.items) {
 //		for (var i = 0; i < check.items.length; i++) {
 //			db.exists(check.items[i]).should.be.true;
@@ -211,7 +211,7 @@
 //for (var i=0; i<1; i++){
 //
 //describe('FS operations', function() {
-//	
+//
 //	describe('#node.game.pl.save()', function() {
 //		before(function() {
 //			filename = './pl.nddb';
@@ -222,12 +222,12 @@
 //		after(function() {
 //			J.deleteIfExists(filename);
 //		});
-//		
+//
 //		it('should return a player object', function() {
 //			J.existsSync(filename).should.be.true;
 //		});
-//		
-//// We are not generating .csv files now		
+//
+//// We are not generating .csv files now
 ////		it('should dump the list of players with headers', function() {
 ////			checkCsvFile({
 ////				csv_length: 2,
@@ -235,9 +235,9 @@
 ////				items: [player],
 ////			});
 ////		});
-//		
+//
 //	});
-//	
+//
 //	describe('#node.game.memory.toCsv()', function() {
 //		before(function() {
 //			filename = './memory.csv';
@@ -279,9 +279,9 @@
 //				filename: myFilename
 //			});
 //		});
-//		
+//
 //	});
-//	
+//
 //	describe('#node.game.memory.saveAllIndexesToCsv()', function() {
 //		before(function() {
 //			createDirIfNotExists('./tmp_csv');
@@ -294,25 +294,25 @@
 //		after(function() {
 //			deleteTestDir('./tmp_csv/', 'csv');
 //		});
-//		
+//
 //		it('should create csv files for index \'painter\'', function() {
 //			var painters = node.game.memory.painter;
-//			
+//
 //			J.size(painters).should.be.eql(painters_list.length);
-//			
+//
 //			for (var i=0; i< painters.length; i++) {
 //				var p = painters[i].first();
 //				checkCsvFile({
 //					csv_length: painters[i].length,
 //					filename: p.painter + '.csv',
 //					items: painters[i].fetch()
-//		
+//
 //				})
 //			}
-//			
-//		});	
+//
+//		});
 //	});
-//	
+//
 //	describe('#node.game.memory.saveAllIndexes()', function() {
 //		before(function() {
 //			createDirIfNotExists('./tmp_json');
@@ -325,26 +325,26 @@
 //		after(function() {
 //			deleteTestDir('./tmp_json/', 'nddb');
 //		});
-//		
+//
 //		it('should create csv files for index \'painter\'', function() {
 //			var painters = node.game.memory.painter;
-//			
+//
 //			J.size(painters).should.be.eql(painters_list.length);
-//			
+//
 //			for (var i=0; i< painters.length; i++) {
 //				var p = painters[i].first();
 //				checkJSONFile({
 //					nitems: painters[i].length,
 //					filename: p.painter + '.nddb',
 //					items: painters[i].fetch()
-//		
+//
 //				})
 //			}
-//			
-//		});	
+//
+//		});
 //	});
-//		
-//	
+//
+//
 //});
 //
 //// END STRESS TEST

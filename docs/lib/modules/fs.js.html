@@ -85,7 +85,7 @@ MIT Licensed </p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
+        <td class="code highlight"><div class="highlight"><pre>
 <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
   <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
   <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
@@ -176,10 +176,10 @@ MIT Licensed </p>
       <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Empty path or object. Aborting.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">,</span> <span class="s1">&#39;node.fs.writeCsv: &#39;</span><span class="p">);</span>
       <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">}</span>
-    
+
     <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
     <span class="nx">options</span><span class="p">.</span><span class="nx">flags</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">flags</span> <span class="o">||</span> <span class="s1">&#39;a&#39;</span><span class="p">;</span>
-    
+
     <span class="kd">var</span> <span class="nx">writer</span> <span class="o">=</span> <span class="nx">csv</span><span class="p">.</span><span class="nx">createCsvStreamWriter</span><span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">createWriteStream</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">));</span>
     </pre></div>
         </td>
@@ -194,7 +194,7 @@ MIT Licensed </p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
     <span class="p">}</span>
-    
+
     <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="p">{</span>
       <span class="kd">var</span> <span class="nx">headers</span> <span class="o">=</span> <span class="p">[];</span>
       <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">))</span> <span class="p">{</span>
@@ -203,7 +203,7 @@ MIT Licensed </p>
       <span class="k">else</span> <span class="p">{</span>
         <span class="nx">headers</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
       <span class="p">}</span>
-      
+
       <span class="k">if</span> <span class="p">(</span><span class="nx">headers</span> <span class="o">&amp;&amp;</span> <span class="nx">headers</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">writer</span><span class="p">.</span><span class="nx">writeRecord</span><span class="p">(</span><span class="nx">headers</span><span class="p">);</span>
       <span class="p">}</span>
@@ -211,7 +211,7 @@ MIT Licensed </p>
         <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Could not find headers&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
       <span class="p">}</span>
     <span class="p">}</span>
-    
+
     <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">writer</span><span class="p">.</span><span class="nx">writeRecord</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
@@ -232,7 +232,7 @@ MIT Licensed </p>
   </div>
   <div class="body"><p>Serializes as a csv file all the entries of the memory object</p>
 
-<p>By defaults, no headers are added. If requested, headers can 
+<p>By defaults, no headers are added. If requested, headers can
 be specified in the <code>options</code> parameter.</p>
   </div>
   <div class="details">
@@ -259,7 +259,7 @@ be specified in the <code>options</code> parameter.</p>
     <span class="p">}</span>
     <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-    
+
     <span class="nx">node</span><span class="p">.</span><span class="nx">fs</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetchValues</span><span class="p">(),</span> <span class="nx">options</span><span class="p">);</span>
   <span class="p">};</span></pre></div>
         </td>
@@ -277,7 +277,7 @@ be specified in the <code>options</code> parameter.</p>
   </div>
   <div class="body"><p>Serializes to JSON files all the hashed indexes of the memory object</p>
 
-<p>Each file is named after the name of the hashed property 
+<p>Each file is named after the name of the hashed property
 and the index. E.g. stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
   </div>
   <div class="details">
@@ -362,15 +362,15 @@ and the index. E.g. stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
-  
+        <td class="code highlight"><div class="highlight"><pre>
+
   <span class="kd">function</span> <span class="nx">saveAllIndexes</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">csv</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">dir</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot save all indexes: missing dir parameter&#39;</span><span class="p">);</span>
       <span class="k">return</span><span class="p">;</span>
     <span class="p">}</span>
-    
+
     <span class="k">if</span> <span class="p">(</span><span class="nx">dir</span><span class="p">[</span><span class="nx">dir</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="nx">dir</span> <span class="o">=</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">ipath</span><span class="p">;</span>
     <span class="k">for</span> <span class="p">(</span><span class="nx">hash</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">)</span> <span class="p">{</span>
@@ -386,16 +386,16 @@ and the index. E.g. stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
               <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">ipath</span> <span class="o">+=</span> <span class="s1">&#39;.nddb&#39;</span><span class="p">;</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">][</span><span class="nx">index</span><span class="p">].</span><span class="nx">save</span><span class="p">(</span><span class="nx">ipath</span><span class="p">);</span>
-              <span class="p">}</span> 
-                
+              <span class="p">}</span>
+
             <span class="p">}</span>
           <span class="p">}</span>
-          
+
         <span class="p">}</span>
       <span class="p">}</span>
     <span class="p">}</span>
   <span class="p">}</span>
-  
+
 
 <span class="p">})(</span>
   <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>

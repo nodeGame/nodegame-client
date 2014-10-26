@@ -211,11 +211,11 @@ MIT Licensed </p>
 <p>Auto build indexes by default.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">.</span><span class="nx">indexes</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        
+
         <span class="nx">NDDB</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">);</span>
-        
+
         <span class="k">this</span><span class="p">.</span><span class="nx">comparator</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareState</span><span class="p">);</span>
-        
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">gb</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
@@ -227,7 +227,7 @@ MIT Licensed </p>
                     <span class="k">return</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="nx">gb</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">});</span>
-        <span class="p">}</span>  
+        <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">gb</span><span class="p">.</span><span class="nx">key</span><span class="p">;</span>
@@ -339,7 +339,7 @@ MIT Licensed </p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameDB.add: key must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        
+
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">player</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
@@ -349,7 +349,7 @@ MIT Licensed </p>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="nx">gb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameBit</span><span class="p">({</span>
-            <span class="nx">player</span><span class="o">:</span> <span class="nx">player</span><span class="p">,</span> 
+            <span class="nx">player</span><span class="o">:</span> <span class="nx">player</span><span class="p">,</span>
             <span class="nx">key</span><span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
             <span class="nx">value</span><span class="o">:</span> <span class="nx">value</span><span class="p">,</span>
             <span class="nx">stage</span><span class="o">:</span> <span class="nx">stage</span>
@@ -448,7 +448,7 @@ MIT Licensed </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameBit</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">+</span> 
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">+</span>
             <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -469,7 +469,7 @@ MIT Licensed </p>
 <p>Returns TRUE if the attributes of <code>player</code>, <code>stage</code>, and <code>key</code>
 are identical. </p>
 
-<p>If the strict parameter is set, also the <code>value</code> property 
+<p>If the strict parameter is set, also the <code>value</code> property
 is used for comparison</p>
   </div>
   <div class="details">
@@ -487,7 +487,7 @@ is used for comparison</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">strict</span>
       <span class="dox_type">boolean</span>
-      <span>Optional. If TRUE, compares also the 
+      <span>Optional. If TRUE, compares also the
  <code>value</code> property</span>
     </div>
     <div class="dox_tag_title">Returns</div>
@@ -524,7 +524,7 @@ is used for comparison</p>
         <span class="k">if</span> <span class="p">(</span><span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareKey</span><span class="p">(</span><span class="nx">gb1</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">strict</span> <span class="o">&amp;&amp;</span>
             <span class="nx">gb1</span><span class="p">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareValue</span><span class="p">(</span><span class="nx">gb1</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>    
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -688,7 +688,7 @@ is used for comparison</p>
 
 <p>Sorts two game-bits by their value property</p>
   </div>
-  <div class="body"><p>Uses JSUS.equals for equality. If they differs, 
+  <div class="body"><p>Uses JSUS.equals for equality. If they differs,
 further comparison is performed, but results will be inaccurate
 for objects. </p>
 
@@ -735,7 +735,7 @@ numerically </li>
         <span class="k">if</span> <span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="nx">gb1</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">.</span><span class="nx">value</span><span class="p">))</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">gb1</span><span class="p">.</span><span class="nx">value</span> <span class="o">&gt;</span> <span class="nx">gb2</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-    <span class="p">};</span>  
+    <span class="p">};</span>
 
 <span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>

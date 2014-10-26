@@ -23,32 +23,32 @@
 // in nested configuration objects.
 
 var conf = {
-		
+
 	url: "/mygame",
-	
+
 	verbosity: 0,
-	
-	io: {				 
+
+	io: {
 		reconnect: false,
 	},
-	
+
 	window: {
 		promptOnleave: true,
 		noEscape: true,
 	},
-	
+
 	player: {
 		myName: 'myName',
 	},
-	
+
 	env: {
 		myEnv: true,
 	},
-	
+
 	events: {
 		history: false,
 		dumpEvents: false,
 	}
-	
-	
+
+
 };

@@ -38,10 +38,10 @@
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">channel</span><span class="p">)</span> <span class="p">{</span>
-  
-  
+
+
   <span class="kd">var</span> <span class="nx">client</span> <span class="o">=</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./client&#39;</span><span class="p">);</span> <span class="c1">// path needs to be resolved at exec time;</span>
-  
+
   <span class="kd">var</span> <span class="nx">game</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
   </pre></div>
         </td>
@@ -99,7 +99,7 @@ the same stage). This is useful for example if you don't need to sync the player
     <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;game&#39;</span><span class="p">,</span>
     <span class="nx">repeat</span><span class="o">:</span> <span class="mi">6</span><span class="p">,</span>
     <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;creation&#39;</span><span class="p">,</span> <span class="s1">&#39;evaluation&#39;</span><span class="p">,</span> <span class="s1">&#39;dissemination&#39;</span> <span class="p">],</span> <span class="c1">// step ids in sequential order</span>
-    <span class="nx">onstepdone</span><span class="o">:</span> <span class="s1">&#39;WAIT&#39;</span><span class="p">,</span> 
+    <span class="nx">onstepdone</span><span class="o">:</span> <span class="s1">&#39;WAIT&#39;</span><span class="p">,</span>
     <span class="nx">onstepdone</span><span class="o">:</span> <span class="s1">&#39;GOTONEXT&#39;</span><span class="p">,</span> <span class="c1">// executes the next step of the stage automatically after a successfull DONE, </span>
     <span class="nx">onstepdone</span><span class="o">:</span> <span class="s1">&#39;GOTONEXT_SYNC&#39;</span><span class="p">,</span> <span class="c1">// executes the next step of the stage automatically if all the players have a successfull DONE</span>
     <span class="nx">onstepdone</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stepid</span><span class="p">,</span> <span class="nx">stepname</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// a custom function can be execute to determine the condition for updating</span>
@@ -161,7 +161,7 @@ the same stage). This is useful for example if you don't need to sync the player
                           <span class="nx">cb</span><span class="o">:</span> <span class="nx">showInstructions</span><span class="p">,</span>
                           <span class="nx">descr</span><span class="o">:</span> <span class="s2">&quot;Here I tell what happens verbosely. I am optional.&quot;</span><span class="p">,</span>
                           <span class="nx">done</span><span class="o">:</span> <span class="nx">onDONEfunction</span><span class="p">,</span> <span class="c1">// optional</span>
-                          <span class="nx">init</span><span class="o">:</span> <span class="nx">initFunc</span> <span class="p">}</span> 
+                          <span class="nx">init</span><span class="o">:</span> <span class="nx">initFunc</span> <span class="p">}</span>
                      <span class="p">,</span>  <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;quiz&#39;</span><span class="p">,</span>
                         <span class="nx">cb</span><span class="o">:</span> <span class="nx">makeQuiz</span><span class="p">,</span>
                         <span class="nx">done</span><span class="o">:</span> <span class="nx">checkQuiz</span> <span class="p">}</span>
@@ -170,7 +170,7 @@ the same stage). This is useful for example if you don't need to sync the player
                      <span class="p">,</span>  <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;respond&#39;</span><span class="p">,</span>
                         <span class="nx">cb</span><span class="o">:</span> <span class="nx">respond</span> <span class="p">}</span>
                      <span class="p">,</span>  <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;questionnaire&#39;</span><span class="p">,</span>
-                        <span class="nx">cb</span><span class="o">:</span> <span class="nx">showQuestionnaire</span> 
+                        <span class="nx">cb</span><span class="o">:</span> <span class="nx">showQuestionnaire</span>
   <span class="p">]);</span>
 
   <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span></pre></div>
@@ -207,7 +207,7 @@ the same stage). This is useful for example if you don't need to sync the player
 </div>
 <p>The logic must always have the game plot already defined before starting the game</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>   
+        <td class="code highlight"><div class="highlight"><pre>
   <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">start</span><span class="p">()</span>
       <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;tutorial&#39;</span><span class="p">)</span>
       <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;game&#39;</span><span class="p">)</span>
@@ -222,18 +222,18 @@ the same stage). This is useful for example if you don't need to sync the player
 </div>
 <p>Equivalent to</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>   
+        <td class="code highlight"><div class="highlight"><pre>
   <span class="nx">game</span><span class="p">.</span><span class="nx">setPlot</span><span class="p">([</span><span class="s1">&#39;tutorial&#39;</span><span class="p">,</span> <span class="s1">&#39;game&#39;</span><span class="p">,</span> <span class="s1">&#39;questionnaire&#39;</span><span class="p">]);</span>
 
 
 
 
-  
+
   <span class="nx">game</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;xxx&#39;</span><span class="p">;</span>
   <span class="nx">game</span><span class="p">.</span><span class="nx">description</span> <span class="o">=</span> <span class="s1">&#39;xxx&#39;</span><span class="p">;</span>
   <span class="nx">game</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.0.1&#39;</span><span class="p">;</span>
   <span class="nx">game</span><span class="p">.</span><span class="nx">observer</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> <span class="c1">// false</span>
-  
+
   <span class="nx">game</span><span class="p">.</span><span class="nx">onstepdone</span> <span class="o">=</span> <span class="s1">&#39;WAIT&#39;</span><span class="p">;</span> <span class="c1">//&#39;GOTONEXT&#39;, &#39;GOTONEXT_SYNC&#39;, custom_function</span>
   <span class="nx">game</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span> <span class="c1">// optional</span>
   <span class="nx">game</span><span class="p">.</span><span class="nx">gameover</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span> <span class="c1">// optional</span>
@@ -250,9 +250,9 @@ the same stage). This is useful for example if you don't need to sync the player
         <td class="code highlight"><div class="highlight"><pre>  <span class="nx">game</span><span class="p">.</span><span class="nx">waiting</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span>  <span class="c1">// what to do when the game is in the state &#39;Waiting for other players to continue&#39;;</span>
   <span class="nx">game</span><span class="p">.</span><span class="nx">pause</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span>  <span class="c1">// what to do when the game is paused</span>
   <span class="nx">game</span><span class="p">.</span><span class="nx">resuming</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span> <span class="c1">// what to do when a game is resuming</span>
-  
+
   <span class="k">return</span> <span class="nx">game</span><span class="p">;</span>
-  
+
 <span class="p">})(</span><span class="nx">node</span><span class="p">);</span>
 </pre></div>
         </td>

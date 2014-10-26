@@ -2,7 +2,7 @@
  * # Listeners for incoming messages.
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
- * 
+ *
  * Internal listeners are not directly associated to messages,
  * but they are usually responding to internal nodeGame events,
  * such as progressing in the loading chain, or finishing a game stage.
@@ -66,7 +66,7 @@
          *
          * Registers the stageLevel _DONE_ and eventually steps forward.
          *
-         * If a DONE handler is defined in the game-plot, it will execute it. 
+         * If a DONE handler is defined in the game-plot, it will execute it.
          * In case it returns FALSE, the update process is stopped.
          *
          * @emit REALLY_DONE
@@ -80,7 +80,7 @@
 
             if (doneCb) ok = doneCb.apply(node.game, arguments);
             if (!ok) return;
-                   
+
             stageLevel = node.game.getStageLevel();
 
             if (stageLevel >= stageLevels.PLAYING) {
@@ -146,12 +146,12 @@
             node.timer.setTimestamp(node.game.getCurrentGameStage().toString(),
                                     currentTime);
             node.timer.setTimestamp('step', currentTime);
-            
+
             // DONE was previously emitted, we just execute done handler.
             if (node.game.willBeDone) {
                 done();
             }
-            
+
         });
 
         /**
@@ -163,7 +163,7 @@
                 node.err('Game cannot be started.');
                 return;
             }
-            
+
             node.emit('BEFORE_GAMECOMMAND', gcommands.start, options);
             node.game.start(options);
         });
