@@ -10769,6 +10769,13 @@ JSUS.extend(TIME);
         else {
             this.clear();
         }
+
+        /**
+         * ## Stager.log
+         *
+         * Default stdout output. Override to redirect.
+         */
+        this.log = console.log;
     }
 
     // ## Stager methods
@@ -12040,6 +12047,12 @@ JSUS.extend(TIME);
      */
     function GamePlot(stager) {
         this.init(stager);
+
+        /**
+         * ## GamePlot.log
+         *
+         * Default stdout output. Override to redirect.
+         */
         this.log = console.log;
     }
 
@@ -12065,6 +12078,23 @@ JSUS.extend(TIME);
         else {
             this.stager = null;
         }
+    };
+
+    /**
+     * ### GamePlot.setDefaultLog
+     *
+     * Sets the default stdout function for game plot and stager (if any)
+     *
+     * @param {function} log The logging function
+     *
+     * @see Stager.log
+     */
+    GamePlot.prototype.setDefaultLog = function(log) {
+        if ('function' !== typeof log) {
+            throw new TypeError('GamePlot.setDefaultLog: log must be function.');
+        }
+        this.log = log;
+        if (this.stager) this.stager.log = this.log;
     };
 
     /**
@@ -14149,7 +14179,12 @@ JSUS.extend(TIME);
          *
          * @see GamePlot
          */
-        this.plot = new GamePlot(new Stager(settings.stages), node);
+        this.plot = new GamePlot(new Stager(settings.stages));
+
+        // Overriding stdout for game plot.
+        this.plot.setDefaultLog(function() {
+            node.log.apply(node, arguments);
+        });
 
         /**
          * ### Game.checkPlistSize
