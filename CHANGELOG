@@ -1,10 +1,21 @@
 # nodegame-client change log
 
+## 0.9.3
+
+ - Stager refactored to build the sequence first and add stages later.
+ - Globals defined in the stager are added to _game.globals_ and updated at each step.
+ - `#Game.getCurrentStepProperty() added.
+ - `#GamePlot.getGlobals() added.
+ - Fixed problem with timer resuming.
+ - Other minor fixes.
+
 ## 0.9.1
+
   - GameMsg id and session fields are not write-protected any more.
- - `#GameTimer.start()` and `#GameTimer.stop()` do more robust checkings on initial conditions.
+  - `#GameTimer.start()` and `#GameTimer.stop()` do more robust checkings on initial conditions.
 
 ## 0.9.0
+
   - Change log new version starts here
 
 ## Above 0.6.2

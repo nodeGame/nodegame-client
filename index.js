@@ -88,7 +88,7 @@
     require('./listeners/internal.js');
 
 
-    exports.getClient = function(options) {
+    exports.getClient = function() {
         var node;
         node = new exports.NodeGameClient();
         node.constants = exports.constants;
@@ -105,6 +105,10 @@
         node.fs = new exports.NodeGameFS(node);
 
         return node;
-    }
+    };
+
+    exports.getStager = function() {
+        return new exports.Stager();
+    };
 
 })(module.exports);

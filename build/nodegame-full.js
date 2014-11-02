@@ -10747,6 +10747,7 @@ JSUS.extend(TIME);
     exports.Stager = Stager;
 
     var stepRules = parent.stepRules;
+    var J = parent.JSUS;
 
     /**
      * ## Stager constructor
@@ -10760,11 +10761,21 @@ JSUS.extend(TIME);
      */
     function Stager(stateObj) {
         if (stateObj) {
+            if ('object' !== typeof stateObj) {
+                throw new TypeError('Stager: stateObj must be object.');
+            }
             this.setState(stateObj);
         }
         else {
             this.clear();
         }
+
+        /**
+         * ## Stager.log
+         *
+         * Default stdout output. Override to redirect.
+         */
+        this.log = console.log;
     }
 
     // ## Stager methods
@@ -10924,8 +10935,8 @@ JSUS.extend(TIME);
      * The callback given here is used to determine the next stage.
      *
      * @param {function|null} func The decider callback. It should return the
-     *  name of the next stage, 'NODEGAME_GAMEOVER' to end the game or FALSE for
-     *  sequence end. NULL can be given to signify non-existence.
+     *   name of the next stage, 'NODEGAME_GAMEOVER' to end the game or FALSE
+     *   for sequence end. NULL can be given to signify non-existence.
      *
      * @return {boolean} TRUE on success, FALSE on error
      */
@@ -11067,7 +11078,6 @@ JSUS.extend(TIME);
         if (!defaultProperties || 'object' !== typeof defaultProperties) {
             throw new Error('Stager.setDefaultProperties: ' +
                             'expecting an object as parameter.');
-            return false;
         }
 
         this.defaultProperties = defaultProperties;
@@ -11104,7 +11114,6 @@ JSUS.extend(TIME);
         if (func !== null && 'function' !== typeof func) {
             throw new Error('Stager.setOnInit: ' +
                             'expecting a function as parameter.');
-            return false;
         }
 
         this.onInit = func;
@@ -11141,7 +11150,6 @@ JSUS.extend(TIME);
         if (func !== null && 'function' !== typeof func) {
             throw new Error('Stager.setOnGameover: ' +
                             'expecting a function as parameter.');
-            return false;
         }
 
         this.onGameover = func;
@@ -11153,8 +11161,6 @@ JSUS.extend(TIME);
      *
      * Alias for `setOnGameover`
      *
-     * A rescue net in case of human error.
-     *
      * @see Stager.setOnGameover
      */
     Stager.prototype.setOnGameOver = Stager.prototype.setOnGameover;
@@ -11164,8 +11170,7 @@ JSUS.extend(TIME);
      *
      * Gets onGameover function
      *
-     * @return {function|null} The onGameover function.
-     *  NULL signifies non-existence.
+     * @return {function|null} The onGameover function, or NULL if none is found
      *
      * @see Stager.onGameover
      */
@@ -11186,12 +11191,11 @@ JSUS.extend(TIME);
      *
      * @param {object} step A valid step object. Shallowly copied.
      *
-     * @return {boolean} TRUE on success, FALSE on error
+     * @return {boolean} TRUE on success
      */
     Stager.prototype.addStep = function(step) {
         if (!this.checkStepValidity(step)) {
             throw new Error('Stager.addStep: invalid step received.');
-            return false;
         }
 
         this.steps[step.id] = step;
@@ -11221,27 +11225,101 @@ JSUS.extend(TIME);
      * @see Stager.addStep
      */
     Stager.prototype.addStage = function(stage) {
-        var rc;
+        var res;
 
         // Handle wrapped steps:
         if (this.checkStepValidity(stage)) {
-            if (!this.addStep(stage)) return false;
-            if (!this.addStage({
+            res = this.addStep(stage)
+            if (!res) return false;
+            res = this.addStage({
                 id: stage.id,
                 steps: [ stage.id ]
-            })) return false;
-
+            });
+            if (!res) return false;
             return true;
         }
 
-        rc = this.checkStageValidity(stage);
-        if (rc !== null) {
-            throw new Error('Stager.addStage: invalid stage received - ' + rc);
-            return false;
+        res = this.checkStageValidity(stage);
+        if (res !== null) {
+            throw new Error('Stager.addStage: invalid stage received - ' + res);
         }
 
-        this.stages[stage.id] = stage;
+        if (!this.stages.hasOwnProperty(stage.id)) {
+            this.stages[stage.id] = stage;
+        }
+        else {
+            this.extendStage(stage);
+        }
+
         return true;
+    };
+
+    /**
+     * ### Stager.extendStep
+     *
+     * Extends existing step
+     *
+     * Extends an existing game step object. The extension object must have at
+     * least an id field that matches an already existing step.
+     *
+     * If a valid object is provided, the fields of the new object are merged
+     * into the existing object (done via JSUS.mixin). Note that this overwrites
+     * already existing fields if the new object redefines them.
+     *
+     * @param {object} step This object must have an 'id' field that matches an
+     *                      existing step.
+     *
+     * @see Stager.addStep
+     */
+    Stager.prototype.extendStep = function(step) {
+        if (!step || 'object' !== typeof step) {
+            throw new Error('Stager.extendStep: "step" must be object');
+        }
+
+        if ('string' !== typeof step.id) {
+            throw new Error('Stager.extendStep: "step.id" must be a string');
+        }
+
+        if (!this.steps[step.id]) {
+            throw new Error('Stager.extendStep: ' + step.id +
+                            ' does not name an existing step');
+        }
+
+        J.mixin(this.steps[step.id], step);
+    };
+
+    /**
+     * ### Stager.extendStage
+     *
+     * Extends existing stage
+     *
+     * Extends an existing game stage object. The extension object must have at
+     * least an id field that matches an already existing stage.
+     *
+     * If a valid object is provided, the fields of the new object are merged
+     * into the existing object (done via JSUS.mixin). Note that this overwrites
+     * already existing fields if the new object redefines them.
+     *
+     * @param {object} stage This object must have an 'id' field that matches an
+     *                       existing stage.
+     *
+     * @see Stager.addStage
+     */
+    Stager.prototype.extendStage = function(stage) {
+        if (!stage || 'object' !== typeof stage) {
+            throw new Error('Stager.extendStage: "stage" must be object');
+        }
+
+        if ('string' !== typeof stage.id) {
+            throw new Error('Stager.extendStage: "stage.id" must be a string');
+        }
+
+        if (!this.stages[stage.id]) {
+            throw new Error('Stager.extendStage: ' + stage.id +
+                            ' does not name an existing stage');
+        }
+
+        J.mixin(this.stages[stage.id], stage);
     };
 
     /**
@@ -11286,11 +11364,10 @@ JSUS.extend(TIME);
      * @see Stager.addStage
      */
     Stager.prototype.next = function(id) {
-        var stageName = this.handleAlias(id);
+        var stageName = handleAlias(this, id);
 
         if (stageName === null) {
             throw new Error('Stager.next: invalid stage name received.');
-            return null;
         }
 
         this.sequence.push({
@@ -11315,17 +11392,15 @@ JSUS.extend(TIME);
      * @see Stager.next
      */
     Stager.prototype.repeat = function(id, nRepeats) {
-        var stageName = this.handleAlias(id);
+        var stageName = handleAlias(this, id);
 
         if (stageName === null) {
             throw new Error('Stager.repeat: received invalid stage name.');
-            return null;
         }
 
         if ('number' !== typeof nRepeats) {
             throw new Error('Stager.repeat: ' +
                             'received invalid number of repetitions.');
-            return null;
         }
 
         this.sequence.push({
@@ -11336,34 +11411,6 @@ JSUS.extend(TIME);
 
         return this;
     };
-
-
-    function addLoop(that, type, id, func) {
-        var stageName = that.handleAlias(id);
-
-        if (stageName === null) {
-            throw new Error('Stager.' + type +
-                            ': received invalid stage name.');
-            return null;
-        }
-
-        if ('undefined' === typeof func) {
-            func = function() { return true; };
-        }
-
-        if ('function' !== typeof func) {
-            throw new Error('Stager.' + type + ': received invalid callback.');
-            return null;
-        }
-
-        that.sequence.push({
-            type: type,
-            id: stageName,
-            cb: func
-        });
-
-        return that;
-    }
 
 
     /**
@@ -11463,7 +11510,6 @@ JSUS.extend(TIME);
                     default:
                         throw new Error('Stager.getSequence: ' +
                                         'unknown sequence object type.');
-                        return null;
                     }
                 }
             }
@@ -11510,7 +11556,6 @@ JSUS.extend(TIME);
                     default:
                         throw new Error('Stager.getSequence: ' +
                                         'unknown sequence object type.');
-                        return null;
                     }
                 }
             }
@@ -11522,7 +11567,6 @@ JSUS.extend(TIME);
 
         default:
             throw new Error('Stager.getSequence: invalid format.');
-            return null;
         }
 
         return result;
@@ -11708,18 +11752,18 @@ JSUS.extend(TIME);
     /**
      * ### Stager.getState
      *
-     * Returns the internal state of the Stager
+     * Returns a copy of the internal state of the Stager
      *
      * Fields of returned object:
      * steps, stages, sequence, generalNextFunction, nextFunctions,
      * defaultStepRule, defaultGlobals, defaultProperties, onInit, onGameover.
      *
-     * @return {object} The Stager's state
+     * @return {object} Clone of the Stager's state
      *
      * @see Stager.setState
      */
     Stager.prototype.getState = function() {
-        return {
+        return J.clone({
             steps:               this.steps,
             stages:              this.stages,
             sequence:            this.sequence,
@@ -11730,7 +11774,7 @@ JSUS.extend(TIME);
             defaultProperties:   this.defaultProperties,
             onInit:              this.onInit,
             onGameover:          this.onGameover
-        };
+        });
     };
 
     /**
@@ -11808,6 +11852,31 @@ JSUS.extend(TIME);
 
     // ## Stager private methods
 
+    function addLoop(that, type, id, func) {
+        var stageName = handleAlias(that, id);
+
+        if (stageName === null) {
+            throw new Error('Stager.' + type +
+                            ': received invalid stage name.');
+        }
+
+        if ('undefined' === typeof func) {
+            func = function() { return true; };
+        }
+
+        if ('function' !== typeof func) {
+            throw new Error('Stager.' + type + ': received invalid callback.');
+        }
+
+        that.sequence.push({
+            type: type,
+            id: stageName,
+            cb: func
+        });
+
+        return that;
+    }
+
     /**
      * ### Stager.checkStepValidity
      *
@@ -11874,17 +11943,25 @@ JSUS.extend(TIME);
      * alias, if existent.
      * Checks whether parameter is valid and unique.
      *
+     * @param {object} that Reference to Stager object
      * @param {string} nameAndAlias The stage-name string
      *
-     * @return {string|null} NULL on error,
-     *  the alias part of the parameter if it exists,
+     * @return {string} the alias part of the parameter if it exists,
      *  the stageID part otherwise
      *
      * @see Stager.next
      *
      * @api private
      */
-    Stager.prototype.handleAlias = function(nameAndAlias) {
+    function handleAlias(that, nameAndAlias) {
+        if ('object' !== typeof that) {
+            throw new Error('Stager.handleAlias: "that" must be an object.');
+        }
+
+        if ('string' !== typeof nameAndAlias) {
+            throw new Error('Stager.handleAlias: ' +
+                            '"nameAndAlias" must be string.');
+        }
         var tokens = nameAndAlias.split(' AS ');
         var id = tokens[0].trim();
         var alias = tokens[1] ? tokens[1].trim() : undefined;
@@ -11892,25 +11969,30 @@ JSUS.extend(TIME);
         var seqIdx;
 
         // Check ID validity:
-        if (!this.stages[id]) {
-            throw new Error('Stager.handleAlias: ' +
-                            'received nonexistent stage id.');
-            return null;
+        if (!that.stages[id]) {
+            that.addStage({
+                id: id,
+                cb: function() {
+                    console.log(id);
+                },
+            });
+            console.log('Stager.handleAlias: ' +
+                'received nonexistent stage id \'' + id + '\', ' +
+                'implemented default logic.');
         }
 
         // Check uniqueness:
-        for (seqIdx in this.sequence) {
-            if (this.sequence.hasOwnProperty(seqIdx) &&
-                this.sequence[seqIdx].id === stageName) {
+        for (seqIdx in that.sequence) {
+            if (that.sequence.hasOwnProperty(seqIdx) &&
+                that.sequence[seqIdx].id === stageName) {
                 throw new Error('Stager.handleAlias: ' +
                                 'received non-unique stage name.');
-                return null;
             }
         }
 
         // Add alias:
         if (alias) {
-            this.stages[alias] = this.stages[id];
+            that.stages[alias] = that.stages[id];
             return alias;
         }
 
@@ -11965,6 +12047,12 @@ JSUS.extend(TIME);
      */
     function GamePlot(stager) {
         this.init(stager);
+
+        /**
+         * ## GamePlot.log
+         *
+         * Default stdout output. Override to redirect.
+         */
         this.log = console.log;
     }
 
@@ -11990,6 +12078,23 @@ JSUS.extend(TIME);
         else {
             this.stager = null;
         }
+    };
+
+    /**
+     * ### GamePlot.setDefaultLog
+     *
+     * Sets the default stdout function for game plot and stager (if any)
+     *
+     * @param {function} log The logging function
+     *
+     * @see Stager.log
+     */
+    GamePlot.prototype.setDefaultLog = function(log) {
+        if ('function' !== typeof log) {
+            throw new TypeError('GamePlot.setDefaultLog: log must be function.');
+        }
+        this.log = log;
+        if (this.stager) this.stager.log = this.log;
     };
 
     /**
@@ -12555,6 +12660,44 @@ JSUS.extend(TIME);
 
         // Not found:
         return null;
+    };
+
+    /**
+     * ### GamePlot.getGlobal
+     *
+     * Looks up and build the _globals_ object for the specified game stage
+     *
+     * Globals properties are mixed in at each level (defaults, stage, step)
+     * to form the complete set of globals available for the specified 
+     * game stage.
+     *
+     * @param {GameStage|string} gameStage The GameStage object,
+     *  or its string representation
+     *
+     * @return {object} The _globals_ object for the specified  game stage
+     */
+    GamePlot.prototype.getGlobals = function(gameStage) {
+        var stepstage, globals;
+        if ('string' !== typeof gameStage && 'object' !== typeof gameStage) {
+            throw new TypeError('GamePlot.getGlobals: gameStage must be ' +
+                                'string or object.');
+        }
+        globals = {};
+        // No stager found, no globals!
+        if (!this.stager) return globals;
+
+        // Look in Stager's defaults:
+        J.mixin(globals, this.stager.getDefaultGlobals());
+        
+        // Look in current stage:
+        stepstage = this.getStage(gameStage);
+        if (stepstage) J.mixin(globals, stepstage.globals);
+        
+        // Look in current step:
+        stepstage = this.getStep(gameStage);
+        if (stepstage) J.mixin(globals, stepstage.globals);
+
+        return globals;
     };
 
     /**
@@ -14036,7 +14179,13 @@ JSUS.extend(TIME);
          *
          * @see GamePlot
          */
-        this.plot = new GamePlot(new Stager(settings.stages), node);
+        this.plot = new GamePlot(new Stager(settings.stages));
+
+        // Overriding stdout for game plot and stager.
+        this.plot.setDefaultLog(function() {
+            // Must use apply, else will be executed in the wrong context.
+            node.log.apply(node, arguments);
+        });
 
         /**
          * ### Game.checkPlistSize
@@ -14111,6 +14260,20 @@ JSUS.extend(TIME);
          * @see Game.gotoStep
          */
         this.exactPlayerCbCalled = false;
+
+        /**
+         * ### Game.globals
+         *
+         * Object pointing to the current step _globals_ properties
+         *
+         * Whenever a new step is executed the _globals_ properties of
+         * the step are copied here. The _globals_ properties of the previous
+         * stage are deleted.
+         *
+         * @see GamePlot
+         * @see Stager
+         */
+        this.globals = {};
     }
 
     // ## Game methods
@@ -14242,6 +14405,8 @@ JSUS.extend(TIME);
      * Ends the game
      *
      * Calls the gameover function, sets levels.
+     *
+     * TODO: should it set the game stage to 0.0.0 again ?
      */
     Game.prototype.gameover = function() {
         var onGameover, node;
@@ -14401,7 +14566,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Game.gotoStep
+     * ### Game.gotoStep
      *
      * Updates the current game step to toStep and executes it.
      *
@@ -14530,6 +14695,9 @@ JSUS.extend(TIME);
 
             this.setStateLevel(constants.stateLevels.PLAYING_STEP);
             this.setStageLevel(constants.stageLevels.INITIALIZED);
+
+            // Updating the globals object.
+            this.globals = this.plot.getGlobals(nextStep);
 
             // Add min/max/exactPlayers listeners for the step.
             // The fields must be of the form
@@ -14674,7 +14842,7 @@ JSUS.extend(TIME);
             }
 
         }
-        return this.execStep(this.getCurrentStep());
+        return this.execStep(this.getCurrentStepObj());
     };
 
     /**
@@ -14715,17 +14883,77 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ### Game.getCurrentStep
+     * ### Game.getCurrentStepObj
      *
      * Returns the object representing the current game step.
+     *
+     * The returning object includes all the properties, such as:
+     * _id_, _cb_, _timer_, etc.
      *
      * @return {object} The game-step as defined in the stager.
      *
      * @see Stager
      * @see GamePlot
      */
-    Game.prototype.getCurrentStep = function() {
+    Game.prototype.getCurrentStepObj = function() {
         return this.plot.getStep(this.getCurrentGameStage());
+    };
+
+     /**
+     * ### Game.getCurrentStep
+     *
+     * Alias for Game.prototype.getCurrentStepObj
+     *
+     * @deprecated
+     */
+    Game.prototype.getCurrentStep = Game.prototype.getCurrentStepObj;
+
+    /**
+     * ### Game.getCurrentStepProperty
+     *
+     * Returns the object representing the current game step.
+     *
+     * The returning object includes all the properties, such as:
+     * _id_, _cb_, _timer_, etc.
+     *
+     * @return {object} The game-step as defined in the stager.
+     *
+     * @see Stager
+     * @see GamePlot
+     */
+    Game.prototype.getCurrentStepProperty = function(propertyName) {
+        var step;
+        if ('string' !== typeof propertyName) {
+            throw new TypeError('Game.getCurrentStepProperty: propertyName ' +
+                                'must be string');
+        }
+        step = this.plot.getStep(this.getCurrentGameStage());
+        return 'undefined' === typeof step[propertyName] ?
+            null : step[propertyName];
+    };
+
+    /**
+     * ### Game.getCurrentStep
+     *
+     * Returns the object representing the current game step.
+     *
+     * The returning object includes all the properties, such as:
+     * _id_, _cb_, _timer_, etc.
+     *
+     * @return {object} The game-step as defined in the stager.
+     *
+     * @see Stager
+     * @see GamePlot
+     */
+    Game.prototype.getCurrentStepProperty = function(propertyName) {
+        var step;
+        if ('string' !== typeof propertyName) {
+            throw new TypeError('Game.getCurrentStepProperty: propertyName ' +
+                                'must be string');
+        }
+        step = this.plot.getStep(this.getCurrentGameStage());
+        return 'undefined' === typeof step[propertyName] ?
+            null : step[propertyName];
     };
 
     /**
@@ -15119,6 +15347,7 @@ JSUS.extend(TIME);
         if (!syncOnLoaded) return true;
         return node.game.pl.isStepLoaded(curGameStage);
     };
+
     // ## Closure
 })(
     'undefined' != typeof node ? node : module.exports,
