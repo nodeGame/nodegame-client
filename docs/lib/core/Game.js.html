@@ -72,6 +72,9 @@
       <div class="heading h3">
         <a href="#game.exactplayercbcalled">Game.exactPlayerCbCalled</a>
       </div>
+      <div class="heading h3">
+        <a href="#game.globals">Game.globals</a>
+      </div>
       <div class="heading h2">
         <a href="#game-methods">Game methods</a>
       </div>
@@ -99,11 +102,20 @@
       <div class="heading h3">
         <a href="#game.step">Game.step</a>
       </div>
-      <div class="heading h2">
+      <div class="heading h3">
         <a href="#game.gotostep">Game.gotoStep</a>
       </div>
       <div class="heading h3">
         <a href="#game.execstep">Game.execStep</a>
+      </div>
+      <div class="heading h3">
+        <a href="#game.getcurrentstepobj">Game.getCurrentStepObj</a>
+      </div>
+      <div class="heading h3">
+        <a href="#game.getcurrentstep">Game.getCurrentStep</a>
+      </div>
+      <div class="heading h3">
+        <a href="#game.getcurrentstepproperty">Game.getCurrentStepProperty</a>
       </div>
       <div class="heading h3">
         <a href="#game.getcurrentstep">Game.getCurrentStep</a>
@@ -189,8 +201,7 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
-    </pre></div>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -463,7 +474,28 @@ automatically inserted in this object</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GamePlot</span><span class="p">(</span><span class="k">new</span> <span class="nx">Stager</span><span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">stages</span><span class="p">),</span> <span class="nx">node</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GamePlot</span><span class="p">(</span><span class="k">new</span> <span class="nx">Stager</span><span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">stages</span><span class="p">));</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>Overriding stdout for game plot and stager.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">setDefaultLog</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>Must use apply, else will be executed in the wrong context.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -503,7 +535,7 @@ and checks them with the PlayerList object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>Setting to stage 0.0.0 and starting.</p>
         </td>
@@ -650,7 +682,40 @@ immediately.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="game.globals">
+  <h3>
+    <a href="#game.globals" class="pilcrow">&#182;</a>
+    Game.globals
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Object pointing to the current step <em>globals</em> properties</p>
+
+<p>Whenever a new step is executed the <em>globals</em> properties of
+the step are copied here. The <em>globals</em> properties of the previous
+stage are deleted.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GamePlot</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">globals</span> <span class="o">=</span> <span class="p">{};</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -700,7 +765,7 @@ just for change of state after the game has started</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Store time:</p>
         </td>
@@ -718,7 +783,7 @@ just for change of state after the game has started</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>INIT the game.</p>
         </td>
@@ -736,7 +801,7 @@ just for change of state after the game has started</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Starts from beginning (default) or from a predefined stage
 This options is useful when a player reconnets.</p>
@@ -823,18 +888,17 @@ TODO: avoid pollution of the game object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Destroy currently running timers.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">destroyAllTimers</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
- </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">destroyAllTimers</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Remove all events registered during the game.</p>
         </td>
@@ -846,7 +910,7 @@ TODO: avoid pollution of the game object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Clear memory.</p>
         </td>
@@ -856,7 +920,7 @@ TODO: avoid pollution of the game object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>If a <em>GameWindow</em> object is found, clears it.</p>
         </td>
@@ -868,7 +932,7 @@ TODO: avoid pollution of the game object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Update state/stage levels and game stage.</p>
         </td>
@@ -879,7 +943,7 @@ TODO: avoid pollution of the game object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>This command is notifying the server.</p>
         </td>
@@ -889,7 +953,7 @@ TODO: avoid pollution of the game object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>Temporary change:</p>
         </td>
@@ -916,6 +980,8 @@ TODO: avoid pollution of the game object.</p>
   <div class="body"><p>Ends the game</p>
 
 <p>Calls the gameover function, sets levels.</p>
+
+<p>TODO: should it set the game stage to 0.0.0 again ?</p>
   </div>
 </div>
         </td>
@@ -934,7 +1000,7 @@ TODO: avoid pollution of the game object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>Call gameover callback, if it exists:</p>
         </td>
@@ -987,7 +1053,7 @@ TODO: avoid pollution of the game object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>If the Stager has a method for accepting messages during a
 pause, pass them to it. Otherwise, buffer the messages
@@ -1003,14 +1069,13 @@ until the game is resumed.</p>
         <span class="p">}</span>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">setTimestamp</span><span class="p">(</span><span class="s1">&#39;paused&#39;</span><span class="p">);</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PAUSED&#39;</span><span class="p">);</span>
-        </pre></div>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PAUSED&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>broadcast?</p>
         </td>
@@ -1046,14 +1111,13 @@ until the game is resumed.</p>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;RESUMING&#39;</span><span class="p">);</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        </pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>If the Stager defines an appropriate handler, give it the messages
 that were buffered during the pause.
@@ -1068,7 +1132,7 @@ Otherwise, emit the buffered messages normally.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Reset the Socket's message handler to the default:</p>
         </td>
@@ -1080,7 +1144,7 @@ Otherwise, emit the buffered messages normally.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>Maybe the game was LOADED during the pausing.
 In this case the PLAYING event got lost.</p>
@@ -1093,7 +1157,7 @@ In this case the PLAYING event got lost.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>broadcast?</p>
         </td>
@@ -1202,10 +1266,10 @@ In this case the PLAYING event got lost.</p>
         <td class="docs"><div class="dox">
   <div class="summary">
 <div class="pilwrap" id="game.gotostep">
-  <h2>
+  <h3>
     <a href="#game.gotostep" class="pilcrow">&#182;</a>
     Game.gotoStep
-  </h2>
+  </h3>
 </div>
 
   </div>
@@ -1268,7 +1332,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>Listeners from previous step are cleared in any case.</p>
         </td>
@@ -1278,7 +1342,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>Emit buffered messages:</p>
         </td>
@@ -1290,7 +1354,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 <p>Sends start / step command to connected clients if option is on.</p>
         </td>
@@ -1311,7 +1375,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>Emit buffered messages:</p>
         </td>
@@ -1327,7 +1391,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>else do nothing</p>
         </td>
@@ -1339,7 +1403,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>TODO maybe update also in case of string</p>
         </td>
@@ -1349,7 +1413,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>Check for stage/step existence:</p>
         </td>
@@ -1362,7 +1426,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
 </div>
 <p>stageLevel needs to be changed (silent), otherwise it stays DONE
 for a short time in the new game stage:</p>
@@ -1374,7 +1438,7 @@ for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
 </div>
 <p>If we enter a new stage we need to update a few things:
 if (this.plot.stepsToNextStage(curStep) === 1) {
@@ -1387,7 +1451,7 @@ if (curStep.stage !== nextStep.stage) {</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
 </div>
 <p>nextStageObj = this.plot.getStage(nextStep);
 if (!nextStageObj) return false;</p>
@@ -1398,7 +1462,7 @@ if (!nextStageObj) return false;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>Store time:</p>
         </td>
@@ -1408,7 +1472,7 @@ if (!nextStageObj) return false;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>clear the previous stage listeners</p>
         </td>
@@ -1418,7 +1482,7 @@ if (!nextStageObj) return false;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
 <p>Execute the init function of the stage, if any:</p>
         </td>
@@ -1432,7 +1496,7 @@ if (!nextStageObj) return false;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>Load the listeners for the stage, if any:</p>
         </td>
@@ -1447,7 +1511,7 @@ if (!nextStageObj) return false;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
 <p>Execute the init function of the step, if any:</p>
         </td>
@@ -1464,7 +1528,17 @@ if (!nextStageObj) return false;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
+  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+</div>
+<p>Updating the globals object.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">globals</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getGlobals</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
 <p>Add min/max/exactPlayers listeners for the step.
 The fields must be of the form
@@ -1527,7 +1601,7 @@ The fields must be of the form
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
+  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
 </div>
 <p>Register event handler:</p>
         </td>
@@ -1538,7 +1612,7 @@ The fields must be of the form
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
 <p>Players should count themselves too.</p>
         </td>
@@ -1584,7 +1658,7 @@ The fields must be of the form
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
 </div>
 <p>PRECONNECT doesn't change the PlayerList so we don't have to
 handle it here.</p>
@@ -1595,7 +1669,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
+  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
 </div>
 <p>Check conditions explicitly:</p>
         </td>
@@ -1605,7 +1679,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
 </div>
 <p>Set bounds-checking function:</p>
         </td>
@@ -1616,7 +1690,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
+  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
 </div>
 <p>Players should count themselves too.</p>
         </td>
@@ -1645,7 +1719,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
+  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
 <p>Set bounds-checking function:</p>
         </td>
@@ -1656,7 +1730,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
 <p>Load the listeners for the step, if any:</p>
         </td>
@@ -1670,7 +1744,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
 </div>
 <p>Emit buffered messages:</p>
         </td>
@@ -1679,7 +1753,7 @@ handle it here.</p>
             <span class="p">}</span>
 
         <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">execStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentStep</span><span class="p">());</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">execStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentStepObj</span><span class="p">());</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1723,14 +1797,13 @@ handle it here.</p>
 
         <span class="nx">cb</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">EXECUTING_CALLBACK</span><span class="p">);</span>
-        </pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">EXECUTING_CALLBACK</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
+  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
 </div>
 <p>Execute custom callback. Can throw errors.</p>
         </td>
@@ -1741,7 +1814,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
+  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
 </div>
 <p>A non fatal error occurred.</p>
         </td>
@@ -1750,13 +1823,13 @@ handle it here.</p>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">CALLBACK_EXECUTED</span><span class="p">);</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;STEP_CALLBACK_EXECUTED&#39;</span><span class="p">);</span>    </pre></div>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;STEP_CALLBACK_EXECUTED&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
+  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
 </div>
 <p>Internal listeners will check whether we need to emit PLAYING.</p>
         </td>
@@ -1767,15 +1840,18 @@ handle it here.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="game.getcurrentstep">
+<div class="pilwrap" id="game.getcurrentstepobj">
   <h3>
-    <a href="#game.getcurrentstep" class="pilcrow">&#182;</a>
-    Game.getCurrentStep
+    <a href="#game.getcurrentstepobj" class="pilcrow">&#182;</a>
+    Game.getCurrentStepObj
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Returns the object representing the current game step. </p>
+  <div class="body"><p>Returns the object representing the current game step.</p>
+
+<p>The returning object includes all the properties, such as:
+<em>id</em>, <em>cb</em>, <em>timer</em>, etc.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
@@ -1796,8 +1872,122 @@ handle it here.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentStepObj</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="game.getcurrentstep">
+  <h3>
+    <a href="#game.getcurrentstep" class="pilcrow">&#182;</a>
+    Game.getCurrentStep
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Alias for Game.prototype.getCurrentStepObj</p>
+  </div>
+  <div class="details">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentStep</span> <span class="o">=</span> <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentStepObj</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="game.getcurrentstepproperty">
+  <h3>
+    <a href="#game.getcurrentstepproperty" class="pilcrow">&#182;</a>
+    Game.getCurrentStepProperty
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the object representing the current game step.</p>
+
+<p>The returning object includes all the properties, such as:
+<em>id</em>, <em>cb</em>, <em>timer</em>, etc.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>The game-step as defined in the stager.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GamePlot
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentStepProperty</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">propertyName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">step</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">propertyName</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.getCurrentStepProperty: propertyName &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;must be string&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">step</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
+        <span class="k">return</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">[</span><span class="nx">propertyName</span><span class="p">]</span> <span class="o">?</span>
+            <span class="kc">null</span> <span class="o">:</span> <span class="nx">step</span><span class="p">[</span><span class="nx">propertyName</span><span class="p">];</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="game.getcurrentstep">
+  <h3>
+    <a href="#game.getcurrentstep" class="pilcrow">&#182;</a>
+    Game.getCurrentStep
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the object representing the current game step.</p>
+
+<p>The returning object includes all the properties, such as:
+<em>id</em>, <em>cb</em>, <em>timer</em>, etc.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>The game-step as defined in the stager.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GamePlot
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentStepProperty</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">propertyName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">step</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">propertyName</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.getCurrentStepProperty: propertyName &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;must be string&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">step</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
+        <span class="k">return</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">[</span><span class="nx">propertyName</span><span class="p">]</span> <span class="o">?</span>
+            <span class="kc">null</span> <span class="o">:</span> <span class="nx">step</span><span class="p">[</span><span class="nx">propertyName</span><span class="p">];</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1812,7 +2002,7 @@ handle it here.</p>
 </div>
 
   </div>
-  <div class="body"><p>Return the GameStage that is currently being executed. </p>
+  <div class="body"><p>Return the GameStage that is currently being executed.</p>
 
 <p>The return value is a reference to node.player.stage.</p>
   </div>
@@ -1833,8 +2023,7 @@ handle it here.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentGameStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
-    <span class="p">};</span>
-    </pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1848,7 +2037,7 @@ handle it here.</p>
 </div>
 
   </div>
-  <div class="body"><p>Sets the current game stage, and optionally notifies the server </p>
+  <div class="body"><p>Sets the current game stage, and optionally notifies the server</p>
 
 <p>The value is actually stored in <code>node.player.stage</code>.</p>
 
@@ -1882,7 +2071,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
+  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
 </div>
 <p>Update is never sent if the value has not changed.</p>
         </td>
@@ -1893,7 +2082,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
+  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.
 The stage level, must also be sent in the published update,
@@ -1962,7 +2151,7 @@ The return value is a reference to <code>node.player.stateLevel</code>.</p>
 </div>
 
   </div>
-  <div class="body"><p>Sets the current game state level, and optionally notifies the server </p>
+  <div class="body"><p>Sets the current game state level, and optionally notifies the server</p>
 
 <p>The value is actually stored in <code>node.player.stateLevel</code>.</p>
 
@@ -2005,7 +2194,7 @@ STAGE_INIT, PLAYING_STEP, GAMEOVER, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
+  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.</p>
         </td>
@@ -2042,7 +2231,7 @@ The return value is a reference to <code>node.player.stageLevel</code>.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
-      <span>The level of the stage execution. </span>
+      <span>The level of the stage execution.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -2072,7 +2261,7 @@ The return value is a reference to <code>node.player.stageLevel</code>.</p>
 </div>
 
   </div>
-  <div class="body"><p>Sets the current game stage level, and optionally notifies the server </p>
+  <div class="body"><p>Sets the current game stage level, and optionally notifies the server</p>
 
 <p>The value is actually stored in <code>node.player.stageLevel</code>.</p>
 
@@ -2116,7 +2305,7 @@ PLAYING, DONE, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
+  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
 </div>
 <p>console.log(stageLevel);
 Important: First publish, then actually update.</p>
@@ -2127,7 +2316,7 @@ Important: First publish, then actually update.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
+  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
 </div>
 <p>Publish only if the update is different than current value.</p>
         </td>
@@ -2138,8 +2327,7 @@ Important: First publish, then actually update.</p>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">stageLevel</span><span class="p">;</span>
-    <span class="p">};</span>
-    </pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2153,7 +2341,7 @@ Important: First publish, then actually update.</p>
 </div>
 
   </div>
-  <div class="body"><p>Sends out a PLAYER_UPDATE message, if conditions are met. </p>
+  <div class="body"><p>Sends out a PLAYER_UPDATE message, if conditions are met.</p>
 
 <p>Type is a property of the <code>node.player</code> object.</p>
   </div>
@@ -2256,7 +2444,7 @@ value of the update to decide whether is to be published or not.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
+  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
 </div>
 <p>Two cases are handled outside of the switch: NO msg
 and LOADED stage with syncOnLoaded option.</p>
@@ -2274,7 +2462,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
+  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
 </div>
 <p>Else will be evaluated below.</p>
         </td>
@@ -2284,7 +2472,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
+  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
 </div>
 <p>Check all the other cases.</p>
         </td>
@@ -2308,7 +2496,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
+  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
 </div>
 <p>Unknown values of publishLevels are treated as ALL.</p>
         </td>
@@ -2378,7 +2566,7 @@ instead.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
+  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
 </div>
 <p>Check if there is a gameWindow obj and whether it is loading</p>
         </td>
@@ -2575,7 +2763,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
+  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
 </div>
 <p>Should emit PLAYING only after LOADED.</p>
         </td>

@@ -377,8 +377,7 @@ array of PlayerList instances and returns it.</p>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">.</span><span class="nx">indexes</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">.</span><span class="nx">indexes</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="p">}</span>
-   </pre></div>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -399,8 +398,7 @@ property to each inserted player.</p>
 </div>
 <p>Invoking NDDB constructor.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">NDDB</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-        </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">NDDB</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -416,8 +414,7 @@ and in such case we would duplicate them.</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">index</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
             <span class="p">});</span>
-        <span class="p">}</span>
-      </pre></div>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -426,7 +423,7 @@ and in such case we would duplicate them.</p>
   <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>Importing initial items
-(should not be done in constructor of NDDB) </p>
+(should not be done in constructor of NDDB)</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">db</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">db</span><span class="p">);</span></pre></div>
         </td>
@@ -902,8 +899,7 @@ that game step have the property <code>stageLevel</code> equal to:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isStepLoaded</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">arePlayersSync</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">stageLevels</span><span class="p">.</span><span class="nx">LOADED</span><span class="p">,</span> <span class="s1">&#39;EXACT&#39;</span><span class="p">);</span>
-    <span class="p">};</span>
-    </pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -917,7 +913,7 @@ that game step have the property <code>stageLevel</code> equal to:</p>
 </div>
 
   </div>
-  <div class="body"><p>Verifies that all players in the same stage are at the same stageLevel. </p>
+  <div class="body"><p>Verifies that all players in the same stage are at the same stageLevel.</p>
 
 <p>Players at other game steps are ignored, unless the <code>upTo</code> parameter is
 set. In this case, if players are found in earlier game steps, the method
@@ -927,7 +923,7 @@ will return false. Players at later game steps will still be ignored.</p>
 
 <p>strict: same stage, step, round, stageLevel
 stage: same stage
-stage_up_to: </p>
+stage_up_to:</p>
 
 <p>players in other stages - ignore - false</p>
   </div>
@@ -991,8 +987,7 @@ stage_up_to: </p>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">checkOutliers</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;EXACT&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;PlayerList.arePlayersSync: incompatible options:&#39;</span> <span class="o">+</span>
                             <span class="s1">&#39; type=EXACT and checkOutliers=FALSE.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        </pre></div>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1030,7 +1025,7 @@ stage_up_to: </p>
                 <span class="p">}</span>
                 <span class="k">break</span><span class="p">;</span>
 
-             <span class="k">case</span> <span class="s1">&#39;STAGE_UPTO&#39;</span><span class="o">:</span>                </pre></div>
+             <span class="k">case</span> <span class="s1">&#39;STAGE_UPTO&#39;</span><span class="o">:</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1040,8 +1035,7 @@ stage_up_to: </p>
 </div>
 <p>Players in current stage up to the reference step.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="nx">cmp</span> <span class="o">=</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
-                </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="nx">cmp</span> <span class="o">=</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1068,8 +1062,7 @@ stage_up_to: </p>
                     <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
                 <span class="p">}</span>
                 <span class="k">break</span><span class="p">;</span>
-            <span class="p">}</span>
-            </pre></div>
+            <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1079,8 +1072,7 @@ stage_up_to: </p>
 </div>
 <p>If outliers are not allowed returns false if one was found.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">checkOutliers</span> <span class="o">&amp;&amp;</span> <span class="nx">outlier</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-            </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">checkOutliers</span> <span class="o">&amp;&amp;</span> <span class="nx">outlier</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1620,9 +1612,7 @@ case of reconnections it can change</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">=</span> <span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">||</span> <span class="nx">stateLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">;</span>
-
-        </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">=</span> <span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">||</span> <span class="nx">stateLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>

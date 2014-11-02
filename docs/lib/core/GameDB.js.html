@@ -84,7 +84,7 @@
 
 
 <p>Copyright(c) 2014 Stefano Balietti
-MIT Licensed </p>
+MIT Licensed</p>
   </div>
   <div class="body">
 <div class="pilwrap" id="provides-a-simple--lightweight-no-sql-database-for-nodegame">
@@ -146,7 +146,7 @@ MIT Licensed </p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
 </div>
-<p>Inheriting from NDDB     </p>
+<p>Inheriting from NDDB</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
     <span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">GameDB</span><span class="p">;</span></pre></div>
@@ -281,8 +281,7 @@ MIT Licensed </p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameDB.syncWithNode: invalid parameter received&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
-    <span class="p">}</span>
-    </pre></div>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -377,9 +376,9 @@ MIT Licensed </p>
 <ul>
 <li>stage GameStage</li>
 <li>player Player</li>
-<li>key </li>
+<li>key</li>
 <li>value</li>
-<li>time </li>
+<li>time</li>
 </ul>
   </div>
 </div>
@@ -467,7 +466,7 @@ MIT Licensed </p>
   <div class="body"><p>Compares two GameBit objects</p>
 
 <p>Returns TRUE if the attributes of <code>player</code>, <code>stage</code>, and <code>key</code>
-are identical. </p>
+are identical.</p>
 
 <p>If the strict parameter is set, also the <code>value</code> property
 is used for comparison</p>
@@ -544,7 +543,7 @@ is used for comparison</p>
 <p>Returns a numerical id that can assume the following values</p>
 
 <ul>
-<li><code>-1</code>: the player id of the second game-bit is larger </li>
+<li><code>-1</code>: the player id of the second game-bit is larger</li>
 <li><code>1</code>: the player id of the first game-bit is larger</li>
 <li><code>0</code>: the two gamebits belong to the same player</li>
 </ul>
@@ -634,13 +633,13 @@ is used for comparison</p>
 </div>
 
   </div>
-  <div class="body"><p>Sort two game-bits by their key property </p>
+  <div class="body"><p>Sort two game-bits by their key property</p>
 
 <p>Returns a numerical id that can assume the following values</p>
 
 <ul>
-<li><code>-1</code>: the key of the first game-bit comes first alphabetically  </li>
-<li><code>1</code>: the key of the second game-bit comes first alphabetically </li>
+<li><code>-1</code>: the key of the first game-bit comes first alphabetically</li>
+<li><code>1</code>: the key of the second game-bit comes first alphabetically</li>
 <li><code>0</code>: the two gamebits have the same key</li>
 </ul>
   </div>
@@ -685,12 +684,12 @@ is used for comparison</p>
   </h3>
 </div>
 
-
-<p>Sorts two game-bits by their value property</p>
   </div>
-  <div class="body"><p>Uses JSUS.equals for equality. If they differs,
+  <div class="body"><p>Sorts two game-bits by their value property</p>
+
+<p>Uses JSUS.equals for equality. If they differs,
 further comparison is performed, but results will be inaccurate
-for objects. </p>
+for objects.</p>
 
 <p>Returns a numerical id that can assume the following values</p>
 
@@ -698,7 +697,7 @@ for objects. </p>
 <li><code>-1</code>: the value of the first game-bit comes first alphabetically or
 numerically</li>
 <li><code>1</code>: the value of the second game-bit comes first alphabetically or
-numerically </li>
+numerically</li>
 <li><code>0</code>: the two gamebits have identical value properties</li>
 </ul>
   </div>
