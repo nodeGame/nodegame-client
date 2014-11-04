@@ -1,5 +1,12 @@
 # nodegame-client change log
 
+## 0.9.4
+
+ - LANG added to the list of targets.
+ - node.player.lang contains the preferred language of the client
+ - `#node.setLanguage()`, '#node.on.lang()`
+ - GET messages fire in the receiver an event like "get.<label>". Previously was just "<label>", where "<label>" is the string passed by the get caller.
+
 ## 0.9.3
 
  - Stager refactored to build the sequence first and add stages later.
