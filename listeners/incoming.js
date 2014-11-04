@@ -141,9 +141,6 @@
         /**
          * ## in.get.DATA
          *
-<<<<<<< HEAD
-         * Emits the content
-=======
          * Re-emits the incoming message, and replies back to the sender
          * 
          * Does the following operations:
@@ -151,7 +148,6 @@
          * - Validates the msg.text field
          * - Emits a get.<msg.text> event
          * - Replies to the sender with with the return values of the emit call
->>>>>>> jadeIntegration
          */
         node.events.ng.on( IN + get + 'DATA', function(msg) {
             var res;
@@ -365,8 +361,6 @@
          */
         node.events.ng.on( IN + get + 'PLIST', function() {
             return node.game.pl.db;
-<<<<<<< HEAD
-=======
         });
 
         /**
@@ -394,7 +388,6 @@
          */
         node.events.ng.on( IN + set + 'LANG', function(msg) {
             node.setLanguage(msg.data);
->>>>>>> jadeIntegration
         });
 
         node.incomingAdded = true;
