@@ -141,7 +141,13 @@
         /**
          * ## in.get.DATA
          *
-         * Emits the content
+         * Re-emits the incoming message, and replies back to the sender
+         * 
+         * Does the following operations:
+         * 
+         * - Validates the msg.text field
+         * - Emits a get.<msg.text> event
+         * - Replies to the sender with with the return values of the emit call
          */
         node.events.ng.on( IN + get + 'DATA', function(msg) {
             var res;
@@ -150,7 +156,7 @@
                 node.warn('node.in.get.DATA: invalid / missing event name.');
                 return;
             }
-            res = node.emit(msg.text, msg);
+            res = node.emit(get + msg.text, msg);
             if (!J.isEmpty(res)) {
                 node.say(msg.text, msg.from, res);
             }
@@ -358,13 +364,17 @@
         });
 
         /**
-         * ## in.get.LANG
+         * ## in.get.LANG | get.LANG
          *
          * Gets the currently used language
          *
          * @see node.player.lang
          */
         node.events.ng.on( IN + get + 'LANG', function() {
+            return node.player.lang;
+        });
+
+        node.events.ng.on( get + 'LANG', function() {
             return node.player.lang;
         });
 

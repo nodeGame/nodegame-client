@@ -18136,8 +18136,8 @@ JSUS.extend(TIME);
          *
          * Sets the uri of the host
          *
-         * If no value is passed, it will try to set the host from the window object
-         * in the browser enviroment.
+         * If no value is passed, it will try to set the host from
+         * the window object in the browser enviroment.
          */
         this.registerSetup('host', function(host) {
             var tokens;
@@ -18251,8 +18251,10 @@ JSUS.extend(TIME);
          */
         this.registerSetup('game_settings', function(settings) {
             if (!this.game) {
-                this.warn("register('game_settings') called before node.game was initialized");
-                throw new node.NodeGameMisconfiguredGameError("node.game non-existent");
+                this.warn('setup("game_settings") called before ' +
+                          'node.game was initialized.');
+                throw new node.NodeGameMisconfiguredGameError(
+                    "node.game non-existent");
             }
 
             if (settings) {
@@ -18269,8 +18271,10 @@ JSUS.extend(TIME);
          */
         this.registerSetup('game_metadata', function(metadata) {
             if (!this.game) {
-                this.warn("register('game_metadata') called before node.game was initialized");
-                throw new node.NodeGameMisconfiguredGameError("node.game non-existent");
+                this.warn('setup("game_metadata") called before ' +
+                          'node.game was initialized');
+                throw new node.NodeGameMisconfiguredGameError(
+                    "node.game non-existent");
             }
 
             if (metadata) {
@@ -18398,25 +18402,42 @@ JSUS.extend(TIME);
             updatePlayerList.call(this, 'ml', monitorList, updateRule);
         });
 
+        /**
+         * ### this.setup.lang
+         *
+         * Sets the default language
+         *
+         * @param {object} The language object to set as default.
+         */
+        this.registerSetup('lang', function(language) {
+            if (!language) return null;
+            return this.setLanguage(language);            
+        });
+
         // Utility for setup.plist and setup.mlist:
         function updatePlayerList(dstListName, srcList, updateRule) {
             var dstList;
 
             if (!this.game) {
-                this.warn('updatePlayerList called before node.game was initialized');
-                throw new this.NodeGameMisconfiguredGameError('node.game non-existent');
+                this.warn('updatePlayerList called before ' +
+                          'node.game was initialized.');
+                throw new this.NodeGameMisconfiguredGameError(
+                    'node.game non-existent.');
             }
 
             if (dstListName === 'pl')      dstList = this.game.pl;
             else if (dstListName === 'ml') dstList = this.game.ml;
             else {
-                this.warn('updatePlayerList called with invalid dstListName');
-                throw new this.NodeGameMisconfiguredGameError("invalid dstListName");
+                this.warn('updatePlayerList called with invalid dstListName.');
+                throw new this.NodeGameMisconfiguredGameError(
+                    "invalid dstListName.");
             }
 
             if (!dstList) {
-                this.warn('updatePlayerList called before node.game was initialized');
-                throw new this.NodeGameMisconfiguredGameError('dstList non-existent');
+                this.warn('updatePlayerList called before ' +
+                          'node.game was initialized.');
+                throw new this.NodeGameMisconfiguredGameError(
+                    'dstList non-existent.');
             }
 
             if (srcList) {
@@ -18425,7 +18446,7 @@ JSUS.extend(TIME);
                 }
                 else if (updateRule !== 'append') {
                     throw new this.NodeGameMisconfiguredGameError(
-                        "register('plist') got invalid updateRule");
+                        "setup('plist') got invalid updateRule.");
                 }
 
                 // automatic cast from Object to Player
@@ -18928,6 +18949,7 @@ JSUS.extend(TIME);
      * Creates player object and places it in node.player
      *
      * @param {object} A player object with a valid id property
+     * @return {object} The player object
      *
      * @see node.setup.player
      * @emit PLAYER_CREATED
@@ -18962,7 +18984,9 @@ JSUS.extend(TIME);
      *
      * @param {object} language Object describing language.
      *   Needs shortName property.
+     * @return {object} The language object
      *
+     * @see node.setup.lang
      * @emit LANGUAGE_SET
      */
     NGC.prototype.setLanguage = function(language) {
@@ -18971,11 +18995,13 @@ JSUS.extend(TIME);
         }
         if ('string' !== typeof language.shortName) {
             throw new TypeError(
-                'node.setLanguage: language.shortName must be string');
+                'node.setLanguage: language.shortName must be string.');
         }
         this.player.lang = language;
         this.player.lang.path = language.shortName + '/';
         this.emit('LANGUAGE_SET');
+
+        return this.player.lang;
     };
 
 })(
@@ -19797,7 +19823,13 @@ JSUS.extend(TIME);
         /**
          * ## in.get.DATA
          *
-         * Emits the content
+         * Re-emits the incoming message, and replies back to the sender
+         * 
+         * Does the following operations:
+         * 
+         * - Validates the msg.text field
+         * - Emits a get.<msg.text> event
+         * - Replies to the sender with with the return values of the emit call
          */
         node.events.ng.on( IN + get + 'DATA', function(msg) {
             var res;
@@ -19806,7 +19838,7 @@ JSUS.extend(TIME);
                 node.warn('node.in.get.DATA: invalid / missing event name.');
                 return;
             }
-            res = node.emit(msg.text, msg);
+            res = node.emit(get + msg.text, msg);
             if (!J.isEmpty(res)) {
                 node.say(msg.text, msg.from, res);
             }
@@ -20014,13 +20046,17 @@ JSUS.extend(TIME);
         });
 
         /**
-         * ## in.get.LANG
+         * ## in.get.LANG | get.LANG
          *
          * Gets the currently used language
          *
          * @see node.player.lang
          */
         node.events.ng.on( IN + get + 'LANG', function() {
+            return node.player.lang;
+        });
+
+        node.events.ng.on( get + 'LANG', function() {
             return node.player.lang;
         });
 
@@ -28270,7 +28306,7 @@ JSUS.extend(TIME);
 
     // ## Meta-data
 
-    LanguageSelector.version = '0.3.0';
+    LanguageSelector.version = '0.3.1';
     LanguageSelector.description = 'Display information about the current ' +
         'language and allows to change language.';
     LanguageSelector.title = 'Language';
@@ -28279,7 +28315,7 @@ JSUS.extend(TIME);
     // ## Dependencies
 
     LanguageSelector.dependencies = {
-        JSUS: {},
+        JSUS: {}
     };
 
     /**
@@ -28378,8 +28414,9 @@ JSUS.extend(TIME);
          *
          * Function to be called when languages have been loaded
          *
-         * Initializes form displaying the information as well as the optionsDisplay
-         * and their labels. Initializes language to English.
+         * Initializes form displaying the information as well
+         * as the optionsDisplay and their labels.
+         * Initializes language to English.
          * Forwards to `LanguageSelector.onLangCallbackExtension` at the very
          * end.
          *
@@ -28402,10 +28439,12 @@ JSUS.extend(TIME);
                 // Creates labled buttons.
                 for (language in msg.data) {
                     if (msg.data.hasOwnProperty(language)) {
-                        that.optionsLabel[language] = node.window.getElement('label',
-                            language + 'Label', { for: language + 'RadioButton' });
+                        that.optionsLabel[language] = W.getElement('label',
+                            language + 'Label', {
+                                'for': language + 'RadioButton'
+                            });
 
-                        that.optionsDisplay[language] = node.window.getElement('input',
+                        that.optionsDisplay[language] = W.getElement('input',
                             language + 'RadioButton', {
                                 type: 'radio',
                                 name: 'languageButton',
@@ -28567,8 +28606,8 @@ JSUS.extend(TIME);
         node.socket.send(node.msg.create({
             target: "LANG",
             to: "SERVER",
-            action: "get"}
-        ));
+            action: "get"
+        }));
     };
 
     /**
@@ -29160,13 +29199,13 @@ JSUS.extend(TIME);
 
     Requirements.defaults = {};
     Requirements.defaults.id = 'requirements';
-    Requirements.defaults.fieldset = { 
+    Requirements.defaults.fieldset = {
         legend: 'Requirements'
     };
-    
+
     // ## Meta-data
 
-    Requirements.version = '0.2.0';
+    Requirements.version = '0.5.0';
     Requirements.description = 'Checks a set of requirements and display the ' +
         'results';
 
@@ -29177,11 +29216,16 @@ JSUS.extend(TIME);
         List: {}
     };
 
+    /**
+     * ## Requirements.
+     *
+     * Instantiates a new Requirements object
+     *
+     * @param {object} options
+     */
     function Requirements(options) {
         // The id of the widget.
         this.id = options.id || Requirements.id;
-        // The root element under which the widget will appended.
-        this.root = null;
         // Array of all test callbacks.
         this.callbacks = [];
         // Number of tests still pending.
@@ -29210,7 +29254,7 @@ JSUS.extend(TIME);
         this.sayResults = options.sayResults || false;
         // The label of the SAY message that will be sent to the server.
         this.sayResultsLabel = options.sayResultLabel || 'requirements';
-        // Callback to add properties to the result object to send to the server. 
+        // Callback to add properties to the result object to send to the server.
         this.addToResults = options.addToResults || null;
 
         // Callbacks to be executed at the end of all tests.
@@ -29220,7 +29264,7 @@ JSUS.extend(TIME);
 
         function renderResult(o) {
             var imgPath, img, span, text;
-            imgPath = '/images/' + (o.content.success ? 
+            imgPath = '/images/' + (o.content.success ?
                                     'success-icon.png' : 'delete-icon.png');
             img = document.createElement('img');
             img.src = imgPath;
@@ -29234,11 +29278,11 @@ JSUS.extend(TIME);
             span = document.createElement('span');
             span.className = 'requirement';
             span.appendChild(img);
-            
+
             span.appendChild(text);
             return span;
         }
-        
+
         // TODO: simplify render syntax.
         this.list = new W.List({
             render: {
@@ -29248,6 +29292,23 @@ JSUS.extend(TIME);
         });
     }
 
+    /**
+     * ## Requirements.addRequirements
+     *
+     * Adds any number of callbacks checking the requirements
+     *
+     * Callbacks can be asynchronous or synchronous.
+     *
+     * An asynchronous callback must call the `results` function
+     * passed as input parameter to communicate the outcome of the test.
+     *
+     * A synchronous callback must return the value immediately.
+     *
+     * In both cases the return is an array, where every item is an
+     * error message. Empty array means test passed.
+     *
+     * @see this.callbacks
+     */
     Requirements.prototype.addRequirements = function() {
         var i, len;
         i = -1, len = arguments.length;
@@ -29260,40 +29321,22 @@ JSUS.extend(TIME);
         }
     };
 
-    function resultCb(that, i) {
-        var update = function(result) {
-            that.updateStillChecking(-1);
-            if (result) {
-                if (!J.isArray(result)) {
-                    throw new Error('Requirements.checkRequirements: ' +
-                                    'result must be array or undefined.');
-                }
-                that.displayResults(result);
-            }
-            if (that.isCheckingFinished()) {
-                that.checkingFinished();
-            }
-        };
-        return that.callbacks[i](update);
-    }
-
-    function extractErrorMsg(e) {
-        var errMsg;
-        if (e.msg) {
-            errMsg = e.msg;
-        }
-        else if (e.message) {
-            errMsg = e.message;
-        }
-        else if (e.description) {
-            errMsg.description;
-        }
-        else {
-            errMsg = e.toString();
-        }
-        return errMsg;
-    }
-
+    /**
+     * ## Requirements.checkRequirements
+     *
+     * Asynchrounsly or synchrounsly checks all registered callbacks
+     *
+     * Can add a timeout for the max execution time of the callbacks, if the
+     * corresponding option is set.
+     *
+     * Results are displayed conditionally
+     *
+     * @param {boolean} display If TRUE, results are displayed.
+     * @return {errors} The array containing the errors
+     *
+     * @see this.withTimeout
+     * @see this.callbacks
+     */
     Requirements.prototype.checkRequirements = function(display) {
         var i, len;
         var errors, cbErrors, cbName, errMsg;
@@ -29313,21 +29356,21 @@ JSUS.extend(TIME);
             catch(e) {
                 errMsg = extractErrorMsg(e);
                 this.updateStillChecking(-1);
-                if (this.callbacks[i] && this.callbacks[i].name) { 
+                if (this.callbacks[i] && this.callbacks[i].name) {
                     cbName = this.callbacks[i].name;
                 }
                 else {
                     cbName = i + 1;
                 }
                 errors.push('An exception occurred in requirement n.' +
-                            cbName + ': ' + errMsg);                            
+                            cbName + ': ' + errMsg);
             }
             if (cbErrors) {
                 this.updateStillChecking(-1);
                 errors = errors.concat(cbErrors);
             }
         }
-        
+
         if (this.withTimeout) {
             this.addTimeout();
         }
@@ -29335,14 +29378,25 @@ JSUS.extend(TIME);
         if ('undefined' === typeof display ? true : false) {
             this.displayResults(errors);
         }
-        
+
         if (this.isCheckingFinished()) {
             this.checkingFinished();
         }
-        
+
         return errors;
     };
-       
+
+    /**
+     * ## Requirements.addTimeout
+     *
+     * Starts a timeout for the max execution time of the callbacks
+     *
+     * Upon time out results are checked, and eventually displayed.
+     *
+     * @see this.stillCheckings
+     * @see this.withTimeout
+     * @see this.callbacks
+     */
     Requirements.prototype.addTimeout = function() {
         var that = this;
         var errStr = 'One or more function is taking too long. This is ' +
@@ -29359,6 +29413,15 @@ JSUS.extend(TIME);
         }, this.timeoutTime);
     };
 
+    /**
+     * ## Requirements.clearTimeout
+     *
+     * Clears the timeout for the max execution time of the callbacks
+     *
+     * @see this.timeoutId
+     * @see this.stillCheckings
+     * @see this.callbacks
+     */
     Requirements.prototype.clearTimeout = function() {
         if (this.timeoutId) {
             clearTimeout(this.timeoutId);
@@ -29366,6 +29429,20 @@ JSUS.extend(TIME);
         }
     };
 
+    /**
+     * ## Requirements.updateStillChecking
+     *
+     * Updates the number of callbacks still running on the display
+     *
+     * @param {number} The number of callbacks still running, or an increment
+     *   as compared to the current value
+     * @param {boolean} absolute TRUE, if `update` is to be interpreted as an
+     *   absolute value
+     *
+     * @see this.summaryUpdate
+     * @see this.stillCheckings
+     * @see this.callbacks
+     */
     Requirements.prototype.updateStillChecking = function(update, absolute) {
         var total, remaining;
 
@@ -29376,11 +29453,33 @@ JSUS.extend(TIME);
         this.summaryUpdate.innerHTML = ' (' +  remaining + ' / ' + total + ')';
     };
 
-            
-    Requirements.prototype.isCheckingFinished = function() {  
+    /**
+     * ## Requirements.isCheckingFinished
+     *
+     * Returns TRUE, if all callbacks have returned
+     *
+     * @see this.stillCheckings
+     * @see this.callbacks
+     */
+    Requirements.prototype.isCheckingFinished = function() {
         return this.stillChecking <= 0;
     };
 
+    /**
+     * ## Requirements.CheckingFinished
+     *
+     * Cleans up timer and dots, and executes final callbacks accordingly
+     *
+     * First, executes the `onComplete` callback in any case. Then if no
+     * errors have been raised executes the `onSuccess` callback, otherwise
+     * the `onFail` callback.
+     *
+     * @see this.onComplete
+     * @see this.onSuccess
+     * @see this.onFail
+     * @see this.stillCheckings
+     * @see this.callbacks
+     */
     Requirements.prototype.checkingFinished = function() {
         var results;
 
@@ -29397,7 +29496,7 @@ JSUS.extend(TIME);
             };
 
             if (this.addToResults) {
-                J.mixin(results, this.addToResults()); 
+                J.mixin(results, this.addToResults());
             }
             node.say(this.sayResultsLabel, 'SERVER', results);
         }
@@ -29405,25 +29504,42 @@ JSUS.extend(TIME);
         if (this.onComplete) {
             this.onComplete();
         }
-        
+
         if (this.hasFailed) {
-            if (this.onFail) {
-                this.onFail();
-            }
+            if (this.onFail) this.onFail();
         }
         else if (this.onSuccess) {
             this.onSuccess();
         }
     };
 
+    /**
+     * ## Requirements.displayResults
+     *
+     * Displays the results of the callbacks on the screen
+     *
+     * Creates a new item in the list of results for every error found
+     * in the results array.
+     *
+     * If no error was raised, the results array should be empty.
+     *
+     * @param {array} results The array containing the return values of all
+     *   the callbacks
+     *
+     * @see this.onComplete
+     * @see this.onSuccess
+     * @see this.onFail
+     * @see this.stillCheckings
+     * @see this.callbacks
+     */
     Requirements.prototype.displayResults = function(results) {
         var i, len;
-        
+
         if (!this.list) {
             throw new Error('Requirements.displayResults: list not found. ' +
                             'Have you called .append() first?');
         }
-        
+
         if (!J.isArray(results)) {
             throw new TypeError('Requirements.displayResults: results must ' +
                                 'be array.');
@@ -29459,58 +29575,59 @@ JSUS.extend(TIME);
         this.list.parse();
     };
 
-    Requirements.prototype.append = function(root) {
-        this.root = root;
-        
+    Requirements.prototype.append = function() {
         this.summary = document.createElement('span');
         this.summary.appendChild(
             document.createTextNode('Evaluating requirements'));
-        
+
         this.summaryUpdate = document.createElement('span');
         this.summary.appendChild(this.summaryUpdate);
-        
+
         this.dots = W.getLoadingDots();
 
         this.summary.appendChild(this.dots.span);
-        
-        root.appendChild(this.summary);
-        
-        root.appendChild(this.list.getRoot());
-        return root;
+
+        this.bodyDiv.appendChild(this.summary);
+
+        this.bodyDiv.appendChild(this.list.getRoot());
     };
 
-    Requirements.prototype.getRoot = function() {
-        return this.root;
-    };
+    Requirements.prototype.listeners = function() {};
 
-    Requirements.prototype.listeners = function() {
-        var that = this;
-    };
+    // ## Default Requirement Functions
 
+    /**
+     * ## Requirements.nodeGameRequirements
+     *
+     * Checks whether the basic dependencies of nodeGame are satisfied
+     *
+     * @param {function} The asynchronous result function
+     * @return {array} errors Array of synchronous errors
+     */
     Requirements.prototype.nodeGameRequirements = function(result) {
         var errors, db;
         errors = [];
-   
+
         if ('undefined' === typeof NDDB) {
             errors.push('NDDB not found.');
         }
-        
+
         if ('undefined' === typeof JSUS) {
             errors.push('JSUS not found.');
         }
-        
+
         if ('undefined' === typeof node.window) {
             errors.push('node.window not found.');
         }
-        
+
         if ('undefined' === typeof W) {
             errors.push('W not found.');
         }
-        
+
         if ('undefined' === typeof node.widgets) {
             errors.push('node.widgets not found.');
         }
-        
+
         if ('undefined' !== typeof NDDB) {
             try {
                 db = new NDDB();
@@ -29520,7 +29637,7 @@ JSUS.extend(TIME);
                             e.message);
             }
         }
-        
+
         // We need to test node.Stager because it will be used in other tests.
         if ('undefined' === typeof node.Stager) {
             errors.push('node.Stager not found.');
@@ -29529,6 +29646,16 @@ JSUS.extend(TIME);
         return errors;
     };
 
+    /**
+     * ## Requirements.loadFrameTest
+     *
+     * Checks whether the iframe can be created and used
+     *
+     * Requires an active connection.
+     *
+     * @param {function} The asynchronous result function
+     * @return {array} errors Array of synchronous errors
+     */
     Requirements.prototype.loadFrameTest = function(result) {
         var errors, that, testIframe, root;
         var oldIframe, oldIframeName, oldIframeRoot;
@@ -29566,14 +29693,49 @@ JSUS.extend(TIME);
         catch(e) {
             errors.push('W.loadFrame raised an error: ' + extractErrorMsg(e));
             return errors;
-        }        
+        }
     };
 
-    
+    // ## Helper methods
+
+    function resultCb(that, i) {
+        var update = function(result) {
+            that.updateStillChecking(-1);
+            if (result) {
+                if (!J.isArray(result)) {
+                    throw new Error('Requirements.checkRequirements: ' +
+                                    'result must be array or undefined.');
+                }
+                that.displayResults(result);
+            }
+            if (that.isCheckingFinished()) {
+                that.checkingFinished();
+            }
+        };
+        return that.callbacks[i](update);
+    }
+
+    function extractErrorMsg(e) {
+        var errMsg;
+        if (e.msg) {
+            errMsg = e.msg;
+        }
+        else if (e.message) {
+            errMsg = e.message;
+        }
+        else if (e.description) {
+            errMsg.description;
+        }
+        else {
+            errMsg = e.toString();
+        }
+        return errMsg;
+    }
 
     node.widgets.register('Requirements', Requirements);
 
 })(node);
+
 /**
  * # ServerInfoDisplay widget for nodeGame
  * Copyright(c) 2014 Stefano Balietti
