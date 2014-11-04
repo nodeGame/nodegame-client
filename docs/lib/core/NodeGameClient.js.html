@@ -124,6 +124,9 @@
         <a href="#this.setup.mlist">this.setup.mlist</a>
       </div>
       <div class="heading h3">
+        <a href="#this.setup.lang">this.setup.lang</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.on.txt">node.on.txt</a>
       </div>
       <div class="heading h3">
@@ -155,6 +158,9 @@
       </div>
       <div class="heading h3">
         <a href="#node.on.stepdone">node.on.stepdone</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.on.lang">node.on.lang</a>
       </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
@@ -721,8 +727,8 @@ the default values.</p>
   </div>
   <div class="body"><p>Sets the uri of the host</p>
 
-<p>If no value is passed, it will try to set the host from the window object
-in the browser enviroment.</p>
+<p>If no value is passed, it will try to set the host from
+the window object in the browser enviroment.</p>
   </div>
 </div>
         </td>
@@ -932,8 +938,10 @@ in the browser enviroment.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;game_settings&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;register(&#39;game_settings&#39;) called before node.game was initialized&quot;</span><span class="p">);</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;setup(&quot;game_settings&quot;) called before &#39;</span> <span class="o">+</span>
+                          <span class="s1">&#39;node.game was initialized.&#39;</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
@@ -961,8 +969,10 @@ in the browser enviroment.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;game_metadata&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">&quot;register(&#39;game_metadata&#39;) called before node.game was initialized&quot;</span><span class="p">);</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;setup(&quot;game_metadata&quot;) called before &#39;</span> <span class="o">+</span>
+                          <span class="s1">&#39;node.game was initialized&#39;</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
@@ -1206,9 +1216,38 @@ Updates are not possible for the moment.</p>
         </td>
       </tr>
       <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="this.setup.lang">
+  <h3>
+    <a href="#this.setup.lang" class="pilcrow">&#182;</a>
+    this.setup.lang
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets the default language</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">The</span>
+      <span class="dox_type">object</span>
+      <span>language object to set as default.</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;lang&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">language</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">language</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">language</span><span class="p">);</span>            
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>Utility for setup.plist and setup.mlist:</p>
         </td>
@@ -1216,20 +1255,25 @@ Updates are not possible for the moment.</p>
             <span class="kd">var</span> <span class="nx">dstList</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList called before node.game was initialized&#39;</span><span class="p">);</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s1">&#39;node.game non-existent&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList called before &#39;</span> <span class="o">+</span>
+                          <span class="s1">&#39;node.game was initialized.&#39;</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;node.game non-existent.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">dstListName</span> <span class="o">===</span> <span class="s1">&#39;pl&#39;</span><span class="p">)</span>      <span class="nx">dstList</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">;</span>
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">dstListName</span> <span class="o">===</span> <span class="s1">&#39;ml&#39;</span><span class="p">)</span> <span class="nx">dstList</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">;</span>
             <span class="k">else</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList called with invalid dstListName&#39;</span><span class="p">);</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s2">&quot;invalid dstListName&quot;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList called with invalid dstListName.&#39;</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s2">&quot;invalid dstListName.&quot;</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">dstList</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList called before node.game was initialized&#39;</span><span class="p">);</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="s1">&#39;dstList non-existent&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList called before &#39;</span> <span class="o">+</span>
+                          <span class="s1">&#39;node.game was initialized.&#39;</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
+                    <span class="s1">&#39;dstList non-existent.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">srcList</span><span class="p">)</span> <span class="p">{</span>
@@ -1238,14 +1282,14 @@ Updates are not possible for the moment.</p>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">throw</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
-                        <span class="s2">&quot;register(&#39;plist&#39;) got invalid updateRule&quot;</span><span class="p">);</span>
+                        <span class="s2">&quot;setup(&#39;plist&#39;) got invalid updateRule.&quot;</span><span class="p">);</span>
                 <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>automatic cast from Object to Player</p>
         </td>
@@ -1259,7 +1303,7 @@ Updates are not possible for the moment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>ALIAS</p>
         </td>
@@ -1449,8 +1493,23 @@ Updates are not possible for the moment.</p>
       </tr>
       <tr>
         <td class="docs">
+<div class="pilwrap" id="node.on.lang">
+  <h3>
+    <a href="#node.on.lang" class="pilcrow">&#182;</a>
+    node.on.lang
+  </h3>
+</div>
+
+
+<p>Gets language information.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;lang&#39;</span><span class="p">,</span><span class="s1">&#39;in.say.LANG&#39;</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>LISTENERS.</p>
         </td>

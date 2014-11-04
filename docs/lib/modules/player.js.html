@@ -27,6 +27,9 @@
       <div class="heading h3">
         <a href="#nodegameclient.createplayer">NodeGameClient.createPlayer</a>
       </div>
+      <div class="heading h3">
+        <a href="#nodegameclient.setlanguage">NodeGameClient.setLanguage</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -88,6 +91,12 @@
       <span class="dox_type">object</span>
       <span>player object with a valid id property</span>
     </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>The player object</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.setup.player</span>
@@ -124,6 +133,56 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PLAYER_CREATED&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient.setlanguage">
+  <h3>
+    <a href="#nodegameclient.setlanguage" class="pilcrow">&#182;</a>
+    NodeGameClient.setLanguage
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets the language for a playerList</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">language</span>
+      <span class="dox_type">object</span>
+      <span>Object describing language.
+  Needs shortName property.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>The language object</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.setup.lang</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setLanguage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">language</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">language</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setLanguage: language must be object.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">language</span><span class="p">.</span><span class="nx">shortName</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;node.setLanguage: language.shortName must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">lang</span> <span class="o">=</span> <span class="nx">language</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">lang</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">language</span><span class="p">.</span><span class="nx">shortName</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;LANGUAGE_SET&#39;</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">lang</span><span class="p">;</span>
     <span class="p">};</span>
 
 <span class="p">})(</span>

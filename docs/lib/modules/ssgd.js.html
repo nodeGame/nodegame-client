@@ -197,14 +197,14 @@
   <div class="body"><p>Sends a GET message to a recipient and listen to the reply</p>
 
 <p>The receiver of a GET message must be implement an <em>internal</em> listener
-with the same label, and return the value requested. For example,</p>
+of the type "get.<label>", and return the value requested. For example,</p>
 
 
 <div class="highlight"><pre><code><span class="c1">// Sender.</span>
 <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;myLabel, function(reply) {});</span>
 
 <span class="s1">// Receiver.</span>
-<span class="s1">node.on(&#39;</span><span class="nx">myLabel</span><span class="s1">&#39;, function() { return &#39;</span><span class="nx">OK</span><span class="err">&#39;</span><span class="p">;</span> <span class="p">});</span>
+<span class="s1">node.on(&#39;</span><span class="nx">get</span><span class="p">.</span><span class="nx">myLabel</span><span class="s1">&#39;, function() { return &#39;</span><span class="nx">OK</span><span class="err">&#39;</span><span class="p">;</span> <span class="p">});</span>
 </code></pre></div>
 
 

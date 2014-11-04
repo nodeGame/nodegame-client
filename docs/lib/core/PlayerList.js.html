@@ -132,6 +132,9 @@
       <div class="heading h3">
         <a href="#player.statelevel">Player.stateLevel</a>
       </div>
+      <div class="heading h3">
+        <a href="#player.lang">Player.lang</a>
+      </div>
       <div class="heading h2">
         <a href="#extra-properties">Extra properties</a>
       </div>
@@ -1272,6 +1275,8 @@ to associate to a player during the game.</p>
 <p>Some of the properties are <code>private</code> and can never be changed
 after an instance of a Player has been created. Defaults one are:</p>
 
+<p>TODO: update DOC.</p>
+
 <p><code>sid</code>: The Socket.io session id associated to the player
  <code>id</code>: The nodeGame session id associate to the player
  <code>count</code>: The id of the player within a PlayerList object
@@ -1280,7 +1285,8 @@ after an instance of a Player has been created. Defaults one are:</p>
 
 <p>Others properties are public and can be changed during the game.</p>
 
-<p><code>name</code>: An alphanumeric name associated to the player
+<p><code>lang</code>: the language chosen by player (default English)
+ <code>name</code>: An alphanumeric name associated to the player
  <code>stage</code>: The current stage of the player as relative to a game
  <code>ip</code>: The ip address of the player</p>
 
@@ -1618,6 +1624,31 @@ case of reconnections it can change</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="player.lang">
+  <h3>
+    <a href="#player.lang" class="pilcrow">&#182;</a>
+    Player.lang
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The current language used by the player</p>
+
+<p>Default language is English with the default path <code>en/</code>.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">lang</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;English&#39;</span><span class="p">,</span>
+            <span class="nx">shortName</span><span class="o">:</span> <span class="s1">&#39;en&#39;</span><span class="p">,</span>
+            <span class="nx">nativeName</span><span class="o">:</span> <span class="s1">&#39;English&#39;</span><span class="p">,</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;en/&#39;</span>
+        <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="extra-properties">
   <h2>
     <a href="#extra-properties" class="pilcrow">&#182;</a>
@@ -1682,7 +1713,8 @@ cannot overwrite any previously defined variable</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Player</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span> <span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; (&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;) &#39;</span> <span class="o">+</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
+        <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span> <span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; (&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;) &#39;</span> <span class="o">+</span>
+            <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>

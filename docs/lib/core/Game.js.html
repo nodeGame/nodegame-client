@@ -111,6 +111,9 @@
       <div class="heading h3">
         <a href="#game.getcurrentstepobj">Game.getCurrentStepObj</a>
       </div>
+      <div class="heading h1">
+        <a href="#id--cb--timer--etc.">id, cb, timer, etc.</a>
+      </div>
       <div class="heading h3">
         <a href="#game.getcurrentstep">Game.getCurrentStep</a>
       </div>
@@ -754,7 +757,9 @@ just for change of state after the game has started</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">onInit</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">startStage</span><span class="p">;</span>
+
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.start: options must be object or &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
@@ -1848,10 +1853,35 @@ handle it here.</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns the object representing the current game step.</p>
+  <div class="body"><p>Returns the object representing the current game step.
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
 
-<p>The returning object includes all the properties, such as:
-<em>id</em>, <em>cb</em>, <em>timer</em>, etc.</p>
+<p>The returning object includes all the properties, such as:</p>
+
+
+<div class="pilwrap" id="id--cb--timer--etc.">
+  <h1>
+    <a href="#id--cb--timer--etc." class="pilcrow">&#182;</a>
+    <em>id</em>, <em>cb</em>, <em>timer</em>, etc.
+  </h1>
+</div>
+
+
+<blockquote>
+  <blockquote>
+    <blockquote>
+      <blockquote>
+        <blockquote>
+          <blockquote>
+            <blockquote>
+              <p>jadeIntegration</p>
+            </blockquote>
+          </blockquote>
+        </blockquote>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+</blockquote>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
@@ -1867,7 +1897,7 @@ handle it here.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GamePlot
-  </span>
+       </span>
     </div>
   </div>
 </div>
