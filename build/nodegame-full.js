@@ -11258,13 +11258,6 @@ JSUS.extend(TIME);
 
         // Step.
         if (stage.cb) {
-//             res = this.checkStepValidity(stage, unique);
-//             if (res !== null) {
-//                 throw new Error('Stager.addStage: invalid stage received: ' +
-//                                 res + '.');
-//             }
-//             this.steps[stage.id] = stage;
-
             this.addStep(stage);
             
             this.stages[stage.id] = {
@@ -11356,6 +11349,14 @@ JSUS.extend(TIME);
         if (update.cb && 'function' !== typeof update.cb) {
             throw new TypeError('Stager.extendStage: update.cb must be ' +
                                 'function or undefined.');
+        }
+        if (update.steps && !J.isArray(update.steps)) {
+            throw new TypeError('Stager.extendStage: update.steps must be ' +
+                                'array or undefined.');
+        }
+        if (stage.steps && stage.cb) {
+            throw new TypeError('Stager.extendStage: update must have either ' +
+                                'a steps or a cb property.');
         }
         if (!this.stages[stageId]) {
             throw new Error('Stager.extendStage: stageId not found: ' +
@@ -14865,8 +14866,6 @@ JSUS.extend(TIME);
      * ### Game.execStep
      *
      * Executes the specified stage object
-     *
-     * @TODO: emit an event 'executing stage', so that other methods get notified
      *
      * @param {object} stage Full stage object to execute
      * @return {boolean} The result of the execution of the step callback
