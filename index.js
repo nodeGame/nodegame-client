@@ -107,8 +107,8 @@
         return node;
     };
 
-    exports.getStager = function() {
-        return new exports.Stager();
+    exports.getStager = function(state) {
+        return new exports.Stager(state);
     };
 
 })(module.exports);
