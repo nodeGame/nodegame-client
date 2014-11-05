@@ -101,21 +101,20 @@ MIT Licensed</p>
 after the alias. The alias can be used as a shortcut to register
 to new listeners on the given events.</p>
 
+<p>```javascript
+  // The node.on.data alias example with modifier function
+  // only DATA msg with the right label will be fired.
+  this.alias('data', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
+      return function(msg) {
+          if (msg.text === text) {
+              cb.call(that.game, msg);
+          }
+      };
+  });</p>
 
-<div class="highlight"><pre><code>  <span class="c1">// The node.on.data alias example with modifier function</span>
-  <span class="c1">// only DATA msg with the right label will be fired.</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.DATA&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
-          <span class="p">}</span>
-      <span class="p">};</span>
-  <span class="p">});</span>
-
-  <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;myLabel&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span> <span class="p">...</span> <span class="p">};</span>
-</code></pre></div>
-
-
+<p>node.on.data('myLabel', function(){ ... };
+  node.once.data('myLabel', function(){ ... };
+```  </p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -159,7 +158,8 @@ to new listeners on the given events.</p>
 
         <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">events</span><span class="p">))</span> <span class="nx">events</span> <span class="o">=</span> <span class="p">[</span><span class="nx">events</span><span class="p">];</span>
-        <span class="nx">that</span><span class="p">.</span><span class="nx">on</span><span class="p">[</span><span class="nx">alias</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span></pre></div>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">[</span><span class="nx">alias</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -175,6 +175,27 @@ Otherwise, we assume the first parameter is the callback.</p>
             <span class="p">}</span>
             <span class="nx">J</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">that</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">});</span>
+        <span class="p">};</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">once</span><span class="p">[</span><span class="nx">alias</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>If set, we use the callback returned by the modifier.
+Otherwise, we assume the first parameter is the callback.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">modifier</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">func</span> <span class="o">=</span> <span class="nx">modifier</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+            <span class="p">}</span> 
+            <span class="nx">J</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">once</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                     <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
                 <span class="p">});</span>
             <span class="p">});</span>

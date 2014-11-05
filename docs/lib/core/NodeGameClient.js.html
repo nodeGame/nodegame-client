@@ -31,9 +31,6 @@
         <a href="#nodegameclient-constructor">NodeGameClient constructor</a>
       </div>
       <div class="heading h3">
-        <a href="#node.verbosity_levels">node.verbosity_levels</a>
-      </div>
-      <div class="heading h3">
         <a href="#node.verbosity">node.verbosity</a>
       </div>
       <div class="heading h3">
@@ -125,6 +122,15 @@
       </div>
       <div class="heading h3">
         <a href="#this.setup.lang">this.setup.lang</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegameclient.on">NodeGameClient.on</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegameclient.once">NodeGameClient.once</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegameclient.off">NodeGameClient.off</a>
       </div>
       <div class="heading h3">
         <a href="#node.on.txt">node.on.txt</a>
@@ -226,7 +232,8 @@ MIT Licensed</p>
         <span class="nx">Timer</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Timer</span><span class="p">,</span>
         <span class="nx">Player</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
         <span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameSession</span><span class="p">,</span>
-        <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
+        <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
+        <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -252,32 +259,6 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.verbosity_levels">
-  <h3>
-    <a href="#node.verbosity_levels" class="pilcrow">&#182;</a>
-    node.verbosity_levels
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>ALWAYS, ERR, WARN, INFO, DEBUG</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">verbosity_levels</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="nx">ALWAYS</span><span class="o">:</span> <span class="o">-</span><span class="p">(</span><span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_VALUE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
-            <span class="nx">ERR</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-            <span class="nx">WARN</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="nx">INFO</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="nx">SILLY</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
-            <span class="nx">DEBUG</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
-            <span class="nx">NEVER</span><span class="o">:</span> <span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_VALUE</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
 <div class="pilwrap" id="node.verbosity">
   <h3>
     <a href="#node.verbosity" class="pilcrow">&#182;</a>
@@ -292,7 +273,7 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">WARN</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">warn</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -334,7 +315,7 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">remoteVerbosity</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">WARN</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">remoteVerbosity</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">warn</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -656,7 +637,7 @@ the default values.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>Old Operas loop over the prototype property as well.</p>
         </td>
@@ -668,7 +649,7 @@ the default values.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Like this browsers do not complain in strict mode.</p>
         </td>
@@ -739,7 +720,7 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>URL</p>
         </td>
@@ -758,7 +739,7 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>url was not of the form '/channel'</p>
         </td>
@@ -770,7 +751,7 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Add a trailing slash if missing</p>
         </td>
@@ -799,7 +780,12 @@ the window object in the browser enviroment.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;verbosity&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">level</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">level</span><span class="p">))</span> <span class="p">{</span>
+
+                <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="nx">level</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">return</span> <span class="nx">level</span><span class="p">;</span>
@@ -1071,7 +1057,7 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Last configured timer options.</p>
         </td>
@@ -1247,7 +1233,7 @@ Updates are not possible for the moment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Utility for setup.plist and setup.mlist:</p>
         </td>
@@ -1289,7 +1275,7 @@ Updates are not possible for the moment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>automatic cast from Object to Player</p>
         </td>
@@ -1301,11 +1287,164 @@ Updates are not possible for the moment.</p>
         </td>
       </tr>
       <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient.on">
+  <h3>
+    <a href="#nodegameclient.on" class="pilcrow">&#182;</a>
+    NodeGameClient.on
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Registers an event listener</p>
+
+<p>Listeners registered before a game is started, e.g. in
+the init function of the game object, will stay valid
+throughout the game. Listeners registered after the game
+is started will be removed after the game has advanced
+to its next stage.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">event</span>
+      <span class="dox_type">string</span>
+      <span>The name of the event</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">listener</span>
+      <span class="dox_type">function</span>
+      <span>The callback function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">ee</span><span class="p">;</span>
+            <span class="nx">ee</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span><span class="p">();</span>
+            <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
+        <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient.once">
+  <h3>
+    <a href="#nodegameclient.once" class="pilcrow">&#182;</a>
+    NodeGameClient.once
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Registers an event listener that will be removed
+after its first invocation</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">event</span>
+      <span class="dox_type">string</span>
+      <span>The name of the event</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">listener</span>
+      <span class="dox_type">function</span>
+      <span>The callback function</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NodeGameClient.on</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NodeGameClient.off
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">ee</span><span class="p">,</span> <span class="nx">cbRemove</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
-<p>ALIAS</p>
+<p>This function will remove the event listener
+and itself.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">cbRemove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
+                <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">cbRemove</span><span class="p">);</span>
+            <span class="p">};</span>
+            <span class="nx">ee</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span><span class="p">();</span>
+            <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
+            <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">cbRemove</span><span class="p">);</span>
+        <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient.off">
+  <h3>
+    <a href="#nodegameclient.off" class="pilcrow">&#182;</a>
+    NodeGameClient.off
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Deregisters one or multiple event listeners</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">event</span>
+      <span class="dox_type">string</span>
+      <span>The name of the event</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">listener</span>
+      <span class="dox_type">function</span>
+      <span>The callback function</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NodeGameClient.on</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NodeGameClient.EventEmitter.remove
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">off</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">func</span><span class="p">);</span>
+        <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+</div>
+<p>ADD ALIASES</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+</div>
+<p>TODO: move aliases into a separate method, like addDefaultIncomingListeners</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
@@ -1320,7 +1459,8 @@ Updates are not possible for the moment.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.TXT&#39;</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.TXT&#39;</span><span class="p">);</span>
+        </pre></div>
         </td>
       </tr>
       <tr>
@@ -1509,7 +1649,7 @@ Updates are not possible for the moment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>LISTENERS.</p>
         </td>

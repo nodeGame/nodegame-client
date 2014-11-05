@@ -108,12 +108,14 @@ smaller than <code>this.remoteVerbosity</code>.</p>
       <span class="dox_tag_name">level</span>
       <span class="dox_type">string</span>
       <span class="dox_type">number</span>
-      <span>Optional. The verbosity level of this log. Defaults, level = 0</span>
+      <span>Optional. The verbosity level of this log.
+  Default: 'warn'</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">prefix</span>
       <span class="dox_type">string</span>
-      <span>Optional. A text to display at the beginning of the log entry. Defaults 'ng> '</span>
+      <span>Optional. A text to display at the beginning of
+  the log entry. Default: 'ng> '</span>
     </div>
   </div>
 </div>
@@ -121,13 +123,10 @@ smaller than <code>this.remoteVerbosity</code>.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">level</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">txt</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
 
-        <span class="nx">level</span>  <span class="o">=</span> <span class="nx">level</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="nx">level</span>  <span class="o">=</span> <span class="nx">level</span> <span class="o">||</span> <span class="s1">&#39;warn&#39;</span><span class="p">;</span>
         <span class="nx">prefix</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">prefix</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="s1">&#39;&gt; &#39;</span> <span class="o">:</span> <span class="nx">prefix</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">level</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">&gt;</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">&gt;=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">[</span><span class="nx">level</span><span class="p">])</span> <span class="p">{</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">txt</span><span class="p">);</span>
         <span class="p">}</span></pre></div>
         </td>
@@ -168,7 +167,7 @@ smaller than <code>this.remoteVerbosity</code>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">info</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">prefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="p">(</span><span class="nx">prefix</span> <span class="o">?</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="nx">prefix</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&gt; info - &#39;</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">INFO</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -189,7 +188,7 @@ smaller than <code>this.remoteVerbosity</code>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">warn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">prefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="p">(</span><span class="nx">prefix</span> <span class="o">?</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="nx">prefix</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&gt; warn - &#39;</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">WARN</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -210,7 +209,7 @@ smaller than <code>this.remoteVerbosity</code>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">err</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">prefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="p">(</span><span class="nx">prefix</span> <span class="o">?</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="nx">prefix</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&gt; error - &#39;</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">ERR</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -231,7 +230,7 @@ smaller than <code>this.remoteVerbosity</code>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">silly</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">prefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="p">(</span><span class="nx">prefix</span> <span class="o">?</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="nx">prefix</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&gt; silly - &#39;</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">SILLY</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="s1">&#39;silly&#39;</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
     <span class="p">};</span>
 
 <span class="p">})(</span>

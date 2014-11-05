@@ -37,10 +37,7 @@
         <a href="#socket.session">Socket.session</a>
       </div>
       <div class="heading h3">
-        <a href="#socket.user_options">Socket.user_options</a>
-      </div>
-      <div class="heading h3">
-        <a href="#socket.connected">Socket.connected</a>
+        <a href="#socket.useroptions">Socket.userOptions</a>
       </div>
       <div class="heading h3">
         <a href="#socket.socket">Socket.socket</a>
@@ -223,10 +220,10 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="socket.user_options">
+<div class="pilwrap" id="socket.useroptions">
   <h3>
-    <a href="#socket.user_options" class="pilcrow">&#182;</a>
-    Socket.user_options
+    <a href="#socket.useroptions" class="pilcrow">&#182;</a>
+    Socket.userOptions
   </h3>
 </div>
 
@@ -244,25 +241,7 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">user_options</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="socket.connected">
-  <h3>
-    <a href="#socket.connected" class="pilcrow">&#182;</a>
-    Socket.connected
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Boolean flag, TRUE if socket is connected to server</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">user_options</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -343,7 +322,7 @@ in case of SocketDirect, it is not an real url.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
 </div>
 <p>Experimental</p>
         </td>
@@ -420,7 +399,7 @@ in case of SocketDirect, it is not an real url.</p>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">?</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="o">:</span> <span class="p">{};</span>
         <span class="nx">type</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
         <span class="k">delete</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">user_options</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setSocketType</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
         <span class="p">}</span>
@@ -468,7 +447,7 @@ in case of SocketDirect, it is not an real url.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>returns null on error.</p>
         </td>
@@ -517,7 +496,7 @@ in case of SocketDirect, it is not an real url.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;connecting to &#39;</span> <span class="o">+</span> <span class="nx">humanReadableUri</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span> <span class="o">?</span>
-                            <span class="nx">options</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">user_options</span><span class="p">);</span>
+                            <span class="nx">options</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -572,7 +551,7 @@ in case of SocketDirect, it is not an real url.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Save the current stage of the game
 this.node.session.store();</p>
@@ -583,7 +562,7 @@ this.node.session.store();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>On re-connection will receive a new ones.</p>
         </td>
@@ -736,7 +715,7 @@ with the data received by the server.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>Parsing successful.</p>
         </td>
@@ -746,7 +725,7 @@ with the data received by the server.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>TODO: do we need to more checkings, besides is HI?</p>
         </td>
@@ -756,7 +735,7 @@ with the data received by the server.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Replace itself: will change onMessage to onMessageFull.</p>
         </td>
@@ -767,7 +746,7 @@ with the data received by the server.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>This will emit PLAYER_CREATED</p>
         </td>
@@ -777,7 +756,7 @@ with the data received by the server.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Functions listening to these events can be executed before HI.</p>
         </td>
@@ -832,7 +811,7 @@ if the game is not ready, and the message priority is low.x</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Message with high priority are executed immediately.</p>
         </td>
@@ -979,7 +958,7 @@ if the game is not ready, and the message priority is low.x</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Modify the buffer at every iteration, so that if an error
 occurs, already emitted messages are out of the way.</p>
@@ -1069,7 +1048,7 @@ stores the session ids in the session object</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Extracts server info from the first msg.</p>
         </td>
@@ -1085,7 +1064,7 @@ stores the session ids in the session object</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>Do not store player cookie if client failed authorization.
 Note: if a client is trying to open multiple connections
@@ -1141,7 +1120,7 @@ it will have both the player cookie and the auth_failed cookie.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>Setting global info</p>
         </td>
@@ -1151,7 +1130,7 @@ it will have both the player cookie and the auth_failed cookie.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>Keep serverid = msg.from for now</p>
         </td>
@@ -1235,7 +1214,7 @@ and sent out whenever the connection is available again.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>TODO: add conf variable node.emitOutMsg</p>
         </td>
@@ -1257,7 +1236,7 @@ and sent out whenever the connection is available again.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>Helper methods.</p>
         </td>

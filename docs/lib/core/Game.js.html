@@ -111,9 +111,6 @@
       <div class="heading h3">
         <a href="#game.getcurrentstepobj">Game.getCurrentStepObj</a>
       </div>
-      <div class="heading h1">
-        <a href="#id--cb--timer--etc.">id, cb, timer, etc.</a>
-      </div>
       <div class="heading h3">
         <a href="#game.getcurrentstep">Game.getCurrentStep</a>
       </div>
@@ -230,10 +227,10 @@ MIT Licensed</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">Game</span> <span class="o">=</span> <span class="nx">Game</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
-    <span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameDB</span><span class="p">,</span>
-    <span class="nx">GamePlot</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GamePlot</span><span class="p">,</span>
-    <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">,</span>
-    <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
+        <span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameDB</span><span class="p">,</span>
+        <span class="nx">GamePlot</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GamePlot</span><span class="p">,</span>
+        <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">,</span>
+        <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span></pre></div>
         </td>
@@ -1853,35 +1850,10 @@ handle it here.</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns the object representing the current game step.
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
+  <div class="body"><p>Returns the object representing the current game step.</p>
 
-<p>The returning object includes all the properties, such as:</p>
-
-
-<div class="pilwrap" id="id--cb--timer--etc.">
-  <h1>
-    <a href="#id--cb--timer--etc." class="pilcrow">&#182;</a>
-    <em>id</em>, <em>cb</em>, <em>timer</em>, etc.
-  </h1>
-</div>
-
-
-<blockquote>
-  <blockquote>
-    <blockquote>
-      <blockquote>
-        <blockquote>
-          <blockquote>
-            <blockquote>
-              <p>jadeIntegration</p>
-            </blockquote>
-          </blockquote>
-        </blockquote>
-      </blockquote>
-    </blockquote>
-  </blockquote>
-</blockquote>
+<p>The returning object includes all the properties, such as:
+<em>id</em>, <em>cb</em>, <em>timer</em>, etc.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
@@ -1897,7 +1869,7 @@ handle it here.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GamePlot
-       </span>
+  </span>
     </div>
   </div>
 </div>
@@ -2229,7 +2201,7 @@ STAGE_INIT, PLAYING_STEP, GAMEOVER, etc.</p>
 <p>Important: First publish, then actually update.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span> <span class="o">!==</span> <span class="nx">stateLevel</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">()</span> <span class="o">!==</span> <span class="nx">stateLevel</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">publishUpdate</span><span class="p">(</span><span class="s1">&#39;stateLevel&#39;</span><span class="p">,</span> <span class="p">{</span>
                     <span class="nx">stateLevel</span><span class="o">:</span> <span class="nx">stateLevel</span>
                 <span class="p">});</span>
@@ -2337,8 +2309,7 @@ PLAYING, DONE, etc.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
 </div>
-<p>console.log(stageLevel);
-Important: First publish, then actually update.</p>
+<p>Important: First publish, then actually update.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">silent</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
