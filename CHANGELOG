@@ -1,5 +1,12 @@
 # nodegame-client change log
 
+## 0.9.5
+
+ - Standardized msg log with the server (same as winston now)
+ - Fixed bug caused by alias on the server
+ - Refactored Stager api
+ - Socket Direct Messagging is asynchronous
+
 ## 0.9.4
 
  - LANG added to the list of targets.

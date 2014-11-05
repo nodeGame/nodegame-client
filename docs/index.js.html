@@ -286,8 +286,8 @@ TODO: should they use the new operator?</p>
         <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
     <span class="p">};</span>
 
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">getStager</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span><span class="p">();</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">getStager</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span><span class="p">(</span><span class="nx">state</span><span class="p">);</span>
     <span class="p">};</span>
 
 <span class="p">})(</span><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">);</span>
