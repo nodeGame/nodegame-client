@@ -53,8 +53,8 @@
 
         function done() {
             node.game.willBeDone = false;
-            node.emit('REALLY_DONE');
             node.game.setStageLevel(stageLevels.DONE);
+            node.emit('REALLY_DONE');
             // Step forward, if allowed.
             if (node.game.shouldStep()) {
                 node.game.step();
@@ -229,20 +229,20 @@
          *
          */
         this.events.ng.on(CMD + gcommands.goto_step, function(step) {
-            var gs;
-
             if (!node.game.isSteppable()) {
                 node.err('Game cannot be stepped.');
                 return;
             }
 
             node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step);
-            gs = new GameStage(step);
-            if (!node.game.plot.getStep(gs)) {
-                node.err('Non-existing game step.');
-                return;
+            if (step !== parent.GamePlot.GAMEOVER) {
+                step = new GameStage(step);
+                if (!node.game.plot.getStep(step)) {
+                    node.err('Non-existing game step.');
+                    return;
+                }
             }
-            node.game.gotoStep(gs);
+            node.game.gotoStep(step);
         });
 
         /**
