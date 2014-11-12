@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>game.logic.old.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../', thisFile = 'examples/game.logic.old.js', defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>game.logic.old.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">channel</span><span class="p">)</span> <span class="p">{</span>
+
+
+  <span class="kd">var</span> <span class="nx">client</span> <span class="o">=</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./client&#39;</span><span class="p">);</span> <span class="c1">// path needs to be resolved at exec time;</span>
+
+  <span class="kd">var</span> <span class="nx">game</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>The fundamental unit of play is a game step. Minimally it must have an identificator, and a valida callback function</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">creation</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;creation&#39;</span><span class="p">,</span>
+      <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{}</span>
+  <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>Optional, but important properties are 'descr', 'init', 'done', and 'onfail', that can added in the game step definition</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">creation</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;creation&#39;</span><span class="p">,</span>
+      <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span>
+      <span class="nx">descr</span><span class="o">:</span> <span class="s1">&#39;A verbose description of what is going on here&#39;</span><span class="p">,</span> <span class="c1">// Optional</span>
+      <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span> <span class="c1">// Optional. Can do things like setting the timer, updating step variables like the timer, etc.</span>
+      <span class="nx">done</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span> <span class="c1">// Optional. Ultimate check before declaring a step DONE. Must return TRUE if everything is OK. </span>
+      <span class="nx">onfail</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="p">{}</span> <span class="c1">// Optional. Handle exceptions locally</span>
+  <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>In order to be executed a game step must be embedded in a game stage object. A very minimal game stage object is just a wrap
+for the game step itself. However, it can specify other properties too, e.g. the number of times the step will be repeated.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>A game stage can also group together more steps, and define the conditions to pass from one step to the other (always inside
+the same stage). This is useful for example if you don't need to sync the players with each other (e.g. in a step-by-step tutorial)</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">stage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;game&#39;</span><span class="p">,</span>
+    <span class="nx">repeat</span><span class="o">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;creation&#39;</span><span class="p">,</span> <span class="s1">&#39;evaluation&#39;</span><span class="p">,</span> <span class="s1">&#39;dissemination&#39;</span> <span class="p">],</span> <span class="c1">// step ids in sequential order</span>
+    <span class="nx">onstepdone</span><span class="o">:</span> <span class="s1">&#39;WAIT&#39;</span><span class="p">,</span>
+    <span class="nx">onstepdone</span><span class="o">:</span> <span class="s1">&#39;GOTONEXT&#39;</span><span class="p">,</span> <span class="c1">// executes the next step of the stage automatically after a successfull DONE, </span>
+    <span class="nx">onstepdone</span><span class="o">:</span> <span class="s1">&#39;GOTONEXT_SYNC&#39;</span><span class="p">,</span> <span class="c1">// executes the next step of the stage automatically if all the players have a successfull DONE</span>
+    <span class="nx">onstepdone</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stepid</span><span class="p">,</span> <span class="nx">stepname</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// a custom function can be execute to determine the condition for updating</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">stepid</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
+      <span class="p">}</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">stepname</span> <span class="o">===</span> <span class="s1">&#39;XX&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
+      <span class="p">}</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">CONDITION</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>init the whole stage</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="p">},</span>
+    <span class="nx">onexit</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>something to do when this stage is done</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="p">},</span>
+    <span class="nx">onfail</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>handle an error (if this was not already handled by the step itself)</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="p">}</span>
+  <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<p>An object in the game manages all steps and stages</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">addSteps</span><span class="p">([</span>
+                        <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;instructions&#39;</span><span class="p">,</span>
+                          <span class="nx">cb</span><span class="o">:</span> <span class="nx">showInstructions</span><span class="p">,</span>
+                          <span class="nx">descr</span><span class="o">:</span> <span class="s2">&quot;Here I tell what happens verbosely. I am optional.&quot;</span><span class="p">,</span>
+                          <span class="nx">done</span><span class="o">:</span> <span class="nx">onDONEfunction</span><span class="p">,</span> <span class="c1">// optional</span>
+                          <span class="nx">init</span><span class="o">:</span> <span class="nx">initFunc</span> <span class="p">}</span>
+                     <span class="p">,</span>  <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;quiz&#39;</span><span class="p">,</span>
+                        <span class="nx">cb</span><span class="o">:</span> <span class="nx">makeQuiz</span><span class="p">,</span>
+                        <span class="nx">done</span><span class="o">:</span> <span class="nx">checkQuiz</span> <span class="p">}</span>
+                     <span class="p">,</span>  <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;offer&#39;</span><span class="p">,</span>
+                        <span class="nx">cb</span><span class="o">:</span> <span class="nx">makeOffer</span> <span class="p">}</span>
+                     <span class="p">,</span>  <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;respond&#39;</span><span class="p">,</span>
+                        <span class="nx">cb</span><span class="o">:</span> <span class="nx">respond</span> <span class="p">}</span>
+                     <span class="p">,</span>  <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;questionnaire&#39;</span><span class="p">,</span>
+                        <span class="nx">cb</span><span class="o">:</span> <span class="nx">showQuestionnaire</span>
+  <span class="p">]);</span>
+
+  <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>The client can have all the stages locally, or can receive each stage separately from the server according to how the game develops</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+
+  <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>Chaining together different game stages gives the game plot.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>The logic must always have the game plot already defined before starting the game</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">start</span><span class="p">()</span>
+      <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;tutorial&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;game&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;questionnaire&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">gameover</span><span class="p">();</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+</div>
+<p>Equivalent to</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">setPlot</span><span class="p">([</span><span class="s1">&#39;tutorial&#39;</span><span class="p">,</span> <span class="s1">&#39;game&#39;</span><span class="p">,</span> <span class="s1">&#39;questionnaire&#39;</span><span class="p">]);</span>
+
+
+
+
+
+  <span class="nx">game</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;xxx&#39;</span><span class="p">;</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">description</span> <span class="o">=</span> <span class="s1">&#39;xxx&#39;</span><span class="p">;</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.0.1&#39;</span><span class="p">;</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">observer</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> <span class="c1">// false</span>
+
+  <span class="nx">game</span><span class="p">.</span><span class="nx">onstepdone</span> <span class="o">=</span> <span class="s1">&#39;WAIT&#39;</span><span class="p">;</span> <span class="c1">//&#39;GOTONEXT&#39;, &#39;GOTONEXT_SYNC&#39;, custom_function</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span> <span class="c1">// optional</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">gameover</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span> <span class="c1">// optional</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>All optional - defaults already defined</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">game</span><span class="p">.</span><span class="nx">waiting</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span>  <span class="c1">// what to do when the game is in the state &#39;Waiting for other players to continue&#39;;</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">pause</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span>  <span class="c1">// what to do when the game is paused</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">resuming</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span> <span class="c1">// what to do when a game is resuming</span>
+
+  <span class="k">return</span> <span class="nx">game</span><span class="p">;</span>
+
+<span class="p">})(</span><span class="nx">node</span><span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

@@ -22,73 +22,13 @@
         <a href="#nodegame">nodeGame</a>
       </div>
       <div class="heading h2">
-        <a href="#libraries">Libraries</a>
+        <a href="#loading-libraries">Loading libraries</a>
       </div>
       <div class="heading h3">
-        <a href="#node.jsus">node.JSUS</a>
+        <a href="#dependencies">Dependencies</a>
       </div>
       <div class="heading h3">
-        <a href="#node.nddb">node.NDDB</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.socket.io-client">node.Socket.io-client</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.eventemitter">node.EventEmitter</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.gamestate">node.GameState</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.playerlist">node.PlayerList</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.player">node.Player</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.gamemsg">node.GameMsg</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.gameloop">node.GameLoop</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.gamemsggenerator">node.GameMsgGenerator</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.gamesocketclient">node.GameSocketClient</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.gamedb">node.GameDB</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.gamebit">node.GameBit</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.game">node.Game</a>
-      </div>
-      <div class="heading h3">
-        <a href="#addons">Addons</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.triggermanager">node.TriggerManager</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.gamesession">node.GameSession</a>
-      </div>
-      <div class="heading h2">
-        <a href="#file-system">File System</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.fs">node.fs</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.fs.writecsv--node.js-">node.fs.writeCsv (Node.JS)</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.memory.dump--node.js-">node.memory.dump (Node.JS)</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.memory.dumpallindexes--node.js-">node.memory.dumpAllIndexes (Node.JS)</a>
+        <a href="#loading-event-listeners">Loading Event listeners</a>
       </div>
     </div>
   </div>
@@ -112,22 +52,21 @@
 <p>Copyright(c) 2012 Stefano Balietti
 MIT Licensed </p>
 
-<p>nodeGame is a free, open source, event-driven javascript framework for on line, 
+<p>nodeGame is a free, open source, event-driven javascript framework for on line,
 multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-  
-<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="libraries">
+<div class="pilwrap" id="loading-libraries">
   <h2>
-    <a href="#libraries" class="pilcrow">&#182;</a>
-    Libraries
+    <a href="#loading-libraries" class="pilcrow">&#182;</a>
+    Loading libraries
   </h2>
 </div>
 
@@ -136,28 +75,18 @@ multiplayer games in the browser.</p>
         </td>
       </tr>
       <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.jsus">
+        <td class="docs">
+<div class="pilwrap" id="dependencies">
   <h3>
-    <a href="#node.jsus" class="pilcrow">&#182;</a>
-    node.JSUS
+    <a href="#dependencies" class="pilcrow">&#182;</a>
+    Dependencies
   </h3>
 </div>
 
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;JSUS&#39;</span><span class="p">).</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;JSUS&#39;</span><span class="p">).</span><span class="nx">JSUS</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">support</span> <span class="o">=</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">compatibility</span><span class="p">();</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;NDDB&#39;</span><span class="p">).</span><span class="nx">NDDB</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -165,638 +94,158 @@ multiplayer games in the browser.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
 </div>
-<p>Update compatibility report</p>
+<p>Costants</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">support</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">compatibility</span><span class="p">();</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.nddb">
-  <h3>
-    <a href="#node.nddb" class="pilcrow">&#182;</a>
-    node.NDDB
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;NDDB&#39;</span><span class="p">).</span><span class="nx">NDDB</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.socket.io-client">
-  <h3>
-    <a href="#node.socket.io-client" class="pilcrow">&#182;</a>
-    node.Socket.io-client
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">io</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;socket.io-client&#39;</span><span class="p">);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.eventemitter">
-  <h3>
-    <a href="#node.eventemitter" class="pilcrow">&#182;</a>
-    node.EventEmitter
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/EventEmitter&#39;</span><span class="p">).</span><span class="nx">EventEmitter</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.gamestate">
-  <h3>
-    <a href="#node.gamestate" class="pilcrow">&#182;</a>
-    node.GameState
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameState</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/GameState&#39;</span><span class="p">).</span><span class="nx">GameState</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.playerlist">
-  <h3>
-    <a href="#node.playerlist" class="pilcrow">&#182;</a>
-    node.PlayerList
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/PlayerList&#39;</span><span class="p">).</span><span class="nx">PlayerList</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.player">
-  <h3>
-    <a href="#node.player" class="pilcrow">&#182;</a>
-    node.Player
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">Player</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/PlayerList&#39;</span><span class="p">).</span><span class="nx">Player</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.gamemsg">
-  <h3>
-    <a href="#node.gamemsg" class="pilcrow">&#182;</a>
-    node.GameMsg
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/GameMsg&#39;</span><span class="p">).</span><span class="nx">GameMsg</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.gameloop">
-  <h3>
-    <a href="#node.gameloop" class="pilcrow">&#182;</a>
-    node.GameLoop
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameLoop</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/GameLoop&#39;</span><span class="p">).</span><span class="nx">GameLoop</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.gamemsggenerator">
-  <h3>
-    <a href="#node.gamemsggenerator" class="pilcrow">&#182;</a>
-    node.GameMsgGenerator
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/GameMsgGenerator&#39;</span><span class="p">).</span><span class="nx">GameMsgGenerator</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.gamesocketclient">
-  <h3>
-    <a href="#node.gamesocketclient" class="pilcrow">&#182;</a>
-    node.GameSocketClient
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameSocketClient</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/GameSocketClient&#39;</span><span class="p">).</span><span class="nx">GameSocketClient</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.gamedb">
-  <h3>
-    <a href="#node.gamedb" class="pilcrow">&#182;</a>
-    node.GameDB
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/GameDB&#39;</span><span class="p">).</span><span class="nx">GameDB</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.gamebit">
-  <h3>
-    <a href="#node.gamebit" class="pilcrow">&#182;</a>
-    node.GameBit
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameBit</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/GameDB&#39;</span><span class="p">).</span><span class="nx">GameBit</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.game">
-  <h3>
-    <a href="#node.game" class="pilcrow">&#182;</a>
-    node.Game
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">Game</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/Game&#39;</span><span class="p">).</span><span class="nx">Game</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="addons">
-  <h3>
-    <a href="#addons" class="pilcrow">&#182;</a>
-    Addons
-  </h3>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">GameTimer</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./addons/GameTimer&#39;</span><span class="p">).</span><span class="nx">GameTimer</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.triggermanager">
-  <h3>
-    <a href="#node.triggermanager" class="pilcrow">&#182;</a>
-    node.TriggerManager
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">TriggerManager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./addons/TriggerManager&#39;</span><span class="p">).</span><span class="nx">TriggerManager</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.gamesession">
-  <h3>
-    <a href="#node.gamesession" class="pilcrow">&#182;</a>
-    node.GameSession
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">API</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">public
-</span>
-    </span>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./addons/GameSession&#39;</span><span class="p">).</span><span class="nx">GameSession</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="file-system">
-  <h2>
-    <a href="#file-system" class="pilcrow">&#182;</a>
-    File System
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="node.fs">
-  <h3>
-    <a href="#node.fs" class="pilcrow">&#182;</a>
-    node.fs
-  </h3>
-</div>
-
-
-<p>Responsible for the file system operations</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">fs</span> <span class="o">=</span> <span class="p">{};</span>
-
-<span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">),</span>
-  <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">),</span>
-  <span class="nx">csv</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;ya-csv&#39;</span><span class="p">);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.fs.writecsv--node.js-">
-  <h3>
-    <a href="#node.fs.writecsv--node.js-" class="pilcrow">&#182;</a>
-    node.fs.writeCsv (Node.JS)
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Serializes an object as a csv file</p>
-
-<p>It accepts a configuration object as third paramter. Available options:</p>
-
-<p><code>
-{ headers: ['A', 'B', 'C'],  // specify the headers directly
-  writeHeaders: false,     // default true,
-  flags: 'w',         // default, 'a'
-  encoding: 'utf-8',     // default null
-  mode: 0777,         // default 0666 <br />
-}
-</code>   </p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">path</span>
-      <span class="dox_type">string</span>
-      <span>The path to the csv file</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">obj</span>
-      <span class="dox_type">object</span>
-      <span>The object to serialze as csv file</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">options</span>
-      <span class="dox_type">options</span>
-      <span>Optional. Configuration options
-
-@see <a href="http://nodejs.org/api/fs.html#fs_fs_createwritestream_path_options">node fs api</a></span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">fs</span><span class="p">.</span><span class="nx">writeCsv</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">obj</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">path</span> <span class="o">||</span> <span class="o">!</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Empty path or object. Aborting.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">,</span> <span class="s1">&#39;node.fs.writeCsv: &#39;</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-  <span class="nx">options</span><span class="p">.</span><span class="nx">flags</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">flags</span> <span class="o">||</span> <span class="s1">&#39;a&#39;</span><span class="p">;</span>
-  
-  <span class="kd">var</span> <span class="nx">writer</span> <span class="o">=</span> <span class="nx">csv</span><span class="p">.</span><span class="nx">createCsvStreamWriter</span><span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">createWriteStream</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">));</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">constants</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/variables&#39;</span><span class="p">);</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/stepRules&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
 </div>
-<!-- Add headers, if not otherwise requested, and if found -->
+<p>ErrorManager</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">headers</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">))</span> <span class="p">{</span>
-      <span class="nx">headers</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">headers</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-    <span class="p">}</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="nx">headers</span> <span class="o">&amp;&amp;</span> <span class="nx">headers</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">writer</span><span class="p">.</span><span class="nx">writeRecord</span><span class="p">(</span><span class="nx">headers</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Could not find headers&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-  
-  <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">writer</span><span class="p">.</span><span class="nx">writeRecord</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-  <span class="p">}</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.memory.dump--node.js-">
-  <h3>
-    <a href="#node.memory.dump--node.js-" class="pilcrow">&#182;</a>
-    node.memory.dump (Node.JS)
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Serializes as a csv file all the entries of the memory object</p>
-
-<p>By defaults, no headers are added. If requested, headers can 
-be specified in the <code>options</code> parameter.</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">path</span>
-      <span class="dox_type">string</span>
-      <span>The path to the csv file</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">options</span>
-      <span class="dox_type">options</span>
-      <span>Optional. Configuration options
-
-@see node.fs.writeCsv</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">dump</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Missing path parameter&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">,</span> <span class="s1">&#39;node.memory.dump: &#39;</span><span class="p">);</span>
-    <span class="k">return</span><span class="p">;</span>
-  <span class="p">}</span>
-  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">fs</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetchValues</span><span class="p">(),</span> <span class="nx">options</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.memory.dumpallindexes--node.js-">
-  <h3>
-    <a href="#node.memory.dumpallindexes--node.js-" class="pilcrow">&#182;</a>
-    node.memory.dumpAllIndexes (Node.JS)
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Serialezes as csv file each of the hashed indexes of the memory object</p>
-
-<p>Each file is named after the name of the hashed property 
-and the index. E.g. state_3.1.1.csv, or player_18432986411.csv`, etc.</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">dir</span>
-      <span class="dox_type">string</span>
-      <span>The path to the folder in which all files will be saved</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">options</span>
-      <span class="dox_type">options</span>
-      <span>Optional. Configuration options
-
-@see node.fs.writeCsv</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">dumpAllIndexes</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">dir</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Missing dir parameter&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">,</span> <span class="s1">&#39;node.memory.dumpAllIndexes: &#39;</span><span class="p">);</span>
-    <span class="k">return</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  <span class="k">if</span> <span class="p">(</span><span class="nx">dir</span><span class="p">[</span><span class="nx">dir</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="nx">dir</span> <span class="o">=</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">ipath</span><span class="p">;</span>
-  <span class="k">for</span> <span class="p">(</span><span class="nx">hash</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">__H</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">hash</span><span class="p">)){</span>
-      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">])</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">index</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">])</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">].</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">index</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">ipath</span> <span class="o">=</span> <span class="nx">dir</span> <span class="o">+</span> <span class="nx">hash</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">index</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/ErrorManager&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
-<!-- node.log('Writing ' + ipath, 'DEBUG', 'node.memory.dumpAllIndexes: '); -->
+<p>Events</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>              <span class="nx">node</span><span class="p">.</span><span class="nx">fs</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">ipath</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">[</span><span class="nx">hash</span><span class="p">][</span><span class="nx">index</span><span class="p">].</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetchValues</span><span class="p">(),</span> <span class="nx">options</span><span class="p">);</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
-        
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-  
-<span class="p">};</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">EventEmitterManager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/EventEmitter&#39;</span><span class="p">).</span><span class="nx">EventEmitterManager</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/EventEmitter&#39;</span><span class="p">).</span><span class="nx">EventEmitter</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>Core</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameStage&#39;</span><span class="p">).</span><span class="nx">GameStage</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/PlayerList&#39;</span><span class="p">).</span><span class="nx">PlayerList</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">Player</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/PlayerList&#39;</span><span class="p">).</span><span class="nx">Player</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameMsg&#39;</span><span class="p">).</span><span class="nx">GameMsg</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Stager&#39;</span><span class="p">).</span><span class="nx">Stager</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">GamePlot</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GamePlot&#39;</span><span class="p">).</span><span class="nx">GamePlot</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameMsgGenerator&#39;</span><span class="p">).</span><span class="nx">GameMsgGenerator</span><span class="p">;</span>
+    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>Sockets</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">SocketFactory</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/SocketFactory&#39;</span><span class="p">).</span><span class="nx">SocketFactory</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">Socket</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Socket&#39;</span><span class="p">).</span><span class="nx">Socket</span><span class="p">;</span>
 
-<span class="p">})(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/sockets/SocketIo.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/sockets/SocketDirect.js&#39;</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<p>Game</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameDB&#39;</span><span class="p">).</span><span class="nx">GameDB</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">GameBit</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameDB&#39;</span><span class="p">).</span><span class="nx">GameBit</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">Game</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Game&#39;</span><span class="p">).</span><span class="nx">Game</span><span class="p">;</span>
+    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>Extra (to be tested)</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">GroupManager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GroupManager&#39;</span><span class="p">).</span><span class="nx">GroupManager</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">RoleMapper</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/RoleMapper&#39;</span><span class="p">).</span><span class="nx">RoleMapper</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Session&#39;</span><span class="p">).</span><span class="nx">GameSession</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>Addons</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">GameTimer</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./addons/GameTimer&#39;</span><span class="p">).</span><span class="nx">GameTimer</span><span class="p">;</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">TriggerManager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./addons/TriggerManager&#39;</span><span class="p">).</span><span class="nx">TriggerManager</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>FS</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameFS</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/NodeGameFS&#39;</span><span class="p">).</span><span class="nx">NodeGameFS</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+</div>
+<p>Load main nodegame-client class    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameClient</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/NodeGameClient&#39;</span><span class="p">).</span><span class="nx">NodeGameClient</span><span class="p">;</span>
+    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>Load extensions to the prototype</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/log.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/setup.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/alias.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/events.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/connect.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/player.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/ssgd.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/commands.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/extra.js&#39;</span><span class="p">);</span>
+
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/variables.js&#39;</span><span class="p">);</span>
+
+    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="loading-event-listeners">
+  <h3>
+    <a href="#loading-event-listeners" class="pilcrow">&#182;</a>
+    Loading Event listeners
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/incoming.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/internal.js&#39;</span><span class="p">);</span>
+
+<span class="p">})();</span>
 </pre></div>
         </td>
       </tr>

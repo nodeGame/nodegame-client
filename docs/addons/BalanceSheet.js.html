@@ -72,9 +72,9 @@
 
   </div>
   <div class="body"><p>Copyright(c) 2012 Stefano Balietti
-MIT Licensed </p>
+MIT Licensed</p>
 
-<p>Keeps a record of </p>
+<p>Keeps a record of</p>
 
 <hr />
   </div>
@@ -93,15 +93,14 @@ MIT Licensed </p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
-<span class="nx">exports</span><span class="p">.</span><span class="nx">BalanceSheet</span> <span class="o">=</span> <span class="nx">BalanceSheet</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">BalanceSheet</span> <span class="o">=</span> <span class="nx">BalanceSheet</span><span class="p">;</span>
 
 
 <span class="kd">var</span> <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
   <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">,</span>
   <span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameDB</span><span class="p">,</span>
   <span class="nx">GameBit</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameBit</span><span class="p">;</span>
-  
+
   <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -110,7 +109,7 @@ MIT Licensed </p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
 </div>
-<p>//Inheriting from NDDB <br />
+<p>//Inheriting from NDDB
 BalanceSheet.prototype = JSUS.clone(NDDB.prototype);
 BalanceSheet.prototype.constructor = BalanceSheet;</p>
         </td>
@@ -121,7 +120,7 @@ BalanceSheet.prototype.constructor = BalanceSheet;</p>
     <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cannot add a sheet with no name.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
   <span class="p">}</span>
-  
+
   <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sheets</span><span class="p">[</span><span class="nx">sheet</span><span class="p">])</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;A sheet with the same already exists: &#39;</span> <span class="o">+</span> <span class="nx">sheet</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
@@ -145,8 +144,7 @@ BalanceSheet.prototype.constructor = BalanceSheet;</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">BalanceSheet</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">BalanceSheet</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -159,11 +157,10 @@ BalanceSheet.prototype.constructor = BalanceSheet;</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
-  <span class="k">this</span><span class="p">.</span><span class="nx">sheets</span> <span class="o">=</span> <span class="p">{};</span>
-  
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">sheets</span> <span class="o">=</span> <span class="p">{};</span>
+
   <span class="k">this</span><span class="p">.</span><span class="nx">sheet</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  
+
   <span class="nx">log</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">log</span> <span class="o">||</span> <span class="nx">log</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -211,7 +208,7 @@ BalanceSheet.prototype.constructor = BalanceSheet;</p>
   </div>
   <div class="body"><p>Configures the BalanceSheet instance</p>
 
-<p>Takes the configuration as an input parameter or 
+<p>Takes the configuration as an input parameter or
 recycles the settings in <code>this.options</code>.</p>
 
 <p>The configuration object is of the type</p>
@@ -219,9 +216,9 @@ recycles the settings in <code>this.options</code>.</p>
 <p>var options = {
     returnAt: 'first', // or 'last'
     triggers: [ myFunc,
-          myFunc2 
+          myFunc2
     ],
-  } </p>
+  }</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -326,11 +323,11 @@ this.sheets[sheet].each(function(p){
 
 <span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">report</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sheet</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isValidSheet</span><span class="p">(</span><span class="nx">sheet</span><span class="p">))</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  
-  
+
+
   <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">sheets</span><span class="p">[</span><span class="nx">sheet</span><span class="p">].</span><span class="nx">keep</span><span class="p">([</span><span class="s1">&#39;__balance&#39;</span><span class="p">]);</span>
-  
-  
+
+
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -372,8 +369,7 @@ this.sheets[sheet].each(function(p){
   <span class="p">}</span>
   <span class="nx">triggersArray</span> <span class="o">=</span> <span class="p">[];</span>
   <span class="k">return</span> <span class="nx">clear</span><span class="p">;</span>
-<span class="p">};</span>
-  </pre></div>
+<span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -394,7 +390,7 @@ this.sheets[sheet].each(function(p){
 <div class="pilwrap">
   <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
-<p>Inheriting from NDDB    </p>
+<p>Inheriting from NDDB</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Sheet</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
 <span class="nx">Sheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Sheet</span><span class="p">;</span>
@@ -403,7 +399,7 @@ this.sheets[sheet].each(function(p){
   <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
   <span class="nx">NDDB</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">,</span> <span class="nx">parent</span><span class="p">);</span>
-  
+
   <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">pl</span><span class="p">;</span>
 <span class="p">}</span></pre></div>
@@ -460,12 +456,12 @@ this.sheets[sheet].each(function(p){
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">Sheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">key</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  
+
   <span class="nx">state</span> <span class="o">=</span> <span class="nx">state</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
   <span class="nx">player</span> <span class="o">=</span> <span class="nx">player</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
 
   <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameBit</span><span class="p">({</span>
-            <span class="nx">player</span><span class="o">:</span> <span class="nx">player</span><span class="p">,</span> 
+            <span class="nx">player</span><span class="o">:</span> <span class="nx">player</span><span class="p">,</span>
             <span class="nx">key</span><span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
             <span class="nx">value</span><span class="o">:</span> <span class="nx">value</span><span class="p">,</span>
             <span class="nx">state</span><span class="o">:</span> <span class="nx">state</span><span class="p">,</span>
@@ -477,7 +473,7 @@ this.sheets[sheet].each(function(p){
 
 <span class="nx">Sheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-  
+
   <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>

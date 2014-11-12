@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>nodegame.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../', thisFile = 'lib/nodegame.js', defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#nodegame">nodeGame</a>
+      </div>
+      <div class="heading h2">
+        <a href="#methods">Methods</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.env">node.env</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.createplayer">node.createPlayer</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.connect">node.connect</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.play">node.play</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.replay">node.replay</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.emit">node.emit</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.say">node.say</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.set">node.set</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.get">node.get</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.on">node.on</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.done">node.done</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.getcurrenteventemitter">node.getCurrentEventEmitter</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.once">node.once</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.off">node.off</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.redirect">node.redirect</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.remotecommand">node.remoteCommand</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegame">
+  <h1>
+    <a href="#nodegame" class="pilcrow">&#182;</a>
+    nodeGame
+  </h1>
+</div>
+
+  </div>
+  <div class="body"><p>Social Experiments in the Browser</p>
+
+<p>Copyright(c) 2012 Stefano Balietti MIT Licensed</p>
+
+<p><em>nodeGame</em> is a free, open source, event-driven javascript framework for on
+line, multiplayer games in the browser.</p>
+
+<hr />
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">EventEmitterManager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">EventEmitterManager</span><span class="p">,</span>
+        <span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">EventEmitter</span><span class="p">,</span>
+        <span class="nx">Socket</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Socket</span><span class="p">,</span>
+        <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
+        <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
+        <span class="nx">Game</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">,</span>
+        <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
+        <span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameSession</span><span class="p">,</span>
+        <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="methods">
+  <h2>
+    <a href="#methods" class="pilcrow">&#182;</a>
+    Methods
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.env">
+  <h3>
+    <a href="#node.env" class="pilcrow">&#182;</a>
+    node.env
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Executes a block of code conditionally to nodeGame environment variables</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">env</span>
+      <span>{string} The name of the environment</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">func</span>
+      <span>{function} The callback function to execute</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">ctx</span>
+      <span>{object} Optional. The context of execution</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">params</span>
+      <span>{array} Optional. An array of additional parameters for the callback</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">env</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">env</span> <span class="o">||</span> <span class="o">!</span><span class="nx">func</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="nx">env</span><span class="p">])</span> <span class="k">return</span><span class="p">;</span>
+        <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">ctx</span> <span class="o">||</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="nx">params</span> <span class="o">=</span> <span class="nx">params</span> <span class="o">||</span> <span class="p">[];</span>
+        <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">params</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.createplayer">
+  <h3>
+    <a href="#node.createplayer" class="pilcrow">&#182;</a>
+    node.createPlayer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Creates player</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">&gt;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STARTING</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">!==</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameIllegalOperationError</span><span class="p">(</span>
+                    <span class="s1">&#39;createPlayer: cannot create player while game is running&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">player</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Player</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
+        <span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stateLevel</span><span class="p">;</span>
+        <span class="nx">player</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stageLevel</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>Overwrite existing 'current' player:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PLAYER_CREATED&#39;</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.connect">
+  <h3>
+    <a href="#node.connect" class="pilcrow">&#182;</a>
+    node.connect
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Establishes a connection with a nodeGame server</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">conf</span>
+      <span class="dox_type">object</span>
+      <span>A configuration object</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">game</span>
+      <span class="dox_type">object</span>
+      <span>The game object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">url</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_CONNECTED&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.play">
+  <h3>
+    <a href="#node.play" class="pilcrow">&#182;</a>
+    node.play
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Starts a game</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">play</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.replay">
+  <h3>
+    <a href="#node.replay" class="pilcrow">&#182;</a>
+    node.replay
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Moves the game stage to 1.1.1</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">rest</span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, to erase the game memory before update the game stage</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">replay</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">reset</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">reset</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">execStep</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="s2">&quot;1.1.1&quot;</span><span class="p">));</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.emit">
+  <h3>
+    <a href="#node.emit" class="pilcrow">&#182;</a>
+    node.emit
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Emits an event locally on all registered event handlers</p>
+
+<p>The first parameter be the name of the event as <em>string</em>,
+followed by any number of parameters that will be passed to the
+handler callback.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitterManager.emit
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.say">
+  <h3>
+    <a href="#node.say" class="pilcrow">&#182;</a>
+    node.say
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sends a DATA message to a specified recipient</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">text</span>
+      <span class="dox_type">string</span>
+      <span>The label associated to the message</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">to</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The recipient of the message. Defaults, 'SERVER'</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">data</span>
+      <span class="dox_type">mixed</span>
+      <span>Optional. The content of the DATA message</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">say</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">label</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">payload</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">msg</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">label</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot say empty message&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
+            <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
+            <span class="nx">text</span><span class="o">:</span> <span class="nx">label</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="nx">payload</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>@TODO when refactoring is finished, emit this event.
+By default there nothing should happen, but people could listen to it
+node.emit('out.say.DATA', msg);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.set">
+  <h3>
+    <a href="#node.set" class="pilcrow">&#182;</a>
+    node.set
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Stores a key-value pair in the server memory</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">key</span>
+      <span class="dox_type">string</span>
+      <span>An alphanumeric (must not be unique)</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">The</span>
+      <span class="dox_type">mixed</span>
+      <span>value to store (can be of any type)</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">set</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">msg</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot set undefined key&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+            <span class="nx">action</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span><span class="p">,</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
+            <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
+            <span class="nx">reliable</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nx">text</span><span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="nx">value</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+</div>
+<p>@TODO when refactoring is finished, emit this event.
+By default there nothing should happen, but people could listen to it
+node.emit('out.set.DATA', msg);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.get">
+  <h3>
+    <a href="#node.get" class="pilcrow">&#182;</a>
+    node.get
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sends a GET message to a recipient and listen to the reply</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">key</span>
+      <span class="dox_type">string</span>
+      <span>The label of the GET message</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">cb</span>
+      <span class="dox_type">function</span>
+      <span>The callback function to handle the return message
+
+Experimental. Undocumented (for now)</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">g</span><span class="p">,</span> <span class="nx">ee</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot get empty key&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.get requires a valid callback function&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+            <span class="nx">action</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
+            <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
+            <span class="nx">reliable</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nx">text</span><span class="o">:</span> <span class="nx">key</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>@TODO when refactoring is finished, emit this event.
+By default there nothing should happen, but people could listen to it
+node.events.emit('out.get.DATA', msg);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">ee</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span><span class="p">();</span>
+
+        <span class="kd">function</span> <span class="nx">g</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+                <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+
+        <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.on">
+  <h3>
+    <a href="#node.on" class="pilcrow">&#182;</a>
+    node.on
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Registers an event listener</p>
+
+<p>Listeners registered before a game is started, e.g. in
+the init function of the game object, will stay valid
+throughout the game. Listeners registered after the game
+is started will be removed after the game has advanced
+to its next stage.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">event</span>
+      <span class="dox_type">string</span>
+      <span>The name of the event</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">listener</span>
+      <span class="dox_type">function</span>
+      <span>The callback function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ee</span><span class="p">;</span>
+        <span class="nx">ee</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span><span class="p">();</span>
+        <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.done">
+  <h3>
+    <a href="#node.done" class="pilcrow">&#182;</a>
+    node.done
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Emits a DONE event</p>
+
+<p>A DONE event signals that the player has completed
+a game step. After a DONE event the step rules are
+evaluated.</p>
+
+<p>Accepts any number of input parameters that will be
+passed to the <code>node.emit</code>.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.emit</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">done</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="k">switch</span><span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">default</span><span class="o">:</span>
+
+            <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.getcurrenteventemitter">
+  <h3>
+    <a href="#node.getcurrenteventemitter" class="pilcrow">&#182;</a>
+    node.getCurrentEventEmitter
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the last active event emitter obj</p>
+
+<p>TODO: finish the method</p>
+
+<p>TODO: add proper doc</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">The</span>
+      <span class="dox_type">EventEmitter</span>
+      <span>current event emitter obj</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>NodeGame default listeners</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">ng</span><span class="p">;</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>It is a game init function</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">((</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">())</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>TODO return the stage ee</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<p>It is a game step function</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.once">
+  <h3>
+    <a href="#node.once" class="pilcrow">&#182;</a>
+    node.once
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Registers an event listener that will be removed
+after its first invocation</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">event</span>
+      <span class="dox_type">string</span>
+      <span>The name of the event</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">listener</span>
+      <span class="dox_type">function</span>
+      <span>The callback function</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.on</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.off
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">event</span> <span class="o">||</span> <span class="o">!</span><span class="nx">listener</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.off">
+  <h3>
+    <a href="#node.off" class="pilcrow">&#182;</a>
+    node.off
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Deregisters one or multiple event listeners</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">event</span>
+      <span class="dox_type">string</span>
+      <span>The name of the event</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">listener</span>
+      <span class="dox_type">function</span>
+      <span>The callback function</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.on</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.EventEmitter.remove
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">off</span>  <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">func</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.redirect">
+  <h3>
+    <a href="#node.redirect" class="pilcrow">&#182;</a>
+    node.redirect
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Redirects a player to the specified url</p>
+
+<p>Works only if it is a monitor client to send
+the message, i.e. players cannot redirect each
+other.</p>
+
+<p>Examples</p>
+
+<p>// Redirect to <a href='http://mydomain/mygame/missing_auth'>http://mydomain/mygame/missing_auth</a>
+ node.redirect('missing_auth', 'xxx');</p>
+
+<p>// Redirect to external urls
+ node.redirect('<a href='http://www.google.com'>http://www.google.com</a>');</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">url</span>
+      <span class="dox_type">string</span>
+      <span>the url of the redirection</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">who</span>
+      <span class="dox_type">string</span>
+      <span>A player id or 'ALL'</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if the redirect message is sent</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">redirect</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">who</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">msg</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;redirect requires a valid string&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">who</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;redirect requires a valid recipient&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">REDIRECT</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="nx">url</span><span class="p">,</span>
+            <span class="nx">to</span><span class="o">:</span> <span class="nx">who</span>
+        <span class="p">});</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.remotecommand">
+  <h3>
+    <a href="#node.remotecommand" class="pilcrow">&#182;</a>
+    node.remoteCommand
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Executes a game command on a client</p>
+
+<p>Works only if it is a monitor client to send
+the message, i.e. players cannot send game commands
+to each others</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">command</span>
+      <span class="dox_type">string</span>
+      <span>The command to execute</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">to</span>
+      <span class="dox_type">string</span>
+      <span>The id of the player to command</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if the game command is sent</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">command</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">msg</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">command</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;remoteCommand requires a valid command&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;remoteCommand requires a valid recipient&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">GAMECOMMAND</span><span class="p">,</span>
+            <span class="nx">text</span><span class="o">:</span> <span class="nx">command</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="nx">options</span><span class="p">,</span>
+            <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span>
+        <span class="p">});</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">version</span> <span class="o">+</span> <span class="s1">&#39; loaded&#39;</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+</div>
+Creating the objects
+<!-- object commented in index.js -->
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventEmitterManager</span><span class="p">();</span>
+
+    <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameMsgGenerator</span><span class="p">();</span>
+
+    <span class="nx">node</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameSession</span><span class="p">();</span>
+
+    <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Socket</span><span class="p">();</span>
+
+    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Game</span><span class="p">();</span>
+
+
+<span class="p">})(</span>
+    <span class="k">this</span>
+ <span class="p">,</span>  <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ErrorManager.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../../', thisFile = 'lib/core/ErrorManager.js', defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#errormanager">ErrorManager</a>
+      </div>
+      <div class="heading h2">
+        <a href="#handles-the-runtime-errors.">Handles the runtime errors.</a>
+      </div>
+      <div class="heading h2">
+        <a href="#global-scope">Global scope</a>
+      </div>
+      <div class="heading h2">
+        <a href="#errormanager">ErrorManager</a>
+      </div>
+      <div class="heading h2">
+        <a href="#errormanager.lasterror">ErrorManager.lastError</a>
+      </div>
+      <div class="heading h2">
+        <a href="#errormanager.init">ErrorManager.init</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegameruntimeerror">NodeGameRuntimeError</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegamestagecallbackerror">NodeGameStageCallbackError</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegamemisconfiguredgameerror">NodeGameMisconfiguredGameError</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegameillegaloperationerror">NodeGameIllegalOperationError</a>
+      </div>
+      <div class="heading h2">
+        <a href="#closure">Closure</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="errormanager">
+  <h1>
+    <a href="#errormanager" class="pilcrow">&#182;</a>
+    ErrorManager
+  </h1>
+</div>
+
+
+<p>Copyright(c) 2014 Stefano Balietti
+MIT Licensed</p>
+  </div>
+  <div class="body">
+<div class="pilwrap" id="handles-the-runtime-errors.">
+  <h2>
+    <a href="#handles-the-runtime-errors." class="pilcrow">&#182;</a>
+    Handles the runtime errors.
+  </h2>
+</div>
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="global-scope">
+  <h2>
+    <a href="#global-scope" class="pilcrow">&#182;</a>
+    Global scope
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+    <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span> <span class="o">=</span> <span class="nx">NodeGameRuntimeError</span><span class="p">;</span>
+    <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameStageCallbackError</span> <span class="o">=</span> <span class="nx">NodeGameStageCallbackError</span><span class="p">;</span>
+    <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span> <span class="o">=</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">;</span>
+    <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameIllegalOperationError</span> <span class="o">=</span> <span class="nx">NodeGameIllegalOperationError</span><span class="p">;</span>
+
+    <span class="nx">parent</span><span class="p">.</span><span class="nx">ErrorManager</span> <span class="o">=</span> <span class="nx">ErrorManager</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="errormanager">
+  <h2>
+    <a href="#errormanager" class="pilcrow">&#182;</a>
+    ErrorManager
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a new instance of ErrorManager</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">node</span>
+      <span class="dox_type">NodeGameClient</span>
+      <span>Reference to the active node object.</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">ErrorManager</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="errormanager.lasterror">
+  <h2>
+    <a href="#errormanager.lasterror" class="pilcrow">&#182;</a>
+    ErrorManager.lastError
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Reference to the last error occurred.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">lastError</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="errormanager.init">
+  <h2>
+    <a href="#errormanager.init" class="pilcrow">&#182;</a>
+    ErrorManager.init
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Starts catching run-time errors</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">node</span>
+      <span class="dox_type">NodeGameClient</span>
+      <span>Reference to the active node object.</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">ErrorManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isNodeJS</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+            <span class="nx">process</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;uncaughtException&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">lastError</span> <span class="o">=</span> <span class="nx">err</span><span class="p">;</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Caught exception: &#39;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nb">window</span><span class="p">.</span><span class="nx">onerror</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">linenumber</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">msg</span><span class="p">;</span>
+                <span class="nx">msg</span> <span class="o">=</span> <span class="nx">url</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">linenumber</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">lastError</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">;</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+                <span class="k">return</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">debug</span><span class="p">;</span>
+            <span class="p">};</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameruntimeerror">
+  <h3>
+    <a href="#nodegameruntimeerror" class="pilcrow">&#182;</a>
+    NodeGameRuntimeError
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>An error occurred during the execution of nodeGame</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameRuntimeError</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>Error.apply(this, arguments);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Runtime: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">NodeGameRuntimeError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
+    <span class="nx">NodeGameRuntimeError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">NodeGameRuntimeError</span><span class="p">;</span>
+    <span class="nx">NodeGameRuntimeError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;NodeGameRuntimeError&#39;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegamestagecallbackerror">
+  <h3>
+    <a href="#nodegamestagecallbackerror" class="pilcrow">&#182;</a>
+    NodeGameStageCallbackError
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>An error occurred during the execution of one of the stage callbacks</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameStageCallbackError</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<p>Error.apply(this, arguments);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
+        <span class="k">throw</span> <span class="s1">&#39;StageCallback: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">NodeGameStageCallbackError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
+    <span class="nx">NodeGameStageCallbackError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">NodeGameStageCallbackError</span><span class="p">;</span>
+    <span class="nx">NodeGameStageCallbackError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;NodeGameStageCallbackError&#39;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegamemisconfiguredgameerror">
+  <h3>
+    <a href="#nodegamemisconfiguredgameerror" class="pilcrow">&#182;</a>
+    NodeGameMisconfiguredGameError
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>An error occurred during the configuration of the Game</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>Error.apply(this, arguments);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
+        <span class="k">throw</span> <span class="s1">&#39;MisconfiguredGame: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
+    <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">;</span>
+    <span class="nx">NodeGameMisconfiguredGameError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;NodeGameMisconfiguredGameError&#39;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameillegaloperationerror">
+  <h3>
+    <a href="#nodegameillegaloperationerror" class="pilcrow">&#182;</a>
+    NodeGameIllegalOperationError
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>An error occurred during the configuration of the Game</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameIllegalOperationError</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+</div>
+<p>Error.apply(this, arguments);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
+        <span class="k">throw</span> <span class="s1">&#39;IllegalOperation: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">NodeGameIllegalOperationError</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
+    <span class="nx">NodeGameIllegalOperationError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">NodeGameIllegalOperationError</span><span class="p">;</span>
+    <span class="nx">NodeGameIllegalOperationError</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;NodeGameIllegalOperationError&#39;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="closure">
+  <h2>
+    <a href="#closure" class="pilcrow">&#182;</a>
+    Closure
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

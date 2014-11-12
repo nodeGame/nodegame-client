@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SocketFactory.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../../', thisFile = 'lib/core/SocketFactory.js', defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#socketfactory">SocketFactory</a>
+      </div>
+      <div class="heading h2">
+        <a href="#closure">Closure</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socketfactory">
+  <h1>
+    <a href="#socketfactory" class="pilcrow">&#182;</a>
+    SocketFactory
+  </h1>
+</div>
+
+  </div>
+  <div class="body"><p>Copyright(c) 2014 Stefano Balietti
+MIT Licensed</p>
+
+<p><code>nodeGame</code> component responsible for registering and instantiating
+new GameSocket clients</p>
+
+<p>Contract: Socket prototypes must implement the following methods:
+ - connect: establish a communication channel with a ServerNode instance
+ - send: pushes messages into the communication channel</p>
+
+<hr />
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>Storage for socket types.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">types</span> <span class="o">=</span> <span class="p">{};</span>
+
+    <span class="kd">function</span> <span class="nx">checkContract</span><span class="p">(</span> <span class="nx">proto</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">test</span><span class="p">;</span>
+        <span class="nx">test</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">proto</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">test</span><span class="p">.</span><span class="nx">send</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">test</span><span class="p">.</span><span class="nx">connect</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">getTypes</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">types</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">get</span><span class="p">(</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">options</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">Socket</span> <span class="o">=</span> <span class="nx">types</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">Socket</span><span class="p">)</span> <span class="o">?</span> <span class="k">new</span> <span class="nx">Socket</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">register</span><span class="p">(</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">proto</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">type</span> <span class="o">||</span> <span class="o">!</span><span class="nx">proto</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>only register classes that fulfill the contract</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span> <span class="nx">checkContract</span><span class="p">(</span><span class="nx">proto</span><span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">types</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">proto</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Cannot register invalid Socket class: &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>expose the socketFactory methods</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">SocketFactory</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">checkContract</span><span class="o">:</span> <span class="nx">checkContract</span><span class="p">,</span>
+        <span class="nx">getTypes</span><span class="o">:</span> <span class="nx">getTypes</span><span class="p">,</span>
+        <span class="nx">get</span><span class="o">:</span> <span class="nx">get</span><span class="p">,</span>
+        <span class="nx">register</span><span class="o">:</span> <span class="nx">register</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="closure">
+  <h2>
+    <a href="#closure" class="pilcrow">&#182;</a>
+    Closure
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

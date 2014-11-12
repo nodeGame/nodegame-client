@@ -19,10 +19,13 @@
     <div id="tree"></div>
     <div id="headings">
       <div class="heading h1">
-        <a href="#triggermanager-">TriggerManager:</a>
+        <a href="#triggermanager">TriggerManager</a>
       </div>
       <div class="heading h2">
         <a href="#note-for-developers">Note for developers</a>
+      </div>
+      <div class="heading h2">
+        <a href="#will-be-executed-first.">will be executed first.</a>
       </div>
       <div class="heading h2">
         <a href="#global-scope">Global scope</a>
@@ -34,25 +37,25 @@
         <a href="#public-properties">Public properties</a>
       </div>
       <div class="heading h3">
-        <a href="#triggermanager.triggers">TriggerManager.triggers</a>
-      </div>
-      <div class="heading h2">
-        <a href="#public-properties">Public properties</a>
-      </div>
-      <div class="heading h3">
         <a href="#triggermanager.options">TriggerManager.options</a>
       </div>
       <div class="heading h3">
-        <a href="#triggermanager.returnat">TriggerManager.returnAt</a>
+        <a href="#triggermanager.triggers">TriggerManager.triggers</a>
       </div>
       <div class="heading h3">
-        <a href="#triggermanager.length">TriggerManager.length</a>
+        <a href="#triggermanager.returnat">TriggerManager.returnAt</a>
       </div>
       <div class="heading h2">
         <a href="#triggermanager-methods">TriggerManager methods</a>
       </div>
       <div class="heading h3">
+        <a href="#triggermanager.size">TriggerManager.size</a>
+      </div>
+      <div class="heading h3">
         <a href="#triggermanager.init">TriggerManager.init</a>
+      </div>
+      <div class="heading h3">
+        <a href="#triggermanager.setreturnat">TriggerManager.setReturnAt</a>
       </div>
       <div class="heading h3">
         <a href="#triggermanager.inittriggers">TriggerManager.initTriggers</a>
@@ -72,12 +75,6 @@
       <div class="heading h3">
         <a href="#triggermanager.pulltriggers">TriggerManager.pullTriggers</a>
       </div>
-      <div class="heading h3">
-        <a href="#triggermanager.size">TriggerManager.size</a>
-      </div>
-      <div class="heading h2">
-        <a href="#closure">Closure</a>
-      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -87,18 +84,18 @@
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="triggermanager-">
+<div class="pilwrap" id="triggermanager">
   <h1>
-    <a href="#triggermanager-" class="pilcrow">&#182;</a>
-    TriggerManager:
+    <a href="#triggermanager" class="pilcrow">&#182;</a>
+    TriggerManager
   </h1>
 </div>
 
-  </div>
-  <div class="body"><p>Copyright(c) 2012 Stefano Balietti
-MIT Licensed </p>
 
-<p>Manages a collection of trigger functions to be called sequentially</p>
+<p>Copyright(c) 2014 Stefano Balietti
+MIT Licensed</p>
+  </div>
+  <div class="body"><p>Manages a collection of trigger functions to be called sequentially</p>
 
 
 <div class="pilwrap" id="note-for-developers">
@@ -109,28 +106,36 @@ MIT Licensed </p>
 </div>
 
 
-<p>Triggers are functions that operate on a common object, and each 
-sequentially adds further modifications to it. </p>
+<p>Triggers are functions that operate on a common object, and each
+sequentially adds further modifications to it.</p>
 
 <p>If the TriggerManager were a beauty saloon, the first trigger function
 would wash the hair, the second would cut the washed hair, and the third
 would style it. All these operations needs to be done sequentially, and
 the TriggerManager takes care of handling this process.</p>
 
-<p>If <code>TriggerManager.returnAt</code> is set equal to <code>TriggerManager.first</code>, 
+<p>If <code>TriggerManager.returnAt</code> is set equal to <code>TriggerManager.first</code>,
 the first trigger function returning a truthy value will stop the process
 and the target object will be immediately returned. In these settings,
 if a trigger function returns <code>undefined</code>, the target is passed to the next
-trigger function. </p>
+trigger function.</p>
 
-<p>Notice: TriggerManager works as a <em>LIFO</em> queue, i.e. new trigger functions
-will be executed first.</p>
+<p>Notice: TriggerManager works as a <em>LIFO</em> queue, i.e. new trigger functions</p>
 
-<hr />
+
+<div class="pilwrap" id="will-be-executed-first.">
+  <h2>
+    <a href="#will-be-executed-first." class="pilcrow">&#182;</a>
+    will be executed first.
+  </h2>
+</div>
+
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">){</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -143,11 +148,10 @@ will be executed first.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
-<span class="nx">exports</span><span class="p">.</span><span class="nx">TriggerManager</span> <span class="o">=</span> <span class="nx">TriggerManager</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">TriggerManager</span> <span class="o">=</span> <span class="nx">TriggerManager</span><span class="p">;</span>
 
-<span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">first</span> <span class="o">=</span> <span class="s1">&#39;first&#39;</span><span class="p">;</span>
-<span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">last</span> <span class="o">=</span> <span class="s1">&#39;last&#39;</span><span class="p">;</span></pre></div>
+    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">first</span> <span class="o">=</span> <span class="s1">&#39;first&#39;</span><span class="p">;</span>
+    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">last</span> <span class="o">=</span> <span class="s1">&#39;last&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -163,42 +167,17 @@ will be executed first.</p>
   </div>
   <div class="body"><p>Creates a new instance of TriggerManager</p>
   </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">TriggerManager</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="public-properties">
-  <h2>
-    <a href="#public-properties" class="pilcrow">&#182;</a>
-    Public properties
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>  
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="triggermanager.triggers">
-  <h3>
-    <a href="#triggermanager.triggers" class="pilcrow">&#182;</a>
-    TriggerManager.triggers
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Array of trigger functions </p>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>Configuration options</span>
+    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="k">this</span><span class="p">.</span><span class="nx">triggers</span> <span class="o">=</span> <span class="p">[];</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">TriggerManager</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -229,7 +208,25 @@ will be executed first.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="triggermanager.triggers">
+  <h3>
+    <a href="#triggermanager.triggers" class="pilcrow">&#182;</a>
+    TriggerManager.triggers
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Array of trigger functions</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span> <span class="o">=</span> <span class="p">[];</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -249,49 +246,10 @@ will be executed first.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">returnAt</span> <span class="o">=</span> <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">first</span><span class="p">;</span>
-  <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;returnAt&#39;</span><span class="p">,</span> <span class="p">{</span>
-    <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">at</span><span class="p">){</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">at</span> <span class="o">||</span> <span class="p">(</span><span class="nx">at</span> <span class="o">!==</span> <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">first</span> <span class="o">&amp;&amp;</span> <span class="nx">at</span> <span class="o">!==</span> <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">last</span><span class="p">))</span> <span class="p">{</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Invalid returnAt type: &#39;</span> <span class="o">+</span> <span class="nx">at</span><span class="p">);</span>
-        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-      <span class="p">}</span>
-      <span class="nx">returnAt</span> <span class="o">=</span> <span class="nx">at</span><span class="p">;</span>
-      <span class="k">return</span> <span class="nx">at</span><span class="p">;</span>
-    <span class="p">},</span>
-    <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
-      <span class="k">return</span> <span class="nx">returnAt</span><span class="p">;</span>
-    <span class="p">},</span>
-    <span class="nx">configurable</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nx">enumerable</span><span class="o">:</span> <span class="kc">true</span>
-  <span class="p">});</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="triggermanager.length">
-  <h3>
-    <a href="#triggermanager.length" class="pilcrow">&#182;</a>
-    TriggerManager.length
-  </h3>
-</div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">=</span> <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">first</span><span class="p">;</span>
 
-  </div>
-  <div class="body"><p>The number of registered trigger functions</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">,</span> <span class="p">{</span>
-    <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){},</span>
-    <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
-      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-    <span class="p">},</span>
-    <span class="nx">configurable</span><span class="o">:</span> <span class="kc">true</span>
-  <span class="p">});</span>
-  
-  <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
-<span class="p">};</span></pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -310,6 +268,26 @@ will be executed first.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="triggermanager.size">
+  <h3>
+    <a href="#triggermanager.size" class="pilcrow">&#182;</a>
+    TriggerManager.size
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the number of registered trigger functions</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="triggermanager.init">
   <h3>
     <a href="#triggermanager.init" class="pilcrow">&#182;</a>
@@ -320,17 +298,15 @@ will be executed first.</p>
   </div>
   <div class="body"><p>Configures the TriggerManager instance</p>
 
-<p>Takes the configuration as an input parameter or 
-recycles the settings in <code>this.options</code>.</p>
+<p>Takes the configuration as an input parameter or recycles the settings
+in <code>this.options</code>.</p>
 
-<p>The configuration object is of the type</p>
+<p>The configuration object is of the type:</p>
 
 <p>var options = {
-    returnAt: 'first', // or 'last'
-    triggers: [ myFunc,
-          myFunc2 
-    ],
-  } </p>
+     returnAt: 'last',
+     triggers: [ myFunc, myFunc2 ]
+ };</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -342,13 +318,67 @@ recycles the settings in <code>this.options</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">===</span> <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">first</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">===</span> <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">last</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">returnAt</span><span class="p">;</span>
-  <span class="p">}</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">resetTriggers</span><span class="p">();</span>
-<span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;TriggerManager.init: options must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">returnAt</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">setReturnAt</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">returnAt</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">resetTriggers</span><span class="p">();</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="triggermanager.setreturnat">
+  <h3>
+    <a href="#triggermanager.setreturnat" class="pilcrow">&#182;</a>
+    TriggerManager.setReturnAt
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Verifies and sets the returnAt option.x</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">returnAt</span>
+      <span class="dox_type">string</span>
+      <span>The value of the returnAt policy</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">TriggerManager.first</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">TriggerManager.last
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setReturnAt</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">returnAt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span>  <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">first</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">last</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">returnAt</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;TriggerManager.setReturnAt: returnAt must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">returnAt</span> <span class="o">!==</span> <span class="nx">f</span> <span class="o">&amp;&amp;</span> <span class="nx">returnAt</span> <span class="o">!==</span> <span class="nx">l</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;TriggerManager.setReturnAt: returnAt must be &#39;</span> <span class="o">+</span>
+                                <span class="nx">f</span> <span class="o">+</span> <span class="s1">&#39; or &#39;</span> <span class="o">+</span> <span class="nx">l</span> <span class="o">+</span> <span class="s1">&#39;. Given:&#39;</span> <span class="o">+</span> <span class="nx">returnAt</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">=</span> <span class="nx">returnAt</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -370,21 +400,22 @@ recycles the settings in <code>this.options</code>.</p>
       <span class="dox_tag_name">triggers</span>
       <span class="dox_type">function</span>
       <span class="dox_type">array</span>
-      <span>An array of trigger functions or a single function </span>
+      <span>An array of trigger functions
+  or a single function.</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">initTriggers</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">triggers</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">triggers</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">triggers</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">))</span> <span class="p">{</span>
-    <span class="nx">triggers</span> <span class="o">=</span> <span class="p">[</span><span class="nx">triggers</span><span class="p">];</span>
-  <span class="p">}</span>
-  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span> <span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">triggers</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-  <span class="p">}</span>
-  <span class="p">};</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">initTriggers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">triggers</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">triggers</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">triggers</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">triggers</span> <span class="o">=</span> <span class="p">[</span><span class="nx">triggers</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">triggers</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -397,20 +428,20 @@ recycles the settings in <code>this.options</code>.</p>
   </h3>
 </div>
 
-
-<p>Resets the trigger array to initial configuration</p>
+  </div>
+  <div class="body"><p>Resets the trigger array to initial configuration</p>
 
 <p>Delete existing trigger functions and re-add the ones
-contained in <code>TriggerManager.options.triggers</code></p>
-  </div>
-  <div class="body">
+contained in <code>TriggerManager.options.triggers</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">resetTriggers</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span> <span class="o">=</span> <span class="p">[];</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">initTriggers</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">triggers</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">resetTriggers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">triggers</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">initTriggers</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">triggers</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -444,15 +475,15 @@ contained in <code>TriggerManager.options.triggers</code></p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Do you really want to clear the current TriggerManager obj? Please use clear(true)&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="p">}</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span> <span class="o">=</span> <span class="p">[];</span>
-  <span class="k">return</span> <span class="nx">clear</span><span class="p">;</span>
-<span class="p">};</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Do you really want to clear the current &#39;</span> <span class="o">+</span>
+                      <span class="s1">&#39;TriggerManager obj? Please use clear(true)&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">return</span> <span class="nx">clear</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -489,18 +520,17 @@ contained in <code>TriggerManager.options.triggers</code></p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addTrigger</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">trigger</span><span class="p">,</span> <span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">trigger</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">trigger</span><span class="p">))</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">trigger</span><span class="p">);</span>
-  <span class="p">}</span>
-  <span class="k">else</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">pos</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">trigger</span><span class="p">);</span>
-  <span class="p">}</span>
-  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-<span class="p">};</span>
-    </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addTrigger</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">trigger</span><span class="p">,</span> <span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">trigger</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">trigger</span><span class="p">))</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">trigger</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">pos</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">trigger</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -532,15 +562,16 @@ contained in <code>TriggerManager.options.triggers</code></p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeTrigger</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">trigger</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">trigger</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="nx">trigger</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">}</span>  
-  <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-<span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeTrigger</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">trigger</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">trigger</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="nx">trigger</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -560,7 +591,7 @@ contained in <code>TriggerManager.options.triggers</code></p>
 functions are fired first.</p>
 
 <p>Depending on the value of <code>TriggerManager.returnAt</code>, some trigger
-functions may not be called. In fact a value is returned </p>
+functions may not be called. In fact a value is returned:</p>
 
 <ul>
 <li>'first': after the first trigger returns a truthy value</li>
@@ -585,18 +616,19 @@ functions may not be called. In fact a value is returned </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pullTriggers</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
-  
-  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">[(</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">out</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">===</span> <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">first</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pullTriggers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">out</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">())</span> <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">out</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">[(</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">out</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">===</span> <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">first</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -604,10 +636,10 @@ functions may not be called. In fact a value is returned </p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
-<p>Safety return</p>
+<p>Safety return.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">out</span><span class="p">)</span> <span class="o">?</span> <span class="nx">out</span> <span class="o">:</span> <span class="nx">o</span><span class="p">;</span>
-<span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">out</span><span class="p">)</span> <span class="o">?</span> <span class="nx">out</span> <span class="o">:</span> <span class="nx">o</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -616,63 +648,25 @@ functions may not be called. In fact a value is returned </p>
   <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <!-- old pullTriggers
-TriggerManager.prototype.pullTriggers = function (o) {
-if (!o) return;
+TriggerManager.prototype.pullTriggers = function(o) {
+ if (!o) return;
 
-for (var i = triggersArray.length; i > 0; i--) {
-    var out = triggersArray[(i-1)].call(this, o);
-    if (out) {
-        if (this.returnAt === TriggerManager.first) {
-            return out;
-        }
-    }
-}
-// Safety return
-return o;
-}; 
+ for (var i = triggersArray.length; i > 0; i--) {
+         var out = triggersArray[(i-1)].call(this, o);
+         if (out) {
+                 if (this.returnAt === TriggerManager.first) {
+                         return out;
+                 }
+         }
+ }
+ // Safety return
+ return o;
+};
 -->
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="triggermanager.size">
-  <h3>
-    <a href="#triggermanager.size" class="pilcrow">&#182;</a>
-    TriggerManager.size
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Returns the number of registered trigger functions</p>
-
-<p>Use TriggerManager.length instead </p>
-  </div>
-  <div class="details">
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-<span class="p">};</span>
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="closure">
-  <h2>
-    <a href="#closure" class="pilcrow">&#182;</a>
-    Closure
-  </h2>
-</div>
-
-        </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
-  <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
-  <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
         </td>

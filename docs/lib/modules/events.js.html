@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>events.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../../', thisFile = 'lib/modules/events.js', defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#nodegameclient-events-handling">NodeGameClient Events Handling</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegameclient.getcurrenteventemitter">NodeGameClient.getCurrentEventEmitter</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegameclient.emit">NodeGameClient.emit</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient-events-handling">
+  <h1>
+    <a href="#nodegameclient-events-handling" class="pilcrow">&#182;</a>
+    NodeGameClient Events Handling
+  </h1>
+</div>
+
+
+<p>Copyright(c) 2014 Stefano Balietti
+MIT Licensed</p>
+  </div>
+  <div class="body"><hr />
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient.getcurrenteventemitter">
+  <h3>
+    <a href="#nodegameclient.getcurrenteventemitter" class="pilcrow">&#182;</a>
+    NodeGameClient.getCurrentEventEmitter
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the last active event emitter obj</p>
+
+<p>TODO: finish the method</p>
+
+<p>TODO: add proper doc</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">The</span>
+      <span class="dox_type">EventEmitter</span>
+      <span>current event emitter obj</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>NodeGame default listeners</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">ng</span><span class="p">;</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>It is a game init function</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">((</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">())</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>TODO return the stage ee</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>It is a game step function</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient.emit">
+  <h3>
+    <a href="#nodegameclient.emit" class="pilcrow">&#182;</a>
+    NodeGameClient.emit
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Emits an event locally on all registered event handlers</p>
+
+<p>The first parameter be the name of the event as <em>string</em>,
+followed by any number of parameters that will be passed to the
+handler callback.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitterManager.emit
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code><span class="cm">/**</span>
+<span class="cm"> * ### NodeGameClient.on</span>
+<span class="cm"> *</span>
+<span class="cm"> * Registers an event listener</span>
+<span class="cm"> *</span>
+<span class="cm"> * Listeners registered before a game is started, e.g. in</span>
+<span class="cm"> * the init function of the game object, will stay valid</span>
+<span class="cm"> * throughout the game. Listeners registered after the game</span>
+<span class="cm"> * is started will be removed after the game has advanced</span>
+<span class="cm"> * to its next stage.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param {string} event The name of the event</span>
+<span class="cm"> * @param {function} listener The callback function</span>
+<span class="cm"> */</span>
+<span class="no">NGC</span><span class="p">.</span><span class="n">prototype</span><span class="p">.</span><span class="n">on</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="n">ee</span><span class="p">;</span>
+    <span class="n">ee</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="n">getCurrentEventEmitter</span><span class="p">();</span>
+    <span class="n">ee</span><span class="p">.</span><span class="n">on</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * ### NodeGameClient.once</span>
+<span class="cm"> *</span>
+<span class="cm"> * Registers an event listener that will be removed</span>
+<span class="cm"> * after its first invocation</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param {string} event The name of the event</span>
+<span class="cm"> * @param {function} listener The callback function</span>
+<span class="cm"> *</span>
+<span class="cm"> * @see NodeGameClient.on</span>
+<span class="cm"> * @see NodeGameClient.off</span>
+<span class="cm"> */</span>
+<span class="no">NGC</span><span class="p">.</span><span class="n">prototype</span><span class="p">.</span><span class="n">once</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="n">ee</span><span class="p">,</span> <span class="n">cbRemove</span><span class="p">;</span>
+    <span class="c1">// This function will remove the event listener</span>
+    <span class="c1">// and itself.</span>
+    <span class="n">cbRemove</span> <span class="o">=</span> <span class="k">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">ee</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">);</span>
+        <span class="n">ee</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">cbRemove</span><span class="p">);</span>
+    <span class="p">};</span>
+    <span class="n">ee</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="n">getCurrentEventEmitter</span><span class="p">();</span>
+    <span class="n">ee</span><span class="p">.</span><span class="n">on</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">);</span>
+    <span class="n">ee</span><span class="p">.</span><span class="n">on</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">cbRemove</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * ### NodeGameClient.off</span>
+<span class="cm"> *</span>
+<span class="cm"> * Deregisters one or multiple event listeners</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param {string} event The name of the event</span>
+<span class="cm"> * @param {function} listener The callback function</span>
+<span class="cm"> *</span>
+<span class="cm"> * @see NodeGameClient.on</span>
+<span class="cm"> * @see NodeGameClient.EventEmitter.remove</span>
+<span class="cm"> */</span>
+<span class="no">NGC</span><span class="p">.</span><span class="n">prototype</span><span class="p">.</span><span class="n">off</span>  <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="n">events</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">func</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

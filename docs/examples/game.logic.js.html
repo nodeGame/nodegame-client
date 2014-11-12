@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>game.logic.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../', thisFile = 'examples/game.logic.js', defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>game.logic.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">channel</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">var</span> <span class="nx">client</span> <span class="o">=</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./client&#39;</span><span class="p">);</span> <span class="c1">// path needs to be resolved at exec time;</span>
+
+  <span class="kd">var</span> <span class="nx">game</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
+
+  <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">addSteps</span><span class="p">([</span>
+                      <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;tutorial&#39;</span><span class="p">,</span>
+                        <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+                          <span class="kd">var</span> <span class="nx">stage</span> <span class="o">=</span> <span class="p">{</span>
+                          <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;game&#39;</span><span class="p">,</span>
+                          <span class="nx">repeat</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+                          <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;instructions&#39;</span><span class="p">,</span> <span class="s1">&#39;quiz&#39;</span><span class="p">],</span> <span class="c1">// step ids in sequential order </span>
+                          <span class="nx">onstepdone</span><span class="o">:</span> <span class="s1">&#39;GOTONEXT&#39;</span><span class="p">,</span> <span class="c1">// executes the next step of the stage automatically after a successfull DONE, </span>
+
+                          <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="mi">20000</span><span class="p">);</span>
+                          <span class="p">},</span>
+                          <span class="nx">onexit</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>something to do when this stage is done</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                          <span class="p">},</span>
+                          <span class="p">};</span>
+
+                          <span class="nx">node</span><span class="p">.</span><span class="nx">remoteSetup</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">instructions</span><span class="p">);</span>
+                          <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">);</span>
+                        <span class="p">}</span> <span class="p">}</span>
+                   <span class="p">,</span>  <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;bidder&#39;</span><span class="p">,</span>
+                      <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                      <span class="nx">node</span><span class="p">.</span><span class="nx">remoteSetup</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">bidder</span><span class="p">);</span>
+                      <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">);</span>
+                      <span class="p">}</span> <span class="p">}</span>
+                   <span class="p">,</span>  <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;respondent&#39;</span><span class="p">,</span>
+                      <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                      <span class="nx">node</span><span class="p">.</span><span class="nx">remoteSetup</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">respondent</span><span class="p">);</span>
+                      <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">);</span>
+                      <span class="p">}</span> <span class="p">}</span>
+                   <span class="p">,</span>  <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;questionnaire&#39;</span><span class="p">,</span>
+                      <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                      <span class="nx">node</span><span class="p">.</span><span class="nx">remoteSetup</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">questionnaire</span><span class="p">);</span>
+                      <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">);</span>
+                      <span class="p">}</span> <span class="p">}</span>
+<span class="p">]);</span>
+
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>ALL PLAYERS FINISHED THE TUTORIAL</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">ondone</span><span class="p">(</span><span class="s1">&#39;tutorial&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+  <span class="p">});</span>
+
+
+  <span class="kd">var</span> <span class="nx">gameStage</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;game&#39;</span><span class="p">,</span>
+      <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>something</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+      <span class="p">},</span>
+      <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>random pairing</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">pairs</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">getRandomGroupsByN</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>Setting up each client</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>      <span class="nx">pairs</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">())</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">remoteSetup</span><span class="p">(</span><span class="s1">&#39;globals&#39;</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">globals</span><span class="p">,</span> <span class="nx">CLIENT_A</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">remoteSetup</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">respondent</span><span class="p">,</span> <span class="nx">CLIENT_A</span><span class="p">);</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">remoteSetup</span><span class="p">(</span><span class="s1">&#39;globals&#39;</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">globals</span><span class="p">,</span> <span class="nx">CLIENT_B</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">remoteSetup</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">client</span><span class="p">.</span><span class="nx">bidder</span><span class="p">,</span> <span class="nx">CLIENT_B</span><span class="p">);</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="nx">CLIENT_B</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="nx">CLIENT_A</span><span class="p">);</span>
+      <span class="p">}</span>
+  <span class="p">};</span>
+
+
+
+  <span class="kd">var</span> <span class="nx">tutorialStage</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;tutorial&#39;</span><span class="p">,</span>
+        <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
+
+          <span class="nx">stage</span> <span class="o">=</span> <span class="p">{</span>
+              <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;tutorial&#39;</span><span class="p">,</span>
+              <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;instructions&#39;</span><span class="p">,</span> <span class="s1">&#39;quiz&#39;</span><span class="p">],</span> <span class="c1">// step ids in sequential order </span>
+              <span class="nx">onstepdone</span><span class="o">:</span> <span class="s1">&#39;GOTONEXT&#39;</span><span class="p">,</span> <span class="c1">// executes the next step of the stage automatically after a successfull DONE, </span>
+          <span class="p">};</span>
+
+          <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">CLIENT</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">remoteSetup</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">CLIENT</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="nx">CLIENT_A</span><span class="p">);</span>
+          <span class="p">}</span>
+  <span class="p">};</span>
+
+
+  <span class="kd">var</span> <span class="nx">questionnaireStage</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;questionnaire&#39;</span><span class="p">,</span>
+      <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;instructions&#39;</span><span class="p">,</span> <span class="s1">&#39;quiz&#39;</span><span class="p">],</span> <span class="c1">// step ids in sequential order </span>
+      <span class="nx">onstepdone</span><span class="o">:</span> <span class="s1">&#39;GOTONEXT&#39;</span><span class="p">,</span> <span class="c1">// executes the next step of the stage automatically after a successfull DONE, </span>
+      <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">CLIENT</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">node</span><span class="p">.</span><span class="nx">remoteSetup</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">CLIENT</span><span class="p">);</span>
+          <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="nx">CLIENT_A</span><span class="p">);</span>
+        <span class="p">}</span>
+<span class="p">};</span>
+
+  <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">tutorialStage</span><span class="p">);</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
+
+
+  <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">start</span><span class="p">()</span>
+      <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;tutorial&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;game&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s1">&#39;questionnaire&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">gameover</span><span class="p">();</span>
+
+
+
+  <span class="nx">game</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="s1">&#39;AAA&#39;</span><span class="p">;</span>
+
+  <span class="nx">game</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;xxx&#39;</span><span class="p">;</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">description</span> <span class="o">=</span> <span class="s1">&#39;xxx&#39;</span><span class="p">;</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.0.1&#39;</span><span class="p">;</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">observer</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> <span class="c1">// false</span>
+
+  <span class="nx">game</span><span class="p">.</span><span class="nx">onstepdone</span> <span class="o">=</span> <span class="s1">&#39;WAIT&#39;</span><span class="p">;</span> <span class="c1">//&#39;GOTONEXT&#39;, &#39;GOTONEXT_SYNC&#39;, custom_function</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span> <span class="c1">// optional</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">gameover</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span> <span class="c1">// optional</span>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>All optional - defaults already defined</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">game</span><span class="p">.</span><span class="nx">waiting</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span>  <span class="c1">// what to do when the game is in the state &#39;Waiting for other players to continue&#39;;</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">pause</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span>  <span class="c1">// what to do when the game is paused</span>
+  <span class="nx">game</span><span class="p">.</span><span class="nx">resuming</span> <span class="o">=</span> <span class="kd">function</span><span class="p">();</span> <span class="c1">// what to do when a game is resuming</span>
+
+  <span class="k">return</span> <span class="nx">game</span><span class="p">;</span>
+
+<span class="p">})(</span><span class="nx">node</span><span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

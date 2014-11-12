@@ -1,149 +1,273 @@
-// ## Game internal listeners
-
-// Internal listeners are not directly associated to messages,
-// but they are usually responding to internal nodeGame events, 
-// such as progressing in the loading chain, or finishing a game state 
-
-(function (node) {
-
-	if (!node) {
-		console.log('nodeGame not found. Cannot add internal listeners');
-		return false;
-	}
-	
-	var GameMsg = node.GameMsg,
-		GameState = node.GameState;
-	
-	var say = GameMsg.actions.SAY + '.',
-		set = GameMsg.actions.SET + '.',
-		get = GameMsg.actions.GET + '.',
-		IN  = GameMsg.IN,
-		OUT = GameMsg.OUT;
-	
 /**
- * ### STATEDONE
- * 
- * Fired when all the players in the player list have their
- * state set to DONE
- */ 
-node.on('STATEDONE', function() {
-	
-	// In single player mode we ignore when all the players have completed the state
-	if (node.game.solo_mode) {
-		return;
-	}
-	
-	// <!-- If we go auto -->
-	if (node.game.auto_step && !node.game.observer) {
-		node.log('We play AUTO', 'DEBUG');
-		var morePlayers = ('undefined' !== node.game.minPlayers) ? node.game.minPlayers - node.game.pl.count() : 0 ;
-		node.log('Additional player required: ' + morePlayers > 0 ? MorePlayers : 0, 'DEBUG');
-		
-		if (morePlayers > 0) {
-			node.emit('OUT.say.TXT', morePlayers + ' player/s still needed to play the game');
-			node.log(morePlayers + ' player/s still needed to play the game');
-		}
-		// TODO: differentiate between before the game starts and during the game
-		else {
-			node.emit('OUT.say.TXT', node.game.minPlayers + ' players ready. Game can proceed');
-			node.log(node.game.pl.count() + ' players ready. Game can proceed');
-			node.game.updateState(node.game.next());
-		}
-	}
-	else {
-		node.log('Waiting for monitor to step', 'DEBUG');
-	}
-});
-
-/**
- * ### DONE
- * 
- * Updates and publishes that the client has successfully terminated a state 
- * 
- * If a DONE handler is defined in the game-loop, it will executes it before
- * continuing with further operations. In case it returns FALSE, the update
- * process is stopped. 
- * 
- * @emit BEFORE_DONE
- * @emit WAITING...
+ * # Listeners for incoming messages.
+ * Copyright(c) 2014 Stefano Balietti
+ * MIT Licensed
+ *
+ * Internal listeners are not directly associated to messages,
+ * but they are usually responding to internal nodeGame events,
+ * such as progressing in the loading chain, or finishing a game stage.
+ * ---
  */
-node.on('DONE', function(p1, p2, p3) {
-	
-	// Execute done handler before updatating state
-	var ok = true;
-	var done = node.game.gameLoop.getAllParams(node.game.state).done;
-	
-	if (done) ok = done.call(node.game, p1, p2, p3);
-	if (!ok) return;
-	node.game.state.is = GameState.iss.DONE;
-	
-	// Call all the functions that want to do 
-	// something before changing state
-	node.emit('BEFORE_DONE');
-	
-	if (node.game.auto_wait) {
-		if (node.window) {	
-			node.emit('WAITING...');
-		}
-	}
-	node.game.publishState();
-	
-	if (node.game.solo_mode) {
-		node.game.updateState(node.game.next());
-	}
-});
+(function(exports, parent) {
 
-/**
- * ### PAUSE
- * 
- * Sets the game to PAUSE and publishes the state
- * 
- */
-node.on('PAUSE', function(msg) {
-	node.game.state.paused = true;
-	node.game.publishState();
-});
+    "use strict";
 
-/**
- * ### WINDOW_LOADED
- * 
- * Checks if the game is ready, and if so fires the LOADED event
- * 
- * @emit BEFORE_LOADING
- * @emit LOADED
- */
-node.on('WINDOW_LOADED', function() {
-	if (node.game.ready) node.emit('LOADED');
-});
+    var NGC = parent.NodeGameClient;
 
-/**
- * ### GAME_LOADED
- * 
- * Checks if the window was loaded, and if so fires the LOADED event
- * 
- * @emit BEFORE_LOADING
- * @emit LOADED
- */
-node.on('GAME_LOADED', function() {
-	if (node.game.ready) node.emit('LOADED');
-});
+    var GameMsg = parent.GameMsg,
+    GameStage = parent.GameStage,
+    PlayerList = parent.PlayerList,
+    Player = parent.Player,
+    J = parent.JSUS,
+    constants = parent.constants;
 
-/**
- * ### LOADED
- * 
- * 
- */
-node.on('LOADED', function() {
-	node.emit('BEFORE_LOADING');
-	node.game.state.is =  GameState.iss.PLAYING;
-	//TODO: the number of messages to emit to inform other players
-	// about its own state should be controlled. Observer is 0 
-	//node.game.publishState();
-	node.socket.clearBuffer();
-	
-});
+    var action = constants.action,
+        target = constants.target,
+        stageLevels = constants.stageLevels;
 
-node.log('internal listeners added');
-	
-})('undefined' !== typeof node ? node : module.parent.exports); 
-// <!-- ends outgoing listener -->
+    var say = action.SAY + '.',
+    set = action.SET + '.',
+    get = action.GET + '.',
+    OUT = constants.OUT;
+
+    var gcommands = constants.gamecommands;
+    var CMD = 'NODEGAME_GAMECOMMAND_';
+
+    /**
+     * ## NodeGameClient.addDefaultInternalListeners
+     *
+     * Adds a battery of event listeners for internal events
+     *
+     * If executed once, it requires a force flag to re-add the listeners.
+     *
+     * @param {boolean} TRUE, to force re-adding the listeners
+     * @return {boolean} TRUE on success
+     */
+    NGC.prototype.addDefaultInternalListeners = function(force) {
+        var node = this;
+        if (this.internalAdded && !force) {
+            this.err('Default internal listeners already added once. ' +
+                     'Use the force flag to re-add.');
+            return false;
+        }
+
+        function done() {
+            node.game.willBeDone = false;
+            node.game.setStageLevel(stageLevels.DONE);
+            node.emit('REALLY_DONE');
+            // Step forward, if allowed.
+            if (node.game.shouldStep()) {
+                node.game.step();
+            }
+        }
+
+        /**
+         * ## DONE
+         *
+         * Registers the stageLevel _DONE_ and eventually steps forward.
+         *
+         * If a DONE handler is defined in the game-plot, it will execute it.
+         * In case it returns FALSE, the update process is stopped.
+         *
+         * @emit REALLY_DONE
+         */
+        this.events.ng.on('DONE', function() {
+            // Execute done handler before updating stage.
+            var ok, doneCb, stageLevel;
+            ok = true;
+            doneCb = node.game.plot.getProperty(node.game.getCurrentGameStage(),
+                                                'done');
+
+            if (doneCb) ok = doneCb.apply(node.game, arguments);
+            if (!ok) return;
+
+            stageLevel = node.game.getStageLevel();
+
+            if (stageLevel >= stageLevels.PLAYING) {
+                done();
+            }
+            else {
+                node.game.willBeDone = true;
+            }
+
+        });
+
+        /**
+         * ## STEP_CALLBACK_EXECUTED
+         *
+         * @emit LOADED
+         */
+        this.events.ng.on('STEP_CALLBACK_EXECUTED', function() {
+            if (!node.window || node.window.isReady()) {
+                node.emit('LOADED');
+            }
+        });
+
+        /**
+         * ## WINDOW_LOADED
+         *
+         * @emit LOADED
+         */
+        this.events.ng.on('WINDOW_LOADED', function() {
+            var stageLevel;
+            stageLevel = node.game.getStageLevel();
+            if (stageLevel >= stageLevels.CALLBACK_EXECUTED) {
+                node.emit('LOADED');
+            }
+        });
+
+        /**
+         * ## LOADED
+         *
+         * @emit PLAYING
+         */
+        this.events.ng.on('LOADED', function() {
+            node.game.setStageLevel(constants.stageLevels.LOADED);
+            if (node.socket.shouldClearBuffer()) {
+                node.socket.clearBuffer();
+            }
+            if (node.game.shouldEmitPlaying()) {
+                node.emit('PLAYING');
+            }
+        });
+
+        /**
+         * ## PLAYING
+         *
+         * @emit BEFORE_PLAYING
+         */
+        this.events.ng.on('PLAYING', function() {
+            var currentTime;
+            node.game.setStageLevel(stageLevels.PLAYING);
+            node.socket.clearBuffer();
+            node.emit('BEFORE_PLAYING');
+            // Last thing to do, is to store time:
+            currentTime = (new Date()).getTime();
+            node.timer.setTimestamp(node.game.getCurrentGameStage().toString(),
+                                    currentTime);
+            node.timer.setTimestamp('step', currentTime);
+
+            // DONE was previously emitted, we just execute done handler.
+            if (node.game.willBeDone) {
+                done();
+            }
+
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: start
+         *
+         */
+        this.events.ng.on(CMD + gcommands.start, function(options) {
+            if (!node.game.isStartable()) {
+                node.err('Game cannot be started.');
+                return;
+            }
+
+            node.emit('BEFORE_GAMECOMMAND', gcommands.start, options);
+            node.game.start(options);
+        });
+
+        /**
+         * ## NODEGAME_GAMECMD: pause
+         *
+         */
+        this.events.ng.on(CMD + gcommands.pause, function(options) {
+            if (!node.game.isPausable()) {
+                node.err('Game cannot be paused.');
+                return;
+            }
+
+            node.emit('BEFORE_GAMECOMMAND', gcommands.pause, options);
+            node.game.pause();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: resume
+         *
+         */
+        this.events.ng.on(CMD + gcommands.resume, function(options) {
+            if (!node.game.isResumable()) {
+                node.err('Game cannot be resumed.');
+                return;
+            }
+
+            node.emit('BEFORE_GAMECOMMAND', gcommands.resume, options);
+            node.game.resume();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: step
+         *
+         */
+        this.events.ng.on(CMD + gcommands.step, function(options) {
+            if (!node.game.isSteppable()) {
+                node.err('Game cannot be stepped.');
+                return;
+            }
+
+            node.emit('BEFORE_GAMECOMMAND', gcommands.step, options);
+            node.game.step();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: stop
+         *
+         */
+        this.events.ng.on(CMD + gcommands.stop, function(options) {
+            if (!node.game.isStoppable()) {
+                node.err('Game cannot be stopped.');
+                return;
+            }
+
+            node.emit('BEFORE_GAMECOMMAND', gcommands.stop, options);
+            node.game.stop();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: goto_step
+         *
+         */
+        this.events.ng.on(CMD + gcommands.goto_step, function(step) {
+            if (!node.game.isSteppable()) {
+                node.err('Game cannot be stepped.');
+                return;
+            }
+
+            node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step);
+            if (step !== parent.GamePlot.GAMEOVER) {
+                step = new GameStage(step);
+                if (!node.game.plot.getStep(step)) {
+                    node.err('Non-existing game step.');
+                    return;
+                }
+            }
+            node.game.gotoStep(step);
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: clear_buffer
+         *
+         */
+        this.events.ng.on(CMD + gcommands.clear_buffer, function() {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
+            node.socket.clearBuffer();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: erase_buffer
+         *
+         */
+        this.events.ng.on(CMD + gcommands.erase_buffer, function() {
+            node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
+            node.socket.eraseBuffer();
+        });
+
+        this.internalAdded = true;
+        this.silly('internal listeners added');
+        return true;
+    };
+})(
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
+);

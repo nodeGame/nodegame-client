@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>extra.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../../', thisFile = 'lib/modules/extra.js', defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#extra">Extra</a>
+      </div>
+      <div class="heading h2">
+        <a href="#nodegame-extra-functions">nodeGame extra functions</a>
+      </div>
+      <div class="heading h2">
+        <a href="#extra">Extra</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.env">node.env</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.clearenv">node.clearEnv</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="extra">
+  <h1>
+    <a href="#extra" class="pilcrow">&#182;</a>
+    Extra
+  </h1>
+</div>
+
+
+<p>Copyright(c) 2014 Stefano Balietti
+MIT Licensed</p>
+  </div>
+  <div class="body">
+<div class="pilwrap" id="nodegame-extra-functions">
+  <h2>
+    <a href="#nodegame-extra-functions" class="pilcrow">&#182;</a>
+    <code>nodeGame</code> extra functions
+  </h2>
+</div>
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="extra">
+  <h2>
+    <a href="#extra" class="pilcrow">&#182;</a>
+    Extra
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.env">
+  <h3>
+    <a href="#node.env" class="pilcrow">&#182;</a>
+    node.env
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Executes a block of code conditionally to nodeGame environment variables</p>
+
+<p>Notice: the value of the requested variable is returned after
+the execution of the callback, that could modify it.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">env</span>
+      <span class="dox_type">string</span>
+      <span>The name of the environment</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">func</span>
+      <span class="dox_type">function</span>
+      <span>Optional The callback to execute conditionally</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">ctx</span>
+      <span class="dox_type">object</span>
+      <span>Optional. The context of execution</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">params</span>
+      <span class="dox_type">array</span>
+      <span>Optional. An array of parameters for the callback</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.setup.env</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.clearEnv
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">env</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">envValue</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">env</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.env: env must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">func</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.env: func must be function or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">ctx</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">ctx</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.env: ctx must be object or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">params</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.env: params must be array-like &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">envValue</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="nx">env</span><span class="p">];</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>Executes the function conditionally to <em>envValue</em>.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">func</span> <span class="o">&amp;&amp;</span> <span class="nx">envValue</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">ctx</span> <span class="o">||</span> <span class="nx">node</span><span class="p">;</span>
+            <span class="nx">params</span> <span class="o">=</span> <span class="nx">params</span> <span class="o">||</span> <span class="p">[];</span>
+            <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">params</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>Returns the value of the requested <em>env</em> variable in any case.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="nx">envValue</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.clearenv">
+  <h3>
+    <a href="#node.clearenv" class="pilcrow">&#182;</a>
+    node.clearEnv
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Deletes all previously set enviroment variables</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.env</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.setup.env
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearEnv</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">env</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+
+
+<span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

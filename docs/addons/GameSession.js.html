@@ -25,13 +25,16 @@
         <a href="#global-scope">Global scope</a>
       </div>
       <div class="heading h2">
-        <a href="#node.session">node.session</a>
+        <a href="#gamesession.getcurrentsession">GameSession.getCurrentSession</a>
       </div>
       <div class="heading h2">
-        <a href="#node.session.isenabled">node.session.isEnabled</a>
+        <a href="#gamesession.getstoredsession">GameSession.getStoredSession</a>
       </div>
       <div class="heading h2">
-        <a href="#node.session.store">node.session.store</a>
+        <a href="#gamesession.store">GameSession.store</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gamesession.isenabled">GameSession.isEnabled</a>
       </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
@@ -54,7 +57,7 @@
 
   </div>
   <div class="body"><p>Copyright(c) 2012 Stefano Balietti
-MIT Licensed </p>
+MIT Licensed</p>
 
 <p>Addon to save and load the nodeGame session in the browser</p>
 
@@ -64,8 +67,7 @@ MIT Licensed </p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -78,21 +80,22 @@ MIT Licensed </p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
-  <span class="kd">var</span> <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
-    <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">,</span>
-    <span class="nx">store</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">store</span><span class="p">;</span>
 
-  <span class="kd">var</span> <span class="nx">prefix</span> <span class="o">=</span> <span class="s1">&#39;nodegame_&#39;</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">prefix</span> <span class="o">=</span> <span class="s1">&#39;nodegame_&#39;</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">GameSession</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.session">
+<div class="pilwrap" id="gamesession.getcurrentsession">
   <h2>
-    <a href="#node.session" class="pilcrow">&#182;</a>
-    node.session
+    <a href="#gamesession.getcurrentsession" class="pilcrow">&#182;</a>
+    GameSession.getCurrentSession
   </h2>
 </div>
 
@@ -100,10 +103,10 @@ MIT Licensed </p>
   <div class="body"><p>Loads a nodeGame session</p>
 
 <p>If no parameter is passed it will return the current session.
-Else, it will try to load a session with the given id. </p>
+Else, it will try to load a session with the given id.</p>
 
 <p>This method interact with the <code>node.store</code> object that provides
-lower level capabilities to write to a persistent support (e.g. 
+lower level capabilities to write to a persistent support (e.g.
 the browser localStorate).</p>
   </div>
   <div class="details">
@@ -117,15 +120,32 @@ the browser localStorate).</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
-      <span>The session object
-
-@see node.store</span>
+      <span>The session object</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameSession.getStoredSession</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameSession.store
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sid</span><span class="p">)</span> <span class="p">{</span>
-        </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameSession</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentSession</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">session</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+
+        <span class="nx">session</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">id</span><span class="o">:</span>     <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span>
+            <span class="nx">player</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">,</span>
+            <span class="nx">memory</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">,</span>
+            <span class="nx">state</span><span class="o">:</span>  <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
+            <span class="nx">game</span><span class="o">:</span>   <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">metadata</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+            <span class="nx">history</span><span class="o">:</span> <span class="kc">undefined</span>
+        <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -133,39 +153,64 @@ the browser localStorate).</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
 </div>
-<p>Returns the current session</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sid</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">session</span> <span class="o">=</span> <span class="p">{</span>
-          <span class="nx">id</span><span class="o">:</span>   <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span><span class="p">.</span><span class="nx">session</span><span class="p">,</span>
-          <span class="nx">player</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">,</span>
-          <span class="nx">memory</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">,</span>
-          <span class="nx">state</span><span class="o">:</span>  <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span>
-          <span class="nx">game</span><span class="o">:</span>   <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-          <span class="nx">history</span><span class="o">:</span> <span class="kc">undefined</span>
-      <span class="p">};</span>
-      </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
-</div>
 <p>If we saved the emitted events, add them to the
 session object</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">session</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
-      <span class="p">}</span>
-      
-      <span class="k">return</span> <span class="nx">session</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">isEnabled</span><span class="p">())</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">session</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">session</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamesession.getstoredsession">
+  <h2>
+    <a href="#gamesession.getstoredsession" class="pilcrow">&#182;</a>
+    GameSession.getStoredSession
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Tries to retrieve a previously stored session</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">The</span>
+      <span class="dox_type">string</span>
+      <span>id of the session to retrieve</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">boolean</span>
+      <span class="dox_type">undefined</span>
+      <span>The session object, FALSE if session storing
+  is not enabled, or undefined if no session with the given id was found</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameSession.getCurrentSession</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameSession.store</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameSession.isEnabled
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameSession</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStoredSession</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sid</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">isEnabled</span><span class="p">())</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -175,38 +220,19 @@ session object</p>
 </div>
 <p>Tries to return a stored session</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">sid</span><span class="p">);</span>
-  <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.session.isenabled">
-  <h2>
-    <a href="#node.session.isenabled" class="pilcrow">&#182;</a>
-    node.session.isEnabled
-  </h2>
-</div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">sid</span><span class="p">);</span>
+    <span class="p">};</span>
 
-  </div>
-  <div class="body"><p>TRUE, if the session can be saved to a persistent support</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">isEnabled</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">isPersistent</span><span class="p">()</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="p">};</span>
-  </pre></div>
+    </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.session.store">
+<div class="pilwrap" id="gamesession.store">
   <h2>
-    <a href="#node.session.store" class="pilcrow">&#182;</a>
-    node.session.store
+    <a href="#gamesession.store" class="pilcrow">&#182;</a>
+    GameSession.store
   </h2>
 </div>
 
@@ -223,19 +249,48 @@ session object</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">store</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">isEnabled</span><span class="p">())</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Could not save the session&#39;</span><span class="p">);</span>
-      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    
-    <span class="kd">var</span> <span class="nx">session</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">();</span>
-    <span class="kd">var</span> <span class="nx">sid</span> <span class="o">=</span> <span class="nx">session</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">sid</span><span class="p">,</span> <span class="nx">session</span><span class="p">);</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Session saved with id &#39;</span> <span class="o">+</span> <span class="nx">sid</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="p">}</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameSession</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">store</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">session</span><span class="p">,</span> <span class="nx">sid</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isEnabled</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Game session could not be saved.&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">session</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">();</span>
+        <span class="nx">sid</span> <span class="o">=</span> <span class="nx">session</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">sid</span><span class="p">,</span> <span class="nx">session</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Game session saved with id &#39;</span> <span class="o">+</span> <span class="nx">sid</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamesession.isenabled">
+  <h2>
+    <a href="#gamesession.isenabled" class="pilcrow">&#182;</a>
+    GameSession.isEnabled
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Verifies the session support</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if the session can be saved to a persistent support</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameSession</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isEnabled</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">isPersistent</span><span class="p">()</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -243,32 +298,32 @@ session object</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
-<!--    
-node.session.restore = function (sessionObj, sid) {
+<!--
+ node.session.restore = function (sessionObj, sid) {
 
-    if (!sessionObj) return false;
-    if (!sessionObj.player) return false;
-    if (!sessionObj.state) return false;
+         if (!sessionObj) return false;
+         if (!sessionObj.player) return false;
+         if (!sessionObj.state) return false;
 
-    sid = sid || sessionObj.player.sid;
-    if (!sid) return false;
+         sid = sid || sessionObj.player.sid;
+         if (!sid) return false;
 
-    var player = {
-            id:     sessionObj.player.id,
-            sid:    sid,
-            name:   node.gsc.name,
-    };
+         var player = {
+                         id:     sessionObj.player.id,
+                         sid:    sid,
+                         name:   node.gsc.name,
+         };
 
-    that.createPlayer(player);
+         that.createPlayer(player);
 
-    node.gsc.session    = sessionObj.id;
-    node.game.memory    = sessionObj.memory;
+         node.gsc.session        = sessionObj.id;
+         node.game.memory        = sessionObj.memory;
 
-    node.goto(session.state);   
+         node.goto(session.state);
 
-    return true;
+         return true;
 
-};
+ };
 -->
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>

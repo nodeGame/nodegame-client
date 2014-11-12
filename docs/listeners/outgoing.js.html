@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>outgoing.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../', thisFile = 'listeners/outgoing.js', defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>outgoing.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+<p>// # Outgoing listeners
+// Outgoing listeners are fired when messages are sent</p>
+
+<p>(function (node) {</p>
+
+<p>var GameMsg = node.GameMsg,
+       GameState = node.GameState;</p>
+
+<p>var action = node.action,
+       target = node.target;</p>
+
+<p>var say = action.SAY + '.',
+       set = action.SET + '.',
+       get = action.GET + '.',
+       OUT  = node.OUT;</p>
+
+<p>/**
+* ## out.say.STAGE
+*
+* Sends out a STAGE message to the specified recipient
+*
+* TODO: check with the server
+* The message is for informative purpose
+*
+*/
+node.events.ng.on( OUT + say + 'STAGE', function (stage, to) {
+   node.socket.sendSTAGE(action.SAY, stage, to);
+});</p>
+
+<p>/**
+* ## out.say.TXT
+*
+* Sends out a TXT message to the specified recipient
+*/
+node.events.ng.on( OUT + say + 'TXT', function (text, to) {
+   node.socket.sendTXT(text,to);
+});</p>
+
+<p>/**
+* ## out.say.DATA
+*
+* Sends out a DATA message to the specified recipient
+*/
+node.events.ng.on( OUT + say + 'DATA', function (data, to, key) {
+   node.socket.sendDATA(action.SAY, data, to, key);
+});</p>
+
+<p>/**
+* ## out.set.STAGE
+*
+* Sends out a STAGE message to the specified recipient
+*
+* TODO: check with the server
+* The receiver will update its representation of the stage
+* of the sender
+*/
+node.events.ng.on( OUT + set + 'STAGE', function (stage, to) {
+   node.socket.sendSTAGE(action.SET, stage, to);
+});</p>
+
+<p>/**
+* ## out.set.DATA
+*
+* Sends out a DATA message to the specified recipient
+*
+* The sent data will be stored in the memory of the recipient
+*
+* @see node.GameDB
+*/
+node.events.ng.on( OUT + set + 'DATA', function (data, to, key) {
+   node.socket.sendDATA(action.SET, data, to, key);
+});</p>
+
+<p>/**
+* ## out.get.DATA
+*
+* Issues a DATA request
+*
+* Experimental. Undocumented (for now)
+*/
+node.events.ng.on( OUT + get + 'DATA', function (data, to, key) {
+   node.socket.sendDATA(action.GET, data, to, data);
+});</p>
+
+<p>node.log('outgoing listeners added');</p>
+
+<p>})('undefined' !== typeof node ? node : module.parent.exports);
+// <!-- ends outgoing listener --></p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

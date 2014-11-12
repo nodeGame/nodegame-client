@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>incoming.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../', thisFile = 'listeners/incoming.js', defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#listeners-for-incoming-messages.">Listeners for incoming messages.</a>
+      </div>
+      <div class="heading h2">
+        <a href="#nodegameclient.adddefaultincominglisteners">NodeGameClient.addDefaultIncomingListeners</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.pconnect">in.say.PCONNECT</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.pdisconnect">in.say.PDISCONNECT</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.mconnect">in.say.MCONNECT</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.mdisconnect">in.say.MDISCONNECT</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.plist">in.say.PLIST</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.mlist">in.say.MLIST</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.get.data">in.get.DATA</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.set.state">in.set.STATE</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.set.data">in.set.DATA</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.player_update">in.say.PLAYER_UPDATE</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.stage">in.say.STAGE</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.stage_level">in.say.STAGE_LEVEL</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.redirect">in.say.REDIRECT</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.setup">in.say.SETUP</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.gamecommand">in.say.GAMECOMMAND</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.say.alert">in.say.ALERT</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.get.session">in.get.SESSION</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.get.plot">in.get.PLOT</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.get.plist">in.get.PLIST</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.get.lang---get.lang">in.get.LANG | get.LANG</a>
+      </div>
+      <div class="heading h2">
+        <a href="#in.set.lang">in.set.LANG</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="listeners-for-incoming-messages.">
+  <h1>
+    <a href="#listeners-for-incoming-messages." class="pilcrow">&#182;</a>
+    Listeners for incoming messages.
+  </h1>
+</div>
+
+
+<p>Copyright(c) 2014 Stefano Balietti
+MIT Licensed</p>
+  </div>
+  <div class="body"><p>TODO: PRECONNECT events are not handled, just emitted.
+Maybe some default support should be given, or some
+default handlers provided.</p>
+
+<hr />
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
+    <span class="nx">GameSage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
+    <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">,</span>
+    <span class="nx">Player</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
+    <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">action</span><span class="p">,</span>
+    <span class="nx">target</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">say</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+    <span class="nx">set</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+    <span class="nx">get</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">GET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+    <span class="nx">IN</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">IN</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient.adddefaultincominglisteners">
+  <h2>
+    <a href="#nodegameclient.adddefaultincominglisteners" class="pilcrow">&#182;</a>
+    NodeGameClient.addDefaultIncomingListeners
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Adds a battery of event listeners for incoming messages</p>
+
+<p>If executed once, it requires a force flag to re-add the listeners</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">TRUE,</span>
+      <span class="dox_type">boolean</span>
+      <span>to force re-adding the listeners</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE on success</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultIncomingListeners</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">incomingAdded</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.addDefaultIncomingListeners: listeners already &#39;</span> <span class="o">+</span>
+                     <span class="s1">&#39;added once. Use the force flag to re-add.&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.pconnect">
+  <h2>
+    <a href="#in.say.pconnect" class="pilcrow">&#182;</a>
+    in.say.PCONNECT
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Adds a new player to the player list</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.pl
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;PCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="k">new</span> <span class="nx">Player</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">));</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">shouldStep</span><span class="p">())</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;UPDATED_PLIST&#39;</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.pdisconnect">
+  <h2>
+    <a href="#in.say.pdisconnect" class="pilcrow">&#182;</a>
+    in.say.PDISCONNECT
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Removes a player from the player list</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.pl
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;PDISCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">shouldStep</span><span class="p">())</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;UPDATED_PLIST&#39;</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.mconnect">
+  <h2>
+    <a href="#in.say.mconnect" class="pilcrow">&#182;</a>
+    in.say.MCONNECT
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Adds a new monitor to the monitor list</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.ml
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;MCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="k">new</span> <span class="nx">Player</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">));</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;UPDATED_MLIST&#39;</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.mdisconnect">
+  <h2>
+    <a href="#in.say.mdisconnect" class="pilcrow">&#182;</a>
+    in.say.MDISCONNECT
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Removes a monitor from the player list</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.ml
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;MDISCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;UPDATED_MLIST&#39;</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.plist">
+  <h2>
+    <a href="#in.say.plist" class="pilcrow">&#182;</a>
+    in.say.PLIST
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a new player-list object</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.pl
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;PLIST&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlayerList</span><span class="p">({},</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;UPDATED_PLIST&#39;</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.mlist">
+  <h2>
+    <a href="#in.say.mlist" class="pilcrow">&#182;</a>
+    in.say.MLIST
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a new monitor-list object</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.pl
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;MLIST&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlayerList</span><span class="p">({},</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;UPDATED_MLIST&#39;</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.get.data">
+  <h2>
+    <a href="#in.get.data" class="pilcrow">&#182;</a>
+    in.get.DATA
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Re-emits the incoming message, and replies back to the sender</p>
+
+<p>Does the following operations:</p>
+
+<ul>
+<li>Validates the msg.text field</li>
+<li>Emits a get.<msg.text> event</li>
+<li>Replies to the sender with with the return values of the emit call</li>
+</ul>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;DATA&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">res</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">||</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.in.get.DATA: invalid / missing event name.&#39;</span><span class="p">);</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">res</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">get</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">res</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">say</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">res</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.set.state">
+  <h2>
+    <a href="#in.set.state" class="pilcrow">&#182;</a>
+    in.set.STATE
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Adds an entry to the memory object</p>
+
+<p>TODO: check, this should be a player update</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">set</span> <span class="o">+</span> <span class="s1">&#39;STATE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.set.data">
+  <h2>
+    <a href="#in.set.data" class="pilcrow">&#182;</a>
+    in.set.DATA
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Adds an entry to the memory object</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">set</span> <span class="o">+</span> <span class="s1">&#39;DATA&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.player_update">
+  <h2>
+    <a href="#in.say.player_update" class="pilcrow">&#182;</a>
+    in.say.PLAYER_UPDATE
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Updates the player's state in the player-list object</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.pl
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;PLAYER_UPDATE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">updatePlayer</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;UPDATED_PLIST&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">shouldStep</span><span class="p">())</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">shouldEmitPlaying</span><span class="p">())</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PLAYING&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.stage">
+  <h2>
+    <a href="#in.say.stage" class="pilcrow">&#182;</a>
+    in.say.STAGE
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Updates the game stage</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;STAGE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">stageObj</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Received in.say.STAGE msg with empty stage&#39;</span><span class="p">);</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">stageObj</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stageObj</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Received in.say.STAGE msg with invalid stage&#39;</span><span class="p">);</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>TODO: renable when it does not cause problems.
+At the moment the AdminServer sends this kind of msg
+each time an admin publishes its own state
+node.game.execStep(stageObj);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.stage_level">
+  <h2>
+    <a href="#in.say.stage_level" class="pilcrow">&#182;</a>
+    in.say.STAGE_LEVEL
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Updates the stage level</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;STAGE_LEVEL&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+</div>
+<p>node.game.setStageLevel(msg.data);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.redirect">
+  <h2>
+    <a href="#in.say.redirect" class="pilcrow">&#182;</a>
+    in.say.REDIRECT
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Redirects to a new page</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.redirect
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;REDIRECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nb">window</span> <span class="o">||</span> <span class="o">!</span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;window.location not found. Cannot redirect&#39;</span><span class="p">);</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nb">window</span><span class="p">.</span><span class="nx">location</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.setup">
+  <h2>
+    <a href="#in.say.setup" class="pilcrow">&#182;</a>
+    in.say.SETUP
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Setups a features of nodegame</p>
+
+<p>Unstrigifies the payload before calling <code>node.setup</code>.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.setup</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">JSUS.parse
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;SETUP&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">payload</span><span class="p">,</span> <span class="nx">feature</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="nx">feature</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span>
+            <span class="nx">payload</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span> <span class="o">?</span>
+                <span class="nx">J</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">payload</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.on.in.say.SETUP: error while parsing &#39;</span> <span class="o">+</span>
+                         <span class="s1">&#39;incoming remote setup message&#39;</span><span class="p">);</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="p">[</span><span class="nx">feature</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">payload</span><span class="p">));</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.gamecommand">
+  <h2>
+    <a href="#in.say.gamecommand" class="pilcrow">&#182;</a>
+    in.say.GAMECOMMAND
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Setups a features of nodegame</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.setup
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;GAMECOMMAND&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>console.log('GM', msg);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">||</span> <span class="o">!</span><span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">gamecommands</span><span class="p">[</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.on.in.say.GAMECOMMAND: unknown game command &#39;</span> <span class="o">+</span>
+                         <span class="s1">&#39;received: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_GAMECOMMAND_&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.alert">
+  <h2>
+    <a href="#in.say.alert" class="pilcrow">&#182;</a>
+    in.say.ALERT
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Displays an alert message (if in the browser window)</p>
+
+<p>If in Node.js, the message will be printed to standard output.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.setup
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;ALERT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Alert message received, but content is empty.&#39;</span><span class="p">);</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">alert</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Alert msg received, but alert is not defined:&#39;</span> <span class="o">+</span>
+                             <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+                    <span class="k">return</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">alert</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;****** ALERT ******&#39;</span><span class="p">);</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;*******************&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.get.session">
+  <h2>
+    <a href="#in.get.session" class="pilcrow">&#182;</a>
+    in.get.SESSION
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Gets the value of a variable registered in the session</p>
+
+<p>If msg.text is undefined returns all session variables</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameSession.get
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;SESSION&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.get.plot">
+  <h2>
+    <a href="#in.get.plot" class="pilcrow">&#182;</a>
+    in.get.PLOT
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Gets the current plot sequence or the full plot state.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GamePlot</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;PLOT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="s1">&#39;state&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getState</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getSequence</span><span class="p">();</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.get.plist">
+  <h2>
+    <a href="#in.get.plist" class="pilcrow">&#182;</a>
+    in.get.PLIST
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Gets the current <em>PlayerList</em> object</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">PlayerList</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.game.pl
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;PLIST&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">db</span><span class="p">;</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.get.lang---get.lang">
+  <h2>
+    <a href="#in.get.lang---get.lang" class="pilcrow">&#182;</a>
+    in.get.LANG | get.LANG
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Gets the currently used language</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.player.lang
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;LANG&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">lang</span><span class="p">;</span>
+        <span class="p">});</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;LANG&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">lang</span><span class="p">;</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.set.lang">
+  <h2>
+    <a href="#in.set.lang" class="pilcrow">&#182;</a>
+    in.set.LANG
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Sets the currently used language</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NodeGameClient.setLanguage</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.player.lang
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">set</span> <span class="o">+</span> <span class="s1">&#39;LANG&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">incomingAdded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;incoming listeners added&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
+
+<span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

@@ -21,56 +21,17 @@
       <div class="heading h1">
         <a href="#nodegame">nodeGame</a>
       </div>
-      <div class="heading h3">
-        <a href="#version">version</a>
+      <div class="heading h2">
+        <a href="#for-on-line--multiplayer-games-in-the-browser.">for on line, multiplayer games in the browser.</a>
       </div>
       <div class="heading h2">
-        <a href="#logging-system">Logging system</a>
+        <a href="#loading-libraries">Loading libraries</a>
       </div>
       <div class="heading h3">
-        <a href="#node.verbosity">node.verbosity</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.verbosity_levels">node.verbosity_levels</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.log">node.log</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.info">node.info</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.warn">node.warn</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.err">node.err</a>
-      </div>
-      <div class="heading h2">
-        <a href="#objects">Objects</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.events">node.events</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.msg">node.msg</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.socket">node.socket</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.session">node.session</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.player">node.player</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.memory">node.memory</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.support">node.support</a>
-      </div>
-      <div class="heading h2">
         <a href="#dependencies">Dependencies</a>
+      </div>
+      <div class="heading h3">
+        <a href="#loading-event-listeners">Loading Event listeners</a>
       </div>
     </div>
   </div>
@@ -88,39 +49,34 @@
   </h1>
 </div>
 
+
+<p>Copyright(c) 2014 Stefano Balietti
+MIT Licensed</p>
   </div>
   <div class="body"><p>Social Experiments in the Browser</p>
 
-<p>Copyright(c) 2012 Stefano Balietti
-MIT Licensed </p>
+<p>nodeGame is a free, open source, event-driven javascript framework</p>
 
-<p>nodeGame is a free, open source, event-driven javascript framework for on line, 
-multiplayer games in the browser.</p>
+
+<div class="pilwrap" id="for-on-line--multiplayer-games-in-the-browser.">
+  <h2>
+    <a href="#for-on-line--multiplayer-games-in-the-browser." class="pilcrow">&#182;</a>
+    for on line, multiplayer games in the browser.
+  </h2>
+</div>
+
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="version">
-  <h3>
-    <a href="#version" class="pilcrow">&#182;</a>
-    version
-  </h3>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.4.8&#39;</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="logging-system">
+<div class="pilwrap" id="loading-libraries">
   <h2>
-    <a href="#logging-system" class="pilcrow">&#182;</a>
-    Logging system
+    <a href="#loading-libraries" class="pilcrow">&#182;</a>
+    Loading libraries
   </h2>
 </div>
 
@@ -129,43 +85,39 @@ multiplayer games in the browser.</p>
         </td>
       </tr>
       <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.verbosity">
+        <td class="docs">
+<div class="pilwrap" id="dependencies">
   <h3>
-    <a href="#node.verbosity" class="pilcrow">&#182;</a>
-    node.verbosity
+    <a href="#dependencies" class="pilcrow">&#182;</a>
+    Dependencies
   </h3>
 </div>
 
-
-<p>The minimum level for a log entry to be displayed as output.</p>
-
-<p>Defaults, only errors are displayed.</p>
-  </div>
-  <div class="body">
-  </div>
-</div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;JSUS&#39;</span><span class="p">).</span><span class="nx">JSUS</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">support</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">compatibility</span><span class="p">();</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;NDDB&#39;</span><span class="p">).</span><span class="nx">NDDB</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.verbosity_levels">
-  <h3>
-    <a href="#node.verbosity_levels" class="pilcrow">&#182;</a>
-    node.verbosity_levels
-  </h3>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
 </div>
-
-  </div>
-  <div class="body"><p>ALWAYS, ERR, WARN, INFO, DEBUG</p>
-  </div>
-</div>
+<p>Costants</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span> <span class="o">=</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">constants</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/variables&#39;</span><span class="p">).</span><span class="nx">constants</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/stepRules&#39;</span><span class="p">).</span><span class="nx">stepRules</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>ErrorManager</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/ErrorManager&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -173,358 +125,172 @@ multiplayer games in the browser.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
-<!-- It is not really always... -->
+<p>Events</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">ALWAYS</span><span class="o">:</span> <span class="o">-</span><span class="p">(</span><span class="nb">Number</span><span class="p">.</span><span class="nx">MIN_VALUE</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> 
-    <span class="nx">ERR</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-    <span class="nx">WARN</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="nx">INFO</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="nx">DEBUG</span><span class="o">:</span> <span class="mi">100</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.log">
-  <h3>
-    <a href="#node.log" class="pilcrow">&#182;</a>
-    node.log
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Default nodeGame standard out, override to redirect</p>
-
-<p>Logs entries are displayed only if their verbosity level is 
-greater than <code>node.verbosity</code></p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">txt</span>
-      <span class="dox_type">string</span>
-      <span>The text to output</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">level</span>
-      <span class="dox_type">string</span>
-      <span class="dox_type">number</span>
-      <span>Optional. The verbosity level of this log. Defaults, level = 0</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">prefix</span>
-      <span class="dox_type">string</span>
-      <span>Optional. A text to display at the beginning of the log entry. Defaults prefix = 'nodeGame: ' </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">level</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">txt</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  
-  <span class="nx">level</span>   <span class="o">=</span> <span class="nx">level</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="nx">prefix</span>  <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">prefix</span><span class="p">)</span>   <span class="o">?</span> <span class="s1">&#39;nodeGame: &#39;</span>
-                        <span class="o">:</span> <span class="nx">prefix</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">level</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">&gt;</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">txt</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.info">
-  <h3>
-    <a href="#node.info" class="pilcrow">&#182;</a>
-    node.info
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Logs an INFO message</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">info</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">INFO</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
-<span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.warn">
-  <h3>
-    <a href="#node.warn" class="pilcrow">&#182;</a>
-    node.warn
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Logs a WARNING message</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">warn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">WARN</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
-<span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.err">
-  <h3>
-    <a href="#node.err" class="pilcrow">&#182;</a>
-    node.err
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Logs an ERROR message</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">err</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">ERR</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
-<span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="objects">
-  <h2>
-    <a href="#objects" class="pilcrow">&#182;</a>
-    Objects
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.events">
-  <h3>
-    <a href="#node.events" class="pilcrow">&#182;</a>
-    node.events
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Instance of the EventEmitter class</p>
-
-<p>Takes care of emitting the events and calling the
-proper listener functions </p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">node.EventEmitter
-    </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="p">{};</span>
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.msg">
-  <h3>
-    <a href="#node.msg" class="pilcrow">&#182;</a>
-    node.msg
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Static factory of game messages</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">node.GameMsgGenerator
-    </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="p">{};</span>
-  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.socket">
-  <h3>
-    <a href="#node.socket" class="pilcrow">&#182;</a>
-    node.socket
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Instantiates the connection to a nodeGame server</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">node.GameSocketClient
-    </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">gsc</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.session">
-  <h3>
-    <a href="#node.session" class="pilcrow">&#182;</a>
-    node.session
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Contains a reference to all session variables</p>
-
-<p>Session variables can be saved and restored at a later stage</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">session</span>  <span class="o">=</span> <span class="p">{};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.player">
-  <h3>
-    <a href="#node.player" class="pilcrow">&#182;</a>
-    node.player
-  </h3>
-</div>
-
-
-<p>Instance of node.Player</p>
-  </div>
-  <div class="body"><p>Contains information about the player</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">node.PlayerList.Player
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">player</span>   <span class="o">=</span> <span class="p">{};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.memory">
-  <h3>
-    <a href="#node.memory" class="pilcrow">&#182;</a>
-    node.memory
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Instance of node.GameDB database</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">node.GameDB
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">memory</span>   <span class="o">=</span> <span class="p">{};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.support">
-  <h3>
-    <a href="#node.support" class="pilcrow">&#182;</a>
-    node.support
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>A collection of features that are supported by the current browser</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">node</span><span class="p">.</span><span class="nx">support</span>  <span class="o">=</span> <span class="p">{};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="dependencies">
-  <h2>
-    <a href="#dependencies" class="pilcrow">&#182;</a>
-    Dependencies
-  </h2>
-</div>
-
-
-<p>Load dependencies</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">module</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">require</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">EventEmitterManager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/EventEmitter&#39;</span><span class="p">).</span><span class="nx">EventEmitterManager</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/EventEmitter&#39;</span><span class="p">).</span><span class="nx">EventEmitter</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
 </div>
-<!-- Node.js -->
+<p>Core</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./init.node.js&#39;</span><span class="p">);</span>
-    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./nodeGame.js&#39;</span><span class="p">);</span>
-    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/incoming.js&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameStage&#39;</span><span class="p">).</span><span class="nx">GameStage</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/PlayerList&#39;</span><span class="p">).</span><span class="nx">PlayerList</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Player</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/PlayerList&#39;</span><span class="p">).</span><span class="nx">Player</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameMsg&#39;</span><span class="p">).</span><span class="nx">GameMsg</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Stager&#39;</span><span class="p">).</span><span class="nx">Stager</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GamePlot</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GamePlot&#39;</span><span class="p">).</span><span class="nx">GamePlot</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameMsgGenerator&#39;</span><span class="p">).</span><span class="nx">GameMsgGenerator</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>Sockets</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">SocketFactory</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/SocketFactory&#39;</span><span class="p">).</span><span class="nx">SocketFactory</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Socket</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Socket&#39;</span><span class="p">).</span><span class="nx">Socket</span><span class="p">;</span>
+
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/sockets/SocketIo.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/sockets/SocketDirect.js&#39;</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<p>Timer</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">Timer</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Timer&#39;</span><span class="p">).</span><span class="nx">Timer</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>Game</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameDB&#39;</span><span class="p">).</span><span class="nx">GameDB</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameBit</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameDB&#39;</span><span class="p">).</span><span class="nx">GameBit</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Game</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Game&#39;</span><span class="p">).</span><span class="nx">Game</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>Extra (to be tested)</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">GroupManager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GroupManager&#39;</span><span class="p">).</span><span class="nx">GroupManager</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">RoleMapper</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/RoleMapper&#39;</span><span class="p">).</span><span class="nx">RoleMapper</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Session&#39;</span><span class="p">).</span><span class="nx">GameSession</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>Addons</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">TriggerManager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./addons/TriggerManager&#39;</span><span class="p">).</span><span class="nx">TriggerManager</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+</div>
+<p>FS</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameFS</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/NodeGameFS&#39;</span><span class="p">).</span><span class="nx">NodeGameFS</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>Load main nodegame-client class</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameClient</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/NodeGameClient&#39;</span><span class="p">).</span><span class="nx">NodeGameClient</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>Load extensions to the prototype</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/log.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/setup.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/alias.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/events.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/connect.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/player.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/ssgd.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/commands.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/extra.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/getJSON.js&#39;</span><span class="p">);</span>
+
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/variables.js&#39;</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="loading-event-listeners">
+  <h3>
+    <a href="#loading-event-listeners" class="pilcrow">&#182;</a>
+    Loading Event listeners
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/incoming.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/internal.js&#39;</span><span class="p">);</span>
-    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/outgoing.js&#39;</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="k">else</span> <span class="p">{</span></pre></div>
+
+
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">getClient</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">();</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
-<!-- Browser -->
+<p>TODO: find a good way to incorpare all the classes
+TODO: should they use the new operator?</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">JSUS</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">NDDB</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">NDDB</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">store</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">store</span> <span class="o">=</span> <span class="nx">store</span><span class="p">;</span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">support</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">compatibility</span><span class="p">();</span>
-<span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameStageCallbackError</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameStageCallbackError</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameIllegalOperationError</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameIllegalOperationError</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">fs</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameFS</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
 
-  
-<span class="p">})(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">module</span> <span class="o">?</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">:</span> <span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="p">{}));</span> 
+        <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">getStager</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span><span class="p">(</span><span class="nx">state</span><span class="p">);</span>
+    <span class="p">};</span>
+
+<span class="p">})(</span><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">);</span>
 </pre></div>
         </td>
       </tr>

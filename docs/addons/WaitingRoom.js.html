@@ -41,20 +41,20 @@
 </div>
 
   </div>
-  <div class="body"><p>Holds a list of players and starts one or more games based on a 
+  <div class="body"><p>Holds a list of players and starts one or more games based on a
 list of criteria. </p>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">){</span>
-  
+
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">TriggerManager</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.TriggerManager not found. Aborting&#39;</span><span class="p">);</span>
   <span class="p">}</span>
-  
+
   <span class="kd">function</span> <span class="nx">Group</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{}</span>
-    
+
     <span class="k">this</span><span class="p">.</span><span class="nx">players</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">players</span><span class="p">;</span>
   <span class="p">}</span>
   </pre></div>
@@ -69,26 +69,26 @@ list of criteria. </p>
     throw new Error('node.TriggerManager not found. Aborting');
 }</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  
+        <td class="code highlight"><div class="highlight"><pre>
   <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
-  
-  
+
+
   <span class="nx">exports</span><span class="p">.</span><span class="nx">WaitingRoom</span> <span class="o">=</span> <span class="nx">WaitingRoom</span><span class="p">;</span>
-  
+
   <span class="nx">WaitingRoom</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">TriggerManager</span><span class="p">();</span>
   <span class="nx">WaitingRoom</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">WaitingRoom</span><span class="p">;</span>
-  
-  <span class="nx">WaitingRoom</span><span class="p">.</span><span class="nx">defaults</span> <span class="o">=</span> <span class="p">{};</span>
-  
 
-  
+  <span class="nx">WaitingRoom</span><span class="p">.</span><span class="nx">defaults</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+
   <span class="kd">function</span> <span class="nx">WaitingRoom</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-    
-    
+
+
     <span class="nx">node</span><span class="p">.</span><span class="nx">pool</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">();</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">room</span> <span class="o">=</span> <span class="p">{};</span>
-    
+
     <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">pullTriggers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -97,7 +97,7 @@ list of criteria. </p>
 
       <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">groups</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
       <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">groups</span><span class="p">))</span> <span class="nx">groups</span> <span class="o">=</span> <span class="p">[</span><span class="nx">groups</span><span class="p">];</span>
-      
+
       <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
       <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span> <span class="nx">groups</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">name</span> <span class="o">=</span> <span class="nx">groups</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">name</span> <span class="o">||</span> <span class="nx">count</span><span class="o">++</span><span class="p">;</span>
@@ -105,7 +105,7 @@ list of criteria. </p>
         <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">room</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">step</span><span class="p">();</span>
       <span class="p">}</span>
     <span class="p">};</span>
-    
+
     <span class="kd">var</span> <span class="nx">onConnectFunc</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
@@ -120,7 +120,7 @@ list of criteria. </p>
         <span class="nx">pullTriggers</span><span class="p">();</span>
       <span class="p">});</span>
     <span class="p">};</span>
-    
+
     <span class="kd">var</span> <span class="nx">onConnect</span><span class="p">;</span>
     <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;onConnect&#39;</span><span class="p">,</span> <span class="p">{</span>
       <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
@@ -132,14 +132,14 @@ list of criteria. </p>
           <span class="nx">node</span><span class="p">.</span><span class="nx">onPLIST</span><span class="p">(</span><span class="nx">pullTriggers</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">onConnect</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
-        
+
       <span class="p">},</span>
       <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">onConnect</span><span class="p">;</span>
       <span class="p">},</span>
       <span class="nx">configurable</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">});</span>
-    
+
     <span class="kd">var</span> <span class="nx">onTimeout</span><span class="p">,</span> <span class="nx">onTimeoutTime</span><span class="p">;</span>
     <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;onTimeout&#39;</span><span class="p">,</span> <span class="p">{</span>
       <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
@@ -149,7 +149,7 @@ list of criteria. </p>
           <span class="nx">onTimeout</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;numeric&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-        
+
           <span class="k">if</span> <span class="p">(</span><span class="nx">onTimeout</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">onTimeout</span><span class="p">);</span>
           <span class="p">}</span>
@@ -162,7 +162,7 @@ list of criteria. </p>
       <span class="p">},</span>
       <span class="nx">configurable</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">});</span>
-    
+
     <span class="kd">var</span> <span class="nx">onInterval</span><span class="p">,</span> <span class="nx">onIntervalTime</span><span class="p">;</span>
     <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;onInterval&#39;</span><span class="p">,</span> <span class="p">{</span>
       <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
@@ -172,7 +172,7 @@ list of criteria. </p>
           <span class="nx">onInterval</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;numeric&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-        
+
           <span class="k">if</span> <span class="p">(</span><span class="nx">onInterval</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">onInterval</span><span class="p">);</span>
           <span class="p">}</span>
@@ -185,27 +185,27 @@ list of criteria. </p>
       <span class="p">},</span>
       <span class="nx">configurable</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">});</span>
-    
-    
+
+
     <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
   <span class="p">}</span>
 
-  
+
   <span class="nx">WaitingRoom</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-    
+
     <span class="k">this</span><span class="p">.</span><span class="nx">onConnect</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">onConnect</span> <span class="o">||</span> <span class="kc">true</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">onTimeout</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">onTimeout</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">onInterval</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">onInterval</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
-    
-    
+
+
     <span class="k">this</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
       <span class="k">return</span> <span class="k">new</span> <span class="nx">Group</span><span class="p">({</span>
         <span class="nx">players</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">pool</span><span class="p">,</span>
         <span class="nx">game</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">loops</span>
       <span class="p">});</span>
     <span class="p">});</span>
-    
+
     <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">minPlayers</span> <span class="o">&amp;&amp;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">maxPlayers</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">minPlayers</span><span class="p">)</span> <span class="p">{</span>
@@ -226,29 +226,29 @@ list of criteria. </p>
             <span class="nx">players</span><span class="o">:</span> <span class="nx">players</span><span class="p">,</span>
             <span class="nx">game</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">loops</span>
           <span class="p">});</span>
-          
+
         <span class="p">}</span>
-        
+
         <span class="k">return</span> <span class="k">new</span> <span class="nx">Group</span><span class="p">({</span>
           <span class="nx">players</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">pool</span><span class="p">,</span>
           <span class="nx">game</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">loops</span>
         <span class="p">});</span>
       <span class="p">});</span>
     <span class="p">}</span>
-    
+
     <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">minPlayers</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">minPlayers</span><span class="p">)</span> <span class="p">{</span>
           <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
-        
+
         <span class="k">return</span> <span class="k">new</span> <span class="nx">Group</span><span class="p">({</span>
           <span class="nx">players</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">pool</span><span class="p">,</span>
           <span class="nx">game</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">loops</span>
         <span class="p">});</span>
       <span class="p">});</span>
     <span class="p">}</span>
-    
+
     <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">maxPlayers</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">maxPlayers</span><span class="p">)</span> <span class="p">{</span></pre></div>
@@ -266,11 +266,11 @@ list of criteria. </p>
             <span class="nx">players</span><span class="o">:</span> <span class="nx">players</span><span class="p">,</span>
             <span class="nx">game</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">loops</span>
           <span class="p">});</span>
-          
+
         <span class="p">}</span>
       <span class="p">});</span>
     <span class="p">}</span>
-    
+
     <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">nPlayers</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="nx">options</span><span class="p">.</span><span class="nx">nPlayers</span><span class="p">)</span> <span class="p">{</span></pre></div>
@@ -287,18 +287,18 @@ list of criteria. </p>
             <span class="nx">players</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">pool</span><span class="p">,</span>
             <span class="nx">game</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">loops</span>
           <span class="p">});</span>
-          
+
         <span class="p">}</span>
       <span class="p">});</span>
     <span class="p">}</span>
-    
+
   <span class="p">};</span>
-  
-  
+
+
   <span class="nx">WaitingRoom</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">criteria</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">pos</span><span class="p">);</span>
   <span class="p">};</span>
-  
+
   </pre></div>
         </td>
       </tr>
@@ -322,8 +322,8 @@ list of criteria. </p>
     <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">interval</span><span class="p">)</span> <span class="nx">clearInterval</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">interval</span><span class="p">);</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">interval</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">pullTriggers</span><span class="p">,</span> <span class="nx">interval</span><span class="p">);</span>
   <span class="p">};</span>
-  
-  
+
+
 <span class="p">})(</span>
   <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
   <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>

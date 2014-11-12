@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GameStage.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../../', thisFile = 'lib/core/GameStage.js', defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#gamestage">GameStage</a>
+      </div>
+      <div class="heading h2">
+        <a href="#global-scope">Global scope</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamestage.defaults.hash">GameStage.defaults.hash</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gamestage-constructor">GameStage constructor</a>
+      </div>
+      <div class="heading h2">
+        <a href="#public-properties">Public properties</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamestage.stage">GameStage.stage</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamestage.step">GameStage.step</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamestage.round">GameStage.round</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gamestage.tostring">GameStage.toString</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gamestage.tohash">GameStage.toHash</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gamestage.tohash--static-">GameStage.toHash (static)</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gamestage.compare--static-">GameStage.compare (static)</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gamestage.stringify--static-">GameStage.stringify (static)</a>
+      </div>
+      <div class="heading h2">
+        <a href="#closure">Closure</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamestage">
+  <h1>
+    <a href="#gamestage" class="pilcrow">&#182;</a>
+    GameStage
+  </h1>
+</div>
+
+  </div>
+  <div class="body"><p>Copyright(c) 2014 Stefano Balietti
+MIT Licensed</p>
+
+<p>Representation of the stage of a game:</p>
+
+<ul>
+<li><code>stage</code>: the higher-level building blocks of a game</li>
+<li><code>step</code>: the sub-unit of a stage</li>
+<li><code>round</code>: the number of repetition for a stage. Defaults round = 1</li>
+</ul>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GamePlot
+---
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="global-scope">
+  <h2>
+    <a href="#global-scope" class="pilcrow">&#182;</a>
+    Global scope
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>Expose constructor</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">GameStage</span><span class="p">;</span>
+
+    <span class="nx">GameStage</span><span class="p">.</span><span class="nx">defaults</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamestage.defaults.hash">
+  <h3>
+    <a href="#gamestage.defaults.hash" class="pilcrow">&#182;</a>
+    GameStage.defaults.hash
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Default hash string for game-stages</p>
+
+<p>@see GameStage.toHash</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameStage</span><span class="p">.</span><span class="nx">defaults</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="s1">&#39;S.s.r&#39;</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamestage-constructor">
+  <h2>
+    <a href="#gamestage-constructor" class="pilcrow">&#182;</a>
+    GameStage constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates an instance of a GameStage</p>
+
+<p>It accepts an object literal, a number, or an hash string as defined in
+<code>GameStage.defaults.hash</code>.</p>
+
+<p>The stage and step can be either an integer (1-based index) or a string
+(valid stage/step name). The round must be an integer.</p>
+
+<p>If no parameter is passed, all the properties of the GameStage
+object are set to 0</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gs</span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The game stage</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameStage.defaults.hash
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gs</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">tokens</span><span class="p">,</span> <span class="nx">stageNum</span><span class="p">,</span> <span class="nx">stepNum</span><span class="p">,</span> <span class="nx">roundNum</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="public-properties">
+  <h2>
+    <a href="#public-properties" class="pilcrow">&#182;</a>
+    Public properties
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamestage.stage">
+  <h3>
+    <a href="#gamestage.stage" class="pilcrow">&#182;</a>
+    GameStage.stage
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The N-th game-block (stage) in the game-plot currently being executed</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamestage.step">
+  <h3>
+    <a href="#gamestage.step" class="pilcrow">&#182;</a>
+    GameStage.step
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The N-th game-block (step) nested in the current stage</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamestage.round">
+  <h3>
+    <a href="#gamestage.round" class="pilcrow">&#182;</a>
+    GameStage.round
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The number of times the current stage was repeated</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">round</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>String.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">);</span>
+            <span class="nx">stageNum</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">10</span><span class="p">);</span>
+            <span class="nx">stepNum</span>  <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">10</span><span class="p">);</span>
+            <span class="nx">roundNum</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">10</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="o">!</span><span class="nb">isNaN</span><span class="p">(</span><span class="nx">stageNum</span><span class="p">)</span> <span class="o">?</span> <span class="nx">stageNum</span> <span class="o">:</span> <span class="nx">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">step</span>  <span class="o">=</span> <span class="o">!</span><span class="nb">isNaN</span><span class="p">(</span><span class="nx">stepNum</span><span class="p">)</span> <span class="o">?</span> <span class="nx">stepNum</span> <span class="o">:</span> <span class="nx">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">tokens</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">round</span> <span class="o">=</span> <span class="nx">roundNum</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">round</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>Not null object.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">gs</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">step</span> <span class="o">?</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">step</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">round</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">round</span> <span class="o">?</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">round</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>Number.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">gs</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+               <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameStage constructor: gs cannot be &#39;</span> <span class="o">+</span>
+                                   <span class="s1">&#39;a non-integer number.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">gs</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">round</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+</div>
+<p>Defaults or error.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">gs</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gs</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameStage constructor: gs must be string, &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;object, a positive number, or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>Final sanity checks.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameStage constructor: stage cannot be &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameStage constructor: step cannot be &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameStage constructor: round cannot be &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">||</span>
+            <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span>  <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">||</span>
+            <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">round</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">round</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
+
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameStage constructor: no field can be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;a negative number.&#39;</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>Either 0.0.0 or no 0 is allowed.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">round</span> <span class="o">===</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">round</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameStage constructor: non-sensical game &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;stage: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamestage.tostring">
+  <h2>
+    <a href="#gamestage.tostring" class="pilcrow">&#182;</a>
+    GameStage.toString
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Converts the current instance of GameStage to a string</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span>out The string representation of game stage</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameStage</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamestage.tohash">
+  <h2>
+    <a href="#gamestage.tohash" class="pilcrow">&#182;</a>
+    GameStage.toHash
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a simplified hash of the stage of the GameStage,
+according to the input string</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">str</span>
+      <span class="dox_type">string</span>
+      <span>The hash code</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span>hash The hashed game stages</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameStage.toHash (static)
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameStage</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toHash</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">str</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamestage.tohash--static-">
+  <h2>
+    <a href="#gamestage.tohash--static-" class="pilcrow">&#182;</a>
+    GameStage.toHash (static)
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a simplified hash of the stage of the GameStage,
+according to the input string.</p>
+
+<p>The following characters are valid to determine the hash string</p>
+
+<ul>
+<li>S: stage</li>
+<li>s: step</li>
+<li>r: round</li>
+</ul>
+
+<p>E.g.</p>
+
+
+<div class="highlight"><pre><code>     <span class="kd">var</span> <span class="nx">gs</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">({</span>
+         <span class="nx">round</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+         <span class="nx">stage</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+         <span class="nx">step</span><span class="o">:</span> <span class="mi">1</span>
+     <span class="p">});</span>
+
+     <span class="nx">gs</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;(R) S.s&#39;</span><span class="p">);</span> <span class="c1">// (1) 2.1</span>
+</code></pre></div>
+
+
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gs</span>
+      <span class="dox_type">GameStage</span>
+      <span>The game stage to hash</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">str</span>
+      <span class="dox_type">string</span>
+      <span>The hash code</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span>hash The hashed game stages</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameStage</span><span class="p">.</span><span class="nx">toHash</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gs</span><span class="p">,</span> <span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">idx</span><span class="p">,</span> <span class="nx">properties</span><span class="p">,</span> <span class="nx">symbols</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gs</span> <span class="o">||</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gs</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameStage.toHash: gs must be object.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">str</span> <span class="o">||</span> <span class="o">!</span><span class="nx">str</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+
+        <span class="nx">hash</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="nx">symbols</span> <span class="o">=</span> <span class="s1">&#39;Ssr&#39;</span><span class="p">,</span>
+        <span class="nx">properties</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="s1">&#39;round&#39;</span><span class="p">];</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">idx</span> <span class="o">=</span> <span class="nx">symbols</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">str</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">i</span><span class="p">));</span>
+            <span class="nx">hash</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">str</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">:</span> <span class="nx">gs</span><span class="p">[</span><span class="nx">properties</span><span class="p">[</span><span class="nx">idx</span><span class="p">]];</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">hash</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamestage.compare--static-">
+  <h2>
+    <a href="#gamestage.compare--static-" class="pilcrow">&#182;</a>
+    GameStage.compare (static)
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Compares two GameStage objects|hash strings and returns:</p>
+
+<ul>
+<li>0 if they represent the same game stage</li>
+<li>a positive number if gs1 is ahead of gs2</li>
+<li>a negative number if gs2 is ahead of gs1</li>
+</ul>
+
+<p>The accepted hash string format is the following: 'S.s.r'.
+Refer to <code>GameStage.toHash</code> for the semantic of the characters.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gs1</span>
+      <span class="dox_type">GameStage</span>
+      <span class="dox_type">string</span>
+      <span>The first game stage to compare</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gs2</span>
+      <span class="dox_type">GameStage</span>
+      <span class="dox_type">string</span>
+      <span>The second game stage to compare</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">Number</span>
+      <span>result The result of the comparison</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameStage.toHash (static)
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gs1</span><span class="p">,</span> <span class="nx">gs2</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">result</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs1</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs1</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>Convert the parameters to objects, if an hash string was passed.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs1</span><span class="p">)</span> <span class="nx">gs1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gs1</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gs2</span><span class="p">)</span> <span class="nx">gs2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gs2</span><span class="p">);</span>
+
+        <span class="nx">result</span> <span class="o">=</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">stage</span> <span class="o">-</span> <span class="nx">gs2</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">result</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">round</span> <span class="o">-</span> <span class="nx">gs2</span><span class="p">.</span><span class="nx">round</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">result</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="nx">gs1</span><span class="p">.</span><span class="nx">step</span> <span class="o">-</span> <span class="nx">gs2</span><span class="p">.</span><span class="nx">step</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamestage.stringify--static-">
+  <h2>
+    <a href="#gamestage.stringify--static-" class="pilcrow">&#182;</a>
+    GameStage.stringify (static)
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Converts an object GameStage-like to its string representation</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gs</span>
+      <span class="dox_type">GameStage</span>
+      <span>The object to convert to string</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span>out The string representation of a GameStage object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameStage</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gs</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gs</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gs</span><span class="p">).</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;(r) S.s_i&#39;</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="closure">
+  <h2>
+    <a href="#closure" class="pilcrow">&#182;</a>
+    Closure
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

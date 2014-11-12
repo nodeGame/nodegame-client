@@ -1,116 +1,114 @@
 /**
  * # nodeGame
- * 
- * Web Experiments in the Browser
- * 
- * Copyright(c) 2012 Stefano Balietti
- * MIT Licensed 
- * 
- * nodeGame is a free, open source, event-driven javascript framework for on line, 
- * multiplayer games in the browser.
- * 
- * 
+ * Copyright(c) 2014 Stefano Balietti
+ * MIT Licensed
+ *
+ * Social Experiments in the Browser
+ *
+ * nodeGame is a free, open source, event-driven javascript framework
+ * for on line, multiplayer games in the browser.
+ * ---
  */
+(function(exports) {
 
-(function (node) {
+    // ## Loading libraries
+
+    // ### Dependencies
+    exports.JSUS = require('JSUS').JSUS;
+    exports.support = exports.JSUS.compatibility();
+    exports.NDDB = require('NDDB').NDDB;
+
+    // Costants
+    exports.constants = require('./lib/modules/variables').constants;
+    exports.stepRules = require('./lib/modules/stepRules').stepRules;
+
+    // ErrorManager
+    require('./lib/core/ErrorManager');
+
+    // Events
+    exports.EventEmitterManager = require('./lib/core/EventEmitter').EventEmitterManager;
+    exports.EventEmitter = require('./lib/core/EventEmitter').EventEmitter;
+
+    // Core
+    exports.GameStage = require('./lib/core/GameStage').GameStage;
+    exports.PlayerList = require('./lib/core/PlayerList').PlayerList;
+    exports.Player = require('./lib/core/PlayerList').Player;
+    exports.GameMsg = require('./lib/core/GameMsg').GameMsg;
+    exports.Stager = require('./lib/core/Stager').Stager;
+    exports.GamePlot = require('./lib/core/GamePlot').GamePlot;
+    exports.GameMsgGenerator = require('./lib/core/GameMsgGenerator').GameMsgGenerator;
+
+    // Sockets
+    exports.SocketFactory = require('./lib/core/SocketFactory').SocketFactory;
+    exports.Socket = require('./lib/core/Socket').Socket;
+
+    require('./lib/sockets/SocketIo.js');
+    require('./lib/sockets/SocketDirect.js');
+
+    // Timer
+    exports.Timer = require('./lib/core/Timer').Timer;
+
+    // Game
+    exports.GameDB = require('./lib/core/GameDB').GameDB;
+    exports.GameBit = require('./lib/core/GameDB').GameBit;
+    exports.Game = require('./lib/core/Game').Game;
+
+    // Extra (to be tested)
+    exports.GroupManager = require('./lib/core/GroupManager').GroupManager;
+    exports.RoleMapper = require('./lib/core/RoleMapper').RoleMapper;
+    exports.GameSession = require('./lib/core/Session').GameSession;
+
+    // Addons
+    exports.TriggerManager = require('./addons/TriggerManager').TriggerManager;
+
+    // FS
+    exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;
+
+    // Load main nodegame-client class
+    exports.NodeGameClient = require('./lib/core/NodeGameClient').NodeGameClient;
+
+    // Load extensions to the prototype
+
+    require('./lib/modules/log.js');
+    require('./lib/modules/setup.js');
+    require('./lib/modules/alias.js');
+    require('./lib/modules/events.js');
+    require('./lib/modules/connect.js');
+    require('./lib/modules/player.js');
+    require('./lib/modules/ssgd.js');
+    require('./lib/modules/commands.js');
+    require('./lib/modules/extra.js');
+    require('./lib/modules/getJSON.js');
+
+    require('./lib/modules/variables.js');
 
 
-node.version = '0.4.8';
-
-/**
- *  ## node.verbosity
- *  
- *  The minimum level for a log entry to be displayed as output.
- *   
- *  Defaults, only errors are displayed.
- *  
- */
-node.verbosity = 0;
-
-
-// ## node.verbosity_levels 
-node.verbosity_levels = {
-		// <!-- It is not really always... -->
-		ALWAYS: -(Number.MIN_VALUE+1), 
-		ERR: -1,
-		WARN: 0,
-		INFO: 1,
-		DEBUG: 100
-};
-
-// ## Logging system
-
-node.warn = function (txt, prefix) {
-	node.log(txt, node.verbosity_levels.WARN, prefix);
-}
-
-node.err = function (txt, prefix) {
-	node.log(txt, node.verbosity_levels.ERR, prefix);
-}
-
-node.info = function (txt, prefix) {
-	node.log(txt, node.verbosity_levels.INFO, prefix);
-}
-
-/**
- * ## node.log
- * 
- * Default nodeGame standard out, override to redirect
- * 
- * Default behavior is to output a text in the form: `nodeGame: some text`.
- * 
- * Logs entries are displayed only if their verbosity level is 
- * greater than `node.verbosity`
- * 
- * @param {string} txt The text to output
- * @param {string|number} level Optional. The verbosity level of this log. Defaults, level = 0
- * @param {string} prefix Optional. A text to display at the beginning of the log entry. Defaults prefix = 'nodeGame: ' 
- * 
- */
-node.log = function (txt, level, prefix) {
-	if ('undefined' === typeof txt) return false;
-	
-	level 	= level || 0;
-	prefix 	= ('undefined' === typeof prefix) 	? 'nodeGame: '
-												: prefix;
-	if ('string' === typeof level) {
-		level = node.verbosity_levels[level];
-	}
-	if (node.verbosity > level) {
-		console.log(prefix + txt);
-	}
-};
-
-
-// ## Objects
-
-node.game 		= {};
-node.socket 	= {};
-node.session 	= {};
-node.player 	= {};
-node.memory 	= {};
-
-// ## node.support 
-// A collection of features that are supported by the current browser
-node.support	= {};
-
-// ## Load dependencies 
-if ('object' === typeof module && 'function' === typeof require) {
-	// <!-- Node.js -->
-	require('./init.node.js');
-    require('./nodeGame.js');
+    // ### Loading Event listeners
     require('./listeners/incoming.js');
     require('./listeners/internal.js');
-    require('./listeners/outgoing.js');
-}
-else {
-	// <!-- Browser -->
-	if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
-	if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
-	if ('undefined' !== typeof store) node.store = store;
-	
-	node.support = JSUS.compatibility();
-}
 
-	
-})('object' === typeof module ? module.exports : (window.node = {}));	
+
+    exports.getClient = function() {
+        var node;
+        node = new exports.NodeGameClient();
+        node.constants = exports.constants;
+        node.stepRules = exports.stepRules;
+
+        // TODO: find a good way to incorpare all the classes
+        // TODO: should they use the new operator?
+        node.Stager = exports.Stager;
+        node.stepRules = exports.stepRules;
+        node.NodeGameRuntimeError = exports.NodeGameRuntimeError;
+        node.NodeGameStageCallbackError = exports.NodeGameStageCallbackError;
+        node.NodeGameMisconfiguredGameError = exports.NodeGameMisconfiguredGameError;
+        node.NodeGameIllegalOperationError = exports.NodeGameIllegalOperationError;
+        node.fs = new exports.NodeGameFS(node);
+
+        return node;
+    };
+
+    exports.getStager = function(state) {
+        return new exports.Stager(state);
+    };
+
+})(module.exports);
