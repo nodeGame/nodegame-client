@@ -174,64 +174,64 @@ handler callback.</p>
   <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code><span class="o">/**</span>
- <span class="o">*</span> <span class="c1">### NodeGameClient.on</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="n">Registers</span> <span class="n">an</span> <span class="n">event</span> <span class="n">listener</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="n">Listeners</span> <span class="n">registered</span> <span class="n">before</span> <span class="n">a</span> <span class="n">game</span> <span class="n">is</span> <span class="n">started</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">in</span>
- <span class="o">*</span> <span class="n">the</span> <span class="n">init</span> <span class="n">function</span> <span class="n">of</span> <span class="n">the</span> <span class="n">game</span> <span class="n">object</span><span class="p">,</span> <span class="n">will</span> <span class="n">stay</span> <span class="n">valid</span>
- <span class="o">*</span> <span class="n">throughout</span> <span class="n">the</span> <span class="n">game</span><span class="o">.</span> <span class="n">Listeners</span> <span class="n">registered</span> <span class="n">after</span> <span class="n">the</span> <span class="n">game</span>
- <span class="o">*</span> <span class="n">is</span> <span class="n">started</span> <span class="n">will</span> <span class="n">be</span> <span class="n">removed</span> <span class="n">after</span> <span class="n">the</span> <span class="n">game</span> <span class="n">has</span> <span class="n">advanced</span>
- <span class="o">*</span> <span class="n">to</span> <span class="n">its</span> <span class="k">next</span> <span class="n">stage</span><span class="o">.</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="nv">@param</span> <span class="p">{</span><span class="n">string</span><span class="p">}</span> <span class="n">event</span> <span class="n">The</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">event</span>
- <span class="o">*</span> <span class="nv">@param</span> <span class="p">{</span><span class="n">function</span><span class="p">}</span> <span class="n">listener</span> <span class="n">The</span> <span class="n">callback</span> <span class="n">function</span>
- <span class="o">*/</span>
-<span class="n">NGC</span><span class="o">.</span><span class="nb">prototype</span><span class="o">.</span><span class="n">on</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">var</span> <span class="n">ee</span><span class="p">;</span>
-    <span class="n">ee</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">getCurrentEventEmitter</span><span class="p">();</span>
-    <span class="n">ee</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">);</span>
+<div class="highlight"><pre><code><span class="cm">/**</span>
+<span class="cm"> * ### NodeGameClient.on</span>
+<span class="cm"> *</span>
+<span class="cm"> * Registers an event listener</span>
+<span class="cm"> *</span>
+<span class="cm"> * Listeners registered before a game is started, e.g. in</span>
+<span class="cm"> * the init function of the game object, will stay valid</span>
+<span class="cm"> * throughout the game. Listeners registered after the game</span>
+<span class="cm"> * is started will be removed after the game has advanced</span>
+<span class="cm"> * to its next stage.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param {string} event The name of the event</span>
+<span class="cm"> * @param {function} listener The callback function</span>
+<span class="cm"> */</span>
+<span class="no">NGC</span><span class="p">.</span><span class="n">prototype</span><span class="p">.</span><span class="n">on</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="n">ee</span><span class="p">;</span>
+    <span class="n">ee</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="n">getCurrentEventEmitter</span><span class="p">();</span>
+    <span class="n">ee</span><span class="p">.</span><span class="n">on</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">);</span>
 <span class="p">};</span>
 
-<span class="o">/**</span>
- <span class="o">*</span> <span class="c1">### NodeGameClient.once</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="n">Registers</span> <span class="n">an</span> <span class="n">event</span> <span class="n">listener</span> <span class="n">that</span> <span class="n">will</span> <span class="n">be</span> <span class="n">removed</span>
- <span class="o">*</span> <span class="n">after</span> <span class="n">its</span> <span class="n">first</span> <span class="n">invocation</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="nv">@param</span> <span class="p">{</span><span class="n">string</span><span class="p">}</span> <span class="n">event</span> <span class="n">The</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">event</span>
- <span class="o">*</span> <span class="nv">@param</span> <span class="p">{</span><span class="n">function</span><span class="p">}</span> <span class="n">listener</span> <span class="n">The</span> <span class="n">callback</span> <span class="n">function</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="nv">@see</span> <span class="n">NodeGameClient</span><span class="o">.</span><span class="n">on</span>
- <span class="o">*</span> <span class="nv">@see</span> <span class="n">NodeGameClient</span><span class="o">.</span><span class="n">off</span>
- <span class="o">*/</span>
-<span class="n">NGC</span><span class="o">.</span><span class="nb">prototype</span><span class="o">.</span><span class="n">once</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">var</span> <span class="n">ee</span><span class="p">,</span> <span class="n">cbRemove</span><span class="p">;</span>
-    <span class="sr">//</span> <span class="n">This</span> <span class="n">function</span> <span class="n">will</span> <span class="n">remove</span> <span class="n">the</span> <span class="n">event</span> <span class="n">listener</span>
-    <span class="sr">//</span> <span class="ow">and</span> <span class="n">itself</span><span class="o">.</span>
-    <span class="n">cbRemove</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="n">ee</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">);</span>
-        <span class="n">ee</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">cbRemove</span><span class="p">);</span>
+<span class="cm">/**</span>
+<span class="cm"> * ### NodeGameClient.once</span>
+<span class="cm"> *</span>
+<span class="cm"> * Registers an event listener that will be removed</span>
+<span class="cm"> * after its first invocation</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param {string} event The name of the event</span>
+<span class="cm"> * @param {function} listener The callback function</span>
+<span class="cm"> *</span>
+<span class="cm"> * @see NodeGameClient.on</span>
+<span class="cm"> * @see NodeGameClient.off</span>
+<span class="cm"> */</span>
+<span class="no">NGC</span><span class="p">.</span><span class="n">prototype</span><span class="p">.</span><span class="n">once</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="n">ee</span><span class="p">,</span> <span class="n">cbRemove</span><span class="p">;</span>
+    <span class="c1">// This function will remove the event listener</span>
+    <span class="c1">// and itself.</span>
+    <span class="n">cbRemove</span> <span class="o">=</span> <span class="k">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">ee</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">);</span>
+        <span class="n">ee</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">cbRemove</span><span class="p">);</span>
     <span class="p">};</span>
-    <span class="n">ee</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">getCurrentEventEmitter</span><span class="p">();</span>
-    <span class="n">ee</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">);</span>
-    <span class="n">ee</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">cbRemove</span><span class="p">);</span>
+    <span class="n">ee</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="n">getCurrentEventEmitter</span><span class="p">();</span>
+    <span class="n">ee</span><span class="p">.</span><span class="n">on</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">);</span>
+    <span class="n">ee</span><span class="p">.</span><span class="n">on</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">cbRemove</span><span class="p">);</span>
 <span class="p">};</span>
 
-<span class="o">/**</span>
- <span class="o">*</span> <span class="c1">### NodeGameClient.off</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="n">Deregisters</span> <span class="n">one</span> <span class="ow">or</span> <span class="n">multiple</span> <span class="n">event</span> <span class="n">listeners</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="nv">@param</span> <span class="p">{</span><span class="n">string</span><span class="p">}</span> <span class="n">event</span> <span class="n">The</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">event</span>
- <span class="o">*</span> <span class="nv">@param</span> <span class="p">{</span><span class="n">function</span><span class="p">}</span> <span class="n">listener</span> <span class="n">The</span> <span class="n">callback</span> <span class="n">function</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="nv">@see</span> <span class="n">NodeGameClient</span><span class="o">.</span><span class="n">on</span>
- <span class="o">*</span> <span class="nv">@see</span> <span class="n">NodeGameClient</span><span class="o">.</span><span class="n">EventEmitter</span><span class="o">.</span><span class="n">remove</span>
- <span class="o">*/</span>
-<span class="n">NGC</span><span class="o">.</span><span class="nb">prototype</span><span class="o">.</span><span class="n">off</span>  <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="n">this</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">func</span><span class="p">);</span>
+<span class="cm">/**</span>
+<span class="cm"> * ### NodeGameClient.off</span>
+<span class="cm"> *</span>
+<span class="cm"> * Deregisters one or multiple event listeners</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param {string} event The name of the event</span>
+<span class="cm"> * @param {function} listener The callback function</span>
+<span class="cm"> *</span>
+<span class="cm"> * @see NodeGameClient.on</span>
+<span class="cm"> * @see NodeGameClient.EventEmitter.remove</span>
+<span class="cm"> */</span>
+<span class="no">NGC</span><span class="p">.</span><span class="n">prototype</span><span class="p">.</span><span class="n">off</span>  <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="n">events</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="k">event</span><span class="p">,</span> <span class="n">func</span><span class="p">);</span>
 <span class="p">};</span>
 </code></pre></div>
 
