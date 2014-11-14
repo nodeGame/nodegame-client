@@ -22,7 +22,7 @@
         <a href="#connect-module">Connect module</a>
       </div>
       <div class="heading h2">
-        <a href="#todo--integrate-in-main-ngc-file--">TODO: integrate in main NGC file ?</a>
+        <a href="#nodegame-connect-module">nodeGame connect module</a>
       </div>
       <div class="heading h3">
         <a href="#node.connect">node.connect</a>
@@ -47,13 +47,11 @@
 <p>Copyright(c) 2014 Stefano Balietti
 MIT Licensed</p>
   </div>
-  <div class="body"><p><code>nodeGame</code> connect module</p>
-
-
-<div class="pilwrap" id="todo--integrate-in-main-ngc-file--">
+  <div class="body">
+<div class="pilwrap" id="nodegame-connect-module">
   <h2>
-    <a href="#todo--integrate-in-main-ngc-file--" class="pilcrow">&#182;</a>
-    TODO: integrate in main NGC file ?
+    <a href="#nodegame-connect-module" class="pilcrow">&#182;</a>
+    <code>nodeGame</code> connect module
   </h2>
 </div>
 
@@ -80,23 +78,18 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>Establishes a connection with a nodeGame server</p>
 
-<p>A callback function can be executed upon connection. However,
-sending messages is disabled until a player object is created. This can
-be done manually, or automatically upon receiving a SETUP PLAYER message.
-Creation of a player emits the event <em>PLAYER_CREATED</em>.</p>
+<p>Events related to the connection include <em>SOCKET_CONNECT</em> and
+<em>PLAYER_CREATED</em>.</p>
+
+<p>Depending on the type of socket chosen (e.g. Direct or IO), the channel
+parameter is optional or not.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">uri</span>
+      <span class="dox_tag_name">channel</span>
       <span class="dox_type">string</span>
-      <span>Optional. The uri to connect to.</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">cb</span>
-      <span class="dox_type">function</span>
-      <span>Optional. A callback to execute as soon as the
-  connection is established.</span>
+      <span>Optional. The channel to connect to</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">socketOptions</span>
@@ -107,17 +100,8 @@ Creation of a player emits the event <em>PLAYER_CREATED</em>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">socketOptions</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.connect: cb must be function or &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;undefined&#39;</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">once</span><span class="p">(</span><span class="s1">&#39;SOCKET_CONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="nx">cb</span><span class="p">();</span>
-            <span class="p">});</span>
-        <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">socketOptions</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">channel</span><span class="p">,</span> <span class="nx">socketOptions</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">channel</span><span class="p">,</span> <span class="nx">socketOptions</span><span class="p">);</span>
     <span class="p">};</span>
 
 <span class="p">})(</span>

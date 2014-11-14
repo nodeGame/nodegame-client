@@ -992,11 +992,11 @@ TODO: avoid pollution of the game object.</p>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">FINISHING</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;game.gameover called on a finishing game.&#39;</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Game.gameover called on a finishing game.&#39;</span><span class="p">);</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;GAMEOVER&#39;</span><span class="p">);</span></pre></div>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;GAME_ALMOST_OVER&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1017,6 +1017,7 @@ TODO: avoid pollution of the game object.</p>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;GAME_OVER&#39;</span><span class="p">);</span>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;game over.&#39;</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
@@ -1178,20 +1179,32 @@ In this case the PLAYING event got lost.</p>
 </div>
 
   </div>
-  <div class="body"><p>Execute the next stage / step, if allowed</p>
+  <div class="body"><p>Checks if the next step can be executed</p>
+
+<p>Checks the number of players required.
+If the game has been initialized and is not in GAME_OVER, then
+evaluates the stepRule function for the current step and returns
+its result.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
-      <span class="dox_type">null</span>
-      <span>FALSE, if the execution encounters an error
-  NULL, if stepping is disallowed</span>
+      <span>TRUE, if stepping is allowed;
+  FALSE, if stepping is not allowed</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Game.step
+      <span class="dox_type">Game.step</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.checkPlistSize</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">stepRules
   </span>
     </div>
   </div>
@@ -1200,8 +1213,8 @@ In this case the PLAYING event got lost.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">shouldStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">stepRule</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">checkPlistSize</span><span class="p">())</span> <span class="p">{</span>
-            <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">checkPlistSize</span><span class="p">()</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isSteppable</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="nx">stepRule</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
@@ -1322,7 +1335,7 @@ TODO: remove some unused comments in the code.
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">nextStep</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">nextStep</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: nextStep must be &#39;</span> <span class="o">+</span>
-                               <span class="s1">&#39;an object or a string.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;an object or a string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="nx">curStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
@@ -1384,8 +1397,6 @@ TODO: remove some unused comments in the code.
         <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">shouldClearBuffer</span><span class="p">())</span> <span class="p">{</span>
                     <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">clearBuffer</span><span class="p">();</span>
                 <span class="p">}</span>
-
-                <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;GAME_OVER&#39;</span><span class="p">);</span>
                 <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
             <span class="p">}</span></pre></div>
         </td>
@@ -2714,7 +2725,11 @@ instead.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isSteppable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">()</span> <span class="o">&gt;</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">stateLevel</span><span class="p">;</span>
+        <span class="nx">stateLevel</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="nx">stateLevel</span> <span class="o">&gt;</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span> <span class="o">&amp;&amp;</span>
+               <span class="nx">stateLevel</span> <span class="o">&lt;</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">FINISHING</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>

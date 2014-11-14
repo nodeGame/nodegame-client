@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## 0.9.6
+
+ - Stager.extendStage fixed
+
 ## 0.9.5
 
  - Standardized msg log with the server (same as winston now)

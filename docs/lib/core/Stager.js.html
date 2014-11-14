@@ -1293,7 +1293,7 @@ this call.</p></li>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
-            
+
             <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="nx">id</span><span class="o">:</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
                 <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span> <span class="p">]</span>
@@ -1309,13 +1309,13 @@ this call.</p></li>
 <p>Stage.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">else</span> <span class="p">{</span>
-            
+
             <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">checkStageValidity</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.addStage: invalid stage received: &#39;</span> <span class="o">+</span>
                                 <span class="nx">res</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
-            
+
             <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">};</span></pre></div>
@@ -1378,7 +1378,7 @@ already existing fields if the new object redefines them.</p>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">])</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: stageId not found: &#39;</span> <span class="o">+</span>
-                            <span class="nx">stepId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);;</span>
+                            <span class="nx">stepId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">],</span> <span class="nx">update</span><span class="p">);</span>
@@ -1444,7 +1444,7 @@ already existing fields if the new object redefines them.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: update.steps must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;array or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">&amp;&amp;</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">update</span><span class="p">.</span><span class="nx">steps</span> <span class="o">&amp;&amp;</span> <span class="nx">update</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: update must have either &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;a steps or a cb property.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
@@ -1651,7 +1651,7 @@ in the sequence.</p>
 <p>The given stage will be repeated as long as the <code>func</code> callback returns
 TRUE. If it returns FALSE on the first time, the stage is never executed.</p>
 
-<p>If no callback function is specified the loop is repeated indefinetely.</p>
+<p>If no callback function is specified the loop is repeated indefinitely.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -2154,7 +2154,7 @@ first, handle all non-aliases
 <p>Set default properties:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultProperties&#39;</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">setDefaultProperties</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultProperties</span><span class="p">);</span>            
+            <span class="k">this</span><span class="p">.</span><span class="nx">setDefaultProperties</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultProperties</span><span class="p">);</span>
         <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -2166,7 +2166,7 @@ first, handle all non-aliases
 <p>Set onInit:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;onInit&#39;</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">setOnInit</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">onInit</span><span class="p">);</span>            
+            <span class="k">this</span><span class="p">.</span><span class="nx">setOnInit</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">onInit</span><span class="p">);</span>
         <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -2450,10 +2450,10 @@ Optionally, checks also for id uniqueness.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">checkStepValidity</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">unique</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">step</span><span class="p">)</span>  <span class="k">return</span> <span class="s1">&#39;missing step object&#39;</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;missing ID&#39;</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;missing callback&#39;</span><span class="p">;</span>     
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;missing callback&#39;</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">unique</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="s1">&#39;step ID already existing: &#39;</span> <span class="o">+</span> <span class="nx">step</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> 
+            <span class="k">return</span> <span class="s1">&#39;step ID already existing: &#39;</span> <span class="o">+</span> <span class="nx">step</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span>
                 <span class="s1">&#39;. Use extendStep to modify it.&#39;</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
@@ -2500,11 +2500,11 @@ Checks for referenced step existence.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">checkStageValidity</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">unique</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;missing stage object&#39;</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;missing ID&#39;</span><span class="p">;</span>       
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;missing ID&#39;</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">||</span> <span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;missing &quot;steps&quot; array&#39;</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">unique</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="s1">&#39;stage id already existing: &#39;</span> <span class="o">+</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> 
+            <span class="k">return</span> <span class="s1">&#39;stage id already existing: &#39;</span> <span class="o">+</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span>
                 <span class="s1">&#39;. Use extendStage to modify it.&#39;</span><span class="p">;</span>
         <span class="p">}</span></pre></div>
         </td>
@@ -2519,7 +2519,7 @@ Checks for referenced step existence.</p>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="s1">&#39;unknown step &quot;&#39;</span> <span class="o">+</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">;</span>            
+                <span class="k">return</span> <span class="s1">&#39;unknown step &quot;&#39;</span> <span class="o">+</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
