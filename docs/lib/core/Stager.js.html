@@ -22,21 +22,15 @@
         <a href="#stager">Stager</a>
       </div>
       <div class="heading h2">
-        <a href="#nodegame-container-and-builder-of-the-game-sequence">nodeGame container and builder of the game sequence</a>
-      </div>
-      <div class="heading h2">
         <a href="#global-scope">Global scope</a>
       </div>
       <div class="heading h2">
         <a href="#stager-constructor">Stager constructor</a>
       </div>
-      <div class="heading h2">
+      <div class="heading h3">
         <a href="#stager.log">Stager.log</a>
       </div>
       <div class="heading h2">
-        <a href="#stager-methods">Stager methods</a>
-      </div>
-      <div class="heading h3">
         <a href="#stager.clear">Stager.clear</a>
       </div>
       <div class="heading h3">
@@ -68,6 +62,9 @@
       </div>
       <div class="heading h3">
         <a href="#stager.ongameover">Stager.onGameover</a>
+      </div>
+      <div class="heading h2">
+        <a href="#stager-methods">Stager methods</a>
       </div>
       <div class="heading h3">
         <a href="#stager.registergeneralnext">Stager.registerGeneralNext</a>
@@ -182,14 +179,7 @@
 <p>Copyright(c) 2014 Stefano Balietti
 MIT Licensed</p>
   </div>
-  <div class="body">
-<div class="pilwrap" id="nodegame-container-and-builder-of-the-game-sequence">
-  <h2>
-    <a href="#nodegame-container-and-builder-of-the-game-sequence" class="pilcrow">&#182;</a>
-    <code>nodeGame</code> container and builder of the game sequence
-  </h2>
-</div>
-
+  <div class="body"><p><code>nodeGame</code> container and builder of the game sequence</p>
   </div>
 </div>
         </td>
@@ -259,10 +249,10 @@ MIT Licensed</p>
         <td class="docs"><div class="dox">
   <div class="summary">
 <div class="pilwrap" id="stager.log">
-  <h2>
+  <h3>
     <a href="#stager.log" class="pilcrow">&#182;</a>
     Stager.log
-  </h2>
+  </h3>
 </div>
 
   </div>
@@ -275,26 +265,13 @@ MIT Licensed</p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap" id="stager-methods">
-  <h2>
-    <a href="#stager-methods" class="pilcrow">&#182;</a>
-    Stager methods
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
 <div class="pilwrap" id="stager.clear">
-  <h3>
+  <h2>
     <a href="#stager.clear" class="pilcrow">&#182;</a>
     Stager.clear
-  </h3>
+  </h2>
 </div>
 
   </div>
@@ -613,6 +590,19 @@ is terminated.</p>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="stager-methods">
+  <h2>
+    <a href="#stager-methods" class="pilcrow">&#182;</a>
+    Stager methods
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -1236,8 +1226,8 @@ fields:</p>
 <li>steps (array of strings): The names of the steps that belong to this
 stage. These must have been added with the <code>addStep</code> method before
 this call.</li>
-<li>cb (function): A callback function. If this field is used, then a step
-with the same name as the stage will be created.</li>
+<li>cb (function): The callback function. If this field is used, then a
+step with the same name as the stage will be created.</li>
 </ul>
   </div>
   <div class="details">
