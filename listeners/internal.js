@@ -1,12 +1,13 @@
 /**
- * # Listeners for incoming messages.
+ * # internal
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
+ *
+ * Listeners for internal messages.
  *
  * Internal listeners are not directly associated to messages,
  * but they are usually responding to internal nodeGame events,
  * such as progressing in the loading chain, or finishing a game stage.
- * ---
  */
 (function(exports, parent) {
 

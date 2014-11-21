@@ -1,14 +1,10 @@
 /**
- *
- * # BalanceSheet:
+ * # BalanceSheet
  *
  * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed
  *
  * Keeps a record of
- *
- * ---
- *
  */
 
 (function(exports, node){
