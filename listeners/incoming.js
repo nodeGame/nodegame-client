@@ -36,7 +36,7 @@
      *
      * If executed once, it requires a force flag to re-add the listeners
      *
-     * @param {boolean} TRUE, to force re-adding the listeners
+     * @param {boolean} force Whether to force re-adding the listeners
      * @return {boolean} TRUE on success
      */
     NGC.prototype.addDefaultIncomingListeners = function(force) {

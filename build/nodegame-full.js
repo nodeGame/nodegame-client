@@ -1271,11 +1271,10 @@ if (!JSON) {
  * Tests browsers ECMAScript 5 compatibility
  *
  * For more information see http://kangax.github.com/es5-compat-table/
- * ---
  */
 (function(JSUS) {
 
-    function COMPATIBILITY() {};
+    function COMPATIBILITY() {}
 
     /**
      * ## COMPATIBILITY.compatibility
@@ -1294,7 +1293,7 @@ if (!JSON) {
         var support = {};
 
         try {
-            Object.defineProperty({}, "a", {enumerable: false, value: 1})
+            Object.defineProperty({}, "a", {enumerable: false, value: 1});
             support.defineProperty = true;
         }
         catch(e) {
@@ -1302,7 +1301,7 @@ if (!JSON) {
         }
 
         try {
-            eval('({ get x(){ return 1 } }).x === 1')
+            eval('({ get x(){ return 1 } }).x === 1');
             support.setter = true;
         }
         catch(err) {
@@ -1328,14 +1327,15 @@ if (!JSON) {
 
 /**
  * # ARRAY
+ *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Collection of static functions to manipulate arrays.
+ * Collection of static functions to manipulate arrays
  */
 (function(JSUS) {
 
-    function ARRAY(){};
+    function ARRAY() {}
 
     /**
      * ## ARRAY.filter
@@ -1343,7 +1343,8 @@ if (!JSON) {
      * Add the filter method to ARRAY objects in case the method is not
      * supported natively.
      *
-     * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/ARRAY/filter
+     * @see https://developer.mozilla.org/en/JavaScript/Reference/
+     *              Global_Objects/ARRAY/filter
      */
     if (!Array.prototype.filter) {
         Array.prototype.filter = function(fun /*, thisp */) {
@@ -1409,7 +1410,7 @@ if (!JSON) {
      * @param {Function} func Optional. A callback function that can modify
      *   each number of the sequence before returning it
      *
-     * @return {array} out The final sequence
+     * @return {array} The final sequence
      */
     ARRAY.seq = function(start, end, increment, func) {
         var i;
@@ -1427,7 +1428,7 @@ if (!JSON) {
         increment = increment || 1;
         func = func || function(e) {return e;};
 
-        i = start,
+        i = start;
         out = [];
 
         if (start < end) {
@@ -1458,7 +1459,7 @@ if (!JSON) {
      * @param {object} context Optional. The context of execution of the
      *   callback. Defaults ARRAY.each
      *
-     * @return {Boolean} TRUE, if execution was successful
+     * @return {boolean} TRUE, if execution was successful
      */
     ARRAY.each = function(array, func, context) {
         if ('object' !== typeof array) return false;
@@ -1481,7 +1482,7 @@ if (!JSON) {
      * Any number of additional parameters can be passed after the
      * callback function
      *
-     * @return {array} out The result of the mapping execution
+     * @return {array} The result of the mapping execution
      * @see ARRAY.each
      */
     ARRAY.map = function() {
@@ -1496,8 +1497,7 @@ if (!JSON) {
             return;
         }
 
-        var out = [],
-        o = undefined;
+        var out = [], o;
         for (var i = 0; i < array.length; i++) {
             args[0] = array[i];
             o = func.apply(this, args);
@@ -1533,7 +1533,7 @@ if (!JSON) {
         else {
             func = function(a,b) {
                 return (a === b);
-            }
+            };
         }
 
         for (i = 0; i < haystack.length; i++) {
@@ -1557,14 +1557,16 @@ if (!JSON) {
      *
      * @param {mixed} needle The element to search in the array
      * @param {array} haystack The array to search in
-     * @return {Boolean} TRUE, if the element is contained in the array
+     *
+     * @return {boolean} TRUE, if the element is contained in the array
      *
      *  @see JSUS.equals
      */
     ARRAY.inArray = ARRAY.in_array = function(needle, haystack) {
         var func, i, len;
         if (!haystack) return false;
-        func = JSUS.equals, len = haystack.length;
+        func = JSUS.equals;
+        len = haystack.length;
         for (i = 0; i < len; i++) {
             if (func.call(this, needle, haystack[i])) {
                 return true;
@@ -1589,6 +1591,7 @@ if (!JSON) {
      *
      * @param {array} array The array to split in subgroups
      * @param {number} N The number of subgroups
+     *
      * @return {array} Array containing N groups
      */
     ARRAY.getNGroups = function(array, N) {
@@ -1603,6 +1606,7 @@ if (!JSON) {
      *
      * @param {array} array The array to split in subgroups
      * @param {number} N The number of elements in each subgroup
+     *
      * @return {array} Array containing groups of size N
      *
      * @see ARRAY.getNGroups
@@ -1662,6 +1666,7 @@ if (!JSON) {
      * @param {number} S The number of rows
      * @param {number} Optional. N The number of columns. Defaults N = S
      * @param {boolean} Optional. If TRUE self-match is allowed. Defaults TRUE
+     *
      * @return {array} The resulting latin square (or rectangle)
      */
     ARRAY._latinSquare = function(S, N, self) {
@@ -1712,6 +1717,7 @@ if (!JSON) {
      *
      * @param {number} S The number of rows
      * @param {number} Optional. N The number of columns. Defaults N = S
+     *
      * @return {array} The resulting latin square (or rectangle)
      */
     ARRAY.latinSquare = function(S, N) {
@@ -1732,6 +1738,7 @@ if (!JSON) {
      *
      * @param {number} S The number of rows
      * @param {number} Optional. N The number of columns. Defaults N = S-1
+     *
      * @return {array} The resulting latin square (or rectangle)
      */
     ARRAY.latinSquareNoSelf = function(S, N) {
@@ -1740,7 +1747,7 @@ if (!JSON) {
         if (N > S) N = S-1;
 
         return ARRAY._latinSquare(S, N, false);
-    }
+    };
 
 
     /**
@@ -1750,6 +1757,7 @@ if (!JSON) {
      *
      * @param {array} array The array from which the combinations are extracted
      * @param {number} r The number of elements in each combination
+     *
      * @return {array} The total sets of combinations
      *
      * @see ARRAY.getGroupSizeN
@@ -1757,6 +1765,7 @@ if (!JSON) {
      * @see ARRAY.matchN
      */
     ARRAY.generateCombinations = function(array, r) {
+        var i, j;
         function values(i, a) {
             var ret = [];
             for (var j = 0; j < i.length; j++) ret.push(a[i[j]]);
@@ -1764,15 +1773,15 @@ if (!JSON) {
         }
         var n = array.length;
         var indices = [];
-        for (var i = 0; i < r; i++) indices.push(i);
+        for (i = 0; i < r; i++) indices.push(i);
         var final = [];
-        for (var i = n - r; i < n; i++) final.push(i);
+        for (i = n - r; i < n; i++) final.push(i);
         while (!JSUS.equals(indices, final)) {
             callback(values(indices, array));
-            var i = r - 1;
+            i = r - 1;
             while (indices[i] == n - r + i) i -= 1;
             indices[i] += 1;
-            for (var j = i + 1; j < r; j++) indices[j] = indices[i] + j - i;
+            for (j = i + 1; j < r; j++) indices[j] = indices[i] + j - i;
         }
         return values(indices, array);
     };
@@ -1791,9 +1800,10 @@ if (!JSON) {
      *
      * @param {array} array The array in which operate the matching
      * @param {number} N The number of matches per element
-     * @param {Boolean} strict Optional. If TRUE, matched elements cannot be
+     * @param {boolean} strict Optional. If TRUE, matched elements cannot be
      *   repeated. Defaults, FALSE
-     * @return {array} result The results of the matching
+     *
+     * @return {array} The results of the matching
      *
      * @see ARRAY.getGroupSizeN
      * @see ARRAY.getNGroups
@@ -1804,8 +1814,8 @@ if (!JSON) {
         if (!array) return;
         if (!N) return array;
 
-        result = [],
-        len = array.length,
+        result = [];
+        len = array.length;
         found = [];
         for (i = 0 ; i < len ; i++) {
             // Recreate the array.
@@ -1837,6 +1847,7 @@ if (!JSON) {
      * @param {array} array the array to repeat
      * @param {number} times The number of times the array must be appended
      *   to itself
+     *
      * @return {array} A copy of the original array appended to itself
      */
     ARRAY.rep = function(array, times) {
@@ -1848,7 +1859,8 @@ if (!JSON) {
             return;
         }
 
-        i = 1, result = array.slice(0);
+        i = 1;
+        result = array.slice(0);
         for (; i < times; i++) {
             result = result.concat(array);
         }
@@ -1952,6 +1964,7 @@ if (!JSON) {
      * The original array is not modified, and a copy is returned.
      *
      * @param {array} shuffle The array to shuffle
+     *
      * @return {array} copy The shuffled array
      *
      * @see http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
@@ -1977,6 +1990,7 @@ if (!JSON) {
      *
      * @param {array} array The array from which extracts random elements
      * @paran {number} N The number of random elements to extract
+     *
      * @return {array} An new array with N elements randomly chosen
      */
     ARRAY.getNRandom = function(array, N) {
@@ -1993,7 +2007,8 @@ if (!JSON) {
      * Comparison is done with `JSUS.equals`.
      *
      * @param {array} array The array from which eliminates duplicates
-     * @return {array} out A copy of the array without duplicates
+     *
+     * @return {array} A copy of the array without duplicates
      *
      * @see JSUS.equals
      */
@@ -2018,6 +2033,7 @@ if (!JSON) {
      * returned.
      *
      * @param {array} array The array to transpose
+     *
      * @return {array} The Transposed Array
      */
     ARRAY.transpose = function(array) {
@@ -2070,11 +2086,10 @@ if (!JSON) {
  *
  * Only the methods which do not follow the above-mentioned syntax
  * will receive further explanation.
- * ---
  */
 (function(JSUS) {
 
-    function DOM() {};
+    function DOM() {}
 
     // ## GENERAL
 
@@ -2138,11 +2153,12 @@ if (!JSON) {
      * ```
      *
      * @param {string} string A text to transform
-     * @param {object} args Optional. An object containing string transformations
+     * @param {object} args Optional. An object containing string
+     *   transformations
      * @param {Element} root Optional. An HTML element to which append the
      *    string. Defaults, a new _span_ element
      *
-     * @return {Element} root The root element.
+     * @return {Element} The root element.
      */
     DOM.sprintf = function(string, args, root) {
 
@@ -2240,7 +2256,7 @@ if (!JSON) {
         }
 
         return root;
-    }
+    };
 
     /**
      * ### DOM.isNode
@@ -2248,6 +2264,7 @@ if (!JSON) {
      * Returns TRUE if the object is a DOM node
      *
      * @param {mixed} The variable to check
+     *
      * @return {boolean} TRUE, if the the object is a DOM node
      */
     DOM.isNode = function(o) {
@@ -2266,6 +2283,7 @@ if (!JSON) {
      * the method is defined.
      *
      * @param {mixed} The variable to check
+     *
      * @return {boolean} TRUE, if the the object is a DOM element
      */
     DOM.isElement = function(o) {
@@ -2282,7 +2300,8 @@ if (!JSON) {
      *
      * @param {Node} parent The parent node
      * @param {array} order Optional. A pre-specified order. Defaults, random
-     * @return {array} The order used to shuffle the nodes.
+     *
+     * @return {array} The order used to shuffle the nodes
      */
     DOM.shuffleNodes = function(parent, order) {
         var i, len, idOrder;
@@ -2303,7 +2322,8 @@ if (!JSON) {
             }
         }
 
-        len = parent.children.length, idOrder = [];
+        len = parent.children.length;
+        idOrder = [];
         if (!order) order = JSUS.sample(0,len);
         for (i = 0 ; i < len; i++) {
             idOrder.push(parent.children[order[i]].id);
@@ -2327,6 +2347,7 @@ if (!JSON) {
      * @param {string} id Optional. The id of the tag
      * @param {object} attributes Optional. Object containing attributes for
      *   the newly created element
+     *
      * @return {HTMLElement} The newly created HTML element
      *
      * @see DOM.addAttributes2Elem
@@ -2350,6 +2371,7 @@ if (!JSON) {
      * @param {string} id Optional. The id of the tag
      * @param {object} attributes Optional. Object containing attributes for
      *   the newly created element
+     *
      * @return {HTMLElement} The newly created HTML element
      *
      * @see DOM.getElement
@@ -2372,7 +2394,7 @@ if (!JSON) {
      * @param {HTMLElement} e The element to decorate
      * @param {object} a Object containing attributes to add to the element
      *
-     * @return {HTMLElement} e The decorated element
+     * @return {HTMLElement} The decorated element
      *
      * @see DOM.addLabel
      * @see DOM.addClass
@@ -2405,16 +2427,18 @@ if (!JSON) {
 
                 // TODO: handle special cases
                 // <!--
-                //                else {
+                //else {
                 //
-                //                    // If there is no parent node, the legend cannot be created
-                //                    if (!e.parentNode) {
-                //                        node.log('Cannot add label: no parent element found', 'ERR');
-                //                        continue;
-                //                    }
+                //    // If there is no parent node,
+                //    // the legend cannot be created
+                //    if (!e.parentNode) {
+                //        node.log('Cannot add label: ' +
+                //                 'no parent element found', 'ERR');
+                //        continue;
+                //    }
                 //
-                //                    this.addLabel(e.parentNode, e, a[key]);
-                //                }
+                //    this.addLabel(e.parentNode, e, a[key]);
+                //}
                 // -->
             }
         }
@@ -2497,7 +2521,7 @@ if (!JSON) {
                 }
             }
             return id;
-        };
+        }
 
 
         return scanDocuments(prefix + '_' + JSUS.randomInt(0, 10000000));
@@ -2757,7 +2781,7 @@ if (!JSON) {
      *
      */
     DOM.addCSS = function(root, css, id, attributes) {
-        var root = root || document.head || document.body || document;
+        root = root || document.head || document.body || document;
         if (!root) return false;
 
         attributes = attributes || {};
@@ -2775,7 +2799,7 @@ if (!JSON) {
      *
      */
     DOM.addJS = function(root, js, id, attributes) {
-        var root = root || document.head || document.body || document;
+        root = root || document.head || document.body || document;
         if (!root) return false;
 
         attributes = attributes || {};
@@ -2866,7 +2890,8 @@ if (!JSON) {
      *
      * @param {HTMLElement} elem The element to style
      * @param {object} Objects containing the properties to add.
-     * @return {HTMLElement} elem The styled element
+     *
+     * @return {HTMLElement} The styled element
      */
     DOM.style = function(elem, properties) {
         var i;
@@ -2888,8 +2913,9 @@ if (!JSON) {
      *
      * @param {HTMLElement} el An HTML element
      * @param {string} c The name of a CSS class already in the element
-     * @return {HTMLElement|undefined} el The HTML element with the removed
-     *   class, or undefined input are misspecified.
+     *
+     * @return {HTMLElement|undefined} The HTML element with the removed
+     *   class, or undefined if the inputs are misspecified
      */
     DOM.removeClass = function(el, c) {
         var regexpr, o;
@@ -2908,8 +2934,9 @@ if (!JSON) {
      *
      * @param {HTMLElement} el An HTML element
      * @param {string|array} c The name/s of CSS class/es
-     * @return {HTMLElement|undefined} el The HTML element with the additional
-     *   class, or undefined input are misspecified.
+     *
+     * @return {HTMLElement|undefined} The HTML element with the additional
+     *   class, or undefined if the inputs are misspecified
      */
     DOM.addClass = function(el, c) {
         if (!el) return;
@@ -2930,13 +2957,15 @@ if (!JSON) {
      * @param {string} className The requested className
      * @param {string}  nodeName Optional. If set only elements with
      *   the specified tag name will be searched
+     *
      * @return {array} Array of elements with the requested class name
      *
      * @see https://gist.github.com/E01T/6088383
      */
     DOM.getElementsByClassName = function(document, className, nodeName) {
         var result, node, tag, seek, i, rightClass;
-        result = [], tag = nodeName || '*';
+        result = [];
+        tag = nodeName || '*';
         if (document.evaluate) {
             seek = '//'+ tag +'[@class="'+ className +'"]';
             seek = document.evaluate(seek, document, null, 0, null );
@@ -2963,6 +2992,7 @@ if (!JSON) {
      * Returns a reference to the document of an iframe object
      *
      * @param {HTMLIFrameElement} iframe The iframe object
+     *
      * @return {HTMLDocument|undefined} The document of the iframe, or
      *   undefined if not found.
      */
@@ -2979,6 +3009,7 @@ if (!JSON) {
      * Tries head, body, lastChild and the HTML element
      *
      * @param {HTMLIFrameElement} iframe The iframe object
+     *
      * @return {HTMLElement|undefined} The child, or undefined if none is found
      */
     DOM.getIFrameAnyChild = function(iframe) {
@@ -3011,14 +3042,14 @@ if (!JSON) {
                         return false;
                     }
                 }
-            }
+            };
         }
         else if (doc.all && !doc.getElementById) {
             doc.onmousedown = function clickIE4() {
                 if (event.button == 2) {
                     return false;
                 }
-            }
+            };
         }
         doc.oncontextmenu = new Function("return false");
     };
@@ -3057,12 +3088,11 @@ if (!JSON) {
  * MIT Licensed
  *
  * Collection of static functions related to the evaluation
- * of strings as javascript commands
- * ---
+ * of strings as JavaScript commands
  */
 (function(JSUS) {
 
-    function EVAL(){};
+    function EVAL() {}
 
     /**
      * ## EVAL.eval
@@ -3075,6 +3105,7 @@ if (!JSON) {
      *
      * @param {string} str The command to executes
      * @param {object} context Optional. Execution context. Defaults, `this`
+     *
      * @return {mixed} The return value of the executed commands
      *
      * @see eval
@@ -3098,7 +3129,7 @@ if (!JSON) {
             else {
                 return eval(str);
             }
-        }
+        };
         return func.call(context, str);
     };
 
@@ -3107,16 +3138,16 @@ if (!JSON) {
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 
 /**
- * # JSUS.OBJ
+ * # OBJ
+ *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Collection of static functions to manipulate javascript objects.
- * ---
+ * Collection of static functions to manipulate JavaScript objects
  */
 (function(JSUS) {
 
-    function OBJ(){};
+    function OBJ() {}
 
     var compatibility = null;
 
@@ -3143,7 +3174,8 @@ if (!JSON) {
      *
      * @param {object} o1 The first object
      * @param {object} o2 The second object
-     * @return {boolean} TRUE if the objects are deeply equal.
+     *
+     * @return {boolean} TRUE if the objects are deeply equal
      */
     OBJ.equals = function(o1, o2) {
         var type1, type2, primitives, p;
@@ -3164,7 +3196,7 @@ if (!JSON) {
         }
 
         // Check whether arguments are not objects
-        primitives = {number: '', string: '', boolean: ''}
+        primitives = {number: '', string: '', boolean: ''};
         if (type1 in primitives) {
             return o1 === o2;
         }
@@ -3185,6 +3217,7 @@ if (!JSON) {
                 case 'function':
                     if (o1[p].toString() !== o2[p].toString()) return false;
 
+                    /* falls through */
                 default:
                     if (!OBJ.equals(o1[p], o2[p])) return false;
                 }
@@ -3213,6 +3246,7 @@ if (!JSON) {
      * Does not check properties of the prototype chain.
      *
      * @param {object} o The object to check
+     *
      * @return {boolean} TRUE, if the object has no properties
      */
     OBJ.isEmpty = function(o) {
@@ -3235,6 +3269,7 @@ if (!JSON) {
      * Prototype chain properties are excluded.
      *
      * @param {object} obj The object to check
+     *
      * @return {number} The number of properties in the object
      */
     OBJ.size = OBJ.getListSize = function(obj) {
@@ -3266,6 +3301,7 @@ if (!JSON) {
      *   Defaults, FALSE
      * @param {number} level Optional. The level of recursion.
      *   Defaults, undefined
+     *
      * @return {array} The converted object
      */
     OBJ._obj2Array = function(obj, keyed, level, cur_level) {
@@ -3309,6 +3345,7 @@ if (!JSON) {
      * @param {object} obj The object to convert in array
      * @param {number} level Optional. The level of recursion. Defaults,
      *   undefined
+     *
      * @return {array} The converted object
      *
      * @see OBJ._obj2Array
@@ -3329,12 +3366,45 @@ if (!JSON) {
      * @param {object} obj The object to convert in array
      * @param {number} level Optional. The level of recursion. Defaults,
      *   undefined
+     *
      * @return {array} The converted object
      *
      * @see OBJ.obj2Array
      */
     OBJ.obj2KeyedArray = OBJ.obj2KeyArray = function(obj, level) {
         return OBJ._obj2Array(obj, true, level);
+    };
+
+    /**
+     * ## OBJ.obj2QueryString
+     *
+     * Creates a querystring with the key-value pairs of the given object.
+     *
+     * @param {object} obj The object to convert
+     *
+     * @return {string} The created querystring
+     *
+     * Kudos:
+     * @see http://stackoverflow.com/a/1714899/3347292
+     */
+    OBJ.obj2QueryString = function(obj) {
+        var str;
+        var key;
+
+        if ('object' !== typeof obj) {
+            throw new TypeError(
+                    'JSUS.objectToQueryString: obj must be object.');
+        }
+
+        str = [];
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                str.push(encodeURIComponent(key) + '=' +
+                         encodeURIComponent(obj[key]));
+            }
+        }
+
+        return '?' + str.join('&');
     };
 
     /**
@@ -3348,6 +3418,7 @@ if (!JSON) {
      *
      * @param {object} obj The object from which extract the keys
      * @param {number} level Optional. The level of recursion. Defaults 0
+     *
      * @return {array} The array containing the extracted keys
      *
      * @see Object.keys
@@ -3385,7 +3456,8 @@ if (!JSON) {
      * ```
      *
      * @param {object} obj The object to implode
-     * @return {array} result The array containig all the imploded properties
+     *
+     * @return {array} The array containing all the imploded properties
      */
     OBJ.implode = OBJ.implodeObj = function(obj) {
         var result, key, o;
@@ -3412,7 +3484,8 @@ if (!JSON) {
      * Primitive types and special values are returned as they are.
      *
      * @param {object} obj The object to clone
-     * @return {object} clone The clone of the object
+     *
+     * @return {object} The clone of the object
      */
     OBJ.clone = function(obj) {
         var clone, i, value;
@@ -3420,8 +3493,7 @@ if (!JSON) {
         if ('number' === typeof obj) return obj;
         if ('string' === typeof obj) return obj;
         if ('boolean' === typeof obj) return obj;
-        if (obj === NaN) return obj;
-        if (obj === Infinity) return obj;
+        // NaN and +-Infinity are numbers, so no check is necessary.
 
         if ('function' === typeof obj) {
             //          clone = obj;
@@ -3436,13 +3508,15 @@ if (!JSON) {
         for (i in obj) {
             // TODO: index i is being updated, so apply is called on the
             // last element, instead of the correct one.
-            //          if ('function' === typeof obj[i]) {
-            //                  value = function() { return obj[i].apply(clone, arguments); };
-            //          }
+            //if ('function' === typeof obj[i]) {
+            //    value = function() { return obj[i].apply(clone, arguments); };
+            //}
             // It is not NULL and it is an object
             if (obj[i] && 'object' === typeof obj[i]) {
                 // Is an array.
-                if (Object.prototype.toString.call(obj[i]) === '[object Array]') {
+                if (Object.prototype.toString.call(obj[i]) ===
+                    '[object Array]') {
+
                     value = obj[i].slice(0);
                 }
                 // Is an object.
@@ -3504,7 +3578,8 @@ if (!JSON) {
      *
      * @param {object} obj1 The object where the merge will take place
      * @param {object} obj2 The merging object
-     * @return {object} clone The joined object
+     *
+     * @return {object} The joined object
      *
      * @see OBJ.merge
      */
@@ -3547,7 +3622,8 @@ if (!JSON) {
      *
      * @param {object} obj1 The object where the merge will take place
      * @param {object} obj2 The merging object
-     * @return {object} clone The merged object
+     *
+     * @return {object} The merged object
      *
      * @see OBJ.join
      * @see OBJ.mergeOnKey
@@ -3569,7 +3645,9 @@ if (!JSON) {
                     // a non-object, we need to cast the
                     // type of obj1
                     if ('object' !== typeof clone[i]) {
-                        if (Object.prototype.toString.call(obj2[i]) === '[object Array]') {
+                        if (Object.prototype.toString.call(obj2[i]) ===
+                            '[object Array]') {
+
                             clone[i] = [];
                         }
                         else {
@@ -3662,7 +3740,8 @@ if (!JSON) {
      * @param {object} obj2 The merging object
      * @param {string} key The name of property under which the second object
      *   will be merged
-     * @return {object} clone The merged object
+     *
+     * @return {object} The merged object
      *
      * @see OBJ.merge
      */
@@ -3695,12 +3774,13 @@ if (!JSON) {
      *
      * @param {object} o The object to dissect
      * @param {string|array} select The selection of properties to extract
-     * @return {object} out The subobject with the properties from the parent
+     *
+     * @return {object} The subobject with the properties from the parent
      *
      * @see OBJ.getNestedValue
      */
     OBJ.subobj = function(o, select) {
-        var out, i, key
+        var out, i, key;
         if (!o) return false;
         out = {};
         if (!select) return out;
@@ -3730,7 +3810,8 @@ if (!JSON) {
      *
      * @param {object} o The object to dissect
      * @param {string|array} remove The selection of properties to remove
-     * @return {object} out The subobject with the properties from the parent
+     *
+     * @return {object} The subobject with the properties from the parent
      *
      * @see OBJ.getNestedValue
      */
@@ -3766,7 +3847,8 @@ if (!JSON) {
      *
      * @param {string} str The path to the value
      * @param {mixed} value The value to set
-     * @return {object|boolean} obj The modified object, or FALSE if error
+     *
+     * @return {object|boolean} The modified object, or FALSE if error
      *   occurrs
      *
      * @see OBJ.getNestedValue
@@ -3808,6 +3890,7 @@ if (!JSON) {
      *
      * @param {string} str The path to the value
      * @param {object} obj The object from which extract the value
+     *
      * @return {mixed} The extracted value
      *
      * @see OBJ.setNestedValue
@@ -3878,6 +3961,7 @@ if (!JSON) {
      *
      * @param {string} str The path of the (nested) property
      * @param {object} obj The object to test
+     *
      * @return {boolean} TRUE, if the (nested) property exists
      */
     OBJ.hasOwnNestedProperty = function(str, obj) {
@@ -3926,6 +4010,7 @@ if (!JSON) {
      *
      * @param {object} o The object to split
      * @param {sting} key The name of the property to split
+     *
      * @return {object} A copy of the object with split values
      */
     OBJ.split = function(o, key) {
@@ -3973,6 +4058,7 @@ if (!JSON) {
      * ```
      * @param {array} keys The names of the keys to add to the object
      * @param {array} values The values to associate to the keys
+     *
      * @return {object} A new object with keys and values melted together
      */
     OBJ.melt = function(keys, values) {
@@ -4000,7 +4086,8 @@ if (!JSON) {
      * @param {number} stop Optional. The number of tries before giving up
      *   searching for a unique key name. Defaults, 1000000.
      *
-     * @return {string|undefined} The unique key name, or undefined if it was not found
+     * @return {string|undefined} The unique key name, or undefined if it was
+     *   not found
      */
     OBJ.uniqueKey = function(obj, prefixName, stop) {
         var name;
@@ -4052,7 +4139,8 @@ if (!JSON) {
      *   taken as the set of properties to augment
      */
     OBJ.augment = function(obj1, obj2, keys) {
-        var i, k, keys = keys || OBJ.keys(obj1);
+        var i, k;
+        keys = keys || OBJ.keys(obj1);
 
         for (i = 0 ; i < keys.length; i++) {
             k = keys[i];
@@ -4097,7 +4185,8 @@ if (!JSON) {
      *
      * @param {object} o1 The first object
      * @param {object} o2 The second object
-     * @return {object} clone The object aggregating the results
+     *
+     * @return {object} The object aggregating the results
      *
      */
     OBJ.pairwiseWalk = function(o1, o2, cb) {
@@ -4129,16 +4218,16 @@ if (!JSON) {
 
 /**
  * # RANDOM
+ *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions related to the generation of
- * pseudo-random numbers.
- * ---
+ * pseudo-random numbers
  */
 (function(JSUS) {
 
-    function RANDOM(){};
+    function RANDOM() {}
 
     /**
      * ## RANDOM.random
@@ -4148,6 +4237,7 @@ if (!JSON) {
      *
      * @param {number} a The lower limit
      * @param {number} b The upper limit
+     *
      * @return {number} A random floating point number in (a,b)
      */
     RANDOM.random = function(a, b) {
@@ -4161,7 +4251,7 @@ if (!JSON) {
             a = b;
             b = c;
         }
-        return (Math.random() * (b - a)) + a
+        return (Math.random() * (b - a)) + a;
     };
 
     /**
@@ -4171,6 +4261,7 @@ if (!JSON) {
      *
      * @param {number} a The lower limit
      * @param {number} b The upper limit
+     *
      * @return {number} A random integer in (a,b]
      *
      * @see RANDOM.random
@@ -4189,13 +4280,14 @@ if (!JSON) {
      *
      * @param {number} a The lower limit
      * @param {number} b The upper limit
+     *
      * @return {array} The randomly shuffled sequence.
      *
      * @see RANDOM.seq
      */
     RANDOM.sample = function(a, b) {
         var out;
-        out = JSUS.seq(a,b)
+        out = JSUS.seq(a,b);
         if (!out) return false;
         return JSUS.shuffle(out);
     };
@@ -4264,9 +4356,9 @@ if (!JSON) {
 
                 return (sigma * x1) + mu;
 
-            }
+            };
         })();
-    }
+    };
 
     /**
      * Generates random numbers with Normal Gaussian distribution.
@@ -4279,6 +4371,7 @@ if (!JSON) {
      *
      * @param {number} mu The mean of the distribution
      * param {number} sigma The standard deviation of the distribution
+     *
      * @return {number} A random number following a Normal Gaussian distribution
      *
      * @see RANDOM.getNormalGenerator
@@ -4293,6 +4386,7 @@ if (!JSON) {
      *
      * @param {number} mu The mean of the gaussian distribution
      * @param {number} sigma The standard deviation of the gaussian distribution
+     *
      * @return {number} A random number following a LogNormal distribution
      *
      * @see RANDOM.nextNormal
@@ -4305,7 +4399,7 @@ if (!JSON) {
             throw new TypeError('nextLogNormal: sigma must be number.');
         }
         return Math.exp(nextNormal(mu, sigma));
-    }
+    };
 
     /**
      * Generates random numbers with Exponential distribution.
@@ -4314,6 +4408,7 @@ if (!JSON) {
      * The expected mean of the distribution is equal to `Math.pow(lamba, -1)`.
      *
      * @param {number} lambda The rate parameter
+     *
      * @return {number} A random number following an Exponential distribution
      */
     RANDOM.nextExponential = function(lambda) {
@@ -4321,10 +4416,11 @@ if (!JSON) {
             throw new TypeError('nextExponential: lambda must be number.');
         }
         if (lambda <= 0) {
-            throw new TypeError('nextExponential: lambda must be greater than 0.');
+            throw new TypeError('nextExponential: ' +
+                                'lambda must be greater than 0.');
         }
         return - Math.log(1 - Math.random()) / lambda;
-    }
+    };
 
     /**
      * Generates random numbers following the Binomial distribution.
@@ -4333,7 +4429,8 @@ if (!JSON) {
      *
      * @param {number} p The probability of success
      * @param {number} trials The number of trials
-     * @return {number} sum The sum of successes in n trials
+     *
+     * @return {number} The sum of successes in n trials
      */
     RANDOM.nextBinomial = function(p, trials) {
         var counter, sum;
@@ -4355,10 +4452,10 @@ if (!JSON) {
         sum = 0;
 
         while(counter < trials){
-	    if (Math.random() < p) {
-	        sum += 1;
+            if (Math.random() < p) {
+                sum += 1;
             }
-	    counter++;
+            counter++;
         }
 
         return sum;
@@ -4412,7 +4509,7 @@ if (!JSON) {
         tmp *=  - alphaDiv;
 
         return x + tmp;
-    }
+    };
 
     JSUS.extend(RANDOM);
 
@@ -4425,80 +4522,80 @@ if (!JSON) {
  * MIT Licensed
  *
  * Collection of static functions related to the generation,
- * manipulation, and formatting of time strings in javascript
- * ---
+ * manipulation, and formatting of time strings in JavaScript
  */
 (function (JSUS) {
 
-function TIME() {};
+    function TIME() {}
 
-/**
- * ## TIME.getDate
- *
- * Returns a string representation of the current date
- * and time formatted as follows:
- *
- * dd-mm-yyyy hh:mm:ss milliseconds
- *
- * @return {string} date Formatted time string hh:mm:ss
- */
-TIME.getDate = TIME.getFullDate = function() {
-    var d = new Date();
-    var date = d.getUTCDate() + '-' + (d.getUTCMonth()+1) + '-' +
-        d.getUTCFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() +
-        ':' + d.getSeconds() + ' ' + d.getMilliseconds();
+    /**
+     * ## TIME.getDate
+     *
+     * Returns a string representation of the current date
+     * and time formatted as follows:
+     *
+     * dd-mm-yyyy hh:mm:ss milliseconds
+     *
+     * @return {string} Formatted time string hh:mm:ss
+     */
+    TIME.getDate = TIME.getFullDate = function() {
+        var d = new Date();
+        var date = d.getUTCDate() + '-' + (d.getUTCMonth()+1) + '-' +
+            d.getUTCFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() +
+            ':' + d.getSeconds() + ' ' + d.getMilliseconds();
 
-    return date;
-};
+        return date;
+    };
 
-/**
- * ## TIME.getTime
- *
- * Returns a string representation of the current time
- * formatted as follows:
- *
- * hh:mm:ss
- *
- * @return {string} time Formatted time string hh:mm:ss
- */
-TIME.getTime = function() {
-    var d = new Date();
-    var time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+    /**
+     * ## TIME.getTime
+     *
+     * Returns a string representation of the current time
+     * formatted as follows:
+     *
+     * hh:mm:ss
+     *
+     * @return {string} Formatted time string hh:mm:ss
+     */
+    TIME.getTime = function() {
+        var d = new Date();
+        var time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 
-    return time;
-};
+        return time;
+    };
 
-/**
- * ## TIME.parseMilliseconds
- *
- * Parses an integer number representing milliseconds,
- * and returns an array of days, hours, minutes and seconds
- *
- * @param {number} ms Integer representing milliseconds
- * @return {array} result Milleconds parsed in days, hours, minutes, and seconds
- */
-TIME.parseMilliseconds = function (ms) {
-    if ('number' !== typeof ms) return;
+    /**
+     * ## TIME.parseMilliseconds
+     *
+     * Parses an integer number representing milliseconds,
+     * and returns an array of days, hours, minutes and seconds
+     *
+     * @param {number} ms Integer representing milliseconds
+     *
+     * @return {array} Milleconds parsed in days, hours, minutes, and seconds
+     */
+    TIME.parseMilliseconds = function (ms) {
+        if ('number' !== typeof ms) return;
 
-    var result = [];
-    var x = ms / 1000;
-    result[4] = x;
-    var seconds = x % 60;
-    result[3] = Math.floor(seconds);
-    var x = x /60;
-    var minutes = x % 60;
-    result[2] = Math.floor(minutes);
-    var x = x / 60;
-    var hours = x % 24;
-    result[1] = Math.floor(hours);
-    var x = x / 24;
-    var days = x;
-    result[1] = Math.floor(days);
+        var result = [];
+        var x = ms / 1000;
+        result[4] = x;
+        var seconds = x % 60;
+        result[3] = Math.floor(seconds);
+        x = x / 60;
+        var minutes = x % 60;
+        result[2] = Math.floor(minutes);
+        x = x / 60;
+        var hours = x % 24;
+        result[1] = Math.floor(hours);
+        x = x / 24;
+        var days = x;
+        result[1] = Math.floor(days);
 
-    return result;
-};
+        return result;
+    };
 
-JSUS.extend(TIME);
+    JSUS.extend(TIME);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 
@@ -4509,11 +4606,10 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * Collection of static functions related to parsing strings
- * ---
  */
 (function(JSUS) {
 
-    function PARSE(){};
+    function PARSE() {}
 
     /**
      * ## PARSE.stringify_prefix
@@ -4548,7 +4644,7 @@ JSUS.extend(TIME);
      * @return {string|boolean} The querystring, or a part of it, or FALSE
      *
      * Kudos:
-     * @see http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+     * @see http://stackoverflow.com/q/901115/3347292
      */
     PARSE.getQueryString = function(name, referer) {
         var regex;
@@ -4559,10 +4655,10 @@ JSUS.extend(TIME);
         referer = referer || window.location.search;
         if ('undefined' === typeof name) return referer;
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-        regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
         results = regex.exec(referer);
-        return results == null ? false :
-            decodeURIComponent(results[1].replace(/\+/g, " "))
+        return results === null ? false :
+            decodeURIComponent(results[1].replace(/\+/g, " "));
     };
 
     /**
@@ -4621,17 +4717,19 @@ JSUS.extend(TIME);
      * @see PARSE.stringify_prefix
      */
     PARSE.stringify = function(o, spaces) {
-        return JSON.stringify(o, function(key, value){
+        return JSON.stringify(o, function(key, value) {
             var type = typeof value;
             if ('function' === type) {
-                return PARSE.stringify_prefix + value.toString()
+                return PARSE.stringify_prefix + value.toString();
             }
 
             if ('undefined' === type) return PARSE.marker_und;
             if (value === null) return PARSE.marker_null;
             if ('number' === type && isNaN(value)) return PARSE.marker_nan;
-            if (value == Number.POSITIVE_INFINITY) return PARSE.marker_inf;
-            if (value == Number.NEGATIVE_INFINITY) return PARSE.marker_minus_inf;
+            if (value === Number.POSITIVE_INFINITY) return PARSE.marker_inf;
+            if (value === Number.NEGATIVE_INFINITY) {
+                return PARSE.marker_minus_inf;
+            }
 
             return value;
 
@@ -4684,12 +4782,12 @@ JSUS.extend(TIME);
     PARSE.parse = function(str) {
 
         var len_prefix = PARSE.stringify_prefix.length,
-        len_func = PARSE.marker_func.length,
-        len_null = PARSE.marker_null.length,
-        len_und = PARSE.marker_und.length,
-        len_nan = PARSE.marker_nan.length,
-        len_inf = PARSE.marker_inf.length,
-        len_inf = PARSE.marker_minus_inf.length;
+            len_func = PARSE.marker_func.length,
+            len_null = PARSE.marker_null.length,
+            len_und = PARSE.marker_und.length,
+            len_nan = PARSE.marker_nan.length,
+            len_inf = PARSE.marker_inf.length,
+            len_minus_inf = PARSE.marker_minus_inf.length;
 
 
         var o = JSON.parse(str);
@@ -4735,14 +4833,16 @@ JSUS.extend(TIME);
                 else if (value.substring(0, len_inf) === PARSE.marker_inf) {
                     return Infinity;
                 }
-                else if (value.substring(0, len_inf) === PARSE.marker_minus_inf) {
+                else if (value.substring(0, len_minus_inf) ===
+                         PARSE.marker_minus_inf) {
+
                     return -Infinity;
                 }
 
             }
             return value;
-        };
-    }
+        }
+    };
 
     JSUS.extend(PARSE);
 
@@ -8239,7 +8339,6 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * `nodeGame` variables and constants module
- * ---
  */
 (function(node) {
 
@@ -8270,11 +8369,11 @@ JSUS.extend(TIME);
     // TODO: do we need these defaults ?
 
     /**
-     *  ### node.constants.verbosity
+     * ### node.constants.verbosity
      *
-     *  The minimum level for a log entry to be displayed as output
+     * The minimum level for a log entry to be displayed as output
      *
-     *  Defaults, only errors are displayed.
+     * Default: only errors are displayed
      *
      */
     k.verbosity = k.verbosity_levels.warn;
@@ -8282,9 +8381,9 @@ JSUS.extend(TIME);
     /**
      * ### node.constants.remoteVerbosity
      *
-     *  The minimum level for a log entry to be reported to the server
+     * The minimum level for a log entry to be reported to the server
      *
-     *  Defaults, only errors are displayed.
+     * Default: only errors are displayed
      */
     k.remoteVerbosity = k.verbosity_levels.warn;
 
@@ -8552,7 +8651,6 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * Collections of rules to determine whether the game should step.
- * ---
  */
 (function(exports, parent) {
 
@@ -8621,14 +8719,13 @@ JSUS.extend(TIME);
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Handles the runtime errors.
- * ---
+ * Handles the runtime errors
  */
 (function(exports, parent) {
 
     "use strict";
 
-// ## Global scope
+    // ## Global scope
     var J = parent.JSUS;
 
     parent.NodeGameRuntimeError = NodeGameRuntimeError;
@@ -8639,7 +8736,7 @@ JSUS.extend(TIME);
     parent.ErrorManager = ErrorManager;
 
     /**
-     * ## ErrorManager
+     * ## ErrorManager constructor
      *
      * Creates a new instance of ErrorManager
      *
@@ -8648,7 +8745,7 @@ JSUS.extend(TIME);
     function ErrorManager(node) {
 
         /**
-         * ## ErrorManager.lastError
+         * ### ErrorManager.lastError
          *
          * Reference to the last error occurred.
          */
@@ -8657,8 +8754,10 @@ JSUS.extend(TIME);
         this.init(node);
     }
 
+    // ## ErrorManager methods
+
     /**
-     * ## ErrorManager.init
+     * ### ErrorManager.init
      *
      * Starts catching run-time errors
      *
@@ -8688,7 +8787,7 @@ JSUS.extend(TIME);
     }
 
     /**
-     * ### NodeGameRuntimeError
+     * ## NodeGameRuntimeError
      *
      * An error occurred during the execution of nodeGame
      */
@@ -8705,7 +8804,7 @@ JSUS.extend(TIME);
 
 
     /**
-     * ### NodeGameStageCallbackError
+     * ## NodeGameStageCallbackError
      *
      * An error occurred during the execution of one of the stage callbacks
      */
@@ -8722,7 +8821,7 @@ JSUS.extend(TIME);
 
 
     /**
-     * ### NodeGameMisconfiguredGameError
+     * ## NodeGameMisconfiguredGameError
      *
      * An error occurred during the configuration of the Game
      */
@@ -8739,7 +8838,7 @@ JSUS.extend(TIME);
 
 
     /**
-     * ### NodeGameIllegalOperationError
+     * ## NodeGameIllegalOperationError
      *
      * An error occurred during the configuration of the Game
      */
@@ -8762,14 +8861,12 @@ JSUS.extend(TIME);
 
 /**
  * # EventEmitter
- *
- * Event emitter engine for `nodeGame`
- *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
+ * Event emitter engine for `nodeGame`
+ *
  * Keeps a register of events listeners.
- * ---
  */
 (function(exports, parent) {
 
@@ -9066,9 +9163,9 @@ JSUS.extend(TIME);
     };
 
     /**
-     * # EventEmitterManager constructor
+     * ## EventEmitterManager constructor
      *
-     * @param {NodeGameClient} A reference to the node object
+     * @param {NodeGameClient} node A reference to the node object
      */
     function EventEmitterManager(node) {
 
@@ -9092,12 +9189,13 @@ JSUS.extend(TIME);
      * Creates a group of event emitters
      *
      * Accepts a variable number of input parameters.
+     * These are the names of existing event emitters.
      *
      * Adds _global_ methods: emit, on, once, remove, printAll methods to be
      * applied to every element of the group
      *
-     * @param {string} groupName
-     * @param {string} The name of the event emitter precendtly created
+     * @param {string} groupName The name of the event emitter group
+     *
      * @return {object} A reference to the event emitter group
      *
      * @see EventEmitterManager.createEE
@@ -9107,17 +9205,19 @@ JSUS.extend(TIME);
         len = arguments.length, that = this;
 
         if (!len) {
-            throw new Error('EEGroup needs a name and valid members.');
+            throw new Error('EventEmitterManager.createEEGroup: ' +
+                            'EEGroup needs a name and valid members.');
         }
         if (len === 1) {
-            throw new Error('EEGroup needs at least one member.');
+            throw new Error('EventEmitterManager.createEEGroup: ' +
+                            'EEGroup needs at least one member.');
         }
 
         // Checking if each ee exist.
         for (i = 1; i < len; i++) {
             if ('string' !== typeof arguments[i]) {
-                throw new TypeError(
-                    'EventEmitter name must be a string');
+                throw new TypeError('EventEmitterManager.createEEGroup: ' +
+                                    'EventEmitter name must be a string');
             }
             if (!this.ee[arguments[i]]) {
                 throw new Error('EventEmitterManager.createEEGroup: ' +
@@ -9281,15 +9381,16 @@ JSUS.extend(TIME);
      *
      * Accepts a variable number of input parameters.
      *
-     * @param {string} The name of the event
+     * @param {string} eventName The name of the event
+     *
      * @return {mixed} The values returned by all fired event listeners
      */
-    EventEmitterManager.prototype.emit = function() {
-        var i, event, tmpRes, res;
-        event = arguments[0];
-        if ('string' !== typeof event) {
+    EventEmitterManager.prototype.emit = function(eventName) {
+        var i, tmpRes, res;
+
+        if ('string' !== typeof eventName) {
             throw new TypeError(
-                'EventEmitterManager.emit: event must be string.');
+                'EventEmitterManager.emit: eventName must be string.');
         }
         res = [];
         for (i in this.ee) {
@@ -9308,14 +9409,14 @@ JSUS.extend(TIME);
      *
      * Removes an event / event listener from all registered event emitters
      *
-     * @param {string} The name of the event
+     * @param {string} eventName The name of the event
      * @param {function} listener Optional A reference of the function to remove
      */
-    EventEmitterManager.prototype.remove = function(event, listener) {
+    EventEmitterManager.prototype.remove = function(eventName, listener) {
         var i;
-        if ('string' !== typeof event) {
+        if ('string' !== typeof eventName) {
             throw new TypeError('EventEmitterManager.remove: ' +
-                                'event must be string.');
+                                'eventName must be string.');
         }
         if (listener && 'function' !== typeof listener) {
             throw new TypeError('EventEmitterManager.remove: ' +
@@ -9323,13 +9424,13 @@ JSUS.extend(TIME);
         }
         for (i in this.ee) {
             if (this.ee.hasOwnProperty(i)) {
-                this.ee[i].remove(event, listener);
+                this.ee[i].remove(eventName, listener);
             }
         }
     };
 
     /**
-     * # EventHistory constructor
+     * ## EventHistory constructor
      *
      * TODO: might require updates.
      */
@@ -9446,7 +9547,6 @@ JSUS.extend(TIME);
  * - `round`: the number of repetition for a stage. Defaults round = 1
  *
  * @see GamePlot
- * ---
  */
 (function(exports, parent) {
 
@@ -9589,8 +9689,10 @@ JSUS.extend(TIME);
         }
     }
 
+    // ## GameStage methods
+
     /**
-     * ## GameStage.toString
+     * ### GameStage.toString
      *
      * Converts the current instance of GameStage to a string
      *
@@ -9601,7 +9703,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GameStage.toHash
+     * ### GameStage.toHash
      *
      * Returns a simplified hash of the stage of the GameStage,
      * according to the input string
@@ -9616,16 +9718,16 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GameStage.toHash (static)
+     * ### GameStage.toHash (static)
      *
      * Returns a simplified hash of the stage of the GameStage,
      * according to the input string.
      *
      * The following characters are valid to determine the hash string
      *
-     *  - S: stage
-     *  - s: step
-     *  - r: round
+     * - S: stage
+     * - s: step
+     * - r: round
      *
      * E.g.
      *
@@ -9662,7 +9764,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GameStage.compare (static)
+     * ### GameStage.compare (static)
      *
      * Compares two GameStage objects|hash strings and returns:
      *
@@ -9704,7 +9806,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GameStage.stringify (static)
+     * ### GameStage.stringify (static)
      *
      * Converts an object GameStage-like to its string representation
      *
@@ -9727,8 +9829,7 @@ JSUS.extend(TIME);
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Handles a collection of `Player` objects.
- * ---
+ * Handles a collection of `Player` objects
  */
 (function(exports, parent) {
 
@@ -9754,15 +9855,16 @@ JSUS.extend(TIME);
     PlayerList.prototype.constructor = PlayerList;
 
     /**
-     * ## PlayerList.array2Groups (static)
+     * ### PlayerList.array2Groups (static)
      *
      * Transforms an array of array (of players) into an
      * array of PlayerList instances and returns it.
      *
      * The original array is modified.
      *
-     * @param {Array} array The array to transform
-     * @return {Array} array The array of `PlayerList` objects
+     * @param {array} array The array to transform
+     *
+     * @return {array} array The array of `PlayerList` objects
      */
     PlayerList.array2Groups = function (array) {
         if (!array) return;
@@ -10027,7 +10129,7 @@ JSUS.extend(TIME);
      *
      * @param {GameStage} gameStage The GameStage of reference
      * @param {boolean} upTo Optional. If TRUE, all players in the stage up to the
-     *   given step are checked. Defaults, FALSE.
+     *   given step are checked. Default: FALSE
      *
      * @return {boolean} TRUE, if all checked players have terminated the stage
      * @see PlayerList.arePlayersSync
@@ -10062,9 +10164,9 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## PlayerList.arePlayersSync
+     * ### PlayerList.arePlayersSync
      *
-     * Verifies that all players in the same stage are at the same stageLevel.
+     * Verifies that all players in the same stage are at the same stageLevel
      *
      * Players at other game steps are ignored, unless the `upTo` parameter is
      * set. In this case, if players are found in earlier game steps, the method
@@ -10079,8 +10181,11 @@ JSUS.extend(TIME);
      players in other stages - ignore - false
 
      * @param {GameStage} gameStage The GameStage of reference
-     * @param {numeric} stageLevel The stageLevel of reference
-     * @param {string} Optional. type. Flag to say what players will be checked.
+     * @param {number} stageLevel The stageLevel of reference
+     * @param {string} type Optional. Flag to say what players will be checked
+     * @param {boolean} checkOutliers Optional. Whether to check for outliers.
+     *   Can't be TRUE if type is 'exact'
+     *
      * @return {boolean} TRUE, if all checked players are sync
      */
     PlayerList.prototype.arePlayersSync = function(gameStage, stageLevel, type, checkOutliers) {
@@ -10144,7 +10249,7 @@ JSUS.extend(TIME);
                 // Players in current stage up to the reference step.
                 cmp = GameStage.compare(gameStage, p.stage);
 
-                // Player in another stage or in later step
+                // Player in another stage or in later step.
                 if (gameStage.stage !== p.stage.stage || cmp < 0) {
                     outlier = true;
                     break;
@@ -10175,6 +10280,7 @@ JSUS.extend(TIME);
      * PlayerList
      *
      * @param {string} eol Optional. End of line separator between players
+     *
      * @return {string} out The string representation of the stage of the PlayerList
      */
     PlayerList.prototype.toString = function(eol) {
@@ -10193,7 +10299,8 @@ JSUS.extend(TIME);
      * Creates N random groups of players
      *
      * @param {number} N The number of groups
-     * @return {Array} Array containing N `PlayerList` objects
+     *
+     * @return {array} Array containing N `PlayerList` objects
      *
      * @see JSUS.getNGroups
      */
@@ -10209,7 +10316,8 @@ JSUS.extend(TIME);
      * Creates random groups of N players
      *
      * @param {number} N The number player per group
-     * @return {Array} Array containing N `PlayerList` objects
+     *
+     * @return {array} Array containing N `PlayerList` objects
      *
      * @see JSUS.getGroupsSizeN
      */
@@ -10225,7 +10333,8 @@ JSUS.extend(TIME);
      * Returns a set of N random players
      *
      * @param {number} N The number of players in the random set. Defaults N = 1
-     * @return {Player|Array} A single player object or an array of
+     *
+     * @return {Player|array} A single player object or an array of
      */
     PlayerList.prototype.getRandom = function(N) {
         if (!N) N = 1;
@@ -10238,7 +10347,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * # Player Class
+     * # Player
      *
      * A Player object is a wrapper object for a number of properties
      * to associate to a player during the game.
@@ -10267,7 +10376,6 @@ JSUS.extend(TIME);
      *
      * For security reasons, non-default properties cannot be `function`, and
      * cannot overwrite any previously existing property.
-     * ---
      */
 
     // Expose Player constructor
@@ -10450,8 +10558,7 @@ JSUS.extend(TIME);
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * `nodeGame` exchangeable data format.
- * ---
+ * `nodeGame` exchangeable data format
  */
 (function(exports, node) {
 
@@ -10607,6 +10714,8 @@ JSUS.extend(TIME);
         return JSON.stringify(this);
     };
 
+    // ## GameMsg methods
+
     /**
      * ### GameMsg.toString
      *
@@ -10749,7 +10858,6 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * `nodeGame` container and builder of the game sequence
- * ---
  */
 (function(exports, parent) {
 
@@ -10767,7 +10875,7 @@ JSUS.extend(TIME);
      * Creates a new instance of Stager
      *
      * @param {object} stateObj Optional. State to initialize the new Stager
-     *  object with. See `Stager.setState`.
+     *   object with. See `Stager.setState`.
      *
      * @see Stager.setState
      */
@@ -10783,17 +10891,15 @@ JSUS.extend(TIME);
         }
 
         /**
-         * ## Stager.log
+         * ### Stager.log
          *
          * Default stdout output. Override to redirect.
          */
         this.log = console.log;
     }
 
-    // ## Stager methods
-
     /**
-     * ### Stager.clear
+     * ## Stager.clear
      *
      * Resets Stager object to initial state
      *
@@ -10938,6 +11044,8 @@ JSUS.extend(TIME);
         return this;
     };
 
+    // ## Stager methods
+
     /**
      * ### Stager.registerGeneralNext
      *
@@ -10968,10 +11076,10 @@ JSUS.extend(TIME);
      * Available only when nodegame is executed in _flexible_ mode.
      *
      * @param {string} id The name of the stage after which the decider function
-     *  will be called
+     *   will be called
      * @param {function} func The decider callback. It should return the name
-     *  of the next stage, 'NODEGAME_GAMEOVER' to end the game or FALSE for
-     *  sequence end.
+     *   of the next stage, 'NODEGAME_GAMEOVER' to end the game or FALSE for
+     *   sequence end.
      *
      * @see Stager.registerGeneralNext
      */
@@ -11116,7 +11224,7 @@ JSUS.extend(TIME);
      * Sets onInit function
      *
      * @param {function|null} func The onInit function.
-     *  NULL can be given to signify non-existence.
+     *   NULL can be given to signify non-existence.
      *
      * @see Stager.onInit
      */
@@ -11148,7 +11256,7 @@ JSUS.extend(TIME);
      * Sets onGameover function
      *
      * @param {function|null} func The onGameover function.
-     *  NULL can be given to signify non-existence.
+     *   NULL can be given to signify non-existence.
      *
      * @see Stager.onGameover
      */
@@ -11190,15 +11298,15 @@ JSUS.extend(TIME);
      * Registers a new game step object. This must have at least the following
      * fields:
      *
-     *  - id (string): The step's name
-     *  - cb (function): The step's callback function
+     * - id (string): The step's name
+     * - cb (function): The step's callback function
      *
      * @param {object} step A valid step object. Shallowly copied.
      */
     Stager.prototype.addStep = function(step) {
         var res, unique;
         unique = true;
-        res = this.checkStepValidity(step, unique);
+        res = checkStepValidity(this, step, unique);
         if (res !== null) {
             throw new Error('Stager.addStep: invalid step received: ' +
                             res + '.');
@@ -11213,14 +11321,15 @@ JSUS.extend(TIME);
      *
      * Registers a new game stage object. The object must have an id field:
      *
-     *  - id (string): The stage's name
+     * - id (string): The stage's name
      *
-     *  and either of the fields:
+     * and exactly one of the following fields:
      *
-     *  - steps (array of strings): The names of the steps that belong to this
-     *     stage. These must have been added with the `addStep` method before
-     *     this call.
-     *  - cb (function): Then a step with the same name will be created
+     * - steps (array of strings): The names of the steps that belong to this
+     *   stage. These must have been added with the `addStep` method before
+     *   this call.
+     * - cb (function): The callback function. If this field is used, then a
+     *   step with the same name as the stage will be created.
      *
      * @param {object} stage A valid stage or step object. Shallowly copied.
      *
@@ -11249,7 +11358,7 @@ JSUS.extend(TIME);
         // Step.
         if (stage.cb) {
             this.addStep(stage);
-            
+
             this.stages[stage.id] = {
                 id: stage.id,
                 steps: [ stage.id ]
@@ -11257,13 +11366,13 @@ JSUS.extend(TIME);
         }
         // Stage.
         else {
-            
-            res = this.checkStageValidity(stage);
+
+            res = checkStageValidity(this, stage);
             if (res !== null) {
                 throw new Error('Stager.addStage: invalid stage received: ' +
                                 res + '.');
             }
-            
+
             this.stages[stage.id] = stage;
         }
     };
@@ -11302,7 +11411,7 @@ JSUS.extend(TIME);
         }
         if (!this.steps[stepId]) {
             throw new Error('Stager.extendStage: stageId not found: ' +
-                            stepId + '.');;
+                            stepId + '.');
         }
 
         J.mixin(this.steps[stepId], update);
@@ -11344,7 +11453,7 @@ JSUS.extend(TIME);
             throw new TypeError('Stager.extendStage: update.steps must be ' +
                                 'array or undefined.');
         }
-        if (stage.steps && stage.cb) {
+        if (update.steps && update.cb) {
             throw new TypeError('Stager.extendStage: update must have either ' +
                                 'a steps or a cb property.');
         }
@@ -11451,11 +11560,11 @@ JSUS.extend(TIME);
      * The given stage will be repeated as long as the `func` callback returns
      * TRUE. If it returns FALSE on the first time, the stage is never executed.
      *
-     * If no callback function is specified the loop is repeated indefinetely.
+     * If no callback function is specified the loop is repeated indefinitely.
      *
      * @param {string} id A valid stage name with optional alias
      * @param {function} func Optional. Callback returning TRUE for repetition.
-     *  Defaults, a function that returns always TRUE.
+     *   Default: a function that returns always TRUE
      *
      * @return {Stager|null} this object on success, NULL on error
      *
@@ -11477,7 +11586,7 @@ JSUS.extend(TIME);
      *
      * @param {string} id A valid stage name with optional alias
      * @param {function} func Optional. Callback returning TRUE for repetition.
-     *  Defaults, a function that returns always TRUE.
+     *   Default: a function that returns always TRUE
      *
      * @return {Stager|null} this object on success, NULL on error
      *
@@ -11495,8 +11604,8 @@ JSUS.extend(TIME);
      * Returns the sequence of stages
      *
      * @param {string} format 'hstages' for an array of human-readable stage
-     *  descriptions, 'hsteps' for an array of human-readable step descriptions,
-     *  'o' for the internal JavaScript object
+     *   descriptions, 'hsteps' for an array of human-readable step descriptions,
+     *   'o' for the internal JavaScript object
      *
      * @return {array|object|null} The stage sequence in requested format. NULL
      *   on error.
@@ -11634,7 +11743,7 @@ JSUS.extend(TIME);
      *
      * @param {object} stateObj The Stager's state
      * @param {string} updateRule Optional. Whether to 'replace' (default) or
-     *  to 'append'.
+     *   to 'append'.
      *
      * @see Stager.getState
      */
@@ -11745,12 +11854,12 @@ JSUS.extend(TIME);
 
         // Set default properties:
         if (stateObj.hasOwnProperty('defaultProperties')) {
-            this.setDefaultProperties(stateObj.defaultProperties);            
+            this.setDefaultProperties(stateObj.defaultProperties);
         }
 
         // Set onInit:
         if (stateObj.hasOwnProperty('onInit')) {
-            this.setOnInit(stateObj.onInit);            
+            this.setOnInit(stateObj.onInit);
         }
 
         // Set onGameover:
@@ -11798,7 +11907,7 @@ JSUS.extend(TIME);
      *
      * @param {string|array} ids Valid stage name(s)
      * @param {boolean} useSeq Optional. Whether to generate a singleton
-     *  sequence.  TRUE by default.
+     *   sequence.  TRUE by default.
      *
      * @return {object|null} The state object on success, NULL on error
      *
@@ -11888,7 +11997,7 @@ JSUS.extend(TIME);
     }
 
     /**
-     * ### Stager.checkStepValidity
+     * checkStepValidity
      *
      * Returns whether given step is valid
      *
@@ -11897,24 +12006,27 @@ JSUS.extend(TIME);
      *
      * @param {object} step The step object
      * @param {boolean} unique If TRUE, checks also for id uniqueness
+     *
      * @return {string} NULL for valid stages, error description otherwise
      *
      * @see Stager.addStep
+     *
+     * @api private
      */
-    Stager.prototype.checkStepValidity = function(step, unique) {
+    function checkStepValidity(that, step, unique) {
         if (!step)  return 'missing step object';
         if ('string' !== typeof step.id) return 'missing ID';
-        if ('function' !== typeof step.cb) return 'missing callback';     
+        if ('function' !== typeof step.cb) return 'missing callback';
 
-        if (unique && this.steps.hasOwnProperty(step.id)) {
-            return 'step ID already existing: ' + step.id + 
+        if (unique && that.steps.hasOwnProperty(step.id)) {
+            return 'step ID already existing: ' + step.id +
                 '. Use extendStep to modify it.';
         }
         return null;
     };
 
     /**
-     * ### Stager.checkStepValidity
+     * checkStageValidity
      *
      * Returns whether given stage is valid
      *
@@ -11922,26 +12034,27 @@ JSUS.extend(TIME);
      * Checks for referenced step existence.
      *
      * @param {object} stage The stage object
+     *
      * @return {string} NULL for valid stages, error description otherwise
      *
      * @see Stager.addStage
+     *
+     * @api private
      */
-    Stager.prototype.checkStageValidity = function(stage, unique) {
-        var i, len;
+    function checkStageValidity(that, stage, unique) {
         if (!stage) return 'missing stage object';
-        if ('string' !== typeof stage.id) return 'missing ID';       
+        if ('string' !== typeof stage.id) return 'missing ID';
         if (!stage.steps || !stage.steps.length) return 'missing "steps" array';
 
-        if (unique && this.stages.hasOwnProperty(stage.id)) {
-            return 'stage id already existing: ' + stage.id + 
+        if (unique && that.stages.hasOwnProperty(stage.id)) {
+            return 'stage id already existing: ' + stage.id +
                 '. Use extendStage to modify it.';
         }
 
         // Check whether the all referenced steps exist.
-        i = -1, len = stage.steps.length;
-        for ( ; ++i < len ; ) {
-            if (!this.steps[stage.steps[i]]) {
-                return 'unknown step "' + stage.steps[i] + '"';            
+        for (var i = 0; i < stage.steps.length; ++i) {
+            if (!that.steps[stage.steps[i]]) {
+                return 'unknown step "' + stage.steps[i] + '"';
             }
         }
 
@@ -11949,7 +12062,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ### Stager.handleAlias
+     * handleAlias
      *
      * Handles stage id and alias strings
      *
@@ -12009,7 +12122,7 @@ JSUS.extend(TIME);
         }
 
         return id;
-    };
+    }
 
     // ## Closure
 })(
@@ -12022,8 +12135,7 @@ JSUS.extend(TIME);
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * `nodeGame` container of game stages functions.
- * ---
+ * `nodeGame` container of game stages functions
  */
 (function(exports, parent) {
 
@@ -12061,7 +12173,7 @@ JSUS.extend(TIME);
         this.init(stager);
 
         /**
-         * ## GamePlot.log
+         * ### GamePlot.log
          *
          * Default stdout output. Override to redirect.
          */
@@ -12925,7 +13037,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GamePlot.isFlexibleMode
+     * ### GamePlot.isFlexibleMode
      *
      * Returns TRUE if operating in _flexible_ mode
      *
@@ -12956,10 +13068,9 @@ JSUS.extend(TIME);
  *
  * Static factory of objects of type `GameMsg`.
  *
- * @see GameMSg
+ * @see GameMsg
  * @see node.target
  * @see node.action
- * ---
  */
 (function(exports, parent) {
 
@@ -12983,7 +13094,7 @@ JSUS.extend(TIME);
         this.node = node;
     }
 
-    // ## General methods
+    // ## GameMsgGenerator methods
 
     /**
      * ### GameMsgGenerator.create
@@ -12996,7 +13107,8 @@ JSUS.extend(TIME);
      * By default GAMECOMMAND, REDIRECT, PCONNET, PDISCONNECT, PRECONNECT
      * have priority 1, all the other targets have priority 0.
      *
-     * @param {object} Optional. The init object
+     * @param {object} msg Optional. The init object
+     *
      * @return {GameMsg} The full GameMsg object
      *
      * @see GameMsg
@@ -13053,7 +13165,6 @@ JSUS.extend(TIME);
 
 /**
  * # SocketFactory
- *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
@@ -13061,10 +13172,9 @@ JSUS.extend(TIME);
  * new GameSocket clients
  *
  * Contract: Socket prototypes must implement the following methods:
- *  - connect: establish a communication channel with a ServerNode instance
- *  - send: pushes messages into the communication channel
  *
- * ---
+ * - connect: establish a communication channel with a ServerNode instance
+ * - send: pushes messages into the communication channel
  */
 (function(exports) {
 
@@ -13122,8 +13232,7 @@ JSUS.extend(TIME);
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * `nodeGame` component responsible for dispatching events and messages.
- * ---
+ * `nodeGame` component responsible for dispatching events and messages
  */
 (function(exports, parent) {
 
@@ -13233,8 +13342,10 @@ JSUS.extend(TIME);
         this.node = node;
     }
 
+    // ## Socket methods
+
     /**
-     * ## Socket.setup
+     * ### Socket.setup
      *
      * Configure the socket.
      *
@@ -13253,7 +13364,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Socket.setSocketType
+     * ### Socket.setSocketType
      *
      * Set the default socket by requesting it to the Socket Factory.
      *
@@ -13270,7 +13381,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Socket.connect
+     * ### Socket.connect
      *
      * Calls the connect method on the actual socket object.
      *
@@ -13288,12 +13399,12 @@ JSUS.extend(TIME);
         this.url = uri;
         this.node.log('connecting to ' + humanReadableUri + '.');
 
-        this.socket.connect(uri,'undefined' !== typeof options ?
+        this.socket.connect(uri, 'undefined' !== typeof options ?
                             options : this.userOptions);
     };
 
     /**
-     * ## Socket.onConnect
+     * ### Socket.onConnect
      *
      * Handler for connections to the server.
      *
@@ -13306,7 +13417,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Socket.onDisconnect
+     * ### Socket.onDisconnect
      *
      * Handler for disconnections from the server.
      *
@@ -13328,7 +13439,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Socket.secureParse
+     * ### Socket.secureParse
      *
      * Parses a string representing a game msg into a game msg object
      *
@@ -13350,7 +13461,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Socket.validateIncomingMsg
+     * ### Socket.validateIncomingMsg
      *
      * Checks whether an incoming message is valid.
      *
@@ -13370,7 +13481,7 @@ JSUS.extend(TIME);
     }
 
     /**
-     * ## Socket.onMessage
+     * ### Socket.onMessage
      *
      * Initial handler for incoming messages from the server.
      *
@@ -13406,7 +13517,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Socket.onMessageFull
+     * ### Socket.onMessageFull
      *
      * Full handler for incoming messages from the server.
      *
@@ -13593,8 +13704,9 @@ JSUS.extend(TIME);
      *
      * The msg is actually received by the client itself as well.
      *
-     * @param {GameMsg} The game message to send
-     * @return {boolean} TRUE, on success.
+     * @param {GameMsg} msg The game message to send
+     *
+     * @return {boolean} TRUE on success
      *
      * @see GameMsg
      *
@@ -13651,11 +13763,10 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * Implementation of a remote socket communicating over HTTP
- * through Socket.IO.
+ * through Socket.IO
  *
  * This file requires that the socket.io library is already loaded before
  * nodeGame is loaded to work (see closure).
- * ---
  */
 (function(exports, node, io) {
 
@@ -13731,7 +13842,7 @@ JSUS.extend(TIME);
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * ### Provides a simple, lightweight NO-SQL database for nodeGame
+ * Provides a simple, lightweight NO-SQL database for nodeGame
  *
  * Entries are stored as GameBit messages.
  *
@@ -13745,7 +13856,6 @@ JSUS.extend(TIME);
  *
  * @see GameBit
  * @see GameStage.compare
- * ---
  */
 (function(exports, parent) {
 
@@ -13812,13 +13922,13 @@ JSUS.extend(TIME);
     // ## GameDB methods
 
     /**
-     * ## GameDB.syncWithNode
+     * ### GameDB.syncWithNode
      *
      * If set, automatically adds property to newly inserted items
      *
      * Adds `node.player` and `node.game.getCurrentGameStage()`
      *
-     * @param {NodeGameClient} A NodeGameClient instance
+     * @param {NodeGameClient} node A NodeGameClient instance
      */
     GameDB.prototype.syncWithNode = function(node) {
         if ('object' !== typeof node) {
@@ -13866,7 +13976,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * # GameBit
+     * ## GameBit
      *
      * Container of relevant information for the game
      *
@@ -14051,8 +14161,7 @@ JSUS.extend(TIME);
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Handles the flow of the game.
- * ---
+ * Handles the flow of the game
  */
 (function(exports, parent) {
 
@@ -14076,7 +14185,7 @@ JSUS.extend(TIME);
      *
      * Creates a new instance of Game
      *
-     * @param {NodeGameClient} node. A valid NodeGameClient object
+     * @param {NodeGameClient} node A valid NodeGameClient object
      * @param {object} settings Optional. A configuration object
      */
     function Game(node, settings) {
@@ -14111,10 +14220,10 @@ JSUS.extend(TIME);
          *
          * The game's settings
          *
-         * Contains following properties:
+         * Contains the following properties:
          *
-         *  - publishLevel: Default: REGULAR (10)
-         *  - syncStepping: Default: false
+         * - publishLevel: Default: REGULAR (10)
+         * - syncStepping: Default: false
          */
         this.settings = {
             publishLevel: 'undefined' === typeof settings.publishLevel ?
@@ -15344,7 +15453,7 @@ JSUS.extend(TIME);
      * Checks also the GameWindow object.
      *
      * @param {boolean} strict If TRUE, PLAYING can be emitted only coming
-     *   from the LOADED stage level. Defaults, TRUE.
+     *   from the LOADED stage level. Default: TRUE
      * @return {boolean} TRUE, if the PLAYING event should be emitted.
      */
     Game.prototype.shouldEmitPlaying = function(strict) {
@@ -15372,13 +15481,10 @@ JSUS.extend(TIME);
 
 /**
  * # GameSession
- *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` session manager
- * @experimental
- * ---
  */
 (function(exports, node) {
 
@@ -15409,7 +15515,7 @@ JSUS.extend(TIME);
         SessionManager.call(this);
 
         /**
-         * ## GameSession.node
+         * ### GameSession.node
          *
          * The reference to the node object.
          */
@@ -15493,22 +15599,24 @@ JSUS.extend(TIME);
 //    };
 
     /**
-     * ## Session Manager constructor
+     * ## SessionManager constructor
      *
      * Creates a new session manager.
      */
     function SessionManager() {
 
         /**
-         * ## SessionManager.session
+         * ### SessionManager.session
          *
          * Container of all variables registered in the session.
          */
         this.session = {};
     }
 
+    // ## SessionManager methods
+
     /**
-     * ## SessionManager.getVariable (static)
+     * ### SessionManager.getVariable (static)
      *
      * Default session getter.
      *
@@ -15520,7 +15628,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## SessionManager.setVariable (static)
+     * ### SessionManager.setVariable (static)
      *
      * Default session setter.
      *
@@ -15532,7 +15640,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## SessionManager.register
+     * ### SessionManager.register
      *
      * Register a new variable to the session
      *
@@ -15582,7 +15690,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## SessionManager.unregister
+     * ### SessionManager.unregister
      *
      * Unegister a variable from session
      *
@@ -15607,7 +15715,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## SessionManager.clear
+     * ### SessionManager.clear
      *
      * Unegister all registered session variables
      *
@@ -15618,7 +15726,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## SessionManager.get
+     * ### SessionManager.get
      *
      * Returns the value/s of one/all registered session variable/s
      *
@@ -15649,12 +15757,13 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## SessionManager.isRegistered
+     * ### SessionManager.isRegistered
      *
      * Returns TRUE, if a variable is registred
      *
      * @param {string} path A previously registred variable
-     * @param {boolean} TRUE, if the variable is registered
+     *
+     * @return {boolean} TRUE, if the variable is registered
      *
      * @see SessionManager.register
      * @see SessionManager.unregister
@@ -15668,7 +15777,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## SessionManager.serialize
+     * ### SessionManager.serialize
      *
      * Returns an object containing that can be to restore the session
      *
@@ -15694,7 +15803,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## SessionManager.restore
+     * ### SessionManager.restore
      *
      * Restore a previously serialized session object
      *
@@ -15731,9 +15840,7 @@ JSUS.extend(TIME);
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * `nodeGame` group manager.
- * @experimental
- * ---
+ * `nodeGame` group manager
  */
 (function(exports, node) {
 
@@ -15757,7 +15864,7 @@ JSUS.extend(TIME);
         var that = this;
 
         /**
-         * ## GroupManager.elements
+         * ### GroupManager.elements
          *
          * Elements that will be used to creates groups
          *
@@ -15768,7 +15875,7 @@ JSUS.extend(TIME);
         this.elements = [];
 
         /**
-         * ## GroupManager.groups
+         * ### GroupManager.groups
          *
          * The current database of groups
          *
@@ -15785,7 +15892,7 @@ JSUS.extend(TIME);
         });
 
         /**
-         * ## GroupManager.scratch.
+         * ### GroupManager.scratch
          *
          * A temporary storage object used by matching algorithms
          *
@@ -15797,7 +15904,7 @@ JSUS.extend(TIME);
         this.scratch = {};
 
         /**
-         * ## GroupManager.matchFunctions
+         * ### GroupManager.matchFunctions
          *
          * Objects literals with all available matching functions
          *
@@ -15807,7 +15914,7 @@ JSUS.extend(TIME);
         this.matchFunctions = {};
 
         /**
-         * ## GroupManager.lastMatchType
+         * ### GroupManager.lastMatchType
          *
          * The last type of matching run.
          *
@@ -15820,8 +15927,10 @@ JSUS.extend(TIME);
 
     }
 
+    // ## GroupManager methods
+
     /**
-     * ## GroupManager.create
+     * ### GroupManager.create
      *
      * Creates a new set of groups in the Group Manager
      *
@@ -15849,7 +15958,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GroupManager.get
+     * ### GroupManager.get
      *
      * Returns the group with the specified name
      *
@@ -15864,7 +15973,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GroupManager.removeAll
+     * ### GroupManager.removeAll
      *
      * Removes all existing groups
      */
@@ -15874,21 +15983,21 @@ JSUS.extend(TIME);
 
 
     /**
-     * ## GroupManager.addElements
+     * ### GroupManager.addElements
      *
      * Adds new elements to the group manager
      *
      * The uniqueness of each element is not checked, and depending on the
      * matching algorithm used, it may or may not be a problem.
      *
-     * @param {array} The set of elements to later match
+     * @param {array} elements The set of elements to later match
      */
     GroupManager.prototype.addElements = function(elements) {
         this.elements = this.elements.concat(elements);
     };
 
     /**
-     * ## GroupManager.createNGroups
+     * ### GroupManager.createNGroups
      *
      * Creates N new groups
      *
@@ -15896,6 +16005,7 @@ JSUS.extend(TIME);
      * of current groups.
      *
      * @param {number} N The requested number of groups
+     *
      * @return {array} out The names of the created groups
      */
     GroupManager.prototype.createNGroups = function(N) {
@@ -15921,14 +16031,16 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GroupManager.assign2Group
+     * ### GroupManager.assign2Group
      *
      * Manually assign one or more elements to a group
      *
      * The group must be already existing.
      *
      * @param {string} groupName The name of the group
-     * @param {string|array|PlayerList} The elements to assign to a group
+     * @param {string|array|PlayerList} elements The elements to assign to a
+     *   group
+     *
      * @return {Group} The updated group
      */
     GroupManager.prototype.assign2Group = function(groupName, elements) {
@@ -15964,7 +16076,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GroupManager.addMatchFunction
+     * ### GroupManager.addMatchFunction
      *
      * Adds a new matching function to the set of available ones
      *
@@ -15999,7 +16111,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GroupManager.match
+     * ### GroupManager.match
      *
      * Performs a match, given the current _groups_ and _elements_ objects
      *
@@ -16033,7 +16145,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GroupManager.addDefaultMatchFunctions
+     * ### GroupManager.addDefaultMatchFunctions
      *
      * Adds default matching functions.
      */
@@ -16069,7 +16181,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GroupManager.resetMemberships
+     * ### GroupManager.resetMemberships
      *
      * Removes all memberships, but keeps the current groups and elements
      *
@@ -16082,7 +16194,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GroupManager.getMemberships
+     * ### GroupManager.getMemberships
      *
      * Returns current memberships as an array or object
      *
@@ -16101,7 +16213,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GroupManager.getGroups
+     * ### GroupManager.getGroups
      *
      * Returns the current groups
      *
@@ -16113,7 +16225,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## GroupManager.getGroupsNames
+     * ### GroupManager.getGroupsNames
      *
      * Returns the current group names
      *
@@ -16159,8 +16271,10 @@ JSUS.extend(TIME);
         this.doneCounter = 0;
     }
 
+    // ## RMatcher methods
+
     /**
-     * ## RMatcher.init
+     * ### RMatcher.init
      *
      * Initializes the RMatcher object
      *
@@ -16181,7 +16295,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## RMatcher.addGroup
+     * ### RMatcher.addGroup
      *
      * Adds a group in the group array
      *
@@ -16195,7 +16309,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## RMatcher.match
+     * ### RMatcher.match
      *
      * Does the matching according to pre-specified criteria
      *
@@ -16223,11 +16337,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## RMatcher.inverMatched
-     *
-     *
-     *
-     * @return
+     * ### RMatcher.invertMatched
      */
     RMatcher.prototype.invertMatched = function() {
 
@@ -16384,7 +16494,7 @@ JSUS.extend(TIME);
     function Group(options) {
 
         /**
-         * ## Group.name
+         * ### Group.name
          *
          * The name of the group
          *
@@ -16393,7 +16503,7 @@ JSUS.extend(TIME);
         this.name = null;
 
         /**
-         * ## Group.elements
+         * ### Group.elements
          *
          * The elements belonging to this group
          *
@@ -16405,7 +16515,7 @@ JSUS.extend(TIME);
         this.elements = [];
 
         /**
-         * ## Group.pool
+         * ### Group.pool
          *
          * Sets of elements that to match with the group members sequentially
          *
@@ -16418,7 +16528,7 @@ JSUS.extend(TIME);
         this.pool = [];
 
         /**
-         * ## Group.matched
+         * ### Group.matched
          *
          * Array of arrays of matched elements
          *
@@ -16431,21 +16541,21 @@ JSUS.extend(TIME);
         this.matched = [];
 
         /**
-         * ## Group.leftOver
+         * ### Group.leftOver
          *
          * Array of elements from the pool that could not be matched
          */
         this.leftOver = [];
 
         /**
-         * ## Group.pointer
+         * ### Group.pointer
          *
          * Index of the row we are trying to complete currently
          */
         this.pointer = 0;
 
         /**
-         * ## Group.matches
+         * ### Group.matches
          *
          * Summary of matching results
          *
@@ -16457,7 +16567,7 @@ JSUS.extend(TIME);
         };
 
         /**
-         * ## Group.rowLimit
+         * ### Group.rowLimit
          *
          * Number of elements necessary to a row
          *
@@ -16467,21 +16577,21 @@ JSUS.extend(TIME);
         this.rowLimit = 1;
 
         /**
-         * ## Group.noSelf
+         * ### Group.noSelf
          *
          * If TRUE, a group member cannot be matched with himself.
          */
         this.noSelf = true;
 
         /**
-         * ## Group.shuffle
+         * ### Group.shuffle
          *
          * If TRUE, all elements of the pool will be randomly shuffled.
          */
         this.shuffle = true;
 
         /**
-         * ## Group.stretch
+         * ### Group.stretch
          *
          * If TRUE,  each element in the pool will be replicated
          * as many times as the _rowLimit_ variable.
@@ -16492,8 +16602,10 @@ JSUS.extend(TIME);
         this.init(options);
     }
 
+    // ## Group methods
+
     /**
-     * ## Group.init
+     * ### Group.init
      *
      * Mixes in default and user options
      *
@@ -16526,7 +16638,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.setElements
+     * ### Group.setElements
      *
      * Sets the elements of the group
      *
@@ -16557,7 +16669,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.addMember
+     * ### Group.addMember
      *
      * Adds a single member to the group
      *
@@ -16577,7 +16689,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.setPool
+     * ### Group.setPool
      *
      * Sets the pool of the group
      *
@@ -16617,7 +16729,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.getMembers
+     * ### Group.getMembers
      *
      * Returns the members of the group
      *
@@ -16628,7 +16740,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.canSwitchIn
+     * ### Group.canSwitchIn
      *
      * Returns TRUE, if an element has the requisite to enter a row-match
      *
@@ -16651,7 +16763,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.canAdd
+     * ### Group.canAdd
      *
      * Returns TRUE, if an element can be added to a row
      *
@@ -16669,7 +16781,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.shouldSwitch
+     * ### Group.shouldSwitch
      *
      * Returns TRUE if the matching is not complete
      *
@@ -16682,7 +16794,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.switchIt
+     * ### Group.switchIt
      *
      * Tries to complete the rows of the match with missing elements
      *
@@ -16698,7 +16810,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.completeRow
+     * ### Group.completeRow
      *
      * Completes the rows with missing elements switching elements between rows
      *
@@ -16731,7 +16843,7 @@ JSUS.extend(TIME);
 
 
     /**
-     * ## Group.switchItInRow
+     * ### Group.switchItInRow
      *
      * Returns TRUE if an element can be inserted in a row (even a complete one)
      *
@@ -16760,7 +16872,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.addToRow
+     * ### Group.addToRow
      *
      * Adds an element to a row and updates the matched count
      *
@@ -16776,7 +16888,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.addIt
+     * ### Group.addIt
      *
      * Tries to add an element to any of the rows
      *
@@ -16803,7 +16915,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.matchBatch
+     * ### Group.matchBatch
      *
      * Tries to add a batch of elements to each of the elements of the group
      *
@@ -16828,7 +16940,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.match
+     * ### Group.match
      *
      * Matches each group member with elements from the a pool
      *
@@ -16871,7 +16983,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Group.reset
+     * ### Group.reset
      *
      * Resets match and possibly also elements and pool.
      *
@@ -17136,13 +17248,10 @@ JSUS.extend(TIME);
 
 /**
  * # RoleMapper
- *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * `nodeGame` manager of player ids and aliases.
- * @experimental
- * ---
+ * `nodeGame` manager of player ids and aliases
  */
 (function(exports, parent) {
 
@@ -17169,7 +17278,6 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * Timing-related utility functions
- *  ---
  */
 (function(exports, parent) {
 
@@ -17540,7 +17648,7 @@ JSUS.extend(TIME);
      *
      * @param {string} event The name of the event
      * @param {number} maxWait Optional. The maximum time (in milliseconds)
-     *   to wait before emitting the event. Defaults, 6000
+     *   to wait before emitting the event. Default: 6000
      */
     Timer.prototype.randomEmit = function(event, maxWait) {
         randomFire.call(this, event, maxWait, true);
@@ -17553,22 +17661,21 @@ JSUS.extend(TIME);
      *
      * Respects pausing / resuming.
      *
-     * @param {function} The callback function to execute
+     * @param {function} func The callback function to execute
      * @param {number} maxWait Optional. The maximum time (in milliseconds)
-     *   to wait before executing the callback. Defaults, 6000
+     *   to wait before executing the callback. Default: 6000
      */
     Timer.prototype.randomExec = function(func, maxWait) {
         randomFire.call(this, func, maxWait, false);
     };
 
     /**
-     * # GameTimer Class
+     * # GameTimer
      *
      * Copyright(c) 2014 Stefano Balietti
      * MIT Licensed
      *
      * Creates a controllable timer object for nodeGame.
-     * ---
      */
     exports.GameTimer = GameTimer;
 
@@ -17721,7 +17828,7 @@ JSUS.extend(TIME);
      *  var options = {
      *      // The length of the interval.
      *      milliseconds: 4000,
-     *      // How often to update the time counter. Defaults, milliseconds.
+     *      // How often to update the time counter. Default: milliseconds
      *      update: 1000,
      *      // An event or function to fire when the timer expires.
      *      timeup: 'MY_EVENT',
@@ -17764,7 +17871,7 @@ JSUS.extend(TIME);
             }
         }
 
-        // Set startPaused option. if specified. Defaults, FALSE.
+        // Set startPaused option. if specified. Default: FALSE
         this.startPaused = 'undefined' !== options.startPaused ?
             options.startPaused : false;
 
@@ -18135,13 +18242,14 @@ JSUS.extend(TIME);
 );
 
 /**
- * # nodeGame: Social Experiments in the Browser!
+ * # NodeGameClient
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * `nodeGame` is a free, open source javascript framework for on line,
+ * nodeGame: Social Experiments in the Browser!
+ *
+ * `nodeGame` is a free, open source javascript framework for online,
  * multiplayer games in the browser.
- * ---
  */
 (function(exports, parent) {
 
@@ -18178,7 +18286,7 @@ JSUS.extend(TIME);
          *
          * The minimum level for a log entry to be displayed as output
          *
-         * Defaults, only errors are displayed.
+         * Default: only errors are displayed
          */
         this.verbosity = constants.verbosity_levels.warn;
 
@@ -18187,7 +18295,7 @@ JSUS.extend(TIME);
          *
          * The name of this node, used in logging output
          *
-         * Defaults, 'ng'
+         * Default: 'ng'
          */
         this.nodename = 'ng';
 
@@ -18196,7 +18304,7 @@ JSUS.extend(TIME);
          *
          * The minimum level for a log entry to be reported to the server
          *
-         * Defaults, only errors are reported.
+         * Default: only errors are reported
          *
          * @experimental
          */
@@ -18580,7 +18688,7 @@ JSUS.extend(TIME);
          * @param {object} stagerState Stager state which is passed
          *   to `Stager.setState`
          * @param {string} updateRule Optional. Accepted: <replace>, <append>.
-         *   Defaults, 'replace'.
+         *   Default: 'replace'
          *
          * @see node.game.plot
          * @see Stager.setState
@@ -18612,7 +18720,7 @@ JSUS.extend(TIME);
          *
          * @param {PlayerList} playerList The new player list
          * @param {string} updateRule Optional. Accepted: <replace>, <append>.
-         *   Defaults, 'replace'.
+         *   Default: 'replace'
          */
         this.registerSetup('plist', function(playerList, updateRule) {
             updatePlayerList.call(this, 'pl', playerList, updateRule);
@@ -18625,7 +18733,7 @@ JSUS.extend(TIME);
          *
          * @param {PlayerList} monitorList The new monitor list
          * @param {string} updateRule Optional. Accepted: <replace>, <append>.
-         *   Defaults, 'replace'.
+         *   Default: 'replace'
          */
         this.registerSetup('mlist', function(monitorList, updateRule) {
             updatePlayerList.call(this, 'ml', monitorList, updateRule);
@@ -18636,7 +18744,7 @@ JSUS.extend(TIME);
          *
          * Sets the default language
          *
-         * @param {object} The language object to set as default.
+         * @param {object} language The language object to set as default.
          */
         this.registerSetup('lang', function(language) {
             if (!language) return null;
@@ -18842,7 +18950,6 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * `nodeGame` logging module
- * ---
  */
 (function(exports, parent) {
 
@@ -18867,7 +18974,6 @@ JSUS.extend(TIME);
      *   Default: 'warn'
      * @param {string} prefix Optional. A text to display at the beginning of
      *   the log entry. Default: 'ng> '
-     *
      */
     NGC.prototype.log = function(txt, level, prefix) {
         if ('undefined' === typeof txt) return false;
@@ -18942,7 +19048,6 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * `nodeGame` configuration module
- * ---
  */
 
 (function(exports, node) {
@@ -19089,7 +19194,6 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * `nodeGame` aliasing module
- * ---
  */
 (function(exports, node) {
 
@@ -19187,12 +19291,11 @@ JSUS.extend(TIME);
 );
 
 /**
- * # Connect module
+ * # Connect
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` connect module
- * ---
  */
 (function(exports, parent) {
 
@@ -19208,15 +19311,18 @@ JSUS.extend(TIME);
      * Events related to the connection include _SOCKET_CONNECT_ and
      * _PLAYER_CREATED_.
      *
-     * @param {string} uri Optional. The uri to connect to.
+     * Depending on the type of socket chosen (e.g. Direct or IO), the channel
+     * parameter is optional or not.
+     *
+     * @param {string} channel Optional. The channel to connect to
      * @param {object} socketOptions Optional. A configuration object for
      *   the socket connect method.
      *
      * @emit SOCKET_CONNECT
      * @emit PLAYER_CREATED
      */
-    NGC.prototype.connect = function(uri, socketOptions) {
-        this.socket.connect(uri, socketOptions);
+    NGC.prototype.connect = function(channel, socketOptions) {
+        this.socket.connect(channel, socketOptions);
     };
 
 })(
@@ -19225,10 +19331,11 @@ JSUS.extend(TIME);
 );
 
 /**
- * # Player related functions
+ * # Player
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
- * ---
+ *
+ * Player related functions
  */
 (function(exports, parent) {
 
@@ -19243,7 +19350,7 @@ JSUS.extend(TIME);
      *
      * Creates player object and places it in node.player
      *
-     * @param {object} A player object with a valid id property
+     * @param {object} player A player object with a valid id property
      * @return {object} The player object
      *
      * @see node.setup.player
@@ -19305,11 +19412,11 @@ JSUS.extend(TIME);
 );
 
 /**
- * # NodeGameClient Events Handling
+ * # Events
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * ---
+ * `nodeGame` events handling
  */
 
 (function(exports, parent) {
@@ -19329,7 +19436,7 @@ JSUS.extend(TIME);
      *
      * TODO: add proper doc
      *
-     * @param {EventEmitter} The current event emitter obj
+     * @return {EventEmitter} The current event emitter obj
      */
     NGC.prototype.getCurrentEventEmitter = function() {
         // NodeGame default listeners
@@ -19431,10 +19538,9 @@ JSUS.extend(TIME);
 );
 
 /**
- * # NodeGameClient: SAY, SET, GET, DONE
+ * # SAY, SET, GET, DONE
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
- * ---
  */
 (function(exports, parent) {
 
@@ -19476,7 +19582,8 @@ JSUS.extend(TIME);
      * Stores a key-value pair in the server memory
      *
      * @param {string} key An alphanumeric (must not be unique)
-     * @param {mixed} The value to store (can be of any type)
+     * @param {mixed} value The value to store (can be of any type)
+     * @param {string} to The recipient
      *
      * @return {boolean} TRUE, if SET message is sent
      */
@@ -19534,11 +19641,11 @@ JSUS.extend(TIME);
      *
      * @param {string} key The label of the GET message
      * @param {function} cb The callback function to handle the return message
-     * @param {string} to Optional. The recipient of the msg. Defaults, SERVER
+     * @param {string} to Optional. The recipient of the msg. Default: SERVER
      * @param {mixed} params Optional. Additional parameters to send along
      * @param {number} timeout Optional. The number of milliseconds after which
      *   the listener will be removed. If equal -1, the listener will not be
-     *   removed. Defaults, 0.
+     *   removed. Default: 0
      *
      * @return {boolean} TRUE, if GET message is sent and listener registered
      */
@@ -19662,11 +19769,11 @@ JSUS.extend(TIME);
 );
 
 /**
- * # NodeGameClient Events Handling
+ * # Commands
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * ---
+ * `nodeGame` commands
  */
 (function(exports, node) {
 
@@ -19782,15 +19889,12 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * `nodeGame` extra functions
- * ---
  */
 (function(exports, parent) {
 
     "use strict";
 
     var NGC = parent.NodeGameClient
-
-    //## Extra
 
     /**
      * ### node.env
@@ -19859,11 +19963,11 @@ JSUS.extend(TIME);
 );
 
 /**
- * # NodeGameClient JSON fetching
+ * # GetJSON
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * ---
+ * `nodeGame` JSON fetching
  */
 (function(exports, parent) {
 
@@ -19977,15 +20081,15 @@ JSUS.extend(TIME);
 );
 
 /**
- * # Listeners for incoming messages.
+ * # incoming
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
+ *
+ * Listeners for incoming messages
  *
  * TODO: PRECONNECT events are not handled, just emitted.
  * Maybe some default support should be given, or some
  * default handlers provided.
- *
- * ---
  */
 (function(exports, parent) {
 
@@ -20014,7 +20118,7 @@ JSUS.extend(TIME);
      *
      * If executed once, it requires a force flag to re-add the listeners
      *
-     * @param {boolean} TRUE, to force re-adding the listeners
+     * @param {boolean} force Whether to force re-adding the listeners
      * @return {boolean} TRUE on success
      */
     NGC.prototype.addDefaultIncomingListeners = function(force) {
@@ -20379,14 +20483,15 @@ JSUS.extend(TIME);
 );
 
 /**
- * # Listeners for incoming messages.
+ * # internal
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
+ *
+ * Listeners for internal messages.
  *
  * Internal listeners are not directly associated to messages,
  * but they are usually responding to internal nodeGame events,
  * such as progressing in the loading chain, or finishing a game stage.
- * ---
  */
 (function(exports, parent) {
 
@@ -20420,7 +20525,7 @@ JSUS.extend(TIME);
      *
      * If executed once, it requires a force flag to re-add the listeners.
      *
-     * @param {boolean} TRUE, to force re-adding the listeners
+     * @param {boolean} force Whether to force re-adding the listeners
      * @return {boolean} TRUE on success
      */
     NGC.prototype.addDefaultInternalListeners = function(force) {
@@ -20677,7 +20782,6 @@ JSUS.extend(TIME);
  *
  * Notice: TriggerManager works as a *LIFO* queue, i.e. new trigger functions
  * will be executed first.
- * ---
  */
 (function(exports, node) {
 
@@ -20962,7 +21066,7 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * GameWindow provides a handy API to interface nodeGame with the
- * browser window.
+ * browser window
  *
  * Creates a custom root element inside the HTML page, and insert an
  * iframe element inside it.
@@ -20973,7 +21077,6 @@ JSUS.extend(TIME);
  * Defines a number of profiles associated with special page layout.
  *
  * Depends on JSUS and nodegame-client.
- * ---
  */
 (function(window, node) {
 
@@ -20982,7 +21085,7 @@ JSUS.extend(TIME);
     var J = node.JSUS;
 
     if (!J) {
-        throw new Error('GameWindow: JSUS object not found. Aborting');
+        throw new Error('GameWindow: JSUS object not found. Aborting.');
     }
 
     var DOM = J.get('DOM');
@@ -21088,7 +21191,7 @@ JSUS.extend(TIME);
     /**
      * ## GameWindow constructor
      *
-     * Creates the GameWindow object.
+     * Creates the GameWindow object
      *
      * @see GameWindow.init
      */
@@ -21106,8 +21209,6 @@ JSUS.extend(TIME);
 
         node.log('node-window: loading...');
 
-        // ## GameWindow properties
-
         /**
          * ### GameWindow.frameName
          *
@@ -21120,7 +21221,7 @@ JSUS.extend(TIME);
          *
          * A reference to the iframe object of type _HTMLIFrameElement_
          *
-         * You can this element also by:
+         * You can get this element also by:
          *
          * - document.getElementById(this.frameName)
          *
@@ -21193,7 +21294,7 @@ JSUS.extend(TIME);
          *
          * The relative position of the header on the screen
          *
-         * Available positions: 'top', 'bottom', 'left', 'right'
+         * Available positions: 'top', 'bottom', 'left', 'right'.
          *
          * @see GameWindow.setHeaderPosition
          */
@@ -21294,9 +21395,9 @@ JSUS.extend(TIME);
         this.waitScreen = null;
 
         /**
-         * ### GamwWindow.screenState
+         * ### GameWindow.screenState
          *
-         * Levels describing whether the user can interact with the frame.
+         * Level describing whether the user can interact with the frame
          *
          * The _screen_ represents all the user can see on screen.
          * It includes the _frame_ area, but also the _header_.
@@ -21633,11 +21734,12 @@ JSUS.extend(TIME);
      * Appends a new iframe to _documents.body_ and sets it as the default one
      *
      * @param {Element} root Optional. The HTML element to which the iframe
-     *   will be appended. Defaults, this.frameRoot or document.body.
-     * @param {string} frameName Optional. The name of the iframe. Defaults,
-     *   'ng_mainframe'.
+     *   will be appended. Default: this.frameRoot or document.body
+     * @param {string} frameName Optional. The name of the iframe. Default:
+     *   'ng_mainframe'
      * @param {boolean} force Optional. Will create the frame even if an
-     *   existing one is found. Defaults, FALSE.
+     *   existing one is found. Default: FALSE
+     *
      * @return {IFrameElement} The newly created iframe
      *
      * @see GameWindow.frameElement
@@ -21690,10 +21792,12 @@ JSUS.extend(TIME);
      *
      * Sets the new default frame and update other references
      *
-     * @param {IFrameElement} iframe. The new default frame.
-     * @param {string} frameName The name of the iframe.
-     * @param {Element} root The HTML element to which the iframe is appended.
+     * @param {IFrameElement} iframe The new default frame
+     * @param {string} frameName The name of the iframe
+     * @param {Element} root The HTML element to which the iframe is appended
+     *
      * @return {IFrameElement} The new default iframe
+     *
      * @see GameWindow.generateFrame
      */
     GameWindow.prototype.setFrame = function(iframe, iframeName, root) {
@@ -21755,15 +21859,16 @@ JSUS.extend(TIME);
     /**
      * ### GameWindow.generateHeader
      *
-     * Adds a a div element and sets it as the header of the page.
+     * Adds a a div element and sets it as the header of the page
      *
      * @param {Element} root Optional. The HTML element to which the header
-     *   will be appended. Defaults, _ document.body_ or
-     *   _document.lastElementChild_.
+     *   will be appended. Default: _document.body_ or
+     *   _document.lastElementChild_
      * @param {string} headerName Optional. The name (id) of the header.
-     *   Defaults, 'gn_header'..
+     *   Default: 'gn_header'
      * @param {boolean} force Optional. Will create the header even if an
-     *   existing one is found. Defaults, FALSE.
+     *   existing one is found. Default: FALSE
+     *
      * @return {Element} The header element
      */
     GameWindow.prototype.generateHeader = function(root, headerName, force) {
@@ -21810,12 +21915,13 @@ JSUS.extend(TIME);
     /**
      * ### GameWindow.setHeaderPosition
      *
-     * Set header's position on the screen.
-     *
-     * Available positions: 'top', 'bottom', 'left', 'right'.
+     * Sets the header's position on the screen
      *
      * Positioning of the frame element is also affected, if existing, or if
      * added later.
+     *
+     * @param {string} position New position, one of
+     *   'top', 'bottom', 'left', 'right'
      *
      * @see GameWindow.generateHeader
      * @see GameWindow.headerPosition
@@ -21870,16 +21976,18 @@ JSUS.extend(TIME);
      *
      * Sets the new header element and update related references
      *
-     * @param {Element} header. The new header.
-     * @param {string} headerName The name of the header.
-     * @param {Element} root The HTML element to which the header is appended.
+     * @param {Element} header The new header
+     * @param {string} headerName The name of the header
+     * @param {Element} root The HTML element to which the header is appended
+     *
      * @return {Element} The new header
      *
      * @see GameWindow.generateHeader
      */
     GameWindow.prototype.setHeader = function(header, headerName, root) {
         if (!J.isElement(header)) {
-            throw new Error('GameWindow.setHeader: header must be HTMLElement.');
+            throw new Error(
+                    'GameWindow.setHeader: header must be HTMLElement.');
         }
         if ('string' !== typeof headerName) {
             throw new Error('GameWindow.setHeader: headerName must be string.');
@@ -21983,7 +22091,7 @@ JSUS.extend(TIME);
      * - PLAYER: header + frame
      * - SOLO_PLAYER: (like player without header)
      *
-     * @param {string} type The type of setup
+     * @param {string} profile The setup profile
      */
     GameWindow.prototype.setupFrame = function(profile) {
 
@@ -22086,16 +22194,16 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ### GameWindow.preCache
+     * ### GameWindow.preCacheTest
      *
-     * Tests wether preChace is supported by the browser.
+     * Tests wether preChace is supported by the browser
      *
      * Results are stored in _GameWindow.cacheSupported_.
      *
      * @param {function} cb Optional. The function to call once the test if
      *   finished. It will be called regardless of success or failure.
-     * @param {string} uri Optional. The URI to test. Defaults,
-     *   '/pages/testpage.htm';
+     * @param {string} uri Optional. The URI to test. Default:
+     *   '/pages/testpage.htm'
      *
      * @see GameWindow.cacheSupported
      */
@@ -22245,6 +22353,7 @@ JSUS.extend(TIME);
      * Looks first into the iframe and then into the rest of the page.
      *
      * @param {string} id The id of the element
+     *
      * @return {Element|null} The element in the page, or null if none is found
      *
      * @see GameWindow.getElementsByTagName
@@ -22271,6 +22380,7 @@ JSUS.extend(TIME);
      * Looks first into the iframe and then into the rest of the page.
      *
      * @param {string} tag The tag of the elements
+     *
      * @return {array|null} The elements in the page, or null if none is found
      *
      * @see GameWindow.getElementById
@@ -22291,7 +22401,7 @@ JSUS.extend(TIME);
      * The third parameter is an options object with the following fields
      * (any fields left out assume the default setting):
      *
-     *  - cache (object): Caching options.  Fields:
+     *  - cache (object): Caching options. Fields:
      *      * loadMode (string):
      *          'cache' (default; get the page from cache if possible),
      *          'reload' (reload page without the cache)
@@ -22390,7 +22500,7 @@ JSUS.extend(TIME);
                 }
                 else {
                     throw new Error('GameWindow.loadFrame: unkown cache ' +
-                                    'store mode: ' + opts.cache.storeMode + '.');
+                            'store mode: ' + opts.cache.storeMode + '.');
                 }
             }
         }
@@ -22506,7 +22616,7 @@ JSUS.extend(TIME);
         }
     };
 
-    /* Private helper functions follow */
+    // ## Helper functions
 
     /**
      * ### handleFrameLoad
@@ -22765,14 +22875,15 @@ JSUS.extend(TIME);
 );
 
 /**
- * # GameWindow UI Behavior module
+ * # ui-behavior
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
+ *
+ * GameWindow UI Behavior module
  *
  * Handles default behavior of the browser on certain DOM Events.
  *
  * http://www.nodegame.org
- * ---
  */
 (function(window, node) {
 
@@ -22822,7 +22933,7 @@ JSUS.extend(TIME);
      * ### GameWindow.promptOnleave
      *
      * Captures the onbeforeunload event and warns the user that leaving the
-     * page may halt the game.
+     * page may halt the game
      *
      * @param {object} windowObj Optional. The window container in which
      *   to bind the ESC key
@@ -22904,17 +23015,16 @@ JSUS.extend(TIME);
 );
 
 /**
- * # GameWindow Screen Locker
+ * # lockScreen
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Locks / Unlocks the screen.
+ * Locks / Unlocks the screen
  *
  * The _screen_ represents all the user can see on screen.
  * It includes the _frame_ area, but also the _header_.
  *
  * http://www.nodegame.org
- * ---
  */
 (function(window, node) {
 
@@ -22978,7 +23088,9 @@ JSUS.extend(TIME);
     /**
      * ### GameWindow.isScreenLocked
      *
-     * TRUE, if the screen is locked.
+     * Checks whether the screen is locked
+     *
+     * @return {boolean} TRUE if the screen is locked
      *
      * @see GameWindow.screenState
      */
@@ -22993,12 +23105,13 @@ JSUS.extend(TIME);
 );
 
 /**
- * # GameWindow listeners
+ * # listeners
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
+ * GameWindow listeners
+ *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -23070,14 +23183,13 @@ JSUS.extend(TIME);
 );
 
 /**
- * # WaitScreen for nodeGame Window
+ * # WaitScreen
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Covers the screen with a grey layer, disables inputs, and displays a message
+ * Covers the screen with a gray layer, disables inputs, and displays a message
  *
  * www.nodegame.org
- * ---
  */
 (function(exports, window) {
 
@@ -23091,7 +23203,7 @@ JSUS.extend(TIME);
     WaitScreen.version = '0.7.0';
     WaitScreen.description = 'Show a standard waiting screen';
 
-    // Helper functions
+    // ## Helper functions
 
     var inputTags, len;
     inputTags = ['button', 'select', 'textarea', 'input'];
@@ -23180,7 +23292,7 @@ JSUS.extend(TIME);
      *
      * Instantiates a new WaitScreen object
      *
-     * @param {object} options Optional. Configuration options.
+     * @param {object} options Optional. Configuration options
      */
     function WaitScreen(options) {
         options = options || {};
@@ -23188,11 +23300,11 @@ JSUS.extend(TIME);
         /**
          * ### WaitScreen.id
          *
-         * The id of _waitingDiv_. Defaults, 'ng_waitScreen'
+         * The id of _waitingDiv_. Default: 'ng_waitScreen'
          *
          * @see WaitScreen.waitingDiv
          */
-	this.id = options.id || 'ng_waitScreen';
+        this.id = options.id || 'ng_waitScreen';
 
         /**
          * ### WaitScreen.root
@@ -23208,14 +23320,14 @@ JSUS.extend(TIME);
          *
          * Reference to the HTML Element that actually locks the screen
          */
-	this.waitingDiv = null;
+        this.waitingDiv = null;
 
         /**
          * ### WaitScreen.beforePauseText
          *
          * Flag if the screen should stay locked after a RESUMED event
          *
-         * Contains the value of the innerHTML attribute of the waiting div
+         * Contains the value of the innerHTML attribute of the waiting div.
          */
         this.beforePauseInnerHTML = null;
 
@@ -23233,7 +23345,7 @@ JSUS.extend(TIME);
          *
          * Default texts for default events
          */
-	this.defaultTexts = {
+        this.defaultTexts = {
             waiting: options.waitingText ||
                 'Waiting for other players to be done...',
             stepping: options.steppingText ||
@@ -23258,7 +23370,7 @@ JSUS.extend(TIME);
     /**
      * ### WaitScreen.enable
      *
-     * Register default event listeners
+     * Registers default event listeners
      */
     WaitScreen.prototype.enable = function() {
         if (this.enabled) return;
@@ -23273,7 +23385,7 @@ JSUS.extend(TIME);
     /**
      * ### WaitScreen.disable
      *
-     * Unregister default event listeners
+     * Unregisters default event listeners
      */
     WaitScreen.prototype.disable = function() {
         if (!this.enabled) return;
@@ -23290,13 +23402,13 @@ JSUS.extend(TIME);
      *
      * Locks the screen
      *
-     * Overlays a grey div on top of the page and disables all inputs
+     * Overlays a gray div on top of the page and disables all inputs.
      *
      * If called on an already locked screen, the previous text is destroyed.
      * Use `WaitScreen.updateText` to modify an existing text.
      *
      * @param {string} text Optional. If set, displays the text on top of the
-     *   grey string
+     *   gray string
      *
      * @see WaitScreen.unlock
      * @see WaitScren.updateText
@@ -23315,18 +23427,18 @@ JSUS.extend(TIME);
             if (!this.root) {
                 this.root = W.getFrameRoot() || document.body;
             }
-	    this.waitingDiv = W.addDiv(this.root, this.id);
-	}
-	if (this.waitingDiv.style.display === 'none') {
-	    this.waitingDiv.style.display = '';
-	}
-	this.waitingDiv.innerHTML = text;
+            this.waitingDiv = W.addDiv(this.root, this.id);
+        }
+        if (this.waitingDiv.style.display === 'none') {
+            this.waitingDiv.style.display = '';
+        }
+        this.waitingDiv.innerHTML = text;
     };
 
     /**
      * ### WaitScreen.unlock
      *
-     * Removes the overlayed grey div and re-enables the inputs on the page
+     * Removes the overlayed gray div and re-enables the inputs on the page
      *
      * @see WaitScreen.lock
      */
@@ -23352,7 +23464,7 @@ JSUS.extend(TIME);
      *
      * @param {string} text The text to be displayed
      * @param {boolean} append Optional. If TRUE, the text is appended. By
-     *   defaults the old text is replaced.
+     *   default the old text is replaced
      */
     WaitScreen.prototype.updateText = function(text, append) {
         append = append || false;
@@ -23393,15 +23505,14 @@ JSUS.extend(TIME);
 );
 
 /**
- * # GameWindow selector module
+ * # selector
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Utility functions to create and manipulate meaninful HTML select lists for
- * nodeGame.
+ * nodeGame
  *
  * http://www.nodegame.org
- * ---
  */
 (function(window, node) {
 
@@ -23417,6 +23528,7 @@ JSUS.extend(TIME);
      * Creates an HTML select element populated with the data of other players
      *
      * @param {string} id Optional. The id of the element
+     *
      * @return The newly created select element
      *
      * @see GameWindow.addRecipientSelector
@@ -23443,6 +23555,7 @@ JSUS.extend(TIME);
      *
      * @param {Element} root The root element
      * @param {string} id The id of the selector
+     *
      * @return {boolean} FALSE if no valid root element is found, TRUE otherwise
      *
      * @see GameWindow.addRecipientSelector
@@ -23462,7 +23575,7 @@ JSUS.extend(TIME);
     /**
      * ### GameWindow.addStandardRecipients
      *
-     * Adds valid _to_ recipient options to a specified select element.
+     * Adds valid _to_ recipient options to a specified select element
      *
      * @param {object} toSelector An HTML `<select>` element
      *
@@ -23534,6 +23647,7 @@ JSUS.extend(TIME);
      * (SET,GET,SAY,SHOW*) as options
      *
      * @param {string} id The id of the selector
+     *
      * @return {Element} The newly created selector
      *
      * @see GameWindow.addActionSelector
@@ -23554,6 +23668,7 @@ JSUS.extend(TIME);
      *
      * @param {Element} root The root element
      * @param {string} id The id of the selector
+     *
      * @return {Element} The newly created selector
      *
      * @see GameWindow.getActionSelector
@@ -23573,6 +23688,7 @@ JSUS.extend(TIME);
      * (HI,TXT,DATA, etc.) as options
      *
      * @param {string} id The id of the selector
+     *
      * @return {Element} The newly created selector
      *
      * @see GameWindow.addActionSelector
@@ -23595,6 +23711,7 @@ JSUS.extend(TIME);
      *
      * @param {Element} root The root element
      * @param {string} id The id of the selector
+     *
      * @return {Element} The newly created selector
      *
      * @see GameWindow.getTargetSelector
@@ -23612,12 +23729,13 @@ JSUS.extend(TIME);
 );
 
 /**
- * # GameWindow extras
+ * # extra
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
+ * GameWindow extras
+ *
  * http://www.nodegame.org
- * ---
  */
 (function(window, node) {
 
@@ -23664,6 +23782,7 @@ JSUS.extend(TIME);
      *
      * @param {string|object} text The content to write
      * @param {Element|string} root Optional. The root element or its id
+     *
      * @return {string|object} The content written
      *
      * @see GameWindow.writeln
@@ -23692,6 +23811,7 @@ JSUS.extend(TIME);
      *
      * @param {string|object} text The content to write
      * @param {Element|string} root Optional. The root element or its id
+     *
      * @return {string|object} The content written
      *
      * @see GameWindow.write
@@ -23704,8 +23824,8 @@ JSUS.extend(TIME);
             root = this.getScreen();
         }
         if (!root) {
-            throw new
-                Error('GameWindow.writeln: could not determine where to write.');
+            throw new Error('GameWindow.writeln: ' +
+                            'could not determine where to write.');
         }
         return DOM.writeln(root, text, br);
     };
@@ -23717,7 +23837,8 @@ JSUS.extend(TIME);
      *
      * Overrides JSUS.DOM.generateUniqueId.
      *
-     * @param {string} prefix Optional. A prefix to use
+     * @param {string} prefix Optional. The prefix to use
+     *
      * @return {string} The generated id
      *
      * @experimental
@@ -23751,9 +23872,10 @@ JSUS.extend(TIME);
      * disabled or enabled (and not toggled).
      *
      * @param {string} id Optional. The id of the element container
-     *   of the forms. Defaults, the whole page, including the frame document
+     *   of the forms. Default: the whole page, including the frame document
      * @param {boolean} disabled Optional. Forces all the inputs to be either
      *   disabled or enabled (not toggled)
+     *
      * @return {boolean} FALSE, if the method could not be executed
      *
      * @see GameWindow.getFrameDocument
@@ -23762,7 +23884,8 @@ JSUS.extend(TIME);
     GameWindow.prototype.toggleInputs = function(id, disabled) {
         var container;
         if (!document.getElementsByTagName) {
-            node.err('GameWindow.toggleInputs: getElementsByTagName not found.');
+            node.err(
+                'GameWindow.toggleInputs: getElementsByTagName not found.');
             return false;
         }
         if (id && 'string' === typeof id) {
@@ -23819,10 +23942,11 @@ JSUS.extend(TIME);
      * Gives the impression of a loading time.
      *
      * @param {number} len Optional. The maximum length of the loading dots.
-     *   Defaults, 5
+     *   Default: 5
      * @param {string} id Optional The id of the span
+     *
      * @return {object} An object containing two properties: the span element
-     *   and a method stop, that clears the interval.
+     *   and a method stop, that clears the interval
      */
     GameWindow.prototype.getLoadingDots = function(len, id) {
         var span_dots, i, limit, intervalId;
@@ -23866,11 +23990,12 @@ JSUS.extend(TIME);
      * _loading dots_ element.
      *
      * @param {HTMLElement} root The element to which the loading dots will be
-     *   appended.
+     *   appended
      * @param {number} len Optional. The maximum length of the loading dots.
-     *   Defaults, 5
+     *   Default: 5
      * @param {string} id Optional The id of the span
-     * @return {object} The span with the loading dots.
+     *
+     * @return {object} The span with the loading dots
      *
      * @see GameWindow.getLoadingDots
      */
@@ -23887,6 +24012,7 @@ JSUS.extend(TIME);
      * @param {string} text Optional. The text on the button
      * @param {string} id The id of the button
      * @param {object} attributes Optional. The attributes of the button
+     *
      * @return {Element} The newly created button
      */
     GameWindow.prototype.getEventButton =
@@ -23917,6 +24043,7 @@ JSUS.extend(TIME);
      * @param {Element} root Optional. The root element
      * @param {string} id The id of the button
      * @param {object} attributes Optional. The attributes of the button
+     *
      * @return {Element} The newly created button
      *
      * @see GameWindow.getEventButton
@@ -23938,7 +24065,7 @@ JSUS.extend(TIME);
     // ## Helper Functions
 
     /**
-     * ## toggleInputs
+     * ### toggleInputs
      *
      * @api private
      */
@@ -23980,14 +24107,13 @@ JSUS.extend(TIME);
 })();
 
 /**
- * # Canvas class for nodeGame window
+ * # Canvas
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Creates an HTML canvas that can be manipulated by an api.
+ * Creates an HTML canvas that can be manipulated by an api
  *
  * www.nodegame.org
- * ---
  */
 (function(exports) {
 
@@ -24020,7 +24146,8 @@ JSUS.extend(TIME);
 
             var radius = settings.radius || 100;
             //console.log(settings);
-            //console.log('X,Y(' + x + ', ' + y + '); Radius: ' + radius + ', Scale: ' + settings.scale_x + ',' + settings.scale_y);
+            //console.log('X,Y(' + x + ', ' + y + '); Radius: ' + radius +
+            //    ', Scale: ' + settings.scale_x + ',' + settings.scale_y);
 
             this.ctx.lineWidth = settings.lineWidth || 1;
             this.ctx.strokeStyle = settings.color || '#000000';
@@ -24047,7 +24174,8 @@ JSUS.extend(TIME);
             var to_y =  Math.sin(angle) * length + settings.y;
             //console.log('aa ' + to_x + ' ' + to_y);
 
-            //console.log('From (' + from_x + ', ' + from_y + ') To (' + to_x + ', ' + to_y + ')');
+            //console.log('From (' + from_x + ', ' + from_y + ') To (' + to_x +
+            //            ', ' + to_y + ')');
             //console.log('Length: ' + length + ', Angle: ' + angle );
 
             this.ctx.lineWidth = settings.lineWidth || 1;
@@ -24085,7 +24213,7 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * Renders javascript objects into HTML following a pipeline
- * of decorator functions.
+ * of decorator functions
  *
  * The default pipeline always looks for a `content` property and
  * performs the following operations:
@@ -24098,7 +24226,6 @@ JSUS.extend(TIME);
  * Depends on the nodegame-client add-on TriggerManager
  *
  * www.nodegame.org
- * ---
  */
 (function(exports, window, node) {
 
@@ -24126,11 +24253,9 @@ JSUS.extend(TIME);
      * @param {object} options A configuration object
      */
     function HTMLRenderer (options) {
-
-        // ## Public properties
-
-        // ### TriggerManager.options
+        // ### HTMLRenderer.options
         this.options = options || {};
+
         // ### HTMLRenderer.tm
         // TriggerManager instance
         this.tm = new TriggerManager();
@@ -24138,7 +24263,7 @@ JSUS.extend(TIME);
         this.init(this.options);
     }
 
-    //## HTMLRenderer methods
+    // ## HTMLRenderer methods
 
     /**
      * ### HTMLRenderer.init
@@ -24150,12 +24275,12 @@ JSUS.extend(TIME);
      *
      * The configuration object is of the type
      *
-     *  var options = {
-     *          returnAt: 'first', // or 'last'
-     *          render: [ myFunc,
-     *                            myFunc2
-     *          ],
-     *  }
+     * ```
+     * var options = {
+     *     returnAt: 'first',  // or 'last'
+     *     render: [ myFunc, myFunc2 ]
+     * }
+     * ```
      *
      * @param {object} options Optional. Configuration object
      */
@@ -24181,7 +24306,6 @@ JSUS.extend(TIME);
      *
      * Deletes all registered render function and restores the default
      * pipeline
-     *
      */
     HTMLRenderer.prototype.reset = function() {
         this.clear(true);
@@ -24192,7 +24316,6 @@ JSUS.extend(TIME);
      * ### HTMLRenderer.addDefaultPipeline
      *
      * Registers the set of default render functions
-     *
      */
     HTMLRenderer.prototype.addDefaultPipeline = function() {
         this.tm.addTrigger(function(el){
@@ -24239,7 +24362,8 @@ JSUS.extend(TIME);
      *
      * Deletes all registered render functions
      *
-     * @param {boolean} clear TRUE, to confirm the clearing
+     * @param {boolean} clear Whether to confirm the clearing
+     *
      * @return {boolean} TRUE, if clearing is successful
      */
     HTMLRenderer.prototype.clear = function(clear) {
@@ -24252,7 +24376,9 @@ JSUS.extend(TIME);
      * Registers a new render function
      *
      * @param {function} renderer The function to add
-     * @param {number} pos Optional. The position of the renderer in the pipeline
+     * @param {number} pos Optional. The position of the renderer in the
+     *   pipeline
+     *
      * @return {boolean} TRUE, if insertion is successful
      */
     HTMLRenderer.prototype.addRenderer = function(renderer, pos) {
@@ -24265,6 +24391,7 @@ JSUS.extend(TIME);
      * Removes a render function from the pipeline
      *
      * @param {function} renderer The function to remove
+     *
      * @return {boolean} TRUE, if removal is successful
      */
     HTMLRenderer.prototype.removeRenderer = function(renderer) {
@@ -24277,6 +24404,7 @@ JSUS.extend(TIME);
      * Runs the pipeline of render functions on a target object
      *
      * @param {object} o The target object
+     *
      * @return {object} The target object after exiting the pipeline
      *
      * @see TriggerManager.pullTriggers
@@ -24300,7 +24428,6 @@ JSUS.extend(TIME);
      * # Entity
      *
      * Abstract representation of an HTML entity
-     *
      */
 
     /**
@@ -24308,7 +24435,7 @@ JSUS.extend(TIME);
      *
      * Creates a new instace of Entity
      *
-     * @param {object} The object to transform in entity
+     * @param {object} e The object to transform in entity
      */
     function Entity(e) {
         e = e || {};
@@ -24323,14 +24450,13 @@ JSUS.extend(TIME);
 );
 
 /**
- * # List class for nodeGame window
+ * # List
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Creates an HTML list that can be manipulated by an api.
+ * Creates an HTML list that can be manipulated by an api
  *
  * www.nodegame.org
- * ---
  */
 (function(exports, node) {
 
@@ -24373,10 +24499,11 @@ JSUS.extend(TIME);
 
         this.last_dt = 0;
         this.last_dd = 0;
-        this.auto_update = ('undefined' !== typeof options.auto_update) ? options.auto_update
-            : this.auto_update;
+        this.auto_update = ('undefined' !== typeof options.auto_update) ?
+            options.auto_update : this.auto_update;
 
-        var lifo = this.lifo = ('undefined' !== typeof options.lifo) ? options.lifo : this.lifo;
+        var lifo = this.lifo = ('undefined' !== typeof options.lifo) ?
+            options.lifo : this.lifo;
 
         this.globalCompare = function(o1, o2) {
             if (!o1 && !o2) return 0;
@@ -24480,7 +24607,8 @@ JSUS.extend(TIME);
                 this.DL.removeChild(this.DL.firstChild);
             }
             if (this.options.title) {
-                this.DL.appendChild(document.createTextNode(this.options.title));
+                this.DL.appendChild(
+                    document.createTextNode(this.options.title));
             }
         }
 
@@ -24517,19 +24645,19 @@ JSUS.extend(TIME);
     }
 
 })(
-    ('undefined' !== typeof node) ? (('undefined' !== typeof node.window) ? node.window : node) : module.parent.exports,
+    ('undefined' !== typeof node) ? (('undefined' !== typeof node.window) ?
+        node.window : node) : module.parent.exports,
     ('undefined' !== typeof node) ? node : module.parent.exports
 );
 
 /**
- * # Table class for nodeGame window
+ * # Table
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML table that can be manipulated by an api.
  *
  * www.nodegame.org
- * ---
  */
 (function(exports, window, node) {
 
@@ -24551,7 +24679,7 @@ JSUS.extend(TIME);
     // ## Helper functions
 
     /**
-     * ## validateInput
+     * ### validateInput
      *
      * Validates user input and throws an error if input is not correct
      *
@@ -24560,6 +24688,7 @@ JSUS.extend(TIME);
      * @param {number} x Optional. The row index
      * @param {number} y Optional. The column index
      * @param {boolean} dataArray TRUE, if data should be an array
+     *
      * @return {boolean} TRUE, if input passes validation
      */
     function validateInput(method, data, x, y, dataArray) {
@@ -24581,13 +24710,13 @@ JSUS.extend(TIME);
     }
 
     /**
-     * ## Table.addClass
+     * ### Table.addClass
      *
      * Adds a CSS class to each element cell in the table
      *
-     * @param {string|array} The name of the class/classes.
+     * @param {string|array} className The name of the class/classes
      *
-     * return {Table} This instance for chaining.
+     * @return {Table} This instance for chaining
      */
     Table.prototype.addClass = function(className) {
         if ('string' !== typeof className && !J.isArray(className)) {
@@ -24609,13 +24738,13 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Table.removeClass
+     * ### Table.removeClass
      *
      * Removes a CSS class from each element cell in the table
      *
-     * @param {string|array} The name of the class/classes.
+     * @param {string|array} className The name of the class/classes
      *
-     * return {Table} This instance for chaining.
+     * @return {Table} This instance for chaining
      */
     Table.prototype.removeClass = function(className) {
         var func;
@@ -24646,12 +24775,13 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## addSpecialCells
+     * ### addSpecialCells
      *
      * Parses an array of data and returns an array of cells
      *
      * @param {array} data Array containing data to transform into cells
-     * @return {array} out The array of cells
+     *
+     * @return {array} The array of cells
      */
     function addSpecialCells(data) {
         var out, i, len;
@@ -24701,7 +24831,7 @@ JSUS.extend(TIME);
         }
 
         /**
-         * ## Table.pointers
+         * ### Table.pointers
          *
          * References to last inserted cell coordinates
          */
@@ -24711,28 +24841,28 @@ JSUS.extend(TIME);
         };
 
         /**
-         * ## Table.header
+         * ### Table.header
          *
          * Array containing the header elements of the table
          */
         this.header = [];
 
         /**
-         * ## Table.footer
+         * ### Table.footer
          *
          * Array containing the footer elements of the table
          */
         this.footer = [];
 
         /**
-         * ## Table.left
+         * ### Table.left
          *
          * Array containing elements to keep on the left border of the table
          */
         this.left = [];
 
         /**
-         * ## Table.table
+         * ### Table.table
          *
          * Reference to the HTMLElement Table
          */
@@ -24747,7 +24877,7 @@ JSUS.extend(TIME);
         }
 
         /**
-         * ## Table.missingClassName
+         * ### Table.missingClassName
          *
          * Class name for "missing" cells
          *
@@ -24758,10 +24888,10 @@ JSUS.extend(TIME);
         this.missingClassName = options.missingClassName || 'missing';
 
         /**
-         * ## Table.autoParse
+         * ### Table.autoParse
          *
          * If TRUE, whenever a new cell is added the table is updated.
-         * Defaults, FALSE.
+         * Default: FALSE
          */
         this.autoParse = 'undefined' !== typeof options.autoParse ?
             options.autoParse : false;
@@ -24770,13 +24900,15 @@ JSUS.extend(TIME);
         this.initRenderer(options.render);
     }
 
+    // ## Table methods
+
     /**
-     * Table.initRenderer
+     * ### Table.initRenderer
      *
-     * Creates the `HTMLRenderer` object and adds a renderer for objects.
+     * Creates the `HTMLRenderer` object and adds a renderer for objects
      *
      * Every cell in the table will be rendered according to the criteria
-     * added to the renderer object
+     * added to the renderer object.
      *
      * @param {object} options Optional. Configuration for the renderer
      *
@@ -24808,7 +24940,8 @@ JSUS.extend(TIME);
      * It also adds an internal reference to the newly created TD/TH element
      *
      * @param {Cell} cell The cell to transform in element
-     * @param {string} tagName The name of the tag. Defaults, 'td'
+     * @param {string} tagName The name of the tag. Default: 'td'
+     *
      * @return {HTMLElement} The newly created HTML Element (TD/TH)
      *
      * @see Table.htmlRenderer
@@ -24828,7 +24961,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * Table.get
+     * ### Table.get
      *
      * Returns the element at row column (row,col)
      *
@@ -24857,13 +24990,14 @@ JSUS.extend(TIME);
     };
 
     /**
-     * Table.getTR
+     * ### Table.getTR
      *
      * Returns a reference to the TR element at row (row)
      *
      * @param {number} row The row number
+     *
      * @return {HTMLElement|boolean} The requested TR object, or FALSE if it
-     *   cannot be found.
+     *   cannot be found
      */
     Table.prototype.getTR = function(row) {
         var cell;
@@ -24877,11 +25011,11 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Table.setHeader
+     * ### Table.setHeader
      *
      * Sets the names of the header elements on top of the table
      *
-     * @param {string|array} Array of strings representing the names
+     * @param {string|array} header Array of strings representing the names
      *   of the header elements
      */
     Table.prototype.setHeader = function(header) {
@@ -24890,11 +25024,11 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Table.setLeft
+     * ### Table.setLeft
      *
      * Sets the element of a column that will be added to the left of the table
      *
-     * @param {string|array} Array of strings representing the names
+     * @param {string|array} left Array of strings representing the names
      *   of the left elements
      */
     Table.prototype.setLeft = function(left) {
@@ -24903,11 +25037,11 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Table.setFooter
+     * ### Table.setFooter
      *
      * Sets the names of the footer elements at the bottom of the table
      *
-     * @param {string|array} Array of strings representing the names
+     * @param {string|array} footer Array of strings representing the names
      *   of the footer elements
      */
     Table.prototype.setFooter = function(footer) {
@@ -24916,15 +25050,16 @@ JSUS.extend(TIME);
     };
 
     /**
-     * Table.updatePointer
+     * ### Table.updatePointer
      *
      * Updates the reference to the foremost element in the table
      *
      * The pointer is updated only if the suggested value is larger than
      * the current one.
      *
-     * @param {string} The name of pointer ('x', 'y')
-     * @param {number} The new value for the pointer
+     * @param {string} pointer The name of pointer ('x', 'y')
+     * @param {number} value The new value for the pointer
+     *
      * @return {boolean|number} The updated value of the pointer, or FALSE,
      *   if an invalid pointer was selected
      *
@@ -24942,7 +25077,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Table.addMultiple
+     * ### Table.addMultiple
      *
      * Primitive to add multiple cells in column or row form
      *
@@ -24950,9 +25085,9 @@ JSUS.extend(TIME);
      * @param {string} dim The dimension of followed by the insertion:
      *   'y' inserts as a row, and 'x' inserts as a column.
      * @param {number} x Optional. The row at which to start the insertion.
-     *   Defaults, the current x pointer.
-     * @param {number} y Optional. The column at which to start the insertion
-     *   Defaults, the current y pointer.
+     *   Default: the current x pointer
+     * @param {number} y Optional. The column at which to start the insertion.
+     *   Default: the current y pointer
      */
     Table.prototype.addMultiple = function(data, dim, x, y) {
         var i, lenI, j, lenJ;
@@ -25002,7 +25137,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Table.add
+     * ### Table.add
      *
      * Adds a single cell to the table
      *
@@ -25043,9 +25178,9 @@ JSUS.extend(TIME);
      *
      * @param {array} data The array of data to add in column form
      * @param {number} x Optional. The row to which the column will be added.
-     *   Defaults, row 0.
+     *   Default: row 0
      * @param {number} y Optional. The column next to which the new column
-     *   will be added. Defaults, the last column in the table.
+     *   will be added. Default: the last column in the table
      */
     Table.prototype.addColumn = function(data, x, y) {
         if (!validateInput('addColumn', data, x, y)) return;
@@ -25055,13 +25190,13 @@ JSUS.extend(TIME);
     /**
      * ### Table.addRow
      *
-     * Adds a new rown into the table
+     * Adds a new row into the table
      *
      * @param {array} data The array of data to add in row form
      * @param {number} x Optional. The row index at which the new row will be
-     *   added. Defaults, after the last row.
+     *   added. Default: after the last row
      * @param {number} y Optional. The column next to which the new row
-     *   will be added. Defaults, column 0.
+     *   will be added. Default: column 0
      */
     Table.prototype.addRow = function(data, x, y) {
         if (!validateInput('addRow', data, x, y)) return;
@@ -25075,6 +25210,7 @@ JSUS.extend(TIME);
      *
      * @param {string} dim The dimension x or y
      * @param {value} value Optional. If set, returns this value
+     *
      * @return {number} The requested pointer
      */
     Table.prototype.getNextPointer = function(dim, value) {
@@ -25089,6 +25225,7 @@ JSUS.extend(TIME);
      *
      * @param {string} dim The dimension x or y
      * @param {value} value Optional. If set, returns this value
+     *
      * @return {number} The requested pointer
      */
     Table.prototype.getCurrPointer = function(dim, value) {
@@ -25097,7 +25234,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Table.parse
+     * ### Table.parse
      *
      * Reads cells currently in database and builds up an HTML table
      *
@@ -25223,7 +25360,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Table.resetPointers
+     * ### Table.resetPointers
      *
      * Reset all pointers to 0 or to the value of the input parameter
      *
@@ -25242,7 +25379,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Table.clear
+     * ### Table.clear
      *
      * Removes all entries and indexes, and resets the pointers
      *
@@ -25256,7 +25393,7 @@ JSUS.extend(TIME);
         }
     };
 
-    // # Cell Class
+    // # Cell
 
     Cell.prototype = new Entity();
     Cell.prototype.constructor = Cell;
@@ -25276,23 +25413,23 @@ JSUS.extend(TIME);
         Entity.call(this, cell);
 
         /**
-         * ## Cell.x
+         * ### Cell.x
          *
          * The row number
          */
         this.x = 'undefined' !== typeof cell.x ? cell.x : null;
 
         /**
-         * ## Cell.y
+         * ### Cell.y
          *
          * The column number
          */
         this.y = 'undefined' !== typeof cell.y ? cell.y : null;
 
         /**
-         * ## Cell.tdElement
+         * ### Cell.tdElement
          *
-         * Reference to the TD/TH element, if built already.
+         * Reference to the TD/TH element, if built already
          */
         this.HTMLElement = cell.HTMLElement || null;
 
@@ -25309,13 +25446,12 @@ JSUS.extend(TIME);
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Prototype of a widget class.
+ * Prototype of a widget class
  *
- * The methods of the prototype will be injected in every new widget, if missing.
+ * The methods of the prototype will be injected in every new widget, if
+ * missing.
  * Properties: _headingDiv_, _bodyDiv_, and _footer_ might be automatically
  * added as well, depending on widget configuration.
- *
- * ---
  */
 (function(node) {
 
@@ -25421,8 +25557,7 @@ JSUS.extend(TIME);
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Helper class to interact with nodeGame widgets.
- * ---
+ * Helper class to interact with nodeGame widgets
  */
 (function(window, node) {
 
@@ -25430,10 +25565,12 @@ JSUS.extend(TIME);
 
     var J = node.JSUS;
 
+    // ## Widgets constructor
+
     function Widgets() {
 
         /**
-         * ## Widgets.widgets
+         * ### Widgets.widgets
          *
          * Container of currently registered widgets
          *
@@ -25442,7 +25579,7 @@ JSUS.extend(TIME);
         this.widgets = {};
 
         /**
-         * ## Widgets.widgets
+         * ### Widgets.widgets
          *
          * Container of appended widget instances
          *
@@ -25450,6 +25587,8 @@ JSUS.extend(TIME);
          */
         this.instances = [];
     }
+
+    // ## Widgets methods
 
     /**
      * ### Widgets.register
@@ -25525,7 +25664,8 @@ JSUS.extend(TIME);
         node.info('registering ' + wProto.name + ' v.' +  wProto.version);
 
         if (!this.checkDependencies(wProto)) {
-            throw new Error('Widgets.get: ' + w_str + ' has unmet dependecies.');
+            throw new Error('Widgets.get: ' + w_str + ' has unmet ' +
+                            'dependecies.');
         }
 
         // Add missing properties to the user options
@@ -25552,8 +25692,9 @@ JSUS.extend(TIME);
     /**
      * ### Widgets.append
      *
-     * Appends a widget to the specified root element. If no root element
-     * is specified the widget is append to the global root.
+     * Appends a widget to the specified root element
+     *
+     * If no root element is specified the widget is append to the global root.
      *
      * The first parameter can be string representing the name of the widget or
      * a valid widget already loaded, for example through Widgets.get.
@@ -25566,10 +25707,12 @@ JSUS.extend(TIME);
      *
      * @param {string} w_str The name of the widget to load
      * @param {object} root. Optional. The HTML element under which the widget
-     *   will be appended. Defaults, `GameWindow.getFrameRoot()` or document.body
+     *   will be appended. Default: `GameWindow.getFrameRoot()` or document.body
      * @param {options} options Optional. Configuration options to be passed
      *   to the widgets
-     * @return {object|boolean} The requested widget, or FALSE is an error occurs
+     *
+     * @return {object|boolean} The requested widget, or FALSE is an error
+     *   occurs
      *
      * @see Widgets.get
      */
@@ -25685,7 +25828,7 @@ JSUS.extend(TIME);
      *
      * @param {object} The widget to check
      * @param {boolean} quiet Optional. If TRUE, no warning will be raised.
-     *   Defaults FALSE
+     *   Default: FALSE
      * @return {boolean} TRUE, if all dependencies are met
      */
     Widgets.prototype.checkDependencies = function(w, quiet) {
@@ -25714,7 +25857,7 @@ JSUS.extend(TIME);
     };
 
 
-    // #### Helper functions.
+    // ## Helper functions
 
     //function appendFieldset(root, options, w) {
     //    var idFieldset, legend;
@@ -25767,14 +25910,13 @@ JSUS.extend(TIME);
 );
 
 /**
- * # Chat widget for nodeGame
+ * # Chat
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Creates a simple configurable chat.
+ * Creates a simple configurable chat
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -25818,7 +25960,7 @@ JSUS.extend(TIME);
     };
 
     Chat.version = '0.4';
-    Chat.description = 'Offers a uni / bi-directional communication interface ' +
+    Chat.description = 'Offers a uni-/bi-directional communication interface ' +
         'between players, or between players and the experimenter.';
 
     // ## Dependencies
@@ -25840,7 +25982,8 @@ JSUS.extend(TIME);
         this.chat_event = options.chat_event || Chat.defaults.chat_event;
         this.submit_text = options.submit_text || Chat.defaults.submit_text;
 
-        this.submit = W.getEventButton(this.chat_event, this.submit_text, this.submit_id);
+        this.submit = W.getEventButton(this.chat_event, this.submit_text,
+                                       this.submit_id);
         this.textarea = W.getElement('textarea', this.textarea_id);
         this.chat = W.getElement('div', this.chat_id);
 
@@ -25925,7 +26068,8 @@ JSUS.extend(TIME);
 
         if (this.mode === Chat.modes.MANY_TO_MANY) {
             node.on('UPDATED_PLIST', function() {
-                W.populateRecipientSelector(that.recipient, node.game.pl.fetch());
+                W.populateRecipientSelector(that.recipient,
+                    node.game.pl.fetch());
             });
         }
 
@@ -25962,14 +26106,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # ChernoffFaces widget for nodeGame
+ * # ChernoffFaces
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Displays multidimensional data in the shape of a Chernoff Face.
+ * Displays multidimensional data in the shape of a Chernoff Face
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -25991,7 +26134,8 @@ JSUS.extend(TIME);
     // ## Meta-data
 
     ChernoffFaces.version = '0.3';
-    ChernoffFaces.description = 'Display parametric data in the form of a Chernoff Face.';
+    ChernoffFaces.description =
+        'Display parametric data in the form of a Chernoff Face.';
 
     // ## Dependencies
     ChernoffFaces.dependencies = {
@@ -26032,9 +26176,11 @@ JSUS.extend(TIME);
         this.id = options.id || this.id;
         var PREF = this.id + '_';
 
-        this.features = options.features || this.features || FaceVector.random();
+        this.features = options.features || this.features ||
+                        FaceVector.random();
 
-        this.controls = ('undefined' !== typeof options.controls) ?  options.controls : true;
+        this.controls = ('undefined' !== typeof options.controls) ?
+            options.controls : true;
 
         var idCanvas = (options.idCanvas) ? options.idCanvas : PREF + 'canvas';
         var idButton = (options.idButton) ? options.idButton : PREF + 'button';
@@ -26045,7 +26191,8 @@ JSUS.extend(TIME);
 
         var sc_options = {
             id: 'cf_controls',
-            features: JSUS.mergeOnKey(FaceVector.defaults, this.features, 'value'),
+            features: JSUS.mergeOnKey(FaceVector.defaults, this.features,
+                                      'value'),
             change: this.change,
             fieldset: {id: this.id + '_controls_fieldest',
                        legend: this.controls.legend || 'Controls'
@@ -26094,7 +26241,9 @@ JSUS.extend(TIME);
         var fv = new FaceVector(features);
         this.fp.redraw(fv);
         // Without merging wrong values are passed as attributes
-        this.sc.init({features: JSUS.mergeOnKey(FaceVector.defaults, features, 'value')});
+        this.sc.init({
+            features: JSUS.mergeOnKey(FaceVector.defaults, features, 'value')
+        });
         this.sc.refresh();
     };
 
@@ -26330,7 +26479,8 @@ JSUS.extend(TIME);
     //TODO Scaling ?
     FacePainter.computeFaceOffset = function(face, offset, y) {
         y = y || 0;
-        //var pos = y - face.head_radius * face.scaleY + face.head_radius * face.scaleY * 2 * offset;
+        //var pos = y - face.head_radius * face.scaleY +
+        //          face.head_radius * face.scaleY * 2 * offset;
         var pos = y - face.head_radius + face.head_radius * 2 * offset;
         //console.log('POS: ' + pos);
         return pos;
@@ -26339,7 +26489,8 @@ JSUS.extend(TIME);
     FacePainter.computeEyebrowOffset = function(face, y) {
         y = y || 0;
         var eyemindistance = 2;
-        return FacePainter.computeFaceOffset(face, face.eye_height, y) - eyemindistance - face.eyebrow_eyedistance;
+        return FacePainter.computeFaceOffset(face, face.eye_height, y) -
+            eyemindistance - face.eyebrow_eyedistance;
     };
 
 
@@ -26347,8 +26498,8 @@ JSUS.extend(TIME);
      *
      * A description of a Chernoff Face.
      *
-     * This class packages the 11-dimensional vector of numbers from 0 through 1 that completely
-     * describe a Chernoff face.
+     * This class packages the 11-dimensional vector of numbers from 0 through
+     * 1 that completely describe a Chernoff face.
      *
      */
 
@@ -26522,8 +26673,11 @@ JSUS.extend(TIME);
         var out = {};
         for (var key in FaceVector.defaults) {
             if (FaceVector.defaults.hasOwnProperty(key)) {
-                if (!JSUS.in_array(key,['color','lineWidth','scaleX','scaleY'])) {
-                    out[key] = FaceVector.defaults[key].min + Math.random() * FaceVector.defaults[key].max;
+                if (!JSUS.in_array(key,
+                            ['color', 'lineWidth', 'scaleX', 'scaleY'])) {
+
+                    out[key] = FaceVector.defaults[key].min +
+                        Math.random() * FaceVector.defaults[key].max;
                 }
             }
         }
@@ -26567,8 +26721,8 @@ JSUS.extend(TIME);
             if (this.hasOwnProperty(key)) {
                 if (FaceVector.defaults.hasOwnProperty(key)) {
                     if (key !== 'color') {
-                        this[key] = FaceVector.defaults[key].min + Math.random() * FaceVector.defaults[key].max;
-
+                        this[key] = FaceVector.defaults[key].min +
+                            Math.random() * FaceVector.defaults[key].max;
                     }
                 }
             }
@@ -26608,14 +26762,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # ChernoffFaces (Simplified version) widget for nodeGame
+ * # ChernoffFacesSimple
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Displays multidimensional data in the shape of a Chernoff Face.
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -26625,7 +26778,7 @@ JSUS.extend(TIME);
 
     node.widgets.register('ChernoffFacesSimple', ChernoffFaces);
 
-    // # Defaults
+    // ## Defaults
 
     ChernoffFaces.defaults = {};
     ChernoffFaces.defaults.id = 'ChernoffFaces';
@@ -26636,7 +26789,8 @@ JSUS.extend(TIME);
     // ## Meta-data
 
     ChernoffFaces.version = '0.3';
-    ChernoffFaces.description = 'Display parametric data in the form of a Chernoff Face.'
+    ChernoffFaces.description =
+        'Display parametric data in the form of a Chernoff Face.'
 
     // ## Dependencies
     ChernoffFaces.dependencies = {
@@ -26678,16 +26832,20 @@ JSUS.extend(TIME);
         this.id = options.id || this.id;
         var PREF = this.id + '_';
 
-        this.features = options.features || this.features || FaceVector.random();
+        this.features = options.features || this.features ||
+            FaceVector.random();
 
-        this.controls = ('undefined' !== typeof options.controls) ?  options.controls : true;
+        this.controls = ('undefined' !== typeof options.controls) ?
+                        options.controls : true;
 
         var idCanvas = (options.idCanvas) ? options.idCanvas : PREF + 'canvas';
         var idButton = (options.idButton) ? options.idButton : PREF + 'button';
 
         this.dims = {
-            width: (options.width) ? options.width : ChernoffFaces.defaults.canvas.width,
-            height:(options.height) ? options.height : ChernoffFaces.defaults.canvas.heigth
+            width:  options.width ?
+                options.width : ChernoffFaces.defaults.canvas.width,
+            height: options.height ?
+                options.height : ChernoffFaces.defaults.canvas.heigth
         };
 
         this.canvas = node.window.getCanvas(idCanvas, this.dims);
@@ -26696,7 +26854,8 @@ JSUS.extend(TIME);
 
         var sc_options = {
             id: 'cf_controls',
-            features: JSUS.mergeOnKey(FaceVector.defaults, this.features, 'value'),
+            features:
+                JSUS.mergeOnKey(FaceVector.defaults, this.features, 'value'),
             change: this.change,
             fieldset: {id: this.id + '_controls_fieldest',
                        legend: this.controls.legend || 'Controls'
@@ -26751,7 +26910,9 @@ JSUS.extend(TIME);
         var fv = new FaceVector(features);
         this.fp.redraw(fv);
         // Without merging wrong values are passed as attributes
-        this.sc.init({features: JSUS.mergeOnKey(FaceVector.defaults, features, 'value')});
+        this.sc.init({
+            features: JSUS.mergeOnKey(FaceVector.defaults, features, 'value')
+        });
         this.sc.refresh();
     };
 
@@ -26827,10 +26988,12 @@ JSUS.extend(TIME);
         }
 
         if (this.canvas.width > this.canvas.height) {
-            var ratio = this.canvas.width / face.head_radius * face.head_scale_x;
+            var ratio = this.canvas.width / face.head_radius *
+                face.head_scale_x;
         }
         else {
-            var ratio = this.canvas.height / face.head_radius * face.head_scale_y;
+            var ratio = this.canvas.height / face.head_radius *
+                face.head_scale_y;
         }
 
         face.scaleX = ratio / 2;
@@ -26985,7 +27148,8 @@ JSUS.extend(TIME);
     //TODO Scaling ?
     FacePainter.computeFaceOffset = function(face, offset, y) {
         var y = y || 0;
-        //var pos = y - face.head_radius * face.scaleY + face.head_radius * face.scaleY * 2 * offset;
+        //var pos = y - face.head_radius * face.scaleY +
+        //          face.head_radius * face.scaleY * 2 * offset;
         var pos = y - face.head_radius + face.head_radius * 2 * offset;
         //console.log('POS: ' + pos);
         return pos;
@@ -26994,7 +27158,8 @@ JSUS.extend(TIME);
     FacePainter.computeEyebrowOffset = function(face, y) {
         var y = y || 0;
         var eyemindistance = 2;
-        return FacePainter.computeFaceOffset(face, face.eye_height, y) - eyemindistance - face.eyebrow_eyedistance;
+        return FacePainter.computeFaceOffset(face, face.eye_height, y) -
+            eyemindistance - face.eyebrow_eyedistance;
     };
 
 
@@ -27002,8 +27167,8 @@ JSUS.extend(TIME);
      *
      * A description of a Chernoff Face.
      *
-     * This class packages the 11-dimensional vector of numbers from 0 through 1 that completely
-     * describe a Chernoff face.
+     * This class packages the 11-dimensional vector of numbers from 0 through
+     * 1 that completely describe a Chernoff face.
      *
      */
 
@@ -27177,8 +27342,11 @@ JSUS.extend(TIME);
         var out = {};
         for (var key in FaceVector.defaults) {
             if (FaceVector.defaults.hasOwnProperty(key)) {
-                if (!JSUS.in_array(key,['color','lineWidth','scaleX','scaleY'])) {
-                    out[key] = FaceVector.defaults[key].min + Math.random() * FaceVector.defaults[key].max;
+                if (!JSUS.in_array(key,
+                            ['color', 'lineWidth', 'scaleX', 'scaleY'])) {
+
+                    out[key] = FaceVector.defaults[key].min +
+                        Math.random() * FaceVector.defaults[key].max;
                 }
             }
         }
@@ -27222,8 +27390,8 @@ JSUS.extend(TIME);
             if (this.hasOwnProperty(key)) {
                 if (FaceVector.defaults.hasOwnProperty(key)) {
                     if (key !== 'color') {
-                        this[key] = FaceVector.defaults[key].min + Math.random() * FaceVector.defaults[key].max;
-
+                        this[key] = FaceVector.defaults[key].min +
+                            Math.random() * FaceVector.defaults[key].max;
                     }
                 }
             }
@@ -27263,14 +27431,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # Controls widget for nodeGame
+ * # Controls
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Creates and manipulates a set of forms.
+ * Creates and manipulates a set of forms
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -27290,7 +27457,7 @@ JSUS.extend(TIME);
     Controls.jQuerySlider = jQuerySliderControls;
     Controls.Radio = RadioControls;
 
-    // Meta-data
+    // ## Meta-data
 
     Controls.version = '0.3';
     Controls.description = 'Wraps a collection of user-inputs controls.';
@@ -27351,7 +27518,8 @@ JSUS.extend(TIME);
                 idButton = this.options.submit.id;
                 delete this.options.submit.id;
             }
-            this.submit = node.window.addButton(root, idButton, this.options.submit, this.options.attributes);
+            this.submit = node.window.addButton(root, idButton,
+                    this.options.submit, this.options.attributes);
 
             var that = this;
             this.submit.onclick = function() {
@@ -27616,14 +27784,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # D3 widget for nodeGame
+ * # D3
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Integrates nodeGame with the D3 library to plot a real-time chart.
+ * Integrates nodeGame with the D3 library to plot a real-time chart
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -27640,7 +27807,7 @@ JSUS.extend(TIME);
     D3.defaults = {};
     D3.defaults.id = 'D3';
     D3.defaults.fieldset = {
-	legend: 'D3 plot'
+        legend: 'D3 plot'
     };
 
 
@@ -27652,25 +27819,25 @@ JSUS.extend(TIME);
     // ## Dependencies
 
     D3.dependencies = {
-	d3: {},
-	JSUS: {}
+        d3: {},
+        JSUS: {}
     };
 
     function D3 (options) {
-	this.id = options.id || D3.id;
-	this.event = options.event || 'D3';
-	this.svg = null;
+        this.id = options.id || D3.id;
+        this.event = options.event || 'D3';
+        this.svg = null;
 
-	var that = this;
-	node.on(this.event, function(value) {
-	    that.tick.call(that, value);
-	});
+        var that = this;
+        node.on(this.event, function(value) {
+            that.tick.call(that, value);
+        });
     }
 
     D3.prototype.append = function(root) {
-	this.root = root;
-	this.svg = d3.select(root).append("svg");
-	return root;
+        this.root = root;
+        this.svg = d3.select(root).append("svg");
+        return root;
     };
 
     D3.prototype.tick = function() {};
@@ -27686,8 +27853,8 @@ JSUS.extend(TIME);
 
     // ## Dependencies
     D3ts.dependencies = {
-	D3: {},
-	JSUS: {}
+        D3: {},
+        JSUS: {}
     };
 
     D3ts.prototype.__proto__ = D3.prototype;
@@ -27699,140 +27866,141 @@ JSUS.extend(TIME);
     D3ts.defaults.height = 200;
 
     D3ts.defaults.margin = {
-    	top: 10,
-    	right: 10,
-    	bottom: 20,
-    	left: 40
+        top: 10,
+        right: 10,
+        bottom: 20,
+        left: 40
     };
 
     D3ts.defaults.domain = {
-	x: [0, 10],
-	y: [0, 1]
+        x: [0, 10],
+        y: [0, 1]
     };
 
     D3ts.defaults.range = {
-    	x: [0, D3ts.defaults.width],
-    	y: [D3ts.defaults.height, 0]
+        x: [0, D3ts.defaults.width],
+        y: [D3ts.defaults.height, 0]
     };
 
     function D3ts (options) {
-	D3.call(this, options);
+        D3.call(this, options);
 
 
-	var o = this.options = JSUS.merge(D3ts.defaults, options);
+        var o = this.options = JSUS.merge(D3ts.defaults, options);
 
-	var n = this.n = o.n;
+        var n = this.n = o.n;
 
-	this.data = [0];
+        this.data = [0];
 
-	this.margin = o.margin;
+        this.margin = o.margin;
 
-	var width = this.width = o.width - this.margin.left - this.margin.right;
-	var height = this.height = o.height - this.margin.top - this.margin.bottom;
+        var width = this.width = o.width - this.margin.left - this.margin.right;
+        var height = this.height = o.height - this.margin.top -
+                     this.margin.bottom;
 
-	// identity function
-	var x = this.x = d3.scale.linear()
-	    .domain(o.domain.x)
-	    .range(o.range.x);
+        // identity function
+        var x = this.x = d3.scale.linear()
+            .domain(o.domain.x)
+            .range(o.range.x);
 
-	var y = this.y = d3.scale.linear()
-	    .domain(o.domain.y)
-	    .range(o.range.y);
+        var y = this.y = d3.scale.linear()
+            .domain(o.domain.y)
+            .range(o.range.y);
 
-	// line generator
-	this.line = d3.svg.line()
-	    .x(function(d, i) { return x(i); })
-	    .y(function(d, i) { return y(d); });
+        // line generator
+        this.line = d3.svg.line()
+            .x(function(d, i) { return x(i); })
+            .y(function(d, i) { return y(d); });
     }
 
     D3ts.prototype.init = function(options) {
-	//D3.init.call(this, options);
+        //D3.init.call(this, options);
 
-	console.log('init!');
-	var x = this.x,
-	y = this.y,
-	height = this.height,
-	width = this.width,
-	margin = this.margin;
-
-
-	// Create the SVG and place it in the middle
-	this.svg.attr("width", width + margin.left + margin.right)
-	    .attr("height", height + margin.top + margin.bottom)
-	    .append("g")
-	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        console.log('init!');
+        var x = this.x,
+        y = this.y,
+        height = this.height,
+        width = this.width,
+        margin = this.margin;
 
 
-	// Line does not go out the axis
-	this.svg.append("defs").append("clipPath")
-	    .attr("id", "clip")
-	    .append("rect")
-	    .attr("width", width)
-	    .attr("height", height);
+        // Create the SVG and place it in the middle
+        this.svg.attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top +
+                  ")");
 
-	// X axis
-	this.svg.append("g")
-	    .attr("class", "x axis")
-	    .attr("transform", "translate(0," + height + ")")
-	    .call(d3.svg.axis().scale(x).orient("bottom"));
 
-	// Y axis
-	this.svg.append("g")
-	    .attr("class", "y axis")
-	    .call(d3.svg.axis().scale(y).orient("left"));
+        // Line does not go out the axis
+        this.svg.append("defs").append("clipPath")
+            .attr("id", "clip")
+            .append("rect")
+            .attr("width", width)
+            .attr("height", height);
 
-	this.path = this.svg.append("g")
-	    .attr("clip-path", "url(#clip)")
-	    .append("path")
-	    .data([this.data])
-	    .attr("class", "line")
-	    .attr("d", this.line);
+        // X axis
+        this.svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.svg.axis().scale(x).orient("bottom"));
+
+        // Y axis
+        this.svg.append("g")
+            .attr("class", "y axis")
+            .call(d3.svg.axis().scale(y).orient("left"));
+
+        this.path = this.svg.append("g")
+            .attr("clip-path", "url(#clip)")
+            .append("path")
+            .data([this.data])
+            .attr("class", "line")
+            .attr("d", this.line);
     };
 
     D3ts.prototype.tick = function(value) {
-	this.alreadyInit = this.alreadyInit || false;
-	if (!this.alreadyInit) {
-	    this.init();
-	    this.alreadyInit = true;
-	}
+        this.alreadyInit = this.alreadyInit || false;
+        if (!this.alreadyInit) {
+            this.init();
+            this.alreadyInit = true;
+        }
 
-	var x = this.x;
+        var x = this.x;
 
-	console.log('tick!');
+        console.log('tick!');
 
-	// push a new data point onto the back
-	this.data.push(value);
+        // push a new data point onto the back
+        this.data.push(value);
 
-	// redraw the line, and slide it to the left
-	this.path
-	    .attr("d", this.line)
-	    .attr("transform", null);
+        // redraw the line, and slide it to the left
+        this.path
+            .attr("d", this.line)
+            .attr("transform", null);
 
-	// pop the old data point off the front
-	if (this.data.length > this.n) {
+        // pop the old data point off the front
+        if (this.data.length > this.n) {
 
-	    this.path
-	  	.transition()
-	  	.duration(500)
-	  	.ease("linear")
-	  	.attr("transform", "translate(" + x(-1) + ")");
+            this.path
+                .transition()
+                .duration(500)
+                .ease("linear")
+                .attr("transform", "translate(" + x(-1) + ")");
 
-	    this.data.shift();
+            this.data.shift();
 
-	}
+        }
     };
 
 })(node);
 
 /**
- * # DataBar widget for nodeGame
+ * # DataBar
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Creates a form to send DATA packages to other clients / SERVER.
+ * Creates a form to send DATA packages to other clients / SERVER
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -27844,70 +28012,69 @@ JSUS.extend(TIME);
     DataBar.defaults = {};
     DataBar.defaults.id = 'databar';
     DataBar.defaults.fieldset = {
-	legend: 'Send DATA to players'
+        legend: 'Send DATA to players'
     };
 
     // ## Meta-data
     DataBar.version = '0.4';
-    DataBar.description = 'Adds a input field to send DATA messages to the players';
+    DataBar.description =
+        'Adds a input field to send DATA messages to the players';
 
     function DataBar(options) {
-	this.bar = null;
-	this.root = null;
-	this.recipient = null;
+        this.bar = null;
+        this.root = null;
+        this.recipient = null;
     }
 
     DataBar.prototype.append = function(root) {
 
-	var sendButton, textInput, dataInput;
+        var sendButton, textInput, dataInput;
 
-	sendButton = W.addButton(root);
-	//W.writeln('Text');
-	textInput = W.addTextInput(root, 'data-bar-text');
-	W.addLabel(root, textInput, undefined, 'Text');
-	W.writeln('Data');
-	dataInput = W.addTextInput(root, 'data-bar-data');
+        sendButton = W.addButton(root);
+        //W.writeln('Text');
+        textInput = W.addTextInput(root, 'data-bar-text');
+        W.addLabel(root, textInput, undefined, 'Text');
+        W.writeln('Data');
+        dataInput = W.addTextInput(root, 'data-bar-data');
 
-	this.recipient = W.addRecipientSelector(root);
+        this.recipient = W.addRecipientSelector(root);
 
-	var that = this;
+        var that = this;
 
-	sendButton.onclick = function() {
+        sendButton.onclick = function() {
+            var to, data, text;
 
-	    var to, data, text;
+            to = that.recipient.value;
+            text = textInput.value;
+            data = dataInput.value;
 
-	    to = that.recipient.value;
-	    text = textInput.value;
-	    data = dataInput.value;
+            node.log('Parsed Data: ' + JSON.stringify(data));
 
-	    node.log('Parsed Data: ' + JSON.stringify(data));
+            node.say(text, to, data);
+        };
 
-	    node.say(text, to, data);
-	};
+        node.on('UPDATED_PLIST', function() {
+            node.window.populateRecipientSelector(that.recipient, node.game.pl);
+        });
 
-	node.on('UPDATED_PLIST', function() {
-	    node.window.populateRecipientSelector(that.recipient, node.game.pl);
-	});
-
-	return root;
+        return root;
 
     };
 
 })(node);
 
 /**
- * # Dynamic Table widget for nodeGame
+ * # DynamicTable
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Extends the GameTable widgets by allowing dynamic reshaping.
+ * Extends the GameTable widgets by allowing dynamic reshaping
  *
  * TODO: this widget needs refactoring.
  *
  * @experimental
  * @see GameTable widget
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -27929,116 +28096,120 @@ JSUS.extend(TIME);
     DynamicTable.version = '0.3.1';
 
     DynamicTable.dependencies = {
-	Table: {},
-	JSUS: {},
-	HTMLRenderer: {}
+        Table: {},
+        JSUS: {},
+        HTMLRenderer: {}
     };
 
     function DynamicTable (options, data) {
-	//JSUS.extend(node.window.Table,this);
-	Table.call(this, options, data);
-	this.options = options;
-	this.id = options.id;
-	this.name = options.name || 'Dynamic Table';
-	this.fieldset = { legend: this.name,
-			  id: this.id + '_fieldset'
-		        };
+        //JSUS.extend(node.window.Table,this);
+        Table.call(this, options, data);
+        this.options = options;
+        this.id = options.id;
+        this.name = options.name || 'Dynamic Table';
+        this.fieldset = {
+            legend: this.name,
+            id: this.id + '_fieldset'
+        };
 
-	this.root = null;
-	this.bindings = {};
-	this.init(this.options);
+        this.root = null;
+        this.bindings = {};
+        this.init(this.options);
     }
 
     DynamicTable.prototype.init = function(options) {
-	this.options = options;
-	this.name = options.name || this.name;
-	this.auto_update = ('undefined' !== typeof options.auto_update) ? options.auto_update : true;
-	this.replace = options.replace || false;
-	this.htmlRenderer = new HTMLRenderer({renderers: options.renderers});
-	this.c('state', GameStage.compare);
-	this.setLeft([]);
-	this.parse(true);
+        this.options = options;
+        this.name = options.name || this.name;
+        this.auto_update = ('undefined' !== typeof options.auto_update) ?
+            options.auto_update : true;
+        this.replace = options.replace || false;
+        this.htmlRenderer = new HTMLRenderer({renderers: options.renderers});
+        this.c('state', GameStage.compare);
+        this.setLeft([]);
+        this.parse(true);
     };
 
     DynamicTable.prototype.bind = function(event, bindings) {
-	if (!event || !bindings) return;
-	var that = this;
+        if (!event || !bindings) return;
+        var that = this;
 
-	node.on(event, function(msg) {
+        node.on(event, function(msg) {
 
-	    if (bindings.x || bindings.y) {
-		// Cell
-		var func;
-		if (that.replace) {
-		    func = function(x, y) {
-			var found = that.get(x,y);
-			if (found.length !== 0) {
-			    for (var ci=0; ci < found.length; ci++) {
-				bindings.cell.call(that, msg, found[ci]);
-			    }
-			}
-			else {
-			    var cell = bindings.cell.call(that, msg, new Table.Cell({x: x, y: y}));
-			    that.add(cell);
-			}
-		    };
-		}
-		else {
-		    func = function(x, y) {
-			var cell = bindings.cell.call(that, msg, new Table.Cell({x: x, y: y}));
-			that.add(cell, x, y);
-		    };
-		}
+            if (bindings.x || bindings.y) {
+                // Cell
+                var func;
+                if (that.replace) {
+                    func = function(x, y) {
+                        var found = that.get(x,y);
+                        if (found.length !== 0) {
+                            for (var ci=0; ci < found.length; ci++) {
+                                bindings.cell.call(that, msg, found[ci]);
+                            }
+                        }
+                        else {
+                            var cell = bindings.cell.call(
+                                that, msg, new Table.Cell({x: x, y: y}));
+                            that.add(cell);
+                        }
+                    };
+                }
+                else {
+                    func = function(x, y) {
+                        var cell = bindings.cell.call(
+                                that, msg, new Table.Cell({x: x, y: y}));
+                        that.add(cell, x, y);
+                    };
+                }
 
-		var x = bindings.x.call(that, msg);
-		var y = bindings.y.call(that, msg);
+                var x = bindings.x.call(that, msg);
+                var y = bindings.y.call(that, msg);
 
-		if (x && y) {
+                if (x && y) {
 
-		    x = (x instanceof Array) ? x : [x];
-		    y = (y instanceof Array) ? y : [y];
+                    x = (x instanceof Array) ? x : [x];
+                    y = (y instanceof Array) ? y : [y];
 
-                    //					console.log('Bindings found:');
-                    //					console.log(x);
-                    //					console.log(y);
+                    //console.log('Bindings found:');
+                    //console.log(x);
+                    //console.log(y);
 
-		    for (var xi=0; xi < x.length; xi++) {
-			for (var yi=0; yi < y.length; yi++) {
-			    // Replace or Add
-			    func.call(that, x[xi], y[yi]);
-			}
-		    }
-		}
-		// End Cell
-	    }
+                    for (var xi=0; xi < x.length; xi++) {
+                        for (var yi=0; yi < y.length; yi++) {
+                            // Replace or Add
+                            func.call(that, x[xi], y[yi]);
+                        }
+                    }
+                }
+                // End Cell
+            }
 
-	    // Header
-	    if (bindings.header) {
-		var h = bindings.header.call(that, msg);
-		h = (h instanceof Array) ? h : [h];
-		that.setHeader(h);
-	    }
+            // Header
+            if (bindings.header) {
+                var h = bindings.header.call(that, msg);
+                h = (h instanceof Array) ? h : [h];
+                that.setHeader(h);
+            }
 
-	    // Left
-	    if (bindings.left) {
-		var l = bindings.left.call(that, msg);
-		if (!JSUS.in_array(l, that.left)) {
-		    that.header.push(l);
-		}
-	    }
+            // Left
+            if (bindings.left) {
+                var l = bindings.left.call(that, msg);
+                if (!JSUS.in_array(l, that.left)) {
+                    that.header.push(l);
+                }
+            }
 
-	    // Auto Update?
-	    if (that.auto_update) {
-		that.parse();
-	    }
-	});
+            // Auto Update?
+            if (that.auto_update) {
+                that.parse();
+            }
+        });
 
     };
 
     DynamicTable.prototype.append = function(root) {
-	this.root = root;
-	root.appendChild(this.table);
-	return root;
+        this.root = root;
+        root.appendChild(this.table);
+        return root;
     };
 
     DynamicTable.prototype.listeners = function() {};
@@ -28046,14 +28217,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # EventButton widget for nodeGame
+ * # EventButton
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Creates a clickable button that fires an event.
+ * Creates a clickable button that fires an event
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -28112,12 +28282,12 @@ JSUS.extend(TIME);
             };
         }
 
-        //              // Emit DONE only if callback is successful
-        //              this.button.onclick = function() {
-        //                      var ok = true;
-        //                      if (options.exec) ok = options.exec.call(node.game);
-        //                      if (ok) node.emit(that.event);
-        //              }
+        //// Emit DONE only if callback is successful
+        //this.button.onclick = function() {
+        //        var ok = true;
+        //        if (options.exec) ok = options.exec.call(node.game);
+        //        if (ok) node.emit(that.event);
+        //}
     };
 
     EventButton.prototype.append = function(root) {
@@ -28128,7 +28298,7 @@ JSUS.extend(TIME);
 
     EventButton.prototype.listeners = function() {};
 
-    // # Done Button
+    // # DoneButton
 
     node.widgets.register('DoneButton', DoneButton);
 
@@ -28155,14 +28325,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # Feedback widget for nodeGame
+ * # Feedback
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Sends a feedback message to the server.
+ * Sends a feedback message to the server
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -28245,14 +28414,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # GameBoard widget for nodeGame
+ * # GameBoard
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Displays a table of currently connected players.
+ * Displays a table of currently connected players
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -28267,127 +28435,128 @@ JSUS.extend(TIME);
     GameBoard.defaults = {};
     GameBoard.defaults.id = 'gboard';
     GameBoard.defaults.fieldset = {
-	legend: 'Game Board'
+        legend: 'Game Board'
     };
 
     // ## Meta-data
 
     GameBoard.version = '0.4.0';
-    GameBoard.description = 'Offer a visual representation of the state of all players in the game.';
+    GameBoard.description = 'Offer a visual representation of the state of ' +
+                            'all players in the game.';
 
     function GameBoard(options) {
 
-	this.id = options.id || GameBoard.defaults.id;
-	this.status_id = this.id + '_statusbar';
+        this.id = options.id || GameBoard.defaults.id;
+        this.status_id = this.id + '_statusbar';
 
-	this.board = null;
-	this.status = null;
-	this.root = null;
+        this.board = null;
+        this.status = null;
+        this.root = null;
 
     }
 
     GameBoard.prototype.append = function(root) {
-	this.root = root;
-	this.status = node.window.addDiv(root, this.status_id);
-	this.board = node.window.addDiv(root, this.id);
+        this.root = root;
+        this.status = node.window.addDiv(root, this.status_id);
+        this.board = node.window.addDiv(root, this.id);
 
-	this.updateBoard(node.game.pl);
+        this.updateBoard(node.game.pl);
 
-	return root;
+        return root;
     };
 
     GameBoard.prototype.listeners = function() {
-	var that = this;
-	node.on('UPDATED_PLIST', function() {
-	    that.updateBoard(node.game.pl);
-	});
+        var that = this;
+        node.on('UPDATED_PLIST', function() {
+            that.updateBoard(node.game.pl);
+        });
 
     };
 
     GameBoard.prototype.printLine = function(p) {
 
-	var line, levels, level;
+        var line, levels, level;
         levels = node.constants.stageLevels;
 
         line = '[' + (p.name || p.id) + "]> \t";
-	line += '(' +  p.stage.round + ') ' + p.stage.stage + '.' + p.stage.step;
-	line += ' ';
+        line += '(' +  p.stage.round + ') ' + p.stage.stage + '.' +
+                p.stage.step;
+        line += ' ';
 
-	switch (p.stageLevel) {
+        switch (p.stageLevel) {
 
-	case levels.UNINITIALIZED:
-	    level = 'uninit.';
-	    break;
+        case levels.UNINITIALIZED:
+            level = 'uninit.';
+            break;
 
-	case levels.INITIALIZING:
-	    level = 'init...';
-	    break;
+        case levels.INITIALIZING:
+            level = 'init...';
+            break;
 
-	case levels.INITIALIZING:
-	    level = 'init!';
-	    break;
+        case levels.INITIALIZING:
+            level = 'init!';
+            break;
 
-	case levels.LOADING:
-	    level = 'loading';
-	    break;
+        case levels.LOADING:
+            level = 'loading';
+            break;
 
-	case levels.LOADED:
-	    level = 'loaded';
-	    break;
+        case levels.LOADED:
+            level = 'loaded';
+            break;
 
-	case levels.PLAYING:
-	    level = 'playing';
-	    break;
-	case levels.DONE:
-	    level = 'done';
-	    break;
+        case levels.PLAYING:
+            level = 'playing';
+            break;
+        case levels.DONE:
+            level = 'done';
+            break;
 
-	default:
-	    level = p.stageLevel;
-	    break;
-	}
+        default:
+            level = p.stageLevel;
+            break;
+        }
 
-	return line + '(' + level + ')';
+        return line + '(' + level + ')';
     };
 
     GameBoard.prototype.printSeparator = function(p) {
-	return W.getElement('hr', null, {style: 'color: #CCC;'});
+        return W.getElement('hr', null, {style: 'color: #CCC;'});
     };
 
 
     GameBoard.prototype.updateBoard = function(pl) {
-	var player, separator;
+        var player, separator;
         var that = this;
 
-	this.status.innerHTML = 'Updating...';
+        this.status.innerHTML = 'Updating...';
 
-	if (pl.size()) {
-	    that.board.innerHTML = '';
-	    pl.forEach( function(p) {
-		player = that.printLine(p);
+        if (pl.size()) {
+            that.board.innerHTML = '';
+            pl.forEach( function(p) {
+                player = that.printLine(p);
 
-		W.write(player, that.board);
+                W.write(player, that.board);
 
-		separator = that.printSeparator(p);
-		W.write(separator, that.board);
-	    });
-	}
+                separator = that.printSeparator(p);
+                W.write(separator, that.board);
+            });
+        }
 
 
-	this.status.innerHTML = 'Connected players: ' + node.game.pl.length;
+        this.status.innerHTML = 'Connected players: ' + node.game.pl.length;
     };
 
 })(node);
 
 /**
- * # GameSummary widget for nodeGame
+ * # GameSummary
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Shows the configuration options of a game in a box.
+ * Shows the configuration options of a game in a box
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -28404,47 +28573,48 @@ JSUS.extend(TIME);
     // ## Meta-data
 
     GameSummary.version = '0.3';
-    GameSummary.description = 'Show the general configuration options of the game.';
+    GameSummary.description =
+        'Show the general configuration options of the game.';
 
     function GameSummary(options) {
-	this.summaryDiv = null;
+        this.summaryDiv = null;
     }
 
     GameSummary.prototype.append = function(root) {
-	this.root = root;
-	this.summaryDiv = node.window.addDiv(root);
-	this.writeSummary();
-	return root;
+        this.root = root;
+        this.summaryDiv = node.window.addDiv(root);
+        this.writeSummary();
+        return root;
     };
 
     GameSummary.prototype.writeSummary = function(idState, idSummary) {
-	var gName = document.createTextNode('Name: ' + node.game.metadata.name),
-	gDescr = document.createTextNode('Descr: ' + node.game.metadata.description),
-	gMinP = document.createTextNode('Min Pl.: ' + node.game.minPlayers),
-	gMaxP = document.createTextNode('Max Pl.: ' + node.game.maxPlayers);
+        var gName = document.createTextNode('Name: ' + node.game.metadata.name),
+        gDescr = document.createTextNode(
+                'Descr: ' + node.game.metadata.description),
+        gMinP = document.createTextNode('Min Pl.: ' + node.game.minPlayers),
+        gMaxP = document.createTextNode('Max Pl.: ' + node.game.maxPlayers);
 
-	this.summaryDiv.appendChild(gName);
-	this.summaryDiv.appendChild(document.createElement('br'));
-	this.summaryDiv.appendChild(gDescr);
-	this.summaryDiv.appendChild(document.createElement('br'));
-	this.summaryDiv.appendChild(gMinP);
-	this.summaryDiv.appendChild(document.createElement('br'));
-	this.summaryDiv.appendChild(gMaxP);
+        this.summaryDiv.appendChild(gName);
+        this.summaryDiv.appendChild(document.createElement('br'));
+        this.summaryDiv.appendChild(gDescr);
+        this.summaryDiv.appendChild(document.createElement('br'));
+        this.summaryDiv.appendChild(gMinP);
+        this.summaryDiv.appendChild(document.createElement('br'));
+        this.summaryDiv.appendChild(gMaxP);
 
-	node.window.addDiv(this.root, this.summaryDiv, idSummary);
+        node.window.addDiv(this.root, this.summaryDiv, idSummary);
     };
 
 })(node);
 
 /**
- * # GameTable widget for nodeGame
+ * # GameTable
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Creates a table that renders in each cell data captured by fired events.
+ * Creates a table that renders in each cell data captured by fired events
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -28533,8 +28703,8 @@ JSUS.extend(TIME);
             var plist = new PlayerList({}, msg.data);
             var diff = plist.diff(that.plist);
             if (diff) {
-                //                              console.log('New Players found');
-                //                              console.log(diff);
+                //console.log('New Players found');
+                //console.log(diff);
                 diff.forEach(function(el){that.addPlayer(el);});
             }
 
@@ -28561,7 +28731,9 @@ JSUS.extend(TIME);
     GameTable.prototype.addLeft = function(state, player) {
         if (!state) return;
         state = new GameStage(state);
-        if (!JSUS.in_array({content:state.toString(), type: 'left'}, this.gtbl.left)){
+        if (!JSUS.in_array({content:state.toString(), type: 'left'},
+                    this.gtbl.left)) {
+
             this.gtbl.add2Left(state.toString());
         }
         // Is it a new display associated to the same state?
@@ -28598,14 +28770,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # LanguageSelector widget for nodeGame
+ * # LanguageSelector
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Manages and displays information about languages available and selected.
+ * Manages and displays information about languages available and selected
  *
  * www.nodegame.org
- * ---
  */
  (function(node) {
 
@@ -28654,7 +28825,7 @@ JSUS.extend(TIME);
          * - `name`: Name of the language in English.
          * - `nativeName`: Native name of the language
          * - `shortName`: An abbreviation for the language, also determines the
-         *  path to the context files for this language.
+         *    path to the context files for this language.
          *
          * The key for each language object is its `shortName`.
          *
@@ -28775,8 +28946,8 @@ JSUS.extend(TIME);
                         node.window.addElement('br', that.displayForm);
                         that.optionsLabel[language].className =
                             'unselectedButtonLabel';
-                        that.displayForm.appendChild(that.optionsLabel[language]);
-
+                        that.displayForm.appendChild(
+                                that.optionsLabel[language]);
                     }
                 }
             }
@@ -28787,10 +28958,12 @@ JSUS.extend(TIME);
                 for (language in msg.data) {
                     that.optionsLabel[language] =
                         document.createTextNode(msg.data[language].nativeName);
-                    that.optionsDisplay[language] = node.window.getElement('option',
-                        language + 'Option', { value: language });
-                    that.optionsDisplay[language].appendChild(that.optionsLabel[language]);
-                    that.displaySelection.appendChild(that.optionsDisplay[language]);
+                    that.optionsDisplay[language] = node.window.getElement(
+                        'option', language + 'Option', { value: language });
+                    that.optionsDisplay[language].appendChild(
+                        that.optionsLabel[language]);
+                    that.displaySelection.appendChild(
+                        that.optionsDisplay[language]);
 
                 }
                 that.displayForm.appendChild(that.displaySelection);
@@ -28830,8 +29003,10 @@ JSUS.extend(TIME);
         this.init(this.options);
     }
 
+    // ## LanguageSelector methods
+
     /**
-     * ## LanguageSelector.init
+     * ### LanguageSelector.init
      *
      * Initializes the widget
      *
@@ -28863,11 +29038,11 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## LanguageSelector.setLanguage
+     * ### LanguageSelector.setLanguage
      *
      * Sets language and updates view
      *
-     * @param {string} langName shortName of language to be set.
+     * @param {string} langName shortName of language to be set
      *
      * @see NodeGameClient.setLanguage
      */
@@ -28905,7 +29080,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## LanguageSelector.updateAvalaibleLanguages
+     * ### LanguageSelector.updateAvailableLanguages
      *
      * Updates available languages asynchronously
      *
@@ -28923,7 +29098,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## LanguageSelector.loadLanguages
+     * ### LanguageSelector.loadLanguages
      *
      * Loads languages once from server
      *
@@ -28946,14 +29121,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # MoneyTalks widget for nodeGame
+ * # MoneyTalks
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Displays a box for formatting currency.
+ * Displays a box for formatting currency
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -29002,8 +29176,10 @@ JSUS.extend(TIME);
         this.money = options.money || this.money;
         this.precision = options.precision || this.precision;
 
-        this.spanCurrency.id = options.idCurrency || this.spanCurrency.id || 'moneytalks_currency';
-        this.spanMoney.id = options.idMoney || this.spanMoney.id || 'moneytalks_money';
+        this.spanCurrency.id = options.idCurrency || this.spanCurrency.id ||
+            'moneytalks_currency';
+        this.spanMoney.id = options.idMoney || this.spanMoney.id ||
+            'moneytalks_money';
 
         this.spanCurrency.innerHTML = this.currency;
         this.spanMoney.innerHTML = this.money;
@@ -29042,14 +29218,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # MsgBar widget for nodeGame
+ * # MsgBar
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Creates a tool for sending messages to other connected clients.
+ * Creates a tool for sending messages to other connected clients
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -29103,7 +29278,8 @@ JSUS.extend(TIME);
             table = i < 5 ? this.table : this.tableAdvanced;
 
             table.add(field, i, 0);
-            table.add(W.getTextInput(this.id + '_' + field, {tabindex: i+1}), i, 1);
+            table.add(W.getTextInput(this.id + '_' + field, {tabindex: i+1}),
+                                     i, 1);
 
             if (field === 'to') {
                 this.recipient =
@@ -29166,7 +29342,8 @@ JSUS.extend(TIME);
         };
 
         // Show a button that expands the table of advanced fields.
-        advButton = W.addButton(this.bodyDiv, undefined, 'Toggle advanced options');
+        advButton =
+            W.addButton(this.bodyDiv, undefined, 'Toggle advanced options');
         advButton.onclick = function() {
             that.tableAdvanced.table.style.display =
                 that.tableAdvanced.table.style.display === '' ? 'none' : '';
@@ -29263,14 +29440,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # NDDBBrowser widget for nodeGame
+ * # NDDBBrowser
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Creates an interface to interact with an NDDB database.
+ * Creates an interface to interact with an NDDB database
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -29291,7 +29467,8 @@ JSUS.extend(TIME);
     // ## Meta-data
 
     NDDBBrowser.version = '0.1.2';
-    NDDBBrowser.description = 'Provides a very simple interface to control a NDDB istance.';
+    NDDBBrowser.description =
+        'Provides a very simple interface to control a NDDB istance.';
 
     // ## Dependencies
 
@@ -29319,14 +29496,19 @@ JSUS.extend(TIME);
 
         function addButtons() {
             var id = this.id;
-            node.window.addEventButton(id + '_GO_TO_FIRST', '<<', this.commandsDiv, 'go_to_first');
-            node.window.addEventButton(id + '_GO_TO_PREVIOUS', '<', this.commandsDiv, 'go_to_previous');
-            node.window.addEventButton(id + '_GO_TO_NEXT', '>', this.commandsDiv, 'go_to_next');
-            node.window.addEventButton(id + '_GO_TO_LAST', '>>', this.commandsDiv, 'go_to_last');
+            node.window.addEventButton(id + '_GO_TO_FIRST', '<<',
+                this.commandsDiv, 'go_to_first');
+            node.window.addEventButton(id + '_GO_TO_PREVIOUS', '<',
+                this.commandsDiv, 'go_to_previous');
+            node.window.addEventButton(id + '_GO_TO_NEXT', '>',
+                this.commandsDiv, 'go_to_next');
+            node.window.addEventButton(id + '_GO_TO_LAST', '>>',
+                this.commandsDiv, 'go_to_last');
             node.window.addBreak(this.commandsDiv);
         }
         function addInfoBar() {
-            var span = this.commandsDiv.appendChild(document.createElement('span'));
+            var span = this.commandsDiv.appendChild(
+                document.createElement('span'));
             return span;
         }
 
@@ -29376,7 +29558,8 @@ JSUS.extend(TIME);
         function notification(el, text) {
             if (el) {
                 node.emit(id + '_GOT', el);
-                this.writeInfo((this.nddb.nddb_pointer + 1) + '/' + this.nddb.size());
+                this.writeInfo((this.nddb.nddb_pointer + 1) + '/' +
+                    this.nddb.size());
             }
             else {
                 this.writeInfo('No element found');
@@ -29417,14 +29600,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # NextPreviousState widget for nodeGame
+ * # NextPreviousState
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Simple widget to step through the stages of the game.
+ * Simple widget to step through the stages of the game
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -29443,7 +29625,8 @@ JSUS.extend(TIME);
     // ## Meta-data
 
     NextPreviousState.version = '0.3.2';
-    NextPreviousState.description = 'Adds two buttons to push forward or rewind the state of the game by one step.';
+    NextPreviousState.description = 'Adds two buttons to push forward or ' +
+        'rewind the state of the game by one step.';
 
     function NextPreviousState(options) {
         this.id = options.id;
@@ -29494,14 +29677,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # Requirements widget for nodeGame
+ * # Requirements
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Checks a list of requirements and displays the results.
+ * Checks a list of requirements and displays the results
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -29531,7 +29713,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Requirements.
+     * ## Requirements constructor
      *
      * Instantiates a new Requirements object
      *
@@ -29568,7 +29750,8 @@ JSUS.extend(TIME);
         this.sayResults = options.sayResults || false;
         // The label of the SAY message that will be sent to the server.
         this.sayResultsLabel = options.sayResultLabel || 'requirements';
-        // Callback to add properties to the result object to send to the server.
+        // Callback to add properties to the result object to send to the
+        // server.
         this.addToResults = options.addToResults || null;
 
         // Callbacks to be executed at the end of all tests.
@@ -29606,8 +29789,10 @@ JSUS.extend(TIME);
         });
     }
 
+    // ## Requirements methods
+
     /**
-     * ## Requirements.addRequirements
+     * ### Requirements.addRequirements
      *
      * Adds any number of callbacks checking the requirements
      *
@@ -29636,17 +29821,18 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Requirements.checkRequirements
+     * ### Requirements.checkRequirements
      *
-     * Asynchrounsly or synchrounsly checks all registered callbacks
+     * Asynchronously or synchronously checks all registered callbacks
      *
      * Can add a timeout for the max execution time of the callbacks, if the
      * corresponding option is set.
      *
      * Results are displayed conditionally
      *
-     * @param {boolean} display If TRUE, results are displayed.
-     * @return {errors} The array containing the errors
+     * @param {boolean} display If TRUE, results are displayed
+     *
+     * @return {array} The array containing the errors
      *
      * @see this.withTimeout
      * @see this.callbacks
@@ -29701,7 +29887,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Requirements.addTimeout
+     * ### Requirements.addTimeout
      *
      * Starts a timeout for the max execution time of the callbacks
      *
@@ -29728,7 +29914,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Requirements.clearTimeout
+     * ### Requirements.clearTimeout
      *
      * Clears the timeout for the max execution time of the callbacks
      *
@@ -29744,12 +29930,12 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Requirements.updateStillChecking
+     * ### Requirements.updateStillChecking
      *
      * Updates the number of callbacks still running on the display
      *
-     * @param {number} The number of callbacks still running, or an increment
-     *   as compared to the current value
+     * @param {number} update The number of callbacks still running, or an
+     *   increment as compared to the current value
      * @param {boolean} absolute TRUE, if `update` is to be interpreted as an
      *   absolute value
      *
@@ -29768,9 +29954,9 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Requirements.isCheckingFinished
+     * ### Requirements.isCheckingFinished
      *
-     * Returns TRUE, if all callbacks have returned
+     * Returns TRUE if all callbacks have returned
      *
      * @see this.stillCheckings
      * @see this.callbacks
@@ -29780,7 +29966,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Requirements.CheckingFinished
+     * ### Requirements.CheckingFinished
      *
      * Cleans up timer and dots, and executes final callbacks accordingly
      *
@@ -29828,7 +30014,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Requirements.displayResults
+     * ### Requirements.displayResults
      *
      * Displays the results of the callbacks on the screen
      *
@@ -29912,12 +30098,13 @@ JSUS.extend(TIME);
     // ## Default Requirement Functions
 
     /**
-     * ## Requirements.nodeGameRequirements
+     * ### Requirements.nodeGameRequirements
      *
      * Checks whether the basic dependencies of nodeGame are satisfied
      *
-     * @param {function} The asynchronous result function
-     * @return {array} errors Array of synchronous errors
+     * @param {function} result The asynchronous result function
+     *
+     * @return {array} Array of synchronous errors
      */
     Requirements.prototype.nodeGameRequirements = function(result) {
         var errors, db;
@@ -29962,14 +30149,15 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## Requirements.loadFrameTest
+     * ### Requirements.loadFrameTest
      *
      * Checks whether the iframe can be created and used
      *
      * Requires an active connection.
      *
-     * @param {function} The asynchronous result function
-     * @return {array} errors Array of synchronous errors
+     * @param {function} result The asynchronous result function
+     *
+     * @return {array} Array of synchronous errors
      */
     Requirements.prototype.loadFrameTest = function(result) {
         var errors, that, testIframe, root;
@@ -30052,14 +30240,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # ServerInfoDisplay widget for nodeGame
+ * # ServerInfoDisplay
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Displays information about the server.
+ * Displays information about the server
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -30143,14 +30330,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # StateBar widget for nodeGame
+ * # StateBar
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Provides a simple interface to change the game stages.
+ * Provides a simple interface to change the game stages
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -30196,7 +30382,8 @@ JSUS.extend(TIME);
         that = this;
 
         //node.on('UPDATED_PLIST', function() {
-        //    node.window.populateRecipientSelector(that.recipient, node.game.pl);
+        //    node.window.populateRecipientSelector(
+        //        that.recipient, node.game.pl);
         //});
 
         sendButton.onclick = function() {
@@ -30220,14 +30407,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # StateDisplay widget for nodeGame
+ * # StateDisplay
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Display information about the state of a player.
+ * Display information about the state of a player
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -30253,53 +30439,53 @@ JSUS.extend(TIME);
     };
 
     function StateDisplay(options) {
-	this.id = options.id;
-	this.table = new Table();
+        this.id = options.id;
+        this.table = new Table();
     }
 
     StateDisplay.prototype.append = function() {
-	var that, checkPlayerName;
+        var that, checkPlayerName;
         that = this;
-	checkPlayerName = setInterval(function() {
-	    if (node.player && node.player.id) {
-		clearInterval(checkPlayerName);
-		that.updateAll();
-	    }
-	}, 100);
-	this.bodyDiv.appendChild(this.table.table);
+        checkPlayerName = setInterval(function() {
+            if (node.player && node.player.id) {
+                clearInterval(checkPlayerName);
+                that.updateAll();
+            }
+        }, 100);
+        this.bodyDiv.appendChild(this.table.table);
     };
 
     StateDisplay.prototype.updateAll = function() {
-	var stage, stageNo, stageId, playerId, tmp, miss;
+        var stage, stageNo, stageId, playerId, tmp, miss;
         miss = '-';
 
         stageId = miss;
         stageNo = miss;
         playerId = miss;
 
-	if (node.player.id) {
+        if (node.player.id) {
             playerId = node.player.id;
         }
 
-	stage = node.game.getCurrentGameStage();
-	if (stage) {
+        stage = node.game.getCurrentGameStage();
+        if (stage) {
             tmp = node.game.plot.getStep(stage);
             stageId = tmp ? tmp.id : '-';
             stageNo = stage.toString();
         }
 
-	this.table.clear(true);
-	this.table.addRow(['Stage  No: ', stageNo]);
-	this.table.addRow(['Stage  Id: ', stageId]);
-	this.table.addRow(['Player Id: ', playerId]);
-	this.table.parse();
+        this.table.clear(true);
+        this.table.addRow(['Stage  No: ', stageNo]);
+        this.table.addRow(['Stage  Id: ', stageId]);
+        this.table.addRow(['Player Id: ', playerId]);
+        this.table.parse();
 
     };
 
     StateDisplay.prototype.listeners = function() {
-	var that = this;
-	node.on('STEP_CALLBACK_EXECUTED', function() {
-	    that.updateAll();
+        var that = this;
+        node.on('STEP_CALLBACK_EXECUTED', function() {
+            that.updateAll();
         });
     };
 
@@ -30309,16 +30495,16 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # VisualRound widget for nodeGame
+ * # VisualRound
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Display information about rounds and/or stage in the game.
+ * Display information about rounds and/or stage in the game
+ *
  * Accepts different visualization options (e.g. countdown, etc.).
  * See `VisualRound` constructor for a list of all available options.
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -30349,23 +30535,27 @@ JSUS.extend(TIME);
      *
      * Displays information on the current and total rounds and stages
      *
-     * @param {object} options Optional. Configuration options
+     * @param {object} options Optional. Configuration options.
+     *   The options it can take are:
      *
-     * The options it can take are:
-     *
-     * - `stageOffset`: Stage displayed is the actual stage minus stageOffset.
-     * - `flexibleMode`: Set `true`, if number of rounds and/or stages can
-     *     change dynamically.
-     * - `curStage`: When (re)starting in `flexibleMode`, sets the current stage
-     * - `curRound`: When (re)starting in `flexibleMode`, sets the current round
-     * - `totStage`: When (re)starting in `flexibleMode`, sets the total
-     *     number of stages.
-     * - `totRound`: When (re)starting in `flexibleMode`, sets the total
-     *     number of rounds.
-     * - `oldStageId`: When (re)starting in `flexibleMode`, sets the id of
-     *     the current stage.
-     * - `displayModeNames`: Array of strings which determines the display style
-     *     of the widget.
+     *   - `stageOffset`:
+     *     Stage displayed is the actual stage minus stageOffset
+     *   - `flexibleMode`:
+     *     Set `true`, if number of rounds and/or stages can change dynamically
+     *   - `curStage`:
+     *     When (re)starting in `flexibleMode`, sets the current stage
+     *   - `curRound`:
+     *     When (re)starting in `flexibleMode`, sets the current round
+     *   - `totStage`:
+     *     When (re)starting in `flexibleMode`, sets the total number of stages
+     *   - `totRound`:
+     *     When (re)starting in `flexibleMode`, sets the total number of
+     *     rounds
+     *   - `oldStageId`:
+     *     When (re)starting in `flexibleMode`, sets the id of the current
+     *     stage
+     *   - `displayModeNames`:
+     *     Array of strings which determines the display style of the widget
      *
      * @see VisualRound.setDisplayMode
      * @see GameStager
@@ -30451,8 +30641,10 @@ JSUS.extend(TIME);
         this.init(this.options);
     }
 
+    // ## VisualRound methods
+
     /**
-     * ## VisualRound.init
+     * ### VisualRound.init
      *
      * Initializes the instance
      *
@@ -30507,7 +30699,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## VisualRound.updateDisplay
+     * ### VisualRound.updateDisplay
      *
      * Updates the values displayed by forwarding the call to displayMode obj
      *
@@ -30520,7 +30712,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## VisualRound.setDisplayMode
+     * ### VisualRound.setDisplayMode
      *
      * Sets the `VisualRound.displayMode` value
      *
@@ -30537,7 +30729,7 @@ JSUS.extend(TIME);
      * - `COUNT_DOWN_STAGES`: Display number of stages left to play.
      * - `COUNT_DOWN_ROUNDS: Display number of rounds left in this stage.
      *
-     * @param {array} displayModeNames Array of strings representing the names.
+     * @param {array} displayModeNames Array of strings representing the names
      *
      * @see VisualRound.displayMode
      * @see CompoundDisplayMode
@@ -30605,24 +30797,24 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## VisualRound.getDisplayMode
+     * ### VisualRound.getDisplayMode
      *
      * Returns name of the current displayMode
      *
-     * @return {string} Name of the current displayMode.
+     * @return {string} Name of the current displayMode
      */
     VisualRound.prototype.getDisplayModeName = function() {
         return this.displayMode.name;
     };
 
     /**
-     * ## VisualRound.activate
+     * ### VisualRound.activate
      *
      * Appends the displayDiv of the given displayMode to `this.bodyDiv`
      *
      * Calls `displayMode.activate`, if one is defined.
      *
-     * @param {object} displayMode DisplayMode to activate.
+     * @param {object} displayMode DisplayMode to activate
      *
      * @see VisualRound.deactivate
      */
@@ -30636,13 +30828,13 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## VisualRound.deactivate
+     * ### VisualRound.deactivate
      *
      * Removes the displayDiv of the given displayMode from `this.bodyDiv`
      *
      * Calls `displayMode.deactivate` if it is defined.
      *
-     * @param {object} displayMode DisplayMode to deactivate.
+     * @param {object} displayMode DisplayMode to deactivate
      *
      * @see VisualRound.activate
      */
@@ -30664,7 +30856,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## VisualRound.updateInformation
+     * ### VisualRound.updateInformation
      *
      * Updates information about rounds and stages and updates the display
      *
@@ -30715,14 +30907,12 @@ JSUS.extend(TIME);
     };
 
    /**
-     * # EmptyDisplayMode Class
+     * # EmptyDisplayMode
      *
      * Copyright(c) 2014 Stefano Balietti
      * MIT Licensed
      *
-     * Defines a displayMode for the `VisualRound` which displays nothing.
-     *
-     * ---
+     * Defines a displayMode for the `VisualRound` which displays nothing
      */
 
     /**
@@ -30731,7 +30921,7 @@ JSUS.extend(TIME);
      * Display a displayMode which contains the bare minumum (nothing)
      *
      * @param {VisualRound} visualRound The `VisualRound` object to which the
-     *     displayMode belongs
+     *   displayMode belongs
      * @param {object} options Optional. Configuration options
      *
      * @see VisualRound
@@ -30765,8 +30955,10 @@ JSUS.extend(TIME);
         this.init(this.options);
     }
 
+    // ## EmptyDisplayMode methods
+
     /**
-     * ## EmptyDisplayMode.init
+     * ### EmptyDisplayMode.init
      *
      * Initializes the instance
      *
@@ -30782,7 +30974,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## EmptyDisplayMode.updateDisplay
+     * ### EmptyDisplayMode.updateDisplay
      *
      * Does nothing
      *
@@ -30791,15 +30983,13 @@ JSUS.extend(TIME);
     EmptyDisplayMode.prototype.updateDisplay = function() {};
 
     /**
-     * # CountUpStages Class
+     * # CountUpStages
      *
      * Copyright(c) 2014 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the current
-     * and, possibly, the total number of stages.
-     *
-     * ---
+     * and, possibly, the total number of stages
      */
 
     /**
@@ -30810,10 +31000,10 @@ JSUS.extend(TIME);
      * Can be constructed to furthermore display the total number of stages.
      *
      * @param {VisualRound} visualRound The `VisualRound` object to which the
-     *      displayMode belongs.
+     *   displayMode belongs
      * @param {object} options Optional. Configuration options.
-     *      If `options.toTotal == true`, then the total number of stages is
-     *      displayed.
+     *   If `options.toTotal == true`, then the total number of stages is
+     *   displayed
      *
      * @see VisualRound
      */
@@ -30878,14 +31068,15 @@ JSUS.extend(TIME);
         this.init(this.options);
     }
 
+    // ## CountUpStages methods
+
     /**
-     * ## CountUpStages.init
+     * ### CountUpStages.init
      *
      * Initializes the instance
      *
-     * @param {object} options Optional. Configuration options.
-     *      If `options.toTotal == true`, then the total number of stages is
-     *      displayed.
+     * @param {object} options Optional. Configuration options. If
+     *   `options.toTotal == true`, then the total number of stages is displayed
      *
      * @see CountUpStages.updateDisplay
      */
@@ -30921,7 +31112,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## CountUpStages.updateDisplay
+     * ### CountUpStages.updateDisplay
      *
      * Updates the content of `curStageNumber` and `totStageNumber`
      *
@@ -30937,15 +31128,13 @@ JSUS.extend(TIME);
     };
 
    /**
-     * # CountDownStages Class
+     * # CountDownStages
      *
      * Copyright(c) 2014 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the remaining
-     * number of stages.
-     *
-     * ---
+     * number of stages
      */
 
     /**
@@ -30954,7 +31143,7 @@ JSUS.extend(TIME);
      * Display mode which displays the remaining number of stages
      *
      * @param {VisualRound} visualRound The `VisualRound` object to which the
-     *     displayMode belongs.
+     *   displayMode belongs.
      * @param {object} options Optional. Configuration options
      *
      * @see VisualRound
@@ -31002,8 +31191,10 @@ JSUS.extend(TIME);
         this.init(this.options);
     }
 
+    // ## CountDownStages methods
+
     /**
-     * ## CountDownStages.init
+     * ### CountDownStages.init
      *
      * Initializes the instance
      *
@@ -31026,7 +31217,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## CountDownStages.updateDisplay
+     * ### CountDownStages.updateDisplay
      *
      * Updates the content of `stagesLeft` according to `visualRound`
      *
@@ -31042,29 +31233,26 @@ JSUS.extend(TIME);
     };
 
    /**
-     * # CountUpRounds Class
+     * # CountUpRounds
      *
      * Copyright(c) 2014 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the current
-     * and possibly the total number of rounds.
-     *
-     * ---
+     * and possibly the total number of rounds
      */
 
     /**
      * ## CountUpRounds constructor
      *
-     * Display mode which displays the current number of rounds.
+     * Display mode which displays the current number of rounds
      *
      * Can be constructed to furthermore display the total number of stages.
      *
      * @param {VisualRound} visualRound The `VisualRound` object to which the
-     *     displayMode belongs.
-     * @param {object} options Optional. Configuration options.
-     *      If `options.toTotal == true`, then the total number of rounds is
-     *      displayed.
+     *   displayMode belongs
+     * @param {object} options Optional. Configuration options. If
+     *   `options.toTotal == true`, then the total number of rounds is displayed
      *
      * @see VisualRound
      */
@@ -31083,7 +31271,7 @@ JSUS.extend(TIME);
         }
 
         /**
-         * CountUpRounds.visualRound
+         * ### CountUpRounds.visualRound
          *
          * The `VisualRound` object to which the displayMode belongs
          *
@@ -31092,35 +31280,35 @@ JSUS.extend(TIME);
         this.visualRound = visualRound;
 
         /**
-         * CountUpRounds.displayDiv
+         * ### CountUpRounds.displayDiv
          *
          * The DIV in which the information is displayed
          */
         this.displayDiv = null;
 
         /**
-         * CountUpRounds.curRoundNumber
+         * ### CountUpRounds.curRoundNumber
          *
          * The span in which the current round number is displayed
          */
         this.curRoundNumber = null;
 
         /**
-         * CountUpRounds.totRoundNumber
+         * ### CountUpRounds.totRoundNumber
          *
          * The element in which the total round number is displayed
          */
         this.totRoundNumber = null;
 
         /**
-         * CountUpRounds.displayDiv
+         * ### CountUpRounds.displayDiv
          *
          * The DIV in which the title is displayed
          */
         this.titleDiv = null;
 
         /**
-         * CountUpRounds.displayDiv
+         * ### CountUpRounds.displayDiv
          *
          * The span in which the text ` of ` is displayed
          */
@@ -31129,14 +31317,15 @@ JSUS.extend(TIME);
         this.init(this.options);
     }
 
+    // ## CountUpRounds methods
+
     /**
-     * ## CountUpRounds.init
+     * ### CountUpRounds.init
      *
      * Initializes the instance
      *
-     * @param {object} options Optional. Configuration options.
-     *      If `options.toTotal == true`, then the total number of rounds is
-     *      displayed.
+     * @param {object} options Optional. Configuration options. If
+     *   `options.toTotal == true`, then the total number of rounds is displayed
      *
      * @see CountUpRounds.updateDisplay
      */
@@ -31172,7 +31361,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## CountUpRounds.updateDisplay
+     * ### CountUpRounds.updateDisplay
      *
      * Updates the content of `curRoundNumber` and `totRoundNumber`
      *
@@ -31189,24 +31378,22 @@ JSUS.extend(TIME);
 
 
    /**
-     * # CountDownRounds Class
+     * # CountDownRounds
      *
      * Copyright(c) 2014 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the remaining
-     * number of rounds.
-     *
-     * ---
+     * number of rounds
      */
 
     /**
      * ## CountDownRounds constructor
      *
-     * Display mode which displays the remaining number of rounds.
+     * Display mode which displays the remaining number of rounds
      *
      * @param {VisualRound} visualRound The `VisualRound` object to which the
-     *     displayMode belongs
+     *   displayMode belongs
      * @param {object} options Optional. Configuration options
      *
      * @see VisualRound
@@ -31254,8 +31441,10 @@ JSUS.extend(TIME);
         this.init(this.options);
     }
 
+    // ## CountDownRounds methods
+
     /**
-     * ## CountDownRounds.init
+     * ### CountDownRounds.init
      *
      * Initializes the instance
      *
@@ -31278,7 +31467,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## CountDownRounds.updateDisplay
+     * ### CountDownRounds.updateDisplay
      *
      * Updates the content of `roundsLeft` according to `visualRound`
      *
@@ -31294,26 +31483,24 @@ JSUS.extend(TIME);
     };
 
     /**
-     * # CompoundDisplayMode Class
+     * # CompoundDisplayMode
      *
      * Copyright(c) 2014 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the
-     * information according to multiple displayModes.
-     *
-     * ---
+     * information according to multiple displayModes
      */
 
     /**
-     * ## CompoundDisplayMode
+     * ## CompoundDisplayMode constructor
      *
      * Display mode which combines multiple other display displayModes
      *
      * @param {VisualRound} visualRound The `VisualRound` object to which the
-     *     displayMode belongs.
+     *   displayMode belongs
      * @param {array} displayModes Array of displayModes to be used in
-     *      combination.
+     *   combination
      * @param {object} options Optional. Configuration options
      *
      * @see VisualRound
@@ -31364,8 +31551,10 @@ JSUS.extend(TIME);
         this.init(options);
     }
 
+    // ## CompoundDisplayMode methods
+
     /**
-     * ## CompoundDisplayMode.init
+     * ### CompoundDisplayMode.init
      *
      * Initializes the instance
      *
@@ -31388,7 +31577,7 @@ JSUS.extend(TIME);
      };
 
     /**
-     * ## CompoundDisplayMode.updateDisplay
+     * ### CompoundDisplayMode.updateDisplay
      *
      * Calls `updateDisplay` for all displayModes in the combination
      *
@@ -31428,14 +31617,13 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # VisualState widget for nodeGame
+ * # VisualState
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Shows current, previous and next state.
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -31449,7 +31637,8 @@ JSUS.extend(TIME);
     // ## Meta-data
 
     VisualState.version = '0.2.1';
-    VisualState.description = 'Visually display current, previous and next state of the game.';
+    VisualState.description =
+        'Visually display current, previous and next state of the game.';
 
     VisualState.title = 'State';
     VisualState.className = 'visualstate';
@@ -31527,7 +31716,7 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # VisualTimer widget for nodeGame
+ * # VisualTimer
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
@@ -31535,8 +31724,6 @@ JSUS.extend(TIME);
  * Only for countdown smaller than 1h.
  *
  * www.nodegame.org
- *
- * ---
  */
 (function(node) {
 
@@ -31558,21 +31745,21 @@ JSUS.extend(TIME);
     // ## Dependencies
 
     VisualTimer.dependencies = {
-        GameTimer : {},
+        GameTimer: {},
         JSUS: {}
     };
 
     /**
-     * ## VisualTimer
+     * ## VisualTimer constructor
      *
      * `VisualTimer` displays and manages a `GameTimer`
      *
-     * @param @param {object} options Optional. Configuration options
+     * @param {object} options Optional. Configuration options
      * The options it can take are:
      *
-     * - any options that can be passed to a `GameTimer`
-     * - waitBoxOptions: an option object to be passed to `TimerBox`
-     * - mainBoxOptions: an option object to be passed to `TimerBox`
+     *   - any options that can be passed to a `GameTimer`
+     *   - waitBoxOptions: an option object to be passed to `TimerBox`
+     *   - mainBoxOptions: an option object to be passed to `TimerBox`
      *
      * @see TimerBox
      * @see GameTimer
@@ -31583,36 +31770,36 @@ JSUS.extend(TIME);
             1000 : this.options.update;
 
         /**
-         * ### gameTimer
+         * ### VisualTimer.gameTimer
          *
-         * The timer which counts down the game time.
+         * The timer which counts down the game time
          *
          * @see node.timer.createTimer
          */
         this.gameTimer = null;
 
         /**
-         * ### mainBox
+         * ### VisualTimer.mainBox
          *
-         * The `TimerBox` which displays the main timer.
+         * The `TimerBox` which displays the main timer
          *
          * @see TimerBox
          */
         this.mainBox = null;
 
         /**
-         * ### waitBox
+         * ### VisualTimer.waitBox
          *
-         * The `TimerBox` which displays the wait timer.
+         * The `TimerBox` which displays the wait timer
          *
          * @see TimerBox
          */
         this.waitBox = null;
 
         /**
-         * ### activeBox
+         * ### VisualTimer.activeBox
          *
-         * The `TimerBox` in which to display the time.
+         * The `TimerBox` in which to display the time
          *
          * This variable is always a reference to either `waitBox` or
          * `mainBox`.
@@ -31622,19 +31809,20 @@ JSUS.extend(TIME);
         this.activeBox = null;
 
         /**
-         * ### isInitialized
+         * ### VisualTimer.isInitialized
          *
-         * indicates whether the instance has been initializded already
+         * Indicates whether the instance has been initializded already
          */
         this.isInitialized = false;
         this.init(this.options);
     }
 
+    // ## VisualTimer methods
+
     /**
-     * ## VisualTimer.init
+     * ### VisualTimer.init
      *
-     * Initializes the instance. When called again, adds options to current
-     * ones.
+     * Initializes the instance. When called again, adds options to current ones
      *
      * The options it can take are:
      *
@@ -31642,7 +31830,8 @@ JSUS.extend(TIME);
      * - waitBoxOptions: an option object to be passed to `TimerBox`
      * - mainBoxOptions: an option object to be passed to `TimerBox`
      *
-     * @param @param {object} options Optional. Configuration options
+     * @param {object} options Optional. Configuration options
+     *
      * @see TimerBox
      * @see GameTimer
      */
@@ -31681,12 +31870,12 @@ JSUS.extend(TIME);
         t = this.gameTimer;
         node.session.register('visualtimer', {
             set: function(p) {
-                // TODO.
+                // TODO
             },
             get: function() {
                 return {
                     startPaused: t.startPaused,
-	                status: t.status,
+                        status: t.status,
                     timeLeft: t.timeLeft,
                     timePassed: t.timePassed,
                     update: t.update,
@@ -31738,13 +31927,13 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## VisualTimer.clear
+     * ### VisualTimer.clear
      *
-     * Reverts state of `VisualTimer` to right after constructor call.
+     * Reverts state of `VisualTimer` to right after constructor call
      *
      * @param {object} options Configuration object
      *
-     * @return {object} Old options.
+     * @return {object} Old options
      *
      * @see node.timer.destroyTimer
      * @see VisualTimer.init
@@ -31772,7 +31961,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## VisualTimer.updateDisplay
+     * ### VisualTimer.updateDisplay
      *
      * Changes `activeBox` to display current time of `gameTimer`
      *
@@ -31792,9 +31981,9 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## VisualTimer.start
+     * ### VisualTimer.start
      *
-     * Starts the timer.
+     * Starts the timer
      *
      * @see VisualTimer.updateDisplay
      * @see GameTimer.start
@@ -31805,7 +31994,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## VisualTimer.restart
+     * ### VisualTimer.restart
      *
      * Restarts the timer with new options
      *
@@ -31822,7 +32011,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## VisualTimer.stop
+     * ### VisualTimer.stop
      *
      * Stops the timer display and stores the time left in `activeBox.timeLeft`
      *
@@ -31838,9 +32027,9 @@ JSUS.extend(TIME);
         }
     };
     /**
-     * ## VisualTimer.switchActiveBoxTo
+     * ### VisualTimer.switchActiveBoxTo
      *
-     * Switches the display of the `gameTimer` into the `TimerBox` `box`.
+     * Switches the display of the `gameTimer` into the `TimerBox` `box`
      *
      * Stores `gameTimer.timeLeft` into `activeBox` and then switches
      * `activeBox` to reference `box`.
@@ -31854,7 +32043,7 @@ JSUS.extend(TIME);
     };
 
     /**
-      * ## VisualTimer.startWaiting
+      * ### VisualTimer.startWaiting
       *
       * Changes the `VisualTimer` appearance to a max. wait timer
       *
@@ -31889,7 +32078,7 @@ JSUS.extend(TIME);
     };
 
     /**
-      * ## VisualTimer.startTiming
+      * ### VisualTimer.startTiming
       *
       * Changes the `VisualTimer` appearance to a regular countdown
       *
@@ -31920,7 +32109,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## VisualTimer.resume
+     * ### VisualTimer.resume
      *
      * Resumes the `gameTimer`
      *
@@ -31931,9 +32120,9 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## VisualTimer.setToZero
+     * ### VisualTimer.setToZero
      *
-     * stops `gameTimer` and sets `activeBox` to display `00:00`
+     * Stops `gameTimer` and sets `activeBox` to display `00:00`
      *
      * @see GameTimer.resume
      */
@@ -31944,7 +32133,7 @@ JSUS.extend(TIME);
     };
 
     /**
-     * ## VisualTimer.doTimeUp
+     * ### VisualTimer.doTimeUp
      *
      * Stops the timer and calls the timeup
      *
@@ -31986,8 +32175,10 @@ JSUS.extend(TIME);
         this.bodyDiv.removeChild(this.waitBox.boxDiv);
     };
 
+    // ## Helper functions
+
     /**
-     * ## processOptions
+     * ### processOptions
      *
      * Clones and mixes in user options with current options
      *
@@ -31995,7 +32186,8 @@ JSUS.extend(TIME);
      *
      * @param {object} options Configuration options
      * @param {object} curOptions Current configuration of VisualTimer
-     * @return {object} Clean, valid configuration object.
+     *
+     * @return {object} Clean, valid configuration object
      */
     function processOptions(inOptions, curOptions) {
         var options, typeofOptions;
@@ -32010,8 +32202,8 @@ JSUS.extend(TIME);
         case 'object':
             options = inOptions;
             if ('function' === typeof options.milliseconds) {
-	        options.milliseconds = options.milliseconds.call(node.game);
-	    }
+                options.milliseconds = options.milliseconds.call(node.game);
+            }
             break;
         case 'function':
             options.milliseconds = inOptions.call(node.game);
@@ -32035,55 +32227,53 @@ JSUS.extend(TIME);
     }
 
    /**
-     * # TimerBox Class
+     * # TimerBox
      *
      * Copyright(c) 2014 Stefano Balietti
      * MIT Licensed
      *
-     * Represents a box wherin to display a `VisualTimer`.
-     *
-     * ---
+     * Represents a box wherin to display a `VisualTimer`
      */
 
     /**
-     * ## TimerBox
+     * ## TimerBox constructor
      *
-     * `TimerBox` represents a box wherein to display the timer.
+     * `TimerBox` represents a box wherein to display the timer
      *
-     * @param @param {object} options Optional. Configuration options
-     * The options it can take are:
+     * @param {object} options Optional. Configuration options
+     *   The options it can take are:
      *
-     * - `hideTitle`
-     * - `hideBody`
-     * - `hideBox`
-     * - `title`
-     * - `classNameTitle`
-     * - `classNameBody`
-     * - `timeLeft`
+     *   - `hideTitle`
+     *   - `hideBody`
+     *   - `hideBox`
+     *   - `title`
+     *   - `classNameTitle`
+     *   - `classNameBody`
+     *   - `timeLeft`
      */
     function TimerBox(options) {
         /**
-         * ### boxDiv
+         * ### TimerBox.boxDiv
          *
          * The Div which will contain the title and body Divs
          */
         this.boxDiv = null;
 
         /**
-         * ### titleDiv
+         * ### TimerBox.titleDiv
          *
          * The Div which will contain the title
          */
         this.titleDiv = null;
         /**
-         * ### bodyDiv
+         * ### TimerBox.bodyDiv
          *
          * The Div which will contain the numbers
          */
         this.bodyDiv = null;
 
         /**
-         * ### timeLeft
+         * ### TimerBox.timeLeft
          *
          * Used to store the last value before focus is taken away
          */
@@ -32128,82 +32318,84 @@ JSUS.extend(TIME);
         }
     };
 
+    // ## TimerBox methods
+
     /**
-     * ## TimerBox.hideBox
+     * ### TimerBox.hideBox
      *
-     * hides entire `TimerBox`
+     * Hides entire `TimerBox`
      */
     TimerBox.prototype.hideBox = function() {
         this.boxDiv.style.display = 'none';
     };
 
     /**
-     * ## TimerBox.unhideBox
+     * ### TimerBox.unhideBox
      *
-     * hides entire `TimerBox`
+     * Hides entire `TimerBox`
      */
     TimerBox.prototype.unhideBox = function() {
         this.boxDiv.style.display = '';
     };
 
     /**
-     * ## TimerBox.hideTitle
+     * ### TimerBox.hideTitle
      *
-     * hides title of `TimerBox`
+     * Hides title of `TimerBox`
      */
     TimerBox.prototype.hideTitle = function() {
         this.titleDiv.style.display = 'none';
     };
 
     /**
-     * ## TimerBox.unhideTitle
+     * ### TimerBox.unhideTitle
      *
-     * unhides title of `TimerBox`
+     * Unhides title of `TimerBox`
      */
     TimerBox.prototype.unhideTitle = function() {
         this.titleDiv.style.display = '';
     };
 
     /**
-     * ## TimerBox.hideBody
+     * ### TimerBox.hideBody
      *
-     * hides body of `TimerBox`
+     * Hides body of `TimerBox`
      */
     TimerBox.prototype.hideBody = function() {
         this.bodyDiv.style.display = 'none';
     };
 
     /**
-     * ## TimerBox.unhideBody
+     * ### TimerBox.unhideBody
      *
-     * unhides Body of `TimerBox`
+     * Unhides Body of `TimerBox`
      */
     TimerBox.prototype.unhideBody = function() {
         this.bodyDiv.style.display = '';
     };
 
     /**
-     * ## TimerBox.setTitle
+     * ### TimerBox.setTitle
      *
-     * sets title of `TimerBox`
+     * Sets title of `TimerBox`
      */
     TimerBox.prototype.setTitle = function(title) {
         this.titleDiv.innerHTML = title;
     };
 
     /**
-     * ## TimerBox.setClassNameTitle
+     * ### TimerBox.setClassNameTitle
      *
-     * sets class name of title of `TimerBox`
+     * Sets class name of title of `TimerBox`
      */
     TimerBox.prototype.setClassNameTitle = function(className) {
         this.titleDiv.className = className;
     };
 
     /**
-     * ## TimerBox.setClassNameBody
+     * ### TimerBox.setClassNameBody
      *
-     * sets class name of body of `TimerBox`
+     * Sets class name of body of `TimerBox`
      */
     TimerBox.prototype.setClassNameBody = function(className) {
         this.bodyDiv.className = className;
@@ -32212,15 +32404,14 @@ JSUS.extend(TIME);
 })(node);
 
 /**
- * # Wall widget for nodeGame
+ * # Wall
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Creates a wall where log and other information is added
- * with a number and timestamp.
+ * with a number and timestamp
  *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -32239,8 +32430,8 @@ JSUS.extend(TIME);
     // ## Meta-data
 
     Wall.version = '0.3';
-    Wall.description = 'Intercepts all LOG events and prints them ';
-    Wall.description += 'into a DIV element with an ordinal number and a timestamp.';
+    Wall.description = 'Intercepts all LOG events and prints them into a DIV ' +
+                       'element with an ordinal number and a timestamp.';
 
     // ## Dependencies
 
@@ -32248,7 +32439,7 @@ JSUS.extend(TIME);
         JSUS: {}
     };
 
-    function Wall (options) {
+    function Wall(options) {
         this.id = options.id || Wall.id;
         this.name = options.name || this.name;
         this.buffer = [];

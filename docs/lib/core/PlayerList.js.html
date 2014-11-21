@@ -241,13 +241,13 @@ array of PlayerList instances and returns it.</p>
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">array</span>
-      <span class="dox_type">Array</span>
+      <span class="dox_type">array</span>
       <span>The array to transform</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
-      <span class="dox_type">Array</span>
+      <span class="dox_type">array</span>
       <span>array The array of <code>PlayerList</code> objects</span>
     </div>
   </div>
@@ -821,7 +821,7 @@ Players at other steps are ignored.</p>
       <span class="dox_tag_name">upTo</span>
       <span class="dox_type">boolean</span>
       <span>Optional. If TRUE, all players in the stage up to the
-  given step are checked. Defaults, FALSE.</span>
+  given step are checked. Default: FALSE</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -903,7 +903,7 @@ that game step have the property <code>stageLevel</code> equal to:</p>
 </div>
 
   </div>
-  <div class="body"><p>Verifies that all players in the same stage are at the same stageLevel.</p>
+  <div class="body"><p>Verifies that all players in the same stage are at the same stageLevel</p>
 
 <p>Players at other game steps are ignored, unless the <code>upTo</code> parameter is
 set. In this case, if players are found in earlier game steps, the method
@@ -926,13 +926,19 @@ stage_up_to:</p>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">stageLevel</span>
-      <span class="dox_type">numeric</span>
+      <span class="dox_type">number</span>
       <span>The stageLevel of reference</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">Optional.</span>
+      <span class="dox_tag_name">type</span>
       <span class="dox_type">string</span>
-      <span>type. Flag to say what players will be checked.</span>
+      <span>Optional. Flag to say what players will be checked</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">checkOutliers</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. Whether to check for outliers.
+  Can't be TRUE if type is 'exact'</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -1033,7 +1039,7 @@ stage_up_to:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
-<p>Player in another stage or in later step</p>
+<p>Player in another stage or in later step.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">gameStage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">!==</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">||</span> <span class="nx">cmp</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">outlier</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
@@ -1145,7 +1151,7 @@ PlayerList</p>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
-      <span class="dox_type">Array</span>
+      <span class="dox_type">array</span>
       <span>Array containing N <code>PlayerList</code> objects</span>
     </div>
     <div class="dox_tag_title">See</div>
@@ -1186,7 +1192,7 @@ PlayerList</p>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
-      <span class="dox_type">Array</span>
+      <span class="dox_type">array</span>
       <span>Array containing N <code>PlayerList</code> objects</span>
     </div>
     <div class="dox_tag_title">See</div>
@@ -1228,7 +1234,7 @@ PlayerList</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">Player</span>
-      <span class="dox_type">Array</span>
+      <span class="dox_type">array</span>
       <span>A single player object or an array of</span>
     </div>
   </div>
