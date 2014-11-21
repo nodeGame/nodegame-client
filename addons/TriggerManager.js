@@ -23,7 +23,6 @@
  *
  * Notice: TriggerManager works as a *LIFO* queue, i.e. new trigger functions
  * will be executed first.
- * ---
  */
 (function(exports, node) {
 

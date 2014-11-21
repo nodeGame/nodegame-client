@@ -7,7 +7,6 @@
  *
  * nodeGame is a free, open source, event-driven javascript framework
  * for on line, multiplayer games in the browser.
- * ---
  */
 (function(exports) {
 
