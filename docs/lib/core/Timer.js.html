@@ -1002,7 +1002,7 @@ the given GameTimer object are removed.</p>
       <span class="dox_tag_name">maxWait</span>
       <span class="dox_type">number</span>
       <span>Optional. The maximum time (in milliseconds)
-  to wait before emitting the event. Defaults, 6000</span>
+  to wait before emitting the event. Default: 6000</span>
     </div>
   </div>
 </div>
@@ -1030,15 +1030,15 @@ the given GameTimer object are removed.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">The</span>
+      <span class="dox_tag_name">func</span>
       <span class="dox_type">function</span>
-      <span>callback function to execute</span>
+      <span>The callback function to execute</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">maxWait</span>
       <span class="dox_type">number</span>
       <span>Optional. The maximum time (in milliseconds)
-  to wait before executing the callback. Defaults, 6000</span>
+  to wait before executing the callback. Default: 6000</span>
     </div>
   </div>
 </div>
@@ -1461,7 +1461,7 @@ recycles the settings in <code>this.options</code>.</p>
 <p>var options = {
      // The length of the interval.
      milliseconds: 4000,
-     // How often to update the time counter. Defaults, milliseconds.
+     // How often to update the time counter. Default: milliseconds
      update: 1000,
      // An event or function to fire when the timer expires.
      timeup: 'MY_EVENT',
@@ -1537,7 +1537,7 @@ recycles the settings in <code>this.options</code>.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
-<p>Set startPaused option. if specified. Defaults, FALSE.</p>
+<p>Set startPaused option. if specified. Default: FALSE</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">startPaused</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="nx">options</span><span class="p">.</span><span class="nx">startPaused</span> <span class="o">?</span>
             <span class="nx">options</span><span class="p">.</span><span class="nx">startPaused</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span></pre></div>
