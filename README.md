@@ -2,20 +2,8 @@
 
 [![Build Status](https://travis-ci.org/nodeGame/nodegame-client.png?branch=master)](https://travis-ci.org/nodeGame/nodegame-client)
 
-*nodeGame* is a free, open source, event-driven javascript framework for on
-line, multiplayer games in the browser.
-
----
-
-## Documentation
-
-For documentation please check the root [nodeGame](https://github.com/shakty/nodeGame) repo.
-
-### API
-
-For an incomplete API documentation see the docs folder. You can generate HTML documentation using the make.js file in the bin folder.
-
-	node bin/make.js doc
+- See [documentation](https://github.com/nodeGame/nodegame/wiki).
+- Browse [source code](http://nodegame.github.io/nodegame-client/docs/index.js.html).
 
 ## License
 
