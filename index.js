@@ -33,6 +33,7 @@
     exports.GameStage = require('./lib/core/GameStage').GameStage;
     exports.PlayerList = require('./lib/core/PlayerList').PlayerList;
     exports.Player = require('./lib/core/PlayerList').Player;
+    exports.MessagingQueue = require('./lib/core/MessagingQueue').MessagingQueue;
     exports.GameMsg = require('./lib/core/GameMsg').GameMsg;
     exports.Stager = require('./lib/core/Stager').Stager;
     exports.GamePlot = require('./lib/core/GamePlot').GamePlot;
