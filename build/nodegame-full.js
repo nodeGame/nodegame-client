@@ -13185,7 +13185,14 @@ JSUS.extend(TIME);
 
     var action = parent.action;
 
-    function Socket(node, options) {
+    /**
+     * ## Socket constructor
+     *
+     * Creates a new instance of Socket
+     *
+     * @param {NodeGameClient} node Reference to the node instance
+     */
+    function Socket(node) {
 
         // ## Private properties
 
@@ -13263,6 +13270,8 @@ JSUS.extend(TIME);
          */
         this.url = null;
 
+        // Experimental Journal.
+        // TODO: check if we need it.
 
         this.journalOn = false;
 
@@ -13286,6 +13295,7 @@ JSUS.extend(TIME);
                 }
             });
         }
+        // End Experimental Code.
 
         /**
          * ### Socket.node
@@ -13371,7 +13381,7 @@ JSUS.extend(TIME);
         }
         this.connecting = true;
         this.url = uri;
-        this.node.log('connecting to ' + humanReadableUri + '.');        
+        this.node.log('connecting to ' + humanReadableUri + '.');
         this.socket.connect(uri, options || this.userOptions);
     };
 
@@ -13388,7 +13398,7 @@ JSUS.extend(TIME);
     /**
      * ### Socket.onConnect
      *
-     * Handler for connections to the server.
+     * Handler for connections to the server
      *
      * @emit SOCKET_CONNECT
      */
@@ -13402,7 +13412,7 @@ JSUS.extend(TIME);
     /**
      * ### Socket.onDisconnect
      *
-     * Handler for disconnections from the server.
+     * Handler for disconnections from the server
      *
      * Clears the player and monitor lists.
      *
@@ -13419,6 +13429,7 @@ JSUS.extend(TIME);
         this.node.game.pl.clear(true);
         this.node.game.ml.clear(true);
 
+        console.log('AAAAAAAAAA');
         this.node.log('socket closed.');
     };
 
@@ -13465,7 +13476,7 @@ JSUS.extend(TIME);
     /**
      * ### Socket.onMessage
      *
-     * Initial handler for incoming messages from the server.
+     * Initial handler for incoming messages from the server
      *
      * This handler will be replaced by the FULL handler, upon receiving
      * a HI message from the server.
@@ -13501,7 +13512,7 @@ JSUS.extend(TIME);
     /**
      * ### Socket.onMessageFull
      *
-     * Full handler for incoming messages from the server.
+     * Full handler for incoming messages from the server
      *
      * All parsed messages are either emitted immediately or buffered,
      * if the game is not ready, and the message priority is low.x
@@ -13682,7 +13693,7 @@ JSUS.extend(TIME);
     /**
      * ### Socket.send
      *
-     * Pushes a message into the socket.
+     * Pushes a message into the socket
      *
      * The msg is actually received by the client itself as well.
      *
@@ -13764,11 +13775,42 @@ JSUS.extend(TIME);
 
     exports.SocketIo = SocketIo;
 
-    function SocketIo(node, options) {
+    /**
+     * ## SocketIo constructor
+     *
+     * Creates a new instance of SocketIo
+     *
+     * @param {NodeGameClient} node Reference to the node instance
+     */
+    function SocketIo(node) {
+
+        // ## Private properties
+
+        /**
+         * ### SocketIo.node
+         *
+         * Reference to the node object.
+         */
         this.node = node;
+
+        /**
+         * ### Socket.socket
+         *
+         * Reference to the actual socket-io socket created on connection
+         */
         this.socket = null;
     }
 
+    /**
+     * ### SocketIo.connect
+     *
+     * Establishes a socket-io connection with a server
+     *
+     * Sets the on: 'connect', 'message', 'disconnect' event listeners.
+     *
+     * @param {string} url The address of the server channel
+     * @param {object} options Optional. Configuration options
+     */
     SocketIo.prototype.connect = function(url, options) {
         var node, socket;
         node = this.node;
@@ -13800,19 +13842,39 @@ JSUS.extend(TIME);
         this.socket = socket;
 
         return true;
-
     };
 
+    /**
+     * ### SocketIo.disconnect
+     *
+     * Triggers the disconnection from a server
+     */
     SocketIo.prototype.disconnect = function() {
         this.socket.disconnect();
+        // this.node.socket.onDisconnect();
     };
 
+    /**
+     * ### SocketIo.isConnected
+     *
+     * Returns TRUE, if currently connected
+     */
     SocketIo.prototype.isConnected = function() {
         return this.socket &&
             this.socket.socket &&
             this.socket.socket.connected;
     };
 
+    /**
+     * ### SocketIo.send
+     *
+     * Stringifies and send a message through the socket-io socket
+     *
+     * @param {object} msg Object implementing a stringiy method. Usually,
+     *    a game message.
+     *
+     * @see GameMessage
+     */
     SocketIo.prototype.send = function(msg) {
         this.socket.send(msg.stringify());
     };
