@@ -13231,11 +13231,27 @@ JSUS.extend(TIME);
          *
          * Socket connection established.
          *
+         * @see Socket.connecting
          * @see Socket.isConnected
          * @see Socket.onConnect
          * @see Socket.onDisconnect
          */
         this.connected = false;
+
+         /**
+         * ### Socket.connecting
+         *
+         * Socket connection being established
+         *
+         * TODO see whether we should merge connected / connecting
+         * in one variable with socket states.
+         *
+         * @see Socket.connected
+         * @see Socket.isConnected
+         * @see Socket.onConnect
+         * @see Socket.onDisconnect
+         */
+        this.connecting = false;
 
         /**
          * ### Socket.url
@@ -13284,7 +13300,7 @@ JSUS.extend(TIME);
     /**
      * ### Socket.setup
      *
-     * Configure the socket.
+     * Configures the socket
      *
      * @param {object} options Optional. Configuration options.
      * @see node.setup.socket
@@ -13303,7 +13319,7 @@ JSUS.extend(TIME);
     /**
      * ### Socket.setSocketType
      *
-     * Set the default socket by requesting it to the Socket Factory.
+     * Sets the default socket by requesting it to the Socket Factory
      *
      * Supported types: 'Direct', 'SocketIo'.
      *
@@ -13320,25 +13336,54 @@ JSUS.extend(TIME);
     /**
      * ### Socket.connect
      *
-     * Calls the connect method on the actual socket object.
+     * Calls the connect method on the actual socket object
      *
-     * @param {string} uri The uri to which to connect.
+     * Uri is usually empty when using SocketDirect.
+     *
+     * @param {string} uri Optional. The uri to which to connect.
      * @param {object} options Optional. Configuration options for the socket.
      */
     Socket.prototype.connect = function(uri, options) {
-        var humanReadableUri = uri || 'local server';
-        if (!this.socket) {
-            this.node.err('Socket.connet: cannot connet to ' +
-                          humanReadableUri + ' . No socket defined.');
-            return false;
+        var humanReadableUri;
+
+        if (uri && 'string' !== typeof uri) {
+            throw new TypeError('Socket.connect: uri must be string or ' +
+                                'undefined.');
+        }
+        if (options && 'object' !== typeof options) {
+            throw new TypeError('Socket.connect: options must be object or ' +
+                                'undefined.');
+        }
+        if (this.connected) {
+            throw new Error('Socket.connect: socket is already connected. ' +
+                            'Only one connection is allowed.');
+        }
+        if (this.connecting) {
+            throw new Error('Socket.connecting: one connection attempt is ' +
+                            'already in progress. Please try again later.');
         }
 
-        this.url = uri;
-        this.node.log('connecting to ' + humanReadableUri + '.');
+        humanReadableUri = uri || 'local server';
 
-        this.socket.connect(uri, 'undefined' !== typeof options ?
-                            options : this.userOptions);
+        if (!this.socket) {
+            throw new Error('Socket.connet: cannot connet to ' +
+                            humanReadableUri + ' . No socket defined.');
+        }
+        this.connecting = true;
+        this.url = uri;
+        this.node.log('connecting to ' + humanReadableUri + '.');        
+        this.socket.connect(uri, options || this.userOptions);
     };
+
+    /**
+     * ### Socket.disconnect
+     *
+     * Calls the disconnect method on the actual socket object
+     */
+    Socket.prototype.disconnect = function() {
+        this.socket.disconnect();
+    };
+
 
     /**
      * ### Socket.onConnect
@@ -13349,6 +13394,7 @@ JSUS.extend(TIME);
      */
     Socket.prototype.onConnect = function() {
         this.connected = true;
+        this.connecting = false;
         this.node.emit('SOCKET_CONNECT');
         this.node.log('socket connected.');
     };
@@ -13364,6 +13410,7 @@ JSUS.extend(TIME);
      */
     Socket.prototype.onDisconnect = function() {
         this.connected = false;
+        this.conecting = false;
         node.emit('SOCKET_DISCONNECT');
         // Save the current stage of the game
         //this.node.session.store();
@@ -13712,7 +13759,8 @@ JSUS.extend(TIME);
 
     var GameMsg = node.GameMsg,
     Player = node.Player,
-    GameMsgGenerator = node.GameMsgGenerator;
+    GameMsgGenerator = node.GameMsgGenerator,
+    J = node.JSUS;
 
     exports.SocketIo = SocketIo;
 
@@ -13725,10 +13773,12 @@ JSUS.extend(TIME);
         var node, socket;
         node = this.node;
 
-        if (!url) {
-            node.err('cannot connect to empty url.', 'ERR');
-            return false;
+        if ('string' !== typeof url) {
+            throw TypeError('SocketIO.connect: url must be string.');
         }
+
+        // See https://github.com/Automattic/socket.io-client/issues/251
+        J.mixin(options, { 'force new connection': true });
 
         socket = io.connect(url, options); //conf.io
 
@@ -13751,6 +13801,10 @@ JSUS.extend(TIME);
 
         return true;
 
+    };
+
+    SocketIo.prototype.disconnect = function() {
+        this.socket.disconnect();
     };
 
     SocketIo.prototype.isConnected = function() {
