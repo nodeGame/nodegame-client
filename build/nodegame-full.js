@@ -8589,6 +8589,7 @@ JSUS.extend(TIME);
     // Player waits that all the clients have terminated the
     // current step before going to the next
     exports.stepRules.SYNC_STEP = function(stage, myStageLevel, pl, game) {
+        debugger
         return myStageLevel === node.constants.stageLevels.DONE &&
             pl.isStepDone(stage);
     };
@@ -14450,7 +14451,12 @@ JSUS.extend(TIME);
      * Calls the init function, and steps.
      *
      * Important: it does not use `Game.publishUpdate` because that is
-     * just for change of state after the game has started
+     * just for change of state after the game has started.
+     *
+     * @param {object} options Optional. Configuration object. Fields:
+     *
+     *   - step: true/false. If false, jus call the init function, and
+     *     does not enter the first step. Default, TRUE.
      */
     Game.prototype.start = function(options) {
         var onInit, node, startStage;
