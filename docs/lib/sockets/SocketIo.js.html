@@ -24,6 +24,30 @@
       <div class="heading h2">
         <a href="#global-scope">Global scope</a>
       </div>
+      <div class="heading h2">
+        <a href="#socketio-constructor">SocketIo constructor</a>
+      </div>
+      <div class="heading h2">
+        <a href="#private-properties">Private properties</a>
+      </div>
+      <div class="heading h3">
+        <a href="#socketio.node">SocketIo.node</a>
+      </div>
+      <div class="heading h3">
+        <a href="#socket.socket">Socket.socket</a>
+      </div>
+      <div class="heading h3">
+        <a href="#socketio.connect">SocketIo.connect</a>
+      </div>
+      <div class="heading h3">
+        <a href="#socketio.disconnect">SocketIo.disconnect</a>
+      </div>
+      <div class="heading h3">
+        <a href="#socketio.isconnected">SocketIo.isConnected</a>
+      </div>
+      <div class="heading h3">
+        <a href="#socketio.send">SocketIo.send</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -78,23 +102,135 @@ module.parents.exports.io does not exists</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
     <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
-    <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">;</span>
+    <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
+    <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">SocketIo</span> <span class="o">=</span> <span class="nx">SocketIo</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">SocketIo</span> <span class="o">=</span> <span class="nx">SocketIo</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socketio-constructor">
+  <h2>
+    <a href="#socketio-constructor" class="pilcrow">&#182;</a>
+    SocketIo constructor
+  </h2>
+</div>
 
-    <span class="kd">function</span> <span class="nx">SocketIo</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-    <span class="p">}</span>
+  </div>
+  <div class="body"><p>Creates a new instance of SocketIo</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">node</span>
+      <span class="dox_type">NodeGameClient</span>
+      <span>Reference to the node instance</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">SocketIo</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="private-properties">
+  <h2>
+    <a href="#private-properties" class="pilcrow">&#182;</a>
+    Private properties
+  </h2>
+</div>
 
-    <span class="nx">SocketIo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socketio.node">
+  <h3>
+    <a href="#socketio.node" class="pilcrow">&#182;</a>
+    SocketIo.node
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reference to the node object.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socket.socket">
+  <h3>
+    <a href="#socket.socket" class="pilcrow">&#182;</a>
+    Socket.socket
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reference to the actual socket-io socket created on connection</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socketio.connect">
+  <h3>
+    <a href="#socketio.connect" class="pilcrow">&#182;</a>
+    SocketIo.connect
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Establishes a socket-io connection with a server</p>
+
+<p>Sets the on: 'connect', 'message', 'disconnect' event listeners.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">url</span>
+      <span class="dox_type">string</span>
+      <span>The address of the server channel</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Configuration options</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">SocketIo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">socket</span><span class="p">;</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;cannot connect to empty url.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;SocketIO.connect: url must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<p>See <a href='https://github.com/Automattic/socket.io-client/issues/251'>https://github.com/Automattic/socket.io-client/issues/251</a></p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;force new connection&#39;</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
 
         <span class="nx">socket</span> <span class="o">=</span> <span class="nx">io</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span> <span class="c1">//conf.io</span>
 
@@ -116,16 +252,81 @@ module.parents.exports.io does not exists</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">socket</span><span class="p">;</span>
 
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socketio.disconnect">
+  <h3>
+    <a href="#socketio.disconnect" class="pilcrow">&#182;</a>
+    SocketIo.disconnect
+  </h3>
+</div>
 
-    <span class="p">};</span>
+  </div>
+  <div class="body"><p>Triggers the disconnection from a server</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">SocketIo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">disconnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socketio.isconnected">
+  <h3>
+    <a href="#socketio.isconnected" class="pilcrow">&#182;</a>
+    SocketIo.isConnected
+  </h3>
+</div>
 
-    <span class="nx">SocketIo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isConnected</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  </div>
+  <div class="body"><p>Returns TRUE, if currently connected</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">SocketIo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isConnected</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">&amp;&amp;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">socket</span> <span class="o">&amp;&amp;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connected</span><span class="p">;</span>
-    <span class="p">};</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socketio.send">
+  <h3>
+    <a href="#socketio.send" class="pilcrow">&#182;</a>
+    SocketIo.send
+  </h3>
+</div>
 
-    <span class="nx">SocketIo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">send</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+  </div>
+  <div class="body"><p>Stringifies and send a message through the socket-io socket</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">msg</span>
+      <span class="dox_type">object</span>
+      <span>Object implementing a stringiy method. Usually,
+   a game message.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameMessage
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">SocketIo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">send</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">stringify</span><span class="p">());</span>
     <span class="p">};</span>
 

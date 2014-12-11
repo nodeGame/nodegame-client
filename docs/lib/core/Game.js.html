@@ -738,7 +738,20 @@ stage are deleted.</p>
 <p>Calls the init function, and steps.</p>
 
 <p>Important: it does not use <code>Game.publishUpdate</code> because that is
-just for change of state after the game has started</p>
+just for change of state after the game has started.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Configuration object. Fields:
+
+<ul>
+<li>step: true/false. If false, jus call the init function, and
+does not enter the first step. Default, TRUE.</li>
+</ul></span>
+    </div>
   </div>
 </div>
         </td>
@@ -777,17 +790,10 @@ just for change of state after the game has started</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
-<p>INIT the game.</p>
+<p>Starts from beginning (default) or from a predefined stage
+This options is useful when a player reconnets.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">onInit</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getOnInit</span><span class="p">();</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">onInit</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;INIT&#39;</span><span class="p">);</span>
-                <span class="nx">onInit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">startStage</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">startStage</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">();</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -795,10 +801,18 @@ just for change of state after the game has started</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
-<p>Starts from beginning (default) or from a predefined stage
-This options is useful when a player reconnets.</p>
+<p>INIT the game.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">startStage</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">startStage</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">onInit</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getOnInit</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">globals</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getGlobals</span><span class="p">(</span><span class="nx">startStage</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">onInit</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;INIT&#39;</span><span class="p">);</span>
+                <span class="nx">onInit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="nx">startStage</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 
@@ -1408,7 +1422,7 @@ TODO: remove some unused comments in the code.
 <div class="pilwrap">
   <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
-<p>TODO maybe update also in case of string</p>
+<p>TODO maybe update also in case of string.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;STEPPING&#39;</span><span class="p">);</span></pre></div>
         </td>

@@ -1,5 +1,11 @@
 # nodegame-client change log
 
+## 0.9.7
+
+ - `node.game.globals` added.
+ - Documentation for Sockets added.
+ - Several documentation fixes.
+
 ## 0.9.6
 
  - Stager.extendStage fixed
