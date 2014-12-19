@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## 0.9.8
+
+ - Updated FS lib to latest NDDB.
+
 ## 0.9.7
 
  - `node.game.globals` added.
