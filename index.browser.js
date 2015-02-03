@@ -1,10 +1,10 @@
 /**
  * # nodeGame: Social Experiments in the Browser
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * nodeGame is a free, open source, event-driven javascript framework,
- * for on line multiplayer games in the browser.
+ * for online multiplayer games in the browser.
  */
 (function(exports) {
     if ('undefined' !== typeof JSUS) exports.JSUS = JSUS;
