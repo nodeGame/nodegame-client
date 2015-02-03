@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## 0.9.9
+
+ - Error Manager removed in Node.JS (use ServerNode instead).
+
 ## 0.9.8
 
  - Updated FS lib to latest NDDB.
