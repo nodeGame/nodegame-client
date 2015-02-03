@@ -368,15 +368,15 @@ if (!JSON) {
     var version = '0.5';
 
     var store = exports.store = function(key, value, options, type) {
-	options = options || {};
-	type = (options.type && options.type in store.types) ? options.type : store.type;
-	if (!type || !store.types[type]) {
-	    store.log("Cannot save/load value. Invalid storage type selected: " + type, 'ERR');
-	    return;
-	}
-	store.log('Accessing ' + type + ' storage');
+        options = options || {};
+        type = (options.type && options.type in store.types) ? options.type : store.type;
+        if (!type || !store.types[type]) {
+            store.log("Cannot save/load value. Invalid storage type selected: " + type, 'ERR');
+            return;
+        }
+        store.log('Accessing ' + type + ' storage');
 
-	return store.types[type](key, value, options);
+        return store.types[type](key, value, options);
     };
 
     // Adding functions and properties to store
@@ -392,154 +392,154 @@ if (!JSON) {
     //if Object.defineProperty works...
     try {
 
-	Object.defineProperty(store, 'type', {
-	    set: function(type){
-		if ('undefined' === typeof store.types[type]) {
-		    store.log('Cannot set store.type to an invalid type: ' + type);
-		    return false;
-		}
-		mainStorageType = type;
-		return type;
-	    },
-	    get: function(){
-		return mainStorageType;
-	    },
-	    configurable: false,
-	    enumerable: true
-	});
+        Object.defineProperty(store, 'type', {
+            set: function(type){
+                if ('undefined' === typeof store.types[type]) {
+                    store.log('Cannot set store.type to an invalid type: ' + type);
+                    return false;
+                }
+                mainStorageType = type;
+                return type;
+            },
+            get: function(){
+                return mainStorageType;
+            },
+            configurable: false,
+            enumerable: true
+        });
     }
     catch(e) {
-	store.type = mainStorageType; // default: memory
+        store.type = mainStorageType; // default: memory
     }
 
     store.addType = function(type, storage) {
-	store.types[type] = storage;
-	store[type] = function(key, value, options) {
-	    options = options || {};
-	    options.type = type;
-	    return store(key, value, options);
-	};
+        store.types[type] = storage;
+        store[type] = function(key, value, options) {
+            options = options || {};
+            options.type = type;
+            return store(key, value, options);
+        };
 
-	if (!store.type || store.type === "volatile") {
-	    store.type = type;
-	}
+        if (!store.type || store.type === "volatile") {
+            store.type = type;
+        }
     };
 
     // TODO: create unit test
     store.onquotaerror = undefined;
     store.error = function() {
-	console.log("shelf quota exceeded");
-	if ('function' === typeof store.onquotaerror) {
-	    store.onquotaerror(null);
-	}
+        console.log("shelf quota exceeded");
+        if ('function' === typeof store.onquotaerror) {
+            store.onquotaerror(null);
+        }
     };
 
     store.log = function(text) {
-	if (store.verbosity > 0) {
-	    console.log('Shelf v.' + version + ': ' + text);
-	}
+        if (store.verbosity > 0) {
+            console.log('Shelf v.' + version + ': ' + text);
+        }
 
     };
 
     store.isPersistent = function() {
-	if (!store.types) return false;
-	if (store.type === "volatile") return false;
-	return true;
+        if (!store.types) return false;
+        if (store.type === "volatile") return false;
+        return true;
     };
 
     //if Object.defineProperty works...
     try {
-	Object.defineProperty(store, 'persistent', {
-	    set: function(){},
-	    get: store.isPersistent,
-	    configurable: false
-	});
+        Object.defineProperty(store, 'persistent', {
+            set: function(){},
+            get: store.isPersistent,
+            configurable: false
+        });
     }
     catch(e) {
-	// safe case
-	store.persistent = false;
+        // safe case
+        store.persistent = false;
     }
 
     store.decycle = function(o) {
-	if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
-	    o = JSON.decycle(o);
-	}
-	return o;
+        if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
+            o = JSON.decycle(o);
+        }
+        return o;
     };
 
     store.retrocycle = function(o) {
-	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
-	    o = JSON.retrocycle(o);
-	}
-	return o;
+        if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
+            o = JSON.retrocycle(o);
+        }
+        return o;
     };
 
     store.stringify = function(o) {
-	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
-	    throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
-	}
+        if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
+            throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
+        }
 
-	o = store.decycle(o);
-	return JSON.stringify(o);
+        o = store.decycle(o);
+        return JSON.stringify(o);
     };
 
     store.parse = function(o) {
-	if ('undefined' === typeof o) return undefined;
-	if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
-	    try {
-		o = JSON.parse(o);
-	    }
-	    catch (e) {
-		store.log('Error while parsing a value: ' + e, 'ERR');
-		store.log(o);
-	    }
-	}
+        if ('undefined' === typeof o) return undefined;
+        if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
+            try {
+                o = JSON.parse(o);
+            }
+            catch (e) {
+                store.log('Error while parsing a value: ' + e, 'ERR');
+                store.log(o);
+            }
+        }
 
-	o = store.retrocycle(o);
-	return o;
+        o = store.retrocycle(o);
+        return o;
     };
 
     // ## In-memory storage
     // ### fallback for all browsers to enable the API even if we can't persist data
     (function() {
 
-	var memory = {},
-	timeout = {};
+        var memory = {},
+        timeout = {};
 
-	function copy(obj) {
-	    return store.parse(store.stringify(obj));
-	}
+        function copy(obj) {
+            return store.parse(store.stringify(obj));
+        }
 
-	store.addType("volatile", function(key, value, options) {
+        store.addType("volatile", function(key, value, options) {
 
-	    if (!key) {
-		return copy(memory);
-	    }
+            if (!key) {
+                return copy(memory);
+            }
 
-	    if (value === undefined) {
-		return copy(memory[key]);
-	    }
+            if (value === undefined) {
+                return copy(memory[key]);
+            }
 
-	    if (timeout[key]) {
-		clearTimeout(timeout[key]);
-		delete timeout[key];
-	    }
+            if (timeout[key]) {
+                clearTimeout(timeout[key]);
+                delete timeout[key];
+            }
 
-	    if (value === null) {
-		delete memory[key];
-		return null;
-	    }
+            if (value === null) {
+                delete memory[key];
+                return null;
+            }
 
-	    memory[key] = value;
-	    if (options.expires) {
-		timeout[key] = setTimeout(function() {
-		    delete memory[key];
-		    delete timeout[key];
-		}, options.expires);
-	    }
+            memory[key] = value;
+            if (options.expires) {
+                timeout[key] = setTimeout(function() {
+                    delete memory[key];
+                    delete timeout[key];
+                }, options.expires);
+            }
 
-	    return value;
-	});
+            return value;
+        });
     }());
 
 }('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
@@ -563,230 +563,230 @@ if (!JSON) {
     var store = exports.store;
 
     if (!store) {
-	throw new Error('amplify.shelf.js: shelf.js core not found.');
+        throw new Error('amplify.shelf.js: shelf.js core not found.');
     }
 
     if ('undefined' === typeof window) {
-	throw new Error('amplify.shelf.js:  window object not found.');
+        throw new Error('amplify.shelf.js:  window object not found.');
     }
 
     var regex = new RegExp("^" + store.prefix);
     function createFromStorageInterface( storageType, storage ) {
-	store.addType( storageType, function( key, value, options ) {
-	    var storedValue, parsed, i, remove,
-	    ret = value,
-	    now = (new Date()).getTime();
+        store.addType( storageType, function( key, value, options ) {
+            var storedValue, parsed, i, remove,
+            ret = value,
+            now = (new Date()).getTime();
 
-	    if ( !key ) {
-		ret = {};
-		remove = [];
-		i = 0;
-		try {
-		    // accessing the length property works around a localStorage bug
-		    // in Firefox 4.0 where the keys don't update cross-page
-		    // we assign to key just to avoid Closure Compiler from removing
-		    // the access as "useless code"
-		    // https://bugzilla.mozilla.org/show_bug.cgi?id=662511
-		    key = storage.length;
+            if ( !key ) {
+                ret = {};
+                remove = [];
+                i = 0;
+                try {
+                    // accessing the length property works around a localStorage bug
+                    // in Firefox 4.0 where the keys don't update cross-page
+                    // we assign to key just to avoid Closure Compiler from removing
+                    // the access as "useless code"
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=662511
+                    key = storage.length;
 
-		    while ( key = storage.key( i++ ) ) {
-			if ( regex.test( key ) ) {
-			    parsed = store.parse( storage.getItem( key ) );
-			    if ( parsed.expires && parsed.expires <= now ) {
-				remove.push( key );
-			    } else {
-				ret[ key.replace( rprefix, "" ) ] = parsed.data;
-			    }
-			}
-		    }
-		    while ( key = remove.pop() ) {
-			storage.removeItem( key );
-		    }
-		} catch ( error ) {}
-		return ret;
-	    }
+                    while ( key = storage.key( i++ ) ) {
+                        if ( regex.test( key ) ) {
+                            parsed = store.parse( storage.getItem( key ) );
+                            if ( parsed.expires && parsed.expires <= now ) {
+                                remove.push( key );
+                            } else {
+                                ret[ key.replace( rprefix, "" ) ] = parsed.data;
+                            }
+                        }
+                    }
+                    while ( key = remove.pop() ) {
+                        storage.removeItem( key );
+                    }
+                } catch ( error ) {}
+                return ret;
+            }
 
-	    // protect against name collisions with direct storage
-	    key = store.prefix + key;
+            // protect against name collisions with direct storage
+            key = store.prefix + key;
 
-	    if ( value === undefined ) {
-		storedValue = storage.getItem( key );
-		parsed = storedValue ? store.parse( storedValue ) : { expires: -1 };
-		if ( parsed.expires && parsed.expires <= now ) {
-		    storage.removeItem( key );
-		} else {
-		    return parsed.data;
-		}
-	    } else {
-		if ( value === null ) {
-		    storage.removeItem( key );
-		} else {
-		    parsed = store.stringify({
-			data: value,
-			expires: options.expires ? now + options.expires : null
-		    });
-		    try {
-			storage.setItem( key, parsed );
-			// quota exceeded
-		    } catch( error ) {
-			// expire old data and try again
-			store[ storageType ]();
-			try {
-			    storage.setItem( key, parsed );
-			} catch( error ) {
-			    throw store.error();
-			}
-		    }
-		}
-	    }
+            if ( value === undefined ) {
+                storedValue = storage.getItem( key );
+                parsed = storedValue ? store.parse( storedValue ) : { expires: -1 };
+                if ( parsed.expires && parsed.expires <= now ) {
+                    storage.removeItem( key );
+                } else {
+                    return parsed.data;
+                }
+            } else {
+                if ( value === null ) {
+                    storage.removeItem( key );
+                } else {
+                    parsed = store.stringify({
+                        data: value,
+                        expires: options.expires ? now + options.expires : null
+                    });
+                    try {
+                        storage.setItem( key, parsed );
+                        // quota exceeded
+                    } catch( error ) {
+                        // expire old data and try again
+                        store[ storageType ]();
+                        try {
+                            storage.setItem( key, parsed );
+                        } catch( error ) {
+                            throw store.error();
+                        }
+                    }
+                }
+            }
 
-	    return ret;
-	});
+            return ret;
+        });
     }
 
     // localStorage + sessionStorage
     // IE 8+, Firefox 3.5+, Safari 4+, Chrome 4+, Opera 10.5+, iPhone 2+, Android 2+
     for ( var webStorageType in { localStorage: 1, sessionStorage: 1 } ) {
-	// try/catch for file protocol in Firefox and Private Browsing in Safari 5
-	try {
-	    // Safari 5 in Private Browsing mode exposes localStorage
-	    // but doesn't allow storing data, so we attempt to store and remove an item.
-	    // This will unfortunately give us a false negative if we're at the limit.
-	    window[ webStorageType ].setItem(store.prefix, "x" );
-	    window[ webStorageType ].removeItem(store.prefix );
-	    createFromStorageInterface( webStorageType, window[ webStorageType ] );
-	} catch( e ) {}
+        // try/catch for file protocol in Firefox and Private Browsing in Safari 5
+        try {
+            // Safari 5 in Private Browsing mode exposes localStorage
+            // but doesn't allow storing data, so we attempt to store and remove an item.
+            // This will unfortunately give us a false negative if we're at the limit.
+            window[ webStorageType ].setItem(store.prefix, "x" );
+            window[ webStorageType ].removeItem(store.prefix );
+            createFromStorageInterface( webStorageType, window[ webStorageType ] );
+        } catch( e ) {}
     }
 
     // globalStorage
     // non-standard: Firefox 2+
     // https://developer.mozilla.org/en/dom/storage#globalStorage
     if ( !store.types.localStorage && window.globalStorage ) {
-	// try/catch for file protocol in Firefox
-	try {
-	    createFromStorageInterface( "globalStorage",
-			                window.globalStorage[ window.location.hostname ] );
-	    // Firefox 2.0 and 3.0 have sessionStorage and globalStorage
-	    // make sure we default to globalStorage
-	    // but don't default to globalStorage in 3.5+ which also has localStorage
-	    if ( store.type === "sessionStorage" ) {
-		store.type = "globalStorage";
-	    }
-	} catch( e ) {}
+        // try/catch for file protocol in Firefox
+        try {
+            createFromStorageInterface( "globalStorage",
+                                        window.globalStorage[ window.location.hostname ] );
+            // Firefox 2.0 and 3.0 have sessionStorage and globalStorage
+            // make sure we default to globalStorage
+            // but don't default to globalStorage in 3.5+ which also has localStorage
+            if ( store.type === "sessionStorage" ) {
+                store.type = "globalStorage";
+            }
+        } catch( e ) {}
     }
 
     // userData
     // non-standard: IE 5+
     // http://msdn.microsoft.com/en-us/library/ms531424(v=vs.85).aspx
     (function() {
-	// IE 9 has quirks in userData that are a huge pain
-	// rather than finding a way to detect these quirks
-	// we just don't register userData if we have localStorage
-	if ( store.types.localStorage ) {
-	    return;
-	}
+        // IE 9 has quirks in userData that are a huge pain
+        // rather than finding a way to detect these quirks
+        // we just don't register userData if we have localStorage
+        if ( store.types.localStorage ) {
+            return;
+        }
 
-	// append to html instead of body so we can do this from the head
-	var div = document.createElement( "div" ),
-	attrKey = store.prefix; // was "amplify" and not __amplify__
-	div.style.display = "none";
-	document.getElementsByTagName( "head" )[ 0 ].appendChild( div );
+        // append to html instead of body so we can do this from the head
+        var div = document.createElement( "div" ),
+        attrKey = store.prefix; // was "amplify" and not __amplify__
+        div.style.display = "none";
+        document.getElementsByTagName( "head" )[ 0 ].appendChild( div );
 
-	// we can't feature detect userData support
-	// so just try and see if it fails
-	// surprisingly, even just adding the behavior isn't enough for a failure
-	// so we need to load the data as well
-	try {
-	    div.addBehavior( "#default#userdata" );
-	    div.load( attrKey );
-	} catch( e ) {
-	    div.parentNode.removeChild( div );
-	    return;
-	}
+        // we can't feature detect userData support
+        // so just try and see if it fails
+        // surprisingly, even just adding the behavior isn't enough for a failure
+        // so we need to load the data as well
+        try {
+            div.addBehavior( "#default#userdata" );
+            div.load( attrKey );
+        } catch( e ) {
+            div.parentNode.removeChild( div );
+            return;
+        }
 
-	store.addType( "userData", function( key, value, options ) {
-	    div.load( attrKey );
-	    var attr, parsed, prevValue, i, remove,
-	    ret = value,
-	    now = (new Date()).getTime();
+        store.addType( "userData", function( key, value, options ) {
+            div.load( attrKey );
+            var attr, parsed, prevValue, i, remove,
+            ret = value,
+            now = (new Date()).getTime();
 
-	    if ( !key ) {
-		ret = {};
-		remove = [];
-		i = 0;
-		while ( attr = div.XMLDocument.documentElement.attributes[ i++ ] ) {
-		    parsed = store.parse( attr.value );
-		    if ( parsed.expires && parsed.expires <= now ) {
-			remove.push( attr.name );
-		    } else {
-			ret[ attr.name ] = parsed.data;
-		    }
-		}
-		while ( key = remove.pop() ) {
-		    div.removeAttribute( key );
-		}
-		div.save( attrKey );
-		return ret;
-	    }
+            if ( !key ) {
+                ret = {};
+                remove = [];
+                i = 0;
+                while ( attr = div.XMLDocument.documentElement.attributes[ i++ ] ) {
+                    parsed = store.parse( attr.value );
+                    if ( parsed.expires && parsed.expires <= now ) {
+                        remove.push( attr.name );
+                    } else {
+                        ret[ attr.name ] = parsed.data;
+                    }
+                }
+                while ( key = remove.pop() ) {
+                    div.removeAttribute( key );
+                }
+                div.save( attrKey );
+                return ret;
+            }
 
-	    // convert invalid characters to dashes
-	    // http://www.w3.org/TR/REC-xml/#NT-Name
-	    // simplified to assume the starting character is valid
-	    // also removed colon as it is invalid in HTML attribute names
-	    key = key.replace( /[^\-._0-9A-Za-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c-\u200d\u203f\u2040\u2070-\u218f]/g, "-" );
-	    // adjust invalid starting character to deal with our simplified sanitization
-	    key = key.replace( /^-/, "_-" );
+            // convert invalid characters to dashes
+            // http://www.w3.org/TR/REC-xml/#NT-Name
+            // simplified to assume the starting character is valid
+            // also removed colon as it is invalid in HTML attribute names
+            key = key.replace( /[^\-._0-9A-Za-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c-\u200d\u203f\u2040\u2070-\u218f]/g, "-" );
+            // adjust invalid starting character to deal with our simplified sanitization
+            key = key.replace( /^-/, "_-" );
 
-	    if ( value === undefined ) {
-		attr = div.getAttribute( key );
-		parsed = attr ? store.parse( attr ) : { expires: -1 };
-		if ( parsed.expires && parsed.expires <= now ) {
-		    div.removeAttribute( key );
-		} else {
-		    return parsed.data;
-		}
-	    } else {
-		if ( value === null ) {
-		    div.removeAttribute( key );
-		} else {
-		    // we need to get the previous value in case we need to rollback
-		    prevValue = div.getAttribute( key );
-		    parsed = store.stringify({
-			data: value,
-			expires: (options.expires ? (now + options.expires) : null)
-		    });
-		    div.setAttribute( key, parsed );
-		}
-	    }
+            if ( value === undefined ) {
+                attr = div.getAttribute( key );
+                parsed = attr ? store.parse( attr ) : { expires: -1 };
+                if ( parsed.expires && parsed.expires <= now ) {
+                    div.removeAttribute( key );
+                } else {
+                    return parsed.data;
+                }
+            } else {
+                if ( value === null ) {
+                    div.removeAttribute( key );
+                } else {
+                    // we need to get the previous value in case we need to rollback
+                    prevValue = div.getAttribute( key );
+                    parsed = store.stringify({
+                        data: value,
+                        expires: (options.expires ? (now + options.expires) : null)
+                    });
+                    div.setAttribute( key, parsed );
+                }
+            }
 
-	    try {
-		div.save( attrKey );
-		// quota exceeded
-	    } catch ( error ) {
-		// roll the value back to the previous value
-		if ( prevValue === null ) {
-		    div.removeAttribute( key );
-		} else {
-		    div.setAttribute( key, prevValue );
-		}
+            try {
+                div.save( attrKey );
+                // quota exceeded
+            } catch ( error ) {
+                // roll the value back to the previous value
+                if ( prevValue === null ) {
+                    div.removeAttribute( key );
+                } else {
+                    div.setAttribute( key, prevValue );
+                }
 
-		// expire old data and try again
-		store.userData();
-		try {
-		    div.setAttribute( key, parsed );
-		    div.save( attrKey );
-		} catch ( error ) {
-		    // roll the value back to the previous value
-		    if ( prevValue === null ) {
-			div.removeAttribute( key );
-		    } else {
-			div.setAttribute( key, prevValue );
-		    }
-		    throw store.error();
-		}
-	    }
-	    return ret;
-	});
+                // expire old data and try again
+                store.userData();
+                try {
+                    div.setAttribute( key, parsed );
+                    div.save( attrKey );
+                } catch ( error ) {
+                    // roll the value back to the previous value
+                    if ( prevValue === null ) {
+                        div.removeAttribute( key );
+                    } else {
+                        div.setAttribute( key, prevValue );
+                    }
+                    throw store.error();
+                }
+            }
+            return ret;
+        });
     }());
 
 }(this));
@@ -802,312 +802,311 @@ if (!JSON) {
     var store = exports.store;
 
     if (!store) {
-	throw new Error('cookie.shelf.js: shelf.js core not found.');
+        throw new Error('cookie.shelf.js: shelf.js core not found.');
     }
 
     if ('undefined' === typeof window) {
-	throw new Error('cookie.shelf.js: window object not found.');
+        throw new Error('cookie.shelf.js: window object not found.');
     }
 
     var cookie = (function() {
 
-	var resolveOptions, assembleOptionsString, parseCookies, constructor;
+        var resolveOptions, assembleOptionsString, parseCookies, constructor;
         var defaultOptions = {
-	    expiresAt: null,
-	    path: '/',
-	    domain:  null,
-	    secure: false
-	};
+            expiresAt: null,
+            path: '/',
+            domain:  null,
+            secure: false
+        };
 
-	/**
-	 * resolveOptions - receive an options object and ensure all options
+        /**
+         * resolveOptions - receive an options object and ensure all options
          * are present and valid, replacing with defaults where necessary
-	 *
-	 * @access private
-	 * @static
-	 * @parameter Object options - optional options to start with
-	 * @return Object complete and valid options object
-	 */
-	resolveOptions = function(options){
+         *
+         * @access private
+         * @static
+         * @parameter Object options - optional options to start with
+         * @return Object complete and valid options object
+         */
+        resolveOptions = function(options){
 
-	    var returnValue, expireDate;
+            var returnValue, expireDate;
 
-	    if(typeof options !== 'object' || options === null){
-		returnValue = defaultOptions;
-	    }
-	    else {
-		returnValue = {
-		    expiresAt: defaultOptions.expiresAt,
-		    path: defaultOptions.path,
-		    domain: defaultOptions.domain,
-		    secure: defaultOptions.secure
-		};
+            if(typeof options !== 'object' || options === null){
+                returnValue = defaultOptions;
+            }
+            else {
+                returnValue = {
+                    expiresAt: defaultOptions.expiresAt,
+                    path: defaultOptions.path,
+                    domain: defaultOptions.domain,
+                    secure: defaultOptions.secure
+                };
 
-		if (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date) {
-		    returnValue.expiresAt = options.expiresAt;
-		}
-		else if (typeof options.hoursToLive === 'number' && options.hoursToLive !== 0){
-		    expireDate = new Date();
-		    expireDate.setTime(expireDate.getTime() + (options.hoursToLive * 60 * 60 * 1000));
-		    returnValue.expiresAt = expireDate;
-		}
+                if (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date) {
+                    returnValue.expiresAt = options.expiresAt;
+                }
+                else if (typeof options.hoursToLive === 'number' && options.hoursToLive !== 0){
+                    expireDate = new Date();
+                    expireDate.setTime(expireDate.getTime() + (options.hoursToLive * 60 * 60 * 1000));
+                    returnValue.expiresAt = expireDate;
+                }
 
-		if (typeof options.path === 'string' && options.path !== '') {
-		    returnValue.path = options.path;
-		}
+                if (typeof options.path === 'string' && options.path !== '') {
+                    returnValue.path = options.path;
+                }
 
-		if (typeof options.domain === 'string' && options.domain !== '') {
-		    returnValue.domain = options.domain;
-		}
+                if (typeof options.domain === 'string' && options.domain !== '') {
+                    returnValue.domain = options.domain;
+                }
 
-		if (options.secure === true) {
-		    returnValue.secure = options.secure;
-		}
-	    }
+                if (options.secure === true) {
+                    returnValue.secure = options.secure;
+                }
+            }
 
-	    return returnValue;
-	};
+            return returnValue;
+        };
 
-	/**
-	 * assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
-	 *
-	 * @access private
-	 * @static
-	 * @parameter options OBJECT - optional options to start with
-	 * @return STRING - complete and valid cookie setting options
-	 */
-	assembleOptionsString = function (options) {
-	    options = resolveOptions(options);
+        /**
+         * assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
+         *
+         * @access private
+         * @static
+         * @parameter options OBJECT - optional options to start with
+         * @return STRING - complete and valid cookie setting options
+         */
+        assembleOptionsString = function (options) {
+            options = resolveOptions(options);
 
-	    return (
-		(typeof options.expiresAt === 'object' && options.expiresAt instanceof Date ? '; expires=' + options.expiresAt.toGMTString() : '') +
-		    '; path=' + options.path +
-		    (typeof options.domain === 'string' ? '; domain=' + options.domain : '') +
-		    (options.secure === true ? '; secure' : '')
-	    );
-	};
+            return (
+                (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date ? '; expires=' + options.expiresAt.toGMTString() : '') +
+                    '; path=' + options.path +
+                    (typeof options.domain === 'string' ? '; domain=' + options.domain : '') +
+                    (options.secure === true ? '; secure' : '')
+            );
+        };
 
-	/**
-	 * parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
-	 *
-	 * @access private
-	 * @static
-	 * @return OBJECT - hash of cookies from document.cookie
-	 */
-	parseCookies = function() {
-	    var cookies = {}, i, pair, name, value, separated = document.cookie.split(';'), unparsedValue;
-	    for(i = 0; i < separated.length; i = i + 1){
-		pair = separated[i].split('=');
-		name = pair[0].replace(/^\s*/, '').replace(/\s*$/, '');
+        /**
+         * parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
+         *
+         * @access private
+         * @static
+         * @return OBJECT - hash of cookies from document.cookie
+         */
+        parseCookies = function() {
+            var cookies = {}, i, pair, name, value, separated = document.cookie.split(';'), unparsedValue;
+            for(i = 0; i < separated.length; i = i + 1){
+                pair = separated[i].split('=');
+                name = pair[0].replace(/^\s*/, '').replace(/\s*$/, '');
 
-		try {
-		    value = decodeURIComponent(pair[1]);
-		}
-		catch(e1) {
-		    value = pair[1];
-		}
+                try {
+                    value = decodeURIComponent(pair[1]);
+                }
+                catch(e1) {
+                    value = pair[1];
+                }
 
-                //						if (JSON && 'object' === typeof JSON && 'function' === typeof JSON.parse) {
-                //							try {
-                //								unparsedValue = value;
-                //								value = JSON.parse(value);
-                //							}
-                //							catch (e2) {
-                //								value = unparsedValue;
-                //							}
-                //						}
+                //                                              if (JSON && 'object' === typeof JSON && 'function' === typeof JSON.parse) {
+                //                                                      try {
+                //                                                              unparsedValue = value;
+                //                                                              value = JSON.parse(value);
+                //                                                      }
+                //                                                      catch (e2) {
+                //                                                              value = unparsedValue;
+                //                                                      }
+                //                                              }
 
-		cookies[name] = store.parse(value);
-	    }
-	    return cookies;
-	};
+                cookies[name] = store.parse(value);
+            }
+            return cookies;
+        };
 
-	constructor = function(){};
+        constructor = function(){};
 
 
-	/**
-	 * get - get one, several, or all cookies
-	 *
-	 * @access public
-	 * @paramater Mixed cookieName - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
-	 * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
-	 */
-	constructor.prototype.get = function(cookieName) {
+        /**
+         * get - get one, several, or all cookies
+         *
+         * @access public
+         * @paramater Mixed cookieName - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
+         * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
+         */
+        constructor.prototype.get = function(cookieName) {
 
-	    var returnValue, item, cookies = parseCookies();
+            var returnValue, item, cookies = parseCookies();
 
-	    if(typeof cookieName === 'string') {
-		returnValue = (typeof cookies[cookieName] !== 'undefined') ? cookies[cookieName] : null;
-	    }
-	    else if (typeof cookieName === 'object' && cookieName !== null) {
-		returnValue = {};
-		for (item in cookieName) {
-		    if (typeof cookies[cookieName[item]] !== 'undefined') {
-			returnValue[cookieName[item]] = cookies[cookieName[item]];
-		    }
-		    else {
-			returnValue[cookieName[item]] = null;
-		    }
-		}
-	    }
-	    else {
-		returnValue = cookies;
-	    }
+            if(typeof cookieName === 'string') {
+                returnValue = (typeof cookies[cookieName] !== 'undefined') ? cookies[cookieName] : null;
+            }
+            else if (typeof cookieName === 'object' && cookieName !== null) {
+                returnValue = {};
+                for (item in cookieName) {
+                    if (typeof cookies[cookieName[item]] !== 'undefined') {
+                        returnValue[cookieName[item]] = cookies[cookieName[item]];
+                    }
+                    else {
+                        returnValue[cookieName[item]] = null;
+                    }
+                }
+            }
+            else {
+                returnValue = cookies;
+            }
 
-	    return returnValue;
-	};
+            return returnValue;
+        };
 
-	/**
-	 * filter - get array of cookies whose names match the provided RegExp
-	 *
-	 * @access public
-	 * @paramater Object RegExp - The regular expression to match against cookie names
-	 * @return Mixed - Object:hash of cookies whose names match the RegExp
-	 */
-	constructor.prototype.filter = function (cookieNameRegExp) {
-	    var cookieName, returnValue = {}, cookies = parseCookies();
+        /**
+         * filter - get array of cookies whose names match the provided RegExp
+         *
+         * @access public
+         * @paramater Object RegExp - The regular expression to match against cookie names
+         * @return Mixed - Object:hash of cookies whose names match the RegExp
+         */
+        constructor.prototype.filter = function (cookieNameRegExp) {
+            var cookieName, returnValue = {}, cookies = parseCookies();
 
-	    if (typeof cookieNameRegExp === 'string') {
-		cookieNameRegExp = new RegExp(cookieNameRegExp);
-	    }
+            if (typeof cookieNameRegExp === 'string') {
+                cookieNameRegExp = new RegExp(cookieNameRegExp);
+            }
 
-	    for (cookieName in cookies) {
-		if (cookieName.match(cookieNameRegExp)) {
-		    returnValue[cookieName] = cookies[cookieName];
-		}
-	    }
+            for (cookieName in cookies) {
+                if (cookieName.match(cookieNameRegExp)) {
+                    returnValue[cookieName] = cookies[cookieName];
+                }
+            }
 
-	    return returnValue;
-	};
+            return returnValue;
+        };
 
-	/**
-	 * set - set or delete a cookie with desired options
-	 *
-	 * @access public
-	 * @paramater String cookieName - name of cookie to set
-	 * @paramater Mixed value - Any JS value. If not a string, will be JSON encoded; NULL to delete
-	 * @paramater Object options - optional list of cookie options to specify
-	 * @return void
-	 */
-	constructor.prototype.set = function(cookieName, value, options){
-	    if (typeof options !== 'object' || options === null) {
-		options = {};
-	    }
+        /**
+         * set - set or delete a cookie with desired options
+         *
+         * @access public
+         * @paramater String cookieName - name of cookie to set
+         * @paramater Mixed value - Any JS value. If not a string, will be JSON encoded; NULL to delete
+         * @paramater Object options - optional list of cookie options to specify
+         * @return void
+         */
+        constructor.prototype.set = function(cookieName, value, options){
+            if (typeof options !== 'object' || options === null) {
+                options = {};
+            }
 
-	    if (typeof value === 'undefined' || value === null) {
-		value = '';
-		options.hoursToLive = -8760;
-	    }
+            if (typeof value === 'undefined' || value === null) {
+                value = '';
+                options.hoursToLive = -8760;
+            }
 
-	    else if (typeof value !== 'string'){
-                //						if(typeof JSON === 'object' && JSON !== null && typeof store.stringify === 'function') {
+            else if (typeof value !== 'string'){
+                //                                              if(typeof JSON === 'object' && JSON !== null && typeof store.stringify === 'function') {
                 //
-                //							value = JSON.stringify(value);
-                //						}
-                //						else {
-                //							throw new Error('cookies.set() received non-string value and could not serialize.');
-                //						}
+                //                                                      value = JSON.stringify(value);
+                //                                              }
+                //                                              else {
+                //                                                      throw new Error('cookies.set() received non-string value and could not serialize.');
+                //                                              }
 
-		value = store.stringify(value);
-	    }
+                value = store.stringify(value);
+            }
 
 
-	    var optionsString = assembleOptionsString(options);
+            var optionsString = assembleOptionsString(options);
 
-	    document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
-	};
+            document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
+        };
 
-	/**
-	 * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
-	 *
-	 * @access public
-	 * @paramater MIxed cookieName - String name of cookie to delete, or Bool true to delete all
-	 * @paramater Object options - optional list of cookie options to specify (path, domain)
-	 * @return void
-	 */
-	constructor.prototype.del = function(cookieName, options) {
-	    var allCookies = {}, name;
+        /**
+         * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
+         *
+         * @access public
+         * @paramater MIxed cookieName - String name of cookie to delete, or Bool true to delete all
+         * @paramater Object options - optional list of cookie options to specify (path, domain)
+         * @return void
+         */
+        constructor.prototype.del = function(cookieName, options) {
+            var allCookies = {}, name;
 
-	    if(typeof options !== 'object' || options === null) {
-		options = {};
-	    }
+            if(typeof options !== 'object' || options === null) {
+                options = {};
+            }
 
-	    if(typeof cookieName === 'boolean' && cookieName === true) {
-		allCookies = this.get();
-	    }
-	    else if(typeof cookieName === 'string') {
-		allCookies[cookieName] = true;
-	    }
+            if(typeof cookieName === 'boolean' && cookieName === true) {
+                allCookies = this.get();
+            }
+            else if(typeof cookieName === 'string') {
+                allCookies[cookieName] = true;
+            }
 
-	    for(name in allCookies) {
-		if(typeof name === 'string' && name !== '') {
-		    this.set(name, null, options);
-		}
-	    }
-	};
+            for(name in allCookies) {
+                if(typeof name === 'string' && name !== '') {
+                    this.set(name, null, options);
+                }
+            }
+        };
 
-	/**
-	 * test - test whether the browser is accepting cookies
-	 *
-	 * @access public
-	 * @return Boolean
-	 */
-	constructor.prototype.test = function() {
-	    var returnValue = false, testName = 'cT', testValue = 'data';
+        /**
+         * test - test whether the browser is accepting cookies
+         *
+         * @access public
+         * @return Boolean
+         */
+        constructor.prototype.test = function() {
+            var returnValue = false, testName = 'cT', testValue = 'data';
 
-	    this.set(testName, testValue);
+            this.set(testName, testValue);
 
-	    if(this.get(testName) === testValue) {
-		this.del(testName);
-		returnValue = true;
-	    }
+            if(this.get(testName) === testValue) {
+                this.del(testName);
+                returnValue = true;
+            }
 
-	    return returnValue;
-	};
+            return returnValue;
+        };
 
-	/**
-	 * setOptions - set default options for calls to cookie methods
-	 *
-	 * @access public
-	 * @param Object options - list of cookie options to specify
-	 * @return void
-	 */
-	constructor.prototype.setOptions = function(options) {
-	    if(typeof options !== 'object') {
-		options = null;
-	    }
+        /**
+         * setOptions - set default options for calls to cookie methods
+         *
+         * @access public
+         * @param Object options - list of cookie options to specify
+         * @return void
+         */
+        constructor.prototype.setOptions = function(options) {
+            if(typeof options !== 'object') {
+                options = null;
+            }
 
-	    defaultOptions = resolveOptions(options);
-	};
+            defaultOptions = resolveOptions(options);
+        };
 
-	return new constructor();
+        return new constructor();
     })();
 
     // if cookies are supported by the browser
     if (cookie.test()) {
 
-	store.addType("cookie", function(key, value, options) {
+        store.addType("cookie", function(key, value, options) {
 
-	    if ('undefined' === typeof key) {
-		return cookie.get();
-	    }
+            if ('undefined' === typeof key) {
+                return cookie.get();
+            }
 
-	    if ('undefined' === typeof value) {
-		return cookie.get(key);
-	    }
+            if ('undefined' === typeof value) {
+                return cookie.get(key);
+            }
 
-	    // Set to NULL means delete
-	    if (value === null) {
-		cookie.del(key);
-		return null;
-	    }
+            // Set to NULL means delete
+            if (value === null) {
+                cookie.del(key);
+                return null;
+            }
 
-	    return cookie.set(key, value, options);
-	});
+            return cookie.set(key, value, options);
+        });
     }
 
 }(this));
-
 /**
  * # JSUS: JavaScript UtilS.
  * Copyright(c) 2014 Stefano Balietti
@@ -1125,10 +1124,6 @@ if (!JSON) {
     // ## JSUS._classes
     // Reference to all the extensions
     JSUS._classes = {};
-
-    // Make sure that the console is available also in old browser, e.g. < IE8.
-    if ('undefined' === typeof console) console = {};
-    if ('undefined' === typeof console.log) console.log = function() {};
 
     /**
      * ## JSUS.log
@@ -1157,7 +1152,6 @@ if (!JSON) {
      *
      * @param {object} additional Text to output
      * @param {object|function} target The object to extend
-     *
      * @return {object|function} target The extended object
      *
      * @see JSUS.get
@@ -1211,14 +1205,13 @@ if (!JSON) {
     /**
      * ## JSUS.require
      *
-     * Returns a copy of one / all the objects extending JSUS
+     * Returns a copy of one / all the objects extending JSUS.
      *
      * The first parameter is a string representation of the name of
      * the requested extending object. If no parameter is passed a copy
      * of all the extending objects is returned.
      *
      * @param {string} className The name of the requested JSUS library
-     *
      * @return {function|boolean} The copy of the JSUS library, or
      *   FALSE if the library does not exist
      */
@@ -1243,9 +1236,9 @@ if (!JSON) {
      * @return {boolean} TRUE when executed inside Node.JS environment
      */
     JSUS.isNodeJS = function() {
-	return 'undefined' !== typeof module
-	    && 'undefined' !== typeof module.exports
-	    && 'function' === typeof require;
+        return 'undefined' !== typeof module
+            && 'undefined' !== typeof module.exports
+            && 'function' === typeof require;
     };
 
     // ## Node.JS includes
@@ -1268,7 +1261,6 @@ if (!JSON) {
     'undefined' !== typeof module && 'undefined' !== typeof module.exports ?
         module.exports: window
 );
-
 /**
  * # COMPATIBILITY
  *
@@ -1278,10 +1270,11 @@ if (!JSON) {
  * Tests browsers ECMAScript 5 compatibility
  *
  * For more information see http://kangax.github.com/es5-compat-table/
+ * ---
  */
 (function(JSUS) {
 
-    function COMPATIBILITY() {}
+    function COMPATIBILITY() {};
 
     /**
      * ## COMPATIBILITY.compatibility
@@ -1300,7 +1293,7 @@ if (!JSON) {
         var support = {};
 
         try {
-            Object.defineProperty({}, "a", {enumerable: false, value: 1});
+            Object.defineProperty({}, "a", {enumerable: false, value: 1})
             support.defineProperty = true;
         }
         catch(e) {
@@ -1308,7 +1301,7 @@ if (!JSON) {
         }
 
         try {
-            eval('({ get x(){ return 1 } }).x === 1');
+            eval('({ get x(){ return 1 } }).x === 1')
             support.setter = true;
         }
         catch(err) {
@@ -1331,18 +1324,16 @@ if (!JSON) {
     JSUS.extend(COMPATIBILITY);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
-
 /**
  * # ARRAY
- *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Collection of static functions to manipulate arrays
+ * Collection of static functions to manipulate arrays.
  */
 (function(JSUS) {
 
-    function ARRAY() {}
+    function ARRAY(){};
 
     /**
      * ## ARRAY.filter
@@ -1350,8 +1341,7 @@ if (!JSON) {
      * Add the filter method to ARRAY objects in case the method is not
      * supported natively.
      *
-     * @see https://developer.mozilla.org/en/JavaScript/Reference/
-     *              Global_Objects/ARRAY/filter
+     * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/ARRAY/filter
      */
     if (!Array.prototype.filter) {
         Array.prototype.filter = function(fun /*, thisp */) {
@@ -1417,7 +1407,7 @@ if (!JSON) {
      * @param {Function} func Optional. A callback function that can modify
      *   each number of the sequence before returning it
      *
-     * @return {array} The final sequence
+     * @return {array} out The final sequence
      */
     ARRAY.seq = function(start, end, increment, func) {
         var i;
@@ -1435,7 +1425,7 @@ if (!JSON) {
         increment = increment || 1;
         func = func || function(e) {return e;};
 
-        i = start;
+        i = start,
         out = [];
 
         if (start < end) {
@@ -1466,7 +1456,7 @@ if (!JSON) {
      * @param {object} context Optional. The context of execution of the
      *   callback. Defaults ARRAY.each
      *
-     * @return {boolean} TRUE, if execution was successful
+     * @return {Boolean} TRUE, if execution was successful
      */
     ARRAY.each = function(array, func, context) {
         if ('object' !== typeof array) return false;
@@ -1489,7 +1479,7 @@ if (!JSON) {
      * Any number of additional parameters can be passed after the
      * callback function
      *
-     * @return {array} The result of the mapping execution
+     * @return {array} out The result of the mapping execution
      * @see ARRAY.each
      */
     ARRAY.map = function() {
@@ -1504,7 +1494,8 @@ if (!JSON) {
             return;
         }
 
-        var out = [], o;
+        var out = [],
+        o = undefined;
         for (var i = 0; i < array.length; i++) {
             args[0] = array[i];
             o = func.apply(this, args);
@@ -1540,7 +1531,7 @@ if (!JSON) {
         else {
             func = function(a,b) {
                 return (a === b);
-            };
+            }
         }
 
         for (i = 0; i < haystack.length; i++) {
@@ -1564,16 +1555,14 @@ if (!JSON) {
      *
      * @param {mixed} needle The element to search in the array
      * @param {array} haystack The array to search in
-     *
-     * @return {boolean} TRUE, if the element is contained in the array
+     * @return {Boolean} TRUE, if the element is contained in the array
      *
      *  @see JSUS.equals
      */
     ARRAY.inArray = ARRAY.in_array = function(needle, haystack) {
         var func, i, len;
         if (!haystack) return false;
-        func = JSUS.equals;
-        len = haystack.length;
+        func = JSUS.equals, len = haystack.length;
         for (i = 0; i < len; i++) {
             if (func.call(this, needle, haystack[i])) {
                 return true;
@@ -1598,7 +1587,6 @@ if (!JSON) {
      *
      * @param {array} array The array to split in subgroups
      * @param {number} N The number of subgroups
-     *
      * @return {array} Array containing N groups
      */
     ARRAY.getNGroups = function(array, N) {
@@ -1613,7 +1601,6 @@ if (!JSON) {
      *
      * @param {array} array The array to split in subgroups
      * @param {number} N The number of elements in each subgroup
-     *
      * @return {array} Array containing groups of size N
      *
      * @see ARRAY.getNGroups
@@ -1673,7 +1660,6 @@ if (!JSON) {
      * @param {number} S The number of rows
      * @param {number} Optional. N The number of columns. Defaults N = S
      * @param {boolean} Optional. If TRUE self-match is allowed. Defaults TRUE
-     *
      * @return {array} The resulting latin square (or rectangle)
      */
     ARRAY._latinSquare = function(S, N, self) {
@@ -1724,7 +1710,6 @@ if (!JSON) {
      *
      * @param {number} S The number of rows
      * @param {number} Optional. N The number of columns. Defaults N = S
-     *
      * @return {array} The resulting latin square (or rectangle)
      */
     ARRAY.latinSquare = function(S, N) {
@@ -1745,7 +1730,6 @@ if (!JSON) {
      *
      * @param {number} S The number of rows
      * @param {number} Optional. N The number of columns. Defaults N = S-1
-     *
      * @return {array} The resulting latin square (or rectangle)
      */
     ARRAY.latinSquareNoSelf = function(S, N) {
@@ -1754,7 +1738,7 @@ if (!JSON) {
         if (N > S) N = S-1;
 
         return ARRAY._latinSquare(S, N, false);
-    };
+    }
 
 
     /**
@@ -1764,7 +1748,6 @@ if (!JSON) {
      *
      * @param {array} array The array from which the combinations are extracted
      * @param {number} r The number of elements in each combination
-     *
      * @return {array} The total sets of combinations
      *
      * @see ARRAY.getGroupSizeN
@@ -1772,7 +1755,6 @@ if (!JSON) {
      * @see ARRAY.matchN
      */
     ARRAY.generateCombinations = function(array, r) {
-        var i, j;
         function values(i, a) {
             var ret = [];
             for (var j = 0; j < i.length; j++) ret.push(a[i[j]]);
@@ -1780,15 +1762,15 @@ if (!JSON) {
         }
         var n = array.length;
         var indices = [];
-        for (i = 0; i < r; i++) indices.push(i);
+        for (var i = 0; i < r; i++) indices.push(i);
         var final = [];
-        for (i = n - r; i < n; i++) final.push(i);
+        for (var i = n - r; i < n; i++) final.push(i);
         while (!JSUS.equals(indices, final)) {
             callback(values(indices, array));
-            i = r - 1;
+            var i = r - 1;
             while (indices[i] == n - r + i) i -= 1;
             indices[i] += 1;
-            for (j = i + 1; j < r; j++) indices[j] = indices[i] + j - i;
+            for (var j = i + 1; j < r; j++) indices[j] = indices[i] + j - i;
         }
         return values(indices, array);
     };
@@ -1807,10 +1789,9 @@ if (!JSON) {
      *
      * @param {array} array The array in which operate the matching
      * @param {number} N The number of matches per element
-     * @param {boolean} strict Optional. If TRUE, matched elements cannot be
+     * @param {Boolean} strict Optional. If TRUE, matched elements cannot be
      *   repeated. Defaults, FALSE
-     *
-     * @return {array} The results of the matching
+     * @return {array} result The results of the matching
      *
      * @see ARRAY.getGroupSizeN
      * @see ARRAY.getNGroups
@@ -1821,8 +1802,8 @@ if (!JSON) {
         if (!array) return;
         if (!N) return array;
 
-        result = [];
-        len = array.length;
+        result = [],
+        len = array.length,
         found = [];
         for (i = 0 ; i < len ; i++) {
             // Recreate the array.
@@ -1854,7 +1835,6 @@ if (!JSON) {
      * @param {array} array the array to repeat
      * @param {number} times The number of times the array must be appended
      *   to itself
-     *
      * @return {array} A copy of the original array appended to itself
      */
     ARRAY.rep = function(array, times) {
@@ -1866,8 +1846,7 @@ if (!JSON) {
             return;
         }
 
-        i = 1;
-        result = array.slice(0);
+        i = 1, result = array.slice(0);
         for (; i < times; i++) {
             result = result.concat(array);
         }
@@ -1971,7 +1950,6 @@ if (!JSON) {
      * The original array is not modified, and a copy is returned.
      *
      * @param {array} shuffle The array to shuffle
-     *
      * @return {array} copy The shuffled array
      *
      * @see http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
@@ -1997,7 +1975,6 @@ if (!JSON) {
      *
      * @param {array} array The array from which extracts random elements
      * @paran {number} N The number of random elements to extract
-     *
      * @return {array} An new array with N elements randomly chosen
      */
     ARRAY.getNRandom = function(array, N) {
@@ -2014,8 +1991,7 @@ if (!JSON) {
      * Comparison is done with `JSUS.equals`.
      *
      * @param {array} array The array from which eliminates duplicates
-     *
-     * @return {array} A copy of the array without duplicates
+     * @return {array} out A copy of the array without duplicates
      *
      * @see JSUS.equals
      */
@@ -2040,7 +2016,6 @@ if (!JSON) {
      * returned.
      *
      * @param {array} array The array to transpose
-     *
      * @return {array} The Transposed Array
      */
     ARRAY.transpose = function(array) {
@@ -2064,7 +2039,6 @@ if (!JSON) {
     JSUS.extend(ARRAY);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
-
 /**
  * # DOM
  *
@@ -2093,10 +2067,11 @@ if (!JSON) {
  *
  * Only the methods which do not follow the above-mentioned syntax
  * will receive further explanation.
+ * ---
  */
 (function(JSUS) {
 
-    function DOM() {}
+    function DOM() {};
 
     // ## GENERAL
 
@@ -2160,12 +2135,11 @@ if (!JSON) {
      * ```
      *
      * @param {string} string A text to transform
-     * @param {object} args Optional. An object containing string
-     *   transformations
+     * @param {object} args Optional. An object containing string transformations
      * @param {Element} root Optional. An HTML element to which append the
      *    string. Defaults, a new _span_ element
      *
-     * @return {Element} The root element.
+     * @return {Element} root The root element.
      */
     DOM.sprintf = function(string, args, root) {
 
@@ -2263,7 +2237,7 @@ if (!JSON) {
         }
 
         return root;
-    };
+    }
 
     /**
      * ### DOM.isNode
@@ -2271,7 +2245,6 @@ if (!JSON) {
      * Returns TRUE if the object is a DOM node
      *
      * @param {mixed} The variable to check
-     *
      * @return {boolean} TRUE, if the the object is a DOM node
      */
     DOM.isNode = function(o) {
@@ -2290,7 +2263,6 @@ if (!JSON) {
      * the method is defined.
      *
      * @param {mixed} The variable to check
-     *
      * @return {boolean} TRUE, if the the object is a DOM element
      */
     DOM.isElement = function(o) {
@@ -2307,8 +2279,7 @@ if (!JSON) {
      *
      * @param {Node} parent The parent node
      * @param {array} order Optional. A pre-specified order. Defaults, random
-     *
-     * @return {array} The order used to shuffle the nodes
+     * @return {array} The order used to shuffle the nodes.
      */
     DOM.shuffleNodes = function(parent, order) {
         var i, len, idOrder;
@@ -2329,8 +2300,7 @@ if (!JSON) {
             }
         }
 
-        len = parent.children.length;
-        idOrder = [];
+        len = parent.children.length, idOrder = [];
         if (!order) order = JSUS.sample(0,len);
         for (i = 0 ; i < len; i++) {
             idOrder.push(parent.children[order[i]].id);
@@ -2354,7 +2324,6 @@ if (!JSON) {
      * @param {string} id Optional. The id of the tag
      * @param {object} attributes Optional. Object containing attributes for
      *   the newly created element
-     *
      * @return {HTMLElement} The newly created HTML element
      *
      * @see DOM.addAttributes2Elem
@@ -2378,7 +2347,6 @@ if (!JSON) {
      * @param {string} id Optional. The id of the tag
      * @param {object} attributes Optional. Object containing attributes for
      *   the newly created element
-     *
      * @return {HTMLElement} The newly created HTML element
      *
      * @see DOM.getElement
@@ -2401,7 +2369,7 @@ if (!JSON) {
      * @param {HTMLElement} e The element to decorate
      * @param {object} a Object containing attributes to add to the element
      *
-     * @return {HTMLElement} The decorated element
+     * @return {HTMLElement} e The decorated element
      *
      * @see DOM.addLabel
      * @see DOM.addClass
@@ -2434,18 +2402,16 @@ if (!JSON) {
 
                 // TODO: handle special cases
                 // <!--
-                //else {
+                //                else {
                 //
-                //    // If there is no parent node,
-                //    // the legend cannot be created
-                //    if (!e.parentNode) {
-                //        node.log('Cannot add label: ' +
-                //                 'no parent element found', 'ERR');
-                //        continue;
-                //    }
+                //                    // If there is no parent node, the legend cannot be created
+                //                    if (!e.parentNode) {
+                //                        node.log('Cannot add label: no parent element found', 'ERR');
+                //                        continue;
+                //                    }
                 //
-                //    this.addLabel(e.parentNode, e, a[key]);
-                //}
+                //                    this.addLabel(e.parentNode, e, a[key]);
+                //                }
                 // -->
             }
         }
@@ -2528,7 +2494,7 @@ if (!JSON) {
                 }
             }
             return id;
-        }
+        };
 
 
         return scanDocuments(prefix + '_' + JSUS.randomInt(0, 10000000));
@@ -2788,7 +2754,7 @@ if (!JSON) {
      *
      */
     DOM.addCSS = function(root, css, id, attributes) {
-        root = root || document.head || document.body || document;
+        var root = root || document.head || document.body || document;
         if (!root) return false;
 
         attributes = attributes || {};
@@ -2806,7 +2772,7 @@ if (!JSON) {
      *
      */
     DOM.addJS = function(root, js, id, attributes) {
-        root = root || document.head || document.body || document;
+        var root = root || document.head || document.body || document;
         if (!root) return false;
 
         attributes = attributes || {};
@@ -2897,8 +2863,7 @@ if (!JSON) {
      *
      * @param {HTMLElement} elem The element to style
      * @param {object} Objects containing the properties to add.
-     *
-     * @return {HTMLElement} The styled element
+     * @return {HTMLElement} elem The styled element
      */
     DOM.style = function(elem, properties) {
         var i;
@@ -2920,9 +2885,8 @@ if (!JSON) {
      *
      * @param {HTMLElement} el An HTML element
      * @param {string} c The name of a CSS class already in the element
-     *
-     * @return {HTMLElement|undefined} The HTML element with the removed
-     *   class, or undefined if the inputs are misspecified
+     * @return {HTMLElement|undefined} el The HTML element with the removed
+     *   class, or undefined input are misspecified.
      */
     DOM.removeClass = function(el, c) {
         var regexpr, o;
@@ -2941,9 +2905,8 @@ if (!JSON) {
      *
      * @param {HTMLElement} el An HTML element
      * @param {string|array} c The name/s of CSS class/es
-     *
-     * @return {HTMLElement|undefined} The HTML element with the additional
-     *   class, or undefined if the inputs are misspecified
+     * @return {HTMLElement|undefined} el The HTML element with the additional
+     *   class, or undefined input are misspecified.
      */
     DOM.addClass = function(el, c) {
         if (!el) return;
@@ -2964,15 +2927,13 @@ if (!JSON) {
      * @param {string} className The requested className
      * @param {string}  nodeName Optional. If set only elements with
      *   the specified tag name will be searched
-     *
      * @return {array} Array of elements with the requested class name
      *
      * @see https://gist.github.com/E01T/6088383
      */
     DOM.getElementsByClassName = function(document, className, nodeName) {
         var result, node, tag, seek, i, rightClass;
-        result = [];
-        tag = nodeName || '*';
+        result = [], tag = nodeName || '*';
         if (document.evaluate) {
             seek = '//'+ tag +'[@class="'+ className +'"]';
             seek = document.evaluate(seek, document, null, 0, null );
@@ -2999,7 +2960,6 @@ if (!JSON) {
      * Returns a reference to the document of an iframe object
      *
      * @param {HTMLIFrameElement} iframe The iframe object
-     *
      * @return {HTMLDocument|undefined} The document of the iframe, or
      *   undefined if not found.
      */
@@ -3016,7 +2976,6 @@ if (!JSON) {
      * Tries head, body, lastChild and the HTML element
      *
      * @param {HTMLIFrameElement} iframe The iframe object
-     *
      * @return {HTMLElement|undefined} The child, or undefined if none is found
      */
     DOM.getIFrameAnyChild = function(iframe) {
@@ -3049,14 +3008,14 @@ if (!JSON) {
                         return false;
                     }
                 }
-            };
+            }
         }
         else if (doc.all && !doc.getElementById) {
             doc.onmousedown = function clickIE4() {
                 if (event.button == 2) {
                     return false;
                 }
-            };
+            }
         }
         doc.oncontextmenu = new Function("return false");
     };
@@ -3095,11 +3054,12 @@ if (!JSON) {
  * MIT Licensed
  *
  * Collection of static functions related to the evaluation
- * of strings as JavaScript commands
+ * of strings as javascript commands
+ * ---
  */
 (function(JSUS) {
 
-    function EVAL() {}
+    function EVAL(){};
 
     /**
      * ## EVAL.eval
@@ -3112,7 +3072,6 @@ if (!JSON) {
      *
      * @param {string} str The command to executes
      * @param {object} context Optional. Execution context. Defaults, `this`
-     *
      * @return {mixed} The return value of the executed commands
      *
      * @see eval
@@ -3136,25 +3095,24 @@ if (!JSON) {
             else {
                 return eval(str);
             }
-        };
+        }
         return func.call(context, str);
     };
 
     JSUS.extend(EVAL);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
-
 /**
- * # OBJ
- *
+ * # JSUS.OBJ
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Collection of static functions to manipulate JavaScript objects
+ * Collection of static functions to manipulate javascript objects.
+ * ---
  */
 (function(JSUS) {
 
-    function OBJ() {}
+    function OBJ(){};
 
     var compatibility = null;
 
@@ -3181,8 +3139,7 @@ if (!JSON) {
      *
      * @param {object} o1 The first object
      * @param {object} o2 The second object
-     *
-     * @return {boolean} TRUE if the objects are deeply equal
+     * @return {boolean} TRUE if the objects are deeply equal.
      */
     OBJ.equals = function(o1, o2) {
         var type1, type2, primitives, p;
@@ -3203,7 +3160,7 @@ if (!JSON) {
         }
 
         // Check whether arguments are not objects
-        primitives = {number: '', string: '', boolean: ''};
+        primitives = {number: '', string: '', boolean: ''}
         if (type1 in primitives) {
             return o1 === o2;
         }
@@ -3224,7 +3181,6 @@ if (!JSON) {
                 case 'function':
                     if (o1[p].toString() !== o2[p].toString()) return false;
 
-                    /* falls through */
                 default:
                     if (!OBJ.equals(o1[p], o2[p])) return false;
                 }
@@ -3253,7 +3209,6 @@ if (!JSON) {
      * Does not check properties of the prototype chain.
      *
      * @param {object} o The object to check
-     *
      * @return {boolean} TRUE, if the object has no properties
      */
     OBJ.isEmpty = function(o) {
@@ -3276,7 +3231,6 @@ if (!JSON) {
      * Prototype chain properties are excluded.
      *
      * @param {object} obj The object to check
-     *
      * @return {number} The number of properties in the object
      */
     OBJ.size = OBJ.getListSize = function(obj) {
@@ -3308,7 +3262,6 @@ if (!JSON) {
      *   Defaults, FALSE
      * @param {number} level Optional. The level of recursion.
      *   Defaults, undefined
-     *
      * @return {array} The converted object
      */
     OBJ._obj2Array = function(obj, keyed, level, cur_level) {
@@ -3352,7 +3305,6 @@ if (!JSON) {
      * @param {object} obj The object to convert in array
      * @param {number} level Optional. The level of recursion. Defaults,
      *   undefined
-     *
      * @return {array} The converted object
      *
      * @see OBJ._obj2Array
@@ -3373,45 +3325,12 @@ if (!JSON) {
      * @param {object} obj The object to convert in array
      * @param {number} level Optional. The level of recursion. Defaults,
      *   undefined
-     *
      * @return {array} The converted object
      *
      * @see OBJ.obj2Array
      */
     OBJ.obj2KeyedArray = OBJ.obj2KeyArray = function(obj, level) {
         return OBJ._obj2Array(obj, true, level);
-    };
-
-    /**
-     * ## OBJ.obj2QueryString
-     *
-     * Creates a querystring with the key-value pairs of the given object.
-     *
-     * @param {object} obj The object to convert
-     *
-     * @return {string} The created querystring
-     *
-     * Kudos:
-     * @see http://stackoverflow.com/a/1714899/3347292
-     */
-    OBJ.obj2QueryString = function(obj) {
-        var str;
-        var key;
-
-        if ('object' !== typeof obj) {
-            throw new TypeError(
-                    'JSUS.objectToQueryString: obj must be object.');
-        }
-
-        str = [];
-        for (key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                str.push(encodeURIComponent(key) + '=' +
-                         encodeURIComponent(obj[key]));
-            }
-        }
-
-        return '?' + str.join('&');
     };
 
     /**
@@ -3425,7 +3344,6 @@ if (!JSON) {
      *
      * @param {object} obj The object from which extract the keys
      * @param {number} level Optional. The level of recursion. Defaults 0
-     *
      * @return {array} The array containing the extracted keys
      *
      * @see Object.keys
@@ -3463,8 +3381,7 @@ if (!JSON) {
      * ```
      *
      * @param {object} obj The object to implode
-     *
-     * @return {array} The array containing all the imploded properties
+     * @return {array} result The array containig all the imploded properties
      */
     OBJ.implode = OBJ.implodeObj = function(obj) {
         var result, key, o;
@@ -3491,8 +3408,7 @@ if (!JSON) {
      * Primitive types and special values are returned as they are.
      *
      * @param {object} obj The object to clone
-     *
-     * @return {object} The clone of the object
+     * @return {object} clone The clone of the object
      */
     OBJ.clone = function(obj) {
         var clone, i, value;
@@ -3500,7 +3416,8 @@ if (!JSON) {
         if ('number' === typeof obj) return obj;
         if ('string' === typeof obj) return obj;
         if ('boolean' === typeof obj) return obj;
-        // NaN and +-Infinity are numbers, so no check is necessary.
+        if (obj === NaN) return obj;
+        if (obj === Infinity) return obj;
 
         if ('function' === typeof obj) {
             //          clone = obj;
@@ -3515,15 +3432,13 @@ if (!JSON) {
         for (i in obj) {
             // TODO: index i is being updated, so apply is called on the
             // last element, instead of the correct one.
-            //if ('function' === typeof obj[i]) {
-            //    value = function() { return obj[i].apply(clone, arguments); };
-            //}
+            //          if ('function' === typeof obj[i]) {
+            //                  value = function() { return obj[i].apply(clone, arguments); };
+            //          }
             // It is not NULL and it is an object
             if (obj[i] && 'object' === typeof obj[i]) {
                 // Is an array.
-                if (Object.prototype.toString.call(obj[i]) ===
-                    '[object Array]') {
-
+                if (Object.prototype.toString.call(obj[i]) === '[object Array]') {
                     value = obj[i].slice(0);
                 }
                 // Is an object.
@@ -3585,8 +3500,7 @@ if (!JSON) {
      *
      * @param {object} obj1 The object where the merge will take place
      * @param {object} obj2 The merging object
-     *
-     * @return {object} The joined object
+     * @return {object} clone The joined object
      *
      * @see OBJ.merge
      */
@@ -3629,8 +3543,7 @@ if (!JSON) {
      *
      * @param {object} obj1 The object where the merge will take place
      * @param {object} obj2 The merging object
-     *
-     * @return {object} The merged object
+     * @return {object} clone The merged object
      *
      * @see OBJ.join
      * @see OBJ.mergeOnKey
@@ -3647,14 +3560,12 @@ if (!JSON) {
 
             if (obj2.hasOwnProperty(i)) {
                 // it is an object and it is not NULL
-                if (obj2[i] && 'object' === typeof obj2[i]) {
+                if ( obj2[i] && 'object' === typeof obj2[i] ) {
                     // If we are merging an object into
                     // a non-object, we need to cast the
                     // type of obj1
                     if ('object' !== typeof clone[i]) {
-                        if (Object.prototype.toString.call(obj2[i]) ===
-                            '[object Array]') {
-
+                        if (Object.prototype.toString.call(obj2[i]) === '[object Array]') {
                             clone[i] = [];
                         }
                         else {
@@ -3662,8 +3573,7 @@ if (!JSON) {
                         }
                     }
                     clone[i] = OBJ.merge(clone[i], obj2[i]);
-                }
-                else {
+                } else {
                     clone[i] = obj2[i];
                 }
             }
@@ -3748,8 +3658,7 @@ if (!JSON) {
      * @param {object} obj2 The merging object
      * @param {string} key The name of property under which the second object
      *   will be merged
-     *
-     * @return {object} The merged object
+     * @return {object} clone The merged object
      *
      * @see OBJ.merge
      */
@@ -3782,13 +3691,12 @@ if (!JSON) {
      *
      * @param {object} o The object to dissect
      * @param {string|array} select The selection of properties to extract
-     *
-     * @return {object} The subobject with the properties from the parent
+     * @return {object} out The subobject with the properties from the parent
      *
      * @see OBJ.getNestedValue
      */
     OBJ.subobj = function(o, select) {
-        var out, i, key;
+        var out, i, key
         if (!o) return false;
         out = {};
         if (!select) return out;
@@ -3818,8 +3726,7 @@ if (!JSON) {
      *
      * @param {object} o The object to dissect
      * @param {string|array} remove The selection of properties to remove
-     *
-     * @return {object} The subobject with the properties from the parent
+     * @return {object} out The subobject with the properties from the parent
      *
      * @see OBJ.getNestedValue
      */
@@ -3855,8 +3762,7 @@ if (!JSON) {
      *
      * @param {string} str The path to the value
      * @param {mixed} value The value to set
-     *
-     * @return {object|boolean} The modified object, or FALSE if error
+     * @return {object|boolean} obj The modified object, or FALSE if error
      *   occurrs
      *
      * @see OBJ.getNestedValue
@@ -3898,7 +3804,6 @@ if (!JSON) {
      *
      * @param {string} str The path to the value
      * @param {object} obj The object from which extract the value
-     *
      * @return {mixed} The extracted value
      *
      * @see OBJ.setNestedValue
@@ -3969,7 +3874,6 @@ if (!JSON) {
      *
      * @param {string} str The path of the (nested) property
      * @param {object} obj The object to test
-     *
      * @return {boolean} TRUE, if the (nested) property exists
      */
     OBJ.hasOwnNestedProperty = function(str, obj) {
@@ -4018,7 +3922,6 @@ if (!JSON) {
      *
      * @param {object} o The object to split
      * @param {sting} key The name of the property to split
-     *
      * @return {object} A copy of the object with split values
      */
     OBJ.split = function(o, key) {
@@ -4066,7 +3969,6 @@ if (!JSON) {
      * ```
      * @param {array} keys The names of the keys to add to the object
      * @param {array} values The values to associate to the keys
-     *
      * @return {object} A new object with keys and values melted together
      */
     OBJ.melt = function(keys, values) {
@@ -4094,8 +3996,7 @@ if (!JSON) {
      * @param {number} stop Optional. The number of tries before giving up
      *   searching for a unique key name. Defaults, 1000000.
      *
-     * @return {string|undefined} The unique key name, or undefined if it was
-     *   not found
+     * @return {string|undefined} The unique key name, or undefined if it was not found
      */
     OBJ.uniqueKey = function(obj, prefixName, stop) {
         var name;
@@ -4147,8 +4048,7 @@ if (!JSON) {
      *   taken as the set of properties to augment
      */
     OBJ.augment = function(obj1, obj2, keys) {
-        var i, k;
-        keys = keys || OBJ.keys(obj1);
+        var i, k, keys = keys || OBJ.keys(obj1);
 
         for (i = 0 ; i < keys.length; i++) {
             k = keys[i];
@@ -4193,8 +4093,7 @@ if (!JSON) {
      *
      * @param {object} o1 The first object
      * @param {object} o2 The second object
-     *
-     * @return {object} The object aggregating the results
+     * @return {object} clone The object aggregating the results
      *
      */
     OBJ.pairwiseWalk = function(o1, o2, cb) {
@@ -4226,16 +4125,16 @@ if (!JSON) {
 
 /**
  * # RANDOM
- *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions related to the generation of
- * pseudo-random numbers
+ * pseudo-random numbers.
+ * ---
  */
 (function(JSUS) {
 
-    function RANDOM() {}
+    function RANDOM(){};
 
     /**
      * ## RANDOM.random
@@ -4245,7 +4144,6 @@ if (!JSON) {
      *
      * @param {number} a The lower limit
      * @param {number} b The upper limit
-     *
      * @return {number} A random floating point number in (a,b)
      */
     RANDOM.random = function(a, b) {
@@ -4259,7 +4157,7 @@ if (!JSON) {
             a = b;
             b = c;
         }
-        return (Math.random() * (b - a)) + a;
+        return (Math.random() * (b - a)) + a
     };
 
     /**
@@ -4269,7 +4167,6 @@ if (!JSON) {
      *
      * @param {number} a The lower limit
      * @param {number} b The upper limit
-     *
      * @return {number} A random integer in (a,b]
      *
      * @see RANDOM.random
@@ -4288,14 +4185,13 @@ if (!JSON) {
      *
      * @param {number} a The lower limit
      * @param {number} b The upper limit
-     *
      * @return {array} The randomly shuffled sequence.
      *
      * @see RANDOM.seq
      */
     RANDOM.sample = function(a, b) {
         var out;
-        out = JSUS.seq(a,b);
+        out = JSUS.seq(a,b)
         if (!out) return false;
         return JSUS.shuffle(out);
     };
@@ -4364,9 +4260,9 @@ if (!JSON) {
 
                 return (sigma * x1) + mu;
 
-            };
+            }
         })();
-    };
+    }
 
     /**
      * Generates random numbers with Normal Gaussian distribution.
@@ -4379,7 +4275,6 @@ if (!JSON) {
      *
      * @param {number} mu The mean of the distribution
      * param {number} sigma The standard deviation of the distribution
-     *
      * @return {number} A random number following a Normal Gaussian distribution
      *
      * @see RANDOM.getNormalGenerator
@@ -4394,7 +4289,6 @@ if (!JSON) {
      *
      * @param {number} mu The mean of the gaussian distribution
      * @param {number} sigma The standard deviation of the gaussian distribution
-     *
      * @return {number} A random number following a LogNormal distribution
      *
      * @see RANDOM.nextNormal
@@ -4407,7 +4301,7 @@ if (!JSON) {
             throw new TypeError('nextLogNormal: sigma must be number.');
         }
         return Math.exp(nextNormal(mu, sigma));
-    };
+    }
 
     /**
      * Generates random numbers with Exponential distribution.
@@ -4416,7 +4310,6 @@ if (!JSON) {
      * The expected mean of the distribution is equal to `Math.pow(lamba, -1)`.
      *
      * @param {number} lambda The rate parameter
-     *
      * @return {number} A random number following an Exponential distribution
      */
     RANDOM.nextExponential = function(lambda) {
@@ -4424,11 +4317,10 @@ if (!JSON) {
             throw new TypeError('nextExponential: lambda must be number.');
         }
         if (lambda <= 0) {
-            throw new TypeError('nextExponential: ' +
-                                'lambda must be greater than 0.');
+            throw new TypeError('nextExponential: lambda must be greater than 0.');
         }
         return - Math.log(1 - Math.random()) / lambda;
-    };
+    }
 
     /**
      * Generates random numbers following the Binomial distribution.
@@ -4437,8 +4329,7 @@ if (!JSON) {
      *
      * @param {number} p The probability of success
      * @param {number} trials The number of trials
-     *
-     * @return {number} The sum of successes in n trials
+     * @return {number} sum The sum of successes in n trials
      */
     RANDOM.nextBinomial = function(p, trials) {
         var counter, sum;
@@ -4517,12 +4408,11 @@ if (!JSON) {
         tmp *=  - alphaDiv;
 
         return x + tmp;
-    };
+    }
 
     JSUS.extend(RANDOM);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
-
 /**
  * # TIME
  *
@@ -4530,78 +4420,82 @@ if (!JSON) {
  * MIT Licensed
  *
  * Collection of static functions related to the generation,
- * manipulation, and formatting of time strings in JavaScript
+ * manipulation, and formatting of time strings in javascript
+ * ---
  */
 (function (JSUS) {
 
-    function TIME() {}
+function TIME() {};
 
-    /**
-     * ## TIME.getDate
-     *
-     * Returns a string representation of the current date
-     * and time formatted as follows:
-     *
-     * YYYY-MM-DDTHH:mm:ss.sssZ
-     *
-     * @return {string} Formatted time string YYYY-MM-DDTHH:mm:ss.sssZ
-     */
-    TIME.getDate = TIME.getFullDate = function() {
-        return new Date().toISOString();
-    };
+/**
+ * ## TIME.getDate
+ *
+ * Returns a string representation of the current date
+ * and time formatted as follows:
+ *
+ * dd-mm-yyyy hh:mm:ss milliseconds
+ *
+ * @return {string} date Formatted time string hh:mm:ss
+ */
+TIME.getDate = TIME.getFullDate = function() {
+    var d = new Date();
+    var date = d.getUTCDate() + '-' + (d.getUTCMonth()+1) + '-' +
+        d.getUTCFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() +
+        ':' + d.getSeconds() + ' ' + d.getMilliseconds();
 
-    /**
-     * ## TIME.getTime
-     *
-     * Returns a string representation of the current time
-     * formatted as follows:
-     *
-     * hh:mm:ss
-     *
-     * @return {string} Formatted time string hh:mm:ss
-     */
-    TIME.getTime = function() {
-        var d = new Date();
-        var time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+    return date;
+};
 
-        return time;
-    };
+/**
+ * ## TIME.getTime
+ *
+ * Returns a string representation of the current time
+ * formatted as follows:
+ *
+ * hh:mm:ss
+ *
+ * @return {string} time Formatted time string hh:mm:ss
+ */
+TIME.getTime = function() {
+    var d = new Date();
+    var time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 
-    /**
-     * ## TIME.parseMilliseconds
-     *
-     * Parses an integer number representing milliseconds,
-     * and returns an array of days, hours, minutes and seconds
-     *
-     * @param {number} ms Integer representing milliseconds
-     *
-     * @return {array} Milleconds parsed in days, hours, minutes, and seconds
-     */
-    TIME.parseMilliseconds = function (ms) {
-        if ('number' !== typeof ms) return;
+    return time;
+};
 
-        var result = [];
-        var x = ms / 1000;
-        result[4] = x;
-        var seconds = x % 60;
-        result[3] = Math.floor(seconds);
-        x = x / 60;
-        var minutes = x % 60;
-        result[2] = Math.floor(minutes);
-        x = x / 60;
-        var hours = x % 24;
-        result[1] = Math.floor(hours);
-        x = x / 24;
-        var days = x;
-        result[1] = Math.floor(days);
+/**
+ * ## TIME.parseMilliseconds
+ *
+ * Parses an integer number representing milliseconds,
+ * and returns an array of days, hours, minutes and seconds
+ *
+ * @param {number} ms Integer representing milliseconds
+ * @return {array} result Milleconds parsed in days, hours, minutes, and seconds
+ */
+TIME.parseMilliseconds = function (ms) {
+    if ('number' !== typeof ms) return;
 
-        return result;
-    };
+    var result = [];
+    var x = ms / 1000;
+    result[4] = x;
+    var seconds = x % 60;
+    result[3] = Math.floor(seconds);
+    var x = x /60;
+    var minutes = x % 60;
+    result[2] = Math.floor(minutes);
+    var x = x / 60;
+    var hours = x % 24;
+    result[1] = Math.floor(hours);
+    var x = x / 24;
+    var days = x;
+    result[1] = Math.floor(days);
 
-    JSUS.extend(TIME);
+    return result;
+};
+
+JSUS.extend(TIME);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
-
 /**
  * # PARSE
  *
@@ -4609,10 +4503,11 @@ if (!JSON) {
  * MIT Licensed
  *
  * Collection of static functions related to parsing strings
+ * ---
  */
 (function(JSUS) {
 
-    function PARSE() {}
+    function PARSE(){};
 
     /**
      * ## PARSE.stringify_prefix
@@ -4647,7 +4542,7 @@ if (!JSON) {
      * @return {string|boolean} The querystring, or a part of it, or FALSE
      *
      * Kudos:
-     * @see http://stackoverflow.com/q/901115/3347292
+     * @see http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
      */
     PARSE.getQueryString = function(name, referer) {
         var regex;
@@ -4658,10 +4553,10 @@ if (!JSON) {
         referer = referer || window.location.search;
         if ('undefined' === typeof name) return referer;
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-        regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+        regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
         results = regex.exec(referer);
-        return results === null ? false :
-            decodeURIComponent(results[1].replace(/\+/g, " "));
+        return results == null ? false :
+            decodeURIComponent(results[1].replace(/\+/g, " "))
     };
 
     /**
@@ -4720,19 +4615,17 @@ if (!JSON) {
      * @see PARSE.stringify_prefix
      */
     PARSE.stringify = function(o, spaces) {
-        return JSON.stringify(o, function(key, value) {
+        return JSON.stringify(o, function(key, value){
             var type = typeof value;
             if ('function' === type) {
-                return PARSE.stringify_prefix + value.toString();
+                return PARSE.stringify_prefix + value.toString()
             }
 
             if ('undefined' === type) return PARSE.marker_und;
             if (value === null) return PARSE.marker_null;
             if ('number' === type && isNaN(value)) return PARSE.marker_nan;
-            if (value === Number.POSITIVE_INFINITY) return PARSE.marker_inf;
-            if (value === Number.NEGATIVE_INFINITY) {
-                return PARSE.marker_minus_inf;
-            }
+            if (value == Number.POSITIVE_INFINITY) return PARSE.marker_inf;
+            if (value == Number.NEGATIVE_INFINITY) return PARSE.marker_minus_inf;
 
             return value;
 
@@ -4785,12 +4678,12 @@ if (!JSON) {
     PARSE.parse = function(str) {
 
         var len_prefix = PARSE.stringify_prefix.length,
-            len_func = PARSE.marker_func.length,
-            len_null = PARSE.marker_null.length,
-            len_und = PARSE.marker_und.length,
-            len_nan = PARSE.marker_nan.length,
-            len_inf = PARSE.marker_inf.length,
-            len_minus_inf = PARSE.marker_minus_inf.length;
+        len_func = PARSE.marker_func.length,
+        len_null = PARSE.marker_null.length,
+        len_und = PARSE.marker_und.length,
+        len_nan = PARSE.marker_nan.length,
+        len_inf = PARSE.marker_inf.length,
+        len_inf = PARSE.marker_minus_inf.length;
 
 
         var o = JSON.parse(str);
@@ -4836,21 +4729,18 @@ if (!JSON) {
                 else if (value.substring(0, len_inf) === PARSE.marker_inf) {
                     return Infinity;
                 }
-                else if (value.substring(0, len_minus_inf) ===
-                         PARSE.marker_minus_inf) {
-
+                else if (value.substring(0, len_inf) === PARSE.marker_minus_inf) {
                     return -Infinity;
                 }
 
             }
             return value;
-        }
-    };
+        };
+    }
 
     JSUS.extend(PARSE);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
-
 /**
  * # NDDB: N-Dimensional Database
  * Copyright(c) 2014 Stefano Balietti
@@ -4858,7 +4748,7 @@ if (!JSON) {
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
  *
- * See README.md for documentation and help.
+ * See README.md for help.
  * ---
  */
 (function(exports, J, store) {
@@ -4872,7 +4762,6 @@ if (!JSON) {
      * Removes cyclic references from an object
      *
      * @param {object} e The object to decycle
-     *
      * @return {object} e The decycled object
      *
      * @see https://github.com/douglascrockford/JSON-js/
@@ -4890,7 +4779,6 @@ if (!JSON) {
      * Restores cyclic references in an object previously decycled
      *
      * @param {object} e The object to retrocycle
-     *
      * @return {object} e The retrocycled object
      *
      * @see https://github.com/douglascrockford/JSON-js/
@@ -4915,35 +4803,20 @@ if (!JSON) {
         that = this;
         options = options || {};
 
-        if (!J) this.throwErr('Error', 'constructor', 'JSUS not found');
+        if (!J) throw new Error('JSUS not found.');
 
         // ## Public properties.
-
-        // ### nddbid
-        // A global index of all objects
-        this.nddbid = new NDDBIndex('nddbid', this);
 
         // ### db
         // The default database.
         this.db = [];
-
-        // ### lastSelection
-        // The subset of items that were selected during the last operations
-        // Notice: some of the items might not exist any more in the database.
-        // @see NDDB.fetch
-        this.lastSelection = [];
-
-        // ### nddbid
-        // A global index of all hashed objects
-        // @see NDDBHashtray
-        this.hashtray = new NDDBHashtray();
 
         // ###tags
         // The tags list.
         this.tags = {};
 
         // ### hooks
-        // The list of hooks and associated callbacks
+        // The list of hooks and associated callbacks.
         this.hooks = {
             insert: [],
             remove: [],
@@ -4951,72 +4824,65 @@ if (!JSON) {
         };
 
         // ### nddb_pointer
-        // Pointer for iterating along all the elements
+        // Pointer for iterating along all the elements.
         this.nddb_pointer = 0;
 
         // ### query
-        // QueryBuilder obj
-        // @see QueryBuilder
+        // QueryBuilder obj.
         this.query = new QueryBuilder();
 
         // ### filters
         // Available db filters
         this.addDefaultFilters();
 
-        // ### __userDefinedFilters
-        // Filters that are defined with addFilter
-        // The field is needed by cloneSettings
-        // @see NDDB.addFilter
-        this.__userDefinedFilters = {};
-
         // ### __C
-        // List of comparator functions
+        // List of comparator functions.
         this.__C = {};
 
         // ### __H
-        // List of hash functions
+        // List of hash functions.
         this.__H = {};
 
         // ### __I
-        // List of index functions
+        // List of index functions.
         this.__I = {};
 
         // ### __I
-        // List of view functions
+        // List of view functions.
         this.__V = {};
 
         // ### __update
-        // Auto update options container
+        // Auto update options container.
         this.__update = {};
 
         // ### __update.pointer
-        // If TRUE, nddb_pointer always points to the last insert
+        // If TRUE, nddb_pointer always points to the last insert.
         this.__update.pointer = false;
 
         // ### __update.indexes
-        // If TRUE, rebuild indexes on every insert and remove
+        // If TRUE, rebuild indexes on every insert and remove.
         this.__update.indexes = false;
 
         // ### __update.sort
-        // If TRUE, sort db on every insert and remove
+        // If TRUE, sort db on every insert and remove.
         this.__update.sort = false;
 
         // ### __shared
-        // Objects shared (not cloned) among breeded NDDB instances
+        // Objects inserted here will be shared (and not cloned)
+        // among all breeded NDDB instances.
         this.__shared = {};
 
         // ### log
-        // Std out for log messages
-        //
-        // It can be overriden in options by another function (`options.log`).
-        // `options.logCtx` specif the context of execution.
-        // @see NDDB.initLog
+        // Std out. Can be overriden in options by another function.
+        // The function will be executed with this instance of PlayerList
+        // as context, so if it is a method of another class it might not
+        // work. In case you will need to inherit or add properties
+        // and methods from the other class into this PlayerList instance.
         this.log = console.log;
 
         // ### globalCompare
-        // Dummy compare function used to sort elements in the database
-        //
-        // It can be overriden with a compare function returning:
+        // Dummy compare function used to sort elements in the database.
+        // Override with a compare function returning:
         //
         //  - 0 if the objects are the same
         //  - a positive number if o2 precedes o1
@@ -5026,22 +4892,24 @@ if (!JSON) {
             return -1;
         };
 
-        // Adding the "compareInAllFields" function.
-        //
-        // @see NDDB.comparator
-        this.comparator('*', function(o1, o2, trigger1, trigger2) {
-            var d, c, res;
-            for (d in o1) {
+        // TODO see where placing
+        var that;
+        that = this;
+        // TODO: maybe give users the option to overwrite it.
+        // Adding the compareInAllFields function
+       this.comparator('*', function(o1, o2, trigger1, trigger2) {
+           var d, c, res;
+           for (d in o1) {
                c = that.getComparator(d);
                o2[d] = o2['*'];
                res = c(o1, o2);
                if (res === trigger1) return res;
                if ('undefined' !== trigger2 && res === trigger2) return res;
                // No need to delete o2[d] afer comparison.
-            }
+           }
 
            // We are not interested in sorting.
-           // Figuring out the right return value.
+           // Figuring out the right return value
            if (trigger1 === 0) {
                return trigger2 === 1 ? -1 : 1;
            }
@@ -5050,6 +4918,7 @@ if (!JSON) {
            }
 
            return trigger2 === 0 ? 1 : 0;
+
        });
 
         // Mixing in user options and defaults.
@@ -5061,7 +4930,8 @@ if (!JSON) {
         }
     };
 
-    /**
+
+      /**
      * ### NDDB.addFilter
      *
      * Registers a _select_ function under an alphanumeric id
@@ -5077,11 +4947,8 @@ if (!JSON) {
      *
      * and return a function that execute the desired operation.
      *
-     * Registering a new filter with the same name of an already existing
-     * one, will overwrite the old filter without warnings.
-     *
-     * A reference to newly added filters are registered under
-     * `__userDefinedFilter`, so that they can be copied by `cloneSettings`.
+     * Registering a new operator under an already existing id will
+     * overwrite the old operator.
      *
      * @param {string} op An alphanumeric id
      * @param {function} cb The callback function
@@ -5090,29 +4957,12 @@ if (!JSON) {
      */
     NDDB.prototype.addFilter = function(op, cb) {
         this.filters[op] = cb;
-        this.__userDefinedFilters[op] = this.filters[op]; 
     };
 
     /**
      * ### NDDB.registerDefaultFilters
      *
      * Register default filters for NDDB
-     *
-     * Default filters include standard logical operators:
-     *
-     *   - '=', '==', '!=', ''>', >=', '<', '<=',
-     *
-     * and:
-     *
-     *   - 'E': field exists (can be omitted, it is the default one)
-     *   - '><': between values
-     *   - '<>': not between values
-     *   - 'in': element is found in array
-     *   - '!in': element is noi found in array
-     *   - 'LIKE': string SQL LIKE (case sensitive)
-     *   - 'iLIKE': string SQL LIKE (case insensitive)
-     *
-     * @see NDDB.filters
      */
     NDDB.prototype.addDefaultFilters = function() {
         if (!this.filters) this.filters = {};
@@ -5408,31 +5258,8 @@ if (!JSON) {
 
     };
 
-    // ## METHODS
 
-    /**
-     * ## NDDB.throwErr
-     *
-     * Throws an error with a predefined format
-     *
-     * The format is "constructor name" . "method name" : "error text" .
-     *
-     * It does **not** perform type checking on itw own input parameters.
-     *
-     * @param {string} type Optional. The error type, e.g. 'TypeError'.
-     *   Default, 'Error'
-     * @param {string} method Optional. The name of the method
-     * @param {string} text Optional. The error text. Default, 'generic error'
-     */
-    NDDB.prototype.throwErr = function(type, method, text) {
-        var errMsg, miss;
-        text = text || 'generic error';
-        errMsg = this._getConstrName();
-        if (method) errMsg = errMsg + '.' + method;
-        errMsg = errMsg + ': ' + text + '.';
-        if (type === 'TypeError') throw new TypeError(errMsg);
-        throw new Error(errMg);
-    };
+    // ## METHODS
 
     /**
      * ### NDDB.init
@@ -5445,48 +5272,27 @@ if (!JSON) {
      */
     NDDB.prototype.init = function(options) {
         var filter, sh, i;
-        var errMsg;
         options = options || {};
 
         this.__options = options;
 
         if (options.tags) {
-            if ('object' !== typeof options.tags) {
-                errMsg = 'options.tag must be object or undefined';
-                this.throwErr('TypeError', 'init', errMsg);
-            }
             this.tags = options.tags;
         }
 
-        if ('undefined' !== typeof options.nddb_pointer) {
-            if ('number' !== typeof options.nddb_pointer) {
-                errMsg = 'options.nddb_pointer must be number or undefined';
-                this.throwErr('TypeError', 'init', errMsg);
-            }
+        if (options.nddb_pointer > 0) {
             this.nddb_pointer = options.nddb_pointer;
         }
 
         if (options.hooks) {
-            if ('object' !== typeof options.hooks) {
-                errMsg = 'options.hooks must be object or undefined';
-                this.throwErr('TypeError', 'init', errMsg);
-            }
             this.hooks = options.hooks;
         }
 
         if (options.globalCompare) {
-            if ('function' !== typeof options.globalCompare) {
-                errMsg = 'options.globalCompare must be function or undefined';
-                this.throwErr('TypeError', 'init', errMsg);
-            }
             this.globalCompare = options.globalCompare;
         }
 
         if (options.update) {
-            if ('object' !== typeof options.update) {
-                errMsg = 'options.update must be object or undefined';
-                this.throwErr('TypeError', 'init', errMsg);
-            }
             if ('undefined' !== typeof options.update.pointer) {
                 this.__update.pointer = options.update.pointer;
             }
@@ -5501,10 +5307,6 @@ if (!JSON) {
         }
 
         if ('object' === typeof options.filters) {
-            if ('object' !== typeof options.filters) {
-                errMsg = 'options.filters must be object or undefined';
-                this.throwErr('TypeError', 'init', errMsg);
-            }
             for (filter in options.filters) {
                 this.addFilter(filter, options.filters[filter]);
             }
@@ -5525,18 +5327,10 @@ if (!JSON) {
         }
 
         if (options.C) {
-            if ('object' !== typeof options.C) {
-                errMsg = 'options.C must be object or undefined';
-                this.throwErr('TypeError', 'init', errMsg);
-            }
             this.__C = options.C;
         }
 
         if (options.H) {
-            if ('object' !== typeof options.H) {
-                errMsg = 'options.H must be object or undefined';
-                this.throwErr('TypeError', 'init', errMsg);
-            }
             for (i in options.H) {
                 if (options.H.hasOwnProperty(i)) {
                     this.hash(i, options.H[i]);
@@ -5545,10 +5339,6 @@ if (!JSON) {
         }
 
         if (options.I) {
-            if ('object' !== typeof options.I) {
-                errMsg = 'options.I must be object or undefined';
-                this.throwErr('TypeError', 'init', errMsg);
-            }
             this.__I = options.I;
             for (i in options.I) {
                 if (options.I.hasOwnProperty(i)) {
@@ -5560,10 +5350,6 @@ if (!JSON) {
         // all the previous settings (the method would also pollute
         // this.__options if called before all options in init are set).
         if (options.V) {
-            if ('object' !== typeof options.V) {
-                errMsg = 'options.V must be object or undefined';
-                this.throwErr('TypeError', 'init', errMsg);
-            }
             this.__V = options.V;
             for (i in options.V) {
                 if (options.V.hasOwnProperty(i)) {
@@ -5582,21 +5368,14 @@ if (!JSON) {
      * @param {object} ctx Optional. The context of the log function
      */
     NDDB.prototype.initLog = function(cb, ctx) {
-        if ('function' !== typeof cb) {
-            this.throwErr('TypeError', 'initLog', 'cb must be function');
-        }
         ctx = ctx || this;
-        if ('function' !== typeof ctx && 'object' !== typeof ctx) {
-            this.throwErr('TypeError', 'initLog', 'ctx must be object or ' +
-                          'function');
-        }
         this.log = function(){
             return cb.apply(ctx, arguments);
         };
     }
 
     /**
-     * ### NDDB._getConstrName
+     * ## NDDB._getConstrName
      *
      * Returns 'NDDB' or the name of the inheriting class.
      */
@@ -5610,14 +5389,12 @@ if (!JSON) {
     /**
      * ### NDDB._autoUpdate
      *
-     * Performs a series of automatic checkings and updates the db
-     *
-     * Checkings are performed according to current configuration, or to
-     * local options.
-     *
-     * @param {object} options Optional. Configuration object
+     * Performs a series of automatic checkings
+     * and updates the db according to current
+     * configuration
      *
      * @api private
+     * @param {object} options Optional. Configuration object
      */
     NDDB.prototype._autoUpdate = function(options) {
         var update = options ? J.merge(this.__update, options) : this.__update;
@@ -5635,58 +5412,40 @@ if (!JSON) {
     };
 
 
-    /**
-     * ## .nddb_insert
-     *
-     * Insert an item into db and performs update operations
-     *
-     * A new property `.nddbid` is created in the object, and it will be
-     * used to add the element into the global index: `NDDB.nddbid`.
-     *
-     * Emits the 'insert' event, and updates indexes, hashes and views
-     * accordingly.
-     *
-     * @param {object|function} o The item to add to database
-     * @param {boolean} update Optional. If TRUE, updates indexes, hashes,
-     *    and views. Default, FALSE
-     *
-     * @see NDDB.nddbid
-     * @see NDDB.emit
-     *
-     * @api private
-     */
     function nddb_insert(o, update) {
-        var nddbid;
-        if (('object' !== typeof o) && ('function' !== typeof o)) {
-            this.throwErr('TypeError', 'insert', 'object or function expected ' +
-                          typeof o + ' received.');
-        }
-
-        // Check / create a global index.
-        if ('undefined' === typeof o._nddbid) {
-            // Create internal idx.
-            nddbid = J.uniqueKey(this.nddbid.resolve);
-            if (!nddbid) {
-                this.throwErr('Error', 'insert', 'failed to create index: ' + o);
-            }
-            if (Object.defineProperty) {
-                Object.defineProperty(o, '_nddbid', { value: nddbid });
-            }
-            else {
-                o._nddbid = nddbid;
-            }
-        }
-        // Add to index directly (bypass api).
-        this.nddbid.resolve[o._nddbid] = this.db.length;
-        // End create index.
-        this.db.push(o);
+        if (o === null) return;
+        var type = typeof(o);
+        if (type === 'undefined') return;
+        if (type === 'string') return;
+        if (type === 'number') return;
         this.emit('insert', o);
+        this.db.push(o);
         if (update) {
             this._indexIt(o, (this.db.length-1));
             this._hashIt(o);
             this._viewIt(o);
         }
     }
+
+    // TODO: To test
+    //    function nddb_insert(o, update) {
+    //        if (o === null) {
+    //            throw new TypeError(this._getConstrName() +
+    //                     '.insert: null received.');
+    //        }
+    //        if (('object' !== typeof o) && ('function' !== typeof o)) {
+    //            throw new TypeError(this._getConstrName() +
+    //                                '.insert: expects object or function, ' +
+    //                                typeof o + ' received.');
+    //        }
+    //        this.db.push(o);
+    //        this.emit('insert', o);
+    //        if (update) {
+    //            this._indexIt(o, (this.db.length-1));
+    //            this._hashIt(o);
+    //            this._viewIt(o);
+    //        }
+    //    }
 
     /**
      * ### NDDB.importDB
@@ -5698,7 +5457,8 @@ if (!JSON) {
     NDDB.prototype.importDB = function(db) {
         var i;
         if (!J.isArray(db)) {
-            this.throwErr('TypeError', 'importDB', 'db must be array');
+            throw new TypeError(this._getConstrName() +
+                                '.importDB expects an array.');
         }
         for (i = 0; i < db.length; i++) {
             nddb_insert.call(this, db[i], this.__update.indexes);
@@ -5733,37 +5493,28 @@ if (!JSON) {
      *
      * Returns the number of elements in the database
      *
-     * It always returns the length of the full database, regardless of
-     * current selection.
-     *
-     * @return {number} The length of the database
-     *
-     * @see NDDB.count
+     * @see NDDB.length
      */
     NDDB.prototype.size = function() {
         return this.db.length;
     };
+
 
     /**
      * ### NDDB.breed
      *
      * Creates a clone of the current NDDB object
      *
-     * Takes care of calling the actual constructor of the class,
-     * so that inheriting objects will preserve their prototype.
+     * Takes care of calling the actual constructor
+     * of the class, so that inheriting objects will
+     * preserve their prototype.
      *
-     * @param {array} db Optional. Array of items to import in the new database.
-     *   Default, items currently in the database
-     *
-     * @return {NDDB|object} The new database
+     * @param {array} db Array of items to import in the new database
+     * @return {NDDB} The new database
      */
     NDDB.prototype.breed = function(db) {
-        if (db && !J.isArray(db)) {
-            this.throwErr('TypeError', 'importDB', 'db must be array ' +
-                          'or undefined');
-        }
-        // In case the class was inherited.
-        return new this.constructor(this.cloneSettings(), db || this.fetch());
+        //In case the class was inherited
+        return new this.constructor(this.cloneSettings(), db || this.db);
     };
 
     /**
@@ -5788,7 +5539,6 @@ if (!JSON) {
      *
      * @param {object} leaveOut Optional. An object containing the name of
      *   the properties to leave out of the clone as keys.
-     *
      * @return {object} options A copy of the current settings
      *   plus the shared objects
      */
@@ -5806,7 +5556,6 @@ if (!JSON) {
         options.update = this.__update;
         options.hooks = this.hooks;
         options.globalCompare = this.globalCompare;
-        options.filters = this.__userDefinedFilters;
 
         // Must be removed before cloning.
         if (options.log) {
@@ -5873,7 +5622,6 @@ if (!JSON) {
      * Cyclic objects are decycled.
      *
      * @param {boolean} TRUE, if compressed
-     *
      * @return {string} out A machine-readable representation of the database
      *
      * @see JSUS.stringify
@@ -5908,16 +5656,20 @@ if (!JSON) {
      *
      * @param {string} d The name of the dimension
      * @param {function} comparator The comparator function
+     * @return {boolean} TRUE, if registration was successful
+     *
      */
     NDDB.prototype.comparator = function(d, comparator) {
-        if ('string' !== typeof d) {
-            this.throwErr('TypeError', 'comparator', 'd must be string');
+        if ('undefined' === typeof d) {
+            throw new TypeError(this._getConstrName() +
+                                '.comparator: undefined dimension.');
         }
         if ('function' !== typeof comparator) {
-            this.throwErr('TypeError', 'comparator', 'comparator ' +
-                          'must be function');
+            throw new TypeError(this._getConstrName() +
+                                '.comparator: comparator must be function.');
         }
         this.__C[d] = comparator;
+        return true;
     };
 
     // ### NDDB.c
@@ -5978,13 +5730,9 @@ if (!JSON) {
                     if ('undefined' === typeof v2) return -1;
                     if (v1 > v2) return 1;
                     if (v2 > v1) return -1;
-                    
-                    // In case v1 and v2 are of different types
-                    // they might not be equal here.
-                    if (v2 === v1) return 0;
 
-                    // Return 1 if everything else fails.
-                    return 1;
+
+                    return 0;
                 };
             }
         }
@@ -6008,9 +5756,7 @@ if (!JSON) {
                         obj[i] = o2;
                         res = comparators[i](o1, obj);
                         if (res === trigger1) return res;
-                        if ('undefined' !== trigger2 && res === trigger2) {
-                            return res;
-                        }
+                        if ('undefined' !== trigger2 && res === trigger2) return res;
                     }
                 }
                 // We are not interested in sorting.
@@ -6032,13 +5778,10 @@ if (!JSON) {
     /**
      * ### NDDB.isReservedWord
      *
-     * Returns TRUE if a key is a reserved word
-     *
-     * A word is reserved if a property or a method with
-     * the same name already exists in the current instance
+     * Returns TRUE if a property or a method with the same name
+     * already exists in the current instance od NDDB
      *
      * @param {string} key The name of the property
-     *
      * @return {boolean} TRUE, if the property exists
      */
     NDDB.prototype.isReservedWord = function(key) {
@@ -6062,21 +5805,27 @@ if (!JSON) {
      *
      * @param {string} idx The name of index
      * @param {function} func The hashing function
+     * @return {boolean} TRUE, if registration was successful
      *
      * @see NDDB.isReservedWord
      * @see NDDB.rebuildIndexes
+     *
      */
     NDDB.prototype.index = function(idx, func) {
         if (('string' !== typeof idx) && ('number' !== typeof idx)) {
-            this.throwErr('TypeError', 'index', 'idx must be string or number');
+            throw new TypeError(this._getConstrName() + '.index: ' +
+                                'idx must be string or number.');
         }
         if (this.isReservedWord(idx)) {
-            this.throwErr('TypeError', 'index', 'idx is reserved word: ' + idx);
+            throw new Error(this._getConstrName() + '.index: ' +
+                            'idx is reserved word (' + idx + ')');
         }
         if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'index', 'func must be function');
+            throw new TypeError(this._getConstrName() + '.view: ' +
+                                'func must be function.');
         }
         this.__I[idx] = func, this[idx] = new NDDBIndex(idx, this);
+        return true;
     };
 
 
@@ -6098,6 +5847,7 @@ if (!JSON) {
      *
      * @param {string} idx The name of index
      * @param {function} func The hashing function
+     * @return {boolean} TRUE, if registration was successful
      *
      * @see NDDB.hash
      * @see NDDB.isReservedWord
@@ -6106,18 +5856,23 @@ if (!JSON) {
     NDDB.prototype.view = function(idx, func) {
         var settings;
         if (('string' !== typeof idx) && ('number' !== typeof idx)) {
-            this.throwErr('TypeError', 'view', 'idx must be string or number');
+            throw new TypeError(this._getConstrName() + '.view: ' +
+                                'idx must be string or number.');
         }
         if (this.isReservedWord(idx)) {
-            this.throwErr('TypeError', 'view', 'idx is reserved word: ' + idx);
+            throw new Error(this._getConstrName() + '.view: ' +
+                            'idx is reserved word (' + idx + ')');
         }
         if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'view', 'func must be function');
+            throw new TypeError(this._getConstrName() + '.view: ' +
+                                'func must be function.');
         }
+
         // Create a copy of the current settings, without the views
         // functions, else we create an infinite loop in the constructor.
-        settings = this.cloneSettings( {V: ''} );
+        settings = this.cloneSettings({V: ''});
         this.__V[idx] = func, this[idx] = new NDDB(settings);
+        return true;
     };
 
     /**
@@ -6136,22 +5891,28 @@ if (!JSON) {
      *
      * @param {string} idx The name of index
      * @param {function} func The hashing function
+     * @return {boolean} TRUE, if registration was successful
      *
      * @see NDDB.view
      * @see NDDB.isReservedWord
      * @see NDDB.rebuildIndexes
+     *
      */
     NDDB.prototype.hash = function(idx, func) {
         if (('string' !== typeof idx) && ('number' !== typeof idx)) {
-            this.throwErr('TypeError', 'hash', 'idx must be string or number');
+            throw new TypeError(this._getConstrName() + '.hash: ' +
+                                'idx must be string or number.');
         }
         if (this.isReservedWord(idx)) {
-            this.throwErr('TypeError', 'hash', 'idx is reserved word: ' + idx);
+            throw new Error(this._getConstrName() + '.hash: ' +
+                            'idx is reserved word (' + idx + ')');
         }
         if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'hash', 'func must be function');
+            throw new TypeError(this._getConstrName() + '.hash: ' +
+                                'func must be function.');
         }
         this.__H[idx] = func, this[idx] = {};
+        return true;
     };
 
     //### NDDB.h
@@ -6285,7 +6046,7 @@ if (!JSON) {
     NDDB.prototype._indexIt = function(o, dbidx, oldIdx) {
         var func, id, index, key;
         if (!o || J.isEmpty(this.__I)) return;
-
+        oldIdx = undefined;
         for (key in this.__I) {
             if (this.__I.hasOwnProperty(key)) {
                 func = this.__I[key];
@@ -6313,8 +6074,6 @@ if (!JSON) {
      * Adds an element to a view
      *
      * @param {object} o The element to index
-     *
-     * @see NDDB.view
      */
     NDDB.prototype._viewIt = function(o) {
         var func, id, index, key, settings;
@@ -6324,16 +6083,7 @@ if (!JSON) {
             if (this.__V.hasOwnProperty(key)) {
                 func = this.__V[key];
                 index = func(o);
-                if ('undefined' === typeof index) {
-                    // Element must be deleted, if already in hash.
-                    if (!this[key]) continue;
-                    if ('undefined' !== typeof
-                        this[key].nddbid.resolve[o._nddbid]) {
-
-                        this[key].nddbid.remove(o._nddbid);
-                    }
-                    continue;
-                }
+                if ('undefined' === typeof index) continue;
                 //this.__V[idx] = func, this[idx] = new this.constructor();
                 if (!this[key]) {
                     // Create a copy of the current settings,
@@ -6343,7 +6093,7 @@ if (!JSON) {
                     settings = this.cloneSettings({V: ''});
                     this[key] = new NDDB(settings);
                 }
-                this[key].insert(o);
+                this[key].insert(o);1
             }
         }
     };
@@ -6354,11 +6104,10 @@ if (!JSON) {
      * Hashes an element
      *
      * @param {object} o The element to hash
-     *
-     * @see NDDB.hash
+     * @return {boolean} TRUE, if insertion to an index was successful
      */
     NDDB.prototype._hashIt = function(o) {
-        var h, id, hash, key, settings, oldHash;
+        var h, id, hash, key, settings;
         if (!o || J.isEmpty(this.__H)) return false;
 
         for (key in this.__H) {
@@ -6366,14 +6115,7 @@ if (!JSON) {
                 h = this.__H[key];
                 hash = h(o);
 
-                if ('undefined' === typeof hash) {
-                    oldHash = this.hashtray.get(key, o._nddbid);
-                    if (oldHash) {
-                        this[key][oldHash].nddbid.remove(o._nddbid);
-                        this.hashtray.remove(key, o._nddbid);
-                    }
-                    continue;
-                }
+                if ('undefined' === typeof hash) continue;
                 if (!this[key]) this[key] = {};
 
                 if (!this[key][hash]) {
@@ -6384,7 +6126,6 @@ if (!JSON) {
                     this[key][hash] = new NDDB(settings);
                 }
                 this[key][hash].insert(o);
-                this.hashtray.set(key, o._nddbid, hash);
             }
         }
     };
@@ -6398,9 +6139,8 @@ if (!JSON) {
      *
      * Available events:
      *
-     *   - `insert`: each time an item is inserted
-     *   - `remove`: each time an item, or a collection of items, is removed
-     *   - `update`: each time an item is updated
+     *  `insert`: each time an item is inserted
+     *  `remove`: each time a collection of items is removed
      *
      * Examples.
      *
@@ -6409,29 +6149,20 @@ if (!JSON) {
      *
      * var trashBin = new NDDB();
      *
-     * db.on('insert', function(item) {
-     *     item.id = getMyNextId();
+     * db.on('insert', function(item){
+     *          item.id = getMyNextId();
      * });
      *
      * db.on('remove', function(array) {
-     *     trashBin.importDB(array);
+     *          trashBin.importDB(array);
      * });
      * ```
      *
-     * @param {string} event The name of an event: 'insert', 'update', 'remove'
-     * @param {function} func The callback function associated to the event
      */
     NDDB.prototype.on = function(event, func) {
-        if ('string' !== typeof event) {
-            this.throwErr('TypeError', 'on', 'event must be string');
-        }
-        if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'on', 'func must be function');
-        }
-        if (!this.hooks[event]) {
-            this.throwErr('TypeError', 'on', 'unknown event: ' + event);
-        }
+        if (!event || !func || !this.hooks[event]) return;
         this.hooks[event].push(func);
+        return true;
     };
 
     /**
@@ -6440,24 +6171,13 @@ if (!JSON) {
      * Deregister an event, or an event listener
      *
      * @param {string} event The event name
-     * @param {function} func Optional. The specific function to deregister.
-     *   If empty, all the event listensers for `event` are cleared.
+     * @param {function} func Optional. The specific function to deregister
      *
-     * @return {boolean} TRUE, if the removal is successful
+     * @return Boolean TRUE, if the removal is successful
      */
     NDDB.prototype.off = function(event, func) {
         var i;
-        if ('string' !== typeof event) {
-            this.throwErr('TypeError', 'off', 'event must be string');
-        }
-        if (func && 'function' !== typeof func) {
-            this.throwErr('TypeError', 'off',
-                          'func must be function or undefined');
-        }
-        if (!this.hooks[event]) {
-            this.throwErr('TypeError', 'off', 'unknown event: ' + event);
-        }
-        if (!this.hooks[event].length) return false;
+        if (!event || !this.hooks[event] || !this.hooks[event].length) return;
 
         if (!func) {
             this.hooks[event] = [];
@@ -6470,23 +6190,20 @@ if (!JSON) {
             }
         }
         return false;
-    };
+    }
 
     /**
      * ### NDDB.emit
      *
      * Fires all the listeners associated with an event
      *
-     * Accepts any number of parameters, the first one is the name
-     * of the event, and the remaining will be passed to the event listeners.
+     * Accepts any number of parameters, the first one is the event type, and
+     * the rest will be passed to the event listeners.
      */
     NDDB.prototype.emit = function() {
         var i, event;
         event = Array.prototype.splice.call(arguments, 0, 1);
-        if ('string' !== typeof event[0]) {
-            this.throwErr('TypeError', 'emit', 'first argument must be string');
-        }
-        if (!this.hooks[event] || !this.hooks[event].length) {
+        if (!event || !this.hooks[event] || !this.hooks[event].length) {
             return;
         }
         for (i = 0; i < this.hooks[event].length; i++) {
@@ -6633,7 +6350,6 @@ if (!JSON) {
      * @param {string} d The dimension of comparison
      * @param {string} op Optional. The operation to perform
      * @param {mixed} value Optional. The right-hand element of comparison
-     *
      * @return {NDDB} A new NDDB instance with the currently
      *   selected items in memory
      *
@@ -6655,7 +6371,6 @@ if (!JSON) {
      * @param {string} d The dimension of comparison
      * @param {string} op Optional. The operation to perform
      * @param {mixed} value Optional. The right-hand element of comparison
-     *
      * @return {NDDB} A new NDDB instance with the currently
      *   selected items in memory
      *
@@ -6685,7 +6400,6 @@ if (!JSON) {
      * @param {string} d The dimension of comparison
      * @param {string} op Optional. The operation to perform
      * @param {mixed} value Optional. The right-hand element of comparison
-     *
      * @return {NDDB} A new NDDB instance with the currently
      *   selected items in memory
      *
@@ -6719,7 +6433,6 @@ if (!JSON) {
      * @param {string} d The dimension of comparison
      * @param {string} op Optional. The operation to perform
      * @param {mixed} value Optional. The right-hand element of comparison
-     *
      * @return {NDDB} A new NDDB instance with the currently
      *   selected items in memory
      *
@@ -6728,6 +6441,7 @@ if (!JSON) {
      * @see NDDB.or
      * @see NDDB.execute
      * @see NDDB.fetch
+     *
      */
     NDDB.prototype.selexec = function(d, op, value) {
         return this.select(d, op, value).execute();
@@ -6736,26 +6450,20 @@ if (!JSON) {
     /**
      * ### NDDB.execute
      *
-     * Returns a new NDDB instance containing only the items currently selected
-     *
-     * This method is deprecated and might not longer be supported in future
-     * versions of NDDB. Use NDDB.breed instead.
+     * Executes a search with the criteria specified by `select` statements
      *
      * Does not reset the query object, and it is possible to reuse the current
-     * selection multiple times.
+     * selection multiple times
      *
      * @param {string} d The dimension of comparison
      * @param {string} op Optional. The operation to perform
      * @param {mixed} value Optional. The right-hand element of comparison
-     *
      * @return {NDDB} A new NDDB instance with selected items in the db
      *
      * @see NDDB.select
      * @see NDDB.selexec
      * @see NDDB.and
      * @see NDDB.or
-     *
-     * @deprecated
      */
     NDDB.prototype.execute = function() {
         return this.filter(this.query.get.call(this.query));
@@ -6764,65 +6472,54 @@ if (!JSON) {
     /**
      * ### NDDB.exists
      *
-     * Returns TRUE if a copy of the object exists in the database / selection
+     * Returns TRUE if a copy of the object exists in
+     * the database
      *
      * @param {object} o The object to look for
-     *
      * @return {boolean} TRUE, if a copy is found
      *
      * @see JSUS.equals
-     * @see NDDB.fetch
      */
     NDDB.prototype.exists = function(o) {
-        var i, len, db;
-        if ('object' !== typeof o && 'function' !== typeof o) {
-            this.throwErr('TypeError', 'exists', 'o must be object or function');
-        }
-        db = this.fetch();
-        len = db.length;
-        for (i = 0 ; i < db.length ; i++) {
-            if (J.equals(db[i], o)) {
+        if (!o) return false;
+
+        for (var i = 0 ; i < this.db.length ; i++) {
+            if (J.equals(this.db[i], o)) {
                 return true;
             }
         }
+
         return false;
     };
 
     /**
      * ### NDDB.limit
      *
-     * Breeds a new NDDB instance with only the first N entries
-     *
-     * If a selection is active it will apply the limit to the
-     * current selection only.
+     * Creates a copy of the current database containing only
+     * the first N entries
      *
      * If limit is a negative number, selection is made starting
      * from the end of the database.
      *
      * @param {number} limit The number of entries to include
-     *
      * @return {NDDB} A "limited" copy of the current instance of NDDB
      *
-     * @see NDDB.breed
      * @see NDDB.first
      * @see NDDB.last
      */
     NDDB.prototype.limit = function(limit) {
-        var db;
-        if ('number' !== typeof limit) {
-            this.throwErr('TypeError', 'exists', 'limit must be number');
-        }
-        db = this.fetch();
-        if (limit !== 0) {
-            db = (limit > 0) ? db.slice(0, limit) : db.slice(limit);
-        }
+        limit = limit || 0;
+        if (limit === 0) return this.breed();
+        var db = (limit > 0) ? this.db.slice(0, limit) :
+            this.db.slice(limit);
+
         return this.breed(db);
     };
 
     /**
      * ### NDDB.reverse
      *
-     * Reverses the order of all the entries in the database / selection
+     * Reverses the order of all the entries in the database
      *
      * @see NDDB.sort
      */
@@ -6834,9 +6531,8 @@ if (!JSON) {
     /**
      * ### NDDB.sort
      *
-     * Sort the db according to one of the several criteria.
-     *
-     * Available sorting options:
+     * Sort the db according to one of the following
+     * criteria:
      *
      *  - globalCompare function, if no parameter is passed
      *  - one of the dimension, if a string is passed
@@ -6848,23 +6544,21 @@ if (!JSON) {
      * Notice: the order of entries is changed.
      *
      * @param {string|array|function} d Optional. The criterium of sorting
-     *
      * @return {NDDB} A sorted copy of the current instance of NDDB
-     *
-     * @see NDDB.globalCompare
      */
     NDDB.prototype.sort = function(d) {
         var func, that;
-
-        // Global compare.
+        // GLOBAL compare
         if (!d) {
             func = this.globalCompare;
         }
-        // User-defined function.
+
+        // FUNCTION
         else if ('function' === typeof d) {
             func = d;
         }
-        // Array of dimensions.
+
+        // ARRAY of dimensions
         else if (d instanceof Array) {
             that = this;
             func = function(a,b) {
@@ -6876,7 +6570,8 @@ if (!JSON) {
                 return result;
             }
         }
-        // Single dimension.
+
+        // SINGLE dimension
         else {
             func = this.getComparator(d);
         }
@@ -6910,30 +6605,26 @@ if (!JSON) {
     /**
      * ### NDDB.filter
      *
-     * Filters the entries according to a user-defined function
-     *
-     * If a selection is active it will filter items only within the
-     * current selection.
+     * Filters the entries of the database according to the
+     * specified callback function.
      *
      * A new NDDB instance is breeded.
      *
      * @param {function} func The filtering function
-     *
      * @return {NDDB} A new instance of NDDB containing the filtered entries
      *
      * @see NDDB.breed
+     *
      */
     NDDB.prototype.filter = function(func) {
-        return this.breed(this.fetch().filter(func));
+        return this.breed(this.db.filter(func));
     };
+
 
     /**
      * ### NDDB.each || NDDB.forEach
      *
-     * Applies a callback function to each element in the db
-     *
-     * If a selection is active, the callback will be applied to items
-     * within the current selection only.
+     * Applies a callback function to each element in the db.
      *
      * It accepts a variable number of input arguments, but the first one
      * must be a valid callback, and all the following are passed as parameters
@@ -6942,16 +6633,10 @@ if (!JSON) {
      * @see NDDB.map
      */
     NDDB.prototype.each = NDDB.prototype.forEach = function() {
-        var func, i, db, len;
-        func = arguments[0];
-        if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'each',
-                          'first argument must be function');
-        }
-        db = this.fetch();
-        len = db.length;
-        for (i = 0 ; i < len ; i++) {
-            arguments[0] = db[i];
+        if (arguments.length === 0) return;
+        var func = arguments[0], i;
+        for (i = 0 ; i < this.db.length ; i++) {
+            arguments[0] = this.db[i];
             func.apply(this, arguments);
         }
     };
@@ -6967,27 +6652,22 @@ if (!JSON) {
      * to the callback
      *
      * @return {array} out The result of the mapping
-     *
      * @see NDDB.each
+     *
      */
     NDDB.prototype.map = function() {
-        var func, i, db, len, out, o;
-        func = arguments[0];
-        if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'map', 'first argument must be function');
-        }
-        db = this.fetch();
-        len = db.length;
-        out = [];
-        for (i = 0 ; i < db.length ; i++) {
-            arguments[0] = db[i];
+        if (arguments.length === 0) return;
+        var func = arguments[0],
+        out = [], o, i;
+        for (i = 0 ; i < this.db.length ; i++) {
+            arguments[0] = this.db[i];
             o = func.apply(this, arguments);
             if ('undefined' !== typeof o) out.push(o);
         }
         return out;
     };
 
-    // ## Update
+    // # Update
 
     /**
      * ### NDDB.update
@@ -7002,30 +6682,19 @@ if (!JSON) {
      *
      * @param {object} update An object containing the properties
      *  that will be updated.
-     *
      * @return {NDDB} A new instance of NDDB with updated entries
      *
      * @see JSUS.mixin
      */
     NDDB.prototype.update = function(update) {
-        var i, len, db;
-        if ('object' !== typeof update) {
-            this.throwErr('TypeError', 'update', 'update must be object');
+        if (!this.db.length || !update) return this;
+
+        for (var i = 0; i < this.db.length; i++) {
+            this.emit('update', this.db[i], update);
+            J.mixin(this.db[i], update);
         }
 
-        // Gets items and resets the current selection.
-        db = this.fetch();
-        if (db.length) {
-            len = db.length;
-            for (i = 0; i < len; i++) {
-                this.emit('update', db[i], update);
-                J.mixin(db[i], update);
-                this._indexIt(db[i]);
-                this._hashIt(db[i]);
-                this._viewIt(db[i]);
-            }
-            this._autoUpdate({indexes: false});
-        }
+        this._autoUpdate();
         return this;
     };
 
@@ -7041,7 +6710,6 @@ if (!JSON) {
     NDDB.prototype.removeAllEntries = function() {
         if (!this.db.length) return this;
         this.emit('remove', this.db);
-        this.nddbid.resolve = {};
         this.db = [];
         this._autoUpdate();
         return this;
@@ -7062,23 +6730,20 @@ if (!JSON) {
      * @return {boolean} TRUE, if the database was cleared
      */
     NDDB.prototype.clear = function(confirm) {
-        var i;
         if (confirm) {
             this.db = [];
-            this.nddbid.resolve = {};
             this.tags = {};
             this.query.reset();
             this.nddb_pointer = 0;
-            this.lastSelection = [];
-            this.hashtray.clear();
 
+            var i;
             for (i in this.__H) {
                 if (this[i]) delete this[i]
             }
             for (i in this.__C) {
                 if (this[i]) delete this[i]
             }
-            for (i in this.__I) {
+            for (var i in this.__I) {
                 if (this[i]) delete this[i]
             }
         }
@@ -7104,13 +6769,10 @@ if (!JSON) {
      *   is performed. Defaults 'joined'
      * @param {string|array} select Optional. The properties to copy
      *   in the join. Defaults undefined
-     *
      * @return {NDDB} A new database containing the joined entries
      *
      * @see NDDB._join
      * @see NDDB.breed
-     *
-     * TODO: allow join on multiple properties.
      */
     NDDB.prototype.join = function(key1, key2, pos, select) {
         // <!--
@@ -7132,7 +6794,8 @@ if (!JSON) {
     /**
      * ### NDDB.concat
      *
-     * Copies the (sub)entries with 'key2' in all the entries with 'key1'
+     * Copies all the entries (or selected properties of them) containing key2
+     * in all the entries containing key1.
      *
      * Nested properties can be accessed with '.'.
      *
@@ -7142,14 +6805,13 @@ if (!JSON) {
      *   performed. Defaults 'joined'
      * @param {string|array} select Optional. The properties to copy in
      *   the join. Defaults undefined
-     *
      * @return {NDDB} A new database containing the concatenated entries
      *
      *  @see NDDB._join
      *  @see JSUS.join
      */
     NDDB.prototype.concat = function(key1, key2, pos, select) {
-        return this._join(key1, key2, function(){ return true; }, pos, select);
+        return this._join(key1, key2, function(){ return true;}, pos, select);
     };
 
     /**
@@ -7177,9 +6839,7 @@ if (!JSON) {
      *   is performed. Defaults 'joined'
      * @param {string|array} select Optional. The properties to copy
      *   in the join. Defaults undefined
-     *
      * @return {NDDB} A new database containing the joined entries
-     *
      * @see NDDB.breed
      */
     NDDB.prototype._join = function(key1, key2, comparator, pos, select) {
@@ -7204,46 +6864,42 @@ if (!JSON) {
 
                     if ('undefined' !== typeof key) {
                         if (comparator(foreign_key, key)) {
-                            // Inject the matched obj into the reference one.
+                            // Inject the matched obj into the
+                            // reference one
                             o = J.clone(this.db[i]);
-                            o2 = select ?
-                                J.subobj(this.db[j], select) : this.db[j];
+                            o2 = (select) ?
+                                J.subobj(this.db[j], select)
+                                : this.db[j];
                             o[pos] = o2;
                             out.push(o);
                         }
+
                     }
                 }
             }
         }
+
         return this.breed(out);
     };
 
     /**
      * ### NDDB.split
      *
-     * Splits all the entries  containing the specified dimension
+     * Splits all the entries in the database containing
+     * the passed dimension.
      *
-     * If a active selection if found, operation is applied only to the subset.
-     *
-     * New entries are created and a new NDDB object is breeded
-     * to allows method chaining.
+     * New entries are created and a new NDDB object is
+     * breeded to allows method chaining.
      *
      * @param {string} key The dimension along which items will be split
-     *
      * @return {NDDB} A new database containing the split entries
      *
      * @see JSUS.split
      */
     NDDB.prototype.split = function(key) {
-        var out, i, db, len;
-        if ('string' !== typeof key) {
-            this.throwErr('TypeError', 'split', 'key must be string');
-        }
-        db = this.fetch();
-        len = db.length;
-        out = [];
-        for (i = 0; i < len; i++) {
-            out = out.concat(J.split(db[i], key));
+        var out = [], i;
+        for (i = 0; i < this.db.length; i++) {
+            out = out.concat(J.split(this.db[i], key));
         }
         return this.breed(out);
     };
@@ -7253,33 +6909,19 @@ if (!JSON) {
     /**
      * ### NDDB.fetch
      *
-     * Returns array of selected entries in the database
+     * Fetches all the entries in the database and returns
+     * them in one array
      *
-     * If no selection criteria is specified returns all entries.
-     *
-     * By default, it resets the current selection, and further calls to
-     * `fetch` will return the full database.
-     *
-     * It stores a reference to the most recent array of selected items
-     * under `this.lastSelection`.
-     *
-     * Examples:
+     * Examples
      *
      * ```javascript
      * var db = new NDDB();
-     * db.importDB([ { a: 1, b: {c: 2}, d: 3 } ]);
+     * db.insert([ { a:1, b:{c:2}, d:3 } ]);
      *
-     * db.fetch();    // [ { a: 1, b: {c: 2}, d: 3 } ]
-     *
-     * db.select('a', '=', 1);
-     *
-     * db.fetch(); // [ { a: 1 } ]
+     * db.fetch();    // [ {a: 1, b: {c: 2}, d: 3} ]
      * ```
      *
      * No further chaining is permitted after fetching.
-     *
-     * @param {boolean} doNotReset Optional. If TRUE, it does not reset
-     *   the current selection. Default, TRUE
      *
      * @return {array} out The fetched values
      *
@@ -7287,23 +6929,10 @@ if (!JSON) {
      * @see NDDB.fetchArray
      * @see NDDB.fetchKeyArray
      * @see NDDB.fetchSubObj
-     * @see NDDB.lastSelection
+     *
      */
-    NDDB.prototype.fetch = function(doNotReset) {
-        var db;
-        if (this.db.length && this.query.query.length) {
-            if (doNotReset && 'boolean' !== typeof doNotReset) {
-                this.throwErr('TypeError', 'fetch',
-                              'doNotReset must be undefined or boolean.');
-            }
-            db = this.db.filter(this.query.get.call(this.query));
-            if (!doNotReset) this.query.reset();
-        }
-        else {
-            db = this.db;
-        }
-        this.lastSelection = db;
-        return db;
+    NDDB.prototype.fetch = function() {
+        return this.db;
     };
 
     /**
@@ -7325,7 +6954,6 @@ if (!JSON) {
      *
      * @param {string|array} key Optional. If set, returned objects will
      *   have only such properties
-     *
      * @return {array} out The fetched objects
      *
      * @see NDDB.fetch
@@ -7334,11 +6962,10 @@ if (!JSON) {
      * @see NDDB.fetchKeyArray
      */
     NDDB.prototype.fetchSubObj= function(key) {
-        var i, el, db, out;
         if (!key) return [];
-        db = this.fetch(), out = [];
-        for (i = 0; i < db.length; i++) {
-            el = J.subobj(db[i], key);
+        var i, el, out = [];
+        for (i=0; i < this.db.length; i++) {
+            el = J.subobj(this.db[i], key);
             if (!J.isEmpty(el)) out.push(el);
         }
         return out;
@@ -7376,7 +7003,6 @@ if (!JSON) {
      *
      * @param {string|array} key Optional. If set, returns only
      *   the value from the specified property
-     *
      * @return {array} out The fetched values
      *
      * @see NDDB.fetch
@@ -7385,22 +7011,20 @@ if (!JSON) {
      * @see NDDB.fetchSubObj
      */
     NDDB.prototype.fetchValues = function(key) {
-        var db, el, i, out, typeofkey;
-
-        db = this.fetch();
+        var el, i, out, typeofkey;
 
         typeofkey = typeof key, out = {};
 
         if (typeofkey === 'undefined') {
-            for (i=0; i < db.length; i++) {
-                J.augment(out, db[i], J.keys(db[i]));
+            for (i=0; i < this.db.length; i++) {
+                J.augment(out, this.db[i], J.keys(this.db[i]));
             }
         }
 
         else if (typeofkey === 'string') {
             out[key] = [];
-            for (i=0; i < db.length; i++) {
-                el = J.getNestedValue(key, db[i]);
+            for (i=0; i < this.db.length; i++) {
+                el = J.getNestedValue(key, this.db[i]);
                 if ('undefined' !== typeof el) {
                     out[key].push(el);
                 }
@@ -7409,8 +7033,8 @@ if (!JSON) {
 
         else if (J.isArray(key)) {
             out = J.melt(key, J.rep([], key.length)); // object not array
-            for ( i = 0 ; i < db.length ; i++) {
-                el = J.subobj(db[i], key);
+            for ( i = 0 ; i < this.db.length ; i++) {
+                el = J.subobj(this.db[i], key);
                 if (!J.isEmpty(el)) {
                     J.augment(out, el);
                 }
@@ -7495,11 +7119,12 @@ if (!JSON) {
      * @param {string|array} key Optional. If set, returns key/values only
      *   from the specified property
      * @param {boolean} keyed. Optional. If set, also the keys are returned
-     *
      * @return {array} out The fetched values
+     *
      */
     NDDB.prototype._fetchArray = function(key, keyed) {
-        var db, cb, out, el, i;
+
+        var cb, out, el, i;
 
         if (keyed) {
 
@@ -7523,9 +7148,9 @@ if (!JSON) {
             }
         }
 
-        db = this.fetch(), out = [];
-        for (i = 0; i < db.length; i++) {
-            el = cb.call(db[i], db[i], key);
+        out = [];
+        for (i=0; i < this.db.length; i++) {
+            el = cb.call(this.db[i], this.db[i], key);
             if ('undefined' !== typeof el) out.push(el);
         }
 
@@ -7563,7 +7188,8 @@ if (!JSON) {
     /**
      * ### NDDB.fetchKeyArray
      *
-     * Like NDDB.fetchArray, but also the keys are added
+     * Exactly as NDDB.fetchArray, but also the keys are added to the
+     * returned values.
      *
      * Examples
      *
@@ -7580,7 +7206,6 @@ if (!JSON) {
      *
      * @param {string} key Optional. If set, returns only the value
      *   from the specified property
-     *
      * @return {array} out The fetched values
      *
      * @see NDDB._fetchArray
@@ -7622,19 +7247,17 @@ if (!JSON) {
      * ```
      *
      * @param {string} key If the dimension for grouping
-     *
      * @return {array} outs The array of groups
+     *
      */
     NDDB.prototype.groupBy = function(key) {
-        var groups, outs, i, el, out;
-        db = this.fetch();
-        if (!key) return db;
+        if (!key) return this.db;
 
-        groups = [], outs = [];
-        for (i = 0 ; i < db.length ; i++) {
-            el = J.getNestedValue(key, db[i]);
+        var groups = [], outs = [], i, el, out;
+        for (i = 0 ; i < this.db.length ; i++) {
+            el = J.getNestedValue(key, this.db[i]);
             if ('undefined' === typeof el) continue;
-            // Creates a new group and add entries to it.
+            // Creates a new group and add entries to it
             if (!J.in_array(el, groups)) {
                 groups.push(el);
                 out = this.filter(function(elem) {
@@ -7642,7 +7265,7 @@ if (!JSON) {
                         return this;
                     }
                 });
-                // Reset nddb_pointer in subgroups.
+                // Reset nddb_pointer in subgroups
                 out.nddb_pointer = 0;
                 outs.push(out);
             }
@@ -7660,51 +7283,41 @@ if (!JSON) {
      * If key is undefined, the size of the databse is returned.
      *
      * @param {string} key The dimension to count
-     *
      * @return {number} count The number of items along the specified dimension
      *
-     * @see NDDB.size
+     * @see NDDB.length
      */
     NDDB.prototype.count = function(key) {
-        var i, count, len, db;
-        db = this.fetch();
-        len = db.length;
-        if ('undefined' === typeof key) return len;
-        if ('string' !== typeof key) {
-            this.throwErr('TypeError', 'count',
-                          'key must be string or undefined');
-        }
-        count = 0;
-        for (i = 0; i < len; i++) {
-            if (J.hasOwnNestedProperty(key, db[i])){
+        if ('undefined' === typeof key) return this.db.length;
+        var count = 0;
+        for (var i = 0; i < this.db.length; i++) {
+            if (J.hasOwnNestedProperty(key, this.db[i])){
                 count++;
             }
         }
         return count;
     };
 
+
     /**
      * ### NDDB.sum
      *
-     * Returns the sum of the values of all the entries with the specified key
+     * Returns the total sum of the values of all the entries
+     * in the database containing the specified key.
      *
      * Non numeric values are ignored.
      *
      * @param {string} key The dimension to sum
+     * @return {number|boolean} sum The sum of the values for the dimension,
+     *   or FALSE if it does not exist
      *
-     * @return {number} sum The sum of the values for the dimension,
-     *   or NaN if it does not exist
      */
     NDDB.prototype.sum = function(key) {
-        var sum, i, len, tmp, db;
-        if ('string' !== typeof key) {
-            this.throwErr('TypeError', 'sum', 'key must be string');
-        }
-        db = this.fetch(), len = db.length, sum = NaN;
-        for (i = 0; i < len; i++) {
-            tmp = J.getNestedValue(key, db[i]);
+        if ('undefined' === typeof key) return false;
+        var sum = 0;
+        for (var i=0; i < this.db.length; i++) {
+            var tmp = J.getNestedValue(key, this.db[i]);
             if (!isNaN(tmp)) {
-                if (isNaN(sum)) sum = 0;
                 sum += tmp;
             }
         }
@@ -7714,73 +7327,66 @@ if (!JSON) {
     /**
      * ### NDDB.mean
      *
-     * Returns the mean of the values of all the entries with the specified key
+     * Returns the average of the values of all the entries
+     * in the database containing the specified key.
      *
      * Entries with non numeric values are ignored, and excluded
      * from the computation of the mean.
      *
      * @param {string} key The dimension to average
+     * @return {number|boolean} The mean of the values for the dimension,
+     *   or FALSE if it does not exist
      *
-     * @return {number} The mean of the values for the dimension,
-     *   or NaN if it does not exist
      */
     NDDB.prototype.mean = function(key) {
-        var sum, count, tmp, db;
-        var i, len;
-        if ('string' !== typeof key) {
-            this.throwErr('TypeError', 'mean', 'key must be string');
-        }
-        db = this.fetch();
-        len = db.length;
-        sum = 0, count = 0;
-        for (i = 0; i < len; i++) {
-            tmp = J.getNestedValue(key, db[i]);
+        if ('undefined' === typeof key) return false;
+        var sum = 0;
+        var count = 0;
+        for (var i=0; i < this.db.length; i++) {
+            var tmp = J.getNestedValue(key, this.db[i]);
             if (!isNaN(tmp)) {
                 sum += tmp;
                 count++;
             }
         }
-        return (count === 0) ? NaN : sum / count;
+        return (count === 0) ? 0 : sum / count;
     };
 
     /**
      * ### NDDB.stddev
      *
-     * Returns the std. dev. of the values of the entries with the specified key
-     *
-     * It uses the computational formula for sample standard deviation,
-     * using N - 1 at the denominator of the sum of squares.
+     * Returns the standard deviation of the values of all the entries
+     * in the database containing the specified key.
      *
      * Entries with non numeric values are ignored, and excluded
      * from the computation of the standard deviation.
      *
      * @param {string} key The dimension to average
+     * @return {number|boolean} The mean of the values for the dimension,
+     *   or FALSE if it does not exist
      *
-     * @return {number} The standard deviations of the values for the dimension,
-     *   or NaN if it does not exist
+     * @see NDDB.mean
+     *
+     * TODO: using computation formula of stdev
      */
     NDDB.prototype.stddev = function(key) {
-        var count, tmp, db, i, len;
-        var sum, sumSquared;
-        if ('string' !== typeof key) {
-            this.throwErr('TypeError', 'stddev', 'key must be string');
-        }
-        db = this.fetch();
-        len = db.length;
-        if (!len || len === 1) return NaN;
-        i = -1;
-        sum = 0, sumSquared = 0, count = 0;
-        for ( ; ++i < len ; ) {
-            tmp = J.getNestedValue(key, db[i]);
+        var V, mean, count;
+        if ('undefined' === typeof key) return false;
+        mean = this.mean(key);
+        if (isNaN(mean)) return false;
+
+        V = 0, count = 0;
+        this.each(function(e) {
+            var tmp = J.getNestedValue(key, e);
             if (!isNaN(tmp)) {
+                V += Math.pow(tmp - mean, 2)
                 count++;
-                sum += tmp;
-                sumSquared += Math.pow(tmp, 2);
             }
-        }
-        tmp = sumSquared - (Math.pow(sum, 2) / count);
-        return Math.sqrt( tmp / (count - 1) );
+        });
+
+        return (V !== 0) ? Math.sqrt(V) / (count-1) : 0;
     };
+
 
     /**
      * ### NDDB.min
@@ -7791,23 +7397,17 @@ if (!JSON) {
      * Entries with non numeric values are ignored.
      *
      * @param {string} key The dimension of which to find the min
-     *
-     * @return {number} The smallest value for the dimension,
-     *   or NaN if it does not exist
+     * @return {number|boolean} The smallest value for the dimension,
+     *   or FALSE if it does not exist
      *
      * @see NDDB.max
      */
     NDDB.prototype.min = function(key) {
-        var min, tmp, db, i, len;
-        if ('string' !== typeof key) {
-            this.throwErr('TypeError', 'min', 'key must be string');
-        }
-        db = this.fetch();
-        len = db.length;
-        min = NaN;
-        for (i = 0; i < len; i++) {
-            tmp = J.getNestedValue(key, db[i]);
-            if (!isNaN(tmp) && (tmp < min || isNaN(min))) {
+        if ('undefined' === typeof key) return false;
+        var min = false;
+        for (var i=0; i < this.db.length; i++) {
+            var tmp = J.getNestedValue(key, this.db[i]);
+            if (!isNaN(tmp) && (tmp < min || min === false)) {
                 min = tmp;
             }
         }
@@ -7823,23 +7423,17 @@ if (!JSON) {
      * Entries with non numeric values are ignored.
      *
      * @param {string} key The dimension of which to find the max
-     *
-     * @return {number} The biggest value for the dimension,
-     *   or NaN if it does not exist
+     * @return {number|boolean} The biggest value for the dimension,
+     *   or FALSE if it does not exist
      *
      * @see NDDB.min
      */
     NDDB.prototype.max = function(key) {
-        var max, i, len, tmp, db;
-        if ('string' !== typeof key) {
-            this.throwErr('TypeError', 'max', 'key must be string');
-        }
-        db = this.fetch();
-        len = db.length;
-        max = NaN;
-        for (i = 0; i < len; i++) {
-            tmp = J.getNestedValue(key, db[i]);
-            if (!isNaN(tmp) && (tmp > max || isNaN(max))) {
+        if ('undefined' === typeof key) return false;
+        var max = false;
+        for (var i=0; i < this.db.length; i++) {
+            var tmp = J.getNestedValue(key, this.db[i]);
+            if (!isNaN(tmp) && (tmp > max || max === false)) {
                 max = tmp;
             }
         }
@@ -7851,25 +7445,20 @@ if (!JSON) {
     /**
      * ### NDDB.skim
      *
-     * Removes the specified properties from the items
-     *
-     * If a active selection if found, operation is applied only to the subset.
+     * Removes the specified properties from all the items in the database
      *
      * Use '.' (dot) to point to a nested property.
      *
      * Items with no property are automatically removed.
      *
      * @param {string|array} skim The selection of properties to remove
-     *
      * @return {NDDB} A new database containing the result of the skim
      *
      * @see NDDB.keep
      * @see JSUS.skim
      */
     NDDB.prototype.skim = function(skim) {
-        if ('string' !== typeof skim && !J.isArray(skim)) {
-            this.throwErr('TypeError', 'skim', 'skim must be string or array');
-        }
+        if (!skim) return this;
         return this.breed(this.map(function(e){
             var skimmed = J.skim(e, skim);
             if (!J.isEmpty(skimmed)) {
@@ -7881,25 +7470,21 @@ if (!JSON) {
     /**
      * ### NDDB.keep
      *
-     * Removes all the properties that are not specified from the items
-     *
-     * If a active selection if found, operation is applied only to the subset.
+     * Removes all the properties that are not specified as parameter
+     * from all the items in the database
      *
      * Use '.' (dot) to point to a nested property.
      *
      * Items with no property are automatically removed.
      *
      * @param {string|array} skim The selection of properties to keep
-
      * @return {NDDB} A new database containing the result of the keep operation
      *
      * @see NDDB.skim
      * @see JSUS.keep
      */
     NDDB.prototype.keep = function(keep) {
-        if ('string' !== typeof keep && !J.isArray(keep)) {
-            this.throwErr('TypeError', 'keep', 'keep must be string or array');
-        }
+        if (!keep) return this.breed([]);
         return this.breed(this.map(function(e){
             var subobj = J.subobj(e, keep);
             if (!J.isEmpty(subobj)) {
@@ -7914,61 +7499,57 @@ if (!JSON) {
     /**
      * ### NDDB.diff
      *
-     * Performs a diff of the entries of a specified databases
+     * Performs a diff of the entries in the database and the database
+     * object passed as parameter (Array or NDDB)
      *
      * Returns a new NDDB instance containing all the entries that
      * are present in the current instance, and *not* in the
      * database obj passed as parameter.
      *
      * @param {NDDB|array} nddb The external database to compare
-     *
      * @return {NDDB} A new database containing the result of the diff
      *
      * @see NDDB.intersect
      * @see JSUS.arrayDiff
      */
     NDDB.prototype.diff = function(nddb) {
-        if (!J.isArray(nddb)) {
-            if ('object' !== typeof nddb || !J.isArray(nddb.db)) {
-                this.throwErr('TypeError', 'diff',
-                              'nddb must be array or NDDB');
+        if ('object' === typeof nddb) {
+            if (nddb instanceof NDDB || nddb instanceof this.constructor) {
+                nddb = nddb.db;
             }
-            nddb = nddb.db;
         }
-        if (!nddb.length) {
+        if (!nddb || !nddb.length) {
             return this.breed([]);
         }
-        return this.breed(J.arrayDiff(this.fetch(), nddb));
+        return this.breed(J.arrayDiff(this.db, nddb));
     };
 
     /**
      * ### NDDB.intersect
      *
-     * Finds the entries in common with a specified database
+     * Finds the common the entries between the current database and
+     * the database  object passed as parameter (Array or NDDB)
      *
      * Returns a new NDDB instance containing all the entries that
      * are present both in the current instance of NDDB and in the
      * database obj passed as parameter.
      *
      * @param {NDDB|array} nddb The external database to compare
-     *
      * @return {NDDB} A new database containing the result of the intersection
      *
      * @see NDDB.diff
      * @see JSUS.arrayIntersect
      */
     NDDB.prototype.intersect = function(nddb) {
-        if (!J.isArray(nddb)) {
-            if ('object' !== typeof nddb || !J.isArray(nddb.db)) {
-                this.throwErr('TypeError', 'intersect',
-                              'nddb must be array or NDDB');
+        if ('object' === typeof nddb) {
+            if (nddb instanceof NDDB || nddb instanceof this.constructor) {
+                nddb = nddb.db;
             }
-            nddb = nddb.db;
         }
-        if (!nddb.length) {
+        if (!nddb || !nddb.length) {
             return this.breed([]);
         }
-        return this.breed(J.arrayIntersect(this.fetch(), nddb));
+        return this.breed(J.arrayIntersect(this.db, nddb));
     };
 
 
@@ -7980,13 +7561,12 @@ if (!JSON) {
      * Returns the entry at the given numerical position
      *
      * @param {number} pos The position of the entry
-     *
-     * @return {object|undefined} The requested item, or undefined if
+     * @return {object|boolean} The requested item, or FALSE if
      *  the index is invalid
      */
     NDDB.prototype.get = function(pos) {
-        if ('number' !== typeof pos) {
-            this.throwErr('TypeError', 'get', 'pos must be number');
+        if ('undefined' === typeof pos || pos < 0 || pos > (this.db.length-1)) {
+            return false;
         }
         return this.db[pos];
     };
@@ -7998,27 +7578,32 @@ if (!JSON) {
      *
      * The pointer is *not* updated.
      *
-     * @return {object|undefined} The current entry, or undefined if the
-     *   pointer is at an invalid position
+     * Returns false, if the pointer is at an invalid position.
+     *
+     * @return {object|boolean} The current entry, or FALSE if none is found
      */
     NDDB.prototype.current = function() {
+        if (this.nddb_pointer < 0 || this.nddb_pointer > (this.db.length-1)) {
+            return false;
+        }
         return this.db[this.nddb_pointer];
     };
 
     /**
      * ### NDDB.next
      *
-     * Moves the pointer to the next entry in the database and returns it
+     * Moves the pointer to the next entry in the database
+     * and returns it
      *
-     * @return {object|undefined} The next entry, or undefined
-     *   if none is found
+     * Returns false if the pointer is at the last entry,
+     * or if database is empty.
      *
-     * @see NDDB.previous
+     * @return {object|boolean} The next entry, or FALSE if none is found
+     *
      */
     NDDB.prototype.next = function() {
-        var el;
         this.nddb_pointer++;
-        el = NDDB.prototype.current.call(this);
+        var el = NDDB.prototype.current.call(this);
         if (!el) this.nddb_pointer--;
         return el;
     };
@@ -8026,17 +7611,17 @@ if (!JSON) {
     /**
      * ### NDDB.previous
      *
-     * Moves the pointer to the previous entry in the database and returns it
+     * Moves the pointer to the previous entry in the database
+     * and returns it
      *
-     * @return {object|undefined} The previous entry, or undefined
-     *   if none is found
+     * Returns false if the pointer is at the first entry,
+     * or if database is empty.
      *
-     * @see NDDB.next
+     * @return {object|boolean} The previous entry, or FALSE if none is found
      */
     NDDB.prototype.previous = function() {
-        var el;
         this.nddb_pointer--;
-        el = NDDB.prototype.current.call(this);
+        var el = NDDB.prototype.current.call(this);
         if (!el) this.nddb_pointer++;
         return el;
     };
@@ -8044,23 +7629,22 @@ if (!JSON) {
     /**
      * ### NDDB.first
      *
-     * Returns the last entry in the current selection / database
+     * Moves the pointer to the first entry in the database,
+     * and returns it
      *
-     * Returns undefined if the current selection / database is empty.
+     * Returns the first entry of the database, or undefined
+     * if the database is empty.
      *
-     * @param {string} updatePointer Optional. If set, the pointer
-     *   is not moved to the first entry (if any)
-     *
+     * @param {string} key Optional. If set, moves to the pointer
+     *   to the first entry along this dimension
      * @return {object} The first entry found
      *
      * @see NDDB.last
-     * @see NDDB.fetch
-     * @see NDDB.nddb_pointer
      */
-    NDDB.prototype.first = function(doNotUpdatePointer) {
-        var db = this.fetch();
+    NDDB.prototype.first = function(key) {
+        var db = this.fetch(key);
         if (db.length) {
-            if (!doNotUpdatePointer) this.nddb_pointer = 0;
+            this.nddb_pointer = 0;
             return db[0];
         }
         return undefined;
@@ -8069,23 +7653,22 @@ if (!JSON) {
     /**
      * ### NDDB.last
      *
-     * Returns the last entry in the current selection / database
+     * Moves the pointer to the first last in the database,
+     * and returns it
      *
-     * Returns undefined if the current selection / database is empty.
+     * Returns the last entry of the database, or undefined
+     * if the database is empty.
      *
-     * @param {string} doNotUpdatePointer Optional. If set, the pointer is not
-     *   moved to the last entry (if any)
-     *
+     * @param {string} key Optional. If set, moves to the pointer
+     *   to the last entry along this dimension
      * @return {object} The last entry found
      *
      * @see NDDB.first
-     * @see NDDB.fetch
-     * @see NDDB.nddb_pointer
      */
-    NDDB.prototype.last = function(doNotUpdatePointer) {
-        var db = this.fetch();
+    NDDB.prototype.last = function(key) {
+        var db = this.fetch(key);
         if (db.length) {
-            if (!doNotUpdatePointer) this.nddb_pointer = db.length-1;
+            this.nddb_pointer = db.length-1;
             return db[db.length-1];
         }
         return undefined;
@@ -8101,7 +7684,7 @@ if (!JSON) {
      *
      * The second parameter can be the index of an object
      * in the database, the object itself, or undefined. In
-     * the latter case, the current value of `nddb_pointer`
+     * the latter case, the current valye of `nddb_pointer`
      * is used to create the reference.
      *
      * The tag is independent from sorting and deleting operations,
@@ -8116,8 +7699,9 @@ if (!JSON) {
      */
     NDDB.prototype.tag = function(tag, idx) {
         var ref, typeofIdx;
-        if ('string' !== typeof tag && 'number' !== typeof tag) {
-            this.throwErr('TypeError', 'tag', 'tag must be string or number');
+        if (('string' !== typeof tag) && ('number' !== typeof tag)) {
+            throw new TypeError(this._getConstrName() +
+                                '.tag: tag must be string or number.');
         }
 
         ref = null, typeofIdx = typeof idx;
@@ -8128,7 +7712,8 @@ if (!JSON) {
         else if (typeofIdx === 'number') {
 
             if (idx > this.length || idx < 0) {
-                this.throwErr('Error', 'tag', 'invalid index provided: ' + idx);
+                throw new TypeError(this._getConstrName() +
+                                    '.tag: invalid index provided');
             }
             ref = this.db[idx];
         }
@@ -8146,14 +7731,14 @@ if (!JSON) {
      * Returns the element associated with the given tag.
      *
      * @param {string} tag An alphanumeric id
-     *
      * @return {object} The object associated with the tag
      *
      * @see NDDB.tag
      */
     NDDB.prototype.resolveTag = function(tag) {
         if ('string' !== typeof tag) {
-            this.throwErr('TypeError', 'resolveTag', 'tag must be string');
+            throw new TypeError(this._getConstrName() +
+                                '.resolveTag: tag must be string.');
         }
         return this.tags[tag];
     };
@@ -8192,22 +7777,29 @@ if (!JSON) {
      *    the database is saved
      * @param {compress} boolean Optional. If TRUE, output will be compressed.
      *    Defaults, FALSE
+     * @return {boolean} TRUE, if operation is successful
      *
      * @see NDDB.load
      * @see NDDB.stringify
      * @see https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+
+     *
      */
     NDDB.prototype.save = function(file, cb, compress) {
         if ('string' !== typeof file) {
-            this.throwErr('TypeError', 'save', 'file must be string');
+            throw new TypeError(this._getConstrName() +
+                                'load: you must specify a valid file name.');
         }
         compress = compress || false;
-        // Try to save in the browser, e.g. with Shelf.js.
+        // Try to save in the browser, e.g. with Shelf.js
         if (!this.storageAvailable()) {
-            this.throwErr('Error', 'save', 'no persistent storage available');
+            throw new Error(this._getConstrName() +
+                            '.save: no support for persistent storage.');
+            return false;
         }
         store(file, this.stringify(compress));
         if (cb) cb();
+        return true;
     };
 
     /**
@@ -8222,43 +7814,48 @@ if (!JSON) {
      *
      * Cyclic objects previously decycled will be retrocycled.
      *
-     * @param {string} file The file system path, or the identifier
-     *   for the browser database
-     * @param {function} cb Optional. A callback to execute after
-     *   the database was saved
+     * @param {string} file The file system path, or the identifier for the browser database
+     * @param {function} cb Optional. A callback to execute after the database was saved
+     * @return {boolean} TRUE, if operation is successful
      *
      * @see NDDB.loadCSV
      * @see NDDB.save
      * @see NDDB.stringify
      * @see JSUS.parse
      * @see https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+     *
      */
     NDDB.prototype.load = function(file, cb, options) {
         var items, i;
         if ('string' !== typeof file) {
-            this.throwErr('TypeError', 'load', 'file must be string');
+            throw new TypeError(this._getConstrName() +
+                                '.load: you must specify a valid file name.');
         }
         if (!this.storageAvailable()) {
-            this.throwErr('Error', 'load', 'no persistent storage found');
+            throw new Error(this._getConstrName() +
+                            '.load: no support for persistent storage found.');
         }
 
         items = store(file);
 
         if ('undefined' === typeof items) {
-            // Nothing to load.
-            return;
+            this.log(this._getConstrName() +
+                     '.load: nothing found to load', 'WARN');
+            return false;
         }
         if ('string' === typeof items) {
             items = J.parse(items);
         }
         if (!J.isArray(items)) {
-            this.throwErr('Error', 'load', 'expects to load an array');
+            throw new TypeError(this._getConstrName() +
+                                '.load: expects to load an array.');
         }
         for (i = 0; i < items.length; i++) {
-            // Retrocycle, if necessary and possible.
+            // retrocycle if possible
             items[i] = NDDB.retrocycle(items[i]);
         }
         this.importDB(items);
+        return true;
     };
 
     /**
@@ -8296,6 +7893,7 @@ if (!JSON) {
         });
     };
 
+
     /**
      * ### QueryBuilder.addBreak
      *
@@ -8310,12 +7908,14 @@ if (!JSON) {
      * ### QueryBuilder.reset
      *
      * Resets the current query selection
+     *
      */
     QueryBuilder.prototype.reset = function() {
         this.query = [];
         this.pointer = 0;
         this.query[this.pointer] = [];
     };
+
 
 
     function findCallback(obj) {
@@ -8452,44 +8052,6 @@ if (!JSON) {
             }
 
         }
-    };
-
-    /**
-     * # NDDBHashtray
-     *
-     * MIT Licensed
-     *
-     * Helper class for NDDB hash management
-     *
-     * ---
-     */
-
-    /**
-     * ## NDDBHashtray constructor
-     *
-     * Creates an hashtray object to manage maps item-hashes
-     *
-     * @param {string} The name of the index
-     * @param {array} The reference to the original database
-     */
-    function NDDBHashtray() {
-        this.resolve = {};
-    }
-
-    NDDBHashtray.prototype.set = function(key, nddbid, hash) {
-        this.resolve[key + '_' + nddbid] = hash;
-    };
-
-    NDDBHashtray.prototype.get = function(key, nddbid) {
-        return this.resolve[key + '_' + nddbid];
-    };
-
-    NDDBHashtray.prototype.remove = function(key, nddbid) {
-        delete this.resolve[key + '_' + nddbid];
-    };
-
-    NDDBHashtray.prototype.clear = function() {
-        this.resolve = {};
     };
 
     /**
@@ -8662,22 +8224,17 @@ if (!JSON) {
 
     // ## Closure
 })(
-    ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
-        module.exports: window ,
-    ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
-        module.parent.exports.JSUS || require('JSUS').JSUS : JSUS,
-    ('object' === typeof module && 'function' === typeof require) ?
-        module.parent.exports.store ||
-        require('shelf.js/build/shelf-fs.js').store : this.store
+    'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
+    , 'undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
+    , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store
 );
-
 /**
  * # nodeGame: Social Experiments in the Browser
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * nodeGame is a free, open source, event-driven javascript framework,
- * for on line multiplayer games in the browser.
+ * for online multiplayer games in the browser.
  */
 (function(exports) {
     if ('undefined' !== typeof JSUS) exports.JSUS = JSUS;
@@ -9072,7 +8629,7 @@ if (!JSON) {
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Handles the runtime errors
+ * Handles runtime errors
  */
 (function(exports, parent) {
 
@@ -9114,30 +8671,33 @@ if (!JSON) {
      *
      * Starts catching run-time errors
      *
+     * Only active in the browser's window.
+     * In node.js, the ServerNode Error Manager is active.
+     *
      * @param {NodeGameClient} node Reference to the active node object.
      */
     ErrorManager.prototype.init = function(node) {
         var that;
-        if (J.isNodeJS()) {
-            that = this;
-            process.on('uncaughtException', function(err) {
-                that.lastError = err;
-                node.err('Caught exception: ' + err);
-                if (node.debug) {
-                    throw err;
-                }
-            });
-        }
-        else {
+        that = this;
+        if (!J.isNodeJS()) {
             window.onerror = function(msg, url, linenumber) {
                 var msg;
                 msg = url + ' ' + linenumber + ': ' + msg;
-                this.lastError = msg;
+                that.lastError = msg;
                 node.err(msg);
                 return !node.debug;
             };
         }
-    }
+//         else {
+//             process.on('uncaughtException', function(err) {
+//                 that.lastError = err;
+//                 node.err('Caught exception: ' + err);
+//                 if (node.debug) {
+//                     throw err;
+//                 }
+//             });
+//         }
+    };
 
     /**
      * ## NodeGameRuntimeError
@@ -9169,8 +8729,10 @@ if (!JSON) {
     }
 
     NodeGameStageCallbackError.prototype = new Error();
-    NodeGameStageCallbackError.prototype.constructor = NodeGameStageCallbackError;
-    NodeGameStageCallbackError.prototype.name = 'NodeGameStageCallbackError';
+    NodeGameStageCallbackError.prototype.constructor =
+        NodeGameStageCallbackError;
+    NodeGameStageCallbackError.prototype.name =
+        'NodeGameStageCallbackError';
 
 
     /**
@@ -9186,8 +8748,10 @@ if (!JSON) {
     }
 
     NodeGameMisconfiguredGameError.prototype = new Error();
-    NodeGameMisconfiguredGameError.prototype.constructor = NodeGameMisconfiguredGameError;
-    NodeGameMisconfiguredGameError.prototype.name = 'NodeGameMisconfiguredGameError';
+    NodeGameMisconfiguredGameError.prototype.constructor =
+        NodeGameMisconfiguredGameError;
+    NodeGameMisconfiguredGameError.prototype.name =
+        'NodeGameMisconfiguredGameError';
 
 
     /**
@@ -9203,8 +8767,10 @@ if (!JSON) {
     }
 
     NodeGameIllegalOperationError.prototype = new Error();
-    NodeGameIllegalOperationError.prototype.constructor = NodeGameIllegalOperationError;
-    NodeGameIllegalOperationError.prototype.name = 'NodeGameIllegalOperationError';
+    NodeGameIllegalOperationError.prototype.constructor =
+        NodeGameIllegalOperationError;
+    NodeGameIllegalOperationError.prototype.name =
+        'NodeGameIllegalOperationError';
 
 // ## Closure
 })(
@@ -11259,6 +10825,7 @@ if (!JSON) {
      * Called by the constructor.
      */
     Stager.prototype.clear = function() {
+
         /**
          * ### Stager.steps
          *
@@ -11284,7 +10851,6 @@ if (!JSON) {
          */
         this.stages = {};
 
-
         /**
          * ### Stager.sequence
          *
@@ -11299,7 +10865,6 @@ if (!JSON) {
          * @see Stager.doLoop
          */
         this.sequence = [];
-
 
         /**
          * ### Stager.generalNextFunction
@@ -11327,7 +10892,6 @@ if (!JSON) {
          */
         this.nextFunctions = {};
 
-
         /**
          * ### Stager.defaultStepRule
          *
@@ -11342,7 +10906,6 @@ if (!JSON) {
          * @see GamePlot.getStepRule
          */
         this.setDefaultStepRule();
-
 
         /**
          * ### Stager.defaultGlobals
@@ -13172,7 +12735,7 @@ if (!JSON) {
      * Looks up and build the _globals_ object for the specified game stage
      *
      * Globals properties are mixed in at each level (defaults, stage, step)
-     * to form the complete set of globals available for the specified 
+     * to form the complete set of globals available for the specified
      * game stage.
      *
      * @param {GameStage|string} gameStage The GameStage object,
@@ -13192,11 +12755,11 @@ if (!JSON) {
 
         // Look in Stager's defaults:
         J.mixin(globals, this.stager.getDefaultGlobals());
-        
+
         // Look in current stage:
         stepstage = this.getStage(gameStage);
         if (stepstage) J.mixin(globals, stepstage.globals);
-        
+
         // Look in current step:
         stepstage = this.getStep(gameStage);
         if (stepstage) J.mixin(globals, stepstage.globals);
@@ -16921,9 +16484,9 @@ if (!JSON) {
                                 if (toGroup.matches.done) {
 
 
-                                    //	console.log('is done')
-                                    //	console.log(toGroup);
-                                    //	console.log('is done')
+                                    //  console.log('is done')
+                                    //  console.log(toGroup);
+                                    //  console.log('is done')
 
                                     this.doneCounter++;
                                 }
@@ -17556,9 +17119,9 @@ if (!JSON) {
             elements = getElements(),
             pools = getPools();
 
-            //		console.log('NN ' , numbers);
-            //		console.log(elements);
-            //		console.log(pools)
+            //          console.log('NN ' , numbers);
+            //          console.log(elements);
+            //          console.log(pools)
             rm.init(elements, pools);
 
             var matched = rm.match();
@@ -17635,15 +17198,15 @@ if (!JSON) {
 
 
 
-    //20961392604176200	SUB	A	1351591619837
-    //19868497151402600000	SUB	A	1351591620386
-    //5688413461195620000	SUB	A	1351591652731
-    //2019166870553500000	SUB	B	1351591653043
-    //389546331863136000	SUB	B	1351591653803
-    //1886985572967670000	SUB	C	1351591654603
-    //762387587655923000	SUB	C	1351591654648
-    //1757870795266120000	SUB	B	1351591655960
-    //766044637969952000	SUB	A	1351591656253
+    //20961392604176200 SUB     A       1351591619837
+    //19868497151402600000      SUB     A       1351591620386
+    //5688413461195620000       SUB     A       1351591652731
+    //2019166870553500000       SUB     B       1351591653043
+    //389546331863136000        SUB     B       1351591653803
+    //1886985572967670000       SUB     C       1351591654603
+    //762387587655923000        SUB     C       1351591654648
+    //1757870795266120000       SUB     B       1351591655960
+    //766044637969952000        SUB     A       1351591656253
 
     //var myElements = [ [ 3, 5 ], [ 8, 9, 1, 7, 6 ], [ 2, 4 ] ];
     //var myPools = [ [ [ 6 ], [ 9, 7 ] ], [ [], [ 8, 1, 5, 4 ] ], [ [], [ 2, 3 ] ] ];
@@ -17664,28 +17227,28 @@ if (!JSON) {
     //
     //
     //for (var j = 0; j < myRM.groups.length; j++) {
-    //	var g = myRM.groups[j];
-    //	for (var h = 0; h < g.elements.length; h++) {
-    //		if (g.matched[h].length !== g.rowLimit) {
-    //			console.log('Wrong match: ' + j + '-' + h);
+    //  var g = myRM.groups[j];
+    //  for (var h = 0; h < g.elements.length; h++) {
+    //          if (g.matched[h].length !== g.rowLimit) {
+    //                  console.log('Wrong match: ' + j + '-' + h);
     //
-    //			console.log(myRM.options.elements);
-    //			console.log(myRM.options.pools);
-    ////			console.log(matched);
-    //		}
-    //	}
+    //                  console.log(myRM.options.elements);
+    //                  console.log(myRM.options.pools);
+    ////                        console.log(matched);
+    //          }
+    //  }
     //}
 
     //if (!myRM.allGroupsDone()) {
-    //	console.log('ERROR')
-    //	console.log(myElements);
-    //	console.log(myPools);
-    //	console.log(myMatch);
+    //  console.log('ERROR')
+    //  console.log(myElements);
+    //  console.log(myPools);
+    //  console.log(myMatch);
     //
-    //	console.log('---')
-    //	J.each(myRM.groups, function(g) {
-    //		console.log(g.pool);
-    //	});
+    //  console.log('---')
+    //  J.each(myRM.groups, function(g) {
+    //          console.log(g.pool);
+    //  });
     //}
 
     //console.log(myElements);
@@ -18155,7 +17718,7 @@ if (!JSON) {
     /**
      * ### Timer.randomExec
      *
-     * Executes a callback function after a random time interval between 0 and maxWait
+     * Executes a callback function after a random time interval
      *
      * Respects pausing / resuming.
      *
@@ -18364,7 +17927,7 @@ if (!JSON) {
         // TODO: update and milliseconds must be multiple now
         if (options.hooks) {
             len = options.hooks.length;
-            for (i = 0; i < len; i++){
+            for (i = 0; i < len; i++) {
                 this.addHook(options.hooks[i]);
             }
         }
@@ -19246,7 +18809,7 @@ if (!JSON) {
          */
         this.registerSetup('lang', function(language) {
             if (!language) return null;
-            return this.setLanguage(language);            
+            return this.setLanguage(language);
         });
 
         // Utility for setup.plist and setup.mlist:
@@ -19358,7 +18921,7 @@ if (!JSON) {
 
         // ### node.on.txt
         this.alias('txt', 'in.say.TXT');
-        
+
         // ### node.on.data
         this.alias('data', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
             return function(msg) {
@@ -19727,9 +19290,9 @@ if (!JSON) {
      *       };
      *   });
      *
-     * 	node.on.data('myLabel', function(){ ... };
-     * 	node.once.data('myLabel', function(){ ... };
-     * ```	
+     *  node.on.data('myLabel', function(){ ... };
+     *  node.once.data('myLabel', function(){ ... };
+     * ```
      *
      * @param {string} alias The name of alias
      * @param {string|array} events The event/s under which the listeners
@@ -19739,10 +19302,10 @@ if (!JSON) {
      *   actually be invoked when the aliased event is fired.
      */
     NGC.prototype.alias = function(alias, events, modifier) {
-	var that, func;
+        var that, func;
         if ('string' !== typeof alias) {
             throw new TypeError('node.alias: alias must be string.');
-	}
+        }
         if ('string' === typeof events) {
             events = [events];
         }
@@ -19775,7 +19338,7 @@ if (!JSON) {
             // Otherwise, we assume the first parameter is the callback.
             if (modifier) {
                 func = modifier.apply(that.game, arguments);
-            } 
+            }
             J.each(events, function(event) {
                 that.once(event, function() {
                     func.apply(that.game, arguments);
@@ -19989,7 +19552,7 @@ if (!JSON) {
 //         ee = this.getCurrentEventEmitter();
 //         ee.on(event, listener);
 //     };
-// 
+//
 //     /**
 //      * ### NodeGameClient.once
 //      *
@@ -20014,7 +19577,7 @@ if (!JSON) {
 //         ee.on(event, listener);
 //         ee.on(event, cbRemove);
 //     };
-// 
+//
 //     /**
 //      * ### NodeGameClient.off
 //      *
@@ -20722,9 +20285,9 @@ if (!JSON) {
          * ## in.get.DATA
          *
          * Re-emits the incoming message, and replies back to the sender
-         * 
+         *
          * Does the following operations:
-         * 
+         *
          * - Validates the msg.text field
          * - Emits a get.<msg.text> event
          * - Replies to the sender with with the return values of the emit call
@@ -21121,9 +20684,9 @@ if (!JSON) {
          */
         this.events.ng.on('PLAYING', function() {
             var currentTime;
+            node.emit('BEFORE_PLAYING');
             node.game.setStageLevel(stageLevels.PLAYING);
             node.socket.clearBuffer();
-            node.emit('BEFORE_PLAYING');
             // Last thing to do, is to store time:
             currentTime = (new Date()).getTime();
             node.timer.setTimestamp(node.game.getCurrentGameStage().toString(),
