@@ -368,15 +368,15 @@ if (!JSON) {
     var version = '0.5';
 
     var store = exports.store = function(key, value, options, type) {
-        options = options || {};
-        type = (options.type && options.type in store.types) ? options.type : store.type;
-        if (!type || !store.types[type]) {
-            store.log("Cannot save/load value. Invalid storage type selected: " + type, 'ERR');
-            return;
-        }
-        store.log('Accessing ' + type + ' storage');
+	options = options || {};
+	type = (options.type && options.type in store.types) ? options.type : store.type;
+	if (!type || !store.types[type]) {
+	    store.log("Cannot save/load value. Invalid storage type selected: " + type, 'ERR');
+	    return;
+	}
+	store.log('Accessing ' + type + ' storage');
 
-        return store.types[type](key, value, options);
+	return store.types[type](key, value, options);
     };
 
     // Adding functions and properties to store
@@ -392,154 +392,154 @@ if (!JSON) {
     //if Object.defineProperty works...
     try {
 
-        Object.defineProperty(store, 'type', {
-            set: function(type){
-                if ('undefined' === typeof store.types[type]) {
-                    store.log('Cannot set store.type to an invalid type: ' + type);
-                    return false;
-                }
-                mainStorageType = type;
-                return type;
-            },
-            get: function(){
-                return mainStorageType;
-            },
-            configurable: false,
-            enumerable: true
-        });
+	Object.defineProperty(store, 'type', {
+	    set: function(type){
+		if ('undefined' === typeof store.types[type]) {
+		    store.log('Cannot set store.type to an invalid type: ' + type);
+		    return false;
+		}
+		mainStorageType = type;
+		return type;
+	    },
+	    get: function(){
+		return mainStorageType;
+	    },
+	    configurable: false,
+	    enumerable: true
+	});
     }
     catch(e) {
-        store.type = mainStorageType; // default: memory
+	store.type = mainStorageType; // default: memory
     }
 
     store.addType = function(type, storage) {
-        store.types[type] = storage;
-        store[type] = function(key, value, options) {
-            options = options || {};
-            options.type = type;
-            return store(key, value, options);
-        };
+	store.types[type] = storage;
+	store[type] = function(key, value, options) {
+	    options = options || {};
+	    options.type = type;
+	    return store(key, value, options);
+	};
 
-        if (!store.type || store.type === "volatile") {
-            store.type = type;
-        }
+	if (!store.type || store.type === "volatile") {
+	    store.type = type;
+	}
     };
 
     // TODO: create unit test
     store.onquotaerror = undefined;
     store.error = function() {
-        console.log("shelf quota exceeded");
-        if ('function' === typeof store.onquotaerror) {
-            store.onquotaerror(null);
-        }
+	console.log("shelf quota exceeded");
+	if ('function' === typeof store.onquotaerror) {
+	    store.onquotaerror(null);
+	}
     };
 
     store.log = function(text) {
-        if (store.verbosity > 0) {
-            console.log('Shelf v.' + version + ': ' + text);
-        }
+	if (store.verbosity > 0) {
+	    console.log('Shelf v.' + version + ': ' + text);
+	}
 
     };
 
     store.isPersistent = function() {
-        if (!store.types) return false;
-        if (store.type === "volatile") return false;
-        return true;
+	if (!store.types) return false;
+	if (store.type === "volatile") return false;
+	return true;
     };
 
     //if Object.defineProperty works...
     try {
-        Object.defineProperty(store, 'persistent', {
-            set: function(){},
-            get: store.isPersistent,
-            configurable: false
-        });
+	Object.defineProperty(store, 'persistent', {
+	    set: function(){},
+	    get: store.isPersistent,
+	    configurable: false
+	});
     }
     catch(e) {
-        // safe case
-        store.persistent = false;
+	// safe case
+	store.persistent = false;
     }
 
     store.decycle = function(o) {
-        if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
-            o = JSON.decycle(o);
-        }
-        return o;
+	if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
+	    o = JSON.decycle(o);
+	}
+	return o;
     };
 
     store.retrocycle = function(o) {
-        if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
-            o = JSON.retrocycle(o);
-        }
-        return o;
+	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
+	    o = JSON.retrocycle(o);
+	}
+	return o;
     };
 
     store.stringify = function(o) {
-        if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
-            throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
-        }
+	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
+	    throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
+	}
 
-        o = store.decycle(o);
-        return JSON.stringify(o);
+	o = store.decycle(o);
+	return JSON.stringify(o);
     };
 
     store.parse = function(o) {
-        if ('undefined' === typeof o) return undefined;
-        if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
-            try {
-                o = JSON.parse(o);
-            }
-            catch (e) {
-                store.log('Error while parsing a value: ' + e, 'ERR');
-                store.log(o);
-            }
-        }
+	if ('undefined' === typeof o) return undefined;
+	if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
+	    try {
+		o = JSON.parse(o);
+	    }
+	    catch (e) {
+		store.log('Error while parsing a value: ' + e, 'ERR');
+		store.log(o);
+	    }
+	}
 
-        o = store.retrocycle(o);
-        return o;
+	o = store.retrocycle(o);
+	return o;
     };
 
     // ## In-memory storage
     // ### fallback for all browsers to enable the API even if we can't persist data
     (function() {
 
-        var memory = {},
-        timeout = {};
+	var memory = {},
+	timeout = {};
 
-        function copy(obj) {
-            return store.parse(store.stringify(obj));
-        }
+	function copy(obj) {
+	    return store.parse(store.stringify(obj));
+	}
 
-        store.addType("volatile", function(key, value, options) {
+	store.addType("volatile", function(key, value, options) {
 
-            if (!key) {
-                return copy(memory);
-            }
+	    if (!key) {
+		return copy(memory);
+	    }
 
-            if (value === undefined) {
-                return copy(memory[key]);
-            }
+	    if (value === undefined) {
+		return copy(memory[key]);
+	    }
 
-            if (timeout[key]) {
-                clearTimeout(timeout[key]);
-                delete timeout[key];
-            }
+	    if (timeout[key]) {
+		clearTimeout(timeout[key]);
+		delete timeout[key];
+	    }
 
-            if (value === null) {
-                delete memory[key];
-                return null;
-            }
+	    if (value === null) {
+		delete memory[key];
+		return null;
+	    }
 
-            memory[key] = value;
-            if (options.expires) {
-                timeout[key] = setTimeout(function() {
-                    delete memory[key];
-                    delete timeout[key];
-                }, options.expires);
-            }
+	    memory[key] = value;
+	    if (options.expires) {
+		timeout[key] = setTimeout(function() {
+		    delete memory[key];
+		    delete timeout[key];
+		}, options.expires);
+	    }
 
-            return value;
-        });
+	    return value;
+	});
     }());
 
 }('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
@@ -563,230 +563,230 @@ if (!JSON) {
     var store = exports.store;
 
     if (!store) {
-        throw new Error('amplify.shelf.js: shelf.js core not found.');
+	throw new Error('amplify.shelf.js: shelf.js core not found.');
     }
 
     if ('undefined' === typeof window) {
-        throw new Error('amplify.shelf.js:  window object not found.');
+	throw new Error('amplify.shelf.js:  window object not found.');
     }
 
     var regex = new RegExp("^" + store.prefix);
     function createFromStorageInterface( storageType, storage ) {
-        store.addType( storageType, function( key, value, options ) {
-            var storedValue, parsed, i, remove,
-            ret = value,
-            now = (new Date()).getTime();
+	store.addType( storageType, function( key, value, options ) {
+	    var storedValue, parsed, i, remove,
+	    ret = value,
+	    now = (new Date()).getTime();
 
-            if ( !key ) {
-                ret = {};
-                remove = [];
-                i = 0;
-                try {
-                    // accessing the length property works around a localStorage bug
-                    // in Firefox 4.0 where the keys don't update cross-page
-                    // we assign to key just to avoid Closure Compiler from removing
-                    // the access as "useless code"
-                    // https://bugzilla.mozilla.org/show_bug.cgi?id=662511
-                    key = storage.length;
+	    if ( !key ) {
+		ret = {};
+		remove = [];
+		i = 0;
+		try {
+		    // accessing the length property works around a localStorage bug
+		    // in Firefox 4.0 where the keys don't update cross-page
+		    // we assign to key just to avoid Closure Compiler from removing
+		    // the access as "useless code"
+		    // https://bugzilla.mozilla.org/show_bug.cgi?id=662511
+		    key = storage.length;
 
-                    while ( key = storage.key( i++ ) ) {
-                        if ( regex.test( key ) ) {
-                            parsed = store.parse( storage.getItem( key ) );
-                            if ( parsed.expires && parsed.expires <= now ) {
-                                remove.push( key );
-                            } else {
-                                ret[ key.replace( rprefix, "" ) ] = parsed.data;
-                            }
-                        }
-                    }
-                    while ( key = remove.pop() ) {
-                        storage.removeItem( key );
-                    }
-                } catch ( error ) {}
-                return ret;
-            }
+		    while ( key = storage.key( i++ ) ) {
+			if ( regex.test( key ) ) {
+			    parsed = store.parse( storage.getItem( key ) );
+			    if ( parsed.expires && parsed.expires <= now ) {
+				remove.push( key );
+			    } else {
+				ret[ key.replace( rprefix, "" ) ] = parsed.data;
+			    }
+			}
+		    }
+		    while ( key = remove.pop() ) {
+			storage.removeItem( key );
+		    }
+		} catch ( error ) {}
+		return ret;
+	    }
 
-            // protect against name collisions with direct storage
-            key = store.prefix + key;
+	    // protect against name collisions with direct storage
+	    key = store.prefix + key;
 
-            if ( value === undefined ) {
-                storedValue = storage.getItem( key );
-                parsed = storedValue ? store.parse( storedValue ) : { expires: -1 };
-                if ( parsed.expires && parsed.expires <= now ) {
-                    storage.removeItem( key );
-                } else {
-                    return parsed.data;
-                }
-            } else {
-                if ( value === null ) {
-                    storage.removeItem( key );
-                } else {
-                    parsed = store.stringify({
-                        data: value,
-                        expires: options.expires ? now + options.expires : null
-                    });
-                    try {
-                        storage.setItem( key, parsed );
-                        // quota exceeded
-                    } catch( error ) {
-                        // expire old data and try again
-                        store[ storageType ]();
-                        try {
-                            storage.setItem( key, parsed );
-                        } catch( error ) {
-                            throw store.error();
-                        }
-                    }
-                }
-            }
+	    if ( value === undefined ) {
+		storedValue = storage.getItem( key );
+		parsed = storedValue ? store.parse( storedValue ) : { expires: -1 };
+		if ( parsed.expires && parsed.expires <= now ) {
+		    storage.removeItem( key );
+		} else {
+		    return parsed.data;
+		}
+	    } else {
+		if ( value === null ) {
+		    storage.removeItem( key );
+		} else {
+		    parsed = store.stringify({
+			data: value,
+			expires: options.expires ? now + options.expires : null
+		    });
+		    try {
+			storage.setItem( key, parsed );
+			// quota exceeded
+		    } catch( error ) {
+			// expire old data and try again
+			store[ storageType ]();
+			try {
+			    storage.setItem( key, parsed );
+			} catch( error ) {
+			    throw store.error();
+			}
+		    }
+		}
+	    }
 
-            return ret;
-        });
+	    return ret;
+	});
     }
 
     // localStorage + sessionStorage
     // IE 8+, Firefox 3.5+, Safari 4+, Chrome 4+, Opera 10.5+, iPhone 2+, Android 2+
     for ( var webStorageType in { localStorage: 1, sessionStorage: 1 } ) {
-        // try/catch for file protocol in Firefox and Private Browsing in Safari 5
-        try {
-            // Safari 5 in Private Browsing mode exposes localStorage
-            // but doesn't allow storing data, so we attempt to store and remove an item.
-            // This will unfortunately give us a false negative if we're at the limit.
-            window[ webStorageType ].setItem(store.prefix, "x" );
-            window[ webStorageType ].removeItem(store.prefix );
-            createFromStorageInterface( webStorageType, window[ webStorageType ] );
-        } catch( e ) {}
+	// try/catch for file protocol in Firefox and Private Browsing in Safari 5
+	try {
+	    // Safari 5 in Private Browsing mode exposes localStorage
+	    // but doesn't allow storing data, so we attempt to store and remove an item.
+	    // This will unfortunately give us a false negative if we're at the limit.
+	    window[ webStorageType ].setItem(store.prefix, "x" );
+	    window[ webStorageType ].removeItem(store.prefix );
+	    createFromStorageInterface( webStorageType, window[ webStorageType ] );
+	} catch( e ) {}
     }
 
     // globalStorage
     // non-standard: Firefox 2+
     // https://developer.mozilla.org/en/dom/storage#globalStorage
     if ( !store.types.localStorage && window.globalStorage ) {
-        // try/catch for file protocol in Firefox
-        try {
-            createFromStorageInterface( "globalStorage",
-                                        window.globalStorage[ window.location.hostname ] );
-            // Firefox 2.0 and 3.0 have sessionStorage and globalStorage
-            // make sure we default to globalStorage
-            // but don't default to globalStorage in 3.5+ which also has localStorage
-            if ( store.type === "sessionStorage" ) {
-                store.type = "globalStorage";
-            }
-        } catch( e ) {}
+	// try/catch for file protocol in Firefox
+	try {
+	    createFromStorageInterface( "globalStorage",
+			                window.globalStorage[ window.location.hostname ] );
+	    // Firefox 2.0 and 3.0 have sessionStorage and globalStorage
+	    // make sure we default to globalStorage
+	    // but don't default to globalStorage in 3.5+ which also has localStorage
+	    if ( store.type === "sessionStorage" ) {
+		store.type = "globalStorage";
+	    }
+	} catch( e ) {}
     }
 
     // userData
     // non-standard: IE 5+
     // http://msdn.microsoft.com/en-us/library/ms531424(v=vs.85).aspx
     (function() {
-        // IE 9 has quirks in userData that are a huge pain
-        // rather than finding a way to detect these quirks
-        // we just don't register userData if we have localStorage
-        if ( store.types.localStorage ) {
-            return;
-        }
+	// IE 9 has quirks in userData that are a huge pain
+	// rather than finding a way to detect these quirks
+	// we just don't register userData if we have localStorage
+	if ( store.types.localStorage ) {
+	    return;
+	}
 
-        // append to html instead of body so we can do this from the head
-        var div = document.createElement( "div" ),
-        attrKey = store.prefix; // was "amplify" and not __amplify__
-        div.style.display = "none";
-        document.getElementsByTagName( "head" )[ 0 ].appendChild( div );
+	// append to html instead of body so we can do this from the head
+	var div = document.createElement( "div" ),
+	attrKey = store.prefix; // was "amplify" and not __amplify__
+	div.style.display = "none";
+	document.getElementsByTagName( "head" )[ 0 ].appendChild( div );
 
-        // we can't feature detect userData support
-        // so just try and see if it fails
-        // surprisingly, even just adding the behavior isn't enough for a failure
-        // so we need to load the data as well
-        try {
-            div.addBehavior( "#default#userdata" );
-            div.load( attrKey );
-        } catch( e ) {
-            div.parentNode.removeChild( div );
-            return;
-        }
+	// we can't feature detect userData support
+	// so just try and see if it fails
+	// surprisingly, even just adding the behavior isn't enough for a failure
+	// so we need to load the data as well
+	try {
+	    div.addBehavior( "#default#userdata" );
+	    div.load( attrKey );
+	} catch( e ) {
+	    div.parentNode.removeChild( div );
+	    return;
+	}
 
-        store.addType( "userData", function( key, value, options ) {
-            div.load( attrKey );
-            var attr, parsed, prevValue, i, remove,
-            ret = value,
-            now = (new Date()).getTime();
+	store.addType( "userData", function( key, value, options ) {
+	    div.load( attrKey );
+	    var attr, parsed, prevValue, i, remove,
+	    ret = value,
+	    now = (new Date()).getTime();
 
-            if ( !key ) {
-                ret = {};
-                remove = [];
-                i = 0;
-                while ( attr = div.XMLDocument.documentElement.attributes[ i++ ] ) {
-                    parsed = store.parse( attr.value );
-                    if ( parsed.expires && parsed.expires <= now ) {
-                        remove.push( attr.name );
-                    } else {
-                        ret[ attr.name ] = parsed.data;
-                    }
-                }
-                while ( key = remove.pop() ) {
-                    div.removeAttribute( key );
-                }
-                div.save( attrKey );
-                return ret;
-            }
+	    if ( !key ) {
+		ret = {};
+		remove = [];
+		i = 0;
+		while ( attr = div.XMLDocument.documentElement.attributes[ i++ ] ) {
+		    parsed = store.parse( attr.value );
+		    if ( parsed.expires && parsed.expires <= now ) {
+			remove.push( attr.name );
+		    } else {
+			ret[ attr.name ] = parsed.data;
+		    }
+		}
+		while ( key = remove.pop() ) {
+		    div.removeAttribute( key );
+		}
+		div.save( attrKey );
+		return ret;
+	    }
 
-            // convert invalid characters to dashes
-            // http://www.w3.org/TR/REC-xml/#NT-Name
-            // simplified to assume the starting character is valid
-            // also removed colon as it is invalid in HTML attribute names
-            key = key.replace( /[^\-._0-9A-Za-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c-\u200d\u203f\u2040\u2070-\u218f]/g, "-" );
-            // adjust invalid starting character to deal with our simplified sanitization
-            key = key.replace( /^-/, "_-" );
+	    // convert invalid characters to dashes
+	    // http://www.w3.org/TR/REC-xml/#NT-Name
+	    // simplified to assume the starting character is valid
+	    // also removed colon as it is invalid in HTML attribute names
+	    key = key.replace( /[^\-._0-9A-Za-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c-\u200d\u203f\u2040\u2070-\u218f]/g, "-" );
+	    // adjust invalid starting character to deal with our simplified sanitization
+	    key = key.replace( /^-/, "_-" );
 
-            if ( value === undefined ) {
-                attr = div.getAttribute( key );
-                parsed = attr ? store.parse( attr ) : { expires: -1 };
-                if ( parsed.expires && parsed.expires <= now ) {
-                    div.removeAttribute( key );
-                } else {
-                    return parsed.data;
-                }
-            } else {
-                if ( value === null ) {
-                    div.removeAttribute( key );
-                } else {
-                    // we need to get the previous value in case we need to rollback
-                    prevValue = div.getAttribute( key );
-                    parsed = store.stringify({
-                        data: value,
-                        expires: (options.expires ? (now + options.expires) : null)
-                    });
-                    div.setAttribute( key, parsed );
-                }
-            }
+	    if ( value === undefined ) {
+		attr = div.getAttribute( key );
+		parsed = attr ? store.parse( attr ) : { expires: -1 };
+		if ( parsed.expires && parsed.expires <= now ) {
+		    div.removeAttribute( key );
+		} else {
+		    return parsed.data;
+		}
+	    } else {
+		if ( value === null ) {
+		    div.removeAttribute( key );
+		} else {
+		    // we need to get the previous value in case we need to rollback
+		    prevValue = div.getAttribute( key );
+		    parsed = store.stringify({
+			data: value,
+			expires: (options.expires ? (now + options.expires) : null)
+		    });
+		    div.setAttribute( key, parsed );
+		}
+	    }
 
-            try {
-                div.save( attrKey );
-                // quota exceeded
-            } catch ( error ) {
-                // roll the value back to the previous value
-                if ( prevValue === null ) {
-                    div.removeAttribute( key );
-                } else {
-                    div.setAttribute( key, prevValue );
-                }
+	    try {
+		div.save( attrKey );
+		// quota exceeded
+	    } catch ( error ) {
+		// roll the value back to the previous value
+		if ( prevValue === null ) {
+		    div.removeAttribute( key );
+		} else {
+		    div.setAttribute( key, prevValue );
+		}
 
-                // expire old data and try again
-                store.userData();
-                try {
-                    div.setAttribute( key, parsed );
-                    div.save( attrKey );
-                } catch ( error ) {
-                    // roll the value back to the previous value
-                    if ( prevValue === null ) {
-                        div.removeAttribute( key );
-                    } else {
-                        div.setAttribute( key, prevValue );
-                    }
-                    throw store.error();
-                }
-            }
-            return ret;
-        });
+		// expire old data and try again
+		store.userData();
+		try {
+		    div.setAttribute( key, parsed );
+		    div.save( attrKey );
+		} catch ( error ) {
+		    // roll the value back to the previous value
+		    if ( prevValue === null ) {
+			div.removeAttribute( key );
+		    } else {
+			div.setAttribute( key, prevValue );
+		    }
+		    throw store.error();
+		}
+	    }
+	    return ret;
+	});
     }());
 
 }(this));
@@ -802,311 +802,312 @@ if (!JSON) {
     var store = exports.store;
 
     if (!store) {
-        throw new Error('cookie.shelf.js: shelf.js core not found.');
+	throw new Error('cookie.shelf.js: shelf.js core not found.');
     }
 
     if ('undefined' === typeof window) {
-        throw new Error('cookie.shelf.js: window object not found.');
+	throw new Error('cookie.shelf.js: window object not found.');
     }
 
     var cookie = (function() {
 
-        var resolveOptions, assembleOptionsString, parseCookies, constructor;
+	var resolveOptions, assembleOptionsString, parseCookies, constructor;
         var defaultOptions = {
-            expiresAt: null,
-            path: '/',
-            domain:  null,
-            secure: false
-        };
+	    expiresAt: null,
+	    path: '/',
+	    domain:  null,
+	    secure: false
+	};
 
-        /**
-         * resolveOptions - receive an options object and ensure all options
+	/**
+	 * resolveOptions - receive an options object and ensure all options
          * are present and valid, replacing with defaults where necessary
-         *
-         * @access private
-         * @static
-         * @parameter Object options - optional options to start with
-         * @return Object complete and valid options object
-         */
-        resolveOptions = function(options){
+	 *
+	 * @access private
+	 * @static
+	 * @parameter Object options - optional options to start with
+	 * @return Object complete and valid options object
+	 */
+	resolveOptions = function(options){
 
-            var returnValue, expireDate;
+	    var returnValue, expireDate;
 
-            if(typeof options !== 'object' || options === null){
-                returnValue = defaultOptions;
-            }
-            else {
-                returnValue = {
-                    expiresAt: defaultOptions.expiresAt,
-                    path: defaultOptions.path,
-                    domain: defaultOptions.domain,
-                    secure: defaultOptions.secure
-                };
+	    if(typeof options !== 'object' || options === null){
+		returnValue = defaultOptions;
+	    }
+	    else {
+		returnValue = {
+		    expiresAt: defaultOptions.expiresAt,
+		    path: defaultOptions.path,
+		    domain: defaultOptions.domain,
+		    secure: defaultOptions.secure
+		};
 
-                if (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date) {
-                    returnValue.expiresAt = options.expiresAt;
-                }
-                else if (typeof options.hoursToLive === 'number' && options.hoursToLive !== 0){
-                    expireDate = new Date();
-                    expireDate.setTime(expireDate.getTime() + (options.hoursToLive * 60 * 60 * 1000));
-                    returnValue.expiresAt = expireDate;
-                }
+		if (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date) {
+		    returnValue.expiresAt = options.expiresAt;
+		}
+		else if (typeof options.hoursToLive === 'number' && options.hoursToLive !== 0){
+		    expireDate = new Date();
+		    expireDate.setTime(expireDate.getTime() + (options.hoursToLive * 60 * 60 * 1000));
+		    returnValue.expiresAt = expireDate;
+		}
 
-                if (typeof options.path === 'string' && options.path !== '') {
-                    returnValue.path = options.path;
-                }
+		if (typeof options.path === 'string' && options.path !== '') {
+		    returnValue.path = options.path;
+		}
 
-                if (typeof options.domain === 'string' && options.domain !== '') {
-                    returnValue.domain = options.domain;
-                }
+		if (typeof options.domain === 'string' && options.domain !== '') {
+		    returnValue.domain = options.domain;
+		}
 
-                if (options.secure === true) {
-                    returnValue.secure = options.secure;
-                }
-            }
+		if (options.secure === true) {
+		    returnValue.secure = options.secure;
+		}
+	    }
 
-            return returnValue;
-        };
+	    return returnValue;
+	};
 
-        /**
-         * assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
-         *
-         * @access private
-         * @static
-         * @parameter options OBJECT - optional options to start with
-         * @return STRING - complete and valid cookie setting options
-         */
-        assembleOptionsString = function (options) {
-            options = resolveOptions(options);
+	/**
+	 * assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
+	 *
+	 * @access private
+	 * @static
+	 * @parameter options OBJECT - optional options to start with
+	 * @return STRING - complete and valid cookie setting options
+	 */
+	assembleOptionsString = function (options) {
+	    options = resolveOptions(options);
 
-            return (
-                (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date ? '; expires=' + options.expiresAt.toGMTString() : '') +
-                    '; path=' + options.path +
-                    (typeof options.domain === 'string' ? '; domain=' + options.domain : '') +
-                    (options.secure === true ? '; secure' : '')
-            );
-        };
+	    return (
+		(typeof options.expiresAt === 'object' && options.expiresAt instanceof Date ? '; expires=' + options.expiresAt.toGMTString() : '') +
+		    '; path=' + options.path +
+		    (typeof options.domain === 'string' ? '; domain=' + options.domain : '') +
+		    (options.secure === true ? '; secure' : '')
+	    );
+	};
 
-        /**
-         * parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
-         *
-         * @access private
-         * @static
-         * @return OBJECT - hash of cookies from document.cookie
-         */
-        parseCookies = function() {
-            var cookies = {}, i, pair, name, value, separated = document.cookie.split(';'), unparsedValue;
-            for(i = 0; i < separated.length; i = i + 1){
-                pair = separated[i].split('=');
-                name = pair[0].replace(/^\s*/, '').replace(/\s*$/, '');
+	/**
+	 * parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
+	 *
+	 * @access private
+	 * @static
+	 * @return OBJECT - hash of cookies from document.cookie
+	 */
+	parseCookies = function() {
+	    var cookies = {}, i, pair, name, value, separated = document.cookie.split(';'), unparsedValue;
+	    for(i = 0; i < separated.length; i = i + 1){
+		pair = separated[i].split('=');
+		name = pair[0].replace(/^\s*/, '').replace(/\s*$/, '');
 
-                try {
-                    value = decodeURIComponent(pair[1]);
-                }
-                catch(e1) {
-                    value = pair[1];
-                }
+		try {
+		    value = decodeURIComponent(pair[1]);
+		}
+		catch(e1) {
+		    value = pair[1];
+		}
 
-                //                                              if (JSON && 'object' === typeof JSON && 'function' === typeof JSON.parse) {
-                //                                                      try {
-                //                                                              unparsedValue = value;
-                //                                                              value = JSON.parse(value);
-                //                                                      }
-                //                                                      catch (e2) {
-                //                                                              value = unparsedValue;
-                //                                                      }
-                //                                              }
+                //						if (JSON && 'object' === typeof JSON && 'function' === typeof JSON.parse) {
+                //							try {
+                //								unparsedValue = value;
+                //								value = JSON.parse(value);
+                //							}
+                //							catch (e2) {
+                //								value = unparsedValue;
+                //							}
+                //						}
 
-                cookies[name] = store.parse(value);
-            }
-            return cookies;
-        };
+		cookies[name] = store.parse(value);
+	    }
+	    return cookies;
+	};
 
-        constructor = function(){};
+	constructor = function(){};
 
 
-        /**
-         * get - get one, several, or all cookies
-         *
-         * @access public
-         * @paramater Mixed cookieName - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
-         * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
-         */
-        constructor.prototype.get = function(cookieName) {
+	/**
+	 * get - get one, several, or all cookies
+	 *
+	 * @access public
+	 * @paramater Mixed cookieName - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
+	 * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
+	 */
+	constructor.prototype.get = function(cookieName) {
 
-            var returnValue, item, cookies = parseCookies();
+	    var returnValue, item, cookies = parseCookies();
 
-            if(typeof cookieName === 'string') {
-                returnValue = (typeof cookies[cookieName] !== 'undefined') ? cookies[cookieName] : null;
-            }
-            else if (typeof cookieName === 'object' && cookieName !== null) {
-                returnValue = {};
-                for (item in cookieName) {
-                    if (typeof cookies[cookieName[item]] !== 'undefined') {
-                        returnValue[cookieName[item]] = cookies[cookieName[item]];
-                    }
-                    else {
-                        returnValue[cookieName[item]] = null;
-                    }
-                }
-            }
-            else {
-                returnValue = cookies;
-            }
+	    if(typeof cookieName === 'string') {
+		returnValue = (typeof cookies[cookieName] !== 'undefined') ? cookies[cookieName] : null;
+	    }
+	    else if (typeof cookieName === 'object' && cookieName !== null) {
+		returnValue = {};
+		for (item in cookieName) {
+		    if (typeof cookies[cookieName[item]] !== 'undefined') {
+			returnValue[cookieName[item]] = cookies[cookieName[item]];
+		    }
+		    else {
+			returnValue[cookieName[item]] = null;
+		    }
+		}
+	    }
+	    else {
+		returnValue = cookies;
+	    }
 
-            return returnValue;
-        };
+	    return returnValue;
+	};
 
-        /**
-         * filter - get array of cookies whose names match the provided RegExp
-         *
-         * @access public
-         * @paramater Object RegExp - The regular expression to match against cookie names
-         * @return Mixed - Object:hash of cookies whose names match the RegExp
-         */
-        constructor.prototype.filter = function (cookieNameRegExp) {
-            var cookieName, returnValue = {}, cookies = parseCookies();
+	/**
+	 * filter - get array of cookies whose names match the provided RegExp
+	 *
+	 * @access public
+	 * @paramater Object RegExp - The regular expression to match against cookie names
+	 * @return Mixed - Object:hash of cookies whose names match the RegExp
+	 */
+	constructor.prototype.filter = function (cookieNameRegExp) {
+	    var cookieName, returnValue = {}, cookies = parseCookies();
 
-            if (typeof cookieNameRegExp === 'string') {
-                cookieNameRegExp = new RegExp(cookieNameRegExp);
-            }
+	    if (typeof cookieNameRegExp === 'string') {
+		cookieNameRegExp = new RegExp(cookieNameRegExp);
+	    }
 
-            for (cookieName in cookies) {
-                if (cookieName.match(cookieNameRegExp)) {
-                    returnValue[cookieName] = cookies[cookieName];
-                }
-            }
+	    for (cookieName in cookies) {
+		if (cookieName.match(cookieNameRegExp)) {
+		    returnValue[cookieName] = cookies[cookieName];
+		}
+	    }
 
-            return returnValue;
-        };
+	    return returnValue;
+	};
 
-        /**
-         * set - set or delete a cookie with desired options
-         *
-         * @access public
-         * @paramater String cookieName - name of cookie to set
-         * @paramater Mixed value - Any JS value. If not a string, will be JSON encoded; NULL to delete
-         * @paramater Object options - optional list of cookie options to specify
-         * @return void
-         */
-        constructor.prototype.set = function(cookieName, value, options){
-            if (typeof options !== 'object' || options === null) {
-                options = {};
-            }
+	/**
+	 * set - set or delete a cookie with desired options
+	 *
+	 * @access public
+	 * @paramater String cookieName - name of cookie to set
+	 * @paramater Mixed value - Any JS value. If not a string, will be JSON encoded; NULL to delete
+	 * @paramater Object options - optional list of cookie options to specify
+	 * @return void
+	 */
+	constructor.prototype.set = function(cookieName, value, options){
+	    if (typeof options !== 'object' || options === null) {
+		options = {};
+	    }
 
-            if (typeof value === 'undefined' || value === null) {
-                value = '';
-                options.hoursToLive = -8760;
-            }
+	    if (typeof value === 'undefined' || value === null) {
+		value = '';
+		options.hoursToLive = -8760;
+	    }
 
-            else if (typeof value !== 'string'){
-                //                                              if(typeof JSON === 'object' && JSON !== null && typeof store.stringify === 'function') {
+	    else if (typeof value !== 'string'){
+                //						if(typeof JSON === 'object' && JSON !== null && typeof store.stringify === 'function') {
                 //
-                //                                                      value = JSON.stringify(value);
-                //                                              }
-                //                                              else {
-                //                                                      throw new Error('cookies.set() received non-string value and could not serialize.');
-                //                                              }
+                //							value = JSON.stringify(value);
+                //						}
+                //						else {
+                //							throw new Error('cookies.set() received non-string value and could not serialize.');
+                //						}
 
-                value = store.stringify(value);
-            }
+		value = store.stringify(value);
+	    }
 
 
-            var optionsString = assembleOptionsString(options);
+	    var optionsString = assembleOptionsString(options);
 
-            document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
-        };
+	    document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
+	};
 
-        /**
-         * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
-         *
-         * @access public
-         * @paramater MIxed cookieName - String name of cookie to delete, or Bool true to delete all
-         * @paramater Object options - optional list of cookie options to specify (path, domain)
-         * @return void
-         */
-        constructor.prototype.del = function(cookieName, options) {
-            var allCookies = {}, name;
+	/**
+	 * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
+	 *
+	 * @access public
+	 * @paramater MIxed cookieName - String name of cookie to delete, or Bool true to delete all
+	 * @paramater Object options - optional list of cookie options to specify (path, domain)
+	 * @return void
+	 */
+	constructor.prototype.del = function(cookieName, options) {
+	    var allCookies = {}, name;
 
-            if(typeof options !== 'object' || options === null) {
-                options = {};
-            }
+	    if(typeof options !== 'object' || options === null) {
+		options = {};
+	    }
 
-            if(typeof cookieName === 'boolean' && cookieName === true) {
-                allCookies = this.get();
-            }
-            else if(typeof cookieName === 'string') {
-                allCookies[cookieName] = true;
-            }
+	    if(typeof cookieName === 'boolean' && cookieName === true) {
+		allCookies = this.get();
+	    }
+	    else if(typeof cookieName === 'string') {
+		allCookies[cookieName] = true;
+	    }
 
-            for(name in allCookies) {
-                if(typeof name === 'string' && name !== '') {
-                    this.set(name, null, options);
-                }
-            }
-        };
+	    for(name in allCookies) {
+		if(typeof name === 'string' && name !== '') {
+		    this.set(name, null, options);
+		}
+	    }
+	};
 
-        /**
-         * test - test whether the browser is accepting cookies
-         *
-         * @access public
-         * @return Boolean
-         */
-        constructor.prototype.test = function() {
-            var returnValue = false, testName = 'cT', testValue = 'data';
+	/**
+	 * test - test whether the browser is accepting cookies
+	 *
+	 * @access public
+	 * @return Boolean
+	 */
+	constructor.prototype.test = function() {
+	    var returnValue = false, testName = 'cT', testValue = 'data';
 
-            this.set(testName, testValue);
+	    this.set(testName, testValue);
 
-            if(this.get(testName) === testValue) {
-                this.del(testName);
-                returnValue = true;
-            }
+	    if(this.get(testName) === testValue) {
+		this.del(testName);
+		returnValue = true;
+	    }
 
-            return returnValue;
-        };
+	    return returnValue;
+	};
 
-        /**
-         * setOptions - set default options for calls to cookie methods
-         *
-         * @access public
-         * @param Object options - list of cookie options to specify
-         * @return void
-         */
-        constructor.prototype.setOptions = function(options) {
-            if(typeof options !== 'object') {
-                options = null;
-            }
+	/**
+	 * setOptions - set default options for calls to cookie methods
+	 *
+	 * @access public
+	 * @param Object options - list of cookie options to specify
+	 * @return void
+	 */
+	constructor.prototype.setOptions = function(options) {
+	    if(typeof options !== 'object') {
+		options = null;
+	    }
 
-            defaultOptions = resolveOptions(options);
-        };
+	    defaultOptions = resolveOptions(options);
+	};
 
-        return new constructor();
+	return new constructor();
     })();
 
     // if cookies are supported by the browser
     if (cookie.test()) {
 
-        store.addType("cookie", function(key, value, options) {
+	store.addType("cookie", function(key, value, options) {
 
-            if ('undefined' === typeof key) {
-                return cookie.get();
-            }
+	    if ('undefined' === typeof key) {
+		return cookie.get();
+	    }
 
-            if ('undefined' === typeof value) {
-                return cookie.get(key);
-            }
+	    if ('undefined' === typeof value) {
+		return cookie.get(key);
+	    }
 
-            // Set to NULL means delete
-            if (value === null) {
-                cookie.del(key);
-                return null;
-            }
+	    // Set to NULL means delete
+	    if (value === null) {
+		cookie.del(key);
+		return null;
+	    }
 
-            return cookie.set(key, value, options);
-        });
+	    return cookie.set(key, value, options);
+	});
     }
 
 }(this));
+
 /**
  * # JSUS: JavaScript UtilS.
  * Copyright(c) 2014 Stefano Balietti
@@ -1124,6 +1125,10 @@ if (!JSON) {
     // ## JSUS._classes
     // Reference to all the extensions
     JSUS._classes = {};
+
+    // Make sure that the console is available also in old browser, e.g. < IE8.
+    if ('undefined' === typeof console) console = {};
+    if ('undefined' === typeof console.log) console.log = function() {};
 
     /**
      * ## JSUS.log
@@ -1152,6 +1157,7 @@ if (!JSON) {
      *
      * @param {object} additional Text to output
      * @param {object|function} target The object to extend
+     *
      * @return {object|function} target The extended object
      *
      * @see JSUS.get
@@ -1205,13 +1211,14 @@ if (!JSON) {
     /**
      * ## JSUS.require
      *
-     * Returns a copy of one / all the objects extending JSUS.
+     * Returns a copy of one / all the objects extending JSUS
      *
      * The first parameter is a string representation of the name of
      * the requested extending object. If no parameter is passed a copy
      * of all the extending objects is returned.
      *
      * @param {string} className The name of the requested JSUS library
+     *
      * @return {function|boolean} The copy of the JSUS library, or
      *   FALSE if the library does not exist
      */
@@ -1236,9 +1243,9 @@ if (!JSON) {
      * @return {boolean} TRUE when executed inside Node.JS environment
      */
     JSUS.isNodeJS = function() {
-        return 'undefined' !== typeof module
-            && 'undefined' !== typeof module.exports
-            && 'function' === typeof require;
+	return 'undefined' !== typeof module
+	    && 'undefined' !== typeof module.exports
+	    && 'function' === typeof require;
     };
 
     // ## Node.JS includes
@@ -1261,6 +1268,7 @@ if (!JSON) {
     'undefined' !== typeof module && 'undefined' !== typeof module.exports ?
         module.exports: window
 );
+
 /**
  * # COMPATIBILITY
  *
@@ -1270,11 +1278,10 @@ if (!JSON) {
  * Tests browsers ECMAScript 5 compatibility
  *
  * For more information see http://kangax.github.com/es5-compat-table/
- * ---
  */
 (function(JSUS) {
 
-    function COMPATIBILITY() {};
+    function COMPATIBILITY() {}
 
     /**
      * ## COMPATIBILITY.compatibility
@@ -1293,7 +1300,7 @@ if (!JSON) {
         var support = {};
 
         try {
-            Object.defineProperty({}, "a", {enumerable: false, value: 1})
+            Object.defineProperty({}, "a", {enumerable: false, value: 1});
             support.defineProperty = true;
         }
         catch(e) {
@@ -1301,7 +1308,7 @@ if (!JSON) {
         }
 
         try {
-            eval('({ get x(){ return 1 } }).x === 1')
+            eval('({ get x(){ return 1 } }).x === 1');
             support.setter = true;
         }
         catch(err) {
@@ -1324,16 +1331,18 @@ if (!JSON) {
     JSUS.extend(COMPATIBILITY);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
+
 /**
  * # ARRAY
+ *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Collection of static functions to manipulate arrays.
+ * Collection of static functions to manipulate arrays
  */
 (function(JSUS) {
 
-    function ARRAY(){};
+    function ARRAY() {}
 
     /**
      * ## ARRAY.filter
@@ -1341,7 +1350,8 @@ if (!JSON) {
      * Add the filter method to ARRAY objects in case the method is not
      * supported natively.
      *
-     * @see https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/ARRAY/filter
+     * @see https://developer.mozilla.org/en/JavaScript/Reference/
+     *              Global_Objects/ARRAY/filter
      */
     if (!Array.prototype.filter) {
         Array.prototype.filter = function(fun /*, thisp */) {
@@ -1407,7 +1417,7 @@ if (!JSON) {
      * @param {Function} func Optional. A callback function that can modify
      *   each number of the sequence before returning it
      *
-     * @return {array} out The final sequence
+     * @return {array} The final sequence
      */
     ARRAY.seq = function(start, end, increment, func) {
         var i;
@@ -1425,7 +1435,7 @@ if (!JSON) {
         increment = increment || 1;
         func = func || function(e) {return e;};
 
-        i = start,
+        i = start;
         out = [];
 
         if (start < end) {
@@ -1456,7 +1466,7 @@ if (!JSON) {
      * @param {object} context Optional. The context of execution of the
      *   callback. Defaults ARRAY.each
      *
-     * @return {Boolean} TRUE, if execution was successful
+     * @return {boolean} TRUE, if execution was successful
      */
     ARRAY.each = function(array, func, context) {
         if ('object' !== typeof array) return false;
@@ -1479,7 +1489,7 @@ if (!JSON) {
      * Any number of additional parameters can be passed after the
      * callback function
      *
-     * @return {array} out The result of the mapping execution
+     * @return {array} The result of the mapping execution
      * @see ARRAY.each
      */
     ARRAY.map = function() {
@@ -1494,8 +1504,7 @@ if (!JSON) {
             return;
         }
 
-        var out = [],
-        o = undefined;
+        var out = [], o;
         for (var i = 0; i < array.length; i++) {
             args[0] = array[i];
             o = func.apply(this, args);
@@ -1531,7 +1540,7 @@ if (!JSON) {
         else {
             func = function(a,b) {
                 return (a === b);
-            }
+            };
         }
 
         for (i = 0; i < haystack.length; i++) {
@@ -1555,14 +1564,16 @@ if (!JSON) {
      *
      * @param {mixed} needle The element to search in the array
      * @param {array} haystack The array to search in
-     * @return {Boolean} TRUE, if the element is contained in the array
+     *
+     * @return {boolean} TRUE, if the element is contained in the array
      *
      *  @see JSUS.equals
      */
     ARRAY.inArray = ARRAY.in_array = function(needle, haystack) {
         var func, i, len;
         if (!haystack) return false;
-        func = JSUS.equals, len = haystack.length;
+        func = JSUS.equals;
+        len = haystack.length;
         for (i = 0; i < len; i++) {
             if (func.call(this, needle, haystack[i])) {
                 return true;
@@ -1587,6 +1598,7 @@ if (!JSON) {
      *
      * @param {array} array The array to split in subgroups
      * @param {number} N The number of subgroups
+     *
      * @return {array} Array containing N groups
      */
     ARRAY.getNGroups = function(array, N) {
@@ -1601,6 +1613,7 @@ if (!JSON) {
      *
      * @param {array} array The array to split in subgroups
      * @param {number} N The number of elements in each subgroup
+     *
      * @return {array} Array containing groups of size N
      *
      * @see ARRAY.getNGroups
@@ -1660,6 +1673,7 @@ if (!JSON) {
      * @param {number} S The number of rows
      * @param {number} Optional. N The number of columns. Defaults N = S
      * @param {boolean} Optional. If TRUE self-match is allowed. Defaults TRUE
+     *
      * @return {array} The resulting latin square (or rectangle)
      */
     ARRAY._latinSquare = function(S, N, self) {
@@ -1710,6 +1724,7 @@ if (!JSON) {
      *
      * @param {number} S The number of rows
      * @param {number} Optional. N The number of columns. Defaults N = S
+     *
      * @return {array} The resulting latin square (or rectangle)
      */
     ARRAY.latinSquare = function(S, N) {
@@ -1730,6 +1745,7 @@ if (!JSON) {
      *
      * @param {number} S The number of rows
      * @param {number} Optional. N The number of columns. Defaults N = S-1
+     *
      * @return {array} The resulting latin square (or rectangle)
      */
     ARRAY.latinSquareNoSelf = function(S, N) {
@@ -1738,7 +1754,7 @@ if (!JSON) {
         if (N > S) N = S-1;
 
         return ARRAY._latinSquare(S, N, false);
-    }
+    };
 
 
     /**
@@ -1748,6 +1764,7 @@ if (!JSON) {
      *
      * @param {array} array The array from which the combinations are extracted
      * @param {number} r The number of elements in each combination
+     *
      * @return {array} The total sets of combinations
      *
      * @see ARRAY.getGroupSizeN
@@ -1755,6 +1772,7 @@ if (!JSON) {
      * @see ARRAY.matchN
      */
     ARRAY.generateCombinations = function(array, r) {
+        var i, j;
         function values(i, a) {
             var ret = [];
             for (var j = 0; j < i.length; j++) ret.push(a[i[j]]);
@@ -1762,15 +1780,15 @@ if (!JSON) {
         }
         var n = array.length;
         var indices = [];
-        for (var i = 0; i < r; i++) indices.push(i);
+        for (i = 0; i < r; i++) indices.push(i);
         var final = [];
-        for (var i = n - r; i < n; i++) final.push(i);
+        for (i = n - r; i < n; i++) final.push(i);
         while (!JSUS.equals(indices, final)) {
             callback(values(indices, array));
-            var i = r - 1;
+            i = r - 1;
             while (indices[i] == n - r + i) i -= 1;
             indices[i] += 1;
-            for (var j = i + 1; j < r; j++) indices[j] = indices[i] + j - i;
+            for (j = i + 1; j < r; j++) indices[j] = indices[i] + j - i;
         }
         return values(indices, array);
     };
@@ -1789,9 +1807,10 @@ if (!JSON) {
      *
      * @param {array} array The array in which operate the matching
      * @param {number} N The number of matches per element
-     * @param {Boolean} strict Optional. If TRUE, matched elements cannot be
+     * @param {boolean} strict Optional. If TRUE, matched elements cannot be
      *   repeated. Defaults, FALSE
-     * @return {array} result The results of the matching
+     *
+     * @return {array} The results of the matching
      *
      * @see ARRAY.getGroupSizeN
      * @see ARRAY.getNGroups
@@ -1802,8 +1821,8 @@ if (!JSON) {
         if (!array) return;
         if (!N) return array;
 
-        result = [],
-        len = array.length,
+        result = [];
+        len = array.length;
         found = [];
         for (i = 0 ; i < len ; i++) {
             // Recreate the array.
@@ -1835,6 +1854,7 @@ if (!JSON) {
      * @param {array} array the array to repeat
      * @param {number} times The number of times the array must be appended
      *   to itself
+     *
      * @return {array} A copy of the original array appended to itself
      */
     ARRAY.rep = function(array, times) {
@@ -1846,7 +1866,8 @@ if (!JSON) {
             return;
         }
 
-        i = 1, result = array.slice(0);
+        i = 1;
+        result = array.slice(0);
         for (; i < times; i++) {
             result = result.concat(array);
         }
@@ -1950,6 +1971,7 @@ if (!JSON) {
      * The original array is not modified, and a copy is returned.
      *
      * @param {array} shuffle The array to shuffle
+     *
      * @return {array} copy The shuffled array
      *
      * @see http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
@@ -1975,6 +1997,7 @@ if (!JSON) {
      *
      * @param {array} array The array from which extracts random elements
      * @paran {number} N The number of random elements to extract
+     *
      * @return {array} An new array with N elements randomly chosen
      */
     ARRAY.getNRandom = function(array, N) {
@@ -1991,7 +2014,8 @@ if (!JSON) {
      * Comparison is done with `JSUS.equals`.
      *
      * @param {array} array The array from which eliminates duplicates
-     * @return {array} out A copy of the array without duplicates
+     *
+     * @return {array} A copy of the array without duplicates
      *
      * @see JSUS.equals
      */
@@ -2016,6 +2040,7 @@ if (!JSON) {
      * returned.
      *
      * @param {array} array The array to transpose
+     *
      * @return {array} The Transposed Array
      */
     ARRAY.transpose = function(array) {
@@ -2039,6 +2064,7 @@ if (!JSON) {
     JSUS.extend(ARRAY);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
+
 /**
  * # DOM
  *
@@ -2067,11 +2093,10 @@ if (!JSON) {
  *
  * Only the methods which do not follow the above-mentioned syntax
  * will receive further explanation.
- * ---
  */
 (function(JSUS) {
 
-    function DOM() {};
+    function DOM() {}
 
     // ## GENERAL
 
@@ -2134,41 +2159,45 @@ if (!JSON) {
      *      }, document.body);
      * ```
      *
+     * Special span elements are %strong and %em, which add
+     * respectively a _strong_ and _em_ tag instead of the default
+     * _span_ tag. They cannot be styled.
+     *
      * @param {string} string A text to transform
-     * @param {object} args Optional. An object containing string transformations
+     * @param {object} args Optional. An object containing string
+     *   transformations
      * @param {Element} root Optional. An HTML element to which append the
      *    string. Defaults, a new _span_ element
      *
-     * @return {Element} root The root element.
+     * @return {Element} The root element.
      */
     DOM.sprintf = function(string, args, root) {
 
         var text, textNode, span, idx_start, idx_finish, idx_replace, idxs;
         var spans, key, i, returnElement;
 
-        // If no formatting arguments are provided, just create a string
-        // and inserted into a span tag. If a root element is provided, add it.
-        if (!args) {
-            returnElement = document.createElement('span');
-            returnElement.appendChild(document.createTextNode(string));
-            return root ? root.appendChild(returnElement) : returnElement;
-        }
-
         root = root || document.createElement('span');
         spans = {};
+
+        // Create an args object, if none is provided.
+        // Defaults %em and %strong are added.
+        args = args || {};
+        args['%strong'] = '';
+        args['%em'] = '';
 
         // Transform arguments before inserting them.
         for (key in args) {
             if (args.hasOwnProperty(key)) {
 
-                // Pattern not found.
-                if (idx_start === -1) continue;
-
                 switch(key.charAt(0)) {
 
-                case '%': // Span.
+                case '%': // Span/Strong/Emph .
 
                     idx_start = string.indexOf(key);
+
+                    // Pattern not found. No error.
+                    if (idx_start === -1) continue;
+
                     idx_replace = idx_start + key.length;
                     idx_finish = string.indexOf(key, idx_replace);
 
@@ -2177,6 +2206,7 @@ if (!JSON) {
                         continue;
                     }
 
+                    // Can be strong, emph or a generic span.
                     spans[idx_start] = key;
 
                     break;
@@ -2196,7 +2226,7 @@ if (!JSON) {
             }
         }
 
-        // No span to creates.
+        // No span to create, return what we have.
         if (!JSUS.size(spans)) {
             return root.appendChild(document.createTextNode(string));
         }
@@ -2220,7 +2250,15 @@ if (!JSON) {
             idx_replace = idx_start + key.length;
             idx_finish = string.indexOf(key, idx_replace);
 
-            span = JSUS.getElement('span', null, args[key]);
+            if (key === '%strong') {
+                span = document.createElement('strong');
+            }
+            else if (key === '%em') {
+                span = document.createElement('em');
+            }
+            else {
+                span = JSUS.getElement('span', null, args[key]);
+            }
 
             text = string.substring(idx_replace, idx_finish);
 
@@ -2237,7 +2275,7 @@ if (!JSON) {
         }
 
         return root;
-    }
+    };
 
     /**
      * ### DOM.isNode
@@ -2245,6 +2283,7 @@ if (!JSON) {
      * Returns TRUE if the object is a DOM node
      *
      * @param {mixed} The variable to check
+     *
      * @return {boolean} TRUE, if the the object is a DOM node
      */
     DOM.isNode = function(o) {
@@ -2263,6 +2302,7 @@ if (!JSON) {
      * the method is defined.
      *
      * @param {mixed} The variable to check
+     *
      * @return {boolean} TRUE, if the the object is a DOM element
      */
     DOM.isElement = function(o) {
@@ -2279,7 +2319,8 @@ if (!JSON) {
      *
      * @param {Node} parent The parent node
      * @param {array} order Optional. A pre-specified order. Defaults, random
-     * @return {array} The order used to shuffle the nodes.
+     *
+     * @return {array} The order used to shuffle the nodes
      */
     DOM.shuffleNodes = function(parent, order) {
         var i, len, idOrder;
@@ -2300,7 +2341,8 @@ if (!JSON) {
             }
         }
 
-        len = parent.children.length, idOrder = [];
+        len = parent.children.length;
+        idOrder = [];
         if (!order) order = JSUS.sample(0,len);
         for (i = 0 ; i < len; i++) {
             idOrder.push(parent.children[order[i]].id);
@@ -2324,6 +2366,7 @@ if (!JSON) {
      * @param {string} id Optional. The id of the tag
      * @param {object} attributes Optional. Object containing attributes for
      *   the newly created element
+     *
      * @return {HTMLElement} The newly created HTML element
      *
      * @see DOM.addAttributes2Elem
@@ -2347,6 +2390,7 @@ if (!JSON) {
      * @param {string} id Optional. The id of the tag
      * @param {object} attributes Optional. Object containing attributes for
      *   the newly created element
+     *
      * @return {HTMLElement} The newly created HTML element
      *
      * @see DOM.getElement
@@ -2369,7 +2413,7 @@ if (!JSON) {
      * @param {HTMLElement} e The element to decorate
      * @param {object} a Object containing attributes to add to the element
      *
-     * @return {HTMLElement} e The decorated element
+     * @return {HTMLElement} The decorated element
      *
      * @see DOM.addLabel
      * @see DOM.addClass
@@ -2402,16 +2446,18 @@ if (!JSON) {
 
                 // TODO: handle special cases
                 // <!--
-                //                else {
+                //else {
                 //
-                //                    // If there is no parent node, the legend cannot be created
-                //                    if (!e.parentNode) {
-                //                        node.log('Cannot add label: no parent element found', 'ERR');
-                //                        continue;
-                //                    }
+                //    // If there is no parent node,
+                //    // the legend cannot be created
+                //    if (!e.parentNode) {
+                //        node.log('Cannot add label: ' +
+                //                 'no parent element found', 'ERR');
+                //        continue;
+                //    }
                 //
-                //                    this.addLabel(e.parentNode, e, a[key]);
-                //                }
+                //    this.addLabel(e.parentNode, e, a[key]);
+                //}
                 // -->
             }
         }
@@ -2494,7 +2540,7 @@ if (!JSON) {
                 }
             }
             return id;
-        };
+        }
 
 
         return scanDocuments(prefix + '_' + JSUS.randomInt(0, 10000000));
@@ -2754,7 +2800,7 @@ if (!JSON) {
      *
      */
     DOM.addCSS = function(root, css, id, attributes) {
-        var root = root || document.head || document.body || document;
+        root = root || document.head || document.body || document;
         if (!root) return false;
 
         attributes = attributes || {};
@@ -2772,7 +2818,7 @@ if (!JSON) {
      *
      */
     DOM.addJS = function(root, js, id, attributes) {
-        var root = root || document.head || document.body || document;
+        root = root || document.head || document.body || document;
         if (!root) return false;
 
         attributes = attributes || {};
@@ -2863,7 +2909,8 @@ if (!JSON) {
      *
      * @param {HTMLElement} elem The element to style
      * @param {object} Objects containing the properties to add.
-     * @return {HTMLElement} elem The styled element
+     *
+     * @return {HTMLElement} The styled element
      */
     DOM.style = function(elem, properties) {
         var i;
@@ -2885,8 +2932,9 @@ if (!JSON) {
      *
      * @param {HTMLElement} el An HTML element
      * @param {string} c The name of a CSS class already in the element
-     * @return {HTMLElement|undefined} el The HTML element with the removed
-     *   class, or undefined input are misspecified.
+     *
+     * @return {HTMLElement|undefined} The HTML element with the removed
+     *   class, or undefined if the inputs are misspecified
      */
     DOM.removeClass = function(el, c) {
         var regexpr, o;
@@ -2905,8 +2953,9 @@ if (!JSON) {
      *
      * @param {HTMLElement} el An HTML element
      * @param {string|array} c The name/s of CSS class/es
-     * @return {HTMLElement|undefined} el The HTML element with the additional
-     *   class, or undefined input are misspecified.
+     *
+     * @return {HTMLElement|undefined} The HTML element with the additional
+     *   class, or undefined if the inputs are misspecified
      */
     DOM.addClass = function(el, c) {
         if (!el) return;
@@ -2927,13 +2976,15 @@ if (!JSON) {
      * @param {string} className The requested className
      * @param {string}  nodeName Optional. If set only elements with
      *   the specified tag name will be searched
+     *
      * @return {array} Array of elements with the requested class name
      *
      * @see https://gist.github.com/E01T/6088383
      */
     DOM.getElementsByClassName = function(document, className, nodeName) {
         var result, node, tag, seek, i, rightClass;
-        result = [], tag = nodeName || '*';
+        result = [];
+        tag = nodeName || '*';
         if (document.evaluate) {
             seek = '//'+ tag +'[@class="'+ className +'"]';
             seek = document.evaluate(seek, document, null, 0, null );
@@ -2960,6 +3011,7 @@ if (!JSON) {
      * Returns a reference to the document of an iframe object
      *
      * @param {HTMLIFrameElement} iframe The iframe object
+     *
      * @return {HTMLDocument|undefined} The document of the iframe, or
      *   undefined if not found.
      */
@@ -2976,6 +3028,7 @@ if (!JSON) {
      * Tries head, body, lastChild and the HTML element
      *
      * @param {HTMLIFrameElement} iframe The iframe object
+     *
      * @return {HTMLElement|undefined} The child, or undefined if none is found
      */
     DOM.getIFrameAnyChild = function(iframe) {
@@ -3008,14 +3061,14 @@ if (!JSON) {
                         return false;
                     }
                 }
-            }
+            };
         }
         else if (doc.all && !doc.getElementById) {
             doc.onmousedown = function clickIE4() {
                 if (event.button == 2) {
                     return false;
                 }
-            }
+            };
         }
         doc.oncontextmenu = new Function("return false");
     };
@@ -3054,12 +3107,11 @@ if (!JSON) {
  * MIT Licensed
  *
  * Collection of static functions related to the evaluation
- * of strings as javascript commands
- * ---
+ * of strings as JavaScript commands
  */
 (function(JSUS) {
 
-    function EVAL(){};
+    function EVAL() {}
 
     /**
      * ## EVAL.eval
@@ -3072,6 +3124,7 @@ if (!JSON) {
      *
      * @param {string} str The command to executes
      * @param {object} context Optional. Execution context. Defaults, `this`
+     *
      * @return {mixed} The return value of the executed commands
      *
      * @see eval
@@ -3095,24 +3148,25 @@ if (!JSON) {
             else {
                 return eval(str);
             }
-        }
+        };
         return func.call(context, str);
     };
 
     JSUS.extend(EVAL);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
+
 /**
- * # JSUS.OBJ
+ * # OBJ
+ *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Collection of static functions to manipulate javascript objects.
- * ---
+ * Collection of static functions to manipulate JavaScript objects
  */
 (function(JSUS) {
 
-    function OBJ(){};
+    function OBJ() {}
 
     var compatibility = null;
 
@@ -3139,7 +3193,8 @@ if (!JSON) {
      *
      * @param {object} o1 The first object
      * @param {object} o2 The second object
-     * @return {boolean} TRUE if the objects are deeply equal.
+     *
+     * @return {boolean} TRUE if the objects are deeply equal
      */
     OBJ.equals = function(o1, o2) {
         var type1, type2, primitives, p;
@@ -3160,7 +3215,7 @@ if (!JSON) {
         }
 
         // Check whether arguments are not objects
-        primitives = {number: '', string: '', boolean: ''}
+        primitives = {number: '', string: '', boolean: ''};
         if (type1 in primitives) {
             return o1 === o2;
         }
@@ -3181,6 +3236,7 @@ if (!JSON) {
                 case 'function':
                     if (o1[p].toString() !== o2[p].toString()) return false;
 
+                    /* falls through */
                 default:
                     if (!OBJ.equals(o1[p], o2[p])) return false;
                 }
@@ -3209,6 +3265,7 @@ if (!JSON) {
      * Does not check properties of the prototype chain.
      *
      * @param {object} o The object to check
+     *
      * @return {boolean} TRUE, if the object has no properties
      */
     OBJ.isEmpty = function(o) {
@@ -3222,7 +3279,6 @@ if (!JSON) {
         return true;
     };
 
-
     /**
      * ## OBJ.size
      *
@@ -3231,6 +3287,7 @@ if (!JSON) {
      * Prototype chain properties are excluded.
      *
      * @param {object} obj The object to check
+     *
      * @return {number} The number of properties in the object
      */
     OBJ.size = OBJ.getListSize = function(obj) {
@@ -3262,6 +3319,7 @@ if (!JSON) {
      *   Defaults, FALSE
      * @param {number} level Optional. The level of recursion.
      *   Defaults, undefined
+     *
      * @return {array} The converted object
      */
     OBJ._obj2Array = function(obj, keyed, level, cur_level) {
@@ -3305,6 +3363,7 @@ if (!JSON) {
      * @param {object} obj The object to convert in array
      * @param {number} level Optional. The level of recursion. Defaults,
      *   undefined
+     *
      * @return {array} The converted object
      *
      * @see OBJ._obj2Array
@@ -3325,12 +3384,45 @@ if (!JSON) {
      * @param {object} obj The object to convert in array
      * @param {number} level Optional. The level of recursion. Defaults,
      *   undefined
+     *
      * @return {array} The converted object
      *
      * @see OBJ.obj2Array
      */
     OBJ.obj2KeyedArray = OBJ.obj2KeyArray = function(obj, level) {
         return OBJ._obj2Array(obj, true, level);
+    };
+
+    /**
+     * ## OBJ.obj2QueryString
+     *
+     * Creates a querystring with the key-value pairs of the given object.
+     *
+     * @param {object} obj The object to convert
+     *
+     * @return {string} The created querystring
+     *
+     * Kudos:
+     * @see http://stackoverflow.com/a/1714899/3347292
+     */
+    OBJ.obj2QueryString = function(obj) {
+        var str;
+        var key;
+
+        if ('object' !== typeof obj) {
+            throw new TypeError(
+                    'JSUS.objectToQueryString: obj must be object.');
+        }
+
+        str = [];
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                str.push(encodeURIComponent(key) + '=' +
+                         encodeURIComponent(obj[key]));
+            }
+        }
+
+        return '?' + str.join('&');
     };
 
     /**
@@ -3344,6 +3436,7 @@ if (!JSON) {
      *
      * @param {object} obj The object from which extract the keys
      * @param {number} level Optional. The level of recursion. Defaults 0
+     *
      * @return {array} The array containing the extracted keys
      *
      * @see Object.keys
@@ -3381,7 +3474,8 @@ if (!JSON) {
      * ```
      *
      * @param {object} obj The object to implode
-     * @return {array} result The array containig all the imploded properties
+     *
+     * @return {array} The array containing all the imploded properties
      */
     OBJ.implode = OBJ.implodeObj = function(obj) {
         var result, key, o;
@@ -3408,7 +3502,8 @@ if (!JSON) {
      * Primitive types and special values are returned as they are.
      *
      * @param {object} obj The object to clone
-     * @return {object} clone The clone of the object
+     *
+     * @return {object} The clone of the object
      */
     OBJ.clone = function(obj) {
         var clone, i, value;
@@ -3416,8 +3511,7 @@ if (!JSON) {
         if ('number' === typeof obj) return obj;
         if ('string' === typeof obj) return obj;
         if ('boolean' === typeof obj) return obj;
-        if (obj === NaN) return obj;
-        if (obj === Infinity) return obj;
+        // NaN and +-Infinity are numbers, so no check is necessary.
 
         if ('function' === typeof obj) {
             //          clone = obj;
@@ -3432,13 +3526,15 @@ if (!JSON) {
         for (i in obj) {
             // TODO: index i is being updated, so apply is called on the
             // last element, instead of the correct one.
-            //          if ('function' === typeof obj[i]) {
-            //                  value = function() { return obj[i].apply(clone, arguments); };
-            //          }
+            //if ('function' === typeof obj[i]) {
+            //    value = function() { return obj[i].apply(clone, arguments); };
+            //}
             // It is not NULL and it is an object
             if (obj[i] && 'object' === typeof obj[i]) {
                 // Is an array.
-                if (Object.prototype.toString.call(obj[i]) === '[object Array]') {
+                if (Object.prototype.toString.call(obj[i]) ===
+                    '[object Array]') {
+
                     value = obj[i].slice(0);
                 }
                 // Is an object.
@@ -3500,7 +3596,8 @@ if (!JSON) {
      *
      * @param {object} obj1 The object where the merge will take place
      * @param {object} obj2 The merging object
-     * @return {object} clone The joined object
+     *
+     * @return {object} The joined object
      *
      * @see OBJ.merge
      */
@@ -3543,7 +3640,8 @@ if (!JSON) {
      *
      * @param {object} obj1 The object where the merge will take place
      * @param {object} obj2 The merging object
-     * @return {object} clone The merged object
+     *
+     * @return {object} The merged object
      *
      * @see OBJ.join
      * @see OBJ.mergeOnKey
@@ -3560,12 +3658,14 @@ if (!JSON) {
 
             if (obj2.hasOwnProperty(i)) {
                 // it is an object and it is not NULL
-                if ( obj2[i] && 'object' === typeof obj2[i] ) {
+                if (obj2[i] && 'object' === typeof obj2[i]) {
                     // If we are merging an object into
                     // a non-object, we need to cast the
                     // type of obj1
                     if ('object' !== typeof clone[i]) {
-                        if (Object.prototype.toString.call(obj2[i]) === '[object Array]') {
+                        if (Object.prototype.toString.call(obj2[i]) ===
+                            '[object Array]') {
+
                             clone[i] = [];
                         }
                         else {
@@ -3573,7 +3673,8 @@ if (!JSON) {
                         }
                     }
                     clone[i] = OBJ.merge(clone[i], obj2[i]);
-                } else {
+                }
+                else {
                     clone[i] = obj2[i];
                 }
             }
@@ -3658,7 +3759,8 @@ if (!JSON) {
      * @param {object} obj2 The merging object
      * @param {string} key The name of property under which the second object
      *   will be merged
-     * @return {object} clone The merged object
+     *
+     * @return {object} The merged object
      *
      * @see OBJ.merge
      */
@@ -3691,12 +3793,13 @@ if (!JSON) {
      *
      * @param {object} o The object to dissect
      * @param {string|array} select The selection of properties to extract
-     * @return {object} out The subobject with the properties from the parent
+     *
+     * @return {object} The subobject with the properties from the parent
      *
      * @see OBJ.getNestedValue
      */
     OBJ.subobj = function(o, select) {
-        var out, i, key
+        var out, i, key;
         if (!o) return false;
         out = {};
         if (!select) return out;
@@ -3726,7 +3829,8 @@ if (!JSON) {
      *
      * @param {object} o The object to dissect
      * @param {string|array} remove The selection of properties to remove
-     * @return {object} out The subobject with the properties from the parent
+     *
+     * @return {object} The subobject with the properties from the parent
      *
      * @see OBJ.getNestedValue
      */
@@ -3762,7 +3866,8 @@ if (!JSON) {
      *
      * @param {string} str The path to the value
      * @param {mixed} value The value to set
-     * @return {object|boolean} obj The modified object, or FALSE if error
+     *
+     * @return {object|boolean} The modified object, or FALSE if error
      *   occurrs
      *
      * @see OBJ.getNestedValue
@@ -3804,6 +3909,7 @@ if (!JSON) {
      *
      * @param {string} str The path to the value
      * @param {object} obj The object from which extract the value
+     *
      * @return {mixed} The extracted value
      *
      * @see OBJ.setNestedValue
@@ -3874,6 +3980,7 @@ if (!JSON) {
      *
      * @param {string} str The path of the (nested) property
      * @param {object} obj The object to test
+     *
      * @return {boolean} TRUE, if the (nested) property exists
      */
     OBJ.hasOwnNestedProperty = function(str, obj) {
@@ -3922,6 +4029,7 @@ if (!JSON) {
      *
      * @param {object} o The object to split
      * @param {sting} key The name of the property to split
+     *
      * @return {object} A copy of the object with split values
      */
     OBJ.split = function(o, key) {
@@ -3969,6 +4077,7 @@ if (!JSON) {
      * ```
      * @param {array} keys The names of the keys to add to the object
      * @param {array} values The values to associate to the keys
+     *
      * @return {object} A new object with keys and values melted together
      */
     OBJ.melt = function(keys, values) {
@@ -3996,7 +4105,8 @@ if (!JSON) {
      * @param {number} stop Optional. The number of tries before giving up
      *   searching for a unique key name. Defaults, 1000000.
      *
-     * @return {string|undefined} The unique key name, or undefined if it was not found
+     * @return {string|undefined} The unique key name, or undefined if it was
+     *   not found
      */
     OBJ.uniqueKey = function(obj, prefixName, stop) {
         var name;
@@ -4048,7 +4158,8 @@ if (!JSON) {
      *   taken as the set of properties to augment
      */
     OBJ.augment = function(obj1, obj2, keys) {
-        var i, k, keys = keys || OBJ.keys(obj1);
+        var i, k;
+        keys = keys || OBJ.keys(obj1);
 
         for (i = 0 ; i < keys.length; i++) {
             k = keys[i];
@@ -4093,7 +4204,8 @@ if (!JSON) {
      *
      * @param {object} o1 The first object
      * @param {object} o2 The second object
-     * @return {object} clone The object aggregating the results
+     *
+     * @return {object} The object aggregating the results
      *
      */
     OBJ.pairwiseWalk = function(o1, o2, cb) {
@@ -4125,16 +4237,16 @@ if (!JSON) {
 
 /**
  * # RANDOM
+ *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions related to the generation of
- * pseudo-random numbers.
- * ---
+ * pseudo-random numbers
  */
 (function(JSUS) {
 
-    function RANDOM(){};
+    function RANDOM() {}
 
     /**
      * ## RANDOM.random
@@ -4144,6 +4256,7 @@ if (!JSON) {
      *
      * @param {number} a The lower limit
      * @param {number} b The upper limit
+     *
      * @return {number} A random floating point number in (a,b)
      */
     RANDOM.random = function(a, b) {
@@ -4157,7 +4270,7 @@ if (!JSON) {
             a = b;
             b = c;
         }
-        return (Math.random() * (b - a)) + a
+        return (Math.random() * (b - a)) + a;
     };
 
     /**
@@ -4167,6 +4280,7 @@ if (!JSON) {
      *
      * @param {number} a The lower limit
      * @param {number} b The upper limit
+     *
      * @return {number} A random integer in (a,b]
      *
      * @see RANDOM.random
@@ -4185,13 +4299,14 @@ if (!JSON) {
      *
      * @param {number} a The lower limit
      * @param {number} b The upper limit
+     *
      * @return {array} The randomly shuffled sequence.
      *
      * @see RANDOM.seq
      */
     RANDOM.sample = function(a, b) {
         var out;
-        out = JSUS.seq(a,b)
+        out = JSUS.seq(a,b);
         if (!out) return false;
         return JSUS.shuffle(out);
     };
@@ -4260,9 +4375,9 @@ if (!JSON) {
 
                 return (sigma * x1) + mu;
 
-            }
+            };
         })();
-    }
+    };
 
     /**
      * Generates random numbers with Normal Gaussian distribution.
@@ -4275,6 +4390,7 @@ if (!JSON) {
      *
      * @param {number} mu The mean of the distribution
      * param {number} sigma The standard deviation of the distribution
+     *
      * @return {number} A random number following a Normal Gaussian distribution
      *
      * @see RANDOM.getNormalGenerator
@@ -4289,6 +4405,7 @@ if (!JSON) {
      *
      * @param {number} mu The mean of the gaussian distribution
      * @param {number} sigma The standard deviation of the gaussian distribution
+     *
      * @return {number} A random number following a LogNormal distribution
      *
      * @see RANDOM.nextNormal
@@ -4301,7 +4418,7 @@ if (!JSON) {
             throw new TypeError('nextLogNormal: sigma must be number.');
         }
         return Math.exp(nextNormal(mu, sigma));
-    }
+    };
 
     /**
      * Generates random numbers with Exponential distribution.
@@ -4310,6 +4427,7 @@ if (!JSON) {
      * The expected mean of the distribution is equal to `Math.pow(lamba, -1)`.
      *
      * @param {number} lambda The rate parameter
+     *
      * @return {number} A random number following an Exponential distribution
      */
     RANDOM.nextExponential = function(lambda) {
@@ -4317,10 +4435,11 @@ if (!JSON) {
             throw new TypeError('nextExponential: lambda must be number.');
         }
         if (lambda <= 0) {
-            throw new TypeError('nextExponential: lambda must be greater than 0.');
+            throw new TypeError('nextExponential: ' +
+                                'lambda must be greater than 0.');
         }
         return - Math.log(1 - Math.random()) / lambda;
-    }
+    };
 
     /**
      * Generates random numbers following the Binomial distribution.
@@ -4329,7 +4448,8 @@ if (!JSON) {
      *
      * @param {number} p The probability of success
      * @param {number} trials The number of trials
-     * @return {number} sum The sum of successes in n trials
+     *
+     * @return {number} The sum of successes in n trials
      */
     RANDOM.nextBinomial = function(p, trials) {
         var counter, sum;
@@ -4408,94 +4528,117 @@ if (!JSON) {
         tmp *=  - alphaDiv;
 
         return x + tmp;
-    }
+    };
 
     JSUS.extend(RANDOM);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
+
 /**
  * # TIME
  *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions related to the generation,
- * manipulation, and formatting of time strings in javascript
- * ---
+ * manipulation, and formatting of time strings in JavaScript
  */
 (function (JSUS) {
 
-function TIME() {};
+    function TIME() {}
 
-/**
- * ## TIME.getDate
- *
- * Returns a string representation of the current date
- * and time formatted as follows:
- *
- * dd-mm-yyyy hh:mm:ss milliseconds
- *
- * @return {string} date Formatted time string hh:mm:ss
- */
-TIME.getDate = TIME.getFullDate = function() {
-    var d = new Date();
-    var date = d.getUTCDate() + '-' + (d.getUTCMonth()+1) + '-' +
-        d.getUTCFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() +
-        ':' + d.getSeconds() + ' ' + d.getMilliseconds();
+    // Polyfill for Date.toISOString (IE7, IE8, IE9)
+    // Kudos: https://developer.mozilla.org/en-US/docs/Web/
+    // JavaScript/Reference/Global_Objects/Date/toISOString
+    if (!Date.prototype.toISOString) {
+        (function() {
 
-    return date;
-};
+            function pad(number) {
+                return (number < 10) ? '0' + number : number;
+            }
 
-/**
- * ## TIME.getTime
- *
- * Returns a string representation of the current time
- * formatted as follows:
- *
- * hh:mm:ss
- *
- * @return {string} time Formatted time string hh:mm:ss
- */
-TIME.getTime = function() {
-    var d = new Date();
-    var time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+            Date.prototype.toISOString = function() {
+                var ms = (this.getUTCMilliseconds() / 1000).toFixed(3);
+                return this.getUTCFullYear() +
+                    '-' + pad(this.getUTCMonth() + 1) +
+                    '-' + pad(this.getUTCDate()) +
+                    'T' + pad(this.getUTCHours()) +
+                    ':' + pad(this.getUTCMinutes()) +
+                    ':' + pad(this.getUTCSeconds()) +
+                    '.' + ms.slice(2, 5) + 'Z';
+            };
 
-    return time;
-};
+        }());
+    }
 
-/**
- * ## TIME.parseMilliseconds
- *
- * Parses an integer number representing milliseconds,
- * and returns an array of days, hours, minutes and seconds
- *
- * @param {number} ms Integer representing milliseconds
- * @return {array} result Milleconds parsed in days, hours, minutes, and seconds
- */
-TIME.parseMilliseconds = function (ms) {
-    if ('number' !== typeof ms) return;
+    /**
+     * ## TIME.getDate
+     *
+     * Returns a string representation of the current date and time (ISO)
+     *
+     * String is formatted as follows:
+     *
+     * YYYY-MM-DDTHH:mm:ss.sssZ
+     *
+     * @return {string} Formatted time string YYYY-MM-DDTHH:mm:ss.sssZ
+     */
+    TIME.getDate = TIME.getFullDate = function() {
+        return new Date().toISOString();
+    };
 
-    var result = [];
-    var x = ms / 1000;
-    result[4] = x;
-    var seconds = x % 60;
-    result[3] = Math.floor(seconds);
-    var x = x /60;
-    var minutes = x % 60;
-    result[2] = Math.floor(minutes);
-    var x = x / 60;
-    var hours = x % 24;
-    result[1] = Math.floor(hours);
-    var x = x / 24;
-    var days = x;
-    result[1] = Math.floor(days);
+    /**
+     * ## TIME.getTime
+     *
+     * Returns a string representation of the current time
+     *
+     * String is ormatted as follows:
+     *
+     * hh:mm:ss
+     *
+     * @return {string} Formatted time string hh:mm:ss
+     */
+    TIME.getTime = function() {
+        var d = new Date();
+        var time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 
-    return result;
-};
+        return time;
+    };
 
-JSUS.extend(TIME);
+    /**
+     * ## TIME.parseMilliseconds
+     *
+     * Parses an integer number representing milliseconds,
+     * and returns an array of days, hours, minutes and seconds
+     *
+     * @param {number} ms Integer representing milliseconds
+     *
+     * @return {array} Milleconds parsed in days, hours, minutes, and seconds
+     */
+    TIME.parseMilliseconds = function (ms) {
+        if ('number' !== typeof ms) return;
+
+        var result = [];
+        var x = ms / 1000;
+        result[4] = x;
+        var seconds = x % 60;
+        result[3] = Math.floor(seconds);
+        x = x / 60;
+        var minutes = x % 60;
+        result[2] = Math.floor(minutes);
+        x = x / 60;
+        var hours = x % 24;
+        result[1] = Math.floor(hours);
+        x = x / 24;
+        var days = x;
+        result[1] = Math.floor(days);
+
+        return result;
+    };
+
+    JSUS.extend(TIME);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
+
 /**
  * # PARSE
  *
@@ -4503,11 +4646,10 @@ JSUS.extend(TIME);
  * MIT Licensed
  *
  * Collection of static functions related to parsing strings
- * ---
  */
 (function(JSUS) {
 
-    function PARSE(){};
+    function PARSE() {}
 
     /**
      * ## PARSE.stringify_prefix
@@ -4542,7 +4684,7 @@ JSUS.extend(TIME);
      * @return {string|boolean} The querystring, or a part of it, or FALSE
      *
      * Kudos:
-     * @see http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+     * @see http://stackoverflow.com/q/901115/3347292
      */
     PARSE.getQueryString = function(name, referer) {
         var regex;
@@ -4553,10 +4695,10 @@ JSUS.extend(TIME);
         referer = referer || window.location.search;
         if ('undefined' === typeof name) return referer;
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-        regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
         results = regex.exec(referer);
-        return results == null ? false :
-            decodeURIComponent(results[1].replace(/\+/g, " "))
+        return results === null ? false :
+            decodeURIComponent(results[1].replace(/\+/g, " "));
     };
 
     /**
@@ -4615,17 +4757,19 @@ JSUS.extend(TIME);
      * @see PARSE.stringify_prefix
      */
     PARSE.stringify = function(o, spaces) {
-        return JSON.stringify(o, function(key, value){
+        return JSON.stringify(o, function(key, value) {
             var type = typeof value;
             if ('function' === type) {
-                return PARSE.stringify_prefix + value.toString()
+                return PARSE.stringify_prefix + value.toString();
             }
 
             if ('undefined' === type) return PARSE.marker_und;
             if (value === null) return PARSE.marker_null;
             if ('number' === type && isNaN(value)) return PARSE.marker_nan;
-            if (value == Number.POSITIVE_INFINITY) return PARSE.marker_inf;
-            if (value == Number.NEGATIVE_INFINITY) return PARSE.marker_minus_inf;
+            if (value === Number.POSITIVE_INFINITY) return PARSE.marker_inf;
+            if (value === Number.NEGATIVE_INFINITY) {
+                return PARSE.marker_minus_inf;
+            }
 
             return value;
 
@@ -4678,12 +4822,12 @@ JSUS.extend(TIME);
     PARSE.parse = function(str) {
 
         var len_prefix = PARSE.stringify_prefix.length,
-        len_func = PARSE.marker_func.length,
-        len_null = PARSE.marker_null.length,
-        len_und = PARSE.marker_und.length,
-        len_nan = PARSE.marker_nan.length,
-        len_inf = PARSE.marker_inf.length,
-        len_inf = PARSE.marker_minus_inf.length;
+            len_func = PARSE.marker_func.length,
+            len_null = PARSE.marker_null.length,
+            len_und = PARSE.marker_und.length,
+            len_nan = PARSE.marker_nan.length,
+            len_inf = PARSE.marker_inf.length,
+            len_minus_inf = PARSE.marker_minus_inf.length;
 
 
         var o = JSON.parse(str);
@@ -4729,18 +4873,21 @@ JSUS.extend(TIME);
                 else if (value.substring(0, len_inf) === PARSE.marker_inf) {
                     return Infinity;
                 }
-                else if (value.substring(0, len_inf) === PARSE.marker_minus_inf) {
+                else if (value.substring(0, len_minus_inf) ===
+                         PARSE.marker_minus_inf) {
+
                     return -Infinity;
                 }
 
             }
             return value;
-        };
-    }
+        }
+    };
 
     JSUS.extend(PARSE);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
+
 /**
  * # NDDB: N-Dimensional Database
  * Copyright(c) 2014 Stefano Balietti
@@ -16484,9 +16631,9 @@ JSUS.extend(TIME);
                                 if (toGroup.matches.done) {
 
 
-                                    //  console.log('is done')
-                                    //  console.log(toGroup);
-                                    //  console.log('is done')
+                                    //	console.log('is done')
+                                    //	console.log(toGroup);
+                                    //	console.log('is done')
 
                                     this.doneCounter++;
                                 }
@@ -17119,9 +17266,9 @@ JSUS.extend(TIME);
             elements = getElements(),
             pools = getPools();
 
-            //          console.log('NN ' , numbers);
-            //          console.log(elements);
-            //          console.log(pools)
+            //		console.log('NN ' , numbers);
+            //		console.log(elements);
+            //		console.log(pools)
             rm.init(elements, pools);
 
             var matched = rm.match();
@@ -17198,15 +17345,15 @@ JSUS.extend(TIME);
 
 
 
-    //20961392604176200 SUB     A       1351591619837
-    //19868497151402600000      SUB     A       1351591620386
-    //5688413461195620000       SUB     A       1351591652731
-    //2019166870553500000       SUB     B       1351591653043
-    //389546331863136000        SUB     B       1351591653803
-    //1886985572967670000       SUB     C       1351591654603
-    //762387587655923000        SUB     C       1351591654648
-    //1757870795266120000       SUB     B       1351591655960
-    //766044637969952000        SUB     A       1351591656253
+    //20961392604176200	SUB	A	1351591619837
+    //19868497151402600000	SUB	A	1351591620386
+    //5688413461195620000	SUB	A	1351591652731
+    //2019166870553500000	SUB	B	1351591653043
+    //389546331863136000	SUB	B	1351591653803
+    //1886985572967670000	SUB	C	1351591654603
+    //762387587655923000	SUB	C	1351591654648
+    //1757870795266120000	SUB	B	1351591655960
+    //766044637969952000	SUB	A	1351591656253
 
     //var myElements = [ [ 3, 5 ], [ 8, 9, 1, 7, 6 ], [ 2, 4 ] ];
     //var myPools = [ [ [ 6 ], [ 9, 7 ] ], [ [], [ 8, 1, 5, 4 ] ], [ [], [ 2, 3 ] ] ];
@@ -17227,28 +17374,28 @@ JSUS.extend(TIME);
     //
     //
     //for (var j = 0; j < myRM.groups.length; j++) {
-    //  var g = myRM.groups[j];
-    //  for (var h = 0; h < g.elements.length; h++) {
-    //          if (g.matched[h].length !== g.rowLimit) {
-    //                  console.log('Wrong match: ' + j + '-' + h);
+    //	var g = myRM.groups[j];
+    //	for (var h = 0; h < g.elements.length; h++) {
+    //		if (g.matched[h].length !== g.rowLimit) {
+    //			console.log('Wrong match: ' + j + '-' + h);
     //
-    //                  console.log(myRM.options.elements);
-    //                  console.log(myRM.options.pools);
-    ////                        console.log(matched);
-    //          }
-    //  }
+    //			console.log(myRM.options.elements);
+    //			console.log(myRM.options.pools);
+    ////			console.log(matched);
+    //		}
+    //	}
     //}
 
     //if (!myRM.allGroupsDone()) {
-    //  console.log('ERROR')
-    //  console.log(myElements);
-    //  console.log(myPools);
-    //  console.log(myMatch);
+    //	console.log('ERROR')
+    //	console.log(myElements);
+    //	console.log(myPools);
+    //	console.log(myMatch);
     //
-    //  console.log('---')
-    //  J.each(myRM.groups, function(g) {
-    //          console.log(g.pool);
-    //  });
+    //	console.log('---')
+    //	J.each(myRM.groups, function(g) {
+    //		console.log(g.pool);
+    //	});
     //}
 
     //console.log(myElements);
@@ -19290,8 +19437,8 @@ JSUS.extend(TIME);
      *       };
      *   });
      *
-     *  node.on.data('myLabel', function(){ ... };
-     *  node.once.data('myLabel', function(){ ... };
+     * 	node.on.data('myLabel', function(){ ... };
+     * 	node.once.data('myLabel', function(){ ... };
      * ```
      *
      * @param {string} alias The name of alias
@@ -19302,10 +19449,10 @@ JSUS.extend(TIME);
      *   actually be invoked when the aliased event is fired.
      */
     NGC.prototype.alias = function(alias, events, modifier) {
-        var that, func;
+	var that, func;
         if ('string' !== typeof alias) {
             throw new TypeError('node.alias: alias must be string.');
-        }
+	}
         if ('string' === typeof events) {
             events = [events];
         }
