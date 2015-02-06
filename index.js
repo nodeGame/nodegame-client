@@ -25,7 +25,8 @@
     require('./lib/core/ErrorManager');
 
     // Events
-    exports.EventEmitterManager = require('./lib/core/EventEmitter').EventEmitterManager;
+    exports.EventEmitterManager =
+        require('./lib/core/EventEmitter').EventEmitterManager;
     exports.EventEmitter = require('./lib/core/EventEmitter').EventEmitter;
 
     // Core
@@ -35,7 +36,8 @@
     exports.GameMsg = require('./lib/core/GameMsg').GameMsg;
     exports.Stager = require('./lib/core/Stager').Stager;
     exports.GamePlot = require('./lib/core/GamePlot').GamePlot;
-    exports.GameMsgGenerator = require('./lib/core/GameMsgGenerator').GameMsgGenerator;
+    exports.GameMsgGenerator =
+        require('./lib/core/GameMsgGenerator').GameMsgGenerator;
 
     // Sockets
     exports.SocketFactory = require('./lib/core/SocketFactory').SocketFactory;
@@ -64,7 +66,8 @@
     exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;
 
     // Load main nodegame-client class
-    exports.NodeGameClient = require('./lib/core/NodeGameClient').NodeGameClient;
+    exports.NodeGameClient =
+        require('./lib/core/NodeGameClient').NodeGameClient;
 
     // Load extensions to the prototype
 
@@ -99,8 +102,10 @@
         node.stepRules = exports.stepRules;
         node.NodeGameRuntimeError = exports.NodeGameRuntimeError;
         node.NodeGameStageCallbackError = exports.NodeGameStageCallbackError;
-        node.NodeGameMisconfiguredGameError = exports.NodeGameMisconfiguredGameError;
-        node.NodeGameIllegalOperationError = exports.NodeGameIllegalOperationError;
+        node.NodeGameMisconfiguredGameError =
+            exports.NodeGameMisconfiguredGameError;
+        node.NodeGameIllegalOperationError =
+            exports.NodeGameIllegalOperationError;
         node.fs = new exports.NodeGameFS(node);
 
         return node;
