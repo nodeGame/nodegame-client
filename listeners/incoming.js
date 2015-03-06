@@ -364,6 +364,17 @@
         });
 
         /**
+         * ## in.get.PLAYER
+         *
+         * Gets the current _Player_ object
+         *
+         * @see Player
+         */
+        node.events.ng.on( get + 'PLAYER', function() {
+            return node.player;
+        });
+
+        /**
          * ## in.get.LANG | get.LANG
          *
          * Gets the currently used language
