@@ -1,5 +1,10 @@
 # nodegame-client change log
 
+## 0.9.10
+
+ - `node.get` uses a nodeGame timer instead of Javascript timeOuts, so it can synchronize with game events, such as pause and resume.
+ - Fixed bug on parameter timeout of `node.get`.
+
 ## 0.9.9
 
  - Error Manager removed in Node.JS (use ServerNode instead).

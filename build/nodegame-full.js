@@ -9059,8 +9059,7 @@ if (!JSON) {
     /**
      * ### EventEmitter.once
      *
-     * Registers an event listener that will be removed
-     * after its first invocation
+     * Registers an event listener that will be removed after its first call
      *
      * @param {string} event The name of the event
      * @param {function} listener The callback function
@@ -9185,7 +9184,7 @@ if (!JSON) {
      * @param {function} listener Optional. The specific function
      *   to deregister
      *
-     * @return Boolean TRUE, if the removal is successful
+     * @return TRUE, if the removal is successful
      */
     EventEmitter.prototype.remove = EventEmitter.prototype.off =
     function(type, listener) {
@@ -9229,7 +9228,9 @@ if (!JSON) {
             len = listeners.length;
             for (i = 0; i < len; i++) {
                 if (listeners[i] == listener) {
-                    listeners.splice(i, 1);
+                    if (len === 1) delete this.events[type];
+                    else listeners.splice(i, 1);
+
                     node.silly('ee.' + this.name + ' removed ' +
                                'listener: ' + type + ' ' + listener);
                     return true;
@@ -9255,16 +9256,23 @@ if (!JSON) {
      * ### EventEmitter.printAll
      *
      * Prints to console all the registered functions
+     *
+     * @return {number} The total number of registered functions
      */
     EventEmitter.prototype.printAll = function() {
-        var i, len;
+        var i, len, totalLen, str;
+        totalLen = 0, str = '';
         for (i in this.events) {
             if (this.events.hasOwnProperty(i)) {
                 len = ('function' === typeof this.events[i]) ?
                     1 : this.events[i].length;
-                console.log(i + ': ' + len + ' listener/s');
+                totalLen += len;
+                str += i + ': ' + len + "\n";
             }
         }
+        console.log('[' + this.name + '] ' + totalLen + ' listener/s.');
+        if (str) console.log(str);
+        return totalLen;
     };
 
     /**
@@ -9532,6 +9540,70 @@ if (!JSON) {
                 this.ee[i].remove(eventName, listener);
             }
         }
+    };
+
+    /**
+     * ### EventEmitterManager.remove
+     *
+     * Prints all registered events
+     *
+     * @param {string} eventEmitterName Optional The name of the event emitter
+     */
+    EventEmitterManager.prototype.printAll = function(eventEmitterName) {
+        var i, total;
+        if (eventEmitterName && 'string' !== typeof eventEmitterName) {
+            throw new TypeError('EventEmitterManager.printAll: ' +
+                                'eventEmitterName must be string or ' +
+                                'undefined.');
+        }
+        if (eventEmitterName && !this.ee[eventEmitterName]) {
+            throw new TypeError('EventEmitterManager.printAll: event' +
+                                'emitter not found: ' + eventEmitterName + '.');
+        }
+        if (eventEmitterName) {
+            this.ee[eventEmitterName].printAll();
+        }
+        else {
+            total = 0;
+            for (i in this.ee) {
+                if (this.ee.hasOwnProperty(i)) {
+                    total += this.ee[i].printAll();
+                }
+            }
+            console.log('Total number of registered listeners: ' + total + '.');
+        }
+    };
+
+    /**
+     * ### EventEmitterManager.getAll
+     *
+     * Returns all registered events
+     *
+     * @param {string} eventEmitterName Optional The name of the event emitter
+     */
+    EventEmitterManager.prototype.getAll = function(eventEmitterName) {
+        var i, events;
+        if (eventEmitterName && 'string' !== typeof eventEmitterName) {
+            throw new TypeError('EventEmitterManager.printAll: ' +
+                                'eventEmitterName must be string or ' +
+                                'undefined.');
+        }
+        if (eventEmitterName && !this.ee[eventEmitterName]) {
+            throw new TypeError('EventEmitterManager.printAll: event' +
+                                'emitter not found: ' + eventEmitterName + '.');
+        }
+        if (eventEmitterName) {
+            events = this.ee[eventEmitterName].events;
+        }
+        else {
+            events = {};
+            for (i in this.ee) {
+                if (this.ee.hasOwnProperty(i)) {
+                    events[i] = this.ee[i].events;
+                }
+            }
+        }
+        return events;
     };
 
     /**
@@ -10230,17 +10302,18 @@ if (!JSON) {
 
      * Players at other steps are ignored.
      *
-     * If no player is found at the desired step, it returns TRUE.
+     * If no player is found at the desired step, it returns TRUE
      *
      * @param {GameStage} gameStage The GameStage of reference
-     * @param {boolean} upTo Optional. If TRUE, all players in the stage up to the
-     *   given step are checked. Default: FALSE
+     * @param {boolean} upTo Optional. If TRUE, all players in the stage up
+     *   to the given step are checked. Default: FALSE
      *
      * @return {boolean} TRUE, if all checked players have terminated the stage
      * @see PlayerList.arePlayersSync
      */
     PlayerList.prototype.isStepDone = function(gameStage, type, checkOutliers) {
-        return this.arePlayersSync(gameStage, stageLevels.DONE, type, checkOutliers);
+        return this.arePlayersSync(gameStage, stageLevels.DONE, type,
+                                   checkOutliers);
     };
 
     /**
@@ -10293,11 +10366,14 @@ if (!JSON) {
      *
      * @return {boolean} TRUE, if all checked players are sync
      */
-    PlayerList.prototype.arePlayersSync = function(gameStage, stageLevel, type, checkOutliers) {
+    PlayerList.prototype.arePlayersSync = function(gameStage, stageLevel, type,
+                                                   checkOutliers) {
+
         var p, i, len, cmp, types, outlier;
 
         if (!gameStage) {
-            throw new TypeError('PlayerList.arePlayersSync: invalid gameStage.');
+            throw new TypeError('PlayerList.arePlayersSync: ' +
+                                'invalid gameStage.');
         }
         if ('undefined' !== typeof stageLevel &&
             'number' !== typeof stageLevel) {
@@ -10381,12 +10457,11 @@ if (!JSON) {
     /**
      * ### PlayerList.toString
      *
-     * Returns a string representation of the stage of the
-     * PlayerList
+     * Returns a string representation of the PlayerList
      *
      * @param {string} eol Optional. End of line separator between players
      *
-     * @return {string} out The string representation of the stage of the PlayerList
+     * @return {string} out The string representation of the PlayerList
      */
     PlayerList.prototype.toString = function(eol) {
         var out = '', EOL = eol || '\n', stage;
@@ -17551,7 +17626,7 @@ if (!JSON) {
         /**
          * ### Timer.timers
          *
-         * Collection of currently active timers created with `Timer.createTimer`
+         * Collection of currently active timers created by `Timer.createTimer`
          * @see Timer.createTimer
          */
         this.timers = {};
@@ -17597,6 +17672,7 @@ if (!JSON) {
      */
     Timer.prototype.createTimer = function(options) {
         var gameTimer, pausedCb, resumedCb;
+        var ee;
 
         if (options &&
             ('object' !== typeof options && 'number' !== typeof options)) {
@@ -17624,6 +17700,10 @@ if (!JSON) {
             }
         }
 
+        ee = this.node.getCurrentEventEmitter();
+
+        options.eventEmitterName = ee.name;
+
         // Create the GameTimer:
         gameTimer = new GameTimer(this.node, options);
 
@@ -17633,15 +17713,15 @@ if (!JSON) {
                 gameTimer.pause();
             }
         };
-        this.node.on('PAUSED', pausedCb);
-
         resumedCb = function() {
             // startPaused=true also counts as a "paused" state:
             if (gameTimer.isPaused() || gameTimer.startPaused) {
                 gameTimer.resume();
             }
         };
-        this.node.on('RESUMED', resumedCb);
+
+        ee.on('PAUSED', pausedCb);
+        ee.on('RESUMED', resumedCb);
 
         // Attach listener handlers to GameTimer object so they can be
         // unregistered later:
@@ -17666,6 +17746,7 @@ if (!JSON) {
      *   the gameTimer created with Timer.createTimer
      */
     Timer.prototype.destroyTimer = function(gameTimer) {
+        var eeName;
         if ('string' === typeof gameTimer) {
             if (!this.timers[gameTimer]) {
                 throw new Error('node.timer.destroyTimer: gameTimer not ' +
@@ -17678,14 +17759,26 @@ if (!JSON) {
                             'string or object.');
         }
 
-        // Stop timer:
+        // Stop timer.
         if (!gameTimer.isStopped()) {
             gameTimer.stop();
         }
 
-        // Detach listeners:
-        this.node.off('PAUSED', gameTimer.timerPausedCallback);
-        this.node.off('RESUMED', gameTimer.timerResumedCallback);
+        eeName = gameTimer.eventEmitterName;
+        // Detach listeners.
+        if (eeName) {
+            // We know where the timer was registered.
+            this.node.events.ee[eeName].remove('PAUSED',
+                                               gameTimer.timerPausedCallback);
+            this.node.events.ee[eeName].remove('RESUMED',
+                                               gameTimer.timerResumedCallback);
+        }
+        else {
+            // We try to unregister from all.
+            this.node.off('PAUSED', gameTimer.timerPausedCallback);
+            this.node.off('RESUMED', gameTimer.timerResumedCallback);
+        }
+
         // Delete reference in this.timers.
         delete this.timers[gameTimer.name];
     };
@@ -18065,6 +18158,7 @@ if (!JSON) {
          * @see GameTimer.fire
          */
         this.hooks = [];
+
         /**
          * ### GameTimer.hookNames
          *
@@ -18073,6 +18167,15 @@ if (!JSON) {
          * @see GameTimer.hooks
          */
         this.hookNames = {};
+
+        /**
+         * ### GameTimer.hookNames
+         *
+         * The name of the event emitter where the timer was registered
+         *
+         * @see EventEmitter
+         */
+        this.eventEmitterName = null;
 
         // Init!
         this.init();
@@ -18148,6 +18251,8 @@ if (!JSON) {
         if (checkInitialized(this) === null) {
             this.status = GameTimer.INITIALIZED;
         }
+
+        this.eventEmitterName = options.eventEmitterName;
     };
 
 
@@ -19900,6 +20005,10 @@ if (!JSON) {
      * If there is no registered listener on the receiver, the callback will
      * never be executed.
      *
+     * If a timeout is specified is possible to specify also a timeout-callback,
+     * which will be executed if no was reply was received until the end of
+     * the timeout.
+     *
      * If the socket is not able to send the GET message for any reason, the
      * listener function is never registered.
      *
@@ -19914,13 +20023,15 @@ if (!JSON) {
      * @param {number} timeout Optional. The number of milliseconds after which
      *   the listener will be removed. If equal -1, the listener will not be
      *   removed. Default: 0
+     * @param {function} timeoutCb Optional. A callback function to call if
+     *   the timeout is fired (no reply recevied)
      *
      * @return {boolean} TRUE, if GET message is sent and listener registered
      */
-    NGC.prototype.get = function(key, cb, to, params, timeout) {
+    NGC.prototype.get = function(key, cb, to, params, timeout, timeoutCb) {
         var msg, g, ee;
         var that, res;
-        var timer;
+        var timer, success;
 
         if ('string' !== typeof key) {
             throw new TypeError('node.get: key must be string.');
@@ -19944,7 +20055,7 @@ if (!JSON) {
         }
 
         if ('undefined' !== typeof timeout) {
-            if ('number' !== typeof number) {
+            if ('number' !== typeof timeout) {
                 throw new TypeError('node.get: timeout must be number.');
             }
             if (timeout < 0 && timeout !== -1 ) {
@@ -19952,6 +20063,12 @@ if (!JSON) {
                                    '0, or -1.');
             }
         }
+
+        if (timeoutCb && 'function' !== typeof timeoutCb) {
+            throw new TypeError('node.get: timeoutCb must be function ' +
+                                'or undefined.');
+        }
+
         msg = this.msg.create({
             action: this.constants.action.GET,
             target: this.constants.target.DATA,
@@ -19974,6 +20091,7 @@ if (!JSON) {
             // will be removed immediately after its execution.
             g = function(msg) {
                 if (msg.text === key) {
+                    success = true;
                     cb.call(that.game, msg.data);
                     if (!timeout) ee.remove('in.say.DATA', g);
                 }
@@ -19985,16 +20103,16 @@ if (!JSON) {
             // of its execution after the timeout is fired.
             // If timeout === -1, the listener is never removed.
             if (timeout > 0) {
-//                 setTimeout(function() {
-//                     ee.remove('in.say.DATA', g);
-//                 }, timeout);
-                timer = this.createTimer({
+                timer = this.timer.createTimer({
                     milliseconds: timeout,
                     timeup: function() {
                         ee.remove('in.say.DATA', g);
                         that.timer.destroyTimer(timer);
+                        // success === true we have received a reply.
+                        if (timeoutCb && !success) timeoutCb.call(that.game);
                     }
                 });
+                timer.start();
             }
         }
         return res;
