@@ -108,9 +108,6 @@
       <div class="heading h3">
         <a href="#player.disconnected">Player.disconnected</a>
       </div>
-      <div class="heading h2">
-        <a href="#player-public-properties">Player public properties</a>
-      </div>
       <div class="heading h3">
         <a href="#player.ip">Player.ip</a>
       </div>
@@ -158,7 +155,7 @@
 </div>
 
 
-<p>Copyright(c) 2014 Stefano Balietti
+<p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Handles a collection of <code>Player</code> objects</p>
@@ -808,7 +805,7 @@ that game step have the property <code>stageLevel</code> equal to:</p>
 <p>// TODO UPDATE DOC
 Players at other steps are ignored.</p>
 
-<p>If no player is found at the desired step, it returns TRUE.</p>
+<p>If no player is found at the desired step, it returns TRUE</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -820,8 +817,8 @@ Players at other steps are ignored.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">upTo</span>
       <span class="dox_type">boolean</span>
-      <span>Optional. If TRUE, all players in the stage up to the
-  given step are checked. Default: FALSE</span>
+      <span>Optional. If TRUE, all players in the stage up
+  to the given step are checked. Default: FALSE</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -838,7 +835,8 @@ Players at other steps are ignored.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isStepDone</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">checkOutliers</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">arePlayersSync</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">checkOutliers</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">arePlayersSync</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span>
+                                   <span class="nx">checkOutliers</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -949,11 +947,14 @@ stage_up_to:</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">arePlayersSync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">stageLevel</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">checkOutliers</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">arePlayersSync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">stageLevel</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span>
+                                                   <span class="nx">checkOutliers</span><span class="p">)</span> <span class="p">{</span>
+
         <span class="kd">var</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">cmp</span><span class="p">,</span> <span class="nx">types</span><span class="p">,</span> <span class="nx">outlier</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;PlayerList.arePlayersSync: invalid gameStage.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;PlayerList.arePlayersSync: &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;invalid gameStage.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stageLevel</span> <span class="o">&amp;&amp;</span>
             <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span>
@@ -1098,8 +1099,7 @@ stage_up_to:</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns a string representation of the stage of the
-PlayerList</p>
+  <div class="body"><p>Returns a string representation of the PlayerList</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1112,7 +1112,7 @@ PlayerList</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
-      <span>out The string representation of the stage of the PlayerList</span>
+      <span>out The string representation of the PlayerList</span>
     </div>
   </div>
 </div>
@@ -1474,19 +1474,6 @@ case of reconnections it can change</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">disconnected</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">player</span><span class="p">.</span><span class="nx">disconnected</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="player-public-properties">
-  <h2>
-    <a href="#player-public-properties" class="pilcrow">&#182;</a>
-    Player public properties
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>

@@ -2068,7 +2068,7 @@ if (!JSON) {
 /**
  * # DOM
  *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions related to DOM manipulation
@@ -2103,15 +2103,20 @@ if (!JSON) {
     /**
      * ### DOM.write
      *
-     * Write a text, or append an HTML element or node, into the
-     * the root element.
+     * Write a text, or append an HTML element or node, into a root element
+     *
+     * @param {Element} root The HTML element where to write into
+     * @param {mixed} text The text to write. Default, an ampty string
+     *
+     * @return {TextNode} The text node inserted in the root element
      *
      * @see DOM.writeln
      */
     DOM.write = function(root, text) {
+        var content;
         if (!root) return;
-        if (!text) return;
-        var content = (!JSUS.isNode(text) || !JSUS.isElement(text)) ?
+        if ('undefined' === typeof text) text = "";
+        content = (!JSUS.isNode(text) || !JSUS.isElement(text)) ?
             document.createTextNode(text) : text;
         root.appendChild(content);
         return content;
@@ -2120,8 +2125,15 @@ if (!JSON) {
     /**
      * ### DOM.writeln
      *
-     * Write a text, or append an HTML element or node, into the
-     * the root element and adds a break immediately after.
+     * Write a text and a break into a root element
+     *
+     * Default break element is <br> tag
+     *
+     * @param {Element} root The HTML element where to write into
+     * @param {mixed} text The text to write. Default, an ampty string
+     * @param {string} rc the name of the tag to use as a break element
+     *
+     * @return {TextNode} The text node inserted in the root element
      *
      * @see DOM.write
      * @see DOM.addBreak
@@ -2311,19 +2323,24 @@ if (!JSON) {
     };
 
     /**
-     * ### DOM.shuffleNodes
+     * ### DOM.shuffleElements
      *
-     * Shuffles the children nodes
+     * Shuffles the children element nodes
      *
      * All children must have the id attribute.
+     *
+     * Notice the difference between Elements and Nodes:
+     *
+     * http://stackoverflow.com/questions/7935689/
+     * what-is-the-difference-between-children-and-childnodes-in-javascript
      *
      * @param {Node} parent The parent node
      * @param {array} order Optional. A pre-specified order. Defaults, random
      *
      * @return {array} The order used to shuffle the nodes
      */
-    DOM.shuffleNodes = function(parent, order) {
-        var i, len, idOrder;
+    DOM.shuffleElements = function(parent, order) {
+        var i, len, idOrder, children, child;
         if (!JSUS.isNode(parent)) {
             throw new TypeError('DOM.shuffleNodes: parent must node.');
         }
@@ -2341,21 +2358,43 @@ if (!JSON) {
             }
         }
 
-        len = parent.children.length;
+        // DOM4 compliant browsers.
+        children = parent.children;
+
+        //https://developer.mozilla.org/en/DOM/Element.children
+        //[IE lt 9] IE < 9
+        if ('undefined' === typeof children) {
+            child = this.firstChild;
+            while (child) {
+                if (child.nodeType == 1) children.push(child);
+                child = child.nextSibling;
+            }
+        }
+
+        len = children.length;
         idOrder = [];
-        if (!order) order = JSUS.sample(0,len);
+        if (!order) order = JSUS.sample(0, (len-1));
         for (i = 0 ; i < len; i++) {
-            idOrder.push(parent.children[order[i]].id);
+            idOrder.push(children[order[i]].id);
         }
         // Two fors are necessary to follow the real sequence.
         // However parent.children is a special object, so the sequence
         // could be unreliable.
         for (i = 0 ; i < len; i++) {
-            parent.appendChild(parent.children[idOrder[i]]);
+            parent.appendChild(children[idOrder[i]]);
         }
 
         return idOrder;
     };
+
+    /**
+     * ### DOM.shuffleNodes
+     *
+     * It actually shuffles Elements.
+     *
+     * @deprecated
+     */
+    DOM.shuffleNodes = DOM.shuffleElements;
 
     /**
      * ### DOM.getElement
@@ -9892,7 +9931,7 @@ if (!JSON) {
 
 /**
  * # PlayerList
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Handles a collection of `Player` objects
@@ -10518,8 +10557,6 @@ if (!JSON) {
          * The connection status of the client
          */
         this.disconnected = !!player.disconnected;
-
-        // ## Player public properties
 
         /**
          * ### Player.ip
@@ -17543,14 +17580,34 @@ if (!JSON) {
      * The GameTimer instance is automatically paused and resumed on
      * the respective events.
      *
-     * @param {object} options The options that are given to GameTimer
+     * Timer creation is flexible, and input parameter can be a full
+     * configuration object, the number of millieconds or nothing. In the
+     * latter case, the new timer will need to be configured manually. If
+     * only the number of milliseconds is passed the timer will fire a 'TIMEUP'
+     * event once the time expires.
+     *
+     * @param {mixed} options The configuration object passed to the GameTimer
+     *   constructor. Alternatively, it is possble to pass directly the number
+     *   of milliseconds and the remaining settings will be added, or to leave
+     *   it undefined.
+     *
      * @return {GameTimer} timer The requested timer
      *
      * @see GameTimer
      */
     Timer.prototype.createTimer = function(options) {
         var gameTimer, pausedCb, resumedCb;
+
+        if (options &&
+            ('object' !== typeof options && 'number' !== typeof options)) {
+
+            throw new TypeError('Timer.createTimer: options must be ' +
+                                'undefined, object or number.');
+        }
+
+        if ('number' === typeof options) options = { milliseconds: options };
         options = options || {};
+
         options.name = options.name ||
             J.uniqueKey(this.timers, 'timer_' + J.randomInt(0, 10000000));
 
@@ -18048,7 +18105,10 @@ if (!JSON) {
      *                ctx: that, },
      *              ],
      *  }
-     *  // Units are in milliseconds
+     *  // Units are in milliseconds.
+     *
+     * Note: if `milliseconds` is a negative number the timer fire
+     * immediately.
      *
      * @param {object} options Optional. Configuration object
      *
@@ -19860,6 +19920,7 @@ if (!JSON) {
     NGC.prototype.get = function(key, cb, to, params, timeout) {
         var msg, g, ee;
         var that, res;
+        var timer;
 
         if ('string' !== typeof key) {
             throw new TypeError('node.get: key must be string.');
@@ -19924,9 +19985,16 @@ if (!JSON) {
             // of its execution after the timeout is fired.
             // If timeout === -1, the listener is never removed.
             if (timeout > 0) {
-                setTimeout(function() {
-                    ee.remove('in.say.DATA', g);
-                }, timeout);
+//                 setTimeout(function() {
+//                     ee.remove('in.say.DATA', g);
+//                 }, timeout);
+                timer = this.createTimer({
+                    milliseconds: timeout,
+                    timeup: function() {
+                        ee.remove('in.say.DATA', g);
+                        that.timer.destroyTimer(timer);
+                    }
+                });
             }
         }
         return res;

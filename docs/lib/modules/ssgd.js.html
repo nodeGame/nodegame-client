@@ -262,6 +262,7 @@ admins to players should be used only if necessary.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">g</span><span class="p">,</span> <span class="nx">ee</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">timer</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.get: key must be string.&#39;</span><span class="p">);</span>
@@ -346,10 +347,29 @@ will be removed immediately after its execution.</p>
 of its execution after the timeout is fired.
 If timeout === -1, the listener is never removed.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">timeout</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                    <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
-                <span class="p">},</span> <span class="nx">timeout</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">timeout</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code>            <span class="n">setTimeout</span><span class="p">(</span><span class="n">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="n">ee</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="n">g</span><span class="p">);</span>
+            <span class="p">},</span> <span class="n">timeout</span><span class="p">);</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span>
+                    <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">timeout</span><span class="p">,</span>
+                    <span class="nx">timeup</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                        <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+                        <span class="nx">that</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">});</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>

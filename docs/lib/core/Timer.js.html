@@ -263,7 +263,7 @@ MIT Licensed</p>
 </div>
 
   </div>
-  <div class="body"><p>Collection of currently active timers created with <code>Timer.createTimer</code></p>
+  <div class="body"><p>Collection of currently active timers created by <code>Timer.createTimer</code></p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -341,13 +341,22 @@ MIT Licensed</p>
 
 <p>The GameTimer instance is automatically paused and resumed on
 the respective events.</p>
+
+<p>Timer creation is flexible, and input parameter can be a full
+configuration object, the number of millieconds or nothing. In the
+latter case, the new timer will need to be configured manually. If
+only the number of milliseconds is passed the timer will fire a 'TIMEUP'
+event once the time expires.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">options</span>
-      <span class="dox_type">object</span>
-      <span>The options that are given to GameTimer</span>
+      <span class="dox_type">mixed</span>
+      <span>The configuration object passed to the GameTimer
+  constructor. Alternatively, it is possble to pass directly the number
+  of milliseconds and the remaining settings will be added, or to leave
+  it undefined.</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -365,7 +374,17 @@ the respective events.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Timer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">createTimer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">gameTimer</span><span class="p">,</span> <span class="nx">pausedCb</span><span class="p">,</span> <span class="nx">resumedCb</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span>
+            <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">))</span> <span class="p">{</span>
+
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.createTimer: options must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;undefined, object or number.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">options</span> <span class="p">};</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
         <span class="nx">options</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span>
             <span class="nx">J</span><span class="p">.</span><span class="nx">uniqueKey</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timers</span><span class="p">,</span> <span class="s1">&#39;timer_&#39;</span> <span class="o">+</span> <span class="nx">J</span><span class="p">.</span><span class="nx">randomInt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10000000</span><span class="p">));</span>
 
@@ -1473,7 +1492,10 @@ recycles the settings in <code>this.options</code>.</p>
                ctx: that, },
              ],
  }
- // Units are in milliseconds</p>
+ // Units are in milliseconds.</p>
+
+<p>Note: if <code>milliseconds</code> is a negative number the timer fire
+immediately.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
