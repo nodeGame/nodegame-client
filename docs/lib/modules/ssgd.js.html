@@ -214,6 +214,10 @@ and in this case the listener will not be removed at all.</p>
 <p>If there is no registered listener on the receiver, the callback will
 never be executed.</p>
 
+<p>If a timeout is specified is possible to specify also a timeout-callback,
+which will be executed if no was reply was received until the end of
+the timeout.</p>
+
 <p>If the socket is not able to send the GET message for any reason, the
 listener function is never registered.</p>
 
@@ -250,6 +254,12 @@ admins to players should be used only if necessary.</p>
   the listener will be removed. If equal -1, the listener will not be
   removed. Default: 0</span>
     </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">timeoutCb</span>
+      <span class="dox_type">function</span>
+      <span>Optional. A callback function to call if
+  the timeout is fired (no reply recevied)</span>
+    </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
@@ -259,10 +269,10 @@ admins to players should be used only if necessary.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">timeout</span><span class="p">,</span> <span class="nx">timeoutCb</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">g</span><span class="p">,</span> <span class="nx">ee</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">timer</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">timer</span><span class="p">,</span> <span class="nx">success</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.get: key must be string.&#39;</span><span class="p">);</span>
@@ -286,7 +296,7 @@ admins to players should be used only if necessary.</p>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.get: timeout must be number.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">timeout</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">timeout</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">)</span> <span class="p">{</span>
@@ -294,6 +304,12 @@ admins to players should be used only if necessary.</p>
                                    <span class="s1">&#39;0, or -1.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">timeoutCb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timeoutCb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.get: timeoutCb must be function &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
         <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
             <span class="nx">action</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span>
             <span class="nx">target</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
@@ -330,6 +346,7 @@ will be removed immediately after its execution.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="nx">g</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">success</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timeout</span><span class="p">)</span> <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
                 <span class="p">}</span>
@@ -347,7 +364,12 @@ will be removed immediately after its execution.</p>
 of its execution after the timeout is fired.
 If timeout === -1, the listener is never removed.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">timeout</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">timeout</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span>
+                    <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">timeout</span><span class="p">,</span>
+                    <span class="nx">timeup</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                        <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+                        <span class="nx">that</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -355,21 +377,12 @@ If timeout === -1, the listener is never removed.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
 </div>
-
-<div class="highlight"><pre><code>            <span class="n">setTimeout</span><span class="p">(</span><span class="n">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="n">ee</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="n">g</span><span class="p">);</span>
-            <span class="p">},</span> <span class="n">timeout</span><span class="p">);</span>
-</code></pre></div>
-
-
+<p>success === true we have received a reply.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span>
-                    <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">timeout</span><span class="p">,</span>
-                    <span class="nx">timeup</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                        <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
-                        <span class="nx">that</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>                        <span class="k">if</span> <span class="p">(</span><span class="nx">timeoutCb</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">success</span><span class="p">)</span> <span class="nx">timeoutCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">});</span>
+                <span class="nx">timer</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
