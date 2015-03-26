@@ -2,8 +2,10 @@
 
 ## 0.9.10
 
- - `node.get` uses a nodeGame timer instead of Javascript timeOuts, so it can synchronize with game events, such as pause and resume.
+ - `#node.get()` uses a nodeGame timer instead of Javascript timeOuts, so it can synchronize with game events, such as pause and resume.
+ - `#node.get()` checks the id of the message to make sure that only the actual recipient can reply to it.
  - Fixed bug on parameter timeout of `node.get`.
+ - `#EventEmitterManager.printAll()` and `#EventEmitterManager.getAll()`
 
 ## 0.9.9
 

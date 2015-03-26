@@ -20050,7 +20050,11 @@ if (!JSON) {
             throw new TypeError('node.get: cb must be function.');
         }
 
-        if (to && 'string' !== typeof to) {
+        if ('undefined' === typeof to) {
+            to = 'SERVER';
+        }
+
+        if ('string' !== typeof to) {
             throw new TypeError('node.get: to must be string or undefined.');
         }
 
@@ -20072,7 +20076,7 @@ if (!JSON) {
         msg = this.msg.create({
             action: this.constants.action.GET,
             target: this.constants.target.DATA,
-            to: to || 'SERVER',
+            to: to,
             reliable: 1,
             text: key,
             data: params
@@ -20081,6 +20085,10 @@ if (!JSON) {
         // TODO: check potential timing issues. Is it safe to send the GET
         // message before registering the relate listener? (for now yes)
         res = this.socket.send(msg);
+
+        // The key is updated with the id of the message, so
+        // that only those who received it can reply.
+        key = key + '_' + msg.id;
 
         if (res) {
             ee = this.getCurrentEventEmitter();
@@ -20634,7 +20642,7 @@ if (!JSON) {
             }
             res = node.emit(get + msg.text, msg);
             if (!J.isEmpty(res)) {
-                node.say(msg.text, msg.from, res);
+                node.say(msg.text + '_' + msg.id, msg.from, res);
             }
         });
 

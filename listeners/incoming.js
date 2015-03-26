@@ -142,9 +142,9 @@
          * ## in.get.DATA
          *
          * Re-emits the incoming message, and replies back to the sender
-         * 
+         *
          * Does the following operations:
-         * 
+         *
          * - Validates the msg.text field
          * - Emits a get.<msg.text> event
          * - Replies to the sender with with the return values of the emit call
@@ -158,7 +158,7 @@
             }
             res = node.emit(get + msg.text, msg);
             if (!J.isEmpty(res)) {
-                node.say(msg.text, msg.from, res);
+                node.say(msg.text + '_' + msg.id, msg.from, res);
             }
         });
 

@@ -211,9 +211,6 @@ To allow multiple execution, it is possible to specify a positive timeout
 after which the listener will be removed, or specify the timeout as -1,
 and in this case the listener will not be removed at all.</p>
 
-<p>If there is no registered listener on the receiver, the callback will
-never be executed.</p>
-
 <p>If a timeout is specified is possible to specify also a timeout-callback,
 which will be executed if no was reply was received until the end of
 the timeout.</p>
@@ -291,7 +288,11 @@ admins to players should be used only if necessary.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.get: cb must be function.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">to</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">to</span> <span class="o">=</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.get: to must be string or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -313,7 +314,7 @@ admins to players should be used only if necessary.</p>
         <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
             <span class="nx">action</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span>
             <span class="nx">target</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
-            <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span> <span class="o">||</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span>
+            <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span><span class="p">,</span>
             <span class="nx">reliable</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nx">text</span><span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
             <span class="nx">data</span><span class="o">:</span> <span class="nx">params</span>
@@ -328,7 +329,18 @@ admins to players should be used only if necessary.</p>
 <p>TODO: check potential timing issues. Is it safe to send the GET
 message before registering the relate listener? (for now yes)</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>The key is updated with the id of the message, so
+that only those who received it can reply.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">ee</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span><span class="p">();</span>
@@ -339,7 +351,7 @@ message before registering the relate listener? (for now yes)</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
 </div>
 <p>Listener function. If a timeout is not set, the listener
 will be removed immediately after its execution.</p>
@@ -358,7 +370,7 @@ will be removed immediately after its execution.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
 </div>
 <p>If a timeout is set the listener is removed independently,
 of its execution after the timeout is fired.
@@ -375,7 +387,7 @@ If timeout === -1, the listener is never removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
 <p>success === true we have received a reply.</p>
         </td>
