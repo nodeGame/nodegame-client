@@ -20002,9 +20002,6 @@ if (!JSON) {
      * after which the listener will be removed, or specify the timeout as -1,
      * and in this case the listener will not be removed at all.
      *
-     * If there is no registered listener on the receiver, the callback will
-     * never be executed.
-     *
      * If a timeout is specified is possible to specify also a timeout-callback,
      * which will be executed if no was reply was received until the end of
      * the timeout.
@@ -20873,6 +20870,16 @@ if (!JSON) {
         node.events.ng.on( IN + set + 'LANG', function(msg) {
             node.setLanguage(msg.data);
         });
+
+        /**
+         * ## get.PING
+         *
+         * Returns a dummy reply to PING requests
+         */
+        node.events.ng.on( get + 'PING', function() {
+            return 'pong';
+        });
+
 
         node.incomingAdded = true;
         node.silly('incoming listeners added');

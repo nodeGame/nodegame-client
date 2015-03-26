@@ -390,6 +390,16 @@
             node.setLanguage(msg.data);
         });
 
+        /**
+         * ## get.PING
+         *
+         * Returns a dummy reply to PING requests
+         */
+        node.events.ng.on( get + 'PING', function() {
+            return 'pong';
+        });
+
+
         node.incomingAdded = true;
         node.silly('incoming listeners added');
         return true;

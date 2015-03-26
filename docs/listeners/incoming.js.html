@@ -87,6 +87,9 @@
       <div class="heading h2">
         <a href="#in.set.lang">in.set.LANG</a>
       </div>
+      <div class="heading h2">
+        <a href="#get.ping">get.PING</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -857,7 +860,28 @@ node.game.execStep(stageObj);</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">set</span> <span class="o">+</span> <span class="s1">&#39;LANG&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="get.ping">
+  <h2>
+    <a href="#get.ping" class="pilcrow">&#182;</a>
+    get.PING
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a dummy reply to PING requests</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;PING&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;pong&#39;</span><span class="p">;</span>
         <span class="p">});</span>
+
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">incomingAdded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;incoming listeners added&#39;</span><span class="p">);</span>
