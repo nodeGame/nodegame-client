@@ -13656,6 +13656,10 @@ if (!JSON) {
      * Calls the disconnect method on the actual socket object
      */
     Socket.prototype.disconnect = function() {
+        if (!this.connecting && !this.connected) {
+            node.warn('Socket.disconnect: socket is not connected.');
+            return;
+        }
         this.socket.disconnect();
     };
 
@@ -13685,7 +13689,7 @@ if (!JSON) {
      */
     Socket.prototype.onDisconnect = function() {
         this.connected = false;
-        this.conecting = false;
+        this.connecting = false;
         node.emit('SOCKET_DISCONNECT');
         // Save the current stage of the game
         //this.node.session.store();
@@ -13705,7 +13709,8 @@ if (!JSON) {
      * Checks that the id of the session is correct.
      *
      * @param {string} msg The msg string as received by the socket.
-     * @return {GameMsg|undefined} gameMsg The parsed msg, or undefined on error.
+     * @return {GameMsg|undefined} gameMsg The parsed msg, or
+     *   undefined on error.
      */
     Socket.prototype.secureParse = function(msg) {
         var gameMsg;
@@ -13727,7 +13732,8 @@ if (!JSON) {
      * Checks that the id of the session is correct.
      *
      * @param {object} msg The msg object to check
-     * @return {GameMsg|undefined} gameMsg The parsed msg, or undefined on error.
+     * @return {GameMsg|undefined} gameMsg The parsed msg, or
+     *   undefined on error.
      */
     Socket.prototype.validateIncomingMsg = function(gameMsg) {
         if (this.session && gameMsg.session !== this.session) {
@@ -13979,7 +13985,8 @@ if (!JSON) {
         }
 
         if (msg.from === this.node.UNDEFINED_PLAYER) {
-            this.node.err('Socket.send: cannot send message. Player undefined.');
+            this.node.err('Socket.send: cannot send message. ' +
+                          'Player undefined.');
             return false;
         }
 
@@ -28748,7 +28755,8 @@ if (!JSON) {
      * @see DisconnectBox.writeStage
      */
     DisconnectBox.prototype.append = function() {
-        this.disconnectButton = W.getButton();
+        this.disconnectButton = W.getButton(undefined, 'Leave Experiment');
+        this.disconnectButton.className = 'btn btn-lg';
         this.bodyDiv.appendChild(this.disconnectButton);
 
         this.disconnectButton.onclick = function() {
@@ -28761,6 +28769,7 @@ if (!JSON) {
 
         node.on('SOCKET_DISCONNECT', function() {
             console.log('AAAAAAAAAAA');
+            that.disconnectButton.disabled = true;
         });
 
         node.on('SOCKET_CONNECT', function() {
