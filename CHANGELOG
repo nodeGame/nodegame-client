@@ -6,6 +6,7 @@
  - `#node.get()` checks the id of the message to make sure that only the actual recipient can reply to it.
  - Fixed bug on parameter timeout of `node.get`.
  - `#EventEmitterManager.printAll()` and `#EventEmitterManager.getAll()`
+ - Avoiding multiple calls to `#node.socket.disconnect()`
 
 ## 0.9.9
 
