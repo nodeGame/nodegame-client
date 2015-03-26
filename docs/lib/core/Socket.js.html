@@ -686,7 +686,7 @@ TODO: check if we need it.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onDisconnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">conecting</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;SOCKET_DISCONNECT&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
@@ -742,7 +742,8 @@ this.node.session.store();</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">undefined</span>
-      <span>gameMsg The parsed msg, or undefined on error.</span>
+      <span>gameMsg The parsed msg, or
+  undefined on error.</span>
     </div>
   </div>
 </div>
@@ -787,7 +788,8 @@ this.node.session.store();</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">GameMsg</span>
       <span class="dox_type">undefined</span>
-      <span>gameMsg The parsed msg, or undefined on error.</span>
+      <span>gameMsg The parsed msg, or
+  undefined on error.</span>
     </div>
   </div>
 </div>
@@ -1346,7 +1348,8 @@ and sent out whenever the connection is available again.
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">from</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">UNDEFINED_PLAYER</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Socket.send: cannot send message. Player undefined.&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Socket.send: cannot send message. &#39;</span> <span class="o">+</span>
+                          <span class="s1">&#39;Player undefined.&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span></pre></div>
         </td>
