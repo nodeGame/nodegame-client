@@ -7,6 +7,8 @@
  - Fixed bug on parameter timeout of `node.get`.
  - `#EventEmitterManager.printAll()` and `#EventEmitterManager.getAll()`
  - Avoiding multiple calls to `#node.socket.disconnect()`
+ - It is possible to use the name of a function to remove it from the event emitter.
+
 
 ## 0.9.9
 
