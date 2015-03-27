@@ -82,6 +82,9 @@
         <a href="#in.get.plist">in.get.PLIST</a>
       </div>
       <div class="heading h2">
+        <a href="#in.get.player">in.get.PLAYER</a>
+      </div>
+      <div class="heading h2">
         <a href="#in.get.lang---get.lang">in.get.LANG | get.LANG</a>
       </div>
       <div class="heading h2">
@@ -798,6 +801,33 @@ node.game.execStep(stageObj);</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;PLIST&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">db</span><span class="p">;</span>
+        <span class="p">});</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.get.player">
+  <h2>
+    <a href="#in.get.player" class="pilcrow">&#182;</a>
+    in.get.PLAYER
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Gets the current <em>Player</em> object</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Player
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;PLAYER&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
         <span class="p">});</span></pre></div>
         </td>
       </tr>
