@@ -354,17 +354,84 @@ if (!JSON) {
     global.JSON = JSON;
 }());
 
+
+// Production steps of ECMA-262, Edition 5, 15.4.4.14
+// Reference: http://es5.github.io/#x15.4.4.14
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function(searchElement, fromIndex) {
+
+        var k;
+
+        // 1. Let O be the result of calling ToObject passing
+        //    the this value as the argument.
+        if (this == null) {
+            throw new TypeError('"this" is null or not defined');
+        }
+
+        var O = Object(this);
+
+        // 2. Let lenValue be the result of calling the Get
+        //    internal method of O with the argument "length".
+        // 3. Let len be ToUint32(lenValue).
+        var len = O.length >>> 0;
+
+        // 4. If len is 0, return -1.
+        if (len === 0) {
+            return -1;
+        }
+
+        // 5. If argument fromIndex was passed let n be
+        //    ToInteger(fromIndex); else let n be 0.
+        var n = +fromIndex || 0;
+
+        if (Math.abs(n) === Infinity) {
+            n = 0;
+        }
+
+        // 6. If n >= len, return -1.
+        if (n >= len) {
+            return -1;
+        }
+
+        // 7. If n >= 0, then Let k be n.
+        // 8. Else, n<0, Let k be len - abs(n).
+        //    If k is less than 0, then let k be 0.
+        k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+
+        // 9. Repeat, while k < len
+        while (k < len) {
+            // a. Let Pk be ToString(k).
+            //   This is implicit for LHS operands of the in operator
+            // b. Let kPresent be the result of calling the
+            //    HasProperty internal method of O with argument Pk.
+            //   This step can be combined with c
+            // c. If kPresent is true, then
+            //    i.  Let elementK be the result of calling the Get
+            //        internal method of O with the argument ToString(k).
+            //   ii.  Let same be the result of applying the
+            //        Strict Equality Comparison Algorithm to
+            //        searchElement and elementK.
+            //  iii.  If same is true, return k.
+            if (k in O && O[k] === searchElement) {
+                return k;
+            }
+            k++;
+        }
+        return -1;
+    };
+}
+
 /**
- * # Shelf.JS
+ * # Shelf.JS 
  * Copyright 2014 Stefano Balietti
  * GPL licenses.
  *
  * Persistent Client-Side Storage
- *
+ * 
  * ---
  */
 (function(exports){
-
+    
     var version = '0.5';
 
     var store = exports.store = function(key, value, options, type) {
@@ -375,7 +442,7 @@ if (!JSON) {
 	    return;
 	}
 	store.log('Accessing ' + type + ' storage');
-
+	
 	return store.types[type](key, value, options);
     };
 
@@ -390,8 +457,8 @@ if (!JSON) {
     var mainStorageType = "volatile";
 
     //if Object.defineProperty works...
-    try {
-
+    try {	
+	
 	Object.defineProperty(store, 'type', {
 	    set: function(type){
 		if ('undefined' === typeof store.types[type]) {
@@ -419,7 +486,7 @@ if (!JSON) {
 	    options.type = type;
 	    return store(key, value, options);
 	};
-
+	
 	if (!store.type || store.type === "volatile") {
 	    store.type = type;
 	}
@@ -427,8 +494,8 @@ if (!JSON) {
 
     // TODO: create unit test
     store.onquotaerror = undefined;
-    store.error = function() {
-	console.log("shelf quota exceeded");
+    store.error = function() {	
+	console.log("shelf quota exceeded"); 
 	if ('function' === typeof store.onquotaerror) {
 	    store.onquotaerror(null);
 	}
@@ -438,7 +505,7 @@ if (!JSON) {
 	if (store.verbosity > 0) {
 	    console.log('Shelf v.' + version + ': ' + text);
 	}
-
+	
     };
 
     store.isPersistent = function() {
@@ -448,7 +515,7 @@ if (!JSON) {
     };
 
     //if Object.defineProperty works...
-    try {
+    try {	
 	Object.defineProperty(store, 'persistent', {
 	    set: function(){},
 	    get: store.isPersistent,
@@ -466,7 +533,7 @@ if (!JSON) {
 	}
 	return o;
     };
-
+    
     store.retrocycle = function(o) {
 	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
 	    o = JSON.retrocycle(o);
@@ -478,7 +545,7 @@ if (!JSON) {
 	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
 	    throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
 	}
-
+	
 	o = store.decycle(o);
 	return JSON.stringify(o);
     };
@@ -494,7 +561,7 @@ if (!JSON) {
 		store.log(o);
 	    }
 	}
-
+	
 	o = store.retrocycle(o);
 	return o;
     };
@@ -502,16 +569,16 @@ if (!JSON) {
     // ## In-memory storage
     // ### fallback for all browsers to enable the API even if we can't persist data
     (function() {
-
+	
 	var memory = {},
 	timeout = {};
-
+	
 	function copy(obj) {
 	    return store.parse(store.stringify(obj));
 	}
 
 	store.addType("volatile", function(key, value, options) {
-
+	    
 	    if (!key) {
 		return copy(memory);
 	    }
@@ -545,11 +612,11 @@ if (!JSON) {
 }('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
 /**
  * ## Amplify storage for Shelf.js
- *
+ * 
  * v. 1.1.0 22.05.2013 a275f32ee7603fbae6607c4e4f37c4d6ada6c3d5
- *
- * Important! When updating to next Amplify.JS release, remember to change:
- *
+ * 
+ * Important! When updating to next Amplify.JS release, remember to change: 
+ * 
  * - JSON.stringify -> store.stringify to keep support for cyclic objects
  * - JSON.parse -> store.parse (cyclic objects)
  * - store.name -> store.prefix (check)
@@ -560,7 +627,7 @@ if (!JSON) {
  */
 (function(exports) {
 
-    var store = exports.store;
+    var store = exports.store;	
 
     if (!store) {
 	throw new Error('amplify.shelf.js: shelf.js core not found.');
@@ -793,14 +860,14 @@ if (!JSON) {
 /**
  * ## Cookie storage for Shelf.js
  * Copyright 2015 Stefano Balietti
- *
+ * 
  * Original library from:
  * See http://code.google.com/p/cookies/
  */
 (function(exports) {
 
     var store = exports.store;
-
+    
     if (!store) {
 	throw new Error('cookie.shelf.js: shelf.js core not found.');
     }
@@ -810,7 +877,7 @@ if (!JSON) {
     }
 
     var cookie = (function() {
-
+	
 	var resolveOptions, assembleOptionsString, parseCookies, constructor;
         var defaultOptions = {
 	    expiresAt: null,
@@ -818,7 +885,7 @@ if (!JSON) {
 	    domain:  null,
 	    secure: false
 	};
-
+	
 	/**
 	 * resolveOptions - receive an options object and ensure all options
          * are present and valid, replacing with defaults where necessary
@@ -829,7 +896,7 @@ if (!JSON) {
 	 * @return Object complete and valid options object
 	 */
 	resolveOptions = function(options){
-
+	    
 	    var returnValue, expireDate;
 
 	    if(typeof options !== 'object' || options === null){
@@ -867,7 +934,7 @@ if (!JSON) {
 
 	    return returnValue;
 	};
-
+	
 	/**
 	 * assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
 	 *
@@ -886,7 +953,7 @@ if (!JSON) {
 		    (options.secure === true ? '; secure' : '')
 	    );
 	};
-
+	
 	/**
 	 * parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
 	 *
@@ -924,7 +991,7 @@ if (!JSON) {
 
 	constructor = function(){};
 
-
+	
 	/**
 	 * get - get one, several, or all cookies
 	 *
@@ -933,7 +1000,7 @@ if (!JSON) {
 	 * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
 	 */
 	constructor.prototype.get = function(cookieName) {
-
+	    
 	    var returnValue, item, cookies = parseCookies();
 
 	    if(typeof cookieName === 'string') {
@@ -956,7 +1023,7 @@ if (!JSON) {
 
 	    return returnValue;
 	};
-
+	
 	/**
 	 * filter - get array of cookies whose names match the provided RegExp
 	 *
@@ -979,7 +1046,7 @@ if (!JSON) {
 
 	    return returnValue;
 	};
-
+	
 	/**
 	 * set - set or delete a cookie with desired options
 	 *
@@ -1001,13 +1068,13 @@ if (!JSON) {
 
 	    else if (typeof value !== 'string'){
                 //						if(typeof JSON === 'object' && JSON !== null && typeof store.stringify === 'function') {
-                //
+                //							
                 //							value = JSON.stringify(value);
                 //						}
                 //						else {
                 //							throw new Error('cookies.set() received non-string value and could not serialize.');
                 //						}
-
+		
 		value = store.stringify(value);
 	    }
 
@@ -1016,7 +1083,7 @@ if (!JSON) {
 
 	    document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
 	};
-
+	
 	/**
 	 * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
 	 *
@@ -1045,7 +1112,7 @@ if (!JSON) {
 		}
 	    }
 	};
-
+	
 	/**
 	 * test - test whether the browser is accepting cookies
 	 *
@@ -1064,7 +1131,7 @@ if (!JSON) {
 
 	    return returnValue;
 	};
-
+	
 	/**
 	 * setOptions - set default options for calls to cookie methods
 	 *
@@ -1087,7 +1154,7 @@ if (!JSON) {
     if (cookie.test()) {
 
 	store.addType("cookie", function(key, value, options) {
-
+	    
 	    if ('undefined' === typeof key) {
 		return cookie.get();
 	    }
@@ -1095,19 +1162,18 @@ if (!JSON) {
 	    if ('undefined' === typeof value) {
 		return cookie.get(key);
 	    }
-
+	    
 	    // Set to NULL means delete
 	    if (value === null) {
 		cookie.del(key);
 		return null;
 	    }
 
-	    return cookie.set(key, value, options);
+	    return cookie.set(key, value, options);		
 	});
     }
 
 }(this));
-
 /**
  * # JSUS: JavaScript UtilS.
  * Copyright(c) 2014 Stefano Balietti
@@ -2190,17 +2256,17 @@ if (!JSON) {
 
         root = root || document.createElement('span');
         spans = {};
-
-        // Create an args object, if none is provided.
+ 
+        // Create an args object, if none is provided. 
         // Defaults %em and %strong are added.
         args = args || {};
         args['%strong'] = '';
         args['%em'] = '';
-
+        
         // Transform arguments before inserting them.
         for (key in args) {
             if (args.hasOwnProperty(key)) {
-
+                
                 switch(key.charAt(0)) {
 
                 case '%': // Span/Strong/Emph .
@@ -2218,8 +2284,8 @@ if (!JSON) {
                         continue;
                     }
 
-                    // Can be strong, emph or a generic span.
-                    spans[idx_start] = key;
+                    // Can be strong, emph or a generic span.          
+                    spans[idx_start] = key;                    
 
                     break;
 
@@ -5391,7 +5457,7 @@ if (!JSON) {
             RegExp.escape = function(str) {
                 return str.replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
             };
-
+            
             regex = RegExp.escape(value);
             regex = regex.replace(/%/g, '.*').replace(/_/g, '.');
             regex = new RegExp('^' + regex + '$', sensitive);
@@ -5408,12 +5474,12 @@ if (!JSON) {
                         }
                     }
                 };
-            }
+            } 
             else if (d === '*') {
                 return function(elem) {
                     var d;
                     for (d in elem) {
-                        if ('undefined' !== typeof elem[d]) {
+                        if ('undefined' !== typeof elem[d]) { 
                             if (regex.test(elem[d])) {
                                 return elem;
                             }
@@ -5423,7 +5489,7 @@ if (!JSON) {
             }
             else {
                 return function(elem) {
-                    if ('undefined' !== typeof elem[d]) {
+                    if ('undefined' !== typeof elem[d]) { 
                         if (regex.test(elem[d])) {
                             return elem;
                         }
@@ -5432,15 +5498,15 @@ if (!JSON) {
             }
         }
 
-        // Like operator (Case Sensitive).
+        // Like operator (Case Sensitive). 
         this.filters['LIKE'] = function likeOperator(d, value, comparator) {
             return generalLike(d, value, comparator);
         };
-
-        // Like operator (Case Insensitive).
+    
+        // Like operator (Case Insensitive). 
         this.filters['iLIKE'] = function likeOperatorI(d, value, comparator) {
             return generalLike(d, value, comparator, 'i');
-        };
+        };            
 
     };
 
@@ -5756,7 +5822,7 @@ if (!JSON) {
 
         // Cloning.
         options = J.clone(options);
-
+        
         // Removing unwanted options.
         for (i in leaveOut) {
             if (leaveOut.hasOwnProperty(i)) {
@@ -6206,7 +6272,7 @@ if (!JSON) {
                 this._viewIt(o);
             };
         }
-
+ 
         // Reset current indexes.
         this.resetIndexes({h: h, v: v, i: i});
 
@@ -6221,35 +6287,22 @@ if (!JSON) {
      *
      * Indexes an element
      *
-     * Parameter _oldIdx_ is needed if indexing is updating a previously
-     * indexed item. In fact if new index is different, the old one must
-     * be deleted.
-     *
      * @param {object} o The element to index
-     * @param {number} dbidx The position of the element in the database array
-     * @param {string} oldIdx Optional. The old index name, if any.
+     * @param {object} o The position of the element in the database array
      */
-    NDDB.prototype._indexIt = function(o, dbidx, oldIdx) {
+    NDDB.prototype._indexIt = function(o, dbidx) {
         var func, id, index, key;
         if (!o || J.isEmpty(this.__I)) return;
-        oldIdx = undefined;
+
         for (key in this.__I) {
             if (this.__I.hasOwnProperty(key)) {
                 func = this.__I[key];
                 index = func(o);
-                // If the same object has been  previously
-                // added with another index delete the old one.
-                if (index !== oldIdx) {
-                    if ('undefined' !== typeof oldIdx) {
-                        if ('undefined' !== typeof this[key].resolve[oldIdx]) {
-                            delete this[key].resolve[oldIdx];
-                        }
-                    }
-                }
-                if ('undefined' !== typeof index) {
-                    if (!this[key]) this[key] = new NDDBIndex(key, this);
-                    this[key]._add(index, dbidx);
-                }
+
+                if ('undefined' === typeof index) continue;
+
+                if (!this[key]) this[key] = new NDDBIndex(key, this);
+                this[key]._add(index, dbidx);
             }
         }
     };
@@ -6279,7 +6332,7 @@ if (!JSON) {
                     settings = this.cloneSettings({V: ''});
                     this[key] = new NDDB(settings);
                 }
-                this[key].insert(o);1
+                this[key].insert(o);
             }
         }
     };
@@ -6402,8 +6455,8 @@ if (!JSON) {
     function queryError(text, d, op, value) {
         var miss, err;
         miss = '(?)';
-        err = this._getConstrName() + '._analyzeQuery: ' + text +
-            '. Malformed query: ' + d || miss + ' ' + op || miss +
+        err = this._getConstrName() + '._analyzeQuery: ' + text + 
+            '. Malformed query: ' + d || miss + ' ' + op || miss + 
             ' ' + value || miss + '.';
         throw new Error(err);
     }
@@ -6445,7 +6498,7 @@ if (!JSON) {
             if (J.in_array(op,['><', '<>', 'in', '!in'])) {
 
                 if (!(value instanceof Array)) {
-                    errText = 'range-queries need an array as third parameter';
+                    errText = 'range-queries need an array as third parameter';                        
                     queryError.call(this, errText, d, op, value);
                 }
                 if (op === '<>' || op === '><') {
@@ -7699,13 +7752,11 @@ if (!JSON) {
      * @see JSUS.arrayDiff
      */
     NDDB.prototype.diff = function(nddb) {
+        if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
                 nddb = nddb.db;
             }
-        }
-        if (!nddb || !nddb.length) {
-            return this.breed([]);
         }
         return this.breed(J.arrayDiff(this.db, nddb));
     };
@@ -7727,13 +7778,11 @@ if (!JSON) {
      * @see JSUS.arrayIntersect
      */
     NDDB.prototype.intersect = function(nddb) {
+        if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
-                nddb = nddb.db;
+                var nddb = nddb.db;
             }
-        }
-        if (!nddb || !nddb.length) {
-            return this.breed([]);
         }
         return this.breed(J.arrayIntersect(this.db, nddb));
     };
@@ -8357,7 +8406,7 @@ if (!JSON) {
      * @see NDDBIndex.get
      * @see NDDBIndex.remove
      */
-    NDDBIndex.prototype.update = function(idx, update) {
+        NDDBIndex.prototype.update = function(idx, update) {
         var o, dbidx, nddb;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
@@ -8368,7 +8417,7 @@ if (!JSON) {
         // We do indexes separately from the other components of _autoUpdate
         // to avoid looping through all the other elements that are unchanged.
         if (nddb.__update.indexes) {
-            nddb._indexIt(o, dbidx, idx);
+            nddb._indexIt(o, dbidx);
             nddb._hashIt(o);
             nddb._viewIt(o);
         }
@@ -8871,6 +8920,7 @@ if (!JSON) {
                 msg = url + ' ' + linenumber + ': ' + msg;
                 that.lastError = msg;
                 node.err(msg);
+                node.set('ERROR', msg);
                 return !node.debug;
             };
         }
@@ -12338,7 +12388,7 @@ if (!JSON) {
                 cb: function() {
                     this.node.log(this.getCurrentStepObj().id);
                     this.node.done();
-                },
+                }
             });
         }
 
@@ -13028,7 +13078,7 @@ if (!JSON) {
      * Looks up and build the _globals_ object for the specified game stage
      *
      * Globals properties are mixed in at each level (defaults, stage, step)
-     * to form the complete set of globals available for the specified
+     * to form the complete set of globals available for the specified 
      * game stage.
      *
      * @param {GameStage|string} gameStage The GameStage object,
@@ -13048,11 +13098,11 @@ if (!JSON) {
 
         // Look in Stager's defaults:
         J.mixin(globals, this.stager.getDefaultGlobals());
-
+        
         // Look in current stage:
         stepstage = this.getStage(gameStage);
         if (stepstage) J.mixin(globals, stepstage.globals);
-
+        
         // Look in current step:
         stepstage = this.getStep(gameStage);
         if (stepstage) J.mixin(globals, stepstage.globals);
@@ -13709,6 +13759,8 @@ if (!JSON) {
         this.connected = true;
         this.connecting = false;
         this.node.emit('SOCKET_CONNECT');
+
+        // The testing framework expects this, do not remove.
         this.node.log('socket connected.');
     };
 
@@ -19162,7 +19214,7 @@ if (!JSON) {
          */
         this.registerSetup('lang', function(language) {
             if (!language) return null;
-            return this.setLanguage(language);
+            return this.setLanguage(language);            
         });
 
         // Utility for setup.plist and setup.mlist:
@@ -19277,7 +19329,7 @@ if (!JSON) {
 
         // ### node.on.txt
         this.alias('txt', 'in.say.TXT');
-
+        
         // ### node.on.data
         this.alias('data', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
             return function(msg) {
@@ -19648,7 +19700,7 @@ if (!JSON) {
      *
      * 	node.on.data('myLabel', function(){ ... };
      * 	node.once.data('myLabel', function(){ ... };
-     * ```
+     * ```	
      *
      * @param {string} alias The name of alias
      * @param {string|array} events The event/s under which the listeners
@@ -19694,7 +19746,7 @@ if (!JSON) {
             // Otherwise, we assume the first parameter is the callback.
             if (modifier) {
                 func = modifier.apply(that.game, arguments);
-            }
+            } 
             J.each(events, function(event) {
                 that.once(event, function() {
                     func.apply(that.game, arguments);
@@ -19908,7 +19960,7 @@ if (!JSON) {
 //         ee = this.getCurrentEventEmitter();
 //         ee.on(event, listener);
 //     };
-//
+// 
 //     /**
 //      * ### NodeGameClient.once
 //      *
@@ -19933,7 +19985,7 @@ if (!JSON) {
 //         ee.on(event, listener);
 //         ee.on(event, cbRemove);
 //     };
-//
+// 
 //     /**
 //      * ### NodeGameClient.off
 //      *
@@ -20667,9 +20719,9 @@ if (!JSON) {
          * ## in.get.DATA
          *
          * Re-emits the incoming message, and replies back to the sender
-         *
+         * 
          * Does the following operations:
-         *
+         * 
          * - Validates the msg.text field
          * - Emits a get.<msg.text> event
          * - Replies to the sender with with the return values of the emit call
@@ -20886,6 +20938,17 @@ if (!JSON) {
          */
         node.events.ng.on( IN + get + 'PLIST', function() {
             return node.game.pl.db;
+        });
+
+        /**
+         * ## in.get.PLAYER
+         *
+         * Gets the current _Player_ object
+         *
+         * @see Player
+         */
+        node.events.ng.on( get + 'PLAYER', function() {
+            return node.player;
         });
 
         /**
@@ -21515,7 +21578,7 @@ if (!JSON) {
 
 /**
  * # GameWindow
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow provides a handy API to interface nodeGame with the
@@ -21577,11 +21640,14 @@ if (!JSON) {
         iframeWin = iframe.contentWindow;
 
         function completed(event) {
+            var iframeDoc;
+            iframeDoc = JSUS.getIFrameDocument(iframe);
+
             // Detaching the function to avoid double execution.
             iframe.removeEventListener('load', completed, false);
             iframeWin.removeEventListener('load', completed, false);
             if (cb) {
-                // Some browsers fires onLoad too early.
+                // Some browsers fire onLoad too early.
                 // A small timeout is enough.
                 setTimeout(function() { cb(); }, 120);
             }
@@ -21616,7 +21682,7 @@ if (!JSON) {
                 iframeWin.detachEvent('onload', completed );
 
                 if (cb) {
-                    // Some browsers fires onLoad too early.
+                    // Some browsers fire onLoad too early.
                     // A small timeout is enough.
                     setTimeout(function() { cb(); }, 120);
                 }
@@ -21632,7 +21698,7 @@ if (!JSON) {
 
     function onLoad(iframe, cb) {
         // IE
-        if (iframe.attachEvent) {
+        if (W.isIE) {
             onLoadIE(iframe, cb);
         }
         // Standards-based browsers support DOMContentLoaded.
@@ -21861,6 +21927,13 @@ if (!JSON) {
         this.screenState = node.constants.screenLevels.ACTIVE;
 
         /**
+         * ### GameWindow.isIE
+         *
+         * Boolean flag saying whether we are in IE or not
+         */
+        this.isIE = !!document.createElement('span').attachEvent;
+
+        /**
          * ### node.setup.window
          *
          * Setup handler for the node.window object
@@ -21874,6 +21947,13 @@ if (!JSON) {
                 return conf;
             //}
         });
+
+        // Hide <noscript> tag (necessary for IE8).
+        setTimeout(function(){
+            (function (scriptTag) {
+                if (scriptTag.length >= 1) scriptTag[0].style.display = 'none';
+            })(document.getElementsByTagName('noscript'));
+        }, 1000);
 
         // Init.
         this.init(GameWindow.defaults);
@@ -22231,6 +22311,9 @@ if (!JSON) {
         // Method .replace does not add the uri to the history.
         iframe.contentWindow.location.replace('about:blank');
 
+        // For IE8.
+        iframe.frameBorder = 0;
+
         this.setFrame(iframe, frameName, root);
 
         if (this.frameElement) {
@@ -22307,7 +22390,18 @@ if (!JSON) {
         // Method .replace does not add the uri to the history.
         //iframe.contentWindow.location.replace('about:blank');
 
-        this.getFrameDocument().documentElement.innerHTML = '';
+        try {
+            this.getFrameDocument().documentElement.innerHTML = '';
+        }
+        catch(e) {
+            // IE < 10 gives 'Permission Denied' if trying to access
+            // the iframeDoc from the context of the function above.
+            // We need to re-get it from the DOM.
+            if (J.getIFrameDocument(iframe).documentElement) {
+                J.removeChildrenFromNode(
+                        J.getIFrameDocument(iframe).documentElement);
+            }
+        }
 
         this.frameElement = iframe;
         this.frameWindow = window.frames[frameName];
@@ -22654,7 +22748,7 @@ if (!JSON) {
     /**
      * ### GameWindow.preCacheTest
      *
-     * Tests wether preChace is supported by the browser
+     * Tests whether preChace is supported by the browser
      *
      * Results are stored in _GameWindow.cacheSupported_.
      *
@@ -22680,8 +22774,16 @@ if (!JSON) {
         document.body.appendChild(iframe);
         iframe.contentWindow.location.replace(uri);
         onLoad(iframe, function() {
+            var iframe, docElem;
             try {
-                W.getIFrameDocument(iframe).documentElement.innerHTML = 'a';
+                //W.getIFrameDocument(iframe).documentElement.innerHTML = 'a';
+                console.log('Getting iframe');
+                iframe = document.getElementById(iframeName);
+                console.log('Getting docElem');
+                docElem = W.getIFrameDocument(iframe);
+                console.log('Setting innerHTML');
+                docElem.innerHTML = 'a';
+                console.log('Done with everything');
                 W.cacheSupported = true;
             }
             catch(e) {
@@ -22919,7 +23021,8 @@ if (!JSON) {
         iframeDocument = W.getIFrameDocument(iframe);
         frameReady = iframeDocument.readyState;
         // ...reduce it to a boolean:
-        frameReady = frameReady === 'interactive' || frameReady === 'complete';
+        //frameReady = frameReady === 'interactive' || frameReady === 'complete';
+        frameReady = frameReady === 'complete';
 
         // Begin loadFrame caching section.
 
@@ -22931,7 +23034,6 @@ if (!JSON) {
         // Caching options.
         if (opts.cache) {
             if (opts.cache.loadMode) {
-
                 if (opts.cache.loadMode === 'reload') {
                     loadCache = false;
                 }
@@ -23010,9 +23112,11 @@ if (!JSON) {
             onLoad(iframe, function() {
                 // Handles caching.
                 handleFrameLoad(that, uri, iframe, iframeName, loadCache,
-                                storeCacheNow);
-                // Executes callback and updates GameWindow state.
-                that.updateLoadFrameState(func);
+                                storeCacheNow, function() {
+
+                    // Executes callback and updates GameWindow state.
+                    that.updateLoadFrameState(func);
+                });
             });
         }
 
@@ -23025,10 +23129,11 @@ if (!JSON) {
             if (frameReady) {
                 // Handles caching.
                 handleFrameLoad(this, uri, iframe, iframeName, loadCache,
-                                storeCacheNow);
+                                storeCacheNow, function() {
 
-                // Executes callback and updates GameWindow state.
-                this.updateLoadFrameState(func);
+                    // Executes callback and updates GameWindow state.
+                    that.updateLoadFrameState(func);
+                });
             }
         }
         else {
@@ -23090,20 +23195,24 @@ if (!JSON) {
      *
      * @param {GameWindow} that The GameWindow instance
      * @param {uri} uri URI to load
+     * @param {iframe} iframe The target iframe
      * @param {string} frameName ID of the iframe
      * @param {bool} loadCache Whether to load from cache
      * @param {bool} storeCache Whether to store to cache
+     * @param {function} func Callback
      *
      * @see GameWindow.loadFrame
      *
      * @api private
      */
     function handleFrameLoad(that, uri, iframe, frameName, loadCache,
-                             storeCache) {
+                             storeCache, func) {
 
         var iframeDocumentElement;
+        var afterScripts;
 
-        // iframe = W.getElementById(frameName);
+        // Needed for IE8.
+        iframe = W.getElementById(frameName);
         iframeDocumentElement = W.getIFrameDocument(iframe).documentElement;
 
         if (loadCache) {
@@ -23124,15 +23233,22 @@ if (!JSON) {
 
         // (Re-)Inject libraries and reload scripts:
         removeLibraries(iframe);
-        if (loadCache) {
-            reloadScripts(iframe);
-        }
-        injectLibraries(iframe, that.globalLibs.concat(
-                that.frameLibs.hasOwnProperty(uri) ? that.frameLibs[uri] : []));
+        afterScripts = function() {
+            injectLibraries(iframe, that.globalLibs.concat(
+                    that.frameLibs.hasOwnProperty(uri) ? that.frameLibs[uri] : []));
 
-        if (storeCache) {
-            // Store frame in cache:
-            that.cache[uri].contents = iframeDocumentElement.innerHTML;
+            if (storeCache) {
+                // Store frame in cache:
+                that.cache[uri].contents = iframeDocumentElement.innerHTML;
+            }
+
+            func();
+        };
+        if (loadCache) {
+            reloadScripts(iframe, afterScripts);
+        }
+        else {
+            afterScripts();
         }
     }
 
@@ -23178,18 +23294,25 @@ if (!JSON) {
      * scripts. The placement of the tags can change, but the order is kept.
      *
      * @param {HTMLIFrameElement} iframe The target iframe
+     * @param {function} func Callback
      *
      * @api private
      */
-    function reloadScripts(iframe) {
+    function reloadScripts(iframe, func) {
         var contentDocument;
         var headNode;
         var tag, scriptNodes, scriptNodeIdx, scriptNode;
         var attrIdx, attr;
+        var numLoading;
+        var needsLoad;
 
         contentDocument = W.getIFrameDocument(iframe);
-
         headNode = W.getIFrameAnyChild(iframe);
+
+        // Start counting loading tags at 1 instead of 0 and decrement the
+        // count after the loop.
+        // This way the callback cannot be called before the loop finishes.
+        numLoading = 1;
 
         scriptNodes = contentDocument.getElementsByTagName('script');
         for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length;
@@ -23202,12 +23325,27 @@ if (!JSON) {
             // Reinsert tag for reloading:
             scriptNode = document.createElement('script');
             if (tag.innerHTML) scriptNode.innerHTML = tag.innerHTML;
+            needsLoad = false;
             for (attrIdx = 0; attrIdx < tag.attributes.length; attrIdx++) {
                 attr = tag.attributes[attrIdx];
                 scriptNode.setAttribute(attr.name, attr.value);
+                if (attr.name === 'src') needsLoad = true;
+            }
+            if (needsLoad) {
+                //scriptNode.async = true;
+                ++numLoading;
+                scriptNode.onload = function(sn) {
+                    return function() {
+                        sn.onload = null;
+                        --numLoading;
+                        if (numLoading <= 0) func();
+                    };
+                }(scriptNode);
             }
             headNode.appendChild(scriptNode);
         }
+        --numLoading;
+        if (numLoading <= 0) func();
     }
 
     /**
@@ -23515,9 +23653,13 @@ if (!JSON) {
             throw new TypeError('GameWindow.lockScreen: text must be string ' +
                                 'or undefined');
         }
-        if (!this.isReady()) {
-            setTimeout(function() { that.lockScreen(text); }, 100);
-        }
+        // Feb 16.02.2015
+        // Commented out the time-out part. It causes the browser to get stuck
+        // on a locked screen, because the method is invoked multiple times.
+        // If no further problem is found out, it can be eliminitated.
+        // if (!this.isReady()) {
+        //   setTimeout(function() { that.lockScreen(text); }, 100);
+        // }
         this.setScreenLevel('LOCKING');
         text = text || 'Screen locked. Please wait...';
         this.waitScreen.lock(text);
@@ -23676,21 +23818,35 @@ if (!JSON) {
      * be re-activated later.
      *
      * @param {Document|Element} container The target to scan for input tags
+     * @param {boolean} disable Optional. Lock inputs if TRUE, unlock if FALSE.
+     *   Default: TRUE
      *
      * @api private
      */
-    function lockUnlockedInputs(container) {
+    function lockUnlockedInputs(container, disable) {
         var j, i, inputs, nInputs;
+
+        if ('undefined' === typeof disable) disable = true;
+
         for (j = -1; ++j < len; ) {
             inputs = container.getElementsByTagName(inputTags[j]);
             nInputs = inputs.length;
             for (i = -1 ; ++i < nInputs ; ) {
-                if (!inputs[i].disabled) {
-                    inputs[i].disabled = true;
-                    W.waitScreen.lockedInputs.push(inputs[i]);
+                if (disable) {
+                    if (!inputs[i].disabled) {
+                        inputs[i].disabled = true;
+                        W.waitScreen.lockedInputs.push(inputs[i]);
+                    }
+                }
+                else {
+                    if (inputs[i].disabled) {
+                        inputs[i].disabled = false;
+                    }
                 }
             }
         }
+
+        if (!disable) W.waitScreen.lockedInputs = []; 
     }
 
     function event_REALLY_DONE(text) {
@@ -23878,7 +24034,11 @@ if (!JSON) {
         }
         // Disables all input forms in the page.
         lockUnlockedInputs(document);
-        frameDoc = W.getFrameDocument();
+
+        //frameDoc = W.getFrameDocument();
+        // Using this for IE8 compatibility.
+        frameDoc = W.getIFrameDocument(W.getFrame());
+
         if (frameDoc) lockUnlockedInputs(frameDoc);
 
         if (!this.waitingDiv) {
@@ -23901,18 +24061,25 @@ if (!JSON) {
      * @see WaitScreen.lock
      */
     WaitScreen.prototype.unlock = function() {
-        var i, len;
+        var j, i, len, inputs, nInputs;
+
         if (this.waitingDiv) {
             if (this.waitingDiv.style.display === '') {
                 this.waitingDiv.style.display = 'none';
             }
         }
         // Re-enables all previously locked input forms in the page.
-        i = -1, len = this.lockedInputs.length;
-        for ( ; ++i < len ; ) {
-            this.lockedInputs[i].removeAttribute('disabled');
+        try {
+            len = this.lockedInputs.length;
+            for (i = -1 ; ++i < len ; ) {
+                this.lockedInputs[i].removeAttribute('disabled');
+            }
+            this.lockedInputs = [];
         }
-        this.lockedInputs = [];
+        catch(e) {
+            // For IE8.
+            lockUnlockedInputs(W.getIFrameDocument(W.getFrame()), false);
+        }
     };
 
     /**
