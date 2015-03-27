@@ -8978,8 +8978,8 @@ if (!JSON) {
     "use strict";
 
     // ## Global scope
-
-    var NDDB = parent.NDDB,
+    var J = parent.JSUS,
+    NDDB = parent.NDDB,
     GameStage = parent.GameStage;
 
     exports.EventEmitter = EventEmitter;
@@ -9032,10 +9032,10 @@ if (!JSON) {
      */
     EventEmitter.prototype.on = function(type, listener) {
         if ('string' !== typeof type) {
-            throw TypeError('EventEmitter.on: type must be a string.');
+            throw new TypeError('EventEmitter.on: type must be a string.');
         }
         if ('function' !== typeof listener) {
-            throw TypeError('EventEmitter.on: listener must be a function.');
+            throw new TypeError('EventEmitter.on: listener must be a function.');
         }
 
         if (!this.events[type]) {
@@ -9181,65 +9181,93 @@ if (!JSON) {
      * Deregisters one or multiple event listeners
      *
      * @param {string} type The event name
-     * @param {function} listener Optional. The specific function
-     *   to deregister
+     * @param {mixed} listener Optional. The specific function
+     *   to deregister, its name, or undefined to remove all listeners
      *
      * @return TRUE, if the removal is successful
      */
     EventEmitter.prototype.remove = EventEmitter.prototype.off =
     function(type, listener) {
 
-        var listeners, len, i, type, node;
+        var listeners, len, i, type, node, found, name;
         node = this.node;
 
         if ('string' !== typeof type) {
-            throw TypeError('EventEmitter.remove (' + this.name +
-                            '): type must be a string');
+            throw new TypeError('EventEmitter.remove (' + this.name +
+                      '): type must be a string.');
         }
 
         if (!this.events[type]) {
             node.warn('EventEmitter.remove (' + this.name +
-                      '): unexisting event ' + type);
+                      '): unexisting event ' + type + '.');
             return false;
+        }
+
+        if (listener &&
+            ('function' !== typeof listener && 'string' !== typeof listener)) {
+            throw new TypeError('EventEmitter.remove (' + this.name +
+                                '): listener must be function, string, or ' +
+                               'undefined.');
         }
 
         if (!listener) {
             delete this.events[type];
-            node.silly('Removed listener ' + type);
+            node.silly('ee.' + this.name + ' removed listener ' + type + '.');
             return true;
         }
 
-        if (listener && 'function' !== typeof listener) {
-            throw TypeError('EventEmitter.remove (' + this.name +
-                            '): listener must be a function');
+        if ('string' === typeof listener && listener.trim() === '') {
+            throw new Error('EventEmitter.remove (' + this.name + '): ' +
+                            'listener cannot be an empty string.');
         }
 
-        if ('function' === typeof this.events[type] ) {
-            if (listener == this.events[type]) {
+        // Handling multiple cases: this.events[type] can be array or function,
+        // and listener can be function or string.
+
+        if ('function' === typeof this.events[type]) {
+
+            if ('function' === typeof listener) {
+                if (listener == this.events[type]) found = true
+            }
+            else {
+                // String.
+                name = J.funcName(this.events[type]);
+                if (name === listener) found = true;
+            }
+
+            if (found) {
                 delete this.events[type];
-                node.silly('ee.' + this.name + ' removed listener: ' +
-                           type + ' ' + listener);
-                return true;
             }
         }
+        // this.events[type] is an array.
         else {
-            // array
             listeners = this.events[type];
             len = listeners.length;
             for (i = 0; i < len; i++) {
-                if (listeners[i] == listener) {
+                if ('function' === typeof listener) {
+                    if (listeners[i] == listener) found = true;
+                }
+                else {
+                    // String.
+                    name = J.funcName(this.events[type]);
+                    if (name === listener) found = true;
+                }
+
+                if (found) {
                     if (len === 1) delete this.events[type];
                     else listeners.splice(i, 1);
-
-                    node.silly('ee.' + this.name + ' removed ' +
-                               'listener: ' + type + ' ' + listener);
-                    return true;
                 }
             }
         }
 
-        node.warn('EventEmitter.remove (' + this.name + '): no ' +
-                  'listener-match found for event ' + type);
+        if (found) {
+            node.silly('ee.' + this.name + ' removed listener: ' +
+                       type + ' ' + listener + '.');
+            return true;
+        }
+
+        node.warn('EventEmitter.remove (' + this.name + '): requested' +
+                  'listener was not found for event ' + type + '.');
         return false;
     };
 
@@ -9524,22 +9552,28 @@ if (!JSON) {
      *
      * @param {string} eventName The name of the event
      * @param {function} listener Optional A reference of the function to remove
+     *
+     * @return {boolean} TRUE if the listener was found and removed
      */
     EventEmitterManager.prototype.remove = function(eventName, listener) {
-        var i;
+        var i, res;
         if ('string' !== typeof eventName) {
             throw new TypeError('EventEmitterManager.remove: ' +
                                 'eventName must be string.');
         }
-        if (listener && 'function' !== typeof listener) {
-            throw new TypeError('EventEmitterManager.remove: ' +
-                                'listener must be function.');
+        if (listener &&
+            ('function' !== typeof listener && 'string' !== typeof listener)) {
+            throw new TypeError('EventEmitter.remove (' + this.name +
+                                '): listener must be function, string, or ' +
+                               'undefined.');
         }
+        res = false;
         for (i in this.ee) {
             if (this.ee.hasOwnProperty(i)) {
-                this.ee[i].remove(eventName, listener);
+                res = res || this.ee[i].remove(eventName, listener);
             }
         }
+        return res;
     };
 
     /**
@@ -19176,16 +19210,20 @@ if (!JSON) {
         /**
          * ### NodeGameClient.on
          *
-         * Registers an event listener
+         * Registers an event listener on the active event emitter
          *
-         * Listeners registered before a game is started, e.g. in
-         * the init function of the game object, will stay valid
-         * throughout the game. Listeners registered after the game
-         * is started will be removed after the game has advanced
-         * to its next stage.
+         * Different event emitters are active during the game. For
+         * example, before a game is started, e.g. in the init
+         * function of the game object, the `game` event emitter is
+         * active. Events registered with the `game` event emitter
+         * stay valid throughout the whole game. Listeners registered
+         * after the game is started will be removed after the game
+         * has advanced to its next stage or step.
          *
          * @param {string} event The name of the event
          * @param {function} listener The callback function
+         *
+         * @see NodeGameClient.off
          */
         this.on = function(event, listener) {
             var ee;
@@ -19207,14 +19245,13 @@ if (!JSON) {
          */
         this.once = function(event, listener) {
             var ee, cbRemove;
-            // This function will remove the event listener
-            // and itself.
+            ee = this.getCurrentEventEmitter();
+            ee.on(event, listener);
+            // This function will remove the event listener and itself.
             cbRemove = function() {
                 ee.remove(event, listener);
                 ee.remove(event, cbRemove);
             };
-            ee = this.getCurrentEventEmitter();
-            ee.on(event, listener);
             ee.on(event, cbRemove);
         };
 
@@ -28706,6 +28743,121 @@ if (!JSON) {
 })(node);
 
 /**
+ * # DebugInfo
+ * Copyright(c) 2015 Stefano Balietti
+ * MIT Licensed
+ *
+ * Display information about the state of a player
+ *
+ * www.nodegame.org
+ */
+(function(node) {
+
+    "use strict";
+
+    var Table = node.window.Table,
+    GameStage = node.GameStage;
+
+    node.widgets.register('DebugInfo', DebugInfo);
+
+    // ## Meta-data
+
+    DebugInfo.version = '0.5.0';
+    DebugInfo.description = 'Display basic info about player\'s status.';
+
+    DebugInfo.title = 'State Display';
+    DebugInfo.className = 'statedisplay';
+
+    // ## Dependencies
+
+    DebugInfo.dependencies = {
+        Table: {}
+    };
+
+
+    /**
+     * ## DebugInfo constructor
+     *
+     * `DebugInfo` displays information about the state of a player
+     */
+    function DebugInfo() {
+        /**
+         * ### DebugInfo.table
+         *
+         * The `Table` which holds the information
+         *
+         * @See nodegame-window/Table
+         */
+        this.table = new Table();
+    }
+
+    // ## DebugInfo methods
+
+    /**
+     * ### DebugInfo.append
+     *
+     * Appends widget to `this.bodyDiv` and calls `this.updateAll`
+     *
+     * @see DebugInfo.updateAll
+     */
+    DebugInfo.prototype.append = function() {
+        var that, checkPlayerName;
+        that = this;
+        checkPlayerName = setInterval(function() {
+            if (node.player && node.player.id) {
+                clearInterval(checkPlayerName);
+                that.updateAll();
+            }
+        }, 100);
+        this.bodyDiv.appendChild(this.table.table);
+    };
+
+    /**
+     * ### DebugInfo.updateAll
+     *
+     * Updates information in `this.table`
+     */
+    DebugInfo.prototype.updateAll = function() {
+        var stage, stageNo, stageId, playerId, tmp, miss;
+        miss = '-';
+
+        stageId = miss;
+        stageNo = miss;
+        playerId = miss;
+
+        if (node.player.id) {
+            playerId = node.player.id;
+        }
+
+        stage = node.game.getCurrentGameStage();
+        if (stage) {
+            tmp = node.game.plot.getStep(stage);
+            stageId = tmp ? tmp.id : '-';
+            stageNo = stage.toString();
+        }
+
+        this.table.clear(true);
+        this.table.addRow(['Stage  No: ', stageNo]);
+        this.table.addRow(['Stage  Id: ', stageId]);
+        this.table.addRow(['Player Id: ', playerId]);
+        this.table.parse();
+
+    };
+
+    DebugInfo.prototype.listeners = function() {
+        var that = this;
+        node.on('STEP_CALLBACK_EXECUTED', function() {
+            that.updateAll();
+        });
+    };
+
+    DebugInfo.prototype.destroy = function() {
+        node.off('STEP_CALLBACK_EXECUTED', DebugInfo.prototype.updateAll);
+    };
+
+})(node);
+
+/**
  * # DisconnectBox
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
@@ -28742,7 +28894,12 @@ if (!JSON) {
      * `DisconnectBox` displays current, previous and next stage of the game
      */
     function DisconnectBox() {
+        // ### DisconnectBox.disconnectButton
+        // The button for disconnection
         this.disconnectButton = null;
+        // ### DisconnectBox.ee
+        // The event emitter with whom the events are registered
+        this.ee = null;
     }
 
     // ## DisconnectBox methods
@@ -28767,14 +28924,20 @@ if (!JSON) {
     DisconnectBox.prototype.listeners = function() {
         var that = this;
 
-        node.on('SOCKET_DISCONNECT', function() {
-            console.log('AAAAAAAAAAA');
+        this.ee = node.getCurrentEventEmitter();
+        this.ee.on('SOCKET_DISCONNECT', function DBdiscon() {
+            console.log('DB got socket_diconnect');
             that.disconnectButton.disabled = true;
         });
 
-        node.on('SOCKET_CONNECT', function() {
-            console.log('BBBBBBBBB');
+        this.ee.on('SOCKET_CONNECT', function DBcon() {
+            console.log('DB got socket_connect');
         });
+    };
+
+    DisconnectBox.prototype.destroy = function() {
+        this.ee.off('SOCKET_DISCONNECT', 'DBdiscon');
+        this.ee.off('SOCKET_CONNECT', 'DBcon');
     };
 
 
@@ -31232,120 +31395,6 @@ if (!JSON) {
         };
     };
 
-})(node);
-
-/**
- * # StateDisplay
- * Copyright(c) 2014 Stefano Balietti
- * MIT Licensed
- *
- * Display information about the state of a player
- *
- * www.nodegame.org
- */
-(function(node) {
-
-    "use strict";
-
-    var Table = node.window.Table,
-    GameStage = node.GameStage;
-
-    node.widgets.register('StateDisplay', StateDisplay);
-
-    // ## Meta-data
-
-    StateDisplay.version = '0.5.0';
-    StateDisplay.description = 'Display basic info about player\'s status.';
-
-    StateDisplay.title = 'State Display';
-    StateDisplay.className = 'statedisplay';
-
-    // ## Dependencies
-
-    StateDisplay.dependencies = {
-        Table: {}
-    };
-
-
-    /**
-     * ## StateDisplay constructor
-     *
-     * `StateDisplay` displays information about the state of a player
-     */
-    function StateDisplay() {
-        /**
-         * ### StateDisplay.table
-         *
-         * The `Table` which holds the information
-         *
-         * @See nodegame-window/Table
-         */
-        this.table = new Table();
-    }
-
-    // ## StateDisplay methods
-
-    /**
-     * ### StateDisplay.append
-     *
-     * Appends widget to `this.bodyDiv` and calls `this.updateAll`
-     *
-     * @see StateDisplay.updateAll
-     */
-    StateDisplay.prototype.append = function() {
-        var that, checkPlayerName;
-        that = this;
-        checkPlayerName = setInterval(function() {
-            if (node.player && node.player.id) {
-                clearInterval(checkPlayerName);
-                that.updateAll();
-            }
-        }, 100);
-        this.bodyDiv.appendChild(this.table.table);
-    };
-
-    /**
-     * ### StateDisplay.updateAll
-     *
-     * Updates information in `this.table`
-     */
-    StateDisplay.prototype.updateAll = function() {
-        var stage, stageNo, stageId, playerId, tmp, miss;
-        miss = '-';
-
-        stageId = miss;
-        stageNo = miss;
-        playerId = miss;
-
-        if (node.player.id) {
-            playerId = node.player.id;
-        }
-
-        stage = node.game.getCurrentGameStage();
-        if (stage) {
-            tmp = node.game.plot.getStep(stage);
-            stageId = tmp ? tmp.id : '-';
-            stageNo = stage.toString();
-        }
-
-        this.table.clear(true);
-        this.table.addRow(['Stage  No: ', stageNo]);
-        this.table.addRow(['Stage  Id: ', stageId]);
-        this.table.addRow(['Player Id: ', playerId]);
-        this.table.parse();
-
-    };
-
-    StateDisplay.prototype.listeners = function() {
-        var that = this;
-        node.on('STEP_CALLBACK_EXECUTED', function() {
-            that.updateAll();
-        });
-    };
-
-    StateDisplay.prototype.destroy = function() {
-        node.off('STEP_CALLBACK_EXECUTED', StateDisplay.prototype.updateAll);
-    };
 })(node);
 
 /**
