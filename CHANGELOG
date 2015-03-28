@@ -1,5 +1,32 @@
 # nodegame-client change log
 
+## 0.9.10
+
+ - `#node.get()` uses a nodeGame timer instead of Javascript timeOuts, so it can synchronize with game events, such as pause and resume.
+ - `#node.get()` checks the id of the message to make sure that only the actual recipient can reply to it.
+ - Fixed bug on parameter timeout of `node.get`.
+ - `#EventEmitterManager.printAll()` and `#EventEmitterManager.getAll()`
+ - Avoiding multiple calls to `#node.socket.disconnect()`
+ - It is possible to use the name of a function to remove it from the event emitter.
+ - More support for IE8.
+ - 'SOCKET_CONNECTING' event when a socket start the connecting procedure.
+ - Check if there are more than 1 node instances on the browser.
+ - Travis Integration.
+
+## 0.9.9
+
+ - Error Manager removed in Node.JS (use ServerNode instead).
+
+## 0.9.8
+
+ - Updated FS lib to latest NDDB.
+
+## 0.9.7
+
+ - `node.game.globals` added.
+ - Documentation for Sockets added.
+ - Several documentation fixes.
+
 ## 0.9.6
 
  - Stager.extendStage fixed

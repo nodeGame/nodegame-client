@@ -219,9 +219,9 @@ MIT Licensed</p>
 </div>
 
   </div>
-  <div class="body"><p>Serializes as a csv file all the entries of the memory object</p>
+  <div class="body"><p>Serializes all the entries of the memory object</p>
 
-<p>By defaults, no headers are added. If requested, headers can
+<p>By default, no headers are added. If requested, headers can
 be specified in the <code>options</code> parameter.</p>
   </div>
   <div class="details">
@@ -277,13 +277,13 @@ be specified in the <code>options</code> parameter.</p>
             <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">gamedb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gamedb</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemoryIndexes: gamedb must be &#39;</span> <span class="o">+</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemory: gamedb must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;instance of GameDB or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">memory</span> <span class="o">=</span> <span class="nx">gamedb</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">format</span> <span class="o">===</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">memory</span><span class="p">.</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetch</span><span class="p">(),</span> <span class="nx">options</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">memory</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(),</span> <span class="nx">options</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span></pre></div>
         </td>
@@ -407,7 +407,7 @@ stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">format</span> <span class="o">===</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span> <span class="p">{</span>
                                 <span class="nx">ipath</span> <span class="o">+=</span> <span class="s1">&#39;.csv&#39;</span><span class="p">;</span>
                                 <span class="nx">node</span><span class="p">.</span><span class="nx">fs</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">ipath</span><span class="p">,</span>
-                                                 <span class="nx">indexData</span><span class="p">.</span><span class="nx">split</span><span class="p">().</span><span class="nx">fetch</span><span class="p">(),</span>
+                                                 <span class="nx">indexData</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(),</span>
                                                  <span class="nx">options</span><span class="p">);</span>
                             <span class="p">}</span>
                             <span class="k">else</span> <span class="p">{</span>

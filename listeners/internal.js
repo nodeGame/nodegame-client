@@ -139,9 +139,9 @@
          */
         this.events.ng.on('PLAYING', function() {
             var currentTime;
+            node.emit('BEFORE_PLAYING');
             node.game.setStageLevel(stageLevels.PLAYING);
             node.socket.clearBuffer();
-            node.emit('BEFORE_PLAYING');
             // Last thing to do, is to store time:
             currentTime = (new Date()).getTime();
             node.timer.setTimestamp(node.game.getCurrentGameStage().toString(),

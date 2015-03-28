@@ -354,17 +354,84 @@ if (!JSON) {
     global.JSON = JSON;
 }());
 
+
+// Production steps of ECMA-262, Edition 5, 15.4.4.14
+// Reference: http://es5.github.io/#x15.4.4.14
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function(searchElement, fromIndex) {
+
+        var k;
+
+        // 1. Let O be the result of calling ToObject passing
+        //    the this value as the argument.
+        if (this == null) {
+            throw new TypeError('"this" is null or not defined');
+        }
+
+        var O = Object(this);
+
+        // 2. Let lenValue be the result of calling the Get
+        //    internal method of O with the argument "length".
+        // 3. Let len be ToUint32(lenValue).
+        var len = O.length >>> 0;
+
+        // 4. If len is 0, return -1.
+        if (len === 0) {
+            return -1;
+        }
+
+        // 5. If argument fromIndex was passed let n be
+        //    ToInteger(fromIndex); else let n be 0.
+        var n = +fromIndex || 0;
+
+        if (Math.abs(n) === Infinity) {
+            n = 0;
+        }
+
+        // 6. If n >= len, return -1.
+        if (n >= len) {
+            return -1;
+        }
+
+        // 7. If n >= 0, then Let k be n.
+        // 8. Else, n<0, Let k be len - abs(n).
+        //    If k is less than 0, then let k be 0.
+        k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+
+        // 9. Repeat, while k < len
+        while (k < len) {
+            // a. Let Pk be ToString(k).
+            //   This is implicit for LHS operands of the in operator
+            // b. Let kPresent be the result of calling the
+            //    HasProperty internal method of O with argument Pk.
+            //   This step can be combined with c
+            // c. If kPresent is true, then
+            //    i.  Let elementK be the result of calling the Get
+            //        internal method of O with the argument ToString(k).
+            //   ii.  Let same be the result of applying the
+            //        Strict Equality Comparison Algorithm to
+            //        searchElement and elementK.
+            //  iii.  If same is true, return k.
+            if (k in O && O[k] === searchElement) {
+                return k;
+            }
+            k++;
+        }
+        return -1;
+    };
+}
+
 /**
- * # Shelf.JS 
+ * # Shelf.JS
  * Copyright 2014 Stefano Balietti
  * GPL licenses.
  *
  * Persistent Client-Side Storage
- * 
+ *
  * ---
  */
 (function(exports){
-    
+
     var version = '0.5';
 
     var store = exports.store = function(key, value, options, type) {
@@ -375,7 +442,7 @@ if (!JSON) {
 	    return;
 	}
 	store.log('Accessing ' + type + ' storage');
-	
+
 	return store.types[type](key, value, options);
     };
 
@@ -390,8 +457,8 @@ if (!JSON) {
     var mainStorageType = "volatile";
 
     //if Object.defineProperty works...
-    try {	
-	
+    try {
+
 	Object.defineProperty(store, 'type', {
 	    set: function(type){
 		if ('undefined' === typeof store.types[type]) {
@@ -419,7 +486,7 @@ if (!JSON) {
 	    options.type = type;
 	    return store(key, value, options);
 	};
-	
+
 	if (!store.type || store.type === "volatile") {
 	    store.type = type;
 	}
@@ -427,8 +494,8 @@ if (!JSON) {
 
     // TODO: create unit test
     store.onquotaerror = undefined;
-    store.error = function() {	
-	console.log("shelf quota exceeded"); 
+    store.error = function() {
+	console.log("shelf quota exceeded");
 	if ('function' === typeof store.onquotaerror) {
 	    store.onquotaerror(null);
 	}
@@ -438,7 +505,7 @@ if (!JSON) {
 	if (store.verbosity > 0) {
 	    console.log('Shelf v.' + version + ': ' + text);
 	}
-	
+
     };
 
     store.isPersistent = function() {
@@ -448,7 +515,7 @@ if (!JSON) {
     };
 
     //if Object.defineProperty works...
-    try {	
+    try {
 	Object.defineProperty(store, 'persistent', {
 	    set: function(){},
 	    get: store.isPersistent,
@@ -466,7 +533,7 @@ if (!JSON) {
 	}
 	return o;
     };
-    
+
     store.retrocycle = function(o) {
 	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
 	    o = JSON.retrocycle(o);
@@ -478,7 +545,7 @@ if (!JSON) {
 	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
 	    throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
 	}
-	
+
 	o = store.decycle(o);
 	return JSON.stringify(o);
     };
@@ -494,7 +561,7 @@ if (!JSON) {
 		store.log(o);
 	    }
 	}
-	
+
 	o = store.retrocycle(o);
 	return o;
     };
@@ -502,16 +569,16 @@ if (!JSON) {
     // ## In-memory storage
     // ### fallback for all browsers to enable the API even if we can't persist data
     (function() {
-	
+
 	var memory = {},
 	timeout = {};
-	
+
 	function copy(obj) {
 	    return store.parse(store.stringify(obj));
 	}
 
 	store.addType("volatile", function(key, value, options) {
-	    
+
 	    if (!key) {
 		return copy(memory);
 	    }
@@ -545,11 +612,11 @@ if (!JSON) {
 }('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
 /**
  * ## Amplify storage for Shelf.js
- * 
+ *
  * v. 1.1.0 22.05.2013 a275f32ee7603fbae6607c4e4f37c4d6ada6c3d5
- * 
- * Important! When updating to next Amplify.JS release, remember to change: 
- * 
+ *
+ * Important! When updating to next Amplify.JS release, remember to change:
+ *
  * - JSON.stringify -> store.stringify to keep support for cyclic objects
  * - JSON.parse -> store.parse (cyclic objects)
  * - store.name -> store.prefix (check)
@@ -560,7 +627,7 @@ if (!JSON) {
  */
 (function(exports) {
 
-    var store = exports.store;	
+    var store = exports.store;
 
     if (!store) {
 	throw new Error('amplify.shelf.js: shelf.js core not found.');
@@ -793,14 +860,14 @@ if (!JSON) {
 /**
  * ## Cookie storage for Shelf.js
  * Copyright 2015 Stefano Balietti
- * 
+ *
  * Original library from:
  * See http://code.google.com/p/cookies/
  */
 (function(exports) {
 
     var store = exports.store;
-    
+
     if (!store) {
 	throw new Error('cookie.shelf.js: shelf.js core not found.');
     }
@@ -810,7 +877,7 @@ if (!JSON) {
     }
 
     var cookie = (function() {
-	
+
 	var resolveOptions, assembleOptionsString, parseCookies, constructor;
         var defaultOptions = {
 	    expiresAt: null,
@@ -818,7 +885,7 @@ if (!JSON) {
 	    domain:  null,
 	    secure: false
 	};
-	
+
 	/**
 	 * resolveOptions - receive an options object and ensure all options
          * are present and valid, replacing with defaults where necessary
@@ -829,7 +896,7 @@ if (!JSON) {
 	 * @return Object complete and valid options object
 	 */
 	resolveOptions = function(options){
-	    
+
 	    var returnValue, expireDate;
 
 	    if(typeof options !== 'object' || options === null){
@@ -867,7 +934,7 @@ if (!JSON) {
 
 	    return returnValue;
 	};
-	
+
 	/**
 	 * assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
 	 *
@@ -886,7 +953,7 @@ if (!JSON) {
 		    (options.secure === true ? '; secure' : '')
 	    );
 	};
-	
+
 	/**
 	 * parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
 	 *
@@ -924,7 +991,7 @@ if (!JSON) {
 
 	constructor = function(){};
 
-	
+
 	/**
 	 * get - get one, several, or all cookies
 	 *
@@ -933,7 +1000,7 @@ if (!JSON) {
 	 * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
 	 */
 	constructor.prototype.get = function(cookieName) {
-	    
+
 	    var returnValue, item, cookies = parseCookies();
 
 	    if(typeof cookieName === 'string') {
@@ -956,7 +1023,7 @@ if (!JSON) {
 
 	    return returnValue;
 	};
-	
+
 	/**
 	 * filter - get array of cookies whose names match the provided RegExp
 	 *
@@ -979,7 +1046,7 @@ if (!JSON) {
 
 	    return returnValue;
 	};
-	
+
 	/**
 	 * set - set or delete a cookie with desired options
 	 *
@@ -1001,13 +1068,13 @@ if (!JSON) {
 
 	    else if (typeof value !== 'string'){
                 //						if(typeof JSON === 'object' && JSON !== null && typeof store.stringify === 'function') {
-                //							
+                //
                 //							value = JSON.stringify(value);
                 //						}
                 //						else {
                 //							throw new Error('cookies.set() received non-string value and could not serialize.');
                 //						}
-		
+
 		value = store.stringify(value);
 	    }
 
@@ -1016,7 +1083,7 @@ if (!JSON) {
 
 	    document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
 	};
-	
+
 	/**
 	 * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
 	 *
@@ -1045,7 +1112,7 @@ if (!JSON) {
 		}
 	    }
 	};
-	
+
 	/**
 	 * test - test whether the browser is accepting cookies
 	 *
@@ -1064,7 +1131,7 @@ if (!JSON) {
 
 	    return returnValue;
 	};
-	
+
 	/**
 	 * setOptions - set default options for calls to cookie methods
 	 *
@@ -1087,7 +1154,7 @@ if (!JSON) {
     if (cookie.test()) {
 
 	store.addType("cookie", function(key, value, options) {
-	    
+
 	    if ('undefined' === typeof key) {
 		return cookie.get();
 	    }
@@ -1095,18 +1162,19 @@ if (!JSON) {
 	    if ('undefined' === typeof value) {
 		return cookie.get(key);
 	    }
-	    
+
 	    // Set to NULL means delete
 	    if (value === null) {
 		cookie.del(key);
 		return null;
 	    }
 
-	    return cookie.set(key, value, options);		
+	    return cookie.set(key, value, options);
 	});
     }
 
 }(this));
+
 /**
  * # JSUS: JavaScript UtilS.
  * Copyright(c) 2014 Stefano Balietti
@@ -1124,6 +1192,10 @@ if (!JSON) {
     // ## JSUS._classes
     // Reference to all the extensions
     JSUS._classes = {};
+
+    // Make sure that the console is available also in old browser, e.g. < IE8.
+    if ('undefined' === typeof console) console = {};
+    if ('undefined' === typeof console.log) console.log = function() {};
 
     /**
      * ## JSUS.log
@@ -1152,6 +1224,7 @@ if (!JSON) {
      *
      * @param {object} additional Text to output
      * @param {object|function} target The object to extend
+     *
      * @return {object|function} target The extended object
      *
      * @see JSUS.get
@@ -1205,13 +1278,14 @@ if (!JSON) {
     /**
      * ## JSUS.require
      *
-     * Returns a copy of one / all the objects extending JSUS.
+     * Returns a copy of one / all the objects extending JSUS
      *
      * The first parameter is a string representation of the name of
      * the requested extending object. If no parameter is passed a copy
      * of all the extending objects is returned.
      *
      * @param {string} className The name of the requested JSUS library
+     *
      * @return {function|boolean} The copy of the JSUS library, or
      *   FALSE if the library does not exist
      */
@@ -2061,7 +2135,7 @@ if (!JSON) {
 /**
  * # DOM
  *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions related to DOM manipulation
@@ -2096,15 +2170,20 @@ if (!JSON) {
     /**
      * ### DOM.write
      *
-     * Write a text, or append an HTML element or node, into the
-     * the root element.
+     * Write a text, or append an HTML element or node, into a root element
+     *
+     * @param {Element} root The HTML element where to write into
+     * @param {mixed} text The text to write. Default, an ampty string
+     *
+     * @return {TextNode} The text node inserted in the root element
      *
      * @see DOM.writeln
      */
     DOM.write = function(root, text) {
+        var content;
         if (!root) return;
-        if (!text) return;
-        var content = (!JSUS.isNode(text) || !JSUS.isElement(text)) ?
+        if ('undefined' === typeof text) text = "";
+        content = (!JSUS.isNode(text) || !JSUS.isElement(text)) ?
             document.createTextNode(text) : text;
         root.appendChild(content);
         return content;
@@ -2113,8 +2192,15 @@ if (!JSON) {
     /**
      * ### DOM.writeln
      *
-     * Write a text, or append an HTML element or node, into the
-     * the root element and adds a break immediately after.
+     * Write a text and a break into a root element
+     *
+     * Default break element is <br> tag
+     *
+     * @param {Element} root The HTML element where to write into
+     * @param {mixed} text The text to write. Default, an ampty string
+     * @param {string} rc the name of the tag to use as a break element
+     *
+     * @return {TextNode} The text node inserted in the root element
      *
      * @see DOM.write
      * @see DOM.addBreak
@@ -2152,6 +2238,10 @@ if (!JSON) {
      *      }, document.body);
      * ```
      *
+     * Special span elements are %strong and %em, which add
+     * respectively a _strong_ and _em_ tag instead of the default
+     * _span_ tag. They cannot be styled.
+     *
      * @param {string} string A text to transform
      * @param {object} args Optional. An object containing string
      *   transformations
@@ -2165,29 +2255,28 @@ if (!JSON) {
         var text, textNode, span, idx_start, idx_finish, idx_replace, idxs;
         var spans, key, i, returnElement;
 
-        // If no formatting arguments are provided, just create a string
-        // and inserted into a span tag. If a root element is provided, add it.
-        if (!args) {
-            returnElement = document.createElement('span');
-            returnElement.appendChild(document.createTextNode(string));
-            return root ? root.appendChild(returnElement) : returnElement;
-        }
-
         root = root || document.createElement('span');
         spans = {};
+
+        // Create an args object, if none is provided.
+        // Defaults %em and %strong are added.
+        args = args || {};
+        args['%strong'] = '';
+        args['%em'] = '';
 
         // Transform arguments before inserting them.
         for (key in args) {
             if (args.hasOwnProperty(key)) {
 
-                // Pattern not found.
-                if (idx_start === -1) continue;
-
                 switch(key.charAt(0)) {
 
-                case '%': // Span.
+                case '%': // Span/Strong/Emph .
 
                     idx_start = string.indexOf(key);
+
+                    // Pattern not found. No error.
+                    if (idx_start === -1) continue;
+
                     idx_replace = idx_start + key.length;
                     idx_finish = string.indexOf(key, idx_replace);
 
@@ -2196,6 +2285,7 @@ if (!JSON) {
                         continue;
                     }
 
+                    // Can be strong, emph or a generic span.
                     spans[idx_start] = key;
 
                     break;
@@ -2215,7 +2305,7 @@ if (!JSON) {
             }
         }
 
-        // No span to creates.
+        // No span to create, return what we have.
         if (!JSUS.size(spans)) {
             return root.appendChild(document.createTextNode(string));
         }
@@ -2239,7 +2329,15 @@ if (!JSON) {
             idx_replace = idx_start + key.length;
             idx_finish = string.indexOf(key, idx_replace);
 
-            span = JSUS.getElement('span', null, args[key]);
+            if (key === '%strong') {
+                span = document.createElement('strong');
+            }
+            else if (key === '%em') {
+                span = document.createElement('em');
+            }
+            else {
+                span = JSUS.getElement('span', null, args[key]);
+            }
 
             text = string.substring(idx_replace, idx_finish);
 
@@ -2292,19 +2390,24 @@ if (!JSON) {
     };
 
     /**
-     * ### DOM.shuffleNodes
+     * ### DOM.shuffleElements
      *
-     * Shuffles the children nodes
+     * Shuffles the children element nodes
      *
      * All children must have the id attribute.
+     *
+     * Notice the difference between Elements and Nodes:
+     *
+     * http://stackoverflow.com/questions/7935689/
+     * what-is-the-difference-between-children-and-childnodes-in-javascript
      *
      * @param {Node} parent The parent node
      * @param {array} order Optional. A pre-specified order. Defaults, random
      *
      * @return {array} The order used to shuffle the nodes
      */
-    DOM.shuffleNodes = function(parent, order) {
-        var i, len, idOrder;
+    DOM.shuffleElements = function(parent, order) {
+        var i, len, idOrder, children, child;
         if (!JSUS.isNode(parent)) {
             throw new TypeError('DOM.shuffleNodes: parent must node.');
         }
@@ -2322,21 +2425,43 @@ if (!JSON) {
             }
         }
 
-        len = parent.children.length;
+        // DOM4 compliant browsers.
+        children = parent.children;
+
+        //https://developer.mozilla.org/en/DOM/Element.children
+        //[IE lt 9] IE < 9
+        if ('undefined' === typeof children) {
+            child = this.firstChild;
+            while (child) {
+                if (child.nodeType == 1) children.push(child);
+                child = child.nextSibling;
+            }
+        }
+
+        len = children.length;
         idOrder = [];
-        if (!order) order = JSUS.sample(0,len);
+        if (!order) order = JSUS.sample(0, (len-1));
         for (i = 0 ; i < len; i++) {
-            idOrder.push(parent.children[order[i]].id);
+            idOrder.push(children[order[i]].id);
         }
         // Two fors are necessary to follow the real sequence.
         // However parent.children is a special object, so the sequence
         // could be unreliable.
         for (i = 0 ; i < len; i++) {
-            parent.appendChild(parent.children[idOrder[i]]);
+            parent.appendChild(children[idOrder[i]]);
         }
 
         return idOrder;
     };
+
+    /**
+     * ### DOM.shuffleNodes
+     *
+     * It actually shuffles Elements.
+     *
+     * @deprecated
+     */
+    DOM.shuffleNodes = DOM.shuffleElements;
 
     /**
      * ### DOM.getElement
@@ -2535,8 +2660,9 @@ if (!JSON) {
      *
      */
     DOM.getButton = function(id, text, attributes) {
-        var sb = document.createElement('button');
-        sb.id = id;
+        var sb;
+        sb = document.createElement('button');
+        if ('undefined' !== typeof id) sb.id = id;
         sb.appendChild(document.createTextNode(text || 'Send'));
         return this.addAttributes2Elem(sb, attributes);
     };
@@ -3260,7 +3386,6 @@ if (!JSON) {
         return true;
     };
 
-
     /**
      * ## OBJ.size
      *
@@ -3640,7 +3765,7 @@ if (!JSON) {
 
             if (obj2.hasOwnProperty(i)) {
                 // it is an object and it is not NULL
-                if ( obj2[i] && 'object' === typeof obj2[i] ) {
+                if (obj2[i] && 'object' === typeof obj2[i]) {
                     // If we are merging an object into
                     // a non-object, we need to cast the
                     // type of obj1
@@ -3655,7 +3780,8 @@ if (!JSON) {
                         }
                     }
                     clone[i] = OBJ.merge(clone[i], obj2[i]);
-                } else {
+                }
+                else {
                     clone[i] = obj2[i];
                 }
             }
@@ -4518,7 +4644,7 @@ if (!JSON) {
 /**
  * # TIME
  *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions related to the generation,
@@ -4528,30 +4654,51 @@ if (!JSON) {
 
     function TIME() {}
 
+    // Polyfill for Date.toISOString (IE7, IE8, IE9)
+    // Kudos: https://developer.mozilla.org/en-US/docs/Web/
+    // JavaScript/Reference/Global_Objects/Date/toISOString
+    if (!Date.prototype.toISOString) {
+        (function() {
+
+            function pad(number) {
+                return (number < 10) ? '0' + number : number;
+            }
+
+            Date.prototype.toISOString = function() {
+                var ms = (this.getUTCMilliseconds() / 1000).toFixed(3);
+                return this.getUTCFullYear() +
+                    '-' + pad(this.getUTCMonth() + 1) +
+                    '-' + pad(this.getUTCDate()) +
+                    'T' + pad(this.getUTCHours()) +
+                    ':' + pad(this.getUTCMinutes()) +
+                    ':' + pad(this.getUTCSeconds()) +
+                    '.' + ms.slice(2, 5) + 'Z';
+            };
+
+        }());
+    }
+
     /**
      * ## TIME.getDate
      *
-     * Returns a string representation of the current date
-     * and time formatted as follows:
+     * Returns a string representation of the current date and time (ISO)
      *
-     * dd-mm-yyyy hh:mm:ss milliseconds
+     * String is formatted as follows:
      *
-     * @return {string} Formatted time string hh:mm:ss
+     * YYYY-MM-DDTHH:mm:ss.sssZ
+     *
+     * @return {string} Formatted time string YYYY-MM-DDTHH:mm:ss.sssZ
      */
     TIME.getDate = TIME.getFullDate = function() {
-        var d = new Date();
-        var date = d.getUTCDate() + '-' + (d.getUTCMonth()+1) + '-' +
-            d.getUTCFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() +
-            ':' + d.getSeconds() + ' ' + d.getMilliseconds();
-
-        return date;
+        return new Date().toISOString();
     };
 
     /**
      * ## TIME.getTime
      *
      * Returns a string representation of the current time
-     * formatted as follows:
+     *
+     * String is ormatted as follows:
      *
      * hh:mm:ss
      *
@@ -4842,6 +4989,44 @@ if (!JSON) {
             }
             return value;
         }
+    };
+
+    /**
+     * ## PARSE.funcName
+     *
+     * Returns the name of the function
+     *
+     * Function.name is a non-standard JavaScript property,
+     * although many browsers implement it. This is a cross-browser
+     * implementation for it.
+     *
+     * In case of anonymous functions, an empty string is returned.
+     *
+     * @param {function} func The function to check
+     *
+     * @return {string} The name of the function
+     *
+     * Kudos to:
+     * http://matt.scharley.me/2012/03/09/monkey-patch-name-ie.html
+     */
+    if ('undefined' !== typeof Function.prototype.name) {
+        PARSE.funcName = function(func) {
+            if ('function' !== typeof func) {
+                throw new TypeError('PARSE.funcName: func must be function.');
+            }
+            return func.name;
+        };
+    }
+    else {
+        PARSE.funcName = function(func) {
+            var funcNameRegex, res;
+            if ('function' !== typeof func) {
+                throw new TypeError('PARSE.funcName: func must be function.');
+            }
+            funcNameRegex = /function\s([^(]{1,})\(/;
+            res = (funcNameRegex).exec(func.toString());
+            return (res && res.length > 1) ? res[1].trim() : "";
+        };
     };
 
     JSUS.extend(PARSE);
@@ -5312,7 +5497,7 @@ if (!JSON) {
             RegExp.escape = function(str) {
                 return str.replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
             };
-            
+
             regex = RegExp.escape(value);
             regex = regex.replace(/%/g, '.*').replace(/_/g, '.');
             regex = new RegExp('^' + regex + '$', sensitive);
@@ -5329,12 +5514,12 @@ if (!JSON) {
                         }
                     }
                 };
-            } 
+            }
             else if (d === '*') {
                 return function(elem) {
                     var d;
                     for (d in elem) {
-                        if ('undefined' !== typeof elem[d]) { 
+                        if ('undefined' !== typeof elem[d]) {
                             if (regex.test(elem[d])) {
                                 return elem;
                             }
@@ -5344,7 +5529,7 @@ if (!JSON) {
             }
             else {
                 return function(elem) {
-                    if ('undefined' !== typeof elem[d]) { 
+                    if ('undefined' !== typeof elem[d]) {
                         if (regex.test(elem[d])) {
                             return elem;
                         }
@@ -5353,15 +5538,15 @@ if (!JSON) {
             }
         }
 
-        // Like operator (Case Sensitive). 
+        // Like operator (Case Sensitive).
         this.filters['LIKE'] = function likeOperator(d, value, comparator) {
             return generalLike(d, value, comparator);
         };
-    
-        // Like operator (Case Insensitive). 
+
+        // Like operator (Case Insensitive).
         this.filters['iLIKE'] = function likeOperatorI(d, value, comparator) {
             return generalLike(d, value, comparator, 'i');
-        };            
+        };
 
     };
 
@@ -5677,7 +5862,7 @@ if (!JSON) {
 
         // Cloning.
         options = J.clone(options);
-        
+
         // Removing unwanted options.
         for (i in leaveOut) {
             if (leaveOut.hasOwnProperty(i)) {
@@ -6127,7 +6312,7 @@ if (!JSON) {
                 this._viewIt(o);
             };
         }
- 
+
         // Reset current indexes.
         this.resetIndexes({h: h, v: v, i: i});
 
@@ -6142,22 +6327,35 @@ if (!JSON) {
      *
      * Indexes an element
      *
+     * Parameter _oldIdx_ is needed if indexing is updating a previously
+     * indexed item. In fact if new index is different, the old one must
+     * be deleted.
+     *
      * @param {object} o The element to index
-     * @param {object} o The position of the element in the database array
+     * @param {number} dbidx The position of the element in the database array
+     * @param {string} oldIdx Optional. The old index name, if any.
      */
-    NDDB.prototype._indexIt = function(o, dbidx) {
+    NDDB.prototype._indexIt = function(o, dbidx, oldIdx) {
         var func, id, index, key;
         if (!o || J.isEmpty(this.__I)) return;
-
+        oldIdx = undefined;
         for (key in this.__I) {
             if (this.__I.hasOwnProperty(key)) {
                 func = this.__I[key];
                 index = func(o);
-
-                if ('undefined' === typeof index) continue;
-
-                if (!this[key]) this[key] = new NDDBIndex(key, this);
-                this[key]._add(index, dbidx);
+                // If the same object has been  previously
+                // added with another index delete the old one.
+                if (index !== oldIdx) {
+                    if ('undefined' !== typeof oldIdx) {
+                        if ('undefined' !== typeof this[key].resolve[oldIdx]) {
+                            delete this[key].resolve[oldIdx];
+                        }
+                    }
+                }
+                if ('undefined' !== typeof index) {
+                    if (!this[key]) this[key] = new NDDBIndex(key, this);
+                    this[key]._add(index, dbidx);
+                }
             }
         }
     };
@@ -6187,7 +6385,7 @@ if (!JSON) {
                     settings = this.cloneSettings({V: ''});
                     this[key] = new NDDB(settings);
                 }
-                this[key].insert(o);
+                this[key].insert(o);1
             }
         }
     };
@@ -6310,8 +6508,8 @@ if (!JSON) {
     function queryError(text, d, op, value) {
         var miss, err;
         miss = '(?)';
-        err = this._getConstrName() + '._analyzeQuery: ' + text + 
-            '. Malformed query: ' + d || miss + ' ' + op || miss + 
+        err = this._getConstrName() + '._analyzeQuery: ' + text +
+            '. Malformed query: ' + d || miss + ' ' + op || miss +
             ' ' + value || miss + '.';
         throw new Error(err);
     }
@@ -6353,7 +6551,7 @@ if (!JSON) {
             if (J.in_array(op,['><', '<>', 'in', '!in'])) {
 
                 if (!(value instanceof Array)) {
-                    errText = 'range-queries need an array as third parameter';                        
+                    errText = 'range-queries need an array as third parameter';
                     queryError.call(this, errText, d, op, value);
                 }
                 if (op === '<>' || op === '><') {
@@ -7607,11 +7805,13 @@ if (!JSON) {
      * @see JSUS.arrayDiff
      */
     NDDB.prototype.diff = function(nddb) {
-        if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
                 nddb = nddb.db;
             }
+        }
+        if (!nddb || !nddb.length) {
+            return this.breed([]);
         }
         return this.breed(J.arrayDiff(this.db, nddb));
     };
@@ -7633,11 +7833,13 @@ if (!JSON) {
      * @see JSUS.arrayIntersect
      */
     NDDB.prototype.intersect = function(nddb) {
-        if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
-                var nddb = nddb.db;
+                nddb = nddb.db;
             }
+        }
+        if (!nddb || !nddb.length) {
+            return this.breed([]);
         }
         return this.breed(J.arrayIntersect(this.db, nddb));
     };
@@ -8261,7 +8463,7 @@ if (!JSON) {
      * @see NDDBIndex.get
      * @see NDDBIndex.remove
      */
-        NDDBIndex.prototype.update = function(idx, update) {
+    NDDBIndex.prototype.update = function(idx, update) {
         var o, dbidx, nddb;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
@@ -8272,7 +8474,7 @@ if (!JSON) {
         // We do indexes separately from the other components of _autoUpdate
         // to avoid looping through all the other elements that are unchanged.
         if (nddb.__update.indexes) {
-            nddb._indexIt(o, dbidx);
+            nddb._indexIt(o, dbidx, idx);
             nddb._hashIt(o);
             nddb._viewIt(o);
         }
@@ -8320,18 +8522,27 @@ if (!JSON) {
 );
 /**
  * # nodeGame: Social Experiments in the Browser
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * nodeGame is a free, open source, event-driven javascript framework,
- * for on line multiplayer games in the browser.
+ * for real-time multiplayer games in the browser.
  */
-(function(exports) {
-    if ('undefined' !== typeof JSUS) exports.JSUS = JSUS;
-    if ('undefined' !== typeof NDDB) exports.NDDB = NDDB;
-    if ('undefined' !== typeof store) exports.store = store;
-    exports.support = JSUS.compatibility();
-})('object' === typeof module ? module.exports : (window.node = {}));
+(function(window) {
+    if ('undefined' !== typeof window.node) {
+        throw new Error('nodegame-client: a global node variable is already ' +
+                        'defined. Aborting...');
+    }
+
+    // Defining an empty node object. Will be overwritten later on.
+    var node = window.node = {};
+
+    if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
+    if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
+    if ('undefined' !== typeof store) node.store = store;
+    node.support = JSUS.compatibility();
+
+})(window);
 
 /**
  * # Variables
@@ -8719,7 +8930,7 @@ if (!JSON) {
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Handles the runtime errors
+ * Handles runtime errors
  */
 (function(exports, parent) {
 
@@ -8761,30 +8972,35 @@ if (!JSON) {
      *
      * Starts catching run-time errors
      *
+     * Only active in the browser's window.
+     * In node.js, the ServerNode Error Manager is active.
+     *
      * @param {NodeGameClient} node Reference to the active node object.
      */
     ErrorManager.prototype.init = function(node) {
         var that;
-        if (J.isNodeJS()) {
-            that = this;
-            process.on('uncaughtException', function(err) {
-                that.lastError = err;
-                node.err('Caught exception: ' + err);
-                if (node.debug) {
-                    throw err;
-                }
-            });
-        }
-        else {
+        that = this;
+        if (!J.isNodeJS()) {
             window.onerror = function(msg, url, linenumber) {
                 var msg;
                 msg = url + ' ' + linenumber + ': ' + msg;
-                this.lastError = msg;
+                that.lastError = msg;
                 node.err(msg);
+                // TODO: Implement this properly.
+                // node.set('ERROR', msg);
                 return !node.debug;
             };
         }
-    }
+//         else {
+//             process.on('uncaughtException', function(err) {
+//                 that.lastError = err;
+//                 node.err('Caught exception: ' + err);
+//                 if (node.debug) {
+//                     throw err;
+//                 }
+//             });
+//         }
+    };
 
     /**
      * ## NodeGameRuntimeError
@@ -8816,8 +9032,10 @@ if (!JSON) {
     }
 
     NodeGameStageCallbackError.prototype = new Error();
-    NodeGameStageCallbackError.prototype.constructor = NodeGameStageCallbackError;
-    NodeGameStageCallbackError.prototype.name = 'NodeGameStageCallbackError';
+    NodeGameStageCallbackError.prototype.constructor =
+        NodeGameStageCallbackError;
+    NodeGameStageCallbackError.prototype.name =
+        'NodeGameStageCallbackError';
 
 
     /**
@@ -8833,8 +9051,10 @@ if (!JSON) {
     }
 
     NodeGameMisconfiguredGameError.prototype = new Error();
-    NodeGameMisconfiguredGameError.prototype.constructor = NodeGameMisconfiguredGameError;
-    NodeGameMisconfiguredGameError.prototype.name = 'NodeGameMisconfiguredGameError';
+    NodeGameMisconfiguredGameError.prototype.constructor =
+        NodeGameMisconfiguredGameError;
+    NodeGameMisconfiguredGameError.prototype.name =
+        'NodeGameMisconfiguredGameError';
 
 
     /**
@@ -8850,8 +9070,10 @@ if (!JSON) {
     }
 
     NodeGameIllegalOperationError.prototype = new Error();
-    NodeGameIllegalOperationError.prototype.constructor = NodeGameIllegalOperationError;
-    NodeGameIllegalOperationError.prototype.name = 'NodeGameIllegalOperationError';
+    NodeGameIllegalOperationError.prototype.constructor =
+        NodeGameIllegalOperationError;
+    NodeGameIllegalOperationError.prototype.name =
+        'NodeGameIllegalOperationError';
 
 // ## Closure
 })(
@@ -8873,8 +9095,8 @@ if (!JSON) {
     "use strict";
 
     // ## Global scope
-
-    var NDDB = parent.NDDB,
+    var J = parent.JSUS,
+    NDDB = parent.NDDB,
     GameStage = parent.GameStage;
 
     exports.EventEmitter = EventEmitter;
@@ -8927,10 +9149,10 @@ if (!JSON) {
      */
     EventEmitter.prototype.on = function(type, listener) {
         if ('string' !== typeof type) {
-            throw TypeError('EventEmitter.on: type must be a string.');
+            throw new TypeError('EventEmitter.on: type must be string.');
         }
         if ('function' !== typeof listener) {
-            throw TypeError('EventEmitter.on: listener must be a function.');
+            throw new TypeError('EventEmitter.on: listener must be function.');
         }
 
         if (!this.events[type]) {
@@ -8954,8 +9176,7 @@ if (!JSON) {
     /**
      * ### EventEmitter.once
      *
-     * Registers an event listener that will be removed
-     * after its first invocation
+     * Registers an event listener that will be removed after its first call
      *
      * @param {string} event The name of the event
      * @param {function} listener The callback function
@@ -9077,63 +9298,93 @@ if (!JSON) {
      * Deregisters one or multiple event listeners
      *
      * @param {string} type The event name
-     * @param {function} listener Optional. The specific function
-     *   to deregister
+     * @param {mixed} listener Optional. The specific function
+     *   to deregister, its name, or undefined to remove all listeners
      *
-     * @return Boolean TRUE, if the removal is successful
+     * @return TRUE, if the removal is successful
      */
     EventEmitter.prototype.remove = EventEmitter.prototype.off =
     function(type, listener) {
 
-        var listeners, len, i, type, node;
+        var listeners, len, i, type, node, found, name;
         node = this.node;
 
         if ('string' !== typeof type) {
-            throw TypeError('EventEmitter.remove (' + this.name +
-                            '): type must be a string');
+            throw new TypeError('EventEmitter.remove (' + this.name +
+                      '): type must be string.');
         }
 
         if (!this.events[type]) {
             node.warn('EventEmitter.remove (' + this.name +
-                      '): unexisting event ' + type);
+                      '): unexisting event ' + type + '.');
             return false;
+        }
+
+        if (listener &&
+            ('function' !== typeof listener && 'string' !== typeof listener)) {
+            throw new TypeError('EventEmitter.remove (' + this.name +
+                                '): listener must be function, string, or ' +
+                               'undefined.');
         }
 
         if (!listener) {
             delete this.events[type];
-            node.silly('Removed listener ' + type);
+            node.silly('ee.' + this.name + ' removed listener ' + type + '.');
             return true;
         }
 
-        if (listener && 'function' !== typeof listener) {
-            throw TypeError('EventEmitter.remove (' + this.name +
-                            '): listener must be a function');
+        if ('string' === typeof listener && listener.trim() === '') {
+            throw new Error('EventEmitter.remove (' + this.name + '): ' +
+                            'listener cannot be an empty string.');
         }
 
-        if ('function' === typeof this.events[type] ) {
-            if (listener == this.events[type]) {
+        // Handling multiple cases: this.events[type] can be array or function,
+        // and listener can be function or string.
+
+        if ('function' === typeof this.events[type]) {
+
+            if ('function' === typeof listener) {
+                if (listener == this.events[type]) found = true
+            }
+            else {
+                // String.
+                name = J.funcName(this.events[type]);
+                if (name === listener) found = true;
+            }
+
+            if (found) {
                 delete this.events[type];
-                node.silly('ee.' + this.name + ' removed listener: ' +
-                           type + ' ' + listener);
-                return true;
             }
         }
+        // this.events[type] is an array.
         else {
-            // array
             listeners = this.events[type];
             len = listeners.length;
             for (i = 0; i < len; i++) {
-                if (listeners[i] == listener) {
-                    listeners.splice(i, 1);
-                    node.silly('ee.' + this.name + ' removed ' +
-                               'listener: ' + type + ' ' + listener);
-                    return true;
+                if ('function' === typeof listener) {
+                    if (listeners[i] == listener) found = true;
+                }
+                else {
+                    // String.
+                    name = J.funcName(this.events[type]);
+                    if (name === listener) found = true;
+                }
+
+                if (found) {
+                    if (len === 1) delete this.events[type];
+                    else listeners.splice(i, 1);
                 }
             }
         }
 
-        node.warn('EventEmitter.remove (' + this.name + '): no ' +
-                  'listener-match found for event ' + type);
+        if (found) {
+            node.silly('ee.' + this.name + ' removed listener: ' +
+                       type + ' ' + listener + '.');
+            return true;
+        }
+
+        node.warn('EventEmitter.remove (' + this.name + '): requested' +
+                  'listener was not found for event ' + type + '.');
         return false;
     };
 
@@ -9150,16 +9401,23 @@ if (!JSON) {
      * ### EventEmitter.printAll
      *
      * Prints to console all the registered functions
+     *
+     * @return {number} The total number of registered functions
      */
     EventEmitter.prototype.printAll = function() {
-        var i, len;
+        var i, len, totalLen, str;
+        totalLen = 0, str = '';
         for (i in this.events) {
             if (this.events.hasOwnProperty(i)) {
                 len = ('function' === typeof this.events[i]) ?
                     1 : this.events[i].length;
-                console.log(i + ': ' + len + ' listener/s');
+                totalLen += len;
+                str += i + ': ' + len + "\n";
             }
         }
+        console.log('[' + this.name + '] ' + totalLen + ' listener/s.');
+        if (str) console.log(str);
+        return totalLen;
     };
 
     /**
@@ -9217,7 +9475,7 @@ if (!JSON) {
         for (i = 1; i < len; i++) {
             if ('string' !== typeof arguments[i]) {
                 throw new TypeError('EventEmitterManager.createEEGroup: ' +
-                                    'EventEmitter name must be a string');
+                                    'EventEmitter name must be string.');
             }
             if (!this.ee[arguments[i]]) {
                 throw new Error('EventEmitterManager.createEEGroup: ' +
@@ -9411,22 +9669,92 @@ if (!JSON) {
      *
      * @param {string} eventName The name of the event
      * @param {function} listener Optional A reference of the function to remove
+     *
+     * @return {boolean} TRUE if the listener was found and removed
      */
     EventEmitterManager.prototype.remove = function(eventName, listener) {
-        var i;
+        var i, res;
         if ('string' !== typeof eventName) {
             throw new TypeError('EventEmitterManager.remove: ' +
                                 'eventName must be string.');
         }
-        if (listener && 'function' !== typeof listener) {
-            throw new TypeError('EventEmitterManager.remove: ' +
-                                'listener must be function.');
+        if (listener &&
+            ('function' !== typeof listener && 'string' !== typeof listener)) {
+            throw new TypeError('EventEmitter.remove (' + this.name +
+                                '): listener must be function, string, or ' +
+                               'undefined.');
         }
+        res = false;
         for (i in this.ee) {
             if (this.ee.hasOwnProperty(i)) {
-                this.ee[i].remove(eventName, listener);
+                res = res || this.ee[i].remove(eventName, listener);
             }
         }
+        return res;
+    };
+
+    /**
+     * ### EventEmitterManager.remove
+     *
+     * Prints all registered events
+     *
+     * @param {string} eventEmitterName Optional The name of the event emitter
+     */
+    EventEmitterManager.prototype.printAll = function(eventEmitterName) {
+        var i, total;
+        if (eventEmitterName && 'string' !== typeof eventEmitterName) {
+            throw new TypeError('EventEmitterManager.printAll: ' +
+                                'eventEmitterName must be string or ' +
+                                'undefined.');
+        }
+        if (eventEmitterName && !this.ee[eventEmitterName]) {
+            throw new TypeError('EventEmitterManager.printAll: event' +
+                                'emitter not found: ' + eventEmitterName + '.');
+        }
+        if (eventEmitterName) {
+            this.ee[eventEmitterName].printAll();
+        }
+        else {
+            total = 0;
+            for (i in this.ee) {
+                if (this.ee.hasOwnProperty(i)) {
+                    total += this.ee[i].printAll();
+                }
+            }
+            console.log('Total number of registered listeners: ' + total + '.');
+        }
+    };
+
+    /**
+     * ### EventEmitterManager.getAll
+     *
+     * Returns all registered events
+     *
+     * @param {string} eventEmitterName Optional The name of the event emitter
+     */
+    EventEmitterManager.prototype.getAll = function(eventEmitterName) {
+        var i, events;
+        if (eventEmitterName && 'string' !== typeof eventEmitterName) {
+            throw new TypeError('EventEmitterManager.printAll: ' +
+                                'eventEmitterName must be string or ' +
+                                'undefined.');
+        }
+        if (eventEmitterName && !this.ee[eventEmitterName]) {
+            throw new TypeError('EventEmitterManager.printAll: event' +
+                                'emitter not found: ' + eventEmitterName + '.');
+        }
+        if (eventEmitterName) {
+            events = this.ee[eventEmitterName].events;
+        }
+        else {
+            events = {};
+            for (i in this.ee) {
+                if (this.ee.hasOwnProperty(i)) {
+                    events[i] = this.ee[i].events;
+                }
+            }
+        }
+        return events;
     };
 
     /**
@@ -9492,7 +9820,7 @@ if (!JSON) {
         }
 
         // cleaning up the events to remit
-        // @TODO NDDB commands have changed, update
+        // TODO NDDB commands have changed, update
         if (discard) {
             db.select('event', 'in', discard).remove();
         }
@@ -9826,7 +10154,7 @@ if (!JSON) {
 
 /**
  * # PlayerList
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Handles a collection of `Player` objects
@@ -10125,17 +10453,18 @@ if (!JSON) {
 
      * Players at other steps are ignored.
      *
-     * If no player is found at the desired step, it returns TRUE.
+     * If no player is found at the desired step, it returns TRUE
      *
      * @param {GameStage} gameStage The GameStage of reference
-     * @param {boolean} upTo Optional. If TRUE, all players in the stage up to the
-     *   given step are checked. Default: FALSE
+     * @param {boolean} upTo Optional. If TRUE, all players in the stage up
+     *   to the given step are checked. Default: FALSE
      *
      * @return {boolean} TRUE, if all checked players have terminated the stage
      * @see PlayerList.arePlayersSync
      */
     PlayerList.prototype.isStepDone = function(gameStage, type, checkOutliers) {
-        return this.arePlayersSync(gameStage, stageLevels.DONE, type, checkOutliers);
+        return this.arePlayersSync(gameStage, stageLevels.DONE, type,
+                                   checkOutliers);
     };
 
     /**
@@ -10188,11 +10517,14 @@ if (!JSON) {
      *
      * @return {boolean} TRUE, if all checked players are sync
      */
-    PlayerList.prototype.arePlayersSync = function(gameStage, stageLevel, type, checkOutliers) {
+    PlayerList.prototype.arePlayersSync = function(gameStage, stageLevel, type,
+                                                   checkOutliers) {
+
         var p, i, len, cmp, types, outlier;
 
         if (!gameStage) {
-            throw new TypeError('PlayerList.arePlayersSync: invalid gameStage.');
+            throw new TypeError('PlayerList.arePlayersSync: ' +
+                                'invalid gameStage.');
         }
         if ('undefined' !== typeof stageLevel &&
             'number' !== typeof stageLevel) {
@@ -10276,12 +10608,11 @@ if (!JSON) {
     /**
      * ### PlayerList.toString
      *
-     * Returns a string representation of the stage of the
-     * PlayerList
+     * Returns a string representation of the PlayerList
      *
      * @param {string} eol Optional. End of line separator between players
      *
-     * @return {string} out The string representation of the stage of the PlayerList
+     * @return {string} out The string representation of the PlayerList
      */
     PlayerList.prototype.toString = function(eol) {
         var out = '', EOL = eol || '\n', stage;
@@ -10452,8 +10783,6 @@ if (!JSON) {
          * The connection status of the client
          */
         this.disconnected = !!player.disconnected;
-
-        // ## Player public properties
 
         /**
          * ### Player.ip
@@ -10797,7 +11126,7 @@ if (!JSON) {
      *
      * @return {string} A compact string representing the message
      *
-     * @TODO: Create an hash method as for GameStage
+     * TODO: Create an hash method as for GameStage
      */
     GameMsg.prototype.toSMS = function() {
 
@@ -10906,6 +11235,7 @@ if (!JSON) {
      * Called by the constructor.
      */
     Stager.prototype.clear = function() {
+
         /**
          * ### Stager.steps
          *
@@ -10931,7 +11261,6 @@ if (!JSON) {
          */
         this.stages = {};
 
-
         /**
          * ### Stager.sequence
          *
@@ -10946,7 +11275,6 @@ if (!JSON) {
          * @see Stager.doLoop
          */
         this.sequence = [];
-
 
         /**
          * ### Stager.generalNextFunction
@@ -10974,7 +11302,6 @@ if (!JSON) {
          */
         this.nextFunctions = {};
 
-
         /**
          * ### Stager.defaultStepRule
          *
@@ -10989,7 +11316,6 @@ if (!JSON) {
          * @see GamePlot.getStepRule
          */
         this.setDefaultStepRule();
-
 
         /**
          * ### Stager.defaultGlobals
@@ -11462,6 +11788,33 @@ if (!JSON) {
                             stageId + '.');
         }
         J.mixin(this.stages[stageId], update);
+    };
+
+    /**
+     * ### Stager.skip
+     *
+     * Removes one stage from the sequence.
+     *
+     * @param {string} stageId The id of the stage to remove from sequence.
+     * @see Stager.addStage
+     */
+    Stager.prototype.skip = function(stageId) {
+        var i, len;
+        if ('string' !== typeof stageId) {
+            throw new TypeError('Stager.skip: stageId must be a string.');
+        }
+        if (!this.stages[stageId]) {
+            throw new Error('Stager.skip: stageId not found: ' +
+                            stageId + '.');
+        }
+
+        i = -1, len = this.sequence.length;
+        for ( ; ++i < len ; ) {
+            if (this.sequence[i].id === stageId) {
+                this.sequence.splice(i,1);
+                break;
+            }
+        }
     };
 
     /**
@@ -12102,7 +12455,7 @@ if (!JSON) {
                 cb: function() {
                     this.node.log(this.getCurrentStepObj().id);
                     this.node.done();
-                },
+                }
             });
         }
 
@@ -12792,7 +13145,7 @@ if (!JSON) {
      * Looks up and build the _globals_ object for the specified game stage
      *
      * Globals properties are mixed in at each level (defaults, stage, step)
-     * to form the complete set of globals available for the specified 
+     * to form the complete set of globals available for the specified
      * game stage.
      *
      * @param {GameStage|string} gameStage The GameStage object,
@@ -12812,11 +13165,11 @@ if (!JSON) {
 
         // Look in Stager's defaults:
         J.mixin(globals, this.stager.getDefaultGlobals());
-        
+
         // Look in current stage:
         stepstage = this.getStage(gameStage);
         if (stepstage) J.mixin(globals, stepstage.globals);
-        
+
         // Look in current step:
         stepstage = this.getStep(gameStage);
         if (stepstage) J.mixin(globals, stepstage.globals);
@@ -13248,7 +13601,14 @@ if (!JSON) {
 
     var action = parent.action;
 
-    function Socket(node, options) {
+    /**
+     * ## Socket constructor
+     *
+     * Creates a new instance of Socket
+     *
+     * @param {NodeGameClient} node Reference to the node instance
+     */
+    function Socket(node) {
 
         // ## Private properties
 
@@ -13294,11 +13654,27 @@ if (!JSON) {
          *
          * Socket connection established.
          *
+         * @see Socket.connecting
          * @see Socket.isConnected
          * @see Socket.onConnect
          * @see Socket.onDisconnect
          */
         this.connected = false;
+
+         /**
+         * ### Socket.connecting
+         *
+         * Socket connection being established
+         *
+         * TODO see whether we should merge connected / connecting
+         * in one variable with socket states.
+         *
+         * @see Socket.connected
+         * @see Socket.isConnected
+         * @see Socket.onConnect
+         * @see Socket.onDisconnect
+         */
+        this.connecting = false;
 
         /**
          * ### Socket.url
@@ -13310,6 +13686,8 @@ if (!JSON) {
          */
         this.url = null;
 
+        // Experimental Journal.
+        // TODO: check if we need it.
 
         this.journalOn = false;
 
@@ -13333,6 +13711,7 @@ if (!JSON) {
                 }
             });
         }
+        // End Experimental Code.
 
         /**
          * ### Socket.node
@@ -13347,7 +13726,7 @@ if (!JSON) {
     /**
      * ### Socket.setup
      *
-     * Configure the socket.
+     * Configures the socket
      *
      * @param {object} options Optional. Configuration options.
      * @see node.setup.socket
@@ -13366,7 +13745,7 @@ if (!JSON) {
     /**
      * ### Socket.setSocketType
      *
-     * Set the default socket by requesting it to the Socket Factory.
+     * Sets the default socket by requesting it to the Socket Factory
      *
      * Supported types: 'Direct', 'SocketIo'.
      *
@@ -13383,43 +13762,80 @@ if (!JSON) {
     /**
      * ### Socket.connect
      *
-     * Calls the connect method on the actual socket object.
+     * Calls the connect method on the actual socket object
      *
-     * @param {string} uri The uri to which to connect.
+     * Uri is usually empty when using SocketDirect.
+     *
+     * @param {string} uri Optional. The uri to which to connect.
      * @param {object} options Optional. Configuration options for the socket.
      */
     Socket.prototype.connect = function(uri, options) {
-        var humanReadableUri = uri || 'local server';
-        if (!this.socket) {
-            this.node.err('Socket.connet: cannot connet to ' +
-                          humanReadableUri + ' . No socket defined.');
-            return false;
+        var humanReadableUri;
+
+        if (uri && 'string' !== typeof uri) {
+            throw new TypeError('Socket.connect: uri must be string or ' +
+                                'undefined.');
+        }
+        if (options && 'object' !== typeof options) {
+            throw new TypeError('Socket.connect: options must be object or ' +
+                                'undefined.');
+        }
+        if (this.connected) {
+            throw new Error('Socket.connect: socket is already connected. ' +
+                            'Only one connection is allowed.');
+        }
+        if (this.connecting) {
+            throw new Error('Socket.connecting: one connection attempt is ' +
+                            'already in progress. Please try again later.');
         }
 
+        humanReadableUri = uri || 'local server';
+
+        if (!this.socket) {
+            throw new Error('Socket.connet: cannot connet to ' +
+                            humanReadableUri + ' . No socket defined.');
+        }
+        this.node.emit('SOCKET_CONNECTING');
+        this.connecting = true;
         this.url = uri;
         this.node.log('connecting to ' + humanReadableUri + '.');
-
-        this.socket.connect(uri, 'undefined' !== typeof options ?
-                            options : this.userOptions);
+        this.socket.connect(uri, options || this.userOptions);
     };
+
+    /**
+     * ### Socket.disconnect
+     *
+     * Calls the disconnect method on the actual socket object
+     */
+    Socket.prototype.disconnect = function() {
+        if (!this.connecting && !this.connected) {
+            node.warn('Socket.disconnect: socket is not connected.');
+            return;
+        }
+        this.socket.disconnect();
+    };
+
 
     /**
      * ### Socket.onConnect
      *
-     * Handler for connections to the server.
+     * Handler for connections to the server
      *
      * @emit SOCKET_CONNECT
      */
     Socket.prototype.onConnect = function() {
         this.connected = true;
+        this.connecting = false;
         this.node.emit('SOCKET_CONNECT');
+
+        // The testing framework expects this, do not remove.
         this.node.log('socket connected.');
     };
 
     /**
      * ### Socket.onDisconnect
      *
-     * Handler for disconnections from the server.
+     * Handler for disconnections from the server
      *
      * Clears the player and monitor lists.
      *
@@ -13427,6 +13843,7 @@ if (!JSON) {
      */
     Socket.prototype.onDisconnect = function() {
         this.connected = false;
+        this.connecting = false;
         node.emit('SOCKET_DISCONNECT');
         // Save the current stage of the game
         //this.node.session.store();
@@ -13446,7 +13863,8 @@ if (!JSON) {
      * Checks that the id of the session is correct.
      *
      * @param {string} msg The msg string as received by the socket.
-     * @return {GameMsg|undefined} gameMsg The parsed msg, or undefined on error.
+     * @return {GameMsg|undefined} gameMsg The parsed msg, or
+     *   undefined on error.
      */
     Socket.prototype.secureParse = function(msg) {
         var gameMsg;
@@ -13468,22 +13886,21 @@ if (!JSON) {
      * Checks that the id of the session is correct.
      *
      * @param {object} msg The msg object to check
-     * @return {GameMsg|undefined} gameMsg The parsed msg, or undefined on error.
+     * @return {GameMsg|undefined} gameMsg The parsed msg, or
+     *   undefined on error.
      */
     Socket.prototype.validateIncomingMsg = function(gameMsg) {
         if (this.session && gameMsg.session !== this.session) {
-            console.log(this.session, gameMsg.session);
-            console.log(gameMsg);
             return logSecureParseError.call(this, 'mismatched session in ' +
                                             'incoming message.');
         }
         return gameMsg;
-    }
+    };
 
     /**
      * ### Socket.onMessage
      *
-     * Initial handler for incoming messages from the server.
+     * Initial handler for incoming messages from the server
      *
      * This handler will be replaced by the FULL handler, upon receiving
      * a HI message from the server.
@@ -13519,7 +13936,7 @@ if (!JSON) {
     /**
      * ### Socket.onMessageFull
      *
-     * Full handler for incoming messages from the server.
+     * Full handler for incoming messages from the server
      *
      * All parsed messages are either emitted immediately or buffered,
      * if the game is not ready, and the message priority is low.x
@@ -13700,7 +14117,7 @@ if (!JSON) {
     /**
      * ### Socket.send
      *
-     * Pushes a message into the socket.
+     * Pushes a message into the socket
      *
      * The msg is actually received by the client itself as well.
      *
@@ -13722,7 +14139,8 @@ if (!JSON) {
         }
 
         if (msg.from === this.node.UNDEFINED_PLAYER) {
-            this.node.err('Socket.send: cannot send message. Player undefined.');
+            this.node.err('Socket.send: cannot send message. ' +
+                          'Player undefined.');
             return false;
         }
 
@@ -13777,23 +14195,57 @@ if (!JSON) {
 
     var GameMsg = node.GameMsg,
     Player = node.Player,
-    GameMsgGenerator = node.GameMsgGenerator;
+    GameMsgGenerator = node.GameMsgGenerator,
+    J = node.JSUS;
 
     exports.SocketIo = SocketIo;
 
-    function SocketIo(node, options) {
+    /**
+     * ## SocketIo constructor
+     *
+     * Creates a new instance of SocketIo
+     *
+     * @param {NodeGameClient} node Reference to the node instance
+     */
+    function SocketIo(node) {
+
+        // ## Private properties
+
+        /**
+         * ### SocketIo.node
+         *
+         * Reference to the node object.
+         */
         this.node = node;
+
+        /**
+         * ### Socket.socket
+         *
+         * Reference to the actual socket-io socket created on connection
+         */
         this.socket = null;
     }
 
+    /**
+     * ### SocketIo.connect
+     *
+     * Establishes a socket-io connection with a server
+     *
+     * Sets the on: 'connect', 'message', 'disconnect' event listeners.
+     *
+     * @param {string} url The address of the server channel
+     * @param {object} options Optional. Configuration options
+     */
     SocketIo.prototype.connect = function(url, options) {
         var node, socket;
         node = this.node;
 
-        if (!url) {
-            node.err('cannot connect to empty url.', 'ERR');
-            return false;
+        if ('string' !== typeof url) {
+            throw TypeError('SocketIO.connect: url must be string.');
         }
+
+        // See https://github.com/Automattic/socket.io-client/issues/251
+        J.mixin(options, { 'force new connection': true });
 
         socket = io.connect(url, options); //conf.io
 
@@ -13815,15 +14267,38 @@ if (!JSON) {
         this.socket = socket;
 
         return true;
-
     };
 
+    /**
+     * ### SocketIo.disconnect
+     *
+     * Triggers the disconnection from a server
+     */
+    SocketIo.prototype.disconnect = function() {
+        this.socket.disconnect();
+    };
+
+    /**
+     * ### SocketIo.isConnected
+     *
+     * Returns TRUE, if currently connected
+     */
     SocketIo.prototype.isConnected = function() {
         return this.socket &&
             this.socket.socket &&
             this.socket.socket.connected;
     };
 
+    /**
+     * ### SocketIo.send
+     *
+     * Stringifies and send a message through the socket-io socket
+     *
+     * @param {object} msg Object implementing a stringiy method. Usually,
+     *    a game message.
+     *
+     * @see GameMessage
+     */
     SocketIo.prototype.send = function(msg) {
         this.socket.send(msg.stringify());
     };
@@ -14400,7 +14875,12 @@ if (!JSON) {
      * Calls the init function, and steps.
      *
      * Important: it does not use `Game.publishUpdate` because that is
-     * just for change of state after the game has started
+     * just for change of state after the game has started.
+     *
+     * @param {object} options Optional. Configuration object. Fields:
+     *
+     *   - step: true/false. If false, jus call the init function, and
+     *     does not enter the first step. Default, TRUE.
      */
     Game.prototype.start = function(options) {
         var onInit, node, startStage;
@@ -14424,9 +14904,14 @@ if (!JSON) {
             throw new Error('Game.start: game cannot be started.');
         }
 
+        // Starts from beginning (default) or from a predefined stage
+        // This options is useful when a player reconnets.
+        startStage = options.startStage || new GameStage();
+
         // INIT the game.
         if (this.plot && this.plot.stager) {
             onInit = this.plot.stager.getOnInit();
+            this.globals = this.plot.getGlobals(startStage);
             if (onInit) {
                 this.setStateLevel(constants.stateLevels.INITIALIZING);
                 node.emit('INIT');
@@ -14434,10 +14919,6 @@ if (!JSON) {
             }
         }
         this.setStateLevel(constants.stateLevels.INITIALIZED);
-
-        // Starts from beginning (default) or from a predefined stage
-        // This options is useful when a player reconnets.
-        startStage = options.startStage || new GameStage();
 
         this.setCurrentGameStage(startStage, true);
 
@@ -14557,7 +15038,7 @@ if (!JSON) {
      *
      * Experimental. Sets the game to pause
      *
-     * @TODO: check with Game.ready
+     * TODO: check with Game.ready
      */
     Game.prototype.pause = function() {
         var msgHandler, node;
@@ -14596,7 +15077,7 @@ if (!JSON) {
      *
      * Experimental. Resumes the game from a pause
      *
-     * @TODO: check with Game.ready
+     * TODO: check with Game.ready
      */
     Game.prototype.resume = function() {
         var msgHandler, node;
@@ -14764,7 +15245,7 @@ if (!JSON) {
             return null;
         }
         else {
-            // TODO maybe update also in case of string
+            // TODO maybe update also in case of string.
 
             node.emit('STEPPING');
 
@@ -17306,7 +17787,7 @@ if (!JSON) {
         /**
          * ### Timer.timers
          *
-         * Collection of currently active timers created with `Timer.createTimer`
+         * Collection of currently active timers created by `Timer.createTimer`
          * @see Timer.createTimer
          */
         this.timers = {};
@@ -17335,14 +17816,35 @@ if (!JSON) {
      * The GameTimer instance is automatically paused and resumed on
      * the respective events.
      *
-     * @param {object} options The options that are given to GameTimer
+     * Timer creation is flexible, and input parameter can be a full
+     * configuration object, the number of millieconds or nothing. In the
+     * latter case, the new timer will need to be configured manually. If
+     * only the number of milliseconds is passed the timer will fire a 'TIMEUP'
+     * event once the time expires.
+     *
+     * @param {mixed} options The configuration object passed to the GameTimer
+     *   constructor. Alternatively, it is possble to pass directly the number
+     *   of milliseconds and the remaining settings will be added, or to leave
+     *   it undefined.
+     *
      * @return {GameTimer} timer The requested timer
      *
      * @see GameTimer
      */
     Timer.prototype.createTimer = function(options) {
         var gameTimer, pausedCb, resumedCb;
+        var ee;
+
+        if (options &&
+            ('object' !== typeof options && 'number' !== typeof options)) {
+
+            throw new TypeError('Timer.createTimer: options must be ' +
+                                'undefined, object or number.');
+        }
+
+        if ('number' === typeof options) options = { milliseconds: options };
         options = options || {};
+
         options.name = options.name ||
             J.uniqueKey(this.timers, 'timer_' + J.randomInt(0, 10000000));
 
@@ -17359,6 +17861,10 @@ if (!JSON) {
             }
         }
 
+        ee = this.node.getCurrentEventEmitter();
+
+        options.eventEmitterName = ee.name;
+
         // Create the GameTimer:
         gameTimer = new GameTimer(this.node, options);
 
@@ -17368,15 +17874,15 @@ if (!JSON) {
                 gameTimer.pause();
             }
         };
-        this.node.on('PAUSED', pausedCb);
-
         resumedCb = function() {
             // startPaused=true also counts as a "paused" state:
             if (gameTimer.isPaused() || gameTimer.startPaused) {
                 gameTimer.resume();
             }
         };
-        this.node.on('RESUMED', resumedCb);
+
+        ee.on('PAUSED', pausedCb);
+        ee.on('RESUMED', resumedCb);
 
         // Attach listener handlers to GameTimer object so they can be
         // unregistered later:
@@ -17401,6 +17907,7 @@ if (!JSON) {
      *   the gameTimer created with Timer.createTimer
      */
     Timer.prototype.destroyTimer = function(gameTimer) {
+        var eeName;
         if ('string' === typeof gameTimer) {
             if (!this.timers[gameTimer]) {
                 throw new Error('node.timer.destroyTimer: gameTimer not ' +
@@ -17413,14 +17920,26 @@ if (!JSON) {
                             'string or object.');
         }
 
-        // Stop timer:
+        // Stop timer.
         if (!gameTimer.isStopped()) {
             gameTimer.stop();
         }
 
-        // Detach listeners:
-        this.node.off('PAUSED', gameTimer.timerPausedCallback);
-        this.node.off('RESUMED', gameTimer.timerResumedCallback);
+        eeName = gameTimer.eventEmitterName;
+        // Detach listeners.
+        if (eeName) {
+            // We know where the timer was registered.
+            this.node.events.ee[eeName].remove('PAUSED',
+                                               gameTimer.timerPausedCallback);
+            this.node.events.ee[eeName].remove('RESUMED',
+                                               gameTimer.timerResumedCallback);
+        }
+        else {
+            // We try to unregister from all.
+            this.node.off('PAUSED', gameTimer.timerPausedCallback);
+            this.node.off('RESUMED', gameTimer.timerResumedCallback);
+        }
+
         // Delete reference in this.timers.
         delete this.timers[gameTimer.name];
     };
@@ -17657,7 +18176,7 @@ if (!JSON) {
     /**
      * ### Timer.randomExec
      *
-     * Executes a callback function after a random time interval between 0 and maxWait
+     * Executes a callback function after a random time interval
      *
      * Respects pausing / resuming.
      *
@@ -17800,6 +18319,7 @@ if (!JSON) {
          * @see GameTimer.fire
          */
         this.hooks = [];
+
         /**
          * ### GameTimer.hookNames
          *
@@ -17808,6 +18328,15 @@ if (!JSON) {
          * @see GameTimer.hooks
          */
         this.hookNames = {};
+
+        /**
+         * ### GameTimer.hookNames
+         *
+         * The name of the event emitter where the timer was registered
+         *
+         * @see EventEmitter
+         */
+        this.eventEmitterName = null;
 
         // Init!
         this.init();
@@ -17840,7 +18369,10 @@ if (!JSON) {
      *                ctx: that, },
      *              ],
      *  }
-     *  // Units are in milliseconds
+     *  // Units are in milliseconds.
+     *
+     * Note: if `milliseconds` is a negative number the timer fire
+     * immediately.
      *
      * @param {object} options Optional. Configuration object
      *
@@ -17866,7 +18398,7 @@ if (!JSON) {
         // TODO: update and milliseconds must be multiple now
         if (options.hooks) {
             len = options.hooks.length;
-            for (i = 0; i < len; i++){
+            for (i = 0; i < len; i++) {
                 this.addHook(options.hooks[i]);
             }
         }
@@ -17880,6 +18412,8 @@ if (!JSON) {
         if (checkInitialized(this) === null) {
             this.status = GameTimer.INITIALIZED;
         }
+
+        this.eventEmitterName = options.eventEmitterName;
     };
 
 
@@ -18278,8 +18812,9 @@ if (!JSON) {
      * Creates a new NodeGameClient object
      */
     function NodeGameClient() {
-
         var that = this;
+
+        this.silly('node: loading.');
 
         /**
          * ### node.verbosity
@@ -18748,7 +19283,7 @@ if (!JSON) {
          */
         this.registerSetup('lang', function(language) {
             if (!language) return null;
-            return this.setLanguage(language);            
+            return this.setLanguage(language);
         });
 
         // Utility for setup.plist and setup.mlist:
@@ -18796,16 +19331,20 @@ if (!JSON) {
         /**
          * ### NodeGameClient.on
          *
-         * Registers an event listener
+         * Registers an event listener on the active event emitter
          *
-         * Listeners registered before a game is started, e.g. in
-         * the init function of the game object, will stay valid
-         * throughout the game. Listeners registered after the game
-         * is started will be removed after the game has advanced
-         * to its next stage.
+         * Different event emitters are active during the game. For
+         * example, before a game is started, e.g. in the init
+         * function of the game object, the `game` event emitter is
+         * active. Events registered with the `game` event emitter
+         * stay valid throughout the whole game. Listeners registered
+         * after the game is started will be removed after the game
+         * has advanced to its next stage or step.
          *
          * @param {string} event The name of the event
          * @param {function} listener The callback function
+         *
+         * @see NodeGameClient.off
          */
         this.on = function(event, listener) {
             var ee;
@@ -18827,14 +19366,13 @@ if (!JSON) {
          */
         this.once = function(event, listener) {
             var ee, cbRemove;
-            // This function will remove the event listener
-            // and itself.
+            ee = this.getCurrentEventEmitter();
+            ee.on(event, listener);
+            // This function will remove the event listener and itself.
             cbRemove = function() {
                 ee.remove(event, listener);
                 ee.remove(event, cbRemove);
             };
-            ee = this.getCurrentEventEmitter();
-            ee.on(event, listener);
             ee.on(event, cbRemove);
         };
 
@@ -18856,11 +19394,12 @@ if (!JSON) {
 
         // ADD ALIASES
 
-        // TODO: move aliases into a separate method, like addDefaultIncomingListeners
+        // TODO: move aliases into a separate method,
+        // like addDefaultIncomingListeners
 
         // ### node.on.txt
         this.alias('txt', 'in.say.TXT');
-        
+
         // ### node.on.data
         this.alias('data', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
             return function(msg) {
@@ -18936,6 +19475,8 @@ if (!JSON) {
         // LISTENERS.
         this.addDefaultIncomingListeners();
         this.addDefaultInternalListeners();
+
+        this.silly('node: created.');
     }
 
     // ## Closure
@@ -19231,7 +19772,7 @@ if (!JSON) {
      *
      * 	node.on.data('myLabel', function(){ ... };
      * 	node.once.data('myLabel', function(){ ... };
-     * ```	
+     * ```
      *
      * @param {string} alias The name of alias
      * @param {string|array} events The event/s under which the listeners
@@ -19277,7 +19818,7 @@ if (!JSON) {
             // Otherwise, we assume the first parameter is the callback.
             if (modifier) {
                 func = modifier.apply(that.game, arguments);
-            } 
+            }
             J.each(events, function(event) {
                 that.once(event, function() {
                     func.apply(that.game, arguments);
@@ -19491,7 +20032,7 @@ if (!JSON) {
 //         ee = this.getCurrentEventEmitter();
 //         ee.on(event, listener);
 //     };
-// 
+//
 //     /**
 //      * ### NodeGameClient.once
 //      *
@@ -19516,7 +20057,7 @@ if (!JSON) {
 //         ee.on(event, listener);
 //         ee.on(event, cbRemove);
 //     };
-// 
+//
 //     /**
 //      * ### NodeGameClient.off
 //      *
@@ -19629,8 +20170,9 @@ if (!JSON) {
      * after which the listener will be removed, or specify the timeout as -1,
      * and in this case the listener will not be removed at all.
      *
-     * If there is no registered listener on the receiver, the callback will
-     * never be executed.
+     * If a timeout is specified is possible to specify also a timeout-callback,
+     * which will be executed if no was reply was received until the end of
+     * the timeout.
      *
      * If the socket is not able to send the GET message for any reason, the
      * listener function is never registered.
@@ -19646,12 +20188,15 @@ if (!JSON) {
      * @param {number} timeout Optional. The number of milliseconds after which
      *   the listener will be removed. If equal -1, the listener will not be
      *   removed. Default: 0
+     * @param {function} timeoutCb Optional. A callback function to call if
+     *   the timeout is fired (no reply recevied)
      *
      * @return {boolean} TRUE, if GET message is sent and listener registered
      */
-    NGC.prototype.get = function(key, cb, to, params, timeout) {
+    NGC.prototype.get = function(key, cb, to, params, timeout, timeoutCb) {
         var msg, g, ee;
         var that, res;
+        var timer, success;
 
         if ('string' !== typeof key) {
             throw new TypeError('node.get: key must be string.');
@@ -19670,12 +20215,16 @@ if (!JSON) {
             throw new TypeError('node.get: cb must be function.');
         }
 
-        if (to && 'string' !== typeof to) {
+        if ('undefined' === typeof to) {
+            to = 'SERVER';
+        }
+
+        if ('string' !== typeof to) {
             throw new TypeError('node.get: to must be string or undefined.');
         }
 
         if ('undefined' !== typeof timeout) {
-            if ('number' !== typeof number) {
+            if ('number' !== typeof timeout) {
                 throw new TypeError('node.get: timeout must be number.');
             }
             if (timeout < 0 && timeout !== -1 ) {
@@ -19683,10 +20232,16 @@ if (!JSON) {
                                    '0, or -1.');
             }
         }
+
+        if (timeoutCb && 'function' !== typeof timeoutCb) {
+            throw new TypeError('node.get: timeoutCb must be function ' +
+                                'or undefined.');
+        }
+
         msg = this.msg.create({
             action: this.constants.action.GET,
             target: this.constants.target.DATA,
-            to: to || 'SERVER',
+            to: to,
             reliable: 1,
             text: key,
             data: params
@@ -19695,6 +20250,10 @@ if (!JSON) {
         // TODO: check potential timing issues. Is it safe to send the GET
         // message before registering the relate listener? (for now yes)
         res = this.socket.send(msg);
+
+        // The key is updated with the id of the message, so
+        // that only those who received it can reply.
+        key = key + '_' + msg.id;
 
         if (res) {
             ee = this.getCurrentEventEmitter();
@@ -19705,6 +20264,7 @@ if (!JSON) {
             // will be removed immediately after its execution.
             g = function(msg) {
                 if (msg.text === key) {
+                    success = true;
                     cb.call(that.game, msg.data);
                     if (!timeout) ee.remove('in.say.DATA', g);
                 }
@@ -19716,9 +20276,16 @@ if (!JSON) {
             // of its execution after the timeout is fired.
             // If timeout === -1, the listener is never removed.
             if (timeout > 0) {
-                setTimeout(function() {
-                    ee.remove('in.say.DATA', g);
-                }, timeout);
+                timer = this.timer.createTimer({
+                    milliseconds: timeout,
+                    timeup: function() {
+                        ee.remove('in.say.DATA', g);
+                        that.timer.destroyTimer(timer);
+                        // success === true we have received a reply.
+                        if (timeoutCb && !success) timeoutCb.call(that.game);
+                    }
+                });
+                timer.start();
             }
         }
         return res;
@@ -20224,9 +20791,9 @@ if (!JSON) {
          * ## in.get.DATA
          *
          * Re-emits the incoming message, and replies back to the sender
-         * 
+         *
          * Does the following operations:
-         * 
+         *
          * - Validates the msg.text field
          * - Emits a get.<msg.text> event
          * - Replies to the sender with with the return values of the emit call
@@ -20240,7 +20807,7 @@ if (!JSON) {
             }
             res = node.emit(get + msg.text, msg);
             if (!J.isEmpty(res)) {
-                node.say(msg.text, msg.from, res);
+                node.say(msg.text + '_' + msg.id, msg.from, res);
             }
         });
 
@@ -20446,6 +21013,17 @@ if (!JSON) {
         });
 
         /**
+         * ## in.get.PLAYER
+         *
+         * Gets the current _Player_ object
+         *
+         * @see Player
+         */
+        node.events.ng.on( get + 'PLAYER', function() {
+            return node.player;
+        });
+
+        /**
          * ## in.get.LANG | get.LANG
          *
          * Gets the currently used language
@@ -20471,6 +21049,16 @@ if (!JSON) {
         node.events.ng.on( IN + set + 'LANG', function(msg) {
             node.setLanguage(msg.data);
         });
+
+        /**
+         * ## get.PING
+         *
+         * Returns a dummy reply to PING requests
+         */
+        node.events.ng.on( get + 'PING', function() {
+            return 'pong';
+        });
+
 
         node.incomingAdded = true;
         node.silly('incoming listeners added');
@@ -20623,9 +21211,9 @@ if (!JSON) {
          */
         this.events.ng.on('PLAYING', function() {
             var currentTime;
+            node.emit('BEFORE_PLAYING');
             node.game.setStageLevel(stageLevels.PLAYING);
             node.socket.clearBuffer();
-            node.emit('BEFORE_PLAYING');
             // Last thing to do, is to store time:
             currentTime = (new Date()).getTime();
             node.timer.setTimestamp(node.game.getCurrentGameStage().toString(),
@@ -21056,13 +21644,13 @@ if (!JSON) {
  */
 (function() {
     var tmp = new window.node.NodeGameClient();
-    JSUS.mixin(tmp, window.node)
+    JSUS.mixin(tmp, window.node);
     window.node = tmp;
 })();
 
 /**
  * # GameWindow
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow provides a handy API to interface nodeGame with the
@@ -21108,7 +21696,7 @@ if (!JSON) {
     GameWindow.defaults = {};
 
     // Default settings.
-    GameWindow.defaults.textOnleave = '';
+    GameWindow.defaults.promptOnleaveText = '';
     GameWindow.defaults.promptOnleave = true;
     GameWindow.defaults.noEscape = true;
     GameWindow.defaults.waitScreen = undefined;
@@ -21124,11 +21712,14 @@ if (!JSON) {
         iframeWin = iframe.contentWindow;
 
         function completed(event) {
+            var iframeDoc;
+            iframeDoc = JSUS.getIFrameDocument(iframe);
+
             // Detaching the function to avoid double execution.
             iframe.removeEventListener('load', completed, false);
             iframeWin.removeEventListener('load', completed, false);
             if (cb) {
-                // Some browsers fires onLoad too early.
+                // Some browsers fire onLoad too early.
                 // A small timeout is enough.
                 setTimeout(function() { cb(); }, 120);
             }
@@ -21163,7 +21754,7 @@ if (!JSON) {
                 iframeWin.detachEvent('onload', completed );
 
                 if (cb) {
-                    // Some browsers fires onLoad too early.
+                    // Some browsers fire onLoad too early.
                     // A small timeout is enough.
                     setTimeout(function() { cb(); }, 120);
                 }
@@ -21179,7 +21770,7 @@ if (!JSON) {
 
     function onLoad(iframe, cb) {
         // IE
-        if (iframe.attachEvent) {
+        if (W.isIE) {
             onLoadIE(iframe, cb);
         }
         // Standards-based browsers support DOMContentLoaded.
@@ -21207,7 +21798,7 @@ if (!JSON) {
             throw new Error('GameWindow: nodeGame not found');
         }
 
-        node.log('node-window: loading...');
+        node.silly('node-window: loading...');
 
         /**
          * ### GameWindow.frameName
@@ -21395,6 +21986,15 @@ if (!JSON) {
         this.waitScreen = null;
 
         /**
+         * ### GameWindow.listenersAdded
+         *
+         * TRUE, if listeners were added already
+         *
+         * @see GameWindow.addDefaultListeners
+         */
+        this.listenersAdded = null;
+
+        /**
          * ### GameWindow.screenState
          *
          * Level describing whether the user can interact with the frame
@@ -21406,6 +22006,13 @@ if (!JSON) {
          * @see node.constants.screenLevels
          */
         this.screenState = node.constants.screenLevels.ACTIVE;
+
+        /**
+         * ### GameWindow.isIE
+         *
+         * Boolean flag saying whether we are in IE or not
+         */
+        this.isIE = !!document.createElement('span').attachEvent;
 
         /**
          * ### node.setup.window
@@ -21422,8 +22029,20 @@ if (!JSON) {
             //}
         });
 
+        // Adding listeners.
+        this.addDefaultListeners();
+
+        // Hide <noscript> tag (necessary for IE8).
+        setTimeout(function(){
+            (function (scriptTag) {
+                if (scriptTag.length >= 1) scriptTag[0].style.display = 'none';
+            })(document.getElementsByTagName('noscript'));
+        }, 1000);
+
         // Init.
         this.init(GameWindow.defaults);
+
+        node.silly('node-window: created.');
     }
 
     // ## GameWindow methods
@@ -21501,6 +22120,8 @@ if (!JSON) {
         }
 
         this.setStateLevel('INITIALIZED');
+
+        node.silly('node-window: inited.');
     };
 
     /**
@@ -21537,6 +22158,8 @@ if (!JSON) {
 
         // Clear all caches.
         this.clearCache();
+
+        node.silly('node-window: reseted.');
     };
 
     /**
@@ -21778,6 +22401,9 @@ if (!JSON) {
         // Method .replace does not add the uri to the history.
         iframe.contentWindow.location.replace('about:blank');
 
+        // For IE8.
+        iframe.frameBorder = 0;
+
         this.setFrame(iframe, frameName, root);
 
         if (this.frameElement) {
@@ -21847,10 +22473,26 @@ if (!JSON) {
         if (!iframe) {
             throw new Error('GameWindow.clearFrame: cannot detect frame.');
         }
+
         frameName = iframe.name || iframe.id;
         iframe.onload = null;
+
         // Method .replace does not add the uri to the history.
-        iframe.contentWindow.location.replace('about:blank');
+        //iframe.contentWindow.location.replace('about:blank');
+
+        try {
+            this.getFrameDocument().documentElement.innerHTML = '';
+        }
+        catch(e) {
+            // IE < 10 gives 'Permission Denied' if trying to access
+            // the iframeDoc from the context of the function above.
+            // We need to re-get it from the DOM.
+            if (J.getIFrameDocument(iframe).documentElement) {
+                J.removeChildrenFromNode(
+                        J.getIFrameDocument(iframe).documentElement);
+            }
+        }
+
         this.frameElement = iframe;
         this.frameWindow = window.frames[frameName];
         this.frameDocument = W.getIFrameDocument(iframe);
@@ -22196,7 +22838,7 @@ if (!JSON) {
     /**
      * ### GameWindow.preCacheTest
      *
-     * Tests wether preChace is supported by the browser
+     * Tests whether preChace is supported by the browser
      *
      * Results are stored in _GameWindow.cacheSupported_.
      *
@@ -22222,8 +22864,14 @@ if (!JSON) {
         document.body.appendChild(iframe);
         iframe.contentWindow.location.replace(uri);
         onLoad(iframe, function() {
+            //var iframe, docElem;
             try {
                 W.getIFrameDocument(iframe).documentElement.innerHTML = 'a';
+                // This passes in IE8, but the rest of the caching doesn't.
+                // We want this test to fail in IE8.
+                //iframe = document.getElementById(iframeName);
+                //docElem = W.getIFrameDocument(iframe);
+                //docElem.innerHTML = 'a';
                 W.cacheSupported = true;
             }
             catch(e) {
@@ -22413,7 +23061,7 @@ if (!JSON) {
      * Warning: Security policies may block this method if the content is
      * coming from another domain.
      * Notice: If called multiple times within the same stage/step, it will
-     * the `VisualTimer` widget to reload the timer.
+     * cause the `VisualTimer` widget to reload the timer.
      *
      * @param {string} uri The uri to load
      * @param {function} func Optional. The function to call once the DOM is
@@ -22461,7 +23109,8 @@ if (!JSON) {
         iframeDocument = W.getIFrameDocument(iframe);
         frameReady = iframeDocument.readyState;
         // ...reduce it to a boolean:
-        frameReady = frameReady === 'interactive' || frameReady === 'complete';
+        //frameReady = frameReady === 'interactive'||frameReady === 'complete';
+        frameReady = frameReady === 'complete';
 
         // Begin loadFrame caching section.
 
@@ -22473,7 +23122,6 @@ if (!JSON) {
         // Caching options.
         if (opts.cache) {
             if (opts.cache.loadMode) {
-
                 if (opts.cache.loadMode === 'reload') {
                     loadCache = false;
                 }
@@ -22552,9 +23200,11 @@ if (!JSON) {
             onLoad(iframe, function() {
                 // Handles caching.
                 handleFrameLoad(that, uri, iframe, iframeName, loadCache,
-                                storeCacheNow);
-                // Executes callback and updates GameWindow state.
-                that.updateLoadFrameState(func);
+                                storeCacheNow, function() {
+
+                    // Executes callback and updates GameWindow state.
+                    that.updateLoadFrameState(func);
+                });
             });
         }
 
@@ -22565,12 +23215,13 @@ if (!JSON) {
             // would be cleared once the iframe becomes ready.  In that case,
             // iframe.onload handles the filling of the contents.
             if (frameReady) {
-                // Handles chaching.
+                // Handles caching.
                 handleFrameLoad(this, uri, iframe, iframeName, loadCache,
-                                storeCacheNow);
+                                storeCacheNow, function() {
 
-                // Executes callback and updates GameWindow state.
-                this.updateLoadFrameState(func);
+                    // Executes callback and updates GameWindow state.
+                    that.updateLoadFrameState(func);
+                });
             }
         }
         else {
@@ -22632,20 +23283,24 @@ if (!JSON) {
      *
      * @param {GameWindow} that The GameWindow instance
      * @param {uri} uri URI to load
+     * @param {iframe} iframe The target iframe
      * @param {string} frameName ID of the iframe
      * @param {bool} loadCache Whether to load from cache
      * @param {bool} storeCache Whether to store to cache
+     * @param {function} func Callback
      *
      * @see GameWindow.loadFrame
      *
      * @api private
      */
     function handleFrameLoad(that, uri, iframe, frameName, loadCache,
-                             storeCache) {
+                             storeCache, func) {
 
         var iframeDocumentElement;
+        var afterScripts;
 
-        // iframe = W.getElementById(frameName);
+        // Needed for IE8.
+        iframe = W.getElementById(frameName);
         iframeDocumentElement = W.getIFrameDocument(iframe).documentElement;
 
         if (loadCache) {
@@ -22666,15 +23321,22 @@ if (!JSON) {
 
         // (Re-)Inject libraries and reload scripts:
         removeLibraries(iframe);
-        if (loadCache) {
-            reloadScripts(iframe);
-        }
-        injectLibraries(iframe, that.globalLibs.concat(
+        afterScripts = function() {
+            injectLibraries(iframe, that.globalLibs.concat(
                 that.frameLibs.hasOwnProperty(uri) ? that.frameLibs[uri] : []));
 
-        if (storeCache) {
-            // Store frame in cache:
-            that.cache[uri].contents = iframeDocumentElement.innerHTML;
+            if (storeCache) {
+                // Store frame in cache:
+                that.cache[uri].contents = iframeDocumentElement.innerHTML;
+            }
+
+            func();
+        };
+        if (loadCache) {
+            reloadScripts(iframe, afterScripts);
+        }
+        else {
+            afterScripts();
         }
     }
 
@@ -22720,18 +23382,25 @@ if (!JSON) {
      * scripts. The placement of the tags can change, but the order is kept.
      *
      * @param {HTMLIFrameElement} iframe The target iframe
+     * @param {function} func Callback
      *
      * @api private
      */
-    function reloadScripts(iframe) {
+    function reloadScripts(iframe, func) {
         var contentDocument;
         var headNode;
         var tag, scriptNodes, scriptNodeIdx, scriptNode;
         var attrIdx, attr;
+        var numLoading;
+        var needsLoad;
 
         contentDocument = W.getIFrameDocument(iframe);
-
         headNode = W.getIFrameAnyChild(iframe);
+
+        // Start counting loading tags at 1 instead of 0 and decrement the
+        // count after the loop.
+        // This way the callback cannot be called before the loop finishes.
+        numLoading = 1;
 
         scriptNodes = contentDocument.getElementsByTagName('script');
         for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length;
@@ -22744,12 +23413,27 @@ if (!JSON) {
             // Reinsert tag for reloading:
             scriptNode = document.createElement('script');
             if (tag.innerHTML) scriptNode.innerHTML = tag.innerHTML;
+            needsLoad = false;
             for (attrIdx = 0; attrIdx < tag.attributes.length; attrIdx++) {
                 attr = tag.attributes[attrIdx];
                 scriptNode.setAttribute(attr.name, attr.value);
+                if (attr.name === 'src') needsLoad = true;
+            }
+            if (needsLoad) {
+                //scriptNode.async = true;
+                ++numLoading;
+                scriptNode.onload = function(sn) {
+                    return function() {
+                        sn.onload = null;
+                        --numLoading;
+                        if (numLoading <= 0) func();
+                    };
+                }(scriptNode);
             }
             headNode.appendChild(scriptNode);
         }
+        --numLoading;
+        if (numLoading <= 0) func();
     }
 
     /**
@@ -22757,8 +23441,7 @@ if (!JSON) {
      *
      * Injects scripts into the iframe
      *
-     * First removes all old injected script tags.
-     * Then injects `<script class="injectedlib" src="...">` lines into given
+     * Inserts `<script class="injectedlib" src="...">` lines into given
      * iframe object, one for every given library.
      *
      * @param {HTMLIFrameElement} iframe The target iframe
@@ -22818,7 +23501,8 @@ if (!JSON) {
      * The frame element must exists or an error will be thrown.
      *
      * @param {GameWindow} W The current GameWindow object
-     * @param {string} W Optional. The previous position of the header
+     * @param {string} oldHeaderPos Optional. The previous position of the
+     *   header
      *
      * @api private
      */
@@ -22932,8 +23616,9 @@ if (!JSON) {
     /**
      * ### GameWindow.promptOnleave
      *
-     * Captures the onbeforeunload event and warns the user that leaving the
-     * page may halt the game
+     * Displays a confirmation box upon closing the window or tab
+     *
+     * Listens on the onbeforeunload event.
      *
      * @param {object} windowObj Optional. The window container in which
      *   to bind the ESC key
@@ -22943,7 +23628,7 @@ if (!JSON) {
      */
     GameWindow.prototype.promptOnleave = function(windowObj, text) {
         windowObj = windowObj || window;
-        text = 'undefined' !== typeof text ? text : this.conf.textOnleave;
+        text = 'undefined' !== typeof text ? text : this.conf.promptOnleaveText;
 
         windowObj.onbeforeunload = function(e) {
             e = e || window.event;
@@ -23057,9 +23742,13 @@ if (!JSON) {
             throw new TypeError('GameWindow.lockScreen: text must be string ' +
                                 'or undefined');
         }
-        if (!this.isReady()) {
-            setTimeout(function() { that.lockScreen(text); }, 100);
-        }
+        // Feb 16.02.2015
+        // Commented out the time-out part. It causes the browser to get stuck
+        // on a locked screen, because the method is invoked multiple times.
+        // If no further problem is found out, it can be eliminated.
+        // if (!this.isReady()) {
+        //   setTimeout(function() { that.lockScreen(text); }, 100);
+        // }
         this.setScreenLevel('LOCKING');
         text = text || 'Screen locked. Please wait...';
         this.waitScreen.lock(text);
@@ -23136,47 +23825,87 @@ if (!JSON) {
         return el;
     }
 
-    node.on('NODEGAME_GAME_CREATED', function() {
-        W.init(node.conf.window);
-    });
+    var GameWindow = node.GameWindow;
 
-    node.on('HIDE', function(idOrObj) {
-        var el = getElement(idOrObj, 'GameWindow.on.HIDE');
-        el.style.display = 'none';
-    });
+    /**
+     * ## GameWindow.addDefaultListeners
+     *
+     * Adds a battery of event listeners for incoming messages
+     *
+     * If executed once, it requires a force flag to re-add the listeners
+     *
+     * @param {boolean} force Whether to force re-adding the listeners
+     * @return {boolean} TRUE on success
+     */
+    GameWindow.prototype.addDefaultListeners = function(force) {
 
-    node.on('SHOW', function(idOrObj) {
-        var el = getElement(idOrObj, 'GameWindow.on.SHOW');
-        el.style.display = '';
-    });
-
-    node.on('TOGGLE', function(idOrObj) {
-        var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-
-        if (el.style.display === 'none') {
-            el.style.display = '';
+        if (this.listenersAdded && !force) {
+            node.err('node.window.addDefaultListeners: listeners already ' +
+                     'added once. Use the force flag to re-add.');
+            return false;
         }
-        else {
+
+        node.on('NODEGAME_GAME_CREATED', function() {
+            W.init(node.conf.window);
+        });
+
+        node.on('HIDE', function(idOrObj) {
+            var el = getElement(idOrObj, 'GameWindow.on.HIDE');
             el.style.display = 'none';
-        }
-    });
+        });
 
-    // Disable all the input forms found within a given id element.
-    node.on('INPUT_DISABLE', function(id) {
-        W.toggleInputs(id, true);
-    });
+        node.on('SHOW', function(idOrObj) {
+            var el = getElement(idOrObj, 'GameWindow.on.SHOW');
+            el.style.display = '';
+        });
 
-    // Disable all the input forms found within a given id element.
-    node.on('INPUT_ENABLE', function(id) {
-        W.toggleInputs(id, false);
-    });
+        node.on('TOGGLE', function(idOrObj) {
+            var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
 
-    // Disable all the input forms found within a given id element.
-    node.on('INPUT_TOGGLE', function(id) {
-        W.toggleInputs(id);
-    });
+            if (el.style.display === 'none') {
+                el.style.display = '';
+            }
+            else {
+                el.style.display = 'none';
+            }
+        });
 
-    node.log('node-window: listeners added.');
+        // Disable all the input forms found within a given id element.
+        node.on('INPUT_DISABLE', function(id) {
+            W.toggleInputs(id, true);
+        });
+
+        // Disable all the input forms found within a given id element.
+        node.on('INPUT_ENABLE', function(id) {
+            W.toggleInputs(id, false);
+        });
+
+        // Disable all the input forms found within a given id element.
+        node.on('INPUT_TOGGLE', function(id) {
+            W.toggleInputs(id);
+        });
+
+        /**
+         * Force disconnection upon page unload
+         *
+         * This makes browsers using AJAX to signal disconnection immediately.
+         *
+         * Kudos:
+         * http://stackoverflow.com/questions/1704533/intercept-page-exit-event
+         */
+        window.onunload = function() {
+            var i;
+            node.socket.disconnect();
+            // Do nothing, but gain time.
+            for (i = -1 ; ++i < 100000 ; ) { }
+        };
+
+        // Mark listeners as added.
+        this.listenersAdded = true;
+
+        node.silly('node-window: listeners added.');
+        return true;
+    };
 
 })(
     'undefined' !== typeof node ? node : undefined
@@ -23218,21 +23947,35 @@ if (!JSON) {
      * be re-activated later.
      *
      * @param {Document|Element} container The target to scan for input tags
+     * @param {boolean} disable Optional. Lock inputs if TRUE, unlock if FALSE.
+     *   Default: TRUE
      *
      * @api private
      */
-    function lockUnlockedInputs(container) {
+    function lockUnlockedInputs(container, disable) {
         var j, i, inputs, nInputs;
+
+        if ('undefined' === typeof disable) disable = true;
+
         for (j = -1; ++j < len; ) {
             inputs = container.getElementsByTagName(inputTags[j]);
             nInputs = inputs.length;
             for (i = -1 ; ++i < nInputs ; ) {
-                if (!inputs[i].disabled) {
-                    inputs[i].disabled = true;
-                    W.waitScreen.lockedInputs.push(inputs[i]);
+                if (disable) {
+                    if (!inputs[i].disabled) {
+                        inputs[i].disabled = true;
+                        W.waitScreen.lockedInputs.push(inputs[i]);
+                    }
+                }
+                else {
+                    if (inputs[i].disabled) {
+                        inputs[i].disabled = false;
+                    }
                 }
             }
         }
+
+        if (!disable) W.waitScreen.lockedInputs = [];
     }
 
     function event_REALLY_DONE(text) {
@@ -23420,7 +24163,11 @@ if (!JSON) {
         }
         // Disables all input forms in the page.
         lockUnlockedInputs(document);
-        frameDoc = W.getFrameDocument();
+
+        //frameDoc = W.getFrameDocument();
+        // Using this for IE8 compatibility.
+        frameDoc = W.getIFrameDocument(W.getFrame());
+
         if (frameDoc) lockUnlockedInputs(frameDoc);
 
         if (!this.waitingDiv) {
@@ -23443,18 +24190,25 @@ if (!JSON) {
      * @see WaitScreen.lock
      */
     WaitScreen.prototype.unlock = function() {
-        var i, len;
+        var j, i, len, inputs, nInputs;
+
         if (this.waitingDiv) {
             if (this.waitingDiv.style.display === '') {
                 this.waitingDiv.style.display = 'none';
             }
         }
         // Re-enables all previously locked input forms in the page.
-        i = -1, len = this.lockedInputs.length;
-        for ( ; ++i < len ; ) {
-            this.lockedInputs[i].removeAttribute('disabled');
+        try {
+            len = this.lockedInputs.length;
+            for (i = -1 ; ++i < len ; ) {
+                this.lockedInputs[i].removeAttribute('disabled');
+            }
+            this.lockedInputs = [];
         }
-        this.lockedInputs = [];
+        catch(e) {
+            // For IE8.
+            lockUnlockedInputs(W.getIFrameDocument(W.getFrame()), false);
+        }
     };
 
     /**
@@ -25478,6 +26232,7 @@ if (!JSON) {
     Widget.prototype.destroy = function() {};
 
     Widget.prototype.setTitle = function(title) {
+        var tmp;
         if (!this.panelDiv) {
             throw new Error('Widget.setTitle: panelDiv is missing.');
         }
@@ -25494,8 +26249,9 @@ if (!JSON) {
                 // Add heading.
                 this.headingDiv = W.addDiv(this.panelDiv, undefined,
                         {className: 'panel-heading'});
-                // Move it to before the body.
-                this.panelDiv.insertBefore(this.headingDiv, this.bodyDiv);
+                // Move it to before the body (IE cannot have undefined).
+                tmp = (this.bodyDiv && this.bodyDiv.childNodes[0]) || null;
+                this.panelDiv.insertBefore(this.headingDiv, tmp);
             }
 
             // Set title.
@@ -25579,7 +26335,7 @@ if (!JSON) {
         this.widgets = {};
 
         /**
-         * ### Widgets.widgets
+         * ### Widgets.instances
          *
          * Container of appended widget instances
          *
@@ -25634,6 +26390,7 @@ if (!JSON) {
      * @param {string} w_str The name of the widget to load
      * @param {options} options Optional. Configuration options
      *   to be passed to the widgets
+     *
      * @return {object} widget The requested widget
      *
      * @see Widgets.add
@@ -25701,15 +26458,13 @@ if (!JSON) {
      * In the latter case, dependencies are checked, and it returns FALSE if
      * conditions are not met.
      *
-     * It automatically creates a fieldset element around the widget if
-     * requested by the internal widget configuration, or if specified in the
-     * options parameter.
-     *
-     * @param {string} w_str The name of the widget to load
-     * @param {object} root. Optional. The HTML element under which the widget
-     *   will be appended. Default: `GameWindow.getFrameRoot()` or document.body
+     * @param {string|object} w The name of the widget to load or a loaded
+     *   widget object
+     * @param {object} root Optional. The HTML element under which the widget
+     *   will be appended. Default: `GameWindow.getFrameRoot()` or
+     *   `document.body`
      * @param {options} options Optional. Configuration options to be passed
-     *   to the widgets
+     *   to the widget
      *
      * @return {object|boolean} The requested widget, or FALSE is an error
      *   occurs
@@ -25741,12 +26496,6 @@ if (!JSON) {
             w = this.get(w, options);
         }
 
-        // If fieldset option is null, a div is added instead.
-        // If fieldset option is undefined, default options are used.
-        //if (options.fieldset !== null) {
-        //    root = appendFieldset(root, options.fieldset ||
-        //                          w.defaults.fieldset, w);
-        //}
         w.panelDiv = appendDiv(root, {
             attributes: {
                 className: ['ng_widget', 'panel', 'panel-default', w.className]
@@ -25826,7 +26575,7 @@ if (!JSON) {
      *
      * TODO: Check for version and other constraints.
      *
-     * @param {object} The widget to check
+     * @param {object} w The widget to check
      * @param {boolean} quiet Optional. If TRUE, no warning will be raised.
      *   Default: FALSE
      * @return {boolean} TRUE, if all dependencies are met
@@ -25858,14 +26607,6 @@ if (!JSON) {
 
 
     // ## Helper functions
-
-    //function appendFieldset(root, options, w) {
-    //    var idFieldset, legend;
-    //    if (!options) return root;
-    //    idFieldset = options.id || w.id + '_fieldset';
-    //    legend = options.legend || w.legend;
-    //    return W.addFieldset(root, idFieldset, legend, options.attributes);
-    //}
 
     function appendDiv(root, options) {
         // TODO: Check every parameter
@@ -25924,20 +26665,16 @@ if (!JSON) {
 
     var J = node.JSUS;
 
-    // ## Defaults
-
-    Chat.defaults = {};
-    Chat.defaults.id = 'chat';
-    Chat.defaults.fieldset = { legend: 'Chat' };
-    Chat.defaults.mode = 'MANY_TO_MANY';
-    Chat.defaults.textarea_id = 'chat_textarea';
-    Chat.defaults.chat_id = 'chat_chat';
-    Chat.defaults.chat_event = 'CHAT';
-    Chat.defaults.submit_id = 'chat_submit';
-    Chat.defaults.submit_text = 'chat';
-
+    node.widgets.register('Chat', Chat);
 
     // ## Meta-data
+
+    Chat.version = '0.4.1';
+    Chat.description = 'Offers a uni-/bi-directional communication interface ' +
+        'between players, or between players and the experimenter.';
+
+    Chat.title = 'Chat';
+    Chat.className = 'chat';
 
     // ### Chat.modes
     //
@@ -25947,10 +26684,10 @@ if (!JSON) {
     // - MANY_TO_ONE: everybody can see all the messages, private messages can
     //   be received, but not sent.
     //
-    // ONE_TO_ONE: everybody sees only personal messages, private messages can
+    // - ONE_TO_ONE: everybody sees only personal messages, private messages can
     //   be received, but not sent. All messages are sent to the SERVER.
     //
-    // RECEIVER_ONLY: messages can only be received, but not sent.
+    // - RECEIVER_ONLY: messages can only be received, but not sent.
     //
     Chat.modes = {
         MANY_TO_MANY: 'MANY_TO_MANY',
@@ -25959,77 +26696,176 @@ if (!JSON) {
         RECEIVER_ONLY: 'RECEIVER_ONLY'
     };
 
-    Chat.version = '0.4';
-    Chat.description = 'Offers a uni-/bi-directional communication interface ' +
-        'between players, or between players and the experimenter.';
 
     // ## Dependencies
 
     Chat.dependencies = {
         JSUS: {}
+
     };
 
+    /**
+     * ## Chat constructor
+     *
+     * `Chat` is a simple configurable chat
+     *
+     * @param {object} options Optional. Configuration options
+     * which is forwarded to Chat.init.
+     *
+     * @see Chat.init
+     */
     function Chat (options) {
-        this.id = options.id || Chat.id;
-        this.mode = options.mode || Chat.defaults.mode;
+        /**
+         * ### Chat.mode
+         *
+         * Determines to mode of communication
+         *
+         * @see Chat.modes
+         */
+        this.mode = null;
 
-        this.root = null;
+        /**
+         * ### Chat.recipient
+         *
+         * Determines recipient of the messages
+         */
+        this.recipient = null;
 
-        this.textarea_id = options.textarea_id || Chat.defaults.textarea_id;
-        this.chat_id = options.chat_id || Chat.defaults.chat_id;
-        this.submit_id = options.submit_id || Chat.defaults.submit_id;
 
-        this.chat_event = options.chat_event || Chat.defaults.chat_event;
-        this.submit_text = options.submit_text || Chat.defaults.submit_text;
+        /**
+         * ### Chat.textarea
+         *
+         * The textarea wherein to write and read
+         */
+        this.textarea = null;
 
-        this.submit = W.getEventButton(this.chat_event, this.submit_text,
-                                       this.submit_id);
-        this.textarea = W.getElement('textarea', this.textarea_id);
-        this.chat = W.getElement('div', this.chat_id);
+        /**
+         * ### Chat.textareaId
+         *
+         * The id of the textarea
+         */
+        this.textareaId = null;
 
-        if ('undefined' !== typeof options.displayName) {
-            this.displayName = options.displayName;
-        }
 
-        switch(this.mode) {
+        /**
+         * ### Chat.chat
+         *
+         * The DIV wherein to display the chat
+         */
+        this.chat = null;
 
-        case Chat.modes.RECEIVER_ONLY:
-            this.recipient = {value: 'SERVER'};
-            break;
-        case Chat.modes.MANY_TO_ONE:
-            this.recipient = {value: 'ROOM'};
-            break;
-        case Chat.modes.ONE_TO_ONE:
-            this.recipient = {value: 'SERVER'};
-            break;
-        default:
-            this.recipient = W.getRecipientSelector();
-        }
+        /**
+         * ### Chat.chatId
+         *
+         * The id of the chat DIV
+         */
+        this.chatId = null;
+
+
+        /**
+         * ### Chat.submit
+         *
+         * The submit button
+         */
+        this.submit = null;
+
+        /**
+         * ### Chat.submitId
+         *
+         * The id of the submit butten
+         */
+        this.submitId = null;
+
+        /**
+         * ### Chat.submitText
+         *
+         * The text on the submit button
+         */
+        this.submitText = null;
+
+
+        /**
+         * ### Chat.chatEvent
+         *
+         * The event to fire when sending a message
+         */
+        this.chatEvent = null;
+
+        /**
+         * ### Chat.displayName
+         *
+         * Function which displays the sender's name
+         */
+        this.displayName = null;
+        this.init(options)
     }
 
+    // ## Chat methods
 
-    Chat.prototype.append = function(root) {
-        this.root = root;
-        root.appendChild(this.chat);
+    /**
+     * ### Chat.init
+     *
+     * Initializes the widget
+     *
+     * @param {object} options Optional. Configuration options.
+     *
+     * The  options object can have the following attributes:
+     *   - `mode`: Determines to mode of communication
+     *   - `textareaId`: The id of the textarea
+     *   - `chatId`: The id of the chat DIV
+     *   - `submitId`: The id of the submit butten
+     *   - `submitText`: The text on the submit button
+     *   - `chatEvent`: The event to fire when sending a message
+     *   - `displayName`: Function which displays the sender's name
+     */
+    Chat.prototype.init = function(options) {
+        options = options || {};
+        this.mode = options.mode || 'MANY_TO_MANY';
+
+        this.textareaId = options.textareaId || 'chat_textarea';
+        this.chatId = options.chatId || 'chat_chat';
+        this.submitId = options.submitId || 'chat_submit';
+
+        this.chatEvent = options.chatEvent || 'CHAT';
+        this.submitText = options.submitText || 'chat';
+
+        this.submit = W.getEventButton(this.chatEvent, this.submitText,
+                                       this.submitId);
+        this.textarea = W.getElement('textarea', this.textareaId);
+        this.chat = W.getElement('div', this.chatId);
+
+        this.displayName = options.displayName || function(from) {
+            return from;
+        };
+
+        switch(this.mode) {
+            case Chat.modes.RECEIVER_ONLY:
+                this.recipient = {value: 'SERVER'};
+                break;
+            case Chat.modes.MANY_TO_ONE:
+                this.recipient = {value: 'ROOM'};
+                break;
+            case Chat.modes.ONE_TO_ONE:
+                this.recipient = {value: 'SERVER'};
+                break;
+            default:
+                this.recipient = W.getRecipientSelector();
+        }
+    };
+
+
+    Chat.prototype.append = function() {
+        this.bodyDiv.appendChild(this.chat);
 
         if (this.mode !== Chat.modes.RECEIVER_ONLY) {
-            W.writeln('', root);
-            root.appendChild(this.textarea);
-            W.writeln('', root);
-            root.appendChild(this.submit);
+            W.writeln('', this.bodyDiv);
+            this.bodyDiv.appendChild(this.textarea);
+            W.writeln('', this.bodyDiv);
+            this.bodyDiv.appendChild(this.submit);
             if (this.mode === Chat.modes.MANY_TO_MANY) {
-                root.appendChild(this.recipient);
+                this.bodyDiv.appendChild(this.recipient);
             }
         }
-        return root;
-    };
-
-    Chat.prototype.getRoot = function() {
-        return this.root;
-    };
-
-    Chat.prototype.displayName = function(from) {
-        return from;
     };
 
     Chat.prototype.readTA = function() {
@@ -26047,7 +26883,7 @@ if (!JSON) {
     Chat.prototype.listeners = function() {
         var that = this;
 
-        node.on(this.chat_event, function() {
+        node.on(this.chatEvent, function() {
             var msg, to, args;
             msg = that.readTA();
             if (!msg) return;
@@ -26063,7 +26899,7 @@ if (!JSON) {
                 '!txt': msg
             };
             that.writeTA('%sMe%s: %msg!txt%msg', args);
-            node.say(that.chat_event, to, msg.trim());
+            node.say(that.chatEvent, to, msg.trim());
         });
 
         if (this.mode === Chat.modes.MANY_TO_MANY) {
@@ -26073,7 +26909,7 @@ if (!JSON) {
             });
         }
 
-        node.on.data(this.chat_event, function(msg) {
+        node.on.data(this.chatEvent, function(msg) {
             var from, args;
             if (msg.from === node.player.id || msg.from === node.player.sid) {
                 return;
@@ -26101,13 +26937,11 @@ if (!JSON) {
         });
     };
 
-    node.widgets.register('Chat', Chat);
-
 })(node);
 
 /**
  * # ChernoffFaces
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Displays multidimensional data in the shape of a Chernoff Face
@@ -26118,99 +26952,115 @@ if (!JSON) {
 
     "use strict";
 
-    var JSUS = node.JSUS,
-    Table = node.window.Table;
+    var J = node.JSUS;
+    var Table = node.window.Table;
 
     node.widgets.register('ChernoffFaces', ChernoffFaces);
 
-    // ## Defaults
-
-    ChernoffFaces.defaults = {};
-    ChernoffFaces.defaults.id = 'ChernoffFaces';
-    ChernoffFaces.defaults.canvas = {};
-    ChernoffFaces.defaults.canvas.width = 100;
-    ChernoffFaces.defaults.canvas.heigth = 100;
 
     // ## Meta-data
 
-    ChernoffFaces.version = '0.3';
+    ChernoffFaces.version = '0.3.1';
     ChernoffFaces.description =
         'Display parametric data in the form of a Chernoff Face.';
+
+    ChernoffFaces.title = 'ChernoffFaces';
+    ChernoffFaces.className = 'chernofffaces';
 
     // ## Dependencies
     ChernoffFaces.dependencies = {
         JSUS: {},
         Table: {},
         Canvas: {},
-        'Controls.Slider': {}
+        SliderControls: {}
     };
 
     ChernoffFaces.FaceVector = FaceVector;
     ChernoffFaces.FacePainter = FacePainter;
+    ChernoffFaces.width = 100;
+    ChernoffFaces.height = 100;
 
     function ChernoffFaces (options) {
-        this.options = options;
-        this.id = options.id;
-        this.table = new Table({id: 'cf_table'});
-        this.root = options.root || document.createElement('div');
-        this.root.id = this.id;
+        var that = this;
 
-        this.sc = node.widgets.get('Controls.Slider');  // Slider Controls
-        this.fp = null; // Face Painter
+        // ## Public Properties
+
+        // ### ChernoffFaces.options
+        // Configuration options
+        this.options = options;
+
+        // ### ChernoffFaces.table
+        // The table containing everything
+        this.table = new Table({id: 'cf_table'});
+
+        // ### ChernoffFaces.sc
+        // The slider controls of the interface
+        this.sc = node.widgets.get('SliderControls');
+
+        // ### ChernoffFaces.fp
+        // The object generating the Chernoff faces
+        this.fp = null;
+
+        // ### ChernoffFaces.canvas
+        // The HTMLElement canvas where the faces are created
         this.canvas = null;
 
+        // ### ChernoffFaces.change
+        // The name of the event emitted when a slider is moved
         this.change = 'CF_CHANGE';
-        var that = this;
+
+        // ### ChernoffFaces.changeFunc
+        // The callback executed when a slider is moved.
         this.changeFunc = function() {
             that.draw(that.sc.getAllValues());
         };
 
+        // ### ChernoffFaces.features
+        // The object containing all the features to draw Chernoff faces
         this.features = null;
+
+        // ### ChernoffFaces.controls
+        // Flag to determine whether the slider controls should be shown.
         this.controls = null;
 
+        // Init.
         this.init(this.options);
     }
 
     ChernoffFaces.prototype.init = function(options) {
         var that = this;
-        this.id = options.id || this.id;
-        var PREF = this.id + '_';
+
+        var controlsOptions;
 
         this.features = options.features || this.features ||
                         FaceVector.random();
 
-        this.controls = ('undefined' !== typeof options.controls) ?
+        this.controls = 'undefined' !== typeof options.controls ?
             options.controls : true;
 
-        var idCanvas = (options.idCanvas) ? options.idCanvas : PREF + 'canvas';
-        var idButton = (options.idButton) ? options.idButton : PREF + 'button';
+        this.canvas = W.getCanvas('ChernoffFaces_canvas', options.canvas);
 
-        this.canvas = node.window.getCanvas(idCanvas, options.canvas);
         this.fp = new FacePainter(this.canvas);
         this.fp.draw(new FaceVector(this.features));
 
-        var sc_options = {
+        controlsOptions = {
             id: 'cf_controls',
-            features: JSUS.mergeOnKey(FaceVector.defaults, this.features,
-                                      'value'),
+            features: J.mergeOnKey(FaceVector.defaults, this.features, 'value'),
             change: this.change,
-            fieldset: {id: this.id + '_controls_fieldest',
-                       legend: this.controls.legend || 'Controls'
-                      },
             submit: 'Send'
         };
 
-        this.sc = node.widgets.get('Controls.Slider', sc_options);
+        this.sc = node.widgets.get('SliderControls', controlsOptions);
 
         // Controls are always there, but may not be visible
-        if (this.controls) {
-            this.table.add(this.sc);
-        }
+        if (this.controls) this.table.add(this.sc);
 
+        // TODO: need to check what to remove first.
         // Dealing with the onchange event
         if ('undefined' === typeof options.change) {
             node.on(this.change, this.changeFunc);
-        } else {
+        }
+        else {
             if (options.change) {
                 node.on(options.change, this.changeFunc);
             }
@@ -26221,19 +27071,21 @@ if (!JSON) {
         }
 
 
+        this.someDiv = document.createElement('div');
+        this.someDiv.appendChild(this.table.table);
+
+
         this.table.add(this.canvas);
         this.table.parse();
-        this.root.appendChild(this.table.table);
     };
 
     ChernoffFaces.prototype.getCanvas = function() {
         return this.canvas;
     };
 
-    ChernoffFaces.prototype.append = function(root) {
-        root.appendChild(this.root);
+    ChernoffFaces.prototype.append = function() {
+        this.bodyDiv.appendChild(this.someDiv);
         this.table.parse();
-        return this.root;
     };
 
     ChernoffFaces.prototype.draw = function(features) {
@@ -26242,7 +27094,7 @@ if (!JSON) {
         this.fp.redraw(fv);
         // Without merging wrong values are passed as attributes
         this.sc.init({
-            features: JSUS.mergeOnKey(FaceVector.defaults, features, 'value')
+            features: J.mergeOnKey(FaceVector.defaults, features, 'value')
         });
         this.sc.refresh();
     };
@@ -26257,7 +27109,7 @@ if (!JSON) {
         this.fp.redraw(fv);
 
         var sc_options = {
-            features: JSUS.mergeOnValue(FaceVector.defaults, fv),
+            features: J.mergeOnValue(FaceVector.defaults, fv),
             change: this.change
         };
         this.sc.init(sc_options);
@@ -26267,14 +27119,14 @@ if (!JSON) {
     };
 
 
-    // FacePainter
-    // The class that actually draws the faces on the Canvas
+    // # FacePainter
+    // The class that actually draws the faces on the Canvas.
     function FacePainter (canvas, settings) {
 
-        this.canvas = new node.window.Canvas(canvas);
+        this.canvas = new W.Canvas(canvas);
 
-        this.scaleX = canvas.width / ChernoffFaces.defaults.canvas.width;
-        this.scaleY = canvas.height / ChernoffFaces.defaults.canvas.heigth;
+        this.scaleX = canvas.width / ChernoffFaces.width;
+        this.scaleY = canvas.height / ChernoffFaces.heigth;
     }
 
     //Draws a Chernoff face.
@@ -26319,7 +27171,7 @@ if (!JSON) {
             return;
         }
 
-        var ration;
+        var ratio;
         if (this.canvas.width > this.canvas.height) {
             ratio = this.canvas.width / face.head_radius * face.head_scale_x;
         }
@@ -26502,8 +27354,6 @@ if (!JSON) {
      * 1 that completely describe a Chernoff face.
      *
      */
-
-
     FaceVector.defaults = {
         // Head
         head_radius: {
@@ -26665,7 +27515,41 @@ if (!JSON) {
             step: 0.01,
             value: 20,
             label: 'Lower lip'
+        },
+
+        scaleX: {
+            min: 0,
+            max: 20,
+            step: 0.01,
+            value: 0.2,
+            label: 'Scale X'
+        },
+
+        scaleY: {
+            min: 0,
+            max: 20,
+            step: 0.01,
+            value: 0.2,
+            label: 'Scale Y'
+        },
+
+        color: {
+            min: 0,
+            max: 20,
+            step: 0.01,
+            value: 0.2,
+            label: 'color'
+        },
+
+        lineWidth: {
+            min: 0,
+            max: 20,
+            step: 0.01,
+            value: 0.2,
+            label: 'lineWidth'
         }
+
+
     };
 
     //Constructs a random face vector.
@@ -26673,7 +27557,7 @@ if (!JSON) {
         var out = {};
         for (var key in FaceVector.defaults) {
             if (FaceVector.defaults.hasOwnProperty(key)) {
-                if (!JSUS.in_array(key,
+                if (!J.in_array(key,
                             ['color', 'lineWidth', 'scaleX', 'scaleY'])) {
 
                     out[key] = FaceVector.defaults[key].min +
@@ -26685,7 +27569,7 @@ if (!JSON) {
         out.scaleX = 1;
         out.scaleY = 1;
 
-        out.color = 'green';
+        out.color = 'red';
         out.lineWidth = 1;
 
         return new FaceVector(out);
@@ -27445,33 +28329,72 @@ if (!JSON) {
 
     // TODO: handle different events, beside onchange
 
+    var J = node.JSUS;
+    var sliderControls = SliderControls;
+    var jQuerySlider = jQuerySliderControls;
+    var radioControls = RadioControls;
+
     node.widgets.register('Controls', Controls);
-
-    // ## Defaults
-
-    var defaults = { id: 'controls' };
-
-    Controls.defaults = defaults;
-
-    Controls.Slider = SliderControls;
-    Controls.jQuerySlider = jQuerySliderControls;
-    Controls.Radio = RadioControls;
 
     // ## Meta-data
 
-    Controls.version = '0.3';
+    Controls.version = '0.3.1';
     Controls.description = 'Wraps a collection of user-inputs controls.';
 
+    Controls.title = 'Controls';
+    Controls.className = 'controls';
+
+    /**
+     * ## Controls constructor
+     *
+     * `Control` wraps a collection of user-input controls
+     *
+     * @param {object} options Optional. Configuration options
+     * which is stored and forwarded to Controls.init.
+     *
+     *  The  options object can have the following attributes:
+     *   - Any option that can be passed to `node.window.List` constructor.
+     *   - `change`: Event to fire when contents change.
+     *   - `features`: Collection of collection attributes for individual
+     *                 controls.
+     *   - `submit`: Description of the submit button.
+     *               If submit.id is defined, the button will get that id and
+     *               the text on the button will be the text in submit.name.
+     *               If submit is a string, it will be the text on the button.
+     *   - `attributes`: Attributes of the submit button.
+     *
+     * @see Controls.init
+     */
     function Controls(options) {
         this.options = options;
-        this.id = 'undefined' !== typeof options.id ? options.id : 'controls';
-        this.root = null;
 
+        /**
+         * ### Controls.listRoot
+         *
+         * The list which holds the controls
+         */
         this.listRoot = null;
-        this.fieldset = null;
+
+        /**
+         * ### Controls.submit
+         *
+         * The submit button
+         */
         this.submit = null;
 
-        this.changeEvent = this.id + '_change';
+        /**
+         * ### Controls.changeEvent
+         *
+         * The event to be fired when the list changes
+         */
+        this.changeEvent = 'Controls_change';
+
+        /**
+         * ### Controls.hasChanged
+         *
+         * Flag to indicate whether the list has changed
+         */
+        this.hasChanged = false;
 
         this.init(options);
     }
@@ -27486,59 +28409,89 @@ if (!JSON) {
         //return node.window.getTextInput(id, attributes);
     };
 
-    Controls.prototype.init = function(options) {
+    // ## Controls methods
 
+    /**
+     * ### Controls.init
+     *
+     * Initializes the widget
+     *
+     * @param {object} options Optional. Configuration options.
+     *
+     * The  options object can have the following attributes:
+     *   - Any option that can be passed to `node.window.List` constructor.
+     *   - `change`: Event to fire when contents change.
+     *   - `features`: Collection of collection attributes for individual
+     *                 controls.
+     *
+     * @see nodegame-window/List
+     */
+    Controls.prototype.init = function(options) {
         this.hasChanged = false; // TODO: should this be inherited?
         if ('undefined' !== typeof options.change) {
-            if (!options.change){
+            if (!options.change) {
                 this.changeEvent = false;
             }
             else {
                 this.changeEvent = options.change;
             }
         }
-        this.list = new node.window.List(options);
+        this.list = new W.List(options);
         this.listRoot = this.list.getRoot();
 
-        if (!options.features) return;
-        if (!this.root) this.root = this.listRoot;
+        if (!options.features) {
+            return;
+        }
+
         this.features = options.features;
         this.populate();
     };
 
-    Controls.prototype.append = function(root) {
-        this.root = root;
-        var toReturn = this.listRoot;
+    /**
+     * ### Controls.append
+     *
+     * Appends the widget to `this.bodyDiv`
+     *
+     * @see Controls.init
+     */
+    Controls.prototype.append = function() {
+        var that = this;
+        var idButton = 'submit_Controls';
+
+
         this.list.parse();
-        root.appendChild(this.listRoot);
+        this.bodyDiv.appendChild(this.listRoot);
 
         if (this.options.submit) {
-            var idButton = 'submit_' + this.id;
             if (this.options.submit.id) {
                 idButton = this.options.submit.id;
-                delete this.options.submit.id;
+                this.option.submit = this.option.submit.name;
             }
-            this.submit = node.window.addButton(root, idButton,
+            this.submit = node.window.addButton(this.bodyDiv, idButton,
                     this.options.submit, this.options.attributes);
 
-            var that = this;
             this.submit.onclick = function() {
                 if (that.options.change) {
                     node.emit(that.options.change);
                 }
             };
         }
-
-        return toReturn;
     };
 
     Controls.prototype.parse = function() {
         return this.list.parse();
     };
 
+    /**
+     * ### Controls.populate
+     *
+     * Adds features to the list.
+     *
+     * @see Controls.init
+     */
     Controls.prototype.populate = function() {
-        var key, id, attributes, container, elem, that;
-        that = this;
+        var key, id, attributes, container, elem;
+        var that = this;
 
         for (key in this.features) {
             if (this.features.hasOwnProperty(key)) {
@@ -27575,7 +28528,7 @@ if (!JSON) {
     Controls.prototype.listeners = function() {
         var that = this;
         // TODO: should this be inherited?
-        node.on(this.changeEvent, function(){
+        node.on(this.changeEvent, function() {
             that.hasChanged = true;
         });
 
@@ -27616,22 +28569,30 @@ if (!JSON) {
         return node.window.highlight(this.listRoot, code);
     };
 
-    // Sub-classes
+    // ## Sub-classes
 
-    // Slider
+    /**
+     * ### Slider
+     */
+
 
     SliderControls.prototype.__proto__ = Controls.prototype;
     SliderControls.prototype.constructor = SliderControls;
 
-    SliderControls.id = 'slidercontrols';
-    SliderControls.version = '0.2';
+    SliderControls.version = '0.2.1';
+    SliderControls.description = 'Collection of Sliders.';
+
+    SliderControls.title = 'Slider Controls';
+    SliderControls.className = 'slidercontrols';
 
     SliderControls.dependencies = {
         Controls: {}
     };
 
+    // Need to be after the prototype is inherited.
+    node.widgets.register('SliderControls', SliderControls);
 
-    function SliderControls (options) {
+    function SliderControls(options) {
         Controls.call(this, options);
     }
 
@@ -27643,21 +28604,28 @@ if (!JSON) {
         return node.window.getSlider(id, attributes);
     };
 
-    // jQuerySlider
+    /**
+     * ### jQuerySlider
+     */
+
 
     jQuerySliderControls.prototype.__proto__ = Controls.prototype;
     jQuerySliderControls.prototype.constructor = jQuerySliderControls;
 
-    jQuerySliderControls.id = 'jqueryslidercontrols';
-    jQuerySliderControls.version = '0.13';
+    jQuerySliderControls.version = '0.14';
+    jQuerySliderControls.description = 'Collection of jQuery Sliders.';
+
+    jQuerySliderControls.title = 'jQuery Slider Controls';
+    jQuerySliderControls.className = 'jqueryslidercontrols';
 
     jQuerySliderControls.dependencies = {
         jQuery: {},
         Controls: {}
     };
 
+    node.widgets.register('jQuerySliderControls', jQuerySliderControls);
 
-    function jQuerySliderControls (options) {
+    function jQuerySliderControls(options) {
         Controls.call(this, options);
     }
 
@@ -27678,30 +28646,33 @@ if (!JSON) {
         return slider;
     };
 
-
-    ///////////////////////////
-
-
-    // Radio
+    /**
+     * ### RadioControls
+     */
 
     RadioControls.prototype.__proto__ = Controls.prototype;
     RadioControls.prototype.constructor = RadioControls;
 
-    RadioControls.id = 'radiocontrols';
-    RadioControls.version = '0.1.1';
+    RadioControls.version = '0.1.2';
+    RadioControls.description = 'Collection of Radio Controls.';
+
+    RadioControls.title = 'Radio Controls';
+    RadioControls.className = 'radiocontrols';
 
     RadioControls.dependencies = {
         Controls: {}
     };
 
-    function RadioControls (options) {
+    node.widgets.register('RadioControls', RadioControls);
+
+    function RadioControls(options) {
         Controls.call(this,options);
         this.groupName = ('undefined' !== typeof options.name) ? options.name :
             node.window.generateUniqueId();
         this.radioElem = null;
     }
 
-    // overriding populare also. There is an error with the Label
+    // overriding populate also. There is an error with the Label
     RadioControls.prototype.populate = function() {
         var key, id, attributes, container, elem, that;
         that = this;
@@ -27709,8 +28680,8 @@ if (!JSON) {
         if (!this.radioElem) {
             this.radioElem = document.createElement('radio');
             this.radioElem.group = this.name || "radioGroup";
-            this.radioElem.group = this.id || "radioGroup";
-            root.appendChild(this.radioElem);
+            this.radioElem.group = this.className || "radioGroup";
+            this.bodyDiv.appendChild(this.radioElem);
         }
 
         for (key in this.features) {
@@ -28008,38 +28979,45 @@ if (!JSON) {
 
     node.widgets.register('DataBar', DataBar);
 
-    // ## Defaults
-    DataBar.defaults = {};
-    DataBar.defaults.id = 'databar';
-    DataBar.defaults.fieldset = {
-        legend: 'Send DATA to players'
-    };
-
     // ## Meta-data
-    DataBar.version = '0.4';
+
+    DataBar.version = '0.4.1';
     DataBar.description =
         'Adds a input field to send DATA messages to the players';
 
-    function DataBar(options) {
+    DataBar.title = 'DataBar';
+    DataBar.className = 'databar';
+
+
+    /**
+     * ## DataBar constructor
+     *
+     * Instantiates a new DataBar object
+     */
+    function DataBar() {
         this.bar = null;
-        this.root = null;
         this.recipient = null;
     }
 
-    DataBar.prototype.append = function(root) {
+    // ## DataBar methods
+
+     /**
+     * ## DataBar.append
+     *
+     * Appends widget to `this.bodyDiv`
+     */
+    DataBar.prototype.append = function() {
 
         var sendButton, textInput, dataInput;
-
-        sendButton = W.addButton(root);
-        //W.writeln('Text');
-        textInput = W.addTextInput(root, 'data-bar-text');
-        W.addLabel(root, textInput, undefined, 'Text');
-        W.writeln('Data');
-        dataInput = W.addTextInput(root, 'data-bar-data');
-
-        this.recipient = W.addRecipientSelector(root);
-
         var that = this;
+
+        sendButton = W.addButton(this.bodyDiv);
+        textInput = W.addTextInput(this.bodyDiv, 'data-bar-text');
+        W.addLabel(this.bodyDiv, textInput, undefined, 'Text');
+        W.writeln('Data');
+        dataInput = W.addTextInput(this.bodyDiv, 'data-bar-data');
+
+        this.recipient = W.addRecipientSelector(this.bodyDiv);
 
         sendButton.onclick = function() {
             var to, data, text;
@@ -28056,10 +29034,208 @@ if (!JSON) {
         node.on('UPDATED_PLIST', function() {
             node.window.populateRecipientSelector(that.recipient, node.game.pl);
         });
+    };
 
-        return root;
+})(node);
+
+/**
+ * # DebugInfo
+ * Copyright(c) 2015 Stefano Balietti
+ * MIT Licensed
+ *
+ * Display information about the state of a player
+ *
+ * www.nodegame.org
+ */
+(function(node) {
+
+    "use strict";
+
+    var Table = node.window.Table,
+    GameStage = node.GameStage;
+
+    node.widgets.register('DebugInfo', DebugInfo);
+
+    // ## Meta-data
+
+    DebugInfo.version = '0.5.0';
+    DebugInfo.description = 'Display basic info about player\'s status.';
+
+    DebugInfo.title = 'State Display';
+    DebugInfo.className = 'statedisplay';
+
+    // ## Dependencies
+
+    DebugInfo.dependencies = {
+        Table: {}
+    };
+
+
+    /**
+     * ## DebugInfo constructor
+     *
+     * `DebugInfo` displays information about the state of a player
+     */
+    function DebugInfo() {
+        /**
+         * ### DebugInfo.table
+         *
+         * The `Table` which holds the information
+         *
+         * @See nodegame-window/Table
+         */
+        this.table = new Table();
+    }
+
+    // ## DebugInfo methods
+
+    /**
+     * ### DebugInfo.append
+     *
+     * Appends widget to `this.bodyDiv` and calls `this.updateAll`
+     *
+     * @see DebugInfo.updateAll
+     */
+    DebugInfo.prototype.append = function() {
+        var that, checkPlayerName;
+        that = this;
+        checkPlayerName = setInterval(function() {
+            if (node.player && node.player.id) {
+                clearInterval(checkPlayerName);
+                that.updateAll();
+            }
+        }, 100);
+        this.bodyDiv.appendChild(this.table.table);
+    };
+
+    /**
+     * ### DebugInfo.updateAll
+     *
+     * Updates information in `this.table`
+     */
+    DebugInfo.prototype.updateAll = function() {
+        var stage, stageNo, stageId, playerId, tmp, miss;
+        miss = '-';
+
+        stageId = miss;
+        stageNo = miss;
+        playerId = miss;
+
+        if (node.player.id) {
+            playerId = node.player.id;
+        }
+
+        stage = node.game.getCurrentGameStage();
+        if (stage) {
+            tmp = node.game.plot.getStep(stage);
+            stageId = tmp ? tmp.id : '-';
+            stageNo = stage.toString();
+        }
+
+        this.table.clear(true);
+        this.table.addRow(['Stage  No: ', stageNo]);
+        this.table.addRow(['Stage  Id: ', stageId]);
+        this.table.addRow(['Player Id: ', playerId]);
+        this.table.parse();
 
     };
+
+    DebugInfo.prototype.listeners = function() {
+        var that = this;
+        node.on('STEP_CALLBACK_EXECUTED', function() {
+            that.updateAll();
+        });
+    };
+
+    DebugInfo.prototype.destroy = function() {
+        node.off('STEP_CALLBACK_EXECUTED', DebugInfo.prototype.updateAll);
+    };
+
+})(node);
+
+/**
+ * # DisconnectBox
+ * Copyright(c) 2014 Stefano Balietti
+ * MIT Licensed
+ *
+ * Shows current, previous and next stage.
+ *
+ * www.nodegame.org
+ */
+(function(node) {
+
+    "use strict";
+
+    var JSUS = node.JSUS;
+    var Table = W.Table;
+
+    node.widgets.register('DisconnectBox', DisconnectBox);
+
+    // ## Meta-data
+
+    DisconnectBox.version = '0.2.2';
+    DisconnectBox.description =
+        'Visually display current, previous and next stage of the game.';
+
+    DisconnectBox.title = 'Disconnect';
+    DisconnectBox.className = 'disconnectbox';
+
+    // ## Dependencies
+
+    DisconnectBox.dependencies = {};
+
+    /**
+     * ## DisconnectBox constructor
+     *
+     * `DisconnectBox` displays current, previous and next stage of the game
+     */
+    function DisconnectBox() {
+        // ### DisconnectBox.disconnectButton
+        // The button for disconnection
+        this.disconnectButton = null;
+        // ### DisconnectBox.ee
+        // The event emitter with whom the events are registered
+        this.ee = null;
+    }
+
+    // ## DisconnectBox methods
+
+    /**
+     * ### DisconnectBox.append
+     *
+     * Appends widget to `this.bodyDiv` and writes the stage
+     *
+     * @see DisconnectBox.writeStage
+     */
+    DisconnectBox.prototype.append = function() {
+        this.disconnectButton = W.getButton(undefined, 'Leave Experiment');
+        this.disconnectButton.className = 'btn btn-lg';
+        this.bodyDiv.appendChild(this.disconnectButton);
+
+        this.disconnectButton.onclick = function() {
+            node.socket.disconnect();
+        };
+    };
+
+    DisconnectBox.prototype.listeners = function() {
+        var that = this;
+
+        this.ee = node.getCurrentEventEmitter();
+        this.ee.on('SOCKET_DISCONNECT', function DBdiscon() {
+            console.log('DB got socket_diconnect');
+            that.disconnectButton.disabled = true;
+        });
+
+        this.ee.on('SOCKET_CONNECT', function DBcon() {
+            console.log('DB got socket_connect');
+        });
+    };
+
+    DisconnectBox.prototype.destroy = function() {
+        this.ee.off('SOCKET_DISCONNECT', 'DBdiscon');
+        this.ee.off('SOCKET_CONNECT', 'DBcon');
+    };
+
 
 })(node);
 
@@ -28217,114 +29393,6 @@ if (!JSON) {
 })(node);
 
 /**
- * # EventButton
- * Copyright(c) 2014 Stefano Balietti
- * MIT Licensed
- *
- * Creates a clickable button that fires an event
- *
- * www.nodegame.org
- */
-(function(node) {
-
-    "use strict";
-
-    var JSUS = node.JSUS;
-
-    node.widgets.register('EventButton', EventButton);
-
-    // ## Defaults
-
-    EventButton.defaults = {};
-    EventButton.defaults.id = 'eventbutton';
-    EventButton.defaults.fieldset = false;
-
-    // ## Meta-data
-
-    EventButton.version = '0.2';
-
-    // ## Dependencies
-
-    EventButton.dependencies = {
-        JSUS: {}
-    };
-
-    function EventButton(options) {
-        this.options = options;
-        this.id = options.id;
-
-        this.root = null;
-        this.text = 'Send';
-        this.button = document.createElement('button');
-        this.callback = null;
-        this.init(this.options);
-    }
-
-    EventButton.prototype.init = function(options) {
-        options = options || this.options;
-        this.button.id = options.id || this.id;
-        var text = options.text || this.text;
-        while (this.button.hasChildNodes()) {
-            this.button.removeChild(this.button.firstChild);
-        }
-        this.button.appendChild(document.createTextNode(text));
-        this.event = options.event || this.event;
-        this.callback = options.callback || this.callback;
-        var that = this;
-        if (this.event) {
-            // Emit Event only if callback is successful
-            this.button.onclick = function() {
-                var ok = true;
-                if (this.callback){
-                    ok = options.callback.call(node.game);
-                }
-                if (ok) node.emit(that.event);
-            };
-        }
-
-        //// Emit DONE only if callback is successful
-        //this.button.onclick = function() {
-        //        var ok = true;
-        //        if (options.exec) ok = options.exec.call(node.game);
-        //        if (ok) node.emit(that.event);
-        //}
-    };
-
-    EventButton.prototype.append = function(root) {
-        this.root = root;
-        root.appendChild(this.button);
-        return root;
-    };
-
-    EventButton.prototype.listeners = function() {};
-
-    // # DoneButton
-
-    node.widgets.register('DoneButton', DoneButton);
-
-    DoneButton.prototype.__proto__ = EventButton.prototype;
-    DoneButton.prototype.constructor = DoneButton;
-
-    // ## Meta-data
-
-    DoneButton.id = 'donebutton';
-    DoneButton.version = '0.1';
-
-    // ## Dependencies
-
-    DoneButton.dependencies = {
-        EventButton: {}
-    };
-
-    function DoneButton (options) {
-        options.event = 'DONE';
-        options.text = options.text || 'Done!';
-        EventButton.call(this, options);
-    }
-
-})(node);
-
-/**
  * # Feedback
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
@@ -28339,18 +29407,17 @@ if (!JSON) {
 
     var J = node.JSUS;
 
-    // ## Defaults
+    node.widgets.register('Feedback', Feedback);
 
-    Feedback.defaults = {};
-    Feedback.defaults.id = 'feedback';
-    Feedback.defaults.fieldset = {
-        legend: 'Feedback'
-    };
 
     // ## Meta-data
 
-    Feedback.version = '0.1';
-    Feedback.description = 'Displays a simple feedback form';
+    Feedback.version = '0.2';
+    Feedback.description = 'Displays a simple feedback form.';
+
+    Feedback.title = 'Feedback';
+    Feedback.className = 'feedback';
+
 
     // ## Dependencies
 
@@ -28358,17 +29425,37 @@ if (!JSON) {
         JSUS: {}
     };
 
-    function Feedback(options) {
-        this.id = options.id || Feedback.id;
-        this.root = null;
+    /**
+     * ## Feedback constructor
+     *
+     * `Feedback` sends a feedback message to the server
+     */
+    function Feedback() {
+        /**
+         * ### Feedback.textarea
+         *
+         * The TEXTAREA wherein clients can enter feedback
+         */
         this.textarea = null;
+
+        /**
+         * ### Feedback.submit
+         *
+         * Button to submit the feedback form
+         */
         this.submit = null;
-        this.label = options.label || 'FEEDBACK';
     }
 
-    Feedback.prototype.append = function(root) {
+    // ## Feedback methods
+
+    /**
+     * ### Feedback.append
+     *
+     * Appends widget to this.bodyDiv
+     */
+    Feedback.prototype.append = function() {
         var that = this;
-        this.root = root;
+
         this.textarea = document.createElement('textarea');
         this.submit = document.createElement('button');
         this.submit.appendChild(document.createTextNode('Submit'));
@@ -28396,21 +29483,14 @@ if (!JSON) {
                 alert('An error has occurred, feedback not sent.');
             }
         };
-        root.appendChild(this.textarea);
-        root.appendChild(this.submit);
-        return root;
+        this.bodyDiv.appendChild(this.textarea);
+        this.bodyDiv.appendChild(this.submit);
     };
 
-    Feedback.prototype.getRoot = function() {
-        return this.root;
-    };
 
     Feedback.prototype.listeners = function() {
         var that = this;
     };
-
-    node.widgets.register('Feedback', Feedback);
-
 })(node);
 
 /**
@@ -28426,43 +29506,54 @@ if (!JSON) {
 
     "use strict";
 
-    node.widgets.register('GameBoard', GameBoard);
-
     var PlayerList = node.PlayerList;
 
-    // ## Defaults
-
-    GameBoard.defaults = {};
-    GameBoard.defaults.id = 'gboard';
-    GameBoard.defaults.fieldset = {
-        legend: 'Game Board'
-    };
+    node.widgets.register('GameBoard', GameBoard);
 
     // ## Meta-data
 
-    GameBoard.version = '0.4.0';
+    GameBoard.version = '0.4.1';
     GameBoard.description = 'Offer a visual representation of the state of ' +
                             'all players in the game.';
 
+    GameBoard.title = 'Game Board';
+    GameBoard.className = 'gameboard';
+
+    /**
+     * ## GameBoard constructor
+     *
+     * `GameBoard` shows the currently connected players
+     */
     function GameBoard(options) {
-
-        this.id = options.id || GameBoard.defaults.id;
-        this.status_id = this.id + '_statusbar';
-
+        /**
+         * ### GameBoard.board
+         *
+         * The DIV wherein to display the players
+         */
         this.board = null;
-        this.status = null;
-        this.root = null;
 
+        /**
+         * ### GameBoard.status
+         *
+         * The DIV wherein to display the status of the game board
+         */
+        this.status = null;
     }
 
-    GameBoard.prototype.append = function(root) {
-        this.root = root;
-        this.status = node.window.addDiv(root, this.status_id);
-        this.board = node.window.addDiv(root, this.id);
+    // ## GameBoard methods
+
+    /**
+     * ### GameBoard.append
+     *
+     * Appends widget to `this.bodyDiv` and updates the board
+     *
+     * @see GameBoard.updateBoard
+     */
+    GameBoard.prototype.append = function() {
+        this.status = node.window.addDiv(this.bodyDiv, 'gboard_status');
+        this.board = node.window.addDiv(this.bodyDiv, 'gboard');
 
         this.updateBoard(node.game.pl);
-
-        return root;
     };
 
     GameBoard.prototype.listeners = function() {
@@ -28470,10 +29561,51 @@ if (!JSON) {
         node.on('UPDATED_PLIST', function() {
             that.updateBoard(node.game.pl);
         });
-
     };
 
-    GameBoard.prototype.printLine = function(p) {
+    /**
+     * ### GameBoard.updateBoard
+     *
+     * Updates the information on the game board
+     *
+     * @see printLine
+     */
+    GameBoard.prototype.updateBoard = function(pl) {
+        var player, separator;
+        var that = this;
+
+        this.status.innerHTML = 'Updating...';
+
+        if (pl.size()) {
+            that.board.innerHTML = '';
+            pl.forEach( function(p) {
+                player = printLine(p);
+
+                W.write(player, that.board);
+
+                separator = printSeparator();
+                W.write(separator, that.board);
+            });
+        }
+        this.status.innerHTML = 'Connected players: ' + node.game.pl.length;
+    };
+
+    // ## Helper methods
+
+     /**
+     * ### printLine
+     *
+     * Returns a `String` describing the player passed in
+     *
+     * @param {Player} `p`. Player object which will be passed in by a call to
+     * `node.game.pl.forEach`.
+     *
+     * @return {String} A string describing the `Player` `p`.
+     *
+     * @see GameBoard.updateBoard
+     * @see nodegame-client/Player
+     */
+    function printLine(p) {
 
         var line, levels, level;
         levels = node.constants.stageLevels;
@@ -28518,34 +29650,11 @@ if (!JSON) {
         }
 
         return line + '(' + level + ')';
-    };
+    }
 
-    GameBoard.prototype.printSeparator = function(p) {
+    function printSeparator() {
         return W.getElement('hr', null, {style: 'color: #CCC;'});
-    };
-
-
-    GameBoard.prototype.updateBoard = function(pl) {
-        var player, separator;
-        var that = this;
-
-        this.status.innerHTML = 'Updating...';
-
-        if (pl.size()) {
-            that.board.innerHTML = '';
-            pl.forEach( function(p) {
-                player = that.printLine(p);
-
-                W.write(player, that.board);
-
-                separator = that.printSeparator(p);
-                W.write(separator, that.board);
-            });
-        }
-
-
-        this.status.innerHTML = 'Connected players: ' + node.game.pl.length;
-    };
+    }
 
 })(node);
 
@@ -28564,29 +29673,49 @@ if (!JSON) {
 
     node.widgets.register('GameSummary', GameSummary);
 
-    // ## Defaults
-
-    GameSummary.defaults = {};
-    GameSummary.defaults.id = 'gamesummary';
-    GameSummary.defaults.fieldset = { legend: 'Game Summary' };
-
     // ## Meta-data
 
-    GameSummary.version = '0.3';
+    GameSummary.version = '0.3.1';
     GameSummary.description =
         'Show the general configuration options of the game.';
 
-    function GameSummary(options) {
+    GameSummary.title = 'Game Summary';
+    GameSummary.className = 'gamesummary';
+
+
+    /**
+     * ## GameSummary constructor
+     *
+     * `GameSummary` shows the configuration options of the game in a box
+     */
+    function GameSummary() {
+        /**
+         * ### GameSummary.summaryDiv
+         *
+         * The DIV in which to display the information
+         */
         this.summaryDiv = null;
     }
 
-    GameSummary.prototype.append = function(root) {
-        this.root = root;
-        this.summaryDiv = node.window.addDiv(root);
+    // ## GameSummary methods
+
+    /**
+     * ### GameSummary.append
+     *
+     * Appends the widget to `this.bodyDiv` and calls `this.writeSummary`
+     *
+     * @see GameSummary.writeSummary
+     */
+    GameSummary.prototype.append = function() {
+        this.summaryDiv = node.window.addDiv(this.bodyDiv);
         this.writeSummary();
-        return root;
     };
 
+    /**
+     * ### GameSummary.writeSummary
+     *
+     * Writes a summary of the game configuration into `this.summaryDiv`
+     */
     GameSummary.prototype.writeSummary = function(idState, idSummary) {
         var gName = document.createTextNode('Name: ' + node.game.metadata.name),
         gDescr = document.createTextNode(
@@ -28602,7 +29731,7 @@ if (!JSON) {
         this.summaryDiv.appendChild(document.createElement('br'));
         this.summaryDiv.appendChild(gMaxP);
 
-        node.window.addDiv(this.root, this.summaryDiv, idSummary);
+        node.window.addDiv(this.bodyDiv, this.summaryDiv, idSummary);
     };
 
 })(node);
@@ -28782,10 +29911,10 @@ if (!JSON) {
 
     "use strict";
 
-    node.widgets.register('LanguageSelector', LanguageSelector);
-
     var J = node.JSUS,
         game = node.game;
+
+    node.widgets.register('LanguageSelector', LanguageSelector);
 
     // ## Meta-data
 
@@ -28931,7 +30060,7 @@ if (!JSON) {
                             language + 'RadioButton', {
                                 type: 'radio',
                                 name: 'languageButton',
-                                value: msg.data[language].name,
+                                value: msg.data[language].name
                             }
                         );
 
@@ -29133,22 +30262,17 @@ if (!JSON) {
 
     "use strict";
 
+    var J = node.JSUS;
+
     node.widgets.register('MoneyTalks', MoneyTalks);
-
-    var JSUS = node.JSUS;
-
-    // ## Defaults
-
-    MoneyTalks.defaults = {};
-    MoneyTalks.defaults.id = 'moneytalks';
-    MoneyTalks.defaults.fieldset = {
-        legend: 'Earnings'
-    };
 
     // ## Meta-data
 
-    MoneyTalks.version = '0.1.0';
-    MoneyTalks.description = 'Display the earnings of a player.';
+    MoneyTalks.version = '0.1.1';
+    MoneyTalks.description = 'Displays the earnings of a player.';
+
+    MoneyTalks.title = 'Earnings';
+    MoneyTalks.className = 'moneytalks';
 
     // ## Dependencies
 
@@ -29156,44 +30280,88 @@ if (!JSON) {
         JSUS: {}
     };
 
+    /**
+     * ## MoneyTalks constructor
+     *
+     * `MoneyTalks` displays the earnings of the player so far
+     *
+     * @param {object} options Optional. Configuration options
+     * which is forwarded to MoneyTalks.init.
+     *
+     * @see MoneyTalks.init
+     */
     function MoneyTalks(options) {
-        this.id = options.id || MoneyTalks.defaults.id;
-
-        this.root = null;               // the parent element
-
+        /**
+         * ### MoneyTalks.spanCurrency
+         *
+         * The SPAN which holds information on the currency
+         */
         this.spanCurrency = document.createElement('span');
+
+        /**
+         * ### MoneyTalks.spanMoney
+         *
+         * The SPAN which holds information about the money earned so far
+         */
         this.spanMoney = document.createElement('span');
 
+        /**
+         * ### MoneyTalks.currency
+         *
+         * String describing the currency
+         */
         this.currency = 'EUR';
+
+        /**
+         * ### MoneyTalks.money
+         *
+         * Currently earned money
+         */
         this.money = 0;
+
+        /**
+         * ### MoneyTalks.precicison
+         *
+         * Precision of floating point number to display
+         */
         this.precision = 2;
+
         this.init(options);
     }
 
+    // ## MoneyTalks methods
 
+    /**
+     * ### MoneyTalks.init
+     *
+     * Initializes the widget
+     *
+     * @param {object} options Optional. Configuration options.
+     *
+     * The  options object can have the following attributes:
+     *   - `currency`: String describing currency to use.
+     *   - `money`: Current amount of money earned.
+     *   - `precision`: Precision of floating point output to use.
+     *   - `currencyClassName`: Class name to be set for this.spanCurrency.
+     *   - `moneyClassName`: Class name to be set for this.spanMoney;
+     */
     MoneyTalks.prototype.init = function(options) {
         this.currency = options.currency || this.currency;
         this.money = options.money || this.money;
         this.precision = options.precision || this.precision;
 
-        this.spanCurrency.id = options.idCurrency || this.spanCurrency.id ||
-            'moneytalks_currency';
-        this.spanMoney.id = options.idMoney || this.spanMoney.id ||
-            'moneytalks_money';
+        this.spanCurrency.className = options.currencyClassName ||
+            this.spanCurrency.className || 'moneytalkscurrency';
+        this.spanMoney.className = options.moneyClassName ||
+            this.spanMoney.className || 'moneytalksmoney';
 
         this.spanCurrency.innerHTML = this.currency;
         this.spanMoney.innerHTML = this.money;
     };
 
-    MoneyTalks.prototype.getRoot = function() {
-        return this.root;
-    };
-
-    MoneyTalks.prototype.append = function(root, ids) {
-        var PREF = this.id + '_';
-        root.appendChild(this.spanMoney);
-        root.appendChild(this.spanCurrency);
-        return root;
+    MoneyTalks.prototype.append = function() {
+        this.bodyDiv.appendChild(this.spanMoney);
+        this.bodyDiv.appendChild(this.spanCurrency);
     };
 
     MoneyTalks.prototype.listeners = function() {
@@ -29203,6 +30371,11 @@ if (!JSON) {
         });
     };
 
+    /**
+     * ### MoneyTalks.update
+     *
+     * Updates the contents of this.money and this.spanMoney according to amount
+     */
     MoneyTalks.prototype.update = function(amount) {
         if ('number' !== typeof amount) {
             // Try to parse strings
@@ -29214,7 +30387,6 @@ if (!JSON) {
         this.money += amount;
         this.spanMoney.innerHTML = this.money.toFixed(this.precision);
     };
-
 })(node);
 
 /**
@@ -29691,19 +30863,16 @@ if (!JSON) {
 
     var J = node.JSUS;
 
-    // ## Defaults
-
-    Requirements.defaults = {};
-    Requirements.defaults.id = 'requirements';
-    Requirements.defaults.fieldset = {
-        legend: 'Requirements'
-    };
+    node.widgets.register('Requirements', Requirements);
 
     // ## Meta-data
 
-    Requirements.version = '0.5.0';
+    Requirements.version = '0.5.1';
     Requirements.description = 'Checks a set of requirements and display the ' +
         'results';
+
+    Requirements.title = 'Requirements';
+    Requirements.className = 'requirements';
 
     // ## Dependencies
 
@@ -29720,44 +30889,132 @@ if (!JSON) {
      * @param {object} options
      */
     function Requirements(options) {
-        // The id of the widget.
-        this.id = options.id || Requirements.id;
-        // Array of all test callbacks.
+        /**
+         * ### Requirements.callbacks
+         *
+         * Array of all test callbacks
+         */
         this.callbacks = [];
-        // Number of tests still pending.
+
+        /**
+         * ### Requirements.stillChecking
+         *
+         * Number of tests still pending
+         */
         this.stillChecking = 0;
-        // If TRUE, a maximum timeout to the execution of ALL tests is set.
+
+        /**
+         * ### Requirements.withTimeout
+         *
+         * If TRUE, a maximum timeout to the execution of ALL tests is set
+         */
         this.withTimeout = options.withTimeout || true;
-        // The time in milliseconds for the timeout to expire.
+
+        /**
+         * ### Requirements.timeoutTime
+         *
+         * The time in milliseconds for the timeout to expire
+         */
         this.timeoutTime = options.timeoutTime || 10000;
-        // The id of the timeout, if created.
+
+        /**
+         * ### Requirements.timeoutId
+         *
+         * The id of the timeout, if created
+         */
         this.timeoutId = null;
 
-        // Span summarizing the status of the tests.
+        /**
+         * ### Requirements.summary
+         *
+         * Span summarizing the status of the tests
+         */
         this.summary = null;
-        // Span counting how many tests have been completed.
+
+        /**
+         * ### Requirements.summaryUpdate
+         *
+         * Span counting how many tests have been completed
+         */
         this.summaryUpdate = null;
-        // Looping dots to give the user the feeling of code execution.
+
+        /**
+         * ### Requirements.dots
+         *
+         * Looping dots to give the user the feeling of code execution
+         */
         this.dots = null;
 
-        // TRUE if at least one test has failed.
+        /**
+         * ### Requirements.hasFailed
+         *
+         * TRUE if at least one test has failed
+         */
         this.hasFailed = false;
 
-        // The outcomes of all tests.
+        /**
+         * ### Requirements.results
+         *
+         * The outcomes of all tests
+         */
         this.results = [];
 
-        // If true, the final result of the tests will be sent to the server.
+        /**
+         * ### Requirements.sayResult
+         *
+         * If true, the final result of the tests will be sent to the server
+         */
         this.sayResults = options.sayResults || false;
-        // The label of the SAY message that will be sent to the server.
+
+        /**
+         * ### Requirements.sayResultLabel
+         *
+         * The label of the SAY message that will be sent to the server
+         */
         this.sayResultsLabel = options.sayResultLabel || 'requirements';
-        // Callback to add properties to the result object to send to the
-        // server.
+
+        /**
+         * ### Requirements.addToResults
+         *
+         *  Callback to add properties to result object sent to server
+         */
         this.addToResults = options.addToResults || null;
 
-        // Callbacks to be executed at the end of all tests.
+        /**
+         * ### Requirements.onComplete
+         *
+         * Callback to be executed at the end of all tests
+         */
         this.onComplete = null;
+
+        /**
+         * ### Requirements.onSuccess
+         *
+         * Callback to be executed at the end of all tests
+         */
         this.onSuccess = null;
+
+        /**
+         * ### Requirements.onFail
+         *
+         * Callback to be executed at the end of all tests
+         */
         this.onFail = null;
+
+        /**
+         * ### Requirements.list
+         *
+         * `List` to render the results
+         *
+         * @see nodegame-server/List
+         */
+        // TODO: simplify render syntax.
+        this.list = new W.List({
+            render: {
+                pipeline: renderResult,
+                returnAt: 'first'
+            }
+        });
 
         function renderResult(o) {
             var imgPath, img, span, text;
@@ -29779,14 +31036,6 @@ if (!JSON) {
             span.appendChild(text);
             return span;
         }
-
-        // TODO: simplify render syntax.
-        this.list = new W.List({
-            render: {
-                pipeline: renderResult,
-                returnAt: 'first'
-            }
-        });
     }
 
     // ## Requirements methods
@@ -30235,8 +31484,6 @@ if (!JSON) {
         return errMsg;
     }
 
-    node.widgets.register('Requirements', Requirements);
-
 })(node);
 
 /**
@@ -30254,36 +31501,58 @@ if (!JSON) {
 
     node.widgets.register('ServerInfoDisplay', ServerInfoDisplay);
 
-    // ## Defaults
-
-    ServerInfoDisplay.defaults = {};
-    ServerInfoDisplay.defaults.id = 'serverinfodisplay';
-    ServerInfoDisplay.defaults.fieldset = {
-        legend: 'Server Info',
-        id: 'serverinfo_fieldset'
-    };
-
     // ## Meta-data
 
-    ServerInfoDisplay.version = '0.4';
+    ServerInfoDisplay.version = '0.4.1';
+    ServerInfoDisplay.description = 'Displays information about the server.'
 
-    function ServerInfoDisplay(options) {
-        this.id = options.id;
+    ServerInfoDisplay.title = 'Server Info';
+    ServerInfoDisplay.className = 'serverinfodisplay';
 
-        this.root = null;
+    /**
+     * ## ServerInfoDisplay constructor
+     *
+     * `ServerInfoDisplay` shows information about the server
+     */
+    function ServerInfoDisplay() {
+        /**
+         * ### ServerInfoDisplay.div
+         *
+         * The DIV wherein to display the information
+         */
         this.div = document.createElement('div');
+
+        /**
+         * ### ServerInfoDisplay.table
+         *
+         * The table holding the information
+         */
         this.table = null; //new node.window.Table();
+
+        /**
+         * ### ServerInfoDisplay.button
+         *
+         * The button TODO
+         */
         this.button = null;
+
     }
 
-    ServerInfoDisplay.prototype.init = function(options) {
+    // ## ServerInfoDisplay methods
+
+    /**
+     * ### ServerInfoDisplay.init
+     *
+     * Initializes the widget
+     */
+    ServerInfoDisplay.prototype.init = function() {
         var that = this;
         if (!this.div) {
             this.div = document.createElement('div');
         }
         this.div.innerHTML = 'Waiting for the reply from Server...';
         if (!this.table) {
-            this.table = new node.window.Table(options);
+            this.table = new node.window.Table();
         }
         this.table.clear(true);
         this.button = document.createElement('button');
@@ -30292,16 +31561,21 @@ if (!JSON) {
         this.button.onclick = function(){
             that.getInfo();
         };
-        this.root.appendChild(this.button);
+        this.bodyDiv.appendChild(this.button);
         this.getInfo();
     };
 
-    ServerInfoDisplay.prototype.append = function(root) {
-        this.root = root;
-        root.appendChild(this.div);
-        return root;
+    ServerInfoDisplay.prototype.append = function() {
+        this.bodyDiv.appendChild(this.div);
     };
 
+    /**
+     * ### ServerInfoDisplay.getInfo
+     *
+     * Updates current info
+     *
+     * @see ServerInfoDisplay.processInfo
+     */
     ServerInfoDisplay.prototype.getInfo = function() {
         var that = this;
         node.get('INFO', function(info) {
@@ -30310,6 +31584,11 @@ if (!JSON) {
         });
     };
 
+    /**
+     * ### ServerInfoDisplay.processInfo
+     *
+     * Processes incoming server info and displays it in `this.table`
+     */
     ServerInfoDisplay.prototype.processInfo = function(info) {
         this.table.clear(true);
         for (var key in info) {
@@ -30353,17 +31632,27 @@ if (!JSON) {
     StateBar.title = 'Change GameStage';
     StateBar.className = 'statebar';
 
-    function StateBar(options) {
-        this.id = options.id || StateBar.className;
-        this.recipient = null;
+
+    /**
+     * ## StateBar constructor
+     *
+     * `StateBar` provides a simple interface to change game stages
+     */
+    function StateBar() {
+        //this.recipient = null;
     }
 
+    /**
+     * ### StateBar.append
+     *
+     * Appends widget to `this.bodyDiv`
+     */
     StateBar.prototype.append = function() {
-        var prefix, that;
+        var prefix, that = this;
         var idButton, idStageField, idRecipientField;
         var sendButton, stageField, recipientField;
 
-        prefix = this.id + '_';
+        prefix = StateBar.className + '_';
 
         idButton = prefix + 'sendButton';
         idStageField = prefix + 'stageField';
@@ -30378,8 +31667,6 @@ if (!JSON) {
         this.bodyDiv.appendChild(recipientField);
 
         sendButton = node.window.addButton(this.bodyDiv, idButton);
-
-        that = this;
 
         //node.on('UPDATED_PLIST', function() {
         //    node.window.populateRecipientSelector(
@@ -30407,94 +31694,6 @@ if (!JSON) {
 })(node);
 
 /**
- * # StateDisplay
- * Copyright(c) 2014 Stefano Balietti
- * MIT Licensed
- *
- * Display information about the state of a player
- *
- * www.nodegame.org
- */
-(function(node) {
-
-    "use strict";
-
-    var Table = node.window.Table,
-    GameStage = node.GameStage;
-
-    node.widgets.register('StateDisplay', StateDisplay);
-
-    // ## Meta-data
-
-    StateDisplay.version = '0.5.0';
-    StateDisplay.description = 'Display basic info about player\'s status.';
-
-    StateDisplay.title = 'State Display';
-    StateDisplay.className = 'statedisplay';
-
-    // ## Dependencies
-
-    StateDisplay.dependencies = {
-        Table: {}
-    };
-
-    function StateDisplay(options) {
-        this.id = options.id;
-        this.table = new Table();
-    }
-
-    StateDisplay.prototype.append = function() {
-        var that, checkPlayerName;
-        that = this;
-        checkPlayerName = setInterval(function() {
-            if (node.player && node.player.id) {
-                clearInterval(checkPlayerName);
-                that.updateAll();
-            }
-        }, 100);
-        this.bodyDiv.appendChild(this.table.table);
-    };
-
-    StateDisplay.prototype.updateAll = function() {
-        var stage, stageNo, stageId, playerId, tmp, miss;
-        miss = '-';
-
-        stageId = miss;
-        stageNo = miss;
-        playerId = miss;
-
-        if (node.player.id) {
-            playerId = node.player.id;
-        }
-
-        stage = node.game.getCurrentGameStage();
-        if (stage) {
-            tmp = node.game.plot.getStep(stage);
-            stageId = tmp ? tmp.id : '-';
-            stageNo = stage.toString();
-        }
-
-        this.table.clear(true);
-        this.table.addRow(['Stage  No: ', stageNo]);
-        this.table.addRow(['Stage  Id: ', stageId]);
-        this.table.addRow(['Player Id: ', playerId]);
-        this.table.parse();
-
-    };
-
-    StateDisplay.prototype.listeners = function() {
-        var that = this;
-        node.on('STEP_CALLBACK_EXECUTED', function() {
-            that.updateAll();
-        });
-    };
-
-    StateDisplay.prototype.destroy = function() {
-        node.off('STEP_CALLBACK_EXECUTED', StateDisplay.prototype.updateAll);
-    };
-})(node);
-
-/**
  * # VisualRound
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
@@ -30510,9 +31709,9 @@ if (!JSON) {
 
     "use strict";
 
-    node.widgets.register('VisualRound', VisualRound);
-
     var J = node.JSUS;
+
+    node.widgets.register('VisualRound', VisualRound);
 
     // ## Meta-data
 
@@ -30727,7 +31926,7 @@ if (!JSON) {
      * - `COUNT_UP_STAGES_TO_TOTAL`: Display current and total stage number.
      * - `COUNT_UP_ROUNDS_TO_TOTAL`: Display current and total round number.
      * - `COUNT_DOWN_STAGES`: Display number of stages left to play.
-     * - `COUNT_DOWN_ROUNDS: Display number of rounds left in this stage.
+     * - `COUNT_DOWN_ROUNDS`: Display number of rounds left in this stage.
      *
      * @param {array} displayModeNames Array of strings representing the names
      *
@@ -31617,11 +32816,11 @@ if (!JSON) {
 })(node);
 
 /**
- * # VisualState
+ * # VisualStage
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Shows current, previous and next state.
+ * Shows current, previous and next stage.
  *
  * www.nodegame.org
  */
@@ -31629,56 +32828,71 @@ if (!JSON) {
 
     "use strict";
 
-    node.widgets.register('VisualState', VisualState);
+    var JSUS = node.JSUS;
+    var Table = node.window.Table;
 
-    var JSUS = node.JSUS,
-    Table = node.window.Table;
+    node.widgets.register('VisualStage', VisualStage);
 
     // ## Meta-data
 
-    VisualState.version = '0.2.1';
-    VisualState.description =
-        'Visually display current, previous and next state of the game.';
+    VisualStage.version = '0.2.2';
+    VisualStage.description =
+        'Visually display current, previous and next stage of the game.';
 
-    VisualState.title = 'State';
-    VisualState.className = 'visualstate';
+    VisualStage.title = 'Stage';
+    VisualStage.className = 'visualstage';
 
     // ## Dependencies
 
-    VisualState.dependencies = {
+    VisualStage.dependencies = {
         JSUS: {},
         Table: {}
     };
 
-    function VisualState(options) {
-        this.id = options.id;
+    /**
+     * ## VisualStage constructor
+     *
+     * `VisualStage` displays current, previous and next stage of the game
+     */
+    function VisualStage() {
         this.table = new Table();
     }
 
-    VisualState.prototype.append = function() {
-        var that = this;
-        var PREF = this.id + '_';
+    // ## VisualStage methods
+
+    /**
+     * ### VisualStage.append
+     *
+     * Appends widget to `this.bodyDiv` and writes the stage
+     *
+     * @see VisualStage.writeStage
+     */
+    VisualStage.prototype.append = function() {
         this.bodyDiv.appendChild(this.table.table);
-        this.writeState();
+        this.writeStage();
     };
 
-    VisualState.prototype.listeners = function() {
+    VisualStage.prototype.listeners = function() {
         var that = this;
 
         node.on('STEP_CALLBACK_EXECUTED', function() {
-            that.writeState();
+            that.writeStage();
         });
-
         // Game over and init?
     };
 
-    VisualState.prototype.writeState = function() {
-        var miss, state, pr, nx, tmp;
+    /**
+     * ### VisualStage.writeStage
+     *
+     * Writes the current, previous and next stage into `this.table`
+     */
+    VisualStage.prototype.writeStage = function() {
+        var miss, stage, pr, nx, tmp;
         var curStep, nextStep, prevStep;
         var t;
 
         miss = '-';
-        state = 'Uninitialized';
+        stage = 'Uninitialized';
         pr = miss;
         nx = miss;
 
@@ -31686,7 +32900,7 @@ if (!JSON) {
 
         if (curStep) {
             tmp = node.game.plot.getStep(curStep);
-            state = tmp ? tmp.id : miss;
+            stage = tmp ? tmp.id : miss;
 
             prevStep = node.game.plot.previous(curStep);
             if (prevStep) {
@@ -31704,7 +32918,7 @@ if (!JSON) {
         this.table.clear(true);
 
         this.table.addRow(['Previous: ', pr]);
-        this.table.addRow(['Current: ', state]);
+        this.table.addRow(['Current: ', stage]);
         this.table.addRow(['Next: ', nx]);
 
         t = this.table.selexec('y', '=', 0);
@@ -31729,9 +32943,10 @@ if (!JSON) {
 
     "use strict";
 
+    var J = node.JSUS;
+
     node.widgets.register('VisualTimer', VisualTimer);
 
-    var J = node.JSUS;
 
     // ## Meta-data
 
@@ -31758,16 +32973,14 @@ if (!JSON) {
      * The options it can take are:
      *
      *   - any options that can be passed to a `GameTimer`
-     *   - waitBoxOptions: an option object to be passed to `TimerBox`
-     *   - mainBoxOptions: an option object to be passed to `TimerBox`
+     *   - `waitBoxOptions`: an option object to be passed to `TimerBox`
+     *   - `mainBoxOptions`: an option object to be passed to `TimerBox`
      *
      * @see TimerBox
      * @see GameTimer
      */
     function VisualTimer(options) {
         this.options = options || {};
-        this.options.update = ('undefined' === typeof this.options.update) ?
-            1000 : this.options.update;
 
         /**
          * ### VisualTimer.gameTimer
@@ -31814,6 +33027,7 @@ if (!JSON) {
          * Indicates whether the instance has been initializded already
          */
         this.isInitialized = false;
+
         this.init(this.options);
     }
 
@@ -31837,9 +33051,10 @@ if (!JSON) {
      */
     VisualTimer.prototype.init = function(options) {
         var t;
-
-        if (!options) {
-            options = {};
+        options = options || {};
+        if ('object' !== typeof options) {
+            throw new TypeError('VisualTimer.init: options must be ' +
+                                'object or undefined');
         }
         J.mixout(options, this.options);
 
@@ -31884,7 +33099,18 @@ if (!JSON) {
                 };
             }
         });
+
         this.options = options;
+
+        if ('undefined' === typeof this.options.update) {
+            this.options.update = 1000;
+        }
+        if ('undefined' === typeof this.options.stopOnDone) {
+            this.options.stopOnDone = true;
+        }
+        if ('undefined' === typeof this.options.startOnPlaying) {
+            this.options.startOnPlaying = true;
+        }
 
         if (!this.options.mainBoxOptions) {
             this.options.mainBoxOptions = {};
@@ -31929,33 +33155,26 @@ if (!JSON) {
     /**
      * ### VisualTimer.clear
      *
-     * Reverts state of `VisualTimer` to right after constructor call
+     * Reverts state of `VisualTimer` to right after a constructor call
      *
      * @param {object} options Configuration object
      *
-     * @return {object} Old options
+     * @return {object} oldOptions The Old options
      *
      * @see node.timer.destroyTimer
      * @see VisualTimer.init
      */
     VisualTimer.prototype.clear = function(options) {
-        var oldOptions = this.options;
-        if (!options) {
-            options = {};
-        }
+        var oldOptions;
+        options = options || {};
+        oldOptions = this.options;
 
         node.timer.destroyTimer(this.gameTimer);
 
-        // ----- as in constructor -----
-        this.options = options;
-        this.options.update = ('undefined' === typeof this.options.update) ?
-            1000 : this.options.update;
         this.gameTimer = null;
-
         this.activeBox = null;
         this.isInitialized = false;
-        this.init(this.options);
-        // ----- as in constructor ----
+        this.init(options);
 
         return oldOptions;
     };
@@ -32045,7 +33264,7 @@ if (!JSON) {
     /**
       * ### VisualTimer.startWaiting
       *
-      * Changes the `VisualTimer` appearance to a max. wait timer
+      * Stops the timer and changes the appearance to a max. wait timer
       *
       * If options and/or options.milliseconds are undefined, the wait timer
       * will start with the current time left on the `gameTimer`. The mainBox
@@ -32080,7 +33299,7 @@ if (!JSON) {
     /**
       * ### VisualTimer.startTiming
       *
-      * Changes the `VisualTimer` appearance to a regular countdown
+      * Starts the timer and changes appearance to a regular countdown
       *
       * The mainBox will be unstriked and set active, the waitBox will be
       * hidden. All other options are forwarded directly to
@@ -32153,18 +33372,22 @@ if (!JSON) {
 
         node.on('PLAYING', function() {
             var stepObj, timer, options;
-            stepObj = node.game.getCurrentStep();
-            if (!stepObj) return;
-            timer = stepObj.timer;
-            if (timer) {
-                options = processOptions(timer, this.options);
-                that.startTiming(options);
+            if (that.options.startOnPlaying) {
+                stepObj = node.game.getCurrentStep();
+                if (!stepObj) return;
+                timer = stepObj.timer;
+                if (timer) {
+                    options = processOptions(timer, this.options);
+                    that.startTiming(options);
+                }
             }
         });
 
         node.on('REALLY_DONE', function() {
-            if (!that.gameTimer.isStopped()) {
-                that.startWaiting();
+            if (that.options.stopOnDone) {
+                if (!that.gameTimer.isStopped()) {
+                    that.startWaiting();
+                }
             }
        });
     };
@@ -32417,21 +33640,18 @@ if (!JSON) {
 
     "use strict";
 
+    var J = node.JSUS;
+
     node.widgets.register('Wall', Wall);
-
-    var JSUS = node.JSUS;
-
-    // ## Defaults
-
-    Wall.defaults = {};
-    Wall.defaults.id = 'wall';
-    Wall.defaults.fieldset = { legend: 'Game Log' };
 
     // ## Meta-data
 
-    Wall.version = '0.3';
-    Wall.description = 'Intercepts all LOG events and prints them into a DIV ' +
+    Wall.version = '0.3.1';
+    Wall.description = 'Intercepts all LOG events and prints them into a PRE ' +
                        'element with an ordinal number and a timestamp.';
+
+    Wall.title = 'Wall';
+    Wall.className = 'wall';
 
     // ## Dependencies
 
@@ -32439,28 +33659,78 @@ if (!JSON) {
         JSUS: {}
     };
 
+    /**
+     * ## Wall constructor
+     *
+     * `Wall` prints all LOG events into a PRE.
+     *
+     * @param {object} options Optional. Configuration options
+     * The options it can take are:
+     *
+     *   - id: The id of the PRE in which to write.
+     *   - name: The name of this Wall.
+     */
     function Wall(options) {
-        this.id = options.id || Wall.id;
+        /**
+         * ### Wall.id
+         *
+         * The id of the PRE in which to write
+         */
+        this.id = options.id || 'wall';
+
+        /**
+         * ### Wall.name
+         *
+         * The name of this Wall
+         */
         this.name = options.name || this.name;
+
+        /**
+         * ### Wall.buffer
+         *
+         * Buffer for logs which are to be logged before the document is ready
+         */
         this.buffer = [];
+
+        /**
+         * ### Wall.counter
+         *
+         * Counts number of entries on wall
+         */
         this.counter = 0;
 
+        /**
+         * ### Wall.wall
+         *
+         * The PRE in which to write
+         */
         this.wall = node.window.getElement('pre', this.id);
     }
 
+    // ## Wall methods
+
+    /**
+     * ### Wall.init
+     *
+     * Initializes the instance.
+     *
+     * If options are provided, the counter is set to `options.counter`
+     * otherwise nothing happens.
+     */
     Wall.prototype.init = function(options) {
         options = options || {};
         this.counter = options.counter || this.counter;
     };
 
-    Wall.prototype.append = function(root) {
-        return root.appendChild(this.wall);
+    Wall.prototype.append = function() {
+        return this.bodyDiv.appendChild(this.wall);
     };
 
-    Wall.prototype.getRoot = function() {
-        return this.wall;
-    };
-
+    /**
+     * ### Wall.listeners
+     *
+     * Wall has a listener to the `LOG` event
+     */
     Wall.prototype.listeners = function() {
         var that = this;
         node.on('LOG', function(msg) {
@@ -32469,15 +33739,28 @@ if (!JSON) {
         });
     };
 
+
+    /**
+     *  ### Wall.write
+     *
+     * Writes argument as first entry of this.wall if document is fully loaded
+     *
+     * Writes into this.buffer if document is not ready yet.
+     */
     Wall.prototype.write = function(text) {
         if (document.readyState !== 'complete') {
             this.buffer.push(s);
         } else {
-            var mark = this.counter++ + ') ' + JSUS.getTime() + ' ';
+            var mark = this.counter++ + ') ' + J.getTime() + ' ';
             this.wall.innerHTML = mark + text + "\n" + this.wall.innerHTML;
         }
     };
 
+    /**
+     * ### Wall.debuffer
+     *
+     * If the document is ready, the buffer content is written into this.wall
+     */
     Wall.prototype.debuffer = function() {
         if (document.readyState === 'complete' && this.buffer.length > 0) {
             for (var i=0; i < this.buffer.length; i++) {

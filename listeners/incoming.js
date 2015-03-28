@@ -142,9 +142,9 @@
          * ## in.get.DATA
          *
          * Re-emits the incoming message, and replies back to the sender
-         * 
+         *
          * Does the following operations:
-         * 
+         *
          * - Validates the msg.text field
          * - Emits a get.<msg.text> event
          * - Replies to the sender with with the return values of the emit call
@@ -158,7 +158,7 @@
             }
             res = node.emit(get + msg.text, msg);
             if (!J.isEmpty(res)) {
-                node.say(msg.text, msg.from, res);
+                node.say(msg.text + '_' + msg.id, msg.from, res);
             }
         });
 
@@ -364,6 +364,17 @@
         });
 
         /**
+         * ## in.get.PLAYER
+         *
+         * Gets the current _Player_ object
+         *
+         * @see Player
+         */
+        node.events.ng.on( get + 'PLAYER', function() {
+            return node.player;
+        });
+
+        /**
          * ## in.get.LANG | get.LANG
          *
          * Gets the currently used language
@@ -389,6 +400,16 @@
         node.events.ng.on( IN + set + 'LANG', function(msg) {
             node.setLanguage(msg.data);
         });
+
+        /**
+         * ## get.PING
+         *
+         * Returns a dummy reply to PING requests
+         */
+        node.events.ng.on( get + 'PING', function() {
+            return 'pong';
+        });
+
 
         node.incomingAdded = true;
         node.silly('incoming listeners added');

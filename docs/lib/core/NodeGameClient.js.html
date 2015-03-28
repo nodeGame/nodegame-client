@@ -243,8 +243,9 @@ multiplayer games in the browser.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameClient</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
 
-        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node: loading.&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1217,7 +1218,7 @@ Updates are not possible for the moment.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;lang&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">language</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">language</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">language</span><span class="p">);</span>            
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">language</span><span class="p">);</span>
         <span class="p">});</span></pre></div>
         </td>
       </tr>
@@ -1288,13 +1289,15 @@ Updates are not possible for the moment.</p>
 </div>
 
   </div>
-  <div class="body"><p>Registers an event listener</p>
+  <div class="body"><p>Registers an event listener on the active event emitter</p>
 
-<p>Listeners registered before a game is started, e.g. in
-the init function of the game object, will stay valid
-throughout the game. Listeners registered after the game
-is started will be removed after the game has advanced
-to its next stage.</p>
+<p>Different event emitters are active during the game. For
+example, before a game is started, e.g. in the init
+function of the game object, the <code>game</code> event emitter is
+active. Events registered with the <code>game</code> event emitter
+stay valid throughout the whole game. Listeners registered
+after the game is started will be removed after the game
+has advanced to its next stage or step.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1307,6 +1310,11 @@ to its next stage.</p>
       <span class="dox_tag_name">listener</span>
       <span class="dox_type">function</span>
       <span>The callback function</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NodeGameClient.off
+  </span>
     </div>
   </div>
 </div>
@@ -1357,7 +1365,9 @@ after its first invocation</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">ee</span><span class="p">,</span> <span class="nx">cbRemove</span><span class="p">;</span></pre></div>
+            <span class="kd">var</span> <span class="nx">ee</span><span class="p">,</span> <span class="nx">cbRemove</span><span class="p">;</span>
+            <span class="nx">ee</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span><span class="p">();</span>
+            <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1365,15 +1375,12 @@ after its first invocation</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
-<p>This function will remove the event listener
-and itself.</p>
+<p>This function will remove the event listener and itself.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="nx">cbRemove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
                 <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">cbRemove</span><span class="p">);</span>
             <span class="p">};</span>
-            <span class="nx">ee</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span><span class="p">();</span>
-            <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
             <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">cbRemove</span><span class="p">);</span>
         <span class="p">};</span></pre></div>
         </td>
@@ -1435,7 +1442,8 @@ and itself.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
-<p>TODO: move aliases into a separate method, like addDefaultIncomingListeners</p>
+<p>TODO: move aliases into a separate method,
+like addDefaultIncomingListeners</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
@@ -1450,8 +1458,7 @@ and itself.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.TXT&#39;</span><span class="p">);</span>
-        </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.TXT&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1646,6 +1653,8 @@ and itself.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultIncomingListeners</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultInternalListeners</span><span class="p">();</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node: created.&#39;</span><span class="p">);</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
