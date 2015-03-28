@@ -422,16 +422,16 @@ if (!Array.prototype.indexOf) {
 }
 
 /**
- * # Shelf.JS 
+ * # Shelf.JS
  * Copyright 2014 Stefano Balietti
  * GPL licenses.
  *
  * Persistent Client-Side Storage
- * 
+ *
  * ---
  */
 (function(exports){
-    
+
     var version = '0.5';
 
     var store = exports.store = function(key, value, options, type) {
@@ -442,7 +442,7 @@ if (!Array.prototype.indexOf) {
 	    return;
 	}
 	store.log('Accessing ' + type + ' storage');
-	
+
 	return store.types[type](key, value, options);
     };
 
@@ -457,8 +457,8 @@ if (!Array.prototype.indexOf) {
     var mainStorageType = "volatile";
 
     //if Object.defineProperty works...
-    try {	
-	
+    try {
+
 	Object.defineProperty(store, 'type', {
 	    set: function(type){
 		if ('undefined' === typeof store.types[type]) {
@@ -486,7 +486,7 @@ if (!Array.prototype.indexOf) {
 	    options.type = type;
 	    return store(key, value, options);
 	};
-	
+
 	if (!store.type || store.type === "volatile") {
 	    store.type = type;
 	}
@@ -494,8 +494,8 @@ if (!Array.prototype.indexOf) {
 
     // TODO: create unit test
     store.onquotaerror = undefined;
-    store.error = function() {	
-	console.log("shelf quota exceeded"); 
+    store.error = function() {
+	console.log("shelf quota exceeded");
 	if ('function' === typeof store.onquotaerror) {
 	    store.onquotaerror(null);
 	}
@@ -505,7 +505,7 @@ if (!Array.prototype.indexOf) {
 	if (store.verbosity > 0) {
 	    console.log('Shelf v.' + version + ': ' + text);
 	}
-	
+
     };
 
     store.isPersistent = function() {
@@ -515,7 +515,7 @@ if (!Array.prototype.indexOf) {
     };
 
     //if Object.defineProperty works...
-    try {	
+    try {
 	Object.defineProperty(store, 'persistent', {
 	    set: function(){},
 	    get: store.isPersistent,
@@ -533,7 +533,7 @@ if (!Array.prototype.indexOf) {
 	}
 	return o;
     };
-    
+
     store.retrocycle = function(o) {
 	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
 	    o = JSON.retrocycle(o);
@@ -545,7 +545,7 @@ if (!Array.prototype.indexOf) {
 	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
 	    throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
 	}
-	
+
 	o = store.decycle(o);
 	return JSON.stringify(o);
     };
@@ -561,7 +561,7 @@ if (!Array.prototype.indexOf) {
 		store.log(o);
 	    }
 	}
-	
+
 	o = store.retrocycle(o);
 	return o;
     };
@@ -569,16 +569,16 @@ if (!Array.prototype.indexOf) {
     // ## In-memory storage
     // ### fallback for all browsers to enable the API even if we can't persist data
     (function() {
-	
+
 	var memory = {},
 	timeout = {};
-	
+
 	function copy(obj) {
 	    return store.parse(store.stringify(obj));
 	}
 
 	store.addType("volatile", function(key, value, options) {
-	    
+
 	    if (!key) {
 		return copy(memory);
 	    }
@@ -612,11 +612,11 @@ if (!Array.prototype.indexOf) {
 }('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
 /**
  * ## Amplify storage for Shelf.js
- * 
+ *
  * v. 1.1.0 22.05.2013 a275f32ee7603fbae6607c4e4f37c4d6ada6c3d5
- * 
- * Important! When updating to next Amplify.JS release, remember to change: 
- * 
+ *
+ * Important! When updating to next Amplify.JS release, remember to change:
+ *
  * - JSON.stringify -> store.stringify to keep support for cyclic objects
  * - JSON.parse -> store.parse (cyclic objects)
  * - store.name -> store.prefix (check)
@@ -627,7 +627,7 @@ if (!Array.prototype.indexOf) {
  */
 (function(exports) {
 
-    var store = exports.store;	
+    var store = exports.store;
 
     if (!store) {
 	throw new Error('amplify.shelf.js: shelf.js core not found.');
@@ -860,14 +860,14 @@ if (!Array.prototype.indexOf) {
 /**
  * ## Cookie storage for Shelf.js
  * Copyright 2015 Stefano Balietti
- * 
+ *
  * Original library from:
  * See http://code.google.com/p/cookies/
  */
 (function(exports) {
 
     var store = exports.store;
-    
+
     if (!store) {
 	throw new Error('cookie.shelf.js: shelf.js core not found.');
     }
@@ -877,7 +877,7 @@ if (!Array.prototype.indexOf) {
     }
 
     var cookie = (function() {
-	
+
 	var resolveOptions, assembleOptionsString, parseCookies, constructor;
         var defaultOptions = {
 	    expiresAt: null,
@@ -885,7 +885,7 @@ if (!Array.prototype.indexOf) {
 	    domain:  null,
 	    secure: false
 	};
-	
+
 	/**
 	 * resolveOptions - receive an options object and ensure all options
          * are present and valid, replacing with defaults where necessary
@@ -896,7 +896,7 @@ if (!Array.prototype.indexOf) {
 	 * @return Object complete and valid options object
 	 */
 	resolveOptions = function(options){
-	    
+
 	    var returnValue, expireDate;
 
 	    if(typeof options !== 'object' || options === null){
@@ -934,7 +934,7 @@ if (!Array.prototype.indexOf) {
 
 	    return returnValue;
 	};
-	
+
 	/**
 	 * assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
 	 *
@@ -953,7 +953,7 @@ if (!Array.prototype.indexOf) {
 		    (options.secure === true ? '; secure' : '')
 	    );
 	};
-	
+
 	/**
 	 * parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
 	 *
@@ -991,7 +991,7 @@ if (!Array.prototype.indexOf) {
 
 	constructor = function(){};
 
-	
+
 	/**
 	 * get - get one, several, or all cookies
 	 *
@@ -1000,7 +1000,7 @@ if (!Array.prototype.indexOf) {
 	 * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
 	 */
 	constructor.prototype.get = function(cookieName) {
-	    
+
 	    var returnValue, item, cookies = parseCookies();
 
 	    if(typeof cookieName === 'string') {
@@ -1023,7 +1023,7 @@ if (!Array.prototype.indexOf) {
 
 	    return returnValue;
 	};
-	
+
 	/**
 	 * filter - get array of cookies whose names match the provided RegExp
 	 *
@@ -1046,7 +1046,7 @@ if (!Array.prototype.indexOf) {
 
 	    return returnValue;
 	};
-	
+
 	/**
 	 * set - set or delete a cookie with desired options
 	 *
@@ -1068,13 +1068,13 @@ if (!Array.prototype.indexOf) {
 
 	    else if (typeof value !== 'string'){
                 //						if(typeof JSON === 'object' && JSON !== null && typeof store.stringify === 'function') {
-                //							
+                //
                 //							value = JSON.stringify(value);
                 //						}
                 //						else {
                 //							throw new Error('cookies.set() received non-string value and could not serialize.');
                 //						}
-		
+
 		value = store.stringify(value);
 	    }
 
@@ -1083,7 +1083,7 @@ if (!Array.prototype.indexOf) {
 
 	    document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
 	};
-	
+
 	/**
 	 * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
 	 *
@@ -1112,7 +1112,7 @@ if (!Array.prototype.indexOf) {
 		}
 	    }
 	};
-	
+
 	/**
 	 * test - test whether the browser is accepting cookies
 	 *
@@ -1131,7 +1131,7 @@ if (!Array.prototype.indexOf) {
 
 	    return returnValue;
 	};
-	
+
 	/**
 	 * setOptions - set default options for calls to cookie methods
 	 *
@@ -1154,7 +1154,7 @@ if (!Array.prototype.indexOf) {
     if (cookie.test()) {
 
 	store.addType("cookie", function(key, value, options) {
-	    
+
 	    if ('undefined' === typeof key) {
 		return cookie.get();
 	    }
@@ -1162,18 +1162,19 @@ if (!Array.prototype.indexOf) {
 	    if ('undefined' === typeof value) {
 		return cookie.get(key);
 	    }
-	    
+
 	    // Set to NULL means delete
 	    if (value === null) {
 		cookie.del(key);
 		return null;
 	    }
 
-	    return cookie.set(key, value, options);		
+	    return cookie.set(key, value, options);
 	});
     }
 
 }(this));
+
 /**
  * # JSUS: JavaScript UtilS.
  * Copyright(c) 2014 Stefano Balietti
@@ -2256,17 +2257,17 @@ if (!Array.prototype.indexOf) {
 
         root = root || document.createElement('span');
         spans = {};
- 
-        // Create an args object, if none is provided. 
+
+        // Create an args object, if none is provided.
         // Defaults %em and %strong are added.
         args = args || {};
         args['%strong'] = '';
         args['%em'] = '';
-        
+
         // Transform arguments before inserting them.
         for (key in args) {
             if (args.hasOwnProperty(key)) {
-                
+
                 switch(key.charAt(0)) {
 
                 case '%': // Span/Strong/Emph .
@@ -2284,8 +2285,8 @@ if (!Array.prototype.indexOf) {
                         continue;
                     }
 
-                    // Can be strong, emph or a generic span.          
-                    spans[idx_start] = key;                    
+                    // Can be strong, emph or a generic span.
+                    spans[idx_start] = key;
 
                     break;
 
@@ -2659,8 +2660,9 @@ if (!Array.prototype.indexOf) {
      *
      */
     DOM.getButton = function(id, text, attributes) {
-        var sb = document.createElement('button');
-        sb.id = id;
+        var sb;
+        sb = document.createElement('button');
+        if ('undefined' !== typeof id) sb.id = id;
         sb.appendChild(document.createTextNode(text || 'Send'));
         return this.addAttributes2Elem(sb, attributes);
     };
@@ -4989,6 +4991,44 @@ if (!Array.prototype.indexOf) {
         }
     };
 
+    /**
+     * ## PARSE.funcName
+     *
+     * Returns the name of the function
+     *
+     * Function.name is a non-standard JavaScript property,
+     * although many browsers implement it. This is a cross-browser
+     * implementation for it.
+     *
+     * In case of anonymous functions, an empty string is returned.
+     *
+     * @param {function} func The function to check
+     *
+     * @return {string} The name of the function
+     *
+     * Kudos to:
+     * http://matt.scharley.me/2012/03/09/monkey-patch-name-ie.html
+     */
+    if ('undefined' !== typeof Function.prototype.name) {
+        PARSE.funcName = function(func) {
+            if ('function' !== typeof func) {
+                throw new TypeError('PARSE.funcName: func must be function.');
+            }
+            return func.name;
+        };
+    }
+    else {
+        PARSE.funcName = function(func) {
+            var funcNameRegex, res;
+            if ('function' !== typeof func) {
+                throw new TypeError('PARSE.funcName: func must be function.');
+            }
+            funcNameRegex = /function\s([^(]{1,})\(/;
+            res = (funcNameRegex).exec(func.toString());
+            return (res && res.length > 1) ? res[1].trim() : "";
+        };
+    };
+
     JSUS.extend(PARSE);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
@@ -5457,7 +5497,7 @@ if (!Array.prototype.indexOf) {
             RegExp.escape = function(str) {
                 return str.replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
             };
-            
+
             regex = RegExp.escape(value);
             regex = regex.replace(/%/g, '.*').replace(/_/g, '.');
             regex = new RegExp('^' + regex + '$', sensitive);
@@ -5474,12 +5514,12 @@ if (!Array.prototype.indexOf) {
                         }
                     }
                 };
-            } 
+            }
             else if (d === '*') {
                 return function(elem) {
                     var d;
                     for (d in elem) {
-                        if ('undefined' !== typeof elem[d]) { 
+                        if ('undefined' !== typeof elem[d]) {
                             if (regex.test(elem[d])) {
                                 return elem;
                             }
@@ -5489,7 +5529,7 @@ if (!Array.prototype.indexOf) {
             }
             else {
                 return function(elem) {
-                    if ('undefined' !== typeof elem[d]) { 
+                    if ('undefined' !== typeof elem[d]) {
                         if (regex.test(elem[d])) {
                             return elem;
                         }
@@ -5498,15 +5538,15 @@ if (!Array.prototype.indexOf) {
             }
         }
 
-        // Like operator (Case Sensitive). 
+        // Like operator (Case Sensitive).
         this.filters['LIKE'] = function likeOperator(d, value, comparator) {
             return generalLike(d, value, comparator);
         };
-    
-        // Like operator (Case Insensitive). 
+
+        // Like operator (Case Insensitive).
         this.filters['iLIKE'] = function likeOperatorI(d, value, comparator) {
             return generalLike(d, value, comparator, 'i');
-        };            
+        };
 
     };
 
@@ -5822,7 +5862,7 @@ if (!Array.prototype.indexOf) {
 
         // Cloning.
         options = J.clone(options);
-        
+
         // Removing unwanted options.
         for (i in leaveOut) {
             if (leaveOut.hasOwnProperty(i)) {
@@ -6272,7 +6312,7 @@ if (!Array.prototype.indexOf) {
                 this._viewIt(o);
             };
         }
- 
+
         // Reset current indexes.
         this.resetIndexes({h: h, v: v, i: i});
 
@@ -6287,22 +6327,35 @@ if (!Array.prototype.indexOf) {
      *
      * Indexes an element
      *
+     * Parameter _oldIdx_ is needed if indexing is updating a previously
+     * indexed item. In fact if new index is different, the old one must
+     * be deleted.
+     *
      * @param {object} o The element to index
-     * @param {object} o The position of the element in the database array
+     * @param {number} dbidx The position of the element in the database array
+     * @param {string} oldIdx Optional. The old index name, if any.
      */
-    NDDB.prototype._indexIt = function(o, dbidx) {
+    NDDB.prototype._indexIt = function(o, dbidx, oldIdx) {
         var func, id, index, key;
         if (!o || J.isEmpty(this.__I)) return;
-
+        oldIdx = undefined;
         for (key in this.__I) {
             if (this.__I.hasOwnProperty(key)) {
                 func = this.__I[key];
                 index = func(o);
-
-                if ('undefined' === typeof index) continue;
-
-                if (!this[key]) this[key] = new NDDBIndex(key, this);
-                this[key]._add(index, dbidx);
+                // If the same object has been  previously
+                // added with another index delete the old one.
+                if (index !== oldIdx) {
+                    if ('undefined' !== typeof oldIdx) {
+                        if ('undefined' !== typeof this[key].resolve[oldIdx]) {
+                            delete this[key].resolve[oldIdx];
+                        }
+                    }
+                }
+                if ('undefined' !== typeof index) {
+                    if (!this[key]) this[key] = new NDDBIndex(key, this);
+                    this[key]._add(index, dbidx);
+                }
             }
         }
     };
@@ -6332,7 +6385,7 @@ if (!Array.prototype.indexOf) {
                     settings = this.cloneSettings({V: ''});
                     this[key] = new NDDB(settings);
                 }
-                this[key].insert(o);
+                this[key].insert(o);1
             }
         }
     };
@@ -6455,8 +6508,8 @@ if (!Array.prototype.indexOf) {
     function queryError(text, d, op, value) {
         var miss, err;
         miss = '(?)';
-        err = this._getConstrName() + '._analyzeQuery: ' + text + 
-            '. Malformed query: ' + d || miss + ' ' + op || miss + 
+        err = this._getConstrName() + '._analyzeQuery: ' + text +
+            '. Malformed query: ' + d || miss + ' ' + op || miss +
             ' ' + value || miss + '.';
         throw new Error(err);
     }
@@ -6498,7 +6551,7 @@ if (!Array.prototype.indexOf) {
             if (J.in_array(op,['><', '<>', 'in', '!in'])) {
 
                 if (!(value instanceof Array)) {
-                    errText = 'range-queries need an array as third parameter';                        
+                    errText = 'range-queries need an array as third parameter';
                     queryError.call(this, errText, d, op, value);
                 }
                 if (op === '<>' || op === '><') {
@@ -7752,11 +7805,13 @@ if (!Array.prototype.indexOf) {
      * @see JSUS.arrayDiff
      */
     NDDB.prototype.diff = function(nddb) {
-        if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
                 nddb = nddb.db;
             }
+        }
+        if (!nddb || !nddb.length) {
+            return this.breed([]);
         }
         return this.breed(J.arrayDiff(this.db, nddb));
     };
@@ -7778,11 +7833,13 @@ if (!Array.prototype.indexOf) {
      * @see JSUS.arrayIntersect
      */
     NDDB.prototype.intersect = function(nddb) {
-        if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
-                var nddb = nddb.db;
+                nddb = nddb.db;
             }
+        }
+        if (!nddb || !nddb.length) {
+            return this.breed([]);
         }
         return this.breed(J.arrayIntersect(this.db, nddb));
     };
@@ -8406,7 +8463,7 @@ if (!Array.prototype.indexOf) {
      * @see NDDBIndex.get
      * @see NDDBIndex.remove
      */
-        NDDBIndex.prototype.update = function(idx, update) {
+    NDDBIndex.prototype.update = function(idx, update) {
         var o, dbidx, nddb;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
@@ -8417,7 +8474,7 @@ if (!Array.prototype.indexOf) {
         // We do indexes separately from the other components of _autoUpdate
         // to avoid looping through all the other elements that are unchanged.
         if (nddb.__update.indexes) {
-            nddb._indexIt(o, dbidx);
+            nddb._indexIt(o, dbidx, idx);
             nddb._hashIt(o);
             nddb._viewIt(o);
         }
@@ -8469,14 +8526,23 @@ if (!Array.prototype.indexOf) {
  * MIT Licensed
  *
  * nodeGame is a free, open source, event-driven javascript framework,
- * for online multiplayer games in the browser.
+ * for real-time multiplayer games in the browser.
  */
-(function(exports) {
-    if ('undefined' !== typeof JSUS) exports.JSUS = JSUS;
-    if ('undefined' !== typeof NDDB) exports.NDDB = NDDB;
-    if ('undefined' !== typeof store) exports.store = store;
-    exports.support = JSUS.compatibility();
-})('object' === typeof module ? module.exports : (window.node = {}));
+(function(window) {
+    if ('undefined' !== typeof window.node) {
+        throw new Error('nodegame-client: a global node variable is already ' +
+                        'defined. Aborting...');
+    }
+
+    // Defining an empty node object. Will be overwritten later on.
+    var node = window.node = {};
+
+    if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
+    if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
+    if ('undefined' !== typeof store) node.store = store;
+    node.support = JSUS.compatibility();
+
+})(window);
 
 /**
  * # Variables
@@ -8920,7 +8986,8 @@ if (!Array.prototype.indexOf) {
                 msg = url + ' ' + linenumber + ': ' + msg;
                 that.lastError = msg;
                 node.err(msg);
-                node.set('ERROR', msg);
+                // TODO: Implement this properly.
+                // node.set('ERROR', msg);
                 return !node.debug;
             };
         }
@@ -9082,10 +9149,10 @@ if (!Array.prototype.indexOf) {
      */
     EventEmitter.prototype.on = function(type, listener) {
         if ('string' !== typeof type) {
-            throw new TypeError('EventEmitter.on: type must be a string.');
+            throw new TypeError('EventEmitter.on: type must be string.');
         }
         if ('function' !== typeof listener) {
-            throw new TypeError('EventEmitter.on: listener must be a function.');
+            throw new TypeError('EventEmitter.on: listener must be function.');
         }
 
         if (!this.events[type]) {
@@ -9244,7 +9311,7 @@ if (!Array.prototype.indexOf) {
 
         if ('string' !== typeof type) {
             throw new TypeError('EventEmitter.remove (' + this.name +
-                      '): type must be a string.');
+                      '): type must be string.');
         }
 
         if (!this.events[type]) {
@@ -9408,7 +9475,7 @@ if (!Array.prototype.indexOf) {
         for (i = 1; i < len; i++) {
             if ('string' !== typeof arguments[i]) {
                 throw new TypeError('EventEmitterManager.createEEGroup: ' +
-                                    'EventEmitter name must be a string');
+                                    'EventEmitter name must be string.');
             }
             if (!this.ee[arguments[i]]) {
                 throw new Error('EventEmitterManager.createEEGroup: ' +
@@ -13078,7 +13145,7 @@ if (!Array.prototype.indexOf) {
      * Looks up and build the _globals_ object for the specified game stage
      *
      * Globals properties are mixed in at each level (defaults, stage, step)
-     * to form the complete set of globals available for the specified 
+     * to form the complete set of globals available for the specified
      * game stage.
      *
      * @param {GameStage|string} gameStage The GameStage object,
@@ -13098,11 +13165,11 @@ if (!Array.prototype.indexOf) {
 
         // Look in Stager's defaults:
         J.mixin(globals, this.stager.getDefaultGlobals());
-        
+
         // Look in current stage:
         stepstage = this.getStage(gameStage);
         if (stepstage) J.mixin(globals, stepstage.globals);
-        
+
         // Look in current step:
         stepstage = this.getStep(gameStage);
         if (stepstage) J.mixin(globals, stepstage.globals);
@@ -13728,6 +13795,7 @@ if (!Array.prototype.indexOf) {
             throw new Error('Socket.connet: cannot connet to ' +
                             humanReadableUri + ' . No socket defined.');
         }
+        this.node.emit('SOCKET_CONNECTING');
         this.connecting = true;
         this.url = uri;
         this.node.log('connecting to ' + humanReadableUri + '.');
@@ -18744,8 +18812,9 @@ if (!Array.prototype.indexOf) {
      * Creates a new NodeGameClient object
      */
     function NodeGameClient() {
-
         var that = this;
+
+        this.silly('node: loading.');
 
         /**
          * ### node.verbosity
@@ -19214,7 +19283,7 @@ if (!Array.prototype.indexOf) {
          */
         this.registerSetup('lang', function(language) {
             if (!language) return null;
-            return this.setLanguage(language);            
+            return this.setLanguage(language);
         });
 
         // Utility for setup.plist and setup.mlist:
@@ -19325,11 +19394,12 @@ if (!Array.prototype.indexOf) {
 
         // ADD ALIASES
 
-        // TODO: move aliases into a separate method, like addDefaultIncomingListeners
+        // TODO: move aliases into a separate method,
+        // like addDefaultIncomingListeners
 
         // ### node.on.txt
         this.alias('txt', 'in.say.TXT');
-        
+
         // ### node.on.data
         this.alias('data', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
             return function(msg) {
@@ -19405,6 +19475,8 @@ if (!Array.prototype.indexOf) {
         // LISTENERS.
         this.addDefaultIncomingListeners();
         this.addDefaultInternalListeners();
+
+        this.silly('node: created.');
     }
 
     // ## Closure
@@ -19700,7 +19772,7 @@ if (!Array.prototype.indexOf) {
      *
      * 	node.on.data('myLabel', function(){ ... };
      * 	node.once.data('myLabel', function(){ ... };
-     * ```	
+     * ```
      *
      * @param {string} alias The name of alias
      * @param {string|array} events The event/s under which the listeners
@@ -19746,7 +19818,7 @@ if (!Array.prototype.indexOf) {
             // Otherwise, we assume the first parameter is the callback.
             if (modifier) {
                 func = modifier.apply(that.game, arguments);
-            } 
+            }
             J.each(events, function(event) {
                 that.once(event, function() {
                     func.apply(that.game, arguments);
@@ -19960,7 +20032,7 @@ if (!Array.prototype.indexOf) {
 //         ee = this.getCurrentEventEmitter();
 //         ee.on(event, listener);
 //     };
-// 
+//
 //     /**
 //      * ### NodeGameClient.once
 //      *
@@ -19985,7 +20057,7 @@ if (!Array.prototype.indexOf) {
 //         ee.on(event, listener);
 //         ee.on(event, cbRemove);
 //     };
-// 
+//
 //     /**
 //      * ### NodeGameClient.off
 //      *
@@ -20719,9 +20791,9 @@ if (!Array.prototype.indexOf) {
          * ## in.get.DATA
          *
          * Re-emits the incoming message, and replies back to the sender
-         * 
+         *
          * Does the following operations:
-         * 
+         *
          * - Validates the msg.text field
          * - Emits a get.<msg.text> event
          * - Replies to the sender with with the return values of the emit call
@@ -21572,7 +21644,7 @@ if (!Array.prototype.indexOf) {
  */
 (function() {
     var tmp = new window.node.NodeGameClient();
-    JSUS.mixin(tmp, window.node)
+    JSUS.mixin(tmp, window.node);
     window.node = tmp;
 })();
 
@@ -21624,7 +21696,7 @@ if (!Array.prototype.indexOf) {
     GameWindow.defaults = {};
 
     // Default settings.
-    GameWindow.defaults.textOnleave = '';
+    GameWindow.defaults.textOnleave = null;
     GameWindow.defaults.promptOnleave = true;
     GameWindow.defaults.noEscape = true;
     GameWindow.defaults.waitScreen = undefined;
@@ -21640,14 +21712,11 @@ if (!Array.prototype.indexOf) {
         iframeWin = iframe.contentWindow;
 
         function completed(event) {
-            var iframeDoc;
-            iframeDoc = JSUS.getIFrameDocument(iframe);
-
             // Detaching the function to avoid double execution.
             iframe.removeEventListener('load', completed, false);
             iframeWin.removeEventListener('load', completed, false);
             if (cb) {
-                // Some browsers fire onLoad too early.
+                // Some browsers fires onLoad too early.
                 // A small timeout is enough.
                 setTimeout(function() { cb(); }, 120);
             }
@@ -21682,7 +21751,7 @@ if (!Array.prototype.indexOf) {
                 iframeWin.detachEvent('onload', completed );
 
                 if (cb) {
-                    // Some browsers fire onLoad too early.
+                    // Some browsers fires onLoad too early.
                     // A small timeout is enough.
                     setTimeout(function() { cb(); }, 120);
                 }
@@ -21698,7 +21767,7 @@ if (!Array.prototype.indexOf) {
 
     function onLoad(iframe, cb) {
         // IE
-        if (W.isIE) {
+        if (iframe.attachEvent) {
             onLoadIE(iframe, cb);
         }
         // Standards-based browsers support DOMContentLoaded.
@@ -21726,7 +21795,7 @@ if (!Array.prototype.indexOf) {
             throw new Error('GameWindow: nodeGame not found');
         }
 
-        node.log('node-window: loading...');
+        node.silly('node-window: loading...');
 
         /**
          * ### GameWindow.frameName
@@ -21914,6 +21983,15 @@ if (!Array.prototype.indexOf) {
         this.waitScreen = null;
 
         /**
+         * ### GameWindow.listenersAdded
+         *
+         * TRUE, if listeners were added already
+         *
+         * @see GameWindow.addDefaultListeners
+         */
+        this.listenersAdded = null;
+
+        /**
          * ### GameWindow.screenState
          *
          * Level describing whether the user can interact with the frame
@@ -21925,13 +22003,6 @@ if (!Array.prototype.indexOf) {
          * @see node.constants.screenLevels
          */
         this.screenState = node.constants.screenLevels.ACTIVE;
-
-        /**
-         * ### GameWindow.isIE
-         *
-         * Boolean flag saying whether we are in IE or not
-         */
-        this.isIE = !!document.createElement('span').attachEvent;
 
         /**
          * ### node.setup.window
@@ -21948,15 +22019,13 @@ if (!Array.prototype.indexOf) {
             //}
         });
 
-        // Hide <noscript> tag (necessary for IE8).
-        setTimeout(function(){
-            (function (scriptTag) {
-                if (scriptTag.length >= 1) scriptTag[0].style.display = 'none';
-            })(document.getElementsByTagName('noscript'));
-        }, 1000);
+        // Adding listeners.
+        this.addDefaultListeners();
 
         // Init.
         this.init(GameWindow.defaults);
+
+        node.silly('node-window: created.');
     }
 
     // ## GameWindow methods
@@ -22034,6 +22103,8 @@ if (!Array.prototype.indexOf) {
         }
 
         this.setStateLevel('INITIALIZED');
+
+        node.silly('node-window: inited.');
     };
 
     /**
@@ -22070,6 +22141,8 @@ if (!Array.prototype.indexOf) {
 
         // Clear all caches.
         this.clearCache();
+
+        node.silly('node-window: reseted.');
     };
 
     /**
@@ -22311,9 +22384,6 @@ if (!Array.prototype.indexOf) {
         // Method .replace does not add the uri to the history.
         iframe.contentWindow.location.replace('about:blank');
 
-        // For IE8.
-        iframe.frameBorder = 0;
-
         this.setFrame(iframe, frameName, root);
 
         if (this.frameElement) {
@@ -22390,18 +22460,7 @@ if (!Array.prototype.indexOf) {
         // Method .replace does not add the uri to the history.
         //iframe.contentWindow.location.replace('about:blank');
 
-        try {
-            this.getFrameDocument().documentElement.innerHTML = '';
-        }
-        catch(e) {
-            // IE < 10 gives 'Permission Denied' if trying to access
-            // the iframeDoc from the context of the function above.
-            // We need to re-get it from the DOM.
-            if (J.getIFrameDocument(iframe).documentElement) {
-                J.removeChildrenFromNode(
-                        J.getIFrameDocument(iframe).documentElement);
-            }
-        }
+        this.getFrameDocument().documentElement.innerHTML = '';
 
         this.frameElement = iframe;
         this.frameWindow = window.frames[frameName];
@@ -22748,7 +22807,7 @@ if (!Array.prototype.indexOf) {
     /**
      * ### GameWindow.preCacheTest
      *
-     * Tests whether preChace is supported by the browser
+     * Tests wether preChace is supported by the browser
      *
      * Results are stored in _GameWindow.cacheSupported_.
      *
@@ -22774,16 +22833,8 @@ if (!Array.prototype.indexOf) {
         document.body.appendChild(iframe);
         iframe.contentWindow.location.replace(uri);
         onLoad(iframe, function() {
-            var iframe, docElem;
             try {
-                //W.getIFrameDocument(iframe).documentElement.innerHTML = 'a';
-                console.log('Getting iframe');
-                iframe = document.getElementById(iframeName);
-                console.log('Getting docElem');
-                docElem = W.getIFrameDocument(iframe);
-                console.log('Setting innerHTML');
-                docElem.innerHTML = 'a';
-                console.log('Done with everything');
+                W.getIFrameDocument(iframe).documentElement.innerHTML = 'a';
                 W.cacheSupported = true;
             }
             catch(e) {
@@ -23021,8 +23072,7 @@ if (!Array.prototype.indexOf) {
         iframeDocument = W.getIFrameDocument(iframe);
         frameReady = iframeDocument.readyState;
         // ...reduce it to a boolean:
-        //frameReady = frameReady === 'interactive' || frameReady === 'complete';
-        frameReady = frameReady === 'complete';
+        frameReady = frameReady === 'interactive' || frameReady === 'complete';
 
         // Begin loadFrame caching section.
 
@@ -23034,6 +23084,7 @@ if (!Array.prototype.indexOf) {
         // Caching options.
         if (opts.cache) {
             if (opts.cache.loadMode) {
+
                 if (opts.cache.loadMode === 'reload') {
                     loadCache = false;
                 }
@@ -23112,11 +23163,9 @@ if (!Array.prototype.indexOf) {
             onLoad(iframe, function() {
                 // Handles caching.
                 handleFrameLoad(that, uri, iframe, iframeName, loadCache,
-                                storeCacheNow, function() {
-
-                    // Executes callback and updates GameWindow state.
-                    that.updateLoadFrameState(func);
-                });
+                                storeCacheNow);
+                // Executes callback and updates GameWindow state.
+                that.updateLoadFrameState(func);
             });
         }
 
@@ -23129,11 +23178,10 @@ if (!Array.prototype.indexOf) {
             if (frameReady) {
                 // Handles caching.
                 handleFrameLoad(this, uri, iframe, iframeName, loadCache,
-                                storeCacheNow, function() {
+                                storeCacheNow);
 
-                    // Executes callback and updates GameWindow state.
-                    that.updateLoadFrameState(func);
-                });
+                // Executes callback and updates GameWindow state.
+                this.updateLoadFrameState(func);
             }
         }
         else {
@@ -23195,24 +23243,20 @@ if (!Array.prototype.indexOf) {
      *
      * @param {GameWindow} that The GameWindow instance
      * @param {uri} uri URI to load
-     * @param {iframe} iframe The target iframe
      * @param {string} frameName ID of the iframe
      * @param {bool} loadCache Whether to load from cache
      * @param {bool} storeCache Whether to store to cache
-     * @param {function} func Callback
      *
      * @see GameWindow.loadFrame
      *
      * @api private
      */
     function handleFrameLoad(that, uri, iframe, frameName, loadCache,
-                             storeCache, func) {
+                             storeCache) {
 
         var iframeDocumentElement;
-        var afterScripts;
 
-        // Needed for IE8.
-        iframe = W.getElementById(frameName);
+        // iframe = W.getElementById(frameName);
         iframeDocumentElement = W.getIFrameDocument(iframe).documentElement;
 
         if (loadCache) {
@@ -23233,22 +23277,15 @@ if (!Array.prototype.indexOf) {
 
         // (Re-)Inject libraries and reload scripts:
         removeLibraries(iframe);
-        afterScripts = function() {
-            injectLibraries(iframe, that.globalLibs.concat(
-                    that.frameLibs.hasOwnProperty(uri) ? that.frameLibs[uri] : []));
-
-            if (storeCache) {
-                // Store frame in cache:
-                that.cache[uri].contents = iframeDocumentElement.innerHTML;
-            }
-
-            func();
-        };
         if (loadCache) {
-            reloadScripts(iframe, afterScripts);
+            reloadScripts(iframe);
         }
-        else {
-            afterScripts();
+        injectLibraries(iframe, that.globalLibs.concat(
+                that.frameLibs.hasOwnProperty(uri) ? that.frameLibs[uri] : []));
+
+        if (storeCache) {
+            // Store frame in cache:
+            that.cache[uri].contents = iframeDocumentElement.innerHTML;
         }
     }
 
@@ -23294,25 +23331,18 @@ if (!Array.prototype.indexOf) {
      * scripts. The placement of the tags can change, but the order is kept.
      *
      * @param {HTMLIFrameElement} iframe The target iframe
-     * @param {function} func Callback
      *
      * @api private
      */
-    function reloadScripts(iframe, func) {
+    function reloadScripts(iframe) {
         var contentDocument;
         var headNode;
         var tag, scriptNodes, scriptNodeIdx, scriptNode;
         var attrIdx, attr;
-        var numLoading;
-        var needsLoad;
 
         contentDocument = W.getIFrameDocument(iframe);
-        headNode = W.getIFrameAnyChild(iframe);
 
-        // Start counting loading tags at 1 instead of 0 and decrement the
-        // count after the loop.
-        // This way the callback cannot be called before the loop finishes.
-        numLoading = 1;
+        headNode = W.getIFrameAnyChild(iframe);
 
         scriptNodes = contentDocument.getElementsByTagName('script');
         for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length;
@@ -23325,27 +23355,12 @@ if (!Array.prototype.indexOf) {
             // Reinsert tag for reloading:
             scriptNode = document.createElement('script');
             if (tag.innerHTML) scriptNode.innerHTML = tag.innerHTML;
-            needsLoad = false;
             for (attrIdx = 0; attrIdx < tag.attributes.length; attrIdx++) {
                 attr = tag.attributes[attrIdx];
                 scriptNode.setAttribute(attr.name, attr.value);
-                if (attr.name === 'src') needsLoad = true;
-            }
-            if (needsLoad) {
-                //scriptNode.async = true;
-                ++numLoading;
-                scriptNode.onload = function(sn) {
-                    return function() {
-                        sn.onload = null;
-                        --numLoading;
-                        if (numLoading <= 0) func();
-                    };
-                }(scriptNode);
             }
             headNode.appendChild(scriptNode);
         }
-        --numLoading;
-        if (numLoading <= 0) func();
     }
 
     /**
@@ -23528,8 +23543,9 @@ if (!Array.prototype.indexOf) {
     /**
      * ### GameWindow.promptOnleave
      *
-     * Captures the onbeforeunload event and warns the user that leaving the
-     * page may halt the game
+     * Displays a confirmation box upon closing the window or tab
+     *
+     * Listens on the onbeforeunload event.
      *
      * @param {object} windowObj Optional. The window container in which
      *   to bind the ESC key
@@ -23538,20 +23554,38 @@ if (!Array.prototype.indexOf) {
      * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
      */
     GameWindow.prototype.promptOnleave = function(windowObj, text) {
+        var defaultText;
+
+        defaultText = 'Do you really want to navigate away?';
         windowObj = windowObj || window;
         text = 'undefined' !== typeof text ? text : this.conf.textOnleave;
 
+        this.conf.promptOnleave = true;
+
         windowObj.onbeforeunload = function(e) {
             e = e || window.event;
-            // For IE<8 and Firefox prior to version 4
-            if (e) {
-                e.returnValue = text;
-            }
-            // For Chrome, Safari, IE8+ and Opera 12+
-            return text;
-        };
 
-        this.conf.promptOnleave = true;
+            if (/Firefox[\/\s](\d+)/.test(navigator.userAgent) &&
+                new Number(RegExp.$1) >= 4) {
+
+                if (text) {
+                    if (!confirm(text)) {
+                        if (e) e.text = defaultText;;
+                        return defaultText;
+                    }
+                }
+                else {
+                    if (e) e.text = defaultText;;
+                    return defaultText;
+                }
+            }
+            else {
+                // For IE<8 and Firefox prior to version 4
+                if (e) e.returnValue = text || defaultText;
+                // For Chrome, Safari, IE8+ and Opera 12+
+                return text || defaultText;
+            };
+        };
     };
 
     /**
@@ -23656,7 +23690,7 @@ if (!Array.prototype.indexOf) {
         // Feb 16.02.2015
         // Commented out the time-out part. It causes the browser to get stuck
         // on a locked screen, because the method is invoked multiple times.
-        // If no further problem is found out, it can be eliminitated.
+        // If no further problem is found out, it can be eliminated.
         // if (!this.isReady()) {
         //   setTimeout(function() { that.lockScreen(text); }, 100);
         // }
@@ -23736,47 +23770,87 @@ if (!Array.prototype.indexOf) {
         return el;
     }
 
-    node.on('NODEGAME_GAME_CREATED', function() {
-        W.init(node.conf.window);
-    });
+    var GameWindow = node.GameWindow;
 
-    node.on('HIDE', function(idOrObj) {
-        var el = getElement(idOrObj, 'GameWindow.on.HIDE');
-        el.style.display = 'none';
-    });
+    /**
+     * ## GameWindow.addDefaultListeners
+     *
+     * Adds a battery of event listeners for incoming messages
+     *
+     * If executed once, it requires a force flag to re-add the listeners
+     *
+     * @param {boolean} force Whether to force re-adding the listeners
+     * @return {boolean} TRUE on success
+     */
+    GameWindow.prototype.addDefaultListeners = function(force) {
 
-    node.on('SHOW', function(idOrObj) {
-        var el = getElement(idOrObj, 'GameWindow.on.SHOW');
-        el.style.display = '';
-    });
-
-    node.on('TOGGLE', function(idOrObj) {
-        var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-
-        if (el.style.display === 'none') {
-            el.style.display = '';
+        if (this.listenersAdded && !force) {
+            node.err('node.window.addDefaultListeners: listeners already ' +
+                     'added once. Use the force flag to re-add.');
+            return false;
         }
-        else {
+
+        node.on('NODEGAME_GAME_CREATED', function() {
+            W.init(node.conf.window);
+        });
+
+        node.on('HIDE', function(idOrObj) {
+            var el = getElement(idOrObj, 'GameWindow.on.HIDE');
             el.style.display = 'none';
-        }
-    });
+        });
 
-    // Disable all the input forms found within a given id element.
-    node.on('INPUT_DISABLE', function(id) {
-        W.toggleInputs(id, true);
-    });
+        node.on('SHOW', function(idOrObj) {
+            var el = getElement(idOrObj, 'GameWindow.on.SHOW');
+            el.style.display = '';
+        });
 
-    // Disable all the input forms found within a given id element.
-    node.on('INPUT_ENABLE', function(id) {
-        W.toggleInputs(id, false);
-    });
+        node.on('TOGGLE', function(idOrObj) {
+            var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
 
-    // Disable all the input forms found within a given id element.
-    node.on('INPUT_TOGGLE', function(id) {
-        W.toggleInputs(id);
-    });
+            if (el.style.display === 'none') {
+                el.style.display = '';
+            }
+            else {
+                el.style.display = 'none';
+            }
+        });
 
-    node.log('node-window: listeners added.');
+        // Disable all the input forms found within a given id element.
+        node.on('INPUT_DISABLE', function(id) {
+            W.toggleInputs(id, true);
+        });
+
+        // Disable all the input forms found within a given id element.
+        node.on('INPUT_ENABLE', function(id) {
+            W.toggleInputs(id, false);
+        });
+
+        // Disable all the input forms found within a given id element.
+        node.on('INPUT_TOGGLE', function(id) {
+            W.toggleInputs(id);
+        });
+
+        /**
+         * Force disconnection upon page unload
+         *
+         * This makes browsers using AJAX to signal disconnection immediately.
+         *
+         * Kudos:
+         * http://stackoverflow.com/questions/1704533/intercept-page-exit-event
+         */
+        window.onunload = function() {
+            var i;
+            node.socket.disconnect();
+            // Do nothing, but gain time.
+            for (i = -1 ; ++i < 100000 ; ) { }
+        };
+
+        // Mark listeners as added.
+        this.listenersAdded = true;
+
+        node.silly('node-window: listeners added.');
+        return true;
+    };
 
 })(
     'undefined' !== typeof node ? node : undefined
@@ -23818,35 +23892,21 @@ if (!Array.prototype.indexOf) {
      * be re-activated later.
      *
      * @param {Document|Element} container The target to scan for input tags
-     * @param {boolean} disable Optional. Lock inputs if TRUE, unlock if FALSE.
-     *   Default: TRUE
      *
      * @api private
      */
-    function lockUnlockedInputs(container, disable) {
+    function lockUnlockedInputs(container) {
         var j, i, inputs, nInputs;
-
-        if ('undefined' === typeof disable) disable = true;
-
         for (j = -1; ++j < len; ) {
             inputs = container.getElementsByTagName(inputTags[j]);
             nInputs = inputs.length;
             for (i = -1 ; ++i < nInputs ; ) {
-                if (disable) {
-                    if (!inputs[i].disabled) {
-                        inputs[i].disabled = true;
-                        W.waitScreen.lockedInputs.push(inputs[i]);
-                    }
-                }
-                else {
-                    if (inputs[i].disabled) {
-                        inputs[i].disabled = false;
-                    }
+                if (!inputs[i].disabled) {
+                    inputs[i].disabled = true;
+                    W.waitScreen.lockedInputs.push(inputs[i]);
                 }
             }
         }
-
-        if (!disable) W.waitScreen.lockedInputs = []; 
     }
 
     function event_REALLY_DONE(text) {
@@ -24034,11 +24094,7 @@ if (!Array.prototype.indexOf) {
         }
         // Disables all input forms in the page.
         lockUnlockedInputs(document);
-
-        //frameDoc = W.getFrameDocument();
-        // Using this for IE8 compatibility.
-        frameDoc = W.getIFrameDocument(W.getFrame());
-
+        frameDoc = W.getFrameDocument();
         if (frameDoc) lockUnlockedInputs(frameDoc);
 
         if (!this.waitingDiv) {
@@ -24061,25 +24117,18 @@ if (!Array.prototype.indexOf) {
      * @see WaitScreen.lock
      */
     WaitScreen.prototype.unlock = function() {
-        var j, i, len, inputs, nInputs;
-
+        var i, len;
         if (this.waitingDiv) {
             if (this.waitingDiv.style.display === '') {
                 this.waitingDiv.style.display = 'none';
             }
         }
         // Re-enables all previously locked input forms in the page.
-        try {
-            len = this.lockedInputs.length;
-            for (i = -1 ; ++i < len ; ) {
-                this.lockedInputs[i].removeAttribute('disabled');
-            }
-            this.lockedInputs = [];
+        i = -1, len = this.lockedInputs.length;
+        for ( ; ++i < len ; ) {
+            this.lockedInputs[i].removeAttribute('disabled');
         }
-        catch(e) {
-            // For IE8.
-            lockUnlockedInputs(W.getIFrameDocument(W.getFrame()), false);
-        }
+        this.lockedInputs = [];
     };
 
     /**

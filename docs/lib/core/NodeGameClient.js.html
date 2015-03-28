@@ -243,8 +243,9 @@ multiplayer games in the browser.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameClient</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
 
-        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node: loading.&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1652,6 +1653,8 @@ like addDefaultIncomingListeners</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultIncomingListeners</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultInternalListeners</span><span class="p">();</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node: created.&#39;</span><span class="p">);</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>

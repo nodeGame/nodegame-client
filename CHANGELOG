@@ -9,7 +9,8 @@
  - Avoiding multiple calls to `#node.socket.disconnect()`
  - It is possible to use the name of a function to remove it from the event emitter.
  - More support for IE8.
-
+ - 'SOCKET_CONNECTING' event when a socket start the connecting procedure.
+ - Check if there are more than 1 node instances on the browser.
 
 ## 0.9.9
 
