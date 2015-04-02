@@ -181,7 +181,7 @@ have priority 1, all the other targets have priority 0.</p>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">?</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">()</span><span class="o">:</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="s1">&#39;0.0.0&#39;</span><span class="p">);</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">()</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="s1">&#39;0.0.0&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">priority</span><span class="p">)</span> <span class="p">{</span>

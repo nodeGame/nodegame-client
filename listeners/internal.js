@@ -53,13 +53,18 @@
         }
 
         function done() {
+            var res;
+            // No incoming messages should be emitted before
+            // evaluating the step rule and definitely setting
+            // the stageLevel to DONE, otherwise the stage of
+            // other clients could change in between.
+            node.game.setStageLevel(stageLevels.GETTING_DONE);
             node.game.willBeDone = false;
-            node.game.setStageLevel(stageLevels.DONE);
             node.emit('REALLY_DONE');
+            res = node.game.shouldStep(stageLevels.DONE);
+            node.game.setStageLevel(stageLevels.DONE);
             // Step forward, if allowed.
-            if (node.game.shouldStep()) {
-                node.game.step();
-            }
+            if (res) node.game.step();
         }
 
         /**

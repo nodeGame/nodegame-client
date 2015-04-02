@@ -13,6 +13,10 @@
  - Check if there are more than 1 node instances on the browser.
  - `#Game.pause()` and `#Game.resume()` accept a parameter to be passed along the emitted events.
  - `#NodeGameClient.getCurrentEventEmitter()` improved to return the stage event emitter.
+ - `#Game.shouldStep()` accepts the stageLevel as parameter.
+ - `#Game.setStageLevel()`, `#Game.setStateLevel()` and `#Game.setCurrentGameStage()` accept a modifier to force or skip the publish of the update.
+ - Enhanced checks for avoiding clients getting out of sync.
+ - 'GETTING_DONE' stage level introduced to signal that the DONE procedure is being executed.
  - Travis Integration.
 
 ## 0.9.9
