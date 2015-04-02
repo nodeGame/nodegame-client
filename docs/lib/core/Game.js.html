@@ -1038,13 +1038,25 @@ TODO: avoid pollution of the game object.</p>
 </div>
 
   </div>
-  <div class="body"><p>Experimental. Sets the game to pause</p>
-
-<p>TODO: check with Game.ready</p>
+  <div class="body"><p>Sets the game to pause</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">param</span>
+      <span class="dox_type">string</span>
+      <span>Optional. A parameter to pass along the
+  emitted events PAUSING and PAUSED.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.resume
+  </span>
+    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pause</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pause</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">param</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">msgHandler</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isPausable</span><span class="p">())</span> <span class="p">{</span>
@@ -1052,7 +1064,7 @@ TODO: avoid pollution of the game object.</p>
         <span class="p">}</span>
 
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PAUSING&#39;</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PAUSING&#39;</span><span class="p">,</span> <span class="nx">param</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span></pre></div>
         </td>
@@ -1076,7 +1088,7 @@ until the game is resumed.</p>
         <span class="p">}</span>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">setTimestamp</span><span class="p">(</span><span class="s1">&#39;paused&#39;</span><span class="p">);</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PAUSED&#39;</span><span class="p">);</span></pre></div>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PAUSED&#39;</span><span class="p">,</span> <span class="nx">param</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1084,7 +1096,7 @@ until the game is resumed.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
-<p>broadcast?</p>
+<p>TODO: broadcast?</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;game paused.&#39;</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
@@ -1101,13 +1113,25 @@ until the game is resumed.</p>
 </div>
 
   </div>
-  <div class="body"><p>Experimental. Resumes the game from a pause</p>
-
-<p>TODO: check with Game.ready</p>
+  <div class="body"><p>Resumes the game from pause</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">param</span>
+      <span class="dox_type">string</span>
+      <span>Optional. A parameter to pass along the
+  emitted events RESUMING and RESUMED.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.pause
+  </span>
+    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">resume</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">resume</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">param</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">msgHandler</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isResumable</span><span class="p">())</span> <span class="p">{</span>
@@ -1116,7 +1140,7 @@ until the game is resumed.</p>
 
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
 
-        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;RESUMING&#39;</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;RESUMING&#39;</span><span class="p">,</span> <span class="nx">param</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">paused</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
@@ -1145,7 +1169,7 @@ Otherwise, emit the buffered messages normally.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">setMsgListener</span><span class="p">();</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">setTimestamp</span><span class="p">(</span><span class="s1">&#39;resumed&#39;</span><span class="p">);</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;RESUMED&#39;</span><span class="p">);</span></pre></div>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;RESUMED&#39;</span><span class="p">,</span> <span class="nx">param</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1153,12 +1177,9 @@ Otherwise, emit the buffered messages normally.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
-<p>Maybe the game was LOADED during the pausing.
-In this case the PLAYING event got lost.</p>
+<p>TODO: broadcast?</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">shouldEmitPlaying</span><span class="p">())</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PLAYING&#39;</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -1166,9 +1187,14 @@ In this case the PLAYING event got lost.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
-<p>broadcast?</p>
+<p>Maybe the game was LOADED during the pausing.
+In this case the PLAYING event got lost.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;game resumed.&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">shouldEmitPlaying</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;PLAYING&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;game resumed.&#39;</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -2093,7 +2119,8 @@ handle it here.</p>
 <p>Update is never sent if the value has not changed.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span> <span class="nx">gameStage</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span>
+                                  <span class="nx">gameStage</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2385,9 +2412,12 @@ PLAYING, DONE, etc.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">publishUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">node</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.PublishUpdate: type must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.publishUpdate: type must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">!==</span> <span class="s1">&#39;stage&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">!==</span> <span class="s1">&#39;stageLevel&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">!==</span> <span class="s1">&#39;stateLevel&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">!==</span> <span class="s1">&#39;stage&#39;</span> <span class="o">&amp;&amp;</span>
+            <span class="nx">type</span> <span class="o">!==</span> <span class="s1">&#39;stageLevel&#39;</span> <span class="o">&amp;&amp;</span>
+            <span class="nx">type</span> <span class="o">!==</span> <span class="s1">&#39;stateLevel&#39;</span><span class="p">)</span> <span class="p">{</span>
+
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span>
                 <span class="s1">&#39;Game.publishUpdate: unknown update type (&#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
         <span class="p">}</span>

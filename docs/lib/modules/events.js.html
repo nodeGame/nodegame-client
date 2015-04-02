@@ -57,7 +57,10 @@ MIT Licensed</p>
 
     <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">STAGE</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">STATE</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -71,23 +74,45 @@ MIT Licensed</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns the last active event emitter obj</p>
+  <div class="body"><p>Returns the currently active event emitter</p>
 
-<p>TODO: finish the method</p>
+<p>The following event emitters are active:</p>
 
-<p>TODO: add proper doc</p>
+<ul>
+<li><p>NodeGame (ng): before a game is created or started.
+Events registered here never deleted.</p></li>
+<li><p>Game (game): during the initialization of a game
+Events registered here are deleted when a new game
+is created.</p></li>
+<li><p>Stage (stage): during the initialization of a stage.
+Events registered here are deleted when entering a
+new stage.</p></li>
+<li><p>Step (step): during the initialization of a step.
+Events registered here are deleted when entering a
+new step.</p></li>
+</ul>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">EventEmitter</span>
-      <span>The current event emitter obj</span>
+      <span>The current event emitter</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitter</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitterManager
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">gameStage</span><span class="p">,</span> <span class="nx">stageLevel</span><span class="p">,</span> <span class="nx">stateLevel</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -97,9 +122,9 @@ MIT Licensed</p>
 </div>
 <p>NodeGame default listeners</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">())</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">ng</span><span class="p">;</span>
-        <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">ng</span><span class="p">;</span>
+        <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gameStage</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">ng</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -107,9 +132,9 @@ MIT Licensed</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
 </div>
-<p>It is a game init function</p>
+<p>Game listeners.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">((</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">())</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">((</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">())</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">))</span> <span class="p">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
         <span class="p">}</span></pre></div>
         </td>
@@ -119,9 +144,15 @@ MIT Licensed</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
 </div>
-<p>TODO return the stage ee</p>
+<p>Stage listeners.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">gameStage</span><span class="p">.</span><span class="nx">step</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">round</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">()</span> <span class="o">===</span> <span class="nx">STAGE</span> <span class="o">&amp;&amp;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">()</span> <span class="o">===</span> <span class="nx">STATE</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -129,11 +160,9 @@ MIT Licensed</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
-<p>It is a game step function</p>
+<p>Step listeners.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">;</span>
-        <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -165,79 +194,9 @@ handler callback.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
-</div>
-
-<div class="highlight"><pre><code><span class="o">/**</span>
- <span class="o">*</span> <span class="c1">### NodeGameClient.on</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="n">Registers</span> <span class="n">an</span> <span class="n">event</span> <span class="n">listener</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="n">Listeners</span> <span class="n">registered</span> <span class="n">before</span> <span class="n">a</span> <span class="n">game</span> <span class="n">is</span> <span class="n">started</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">in</span>
- <span class="o">*</span> <span class="n">the</span> <span class="n">init</span> <span class="n">function</span> <span class="n">of</span> <span class="n">the</span> <span class="n">game</span> <span class="n">object</span><span class="p">,</span> <span class="n">will</span> <span class="n">stay</span> <span class="n">valid</span>
- <span class="o">*</span> <span class="n">throughout</span> <span class="n">the</span> <span class="n">game</span><span class="o">.</span> <span class="n">Listeners</span> <span class="n">registered</span> <span class="n">after</span> <span class="n">the</span> <span class="n">game</span>
- <span class="o">*</span> <span class="n">is</span> <span class="n">started</span> <span class="n">will</span> <span class="n">be</span> <span class="n">removed</span> <span class="n">after</span> <span class="n">the</span> <span class="n">game</span> <span class="n">has</span> <span class="n">advanced</span>
- <span class="o">*</span> <span class="n">to</span> <span class="n">its</span> <span class="k">next</span> <span class="n">stage</span><span class="o">.</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="nv">@param</span> <span class="p">{</span><span class="n">string</span><span class="p">}</span> <span class="n">event</span> <span class="n">The</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">event</span>
- <span class="o">*</span> <span class="nv">@param</span> <span class="p">{</span><span class="n">function</span><span class="p">}</span> <span class="n">listener</span> <span class="n">The</span> <span class="n">callback</span> <span class="n">function</span>
- <span class="o">*/</span>
-<span class="n">NGC</span><span class="o">.</span><span class="nb">prototype</span><span class="o">.</span><span class="n">on</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">var</span> <span class="n">ee</span><span class="p">;</span>
-    <span class="n">ee</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">getCurrentEventEmitter</span><span class="p">();</span>
-    <span class="n">ee</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">);</span>
-<span class="p">};</span>
-
-<span class="o">/**</span>
- <span class="o">*</span> <span class="c1">### NodeGameClient.once</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="n">Registers</span> <span class="n">an</span> <span class="n">event</span> <span class="n">listener</span> <span class="n">that</span> <span class="n">will</span> <span class="n">be</span> <span class="n">removed</span>
- <span class="o">*</span> <span class="n">after</span> <span class="n">its</span> <span class="n">first</span> <span class="n">invocation</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="nv">@param</span> <span class="p">{</span><span class="n">string</span><span class="p">}</span> <span class="n">event</span> <span class="n">The</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">event</span>
- <span class="o">*</span> <span class="nv">@param</span> <span class="p">{</span><span class="n">function</span><span class="p">}</span> <span class="n">listener</span> <span class="n">The</span> <span class="n">callback</span> <span class="n">function</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="nv">@see</span> <span class="n">NodeGameClient</span><span class="o">.</span><span class="n">on</span>
- <span class="o">*</span> <span class="nv">@see</span> <span class="n">NodeGameClient</span><span class="o">.</span><span class="n">off</span>
- <span class="o">*/</span>
-<span class="n">NGC</span><span class="o">.</span><span class="nb">prototype</span><span class="o">.</span><span class="n">once</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">var</span> <span class="n">ee</span><span class="p">,</span> <span class="n">cbRemove</span><span class="p">;</span>
-    <span class="sr">//</span> <span class="n">This</span> <span class="n">function</span> <span class="n">will</span> <span class="n">remove</span> <span class="n">the</span> <span class="n">event</span> <span class="n">listener</span>
-    <span class="sr">//</span> <span class="ow">and</span> <span class="n">itself</span><span class="o">.</span>
-    <span class="n">cbRemove</span> <span class="o">=</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="n">ee</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">);</span>
-        <span class="n">ee</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">cbRemove</span><span class="p">);</span>
     <span class="p">};</span>
-    <span class="n">ee</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">getCurrentEventEmitter</span><span class="p">();</span>
-    <span class="n">ee</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">listener</span><span class="p">);</span>
-    <span class="n">ee</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">cbRemove</span><span class="p">);</span>
-<span class="p">};</span>
 
-<span class="o">/**</span>
- <span class="o">*</span> <span class="c1">### NodeGameClient.off</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="n">Deregisters</span> <span class="n">one</span> <span class="ow">or</span> <span class="n">multiple</span> <span class="n">event</span> <span class="n">listeners</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="nv">@param</span> <span class="p">{</span><span class="n">string</span><span class="p">}</span> <span class="n">event</span> <span class="n">The</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">event</span>
- <span class="o">*</span> <span class="nv">@param</span> <span class="p">{</span><span class="n">function</span><span class="p">}</span> <span class="n">listener</span> <span class="n">The</span> <span class="n">callback</span> <span class="n">function</span>
- <span class="o">*</span>
- <span class="o">*</span> <span class="nv">@see</span> <span class="n">NodeGameClient</span><span class="o">.</span><span class="n">on</span>
- <span class="o">*</span> <span class="nv">@see</span> <span class="n">NodeGameClient</span><span class="o">.</span><span class="n">EventEmitter</span><span class="o">.</span><span class="n">remove</span>
- <span class="o">*/</span>
-<span class="n">NGC</span><span class="o">.</span><span class="nb">prototype</span><span class="o">.</span><span class="n">off</span>  <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="n">this</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">func</span><span class="p">);</span>
-<span class="p">};</span>
-</code></pre></div>
-
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+<span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>

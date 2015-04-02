@@ -34,7 +34,7 @@
         <a href="#nodegameclient.err">NodeGameClient.err</a>
       </div>
       <div class="heading h3">
-        <a href="#nodegameclient.debug">NodeGameClient.debug</a>
+        <a href="#nodegameclient.silly">NodeGameClient.silly</a>
       </div>
     </div>
   </div>
@@ -114,7 +114,7 @@ smaller than <code>this.remoteVerbosity</code>.</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">txt</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
 
         <span class="nx">level</span>  <span class="o">=</span> <span class="nx">level</span> <span class="o">||</span> <span class="s1">&#39;warn&#39;</span><span class="p">;</span>
-        <span class="nx">prefix</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">prefix</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="s1">&#39;&gt; &#39;</span> <span class="o">:</span> <span class="nx">prefix</span><span class="p">;</span>
+        <span class="nx">prefix</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">prefix</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="s1">&#39;&gt; &#39;</span> <span class="o">:</span> <span class="nx">prefix</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">&gt;=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">[</span><span class="nx">level</span><span class="p">])</span> <span class="p">{</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">txt</span><span class="p">);</span>
@@ -206,15 +206,15 @@ smaller than <code>this.remoteVerbosity</code>.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nodegameclient.debug">
+<div class="pilwrap" id="nodegameclient.silly">
   <h3>
-    <a href="#nodegameclient.debug" class="pilcrow">&#182;</a>
-    NodeGameClient.debug
+    <a href="#nodegameclient.silly" class="pilcrow">&#182;</a>
+    NodeGameClient.silly
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Logs a DEBUG message</p>
+  <div class="body"><p>Logs a SILLY message</p>
   </div>
 </div>
         </td>

@@ -180,7 +180,7 @@
             }
 
             node.emit('BEFORE_GAMECOMMAND', gcommands.pause, options);
-            node.game.pause();
+            node.game.pause(options);
         });
 
         /**
@@ -194,7 +194,7 @@
             }
 
             node.emit('BEFORE_GAMECOMMAND', gcommands.resume, options);
-            node.game.resume();
+            node.game.resume(options);
         });
 
         /**

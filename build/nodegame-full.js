@@ -15754,11 +15754,14 @@ if (!Array.prototype.indexOf) {
     /**
      * ### Game.pause
      *
-     * Experimental. Sets the game to pause
+     * Sets the game to pause
      *
-     * TODO: check with Game.ready
+     * @param {string} param Optional. A parameter to pass along the
+     *   emitted events PAUSING and PAUSED.
+     *
+     * @see Game.resume
      */
-    Game.prototype.pause = function() {
+    Game.prototype.pause = function(param) {
         var msgHandler, node;
 
         if (!this.isPausable()) {
@@ -15766,7 +15769,7 @@ if (!Array.prototype.indexOf) {
         }
 
         node = this.node;
-        node.emit('PAUSING');
+        node.emit('PAUSING', param);
 
         this.paused = true;
 
@@ -15783,9 +15786,9 @@ if (!Array.prototype.indexOf) {
         }
 
         node.timer.setTimestamp('paused');
-        node.emit('PAUSED');
+        node.emit('PAUSED', param);
 
-        // broadcast?
+        // TODO: broadcast?
 
         node.log('game paused.');
     };
@@ -15793,11 +15796,14 @@ if (!Array.prototype.indexOf) {
     /**
      * ### Game.resume
      *
-     * Experimental. Resumes the game from a pause
+     * Resumes the game from pause
      *
-     * TODO: check with Game.ready
+     * @param {string} param Optional. A parameter to pass along the
+     *   emitted events RESUMING and RESUMED.
+     *
+     * @see Game.pause
      */
-    Game.prototype.resume = function() {
+    Game.prototype.resume = function(param) {
         var msgHandler, node;
 
         if (!this.isResumable()) {
@@ -15806,7 +15812,7 @@ if (!Array.prototype.indexOf) {
 
         node = this.node;
 
-        node.emit('RESUMING');
+        node.emit('RESUMING', param);
 
         this.paused = false;
 
@@ -15821,15 +15827,15 @@ if (!Array.prototype.indexOf) {
         // Reset the Socket's message handler to the default:
         node.socket.setMsgListener();
         node.timer.setTimestamp('resumed');
-        node.emit('RESUMED');
+        node.emit('RESUMED', param);
+
+        // TODO: broadcast?
 
         // Maybe the game was LOADED during the pausing.
         // In this case the PLAYING event got lost.
         if (this.shouldEmitPlaying()) {
             this.node.emit('PLAYING');
         }
-
-        // broadcast?
 
         node.log('game resumed.');
     };
@@ -20287,9 +20293,9 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### NodeGameClient.debug
+     * ### NodeGameClient.silly
      *
-     * Logs a DEBUG message
+     * Logs a SILLY message
      */
     NGC.prototype.silly = function(txt, prefix) {
         prefix = this.nodename + (prefix ? '|' + prefix : '') + '> silly - ';
@@ -20686,34 +20692,60 @@ if (!Array.prototype.indexOf) {
 
     var GameStage = parent.GameStage;
 
+    var STAGE = parent.constants.stageLevels.UNINITIALIZED;
+    var STATE = parent.constants.stageLevels.INITIALIZED;
+
     /**
      * ### NodeGameClient.getCurrentEventEmitter
      *
-     * Returns the last active event emitter obj
+     * Returns the currently active event emitter
      *
-     * TODO: finish the method
+     * The following event emitters are active:
      *
-     * TODO: add proper doc
+     *  - NodeGame (ng): before a game is created or started.
+     *    Events registered here never deleted.
      *
-     * @return {EventEmitter} The current event emitter obj
+     *  - Game (game): during the initialization of a game
+     *    Events registered here are deleted when a new game
+     *    is created.
+     *
+     *  - Stage (stage): during the initialization of a stage.
+     *    Events registered here are deleted when entering a
+     *    new stage.
+     *
+     *  - Step (step): during the initialization of a step.
+     *    Events registered here are deleted when entering a
+     *    new step.
+     *
+     * @return {EventEmitter} The current event emitter
+     *
+     * @see EventEmitter
+     * @see EventEmitterManager
      */
     NGC.prototype.getCurrentEventEmitter = function() {
-        // NodeGame default listeners
-        if (!this.game || !this.game.getCurrentGameStage()) {
-            return this.events.ee.ng;
-        }
+        var gameStage, stageLevel, stateLevel;
 
-        // It is a game init function
-        if ((GameStage.compare(this.game.getCurrentGameStage(), new GameStage()) === 0 )) {
+        // NodeGame default listeners
+        if (!this.game) return this.events.ee.ng;
+        gameStage = this.game.getCurrentGameStage()
+        if (!gameStage) return this.events.ee.ng;
+
+        // Game listeners.
+        if ((GameStage.compare(gameStage, new GameStage()) === 0 )) {
             return this.events.ee.game;
         }
 
-        // TODO return the stage ee
+        // Stage listeners.
+        if (gameStage.step === 1 && gameStage.round === 1) {
+            if (this.game.getStageLevel() === STAGE &&
+                this.game.getStateLevel() === STATE) {
 
-        // It is a game step function
-        else {
-            return this.events.ee.step;
+                return this.events.ee.stage;
+            }
         }
+
+        // Step listeners.
+        return this.events.ee.step;
     };
 
     /**
@@ -20730,66 +20762,6 @@ if (!Array.prototype.indexOf) {
     NGC.prototype.emit = function() {
         return this.events.emit.apply(this.events, arguments);
     };
-
-//     /**
-//      * ### NodeGameClient.on
-//      *
-//      * Registers an event listener
-//      *
-//      * Listeners registered before a game is started, e.g. in
-//      * the init function of the game object, will stay valid
-//      * throughout the game. Listeners registered after the game
-//      * is started will be removed after the game has advanced
-//      * to its next stage.
-//      *
-//      * @param {string} event The name of the event
-//      * @param {function} listener The callback function
-//      */
-//     NGC.prototype.on = function(event, listener) {
-//         var ee;
-//         ee = this.getCurrentEventEmitter();
-//         ee.on(event, listener);
-//     };
-//
-//     /**
-//      * ### NodeGameClient.once
-//      *
-//      * Registers an event listener that will be removed
-//      * after its first invocation
-//      *
-//      * @param {string} event The name of the event
-//      * @param {function} listener The callback function
-//      *
-//      * @see NodeGameClient.on
-//      * @see NodeGameClient.off
-//      */
-//     NGC.prototype.once = function(event, listener) {
-//         var ee, cbRemove;
-//         // This function will remove the event listener
-//         // and itself.
-//         cbRemove = function() {
-//             ee.remove(event, listener);
-//             ee.remove(event, cbRemove);
-//         };
-//         ee = this.getCurrentEventEmitter();
-//         ee.on(event, listener);
-//         ee.on(event, cbRemove);
-//     };
-//
-//     /**
-//      * ### NodeGameClient.off
-//      *
-//      * Deregisters one or multiple event listeners
-//      *
-//      * @param {string} event The name of the event
-//      * @param {function} listener The callback function
-//      *
-//      * @see NodeGameClient.on
-//      * @see NodeGameClient.EventEmitter.remove
-//      */
-//     NGC.prototype.off  = function(event, func) {
-//         return this.events.remove(event, func);
-//     };
 
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -21970,7 +21942,7 @@ if (!Array.prototype.indexOf) {
             }
 
             node.emit('BEFORE_GAMECOMMAND', gcommands.pause, options);
-            node.game.pause();
+            node.game.pause(options);
         });
 
         /**
@@ -21984,7 +21956,7 @@ if (!Array.prototype.indexOf) {
             }
 
             node.emit('BEFORE_GAMECOMMAND', gcommands.resume, options);
-            node.game.resume();
+            node.game.resume(options);
         });
 
         /**

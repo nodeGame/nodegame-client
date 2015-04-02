@@ -11,6 +11,8 @@
  - More support for IE8.
  - 'SOCKET_CONNECTING' event when a socket start the connecting procedure.
  - Check if there are more than 1 node instances on the browser.
+ - `#Game.pause()` and `#Game.resume()` accept a parameter to be passed along the emitted events.
+ - `#NodeGameClient.getCurrentEventEmitter()` improved to return the stage event emitter.
  - Travis Integration.
 
 ## 0.9.9
