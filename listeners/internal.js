@@ -72,23 +72,29 @@
          *
          * Registers the stageLevel _DONE_ and eventually steps forward.
          *
-         * If a DONE handler is defined in the game-plot, it will execute it.
-         * In case it returns FALSE, the update process is stopped.
+         * If a DONE handler is defined in the game-plot, it executes it.
+         * In case the handler returns FALSE, the process is stopped.
          *
          * @emit REALLY_DONE
          */
         this.events.ng.on('DONE', function() {
             // Execute done handler before updating stage.
             var ok, doneCb, stageLevel;
-            ok = true;
+
+            // Evaluating `done` callback if any.
             doneCb = node.game.plot.getProperty(node.game.getCurrentGameStage(),
                                                 'done');
-
-            if (doneCb) ok = doneCb.apply(node.game, arguments);
-            if (!ok) return;
+            if (doneCb) {
+                ok = doneCb.apply(node.game, arguments);
+                if (!ok) {
+                    // Should revert state. But state was lost...
+                    return;
+                }
+            }
 
             stageLevel = node.game.getStageLevel();
 
+            // TODO check >=.
             if (stageLevel >= stageLevels.PLAYING) {
                 done();
             }
@@ -109,18 +115,18 @@
             }
         });
 
-        /**
-         * ## WINDOW_LOADED
-         *
-         * @emit LOADED
-         */
-        this.events.ng.on('WINDOW_LOADED', function() {
-            var stageLevel;
-            stageLevel = node.game.getStageLevel();
-            if (stageLevel >= stageLevels.CALLBACK_EXECUTED) {
-                node.emit('LOADED');
-            }
-        });
+//         /**
+//          * ## WINDOW_LOADED
+//          *
+//          * @emit LOADED
+//          */
+//         this.events.ng.on('WINDOW_LOADED', function() {
+//             var stageLevel;
+//             stageLevel = node.game.getStageLevel();
+//             if (stageLevel === stageLevels.CALLBACK_EXECUTED) {
+//                 node.emit('LOADED');
+//             }
+//         });
 
         /**
          * ## LOADED

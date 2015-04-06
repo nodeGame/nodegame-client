@@ -685,7 +685,7 @@ information carried in the message.</p>
 </div>
 
   </div>
-  <div class="body"><p>Levels associated with the states of the Game</p>
+  <div class="body"><p>Levels associated with the states of the nodeGame engine.</p>
   </div>
 </div>
         </td>
@@ -697,7 +697,7 @@ information carried in the message.</p>
         <span class="nx">STAGE_INIT</span><span class="o">:</span>    <span class="mi">10</span><span class="p">,</span>  <span class="c1">// calling stage&#39;s init</span>
         <span class="nx">STEP_INIT</span><span class="o">:</span>     <span class="mi">20</span><span class="p">,</span>  <span class="c1">// calling step&#39;s init</span>
         <span class="nx">PLAYING_STEP</span><span class="o">:</span>  <span class="mi">30</span><span class="p">,</span>  <span class="c1">// executing step</span>
-        <span class="nx">FINISHING</span><span class="o">:</span>     <span class="mi">40</span><span class="p">,</span>  <span class="c1">// calling game&#39;s gameover</span>
+        <span class="nx">FINISHING</span><span class="o">:</span>     <span class="mi">70</span><span class="p">,</span>  <span class="c1">// calling game&#39;s gameover</span>
         <span class="nx">GAMEOVER</span><span class="o">:</span>     <span class="mi">100</span><span class="p">,</span>  <span class="c1">// game complete</span>
         <span class="nx">RUNTIME_ERROR</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span>
     <span class="p">};</span></pre></div>
@@ -714,30 +714,55 @@ information carried in the message.</p>
 </div>
 
   </div>
-  <div class="body"><p>Levels associated with the states of the stages of the Game</p>
+  <div class="body"><p>Levels associated with the states of the stages of a game.</p>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">stageLevels</span> <span class="o">=</span> <span class="p">{</span>
+
         <span class="nx">UNINITIALIZED</span><span class="o">:</span>       <span class="mi">0</span><span class="p">,</span>  <span class="c1">// Constructor called.</span>
+
         <span class="nx">INITIALIZING</span><span class="o">:</span>        <span class="mi">1</span><span class="p">,</span>  <span class="c1">// Executing init.</span>
+
         <span class="nx">INITIALIZED</span><span class="o">:</span>         <span class="mi">5</span><span class="p">,</span>  <span class="c1">// Init executed.</span>
+
+        <span class="nx">LOADING_FRAME</span><span class="o">:</span>       <span class="mi">20</span><span class="p">,</span> <span class="c1">// A frame is being loaded (only in browser).</span>
+
+        <span class="nx">FRAME_LOADED</span><span class="o">:</span>        <span class="mi">25</span><span class="p">,</span> <span class="c1">// The frame has been loaded (only in browser).</span>
+
         <span class="nx">EXECUTING_CALLBACK</span><span class="o">:</span>  <span class="mi">30</span><span class="p">,</span> <span class="c1">// Executing the stage callback.</span>
+
         <span class="nx">CALLBACK_EXECUTED</span><span class="o">:</span>   <span class="mi">40</span><span class="p">,</span> <span class="c1">// Stage callback executed.</span>
+
         <span class="nx">LOADED</span><span class="o">:</span>              <span class="mi">45</span><span class="p">,</span> <span class="c1">// Both GameWindow loaded and cb executed.</span>
+
         <span class="nx">PLAYING</span><span class="o">:</span>             <span class="mi">50</span><span class="p">,</span> <span class="c1">// Player playing.</span>
+
         <span class="nx">PAUSING</span><span class="o">:</span>             <span class="mi">55</span><span class="p">,</span> <span class="c1">// TODO: to be removed?</span>
+
         <span class="nx">PAUSED</span><span class="o">:</span>              <span class="mi">60</span><span class="p">,</span> <span class="c1">// TODO: to be removed?</span>
+
         <span class="nx">RESUMING</span><span class="o">:</span>            <span class="mi">65</span><span class="p">,</span> <span class="c1">// TODO: to be removed?</span>
+
         <span class="nx">RESUMED</span><span class="o">:</span>             <span class="mi">70</span><span class="p">,</span> <span class="c1">// TODO: to be removed?</span>
 
-        <span class="nx">GETTING_DONE</span><span class="o">:</span>        <span class="mi">90</span><span class="p">,</span> <span class="c1">// Done is being called,</span></pre></div>
+        <span class="nx">DONE_CALLED</span><span class="o">:</span>         <span class="mi">80</span><span class="p">,</span> <span class="c1">// Done is called,</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+</div>
+<p>will be asynchronously evaluated.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">GETTING_DONE</span><span class="o">:</span>        <span class="mi">90</span><span class="p">,</span> <span class="c1">// Done is being called,</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>and the step rule evaluated.</p>
         </td>

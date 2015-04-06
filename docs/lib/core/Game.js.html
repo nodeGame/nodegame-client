@@ -2564,21 +2564,20 @@ and LOADED stage with syncOnLoaded option.</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns TRUE if the nodeGame engine is fully loaded</p>
+  <div class="body"><p>Returns TRUE if a game is set and interactive</p>
 
-<p>As soon as the nodegame-client library is loaded
-<code>node.game.state</code> is equal to 0.0.0. In this situation the
-game will be considered READY unless the nodegame-window
-says otherwise</p>
+<p>A game is ready unless a stage or step is currently being
+loaded or DONE procedure has been started, i.e. between the
+stage levels: PLAYING and GETTING_DONE.</p>
 
-<p>During stepping between functions in the game-plot
-the flag is temporarily turned to FALSE, and all events
-are queued and fired only after nodeGame is ready to
-handle them again.</p>
-
-<p>If the browser does not support the method object setters,
-this property is disabled, and Game.isReady() should be used
-instead.</p>
+<p>If a game is paused, it is also NOT ready.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.constants.stageLevels
+  </span>
+    </div>
   </div>
 </div>
         </td>
@@ -2609,17 +2608,8 @@ instead.</p>
                 <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
-        <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
-</div>
-<p>Check if there is a gameWindow obj and whether it is loading</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">isReady</span><span class="p">()</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -2816,7 +2806,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
+  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
 </div>
 <p>Should emit PLAYING only after LOADED.</p>
         </td>
