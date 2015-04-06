@@ -24,9 +24,6 @@
       <div class="heading h3">
         <a href="#nodegameclient.getcurrenteventemitter">NodeGameClient.getCurrentEventEmitter</a>
       </div>
-      <div class="heading h3">
-        <a href="#nodegameclient.emit">NodeGameClient.emit</a>
-      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -163,37 +160,6 @@ new step.</p></li>
 <p>Step listeners.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="nodegameclient.emit">
-  <h3>
-    <a href="#nodegameclient.emit" class="pilcrow">&#182;</a>
-    NodeGameClient.emit
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Emits an event locally on all registered event handlers</p>
-
-<p>The first parameter be the name of the event as <em>string</em>,
-followed by any number of parameters that will be passed to the
-handler callback.</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">EventEmitterManager.emit
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
     <span class="p">};</span>
 
 <span class="p">})(</span>

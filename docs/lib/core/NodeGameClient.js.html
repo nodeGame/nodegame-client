@@ -121,6 +121,12 @@
         <a href="#this.setup.lang">this.setup.lang</a>
       </div>
       <div class="heading h3">
+        <a href="#nodegameclient.emit">NodeGameClient.emit</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nodegameclient.emitasync">NodeGameClient.emitAsync</a>
+      </div>
+      <div class="heading h3">
         <a href="#nodegameclient.on">NodeGameClient.on</a>
       </div>
       <div class="heading h3">
@@ -1281,6 +1287,70 @@ Updates are not possible for the moment.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="nodegameclient.emit">
+  <h3>
+    <a href="#nodegameclient.emit" class="pilcrow">&#182;</a>
+    NodeGameClient.emit
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Emits an event locally on all registered event handlers</p>
+
+<p>The first parameter be the name of the event as <em>string</em>,
+followed by any number of parameters that will be passed to the
+handler callback.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NodeGameClient.emitAsync</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitterManager.emit
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegameclient.emitasync">
+  <h3>
+    <a href="#nodegameclient.emitasync" class="pilcrow">&#182;</a>
+    NodeGameClient.emitAsync
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Emits an event locally on all registered event handlers</p>
+
+<p>Unlike normal emit, it does not return a value.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NodeGameClient.emit</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitterManager.emitSync
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">emitAsync</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="nodegameclient.on">
   <h3>
     <a href="#nodegameclient.on" class="pilcrow">&#182;</a>
@@ -1337,8 +1407,7 @@ has advanced to its next stage or step.</p>
 </div>
 
   </div>
-  <div class="body"><p>Registers an event listener that will be removed
-after its first invocation</p>
+  <div class="body"><p>Registers an event listener that will be removed after its first call</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1365,23 +1434,9 @@ after its first invocation</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">ee</span><span class="p">,</span> <span class="nx">cbRemove</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">ee</span><span class="p">;</span>
             <span class="nx">ee</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span><span class="p">();</span>
-            <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
-</div>
-<p>This function will remove the event listener and itself.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">cbRemove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
-                <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">cbRemove</span><span class="p">);</span>
-            <span class="p">};</span>
-            <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">cbRemove</span><span class="p">);</span>
+            <span class="nx">ee</span><span class="p">.</span><span class="nx">once</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
         <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1430,7 +1485,7 @@ after its first invocation</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>ADD ALIASES</p>
         </td>
@@ -1440,7 +1495,7 @@ after its first invocation</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>TODO: move aliases into a separate method,
 like addDefaultIncomingListeners</p>
@@ -1647,7 +1702,7 @@ like addDefaultIncomingListeners</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>LISTENERS.</p>
         </td>

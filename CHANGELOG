@@ -2,11 +2,13 @@
 
 ## 0.9.10
 
+ - Optimized EventEmitter.
  - `#node.done()` is asynchronous to avoid calling multiple node.done() in the same step.
  - After 'PLAYING' is emitted, if a frame is loaded by `#GameWindow.loadFrame()` the game level will not change again to 'WINDOW_LOADED` and then `PLAYING`. That was causing issues with sychronization.
  - `#Game.isReady()` does not look anymore at the status of the GameWindow. Once PLAYING has been emitted, if the game is not paused or done was called it return TRUE.
  - New game levels: 'LOADING_FRAME' (reserved, not used), 'FRAME_LOADED' (reserved, not used), 'DONE_CALLED' (when game.done has been called, but not yet evaluated).
  - Removed game level: 'WINDOW_LOADED'.
+ - `node.emitAsync()` emits event asynchrounosly (does not return a value).
  - `#node.get()` uses a nodeGame timer instead of Javascript timeOuts, so it can synchronize with game events, such as pause and resume.
  - `#node.get()` checks the id of the message to make sure that only the actual recipient can reply to it.
  - Fixed bug on parameter timeout of `node.get`.

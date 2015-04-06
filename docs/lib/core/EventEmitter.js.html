@@ -40,7 +40,7 @@
         <a href="#eventemitter-methods">EventEmitter methods</a>
       </div>
       <div class="heading h3">
-        <a href="#eventemitter.add">EventEmitter.add</a>
+        <a href="#eventemitter.on">EventEmitter.on</a>
       </div>
       <div class="heading h3">
         <a href="#eventemitter.once">EventEmitter.once</a>
@@ -49,7 +49,10 @@
         <a href="#eventemitter.emit">EventEmitter.emit</a>
       </div>
       <div class="heading h3">
-        <a href="#eventemitter.remove">EventEmitter.remove</a>
+        <a href="#eventemitter.emitasync">EventEmitter.emitAsync</a>
+      </div>
+      <div class="heading h3">
+        <a href="#eventemitter.off----remove">EventEmitter.off || remove</a>
       </div>
       <div class="heading h3">
         <a href="#eventemitter.clear">EventEmitter.clear</a>
@@ -77,6 +80,9 @@
       </div>
       <div class="heading h3">
         <a href="#eventemittermanager.emit">EventEmitterManager.emit</a>
+      </div>
+      <div class="heading h3">
+        <a href="#eventemittermanager.emitasync">EventEmitterManager.emitAsync</a>
       </div>
       <div class="heading h3">
         <a href="#eventemittermanager.remove">EventEmitterManager.remove</a>
@@ -161,6 +167,10 @@ MIT Licensed</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">EventEmitter</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter constructor: &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;name must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span></pre></div>
         </td>
@@ -175,7 +185,7 @@ MIT Licensed</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">name</span> <span class="o">?</span> <span class="nx">name</span> <span class="o">:</span> <span class="s1">&#39;EE&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -246,18 +256,15 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="eventemitter.add">
+<div class="pilwrap" id="eventemitter.on">
   <h3>
-    <a href="#eventemitter.add" class="pilcrow">&#182;</a>
-    EventEmitter.add
+    <a href="#eventemitter.on" class="pilcrow">&#182;</a>
+    EventEmitter.on
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Registers a global listener for an event</p>
-
-<p>Listeners registered with this method are valid for the
-whole length of the game</p>
+  <div class="body"><p>Registers a callback function for an event (event listener)</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -320,8 +327,7 @@ Don't need the extra array object.</p>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">],</span> <span class="nx">listener</span><span class="p">];</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;ee.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; added listener: &#39;</span> <span class="o">+</span>
-                        <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">listener</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;.on: added: &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">listener</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -363,10 +369,10 @@ Don't need the extra array object.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="kd">function</span> <span class="nx">g</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
-            <span class="nx">listener</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+            <span class="nx">listener</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
@@ -385,18 +391,13 @@ Don't need the extra array object.</p>
   </div>
   <div class="body"><p>Fires all the listeners associated with an event</p>
 
-<p>The first parameter be the name of the event as <em>string</em>,
+<p>The first parameter is the name of the event as <em>string</em>,
 followed by any number of parameters that will be passed to the
-handler callback.</p>
+callback.</p>
 
-<p>Return values of each callback are aggregated and returned as an
-array. If the array contains less than 2 elements, the only element
-or <em>undefined</em> is returned instead.</p>
-
-<p>Technical notice: classic EventEmitter classes do not return any value.
-Returning a value creates an overhead when multiple listeners are
-registered under the same event, and an array needs to be managed.
-Such overhead is anyway very small, and can be neglected (for now).</p>
+<p>Return values of each callback are aggregated and returned as
+an array. If the array contains less than 2 elements, only
+element or <em>undefined</em> is returned.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
@@ -537,10 +538,76 @@ we will return an array.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="eventemitter.remove">
+<div class="pilwrap" id="eventemitter.emitasync">
   <h3>
-    <a href="#eventemitter.remove" class="pilcrow">&#182;</a>
-    EventEmitter.remove
+    <a href="#eventemitter.emitasync" class="pilcrow">&#182;</a>
+    EventEmitter.emitAsync
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Fires all the listeners associated with an event asynchronously</p>
+
+<p>Unlike normal emit, it does not return a value.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitter.emit
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emitAsync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">len</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>The arguments object must not be passed or leaked anywhere.
+Therefore, we recreate an args array here. We have a different
+timeout in a different branch for optimization.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+            <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">that</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span> <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+            <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="mi">3</span><span class="o">:</span>
+            <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+            <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">default</span><span class="o">:</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">that</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span> <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="eventemitter.off----remove">
+  <h3>
+    <a href="#eventemitter.off----remove" class="pilcrow">&#182;</a>
+    EventEmitter.off || remove
   </h3>
 </div>
 
@@ -607,7 +674,7 @@ we will return an array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>Handling multiple cases: this.events[type] can be array or function,
 and listener can be function or string.</p>
@@ -623,7 +690,7 @@ and listener can be function or string.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>String.</p>
         </td>
@@ -640,7 +707,7 @@ and listener can be function or string.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>this.events[type] is an array.</p>
         </td>
@@ -657,7 +724,7 @@ and listener can be function or string.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>String.</p>
         </td>
@@ -772,14 +839,23 @@ and listener can be function or string.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">ee</span> <span class="o">=</span> <span class="p">{};</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">createEE</span><span class="p">(</span><span class="s1">&#39;ng&#39;</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">createEE</span><span class="p">(</span><span class="s1">&#39;game&#39;</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">createEE</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">createEE</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">);</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">createEEGroup</span><span class="p">(</span><span class="s1">&#39;game&#39;</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="s1">&#39;game&#39;</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">createEEGroup</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="s1">&#39;game&#39;</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">createEE</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+</div>
+<p>Groups disabled for the moment.
+this.createEEGroup('game', 'step', 'stage', 'game');
+this.createEEGroup('stage', 'stage', 'game');</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -830,6 +906,8 @@ applied to every element of the group</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">EventEmitterManager.createEE
+
+TODO: check if this code is still valid.
   </span>
     </div>
   </div>
@@ -852,7 +930,7 @@ applied to every element of the group</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Checking if each ee exist.</p>
         </td>
@@ -872,7 +950,7 @@ applied to every element of the group</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Copying the args obj into an array.</p>
         </td>
@@ -887,7 +965,7 @@ applied to every element of the group</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Fast cases.</p>
         </td>
@@ -948,7 +1026,7 @@ applied to every element of the group</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Slower.</p>
         </td>
@@ -1129,34 +1207,183 @@ TODO: the event emitter should be removed by the group
       <span class="dox_type">mixed</span>
       <span>The values returned by all fired event listeners</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitterManager.emit
+  </span>
+    </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">tmpRes</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">tmpRes</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">ees</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span>
                 <span class="s1">&#39;EventEmitterManager.emit: eventName must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">res</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">tmpRes</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+</div>
+<p>The scope might <code>node</code> if this method is invoked from <code>node.emit</code>.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">ees</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+</div>
+<p>The arguments object must not be passed or leaked anywhere.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="mi">3</span><span class="o">:</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">default</span><span class="o">:</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
             <span class="p">}</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ees</span><span class="p">.</span><span class="nx">ng</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ees</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ees</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
+            <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
         <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>If there are less than 2 elements, unpack the array.
 res[0] is either undefined or some value.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">?</span> <span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="nx">res</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="eventemittermanager.emitasync">
+  <h3>
+    <a href="#eventemittermanager.emitasync" class="pilcrow">&#182;</a>
+    EventEmitterManager.emitAsync
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Emits an event on all registered event emitters asynchrounsly</p>
+
+<p>Accepts a variable number of input parameters.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">eventName</span>
+      <span class="dox_type">string</span>
+      <span>The name of the event</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitterManager.emit
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emitAsync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">ees</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;EventEmitterManager.emit: eventName must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">res</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="nx">ees</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+</div>
+<p>The arguments object must not be passed or leaked anywhere.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="nx">eventName</span><span class="p">);</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="nx">eventName</span><span class="p">);</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="nx">eventName</span><span class="p">);</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="nx">eventName</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="mi">3</span><span class="o">:</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">default</span><span class="o">:</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ees</span><span class="p">.</span><span class="nx">ng</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ees</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ees</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1409,7 +1636,7 @@ res[0] is either undefined or some value.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>cleaning up the events to remit
 TODO NDDB commands have changed, update</p>
@@ -1434,7 +1661,7 @@ TODO NDDB commands have changed, update</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>We have events that were fired at the stage when
 disconnection happened. Let's fire them again</p>
