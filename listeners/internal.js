@@ -79,18 +79,7 @@
          */
         this.events.ng.on('DONE', function() {
             // Execute done handler before updating stage.
-            var ok, doneCb, stageLevel;
-
-            // Evaluating `done` callback if any.
-            doneCb = node.game.plot.getProperty(node.game.getCurrentGameStage(),
-                                                'done');
-            if (doneCb) {
-                ok = doneCb.apply(node.game, arguments);
-                if (!ok) {
-                    // Should revert state. But state was lost...
-                    return;
-                }
-            }
+            var stageLevel;
 
             stageLevel = node.game.getStageLevel();
 

@@ -4,9 +4,10 @@
 
  - Optimized EventEmitter.
  - `#node.done()` is asynchronous to avoid calling multiple node.done() in the same step.
+ - `#node.done()` evaluates the done handler immediately, and then eventually emit 'DONE'. This makes node.done and emit('DONE') different, because emit('DONE') does not evaluate the done handler any more.
  - After 'PLAYING' is emitted, if a frame is loaded by `#GameWindow.loadFrame()` the game level will not change again to 'WINDOW_LOADED` and then `PLAYING`. That was causing issues with sychronization.
  - `#Game.isReady()` does not look anymore at the status of the GameWindow. Once PLAYING has been emitted, if the game is not paused or done was called it return TRUE.
- - New game levels: 'LOADING_FRAME' (reserved, not used), 'FRAME_LOADED' (reserved, not used), 'DONE_CALLED' (when game.done has been called, but not yet evaluated).
+ - New game levels: 'LOADING_FRAME' (reserved, not used), 'FRAME_LOADED' (reserved, not used)..
  - Removed game level: 'WINDOW_LOADED'.
  - `node.emitAsync()` emits event asynchrounosly (does not return a value).
  - `#node.get()` uses a nodeGame timer instead of Javascript timeOuts, so it can synchronize with game events, such as pause and resume.
@@ -17,6 +18,7 @@
  - It is possible to use the name of a function to remove it from the event emitter.
  - More support for IE8.
  - 'SOCKET_CONNECTING' event when a socket start the connecting procedure.
+ - Removed group event listeners.
  - Check if there are more than 1 node instances on the browser.
  - `#Game.pause()` and `#Game.resume()` accept a parameter to be passed along the emitted events.
  - `#NodeGameClient.getCurrentEventEmitter()` improved to return the stage event emitter.
