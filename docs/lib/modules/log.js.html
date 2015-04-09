@@ -67,7 +67,8 @@ MIT Licensed</p>
     <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">LOG</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LOG</span></pre></div>
+    <span class="kd">var</span> <span class="nx">LOG</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LOG</span>
+    <span class="kd">var</span> <span class="nx">UNDEFINED_PLAYER</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">UNDEFINED_PLAYER</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -113,7 +114,7 @@ smaller than <code>this.remoteVerbosity</code>.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">level</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">numLevel</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">numLevel</span><span class="p">,</span> <span class="nx">hash</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">txt</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 
         <span class="nx">level</span>  <span class="o">=</span> <span class="nx">level</span> <span class="o">||</span> <span class="s1">&#39;warn&#39;</span><span class="p">;</span>
@@ -124,13 +125,29 @@ smaller than <code>this.remoteVerbosity</code>.</p>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">&gt;=</span> <span class="nx">numLevel</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">txt</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">remoteVerbosity</span> <span class="o">&gt;=</span> <span class="nx">numLevel</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-                <span class="nx">target</span><span class="o">:</span> <span class="nx">LOG</span><span class="p">,</span>
-                <span class="nx">text</span><span class="o">:</span> <span class="nx">level</span><span class="p">,</span>
-                <span class="nx">data</span><span class="o">:</span> <span class="nx">txt</span><span class="p">,</span>
-                <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;SERVER&#39;</span>
-            <span class="p">}));</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">remoteVerbosity</span> <span class="o">&gt;=</span> <span class="nx">numLevel</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>We need to avoid creating errors here,
+otherwise we enter an infinite loop.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">UNDEFINED_PLAYER</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">lastLog</span> <span class="o">!==</span> <span class="nx">txt</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+                        <span class="nx">target</span><span class="o">:</span> <span class="nx">LOG</span><span class="p">,</span>
+                        <span class="nx">text</span><span class="o">:</span> <span class="nx">level</span><span class="p">,</span>
+                        <span class="nx">data</span><span class="o">:</span> <span class="nx">txt</span><span class="p">,</span>
+                        <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;SERVER&#39;</span>
+                    <span class="p">}));</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">};</span></pre></div>
         </td>
