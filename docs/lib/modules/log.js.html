@@ -123,8 +123,7 @@ smaller than <code>this.remoteVerbosity</code>.</p>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">&gt;=</span> <span class="nx">numLevel</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">txt</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">remoteVerbosity</span> <span class="o">&gt;=</span> <span class="nx">numLevel</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -132,19 +131,24 @@ smaller than <code>this.remoteVerbosity</code>.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
 </div>
-<p>We need to avoid creating errors here,
-otherwise we enter an infinite loop.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">placeholder</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-                    <span class="nx">target</span><span class="o">:</span> <span class="nx">LOG</span><span class="p">,</span>
-                    <span class="nx">text</span><span class="o">:</span> <span class="nx">level</span><span class="p">,</span>
-                    <span class="nx">data</span><span class="o">:</span> <span class="nx">txt</span><span class="p">,</span>
-                    <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;SERVER&#39;</span>
-                <span class="p">}));</span>
-            <span class="p">}</span>
+
+<div class="highlight"><pre><code>    <span class="k">if</span> <span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">remoteVerbosity</span> <span class="o">&gt;=</span> <span class="n">numLevel</span><span class="p">)</span> <span class="p">{</span>
+        <span class="sr">//</span> <span class="n">We</span> <span class="n">need</span> <span class="n">to</span> <span class="n">avoid</span> <span class="n">creating</span> <span class="n">errors</span> <span class="n">here</span><span class="p">,</span>
+        <span class="sr">//</span> <span class="n">otherwise</span> <span class="n">we</span> <span class="n">enter</span> <span class="n">an</span> <span class="n">infinite</span> <span class="n">loop</span><span class="o">.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="nb">socket</span><span class="o">.</span><span class="n">isConnected</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">this</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">placeholder</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">this</span><span class="o">.</span><span class="nb">socket</span><span class="o">.</span><span class="nb">send</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">create</span><span class="p">({</span>
+                <span class="n">target:</span> <span class="n">LOG</span><span class="p">,</span>
+                <span class="n">text:</span> <span class="n">level</span><span class="p">,</span>
+                <span class="n">data:</span> <span class="n">txt</span><span class="p">,</span>
+                <span class="n">to:</span> <span class="s">&#39;SERVER&#39;</span>
+            <span class="p">}));</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">}</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>

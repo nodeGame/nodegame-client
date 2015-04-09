@@ -15063,7 +15063,7 @@ if (!Array.prototype.indexOf) {
             return false;
         }
 
-        if (msg.from === this.node.UNDEFINED_PLAYER) {
+        if (!msg.from || msg.from === this.node.UNDEFINED_PLAYER) {
             this.node.err('Socket.send: cannot send message. ' +
                           'Player undefined.');
             return false;
@@ -19760,15 +19760,6 @@ if (!Array.prototype.indexOf) {
         this.silly('node: loading.');
 
         /**
-         * ### node.verbosity
-         *
-         * The minimum level for a log entry to be displayed as output
-         *
-         * Default: only errors are displayed
-         */
-        this.verbosity = constants.verbosity_levels.warn;
-
-        /**
          * ### node.nodename
          *
          * The name of this node, used in logging output
@@ -19778,13 +19769,20 @@ if (!Array.prototype.indexOf) {
         this.nodename = 'ng';
 
         /**
+         * ### node.verbosity
+         *
+         * The minimum level for a log entry to be displayed as output
+         *
+         * Default: only errors are displayed
+         */
+        this.verbosity = constants.verbosity_levels.warn;
+
+        /**
          * ### node.remoteVerbosity
          *
          * The minimum level for a log entry to be reported to the server
          *
-         * Default: only errors are reported
-         *
-         * @experimental
+         * Default: errors and warnings are reported
          */
         this.remoteVerbosity = constants.verbosity_levels.warn;
 
@@ -20492,18 +20490,18 @@ if (!Array.prototype.indexOf) {
         if (this.verbosity >= numLevel) {
             console.log(prefix + txt);
         }
-        if (this.remoteVerbosity >= numLevel) {
-            // We need to avoid creating errors here,
-            // otherwise we enter an infinite loop.
-            if (this.socket.isConnected() && !this.player.placeholder) {
-                this.socket.send(this.msg.create({
-                    target: LOG,
-                    text: level,
-                    data: txt,
-                    to: 'SERVER'
-                }));
-            }
-        }
+//         if (this.remoteVerbosity >= numLevel) {
+//             // We need to avoid creating errors here,
+//             // otherwise we enter an infinite loop.
+//             if (this.socket.isConnected() && !this.player.placeholder) {
+//                 this.socket.send(this.msg.create({
+//                     target: LOG,
+//                     text: level,
+//                     data: txt,
+//                     to: 'SERVER'
+//                 }));
+//             }
+//         }
     };
 
     /**

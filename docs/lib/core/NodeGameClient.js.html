@@ -28,10 +28,10 @@
         <a href="#nodegameclient-constructor">NodeGameClient constructor</a>
       </div>
       <div class="heading h3">
-        <a href="#node.verbosity">node.verbosity</a>
+        <a href="#node.nodename">node.nodename</a>
       </div>
       <div class="heading h3">
-        <a href="#node.nodename">node.nodename</a>
+        <a href="#node.verbosity">node.verbosity</a>
       </div>
       <div class="heading h3">
         <a href="#node.remoteverbosity">node.remoteVerbosity</a>
@@ -257,26 +257,6 @@ multiplayer games in the browser.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.verbosity">
-  <h3>
-    <a href="#node.verbosity" class="pilcrow">&#182;</a>
-    node.verbosity
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>The minimum level for a log entry to be displayed as output</p>
-
-<p>Default: only errors are displayed</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">warn</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
 <div class="pilwrap" id="node.nodename">
   <h3>
     <a href="#node.nodename" class="pilcrow">&#182;</a>
@@ -297,6 +277,26 @@ multiplayer games in the browser.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="node.verbosity">
+  <h3>
+    <a href="#node.verbosity" class="pilcrow">&#182;</a>
+    node.verbosity
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The minimum level for a log entry to be displayed as output</p>
+
+<p>Default: only errors are displayed</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">warn</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="node.remoteverbosity">
   <h3>
     <a href="#node.remoteverbosity" class="pilcrow">&#182;</a>
@@ -307,9 +307,7 @@ multiplayer games in the browser.</p>
   </div>
   <div class="body"><p>The minimum level for a log entry to be reported to the server</p>
 
-<p>Default: only errors are reported</p>
-  </div>
-  <div class="details">
+<p>Default: errors and warnings are reported</p>
   </div>
 </div>
         </td>
