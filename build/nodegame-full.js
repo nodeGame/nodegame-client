@@ -9271,8 +9271,6 @@ if (!Array.prototype.indexOf) {
         NEVER: Number.MAX_VALUE
     };
 
-    // TODO: do we need these defaults ?
-
     /**
      * ### node.constants.verbosity
      *
@@ -9290,7 +9288,7 @@ if (!Array.prototype.indexOf) {
      *
      * Default: only errors are displayed
      */
-    k.remoteVerbosity = k.verbosity_levels.warn;
+    k.remoteVerbosity = k.verbosity_levels.error;
 
     /**
      * ### node.constants.actions
@@ -19784,7 +19782,16 @@ if (!Array.prototype.indexOf) {
          *
          * Default: errors and warnings are reported
          */
-        this.remoteVerbosity = constants.verbosity_levels.warn;
+        this.remoteVerbosity = constants.verbosity_levels.error;
+
+        /**
+         * ### node.remoteVerbosity
+         *
+         * Maps remotely logged messages to avoid infinite recursion
+         *
+         * In normal conditions this should always stay empty.
+         */
+        this.remoteLogMap = {};
 
         /**
          * ### node.errorManager
@@ -20482,7 +20489,7 @@ if (!Array.prototype.indexOf) {
         var numLevel, hash
         if ('undefined' === typeof txt) return;
 
-        level  = level || 'warn';
+        level  = level || 'info';
         prefix = 'undefined' === typeof prefix ? this.nodename + '> ' : prefix;
 
         numLevel = constants.verbosity_levels[level];
@@ -20490,18 +20497,22 @@ if (!Array.prototype.indexOf) {
         if (this.verbosity >= numLevel) {
             console.log(prefix + txt);
         }
-//         if (this.remoteVerbosity >= numLevel) {
-//             // We need to avoid creating errors here,
-//             // otherwise we enter an infinite loop.
-//             if (this.socket.isConnected() && !this.player.placeholder) {
-//                 this.socket.send(this.msg.create({
-//                     target: LOG,
-//                     text: level,
-//                     data: txt,
-//                     to: 'SERVER'
-//                 }));
-//             }
-//         }
+        if (this.remoteVerbosity >= numLevel) {
+            // We need to avoid creating errors here,
+            // otherwise we enter an infinite loop.
+            if (this.socket.isConnected() && !this.player.placeholder) {
+                if (!this.remoteLogMap[txt]) {
+                    this.remoteLogMap[txt] = true;
+                    this.socket.send(this.msg.create({
+                        target: LOG,
+                        text: level,
+                        data: txt,
+                        to: 'SERVER'
+                    }));
+                    delete this.remoteLogMap[txt];
+                }
+            }
+        }
     };
 
     /**

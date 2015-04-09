@@ -16,9 +16,11 @@
  - `#EventEmitterManager.printAll()` and `#EventEmitterManager.getAll()`
  - Avoiding multiple calls to `#node.socket.disconnect()`
  - It is possible to use the name of a function to remove it from the event emitter.
+ - Remote logging is enabled. By default only errors are sent to server as LOG messages.
+ - Default level for logged message is 'info'. Before it was 'warn'.
  - More support for IE8.
  - 'SOCKET_CONNECTING' event when a socket start the connecting procedure.
- - Removed group event listeners.
+ - Removed group event-listeners.
  - Check if there are more than 1 node instances on the browser.
  - `#Game.pause()` and `#Game.resume()` accept a parameter to be passed along the emitted events.
  - `#NodeGameClient.getCurrentEventEmitter()` improved to return the stage event emitter.
