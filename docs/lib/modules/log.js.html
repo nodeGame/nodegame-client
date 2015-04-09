@@ -67,8 +67,7 @@ MIT Licensed</p>
     <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">LOG</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LOG</span>
-    <span class="kd">var</span> <span class="nx">UNDEFINED_PLAYER</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">UNDEFINED_PLAYER</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">LOG</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LOG</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -136,17 +135,13 @@ smaller than <code>this.remoteVerbosity</code>.</p>
 <p>We need to avoid creating errors here,
 otherwise we enter an infinite loop.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">UNDEFINED_PLAYER</span><span class="p">)</span> <span class="p">{</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">lastLog</span> <span class="o">!==</span> <span class="nx">txt</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-                        <span class="nx">target</span><span class="o">:</span> <span class="nx">LOG</span><span class="p">,</span>
-                        <span class="nx">text</span><span class="o">:</span> <span class="nx">level</span><span class="p">,</span>
-                        <span class="nx">data</span><span class="o">:</span> <span class="nx">txt</span><span class="p">,</span>
-                        <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;SERVER&#39;</span>
-                    <span class="p">}));</span>
-                <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">placeholder</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+                    <span class="nx">target</span><span class="o">:</span> <span class="nx">LOG</span><span class="p">,</span>
+                    <span class="nx">text</span><span class="o">:</span> <span class="nx">level</span><span class="p">,</span>
+                    <span class="nx">data</span><span class="o">:</span> <span class="nx">txt</span><span class="p">,</span>
+                    <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;SERVER&#39;</span>
+                <span class="p">}));</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">};</span></pre></div>
