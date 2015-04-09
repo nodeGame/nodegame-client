@@ -124,8 +124,7 @@ smaller than <code>this.remoteVerbosity</code>.</p>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">&gt;=</span> <span class="nx">numLevel</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">txt</span><span class="p">);</span>
         <span class="p">}</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">remoteVerbosity</span> <span class="o">&gt;</span> <span class="nx">numLevel</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">remoteVerbosity</span> <span class="o">&gt;=</span> <span class="nx">numLevel</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
                 <span class="nx">target</span><span class="o">:</span> <span class="nx">LOG</span><span class="p">,</span>
                 <span class="nx">text</span><span class="o">:</span> <span class="nx">level</span><span class="p">,</span>

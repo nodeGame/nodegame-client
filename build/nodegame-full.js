@@ -20492,8 +20492,7 @@ if (!Array.prototype.indexOf) {
         if (this.verbosity >= numLevel) {
             console.log(prefix + txt);
         }
-
-        if (this.remoteVerbosity > numLevel) {
+        if (this.remoteVerbosity >= numLevel) {
             this.socket.send(this.msg.create({
                 target: LOG,
                 text: level,
