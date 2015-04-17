@@ -12785,11 +12785,9 @@ if (!Array.prototype.indexOf) {
      */
     Stager.prototype.next = function(id, positions) {
         var stageName = handleAlias(this, id);
-
         if (stageName === null) {
             throw new Error('Stager.next: invalid stage name received.');
         }
-
         this.getCurrentBlock().add({
             type: 'plain',
             id: stageName
@@ -12827,7 +12825,7 @@ if (!Array.prototype.indexOf) {
             type: 'repeat',
             id: stageName,
             num: nRepeats
-        }, postions);
+        }, positions);
 
         return this;
     };
@@ -13074,39 +13072,41 @@ if (!Array.prototype.indexOf) {
             for (idx = 0; idx < stateObj.sequence.length; idx++) {
                 seqObj = stateObj.sequence[idx];
 
-                switch (seqObj.type) {
-                case 'gameover':
-                    this.gameover();
-                    break;
+                this.sequence[idx] = seqObj;
 
-                case 'plain':
-                    if (!this.next(seqObj.id)) {
-                        throw new Error('Stager.setState: invalid sequence.');
-                    }
-                    break;
+                //switch (seqObj.type) {
+                //case 'gameover':
+                    //this.gameover();
+                    //break;
 
-                case 'repeat':
-                    if (!this.repeat(seqObj.id, seqObj.num)) {
-                        throw new Error('Stager.setState: invalid sequence.');
-                    }
-                    break;
+                //case 'plain':
+                    //if (!this.next(seqObj.id)) {
+                        //throw new Error('Stager.setState: invalid sequence.');
+                    //}
+                    //break;
 
-                case 'loop':
-                    if (!this.loop(seqObj.id, seqObj.cb)) {
-                        throw new Error('Stager.setState: invalid sequence.');
-                    }
-                    break;
+                //case 'repeat':
+                    //if (!this.repeat(seqObj.id, seqObj.num)) {
+                        //throw new Error('Stager.setState: invalid sequence.');
+                    //}
+                    //break;
 
-                case 'doLoop':
-                    if (!this.doLoop(seqObj.id, seqObj.cb)) {
-                        throw new Error('Stager.setState: invalid sequence.');
-                    }
-                    break;
+                //case 'loop':
+                    //if (!this.loop(seqObj.id, seqObj.cb)) {
+                        //throw new Error('Stager.setState: invalid sequence.');
+                    //}
+                    //break;
 
-                default:
-                    // Unknown type:
-                    throw new Error('Stager.setState: invalid sequence.');
-                }
+                //case 'doLoop':
+                    //if (!this.doLoop(seqObj.id, seqObj.cb)) {
+                        //throw new Error('Stager.setState: invalid sequence.');
+                    //}
+                    //break;
+
+                //default:
+                    //// Unknown type:
+                    //throw new Error('Stager.setState: invalid sequence.');
+                //}
             }
         }
 
@@ -13162,6 +13162,8 @@ if (!Array.prototype.indexOf) {
      * @see Stager.setState
      */
     Stager.prototype.getState = function() {
+        this.finalize();
+
         return J.clone({
             steps:               this.steps,
             stages:              this.stages,
@@ -13172,7 +13174,8 @@ if (!Array.prototype.indexOf) {
             defaultGlobals:      this.defaultGlobals,
             defaultProperties:   this.defaultProperties,
             onInit:              this.onInit,
-            onGameover:          this.onGameover
+            onGameover:          this.onGameover,
+            blocks:              this.blocks,
         });
     };
 
@@ -13254,11 +13257,11 @@ if (!Array.prototype.indexOf) {
     };
 
     Stager.prototype.finalize = function() {
-        var currentBlock, block;
+        var currentItem, blockIndex;
         this.endAllBlocks();
-        for (block in this.blocks)
-        {
-            block.finalize();
+
+        for (blockIndex in this.blocks) {
+            this.blocks[blockIndex].finalize();
         }
 
         // Create sequence.
@@ -13266,6 +13269,10 @@ if (!Array.prototype.indexOf) {
         while (!!currentItem) {
             this.sequence.push(currentItem);
             currentItem = this.blocks[0].next();
+        }
+
+        for (blockIndex in this.blocks) {
+            this.blocks[blockIndex].index = 0;
         }
     };
 
@@ -13297,7 +13304,6 @@ if (!Array.prototype.indexOf) {
 
         // No valid position specified.
         if (parsedPositions.length === 0) {
-            console.log(item)
             throw new Error('No valid position specified.');
         }
 
@@ -13312,7 +13318,7 @@ if (!Array.prototype.indexOf) {
             for (i in this.unfinishedEntries) {
                 if (this.unfinished.hasOwnProperty(i)) {
                     this.unfinishedEntries[i].positions =
-                        J.mixout(this.unfinishedEntries[i].positions,
+                        J.skim(this.unfinishedEntries[i].positions,
                                  onlyPosition);
                 }
             }
@@ -13354,12 +13360,12 @@ if (!Array.prototype.indexOf) {
     // Deep get
     Block.prototype.next = function() {
         var item;
-        if (index < this.items.length) {
-            item = this.items[index];
+        if (this.index < this.items.length) {
+            item = this.items[this.index];
             if (item instanceof Block) {
                 item = item.next();
                 if (item === false) {
-                    index++;
+                    this.index++;
                     return this.next();
                 }
                 else {
@@ -13367,7 +13373,7 @@ if (!Array.prototype.indexOf) {
                 }
             }
             else {
-                index++;
+                this.index++;
                 return item;
             }
         }
@@ -13375,8 +13381,7 @@ if (!Array.prototype.indexOf) {
     };
 
     Stager.prototype.beginBlock = function(id, positions, options) {
-        var block = new Block(arguments);
-        this.blocks.push(block);
+        var block = new Block(id, positions, options);
         this.unfinishedBlocks.push(block);
 
         return this;
@@ -13388,10 +13393,11 @@ if (!Array.prototype.indexOf) {
 
         this.blocks.push(block);
 
+        options = options | {};
+
         if (currentBlock) {
             currentBlock.add(block, block.positions);
         }
-
         if (options.finalize) {
             block.finalize();
         }
@@ -13401,15 +13407,16 @@ if (!Array.prototype.indexOf) {
 
     Stager.prototype.endBlocks = function(n, options) {
         var i;
+
         for (i = 0; i < n; ++i) {
-            this.endBlock(options[i]);
+            this.endBlock(options);
         }
         return this;
     };
 
-    Stager.prototype.nextBlock = function() {
+    Stager.prototype.nextBlock = function(id, positions, options) {
         this.endBlock();
-        this.beginBlock(arguments);
+        this.beginBlock(id, positions, options);
         return this;
     };
 
