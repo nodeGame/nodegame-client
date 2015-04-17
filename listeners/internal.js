@@ -53,13 +53,18 @@
         }
 
         function done() {
+            var res;
+            // No incoming messages should be emitted before
+            // evaluating the step rule and definitely setting
+            // the stageLevel to DONE, otherwise the stage of
+            // other clients could change in between.
+            node.game.setStageLevel(stageLevels.GETTING_DONE);
             node.game.willBeDone = false;
-            node.game.setStageLevel(stageLevels.DONE);
             node.emit('REALLY_DONE');
+            res = node.game.shouldStep(stageLevels.DONE);
+            node.game.setStageLevel(stageLevels.DONE);
             // Step forward, if allowed.
-            if (node.game.shouldStep()) {
-                node.game.step();
-            }
+            if (res) node.game.step();
         }
 
         /**
@@ -67,23 +72,18 @@
          *
          * Registers the stageLevel _DONE_ and eventually steps forward.
          *
-         * If a DONE handler is defined in the game-plot, it will execute it.
-         * In case it returns FALSE, the update process is stopped.
+         * If a DONE handler is defined in the game-plot, it executes it.
+         * In case the handler returns FALSE, the process is stopped.
          *
          * @emit REALLY_DONE
          */
         this.events.ng.on('DONE', function() {
             // Execute done handler before updating stage.
-            var ok, doneCb, stageLevel;
-            ok = true;
-            doneCb = node.game.plot.getProperty(node.game.getCurrentGameStage(),
-                                                'done');
-
-            if (doneCb) ok = doneCb.apply(node.game, arguments);
-            if (!ok) return;
+            var stageLevel;
 
             stageLevel = node.game.getStageLevel();
 
+            // TODO check >=.
             if (stageLevel >= stageLevels.PLAYING) {
                 done();
             }
@@ -104,18 +104,18 @@
             }
         });
 
-        /**
-         * ## WINDOW_LOADED
-         *
-         * @emit LOADED
-         */
-        this.events.ng.on('WINDOW_LOADED', function() {
-            var stageLevel;
-            stageLevel = node.game.getStageLevel();
-            if (stageLevel >= stageLevels.CALLBACK_EXECUTED) {
-                node.emit('LOADED');
-            }
-        });
+//         /**
+//          * ## WINDOW_LOADED
+//          *
+//          * @emit LOADED
+//          */
+//         this.events.ng.on('WINDOW_LOADED', function() {
+//             var stageLevel;
+//             stageLevel = node.game.getStageLevel();
+//             if (stageLevel === stageLevels.CALLBACK_EXECUTED) {
+//                 node.emit('LOADED');
+//             }
+//         });
 
         /**
          * ## LOADED
@@ -180,7 +180,7 @@
             }
 
             node.emit('BEFORE_GAMECOMMAND', gcommands.pause, options);
-            node.game.pause();
+            node.game.pause(options);
         });
 
         /**
@@ -194,7 +194,7 @@
             }
 
             node.emit('BEFORE_GAMECOMMAND', gcommands.resume, options);
-            node.game.resume();
+            node.game.resume(options);
         });
 
         /**

@@ -34,7 +34,7 @@
         <a href="#nodegameclient.err">NodeGameClient.err</a>
       </div>
       <div class="heading h3">
-        <a href="#nodegameclient.debug">NodeGameClient.debug</a>
+        <a href="#nodegameclient.silly">NodeGameClient.silly</a>
       </div>
     </div>
   </div>
@@ -53,7 +53,7 @@
 </div>
 
 
-<p>Copyright(c) 2014 Stefano Balietti
+<p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p><code>nodeGame</code> logging module</p>
@@ -65,7 +65,9 @@ MIT Licensed</p>
     <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">LOG</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LOG</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -84,7 +86,7 @@ MIT Licensed</p>
 <p>Logs entries are displayed to the console if their level is
 smaller than <code>this.verbosity</code>.</p>
 
-<p>TODO: Logs entries are forwarded to the server if their level is
+<p>Logs entries are forwarded to the server if their level is
 smaller than <code>this.remoteVerbosity</code>.</p>
   </div>
   <div class="details">
@@ -111,14 +113,18 @@ smaller than <code>this.remoteVerbosity</code>.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">level</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">txt</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">numLevel</span><span class="p">,</span> <span class="nx">hash</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">txt</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 
-        <span class="nx">level</span>  <span class="o">=</span> <span class="nx">level</span> <span class="o">||</span> <span class="s1">&#39;warn&#39;</span><span class="p">;</span>
-        <span class="nx">prefix</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">prefix</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="s1">&#39;&gt; &#39;</span> <span class="o">:</span> <span class="nx">prefix</span><span class="p">;</span>
+        <span class="nx">level</span>  <span class="o">=</span> <span class="nx">level</span> <span class="o">||</span> <span class="s1">&#39;info&#39;</span><span class="p">;</span>
+        <span class="nx">prefix</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">prefix</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="s1">&#39;&gt; &#39;</span> <span class="o">:</span> <span class="nx">prefix</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">&gt;=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">[</span><span class="nx">level</span><span class="p">])</span> <span class="p">{</span>
+        <span class="nx">numLevel</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">&gt;=</span> <span class="nx">numLevel</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">txt</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">remoteVerbosity</span> <span class="o">&gt;=</span> <span class="nx">numLevel</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -126,18 +132,23 @@ smaller than <code>this.remoteVerbosity</code>.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
 </div>
-<p>if (this.remoteVerbosity > level) {
-    var remoteMsg = this.msg.create({
-        target: this.target.LOG,
-        text: level,
-        data: txt,
-        to: 'SERVER'
-    });
-    console.log(txt)
-    this.socket.send(remoteMsg);
-}</p>
+<p>We need to avoid creating errors here,
+otherwise we enter an infinite loop.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">placeholder</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">remoteLogMap</span><span class="p">[</span><span class="nx">txt</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">remoteLogMap</span><span class="p">[</span><span class="nx">txt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+                        <span class="nx">target</span><span class="o">:</span> <span class="nx">LOG</span><span class="p">,</span>
+                        <span class="nx">text</span><span class="o">:</span> <span class="nx">level</span><span class="p">,</span>
+                        <span class="nx">data</span><span class="o">:</span> <span class="nx">txt</span><span class="p">,</span>
+                        <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;SERVER&#39;</span>
+                    <span class="p">}));</span>
+                    <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">remoteLogMap</span><span class="p">[</span><span class="nx">txt</span><span class="p">];</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -206,15 +217,15 @@ smaller than <code>this.remoteVerbosity</code>.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nodegameclient.debug">
+<div class="pilwrap" id="nodegameclient.silly">
   <h3>
-    <a href="#nodegameclient.debug" class="pilcrow">&#182;</a>
-    NodeGameClient.debug
+    <a href="#nodegameclient.silly" class="pilcrow">&#182;</a>
+    NodeGameClient.silly
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Logs a DEBUG message</p>
+  <div class="body"><p>Logs a SILLY message</p>
   </div>
 </div>
         </td>

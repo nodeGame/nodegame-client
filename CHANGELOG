@@ -1,5 +1,35 @@
 # nodegame-client change log
 
+## 0.9.10
+
+ - Optimized EventEmitter.
+ - `#node.done()` is asynchronous to avoid calling multiple node.done() in the same step.
+ - `#node.done()` evaluates the done handler immediately, and then eventually emit 'DONE'. This makes node.done and emit('DONE') different, because emit('DONE') does not evaluate the done handler any more.
+ - After 'PLAYING' is emitted, if a frame is loaded by `#GameWindow.loadFrame()` the game level will not change again to 'WINDOW_LOADED` and then `PLAYING`. That was causing issues with sychronization.
+ - `#Game.isReady()` does not look anymore at the status of the GameWindow. Once PLAYING has been emitted, if the game is not paused or done was called it return TRUE.
+ - New game levels: 'LOADING_FRAME' (reserved, not used), 'FRAME_LOADED' (reserved, not used)..
+ - Removed game level: 'WINDOW_LOADED'.
+ - `node.emitAsync()` emits event asynchrounosly (does not return a value).
+ - `#node.get()` uses a nodeGame timer instead of Javascript timeOuts, so it can synchronize with game events, such as pause and resume.
+ - `#node.get()` checks the id of the message to make sure that only the actual recipient can reply to it.
+ - Fixed bug on parameter timeout of `node.get`.
+ - `#EventEmitterManager.printAll()` and `#EventEmitterManager.getAll()`
+ - Avoiding multiple calls to `#node.socket.disconnect()`
+ - It is possible to use the name of a function to remove it from the event emitter.
+ - Remote logging is enabled. By default only errors are sent to server as LOG messages.
+ - Default level for logged message is 'info'. Before it was 'warn'.
+ - More support for IE8.
+ - 'SOCKET_CONNECTING' event when a socket start the connecting procedure.
+ - Removed group event-listeners.
+ - Check if there are more than 1 node instances on the browser.
+ - `#Game.pause()` and `#Game.resume()` accept a parameter to be passed along the emitted events.
+ - `#NodeGameClient.getCurrentEventEmitter()` improved to return the stage event emitter.
+ - `#Game.shouldStep()` accepts the stageLevel as parameter.
+ - `#Game.setStageLevel()`, `#Game.setStateLevel()` and `#Game.setCurrentGameStage()` accept a modifier to force or skip the publish of the update.
+ - Enhanced checks for avoiding clients getting out of sync.
+ - 'GETTING_DONE' stage level introduced to signal that the DONE procedure is being executed.
+ - Travis Integration.
+
 ## 0.9.9
 
  - Error Manager removed in Node.JS (use ServerNode instead).

@@ -4,11 +4,20 @@
  * MIT Licensed
  *
  * nodeGame is a free, open source, event-driven javascript framework,
- * for online multiplayer games in the browser.
+ * for real-time multiplayer games in the browser.
  */
-(function(exports) {
-    if ('undefined' !== typeof JSUS) exports.JSUS = JSUS;
-    if ('undefined' !== typeof NDDB) exports.NDDB = NDDB;
-    if ('undefined' !== typeof store) exports.store = store;
-    exports.support = JSUS.compatibility();
-})('object' === typeof module ? module.exports : (window.node = {}));
+(function(window) {
+    if ('undefined' !== typeof window.node) {
+        throw new Error('nodegame-client: a global node variable is already ' +
+                        'defined. Aborting...');
+    }
+
+    // Defining an empty node object. Will be overwritten later on.
+    var node = window.node = {};
+
+    if ('undefined' !== typeof JSUS) node.JSUS = JSUS;
+    if ('undefined' !== typeof NDDB) node.NDDB = NDDB;
+    if ('undefined' !== typeof store) node.store = store;
+    node.support = JSUS.compatibility();
+
+})(window);
