@@ -12292,6 +12292,7 @@ if (!Array.prototype.indexOf) {
 
         this.blocks = [];
         this.unfinishedBlocks = [];
+        this.finalized = false;
 
         return this;
     };
@@ -13249,6 +13250,8 @@ if (!Array.prototype.indexOf) {
             }
         }
 
+        this.finalized = true;
+
         return result;
     };
 
@@ -13258,7 +13261,12 @@ if (!Array.prototype.indexOf) {
 
     Stager.prototype.finalize = function() {
         var currentItem, blockIndex;
+
+        if (this.finalized) {
+            return;
+        }
         this.endAllBlocks();
+        debugger;
 
         for (blockIndex in this.blocks) {
             this.blocks[blockIndex].finalize();
@@ -13274,6 +13282,7 @@ if (!Array.prototype.indexOf) {
         for (blockIndex in this.blocks) {
             this.blocks[blockIndex].index = 0;
         }
+        this.finalized = true;
     };
 
 
@@ -13291,6 +13300,10 @@ if (!Array.prototype.indexOf) {
     Block.prototype.add = function(item, positions) {
         var parsedPositions;
         var onlyPosition, i;
+
+        if (this.finalized) {
+            throw new Error("Cannot add items after finalization");
+        }
 
         if ("undefined" === typeof positions || positions === "linear") {
             parsedPositions = [this.index];
@@ -13347,11 +13360,6 @@ if (!Array.prototype.indexOf) {
             positions = entry.positions;
             this.add(item, positions[J.randomInt(0, positions.length) - 1]);
         }
-
-        // Preventing further adds.
-        this.add = function() {
-            throw new Error("Cannot add items after finalization");
-        };
 
         // From now on index counts the execution state.
         this.index = 0;
@@ -13515,7 +13523,6 @@ if (!Array.prototype.indexOf) {
                 return 'unknown step "' + stage.steps[i] + '"';
             }
         }
-
         return null;
     }
 
