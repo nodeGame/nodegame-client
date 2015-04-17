@@ -5138,7 +5138,7 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string} expr The string specifying the selection expression
      * @param {mixed} available
-     *  - string adhering to be interpreted according to the same rules as
+     *  - string to be interpreted according to the same rules as
      *       `expr`
      *  - array containing the available elements
      *  - object providing functions next, isFinished and attributes begin, end
@@ -12290,6 +12290,9 @@ if (!Array.prototype.indexOf) {
          */
         this.onGameover = null;
 
+        this.blocks = [];
+        this.unfinishedBlocks = [];
+
         return this;
     };
 
@@ -12749,6 +12752,7 @@ if (!Array.prototype.indexOf) {
      */
     Stager.prototype.init = function() {
         this.sequence = [];
+        this.beginBlock('default', 1);
         return this;
     };
 
@@ -12759,8 +12763,8 @@ if (!Array.prototype.indexOf) {
      *
      * @return {Stager} this object
      */
-    Stager.prototype.gameover = function() {
-        this.sequence.push({ type: 'gameover' });
+    Stager.prototype.gameover = function(positions) {
+        this.getCurrentBlock().add({ type: 'gameover' }, positions);
         return this;
     };
 
@@ -12779,17 +12783,17 @@ if (!Array.prototype.indexOf) {
      *
      * @see Stager.addStage
      */
-    Stager.prototype.next = function(id) {
+    Stager.prototype.next = function(id, positions) {
         var stageName = handleAlias(this, id);
 
         if (stageName === null) {
             throw new Error('Stager.next: invalid stage name received.');
         }
 
-        this.sequence.push({
+        this.getCurrentBlock().add({
             type: 'plain',
             id: stageName
-        });
+        }, positions);
 
         return this;
     };
@@ -12807,7 +12811,7 @@ if (!Array.prototype.indexOf) {
      * @see Stager.addStage
      * @see Stager.next
      */
-    Stager.prototype.repeat = function(id, nRepeats) {
+    Stager.prototype.repeat = function(id, nRepeats, positions) {
         var stageName = handleAlias(this, id);
 
         if (stageName === null) {
@@ -12819,11 +12823,11 @@ if (!Array.prototype.indexOf) {
                             'received invalid number of repetitions.');
         }
 
-        this.sequence.push({
+        this.getCurrentBlock().add({
             type: 'repeat',
             id: stageName,
             num: nRepeats
-        });
+        }, postions);
 
         return this;
     };
@@ -12848,8 +12852,8 @@ if (!Array.prototype.indexOf) {
      * @see Stager.next
      * @see Stager.doLoop
      */
-    Stager.prototype.loop = function(id, func) {
-        return addLoop(this, 'loop', id, func);
+    Stager.prototype.loop = function(id, func, positions) {
+        return addLoop(this, 'loop', id, func, positions);
     };
 
     /**
@@ -12870,8 +12874,8 @@ if (!Array.prototype.indexOf) {
      * @see Stager.next
      * @see Stager.loop
      */
-    Stager.prototype.doLoop = function(id, func) {
-        return addLoop(this, 'doLoop', id, func);
+    Stager.prototype.doLoop = function(id, func, positions) {
+        return addLoop(this, 'doLoop', id, func, positions);
     };
 
     /**
@@ -13245,9 +13249,180 @@ if (!Array.prototype.indexOf) {
         return result;
     };
 
-    // ## Stager private methods
+    Stager.prototype.endAllBlocks = function() {
+        this.endBlocks(this.unfinishedBlocks.length);
+    };
 
-    function addLoop(that, type, id, func) {
+    Stager.prototype.finalize = function() {
+        var currentBlock, block;
+        this.endAllBlocks();
+        for (block in this.blocks)
+        {
+            block.finalize();
+        }
+
+        // Create sequence.
+        currentItem = this.blocks[0].next();
+        while (!!currentItem) {
+            this.sequence.push(currentItem);
+            currentItem = this.blocks[0].next();
+        }
+    };
+
+
+    function Block(id, positions) {
+        this.id = id;
+        this.positions = positions;
+
+        this.takenPositions = [];
+        this.items = [];
+        this.unfinishedEntries = [];
+
+        this.index = 0;
+    }
+
+    Block.prototype.add = function(item, positions) {
+        var parsedPositions;
+        var onlyPosition, i;
+
+        if ("undefined" === typeof positions || positions === "linear") {
+            parsedPositions = [this.index];
+        }
+        else {
+            parsedPositions =
+                J.skim(J.range(positions), this.takenPositions);
+        }
+        // Index counts how many elements have been added.
+        ++this.index;
+
+        // No valid position specified.
+        if (parsedPositions.length === 0) {
+            console.log(item)
+            throw new Error('No valid position specified.');
+        }
+
+        // Only one valid position specified means we add it directly.
+        if (parsedPositions.length === 1) {
+            onlyPosition = parsedPositions[0];
+
+            this.takenPositions.push(onlyPosition);
+            this.items[onlyPosition] = item;
+
+            // Remove taken position from all unfinished items.
+            for (i in this.unfinishedEntries) {
+                if (this.unfinished.hasOwnProperty(i)) {
+                    this.unfinishedEntries[i].positions =
+                        J.mixout(this.unfinishedEntries[i].positions,
+                                 onlyPosition);
+                }
+            }
+
+            return;
+        }
+
+        this.unfinishedEntries.push({
+            item: item,
+            positions: parsedPositions
+        });
+    };
+
+    Block.prototype.finalize = function() {
+        var entry, item, positions;
+        var sortFunction = function(left, right) {
+            return left.positions.length < right.positions.length;
+        };
+        while(this.unfinishedEntries.length > 0) {
+            // Sort in descending order according to length of positions.
+            this.unfinishedItems.sort(sortFunction);
+
+            // Apply same sorting to item
+            entry = this.unfinishedEntries.pop();
+            item = entry.item;
+            positions = entry.positions;
+            this.add(item, positions[J.randomInt(0, positions.length) - 1]);
+        }
+
+        // Preventing further adds.
+        this.add = function() {
+            throw new Error("Cannot add items after finalization");
+        };
+
+        // From now on index counts the execution state.
+        this.index = 0;
+    };
+
+    // Deep get
+    Block.prototype.next = function() {
+        var item;
+        if (index < this.items.length) {
+            item = this.items[index];
+            if (item instanceof Block) {
+                item = item.next();
+                if (item === false) {
+                    index++;
+                    return this.next();
+                }
+                else {
+                    return item;
+                }
+            }
+            else {
+                index++;
+                return item;
+            }
+        }
+        return false;
+    };
+
+    Stager.prototype.beginBlock = function(id, positions, options) {
+        var block = new Block(arguments);
+        this.blocks.push(block);
+        this.unfinishedBlocks.push(block);
+
+        return this;
+    };
+
+    Stager.prototype.endBlock = function(options) {
+        var block = this.unfinishedBlocks.pop();
+        var currentBlock = this.getCurrentBlock();
+
+        this.blocks.push(block);
+
+        if (currentBlock) {
+            currentBlock.add(block, block.positions);
+        }
+
+        if (options.finalize) {
+            block.finalize();
+        }
+
+        return this;
+    };
+
+    Stager.prototype.endBlocks = function(n, options) {
+        var i;
+        for (i = 0; i < n; ++i) {
+            this.endBlock(options[i]);
+        }
+        return this;
+    };
+
+    Stager.prototype.nextBlock = function() {
+        this.endBlock();
+        this.beginBlock(arguments);
+        return this;
+    };
+
+    Stager.prototype.getCurrentBlock = function() {
+        if (this.unfinishedBlocks.length > 0) {
+            return this.unfinishedBlocks[this.unfinishedBlocks.length -1];
+        }
+        return false;
+    };
+
+
+    // ## Stager private methods
+    function addLoop(that, type, id, func, positions) {
         var stageName = handleAlias(that, id);
 
         if (stageName === null) {
@@ -13263,11 +13438,11 @@ if (!Array.prototype.indexOf) {
             throw new Error('Stager.' + type + ': received invalid callback.');
         }
 
-        that.sequence.push({
+        that.getCurrentBlock().add({
             type: type,
             id: stageName,
             cb: func
-        });
+        }, positions);
 
         return that;
     }
@@ -13299,7 +13474,7 @@ if (!Array.prototype.indexOf) {
                 '. Use extendStep to modify it.';
         }
         return null;
-    };
+    }
 
     /**
      * checkStageValidity
@@ -13335,7 +13510,7 @@ if (!Array.prototype.indexOf) {
         }
 
         return null;
-    };
+    }
 
     /**
      * handleAlias
@@ -14068,7 +14243,7 @@ if (!Array.prototype.indexOf) {
      * Looks up and build the _globals_ object for the specified game stage
      *
      * Globals properties are mixed in at each level (defaults, stage, step)
-     * to form the complete set of globals available for the specified
+     * to form the complete set of globals available for the specified 
      * game stage.
      *
      * @param {GameStage|string} gameStage The GameStage object,
@@ -14088,11 +14263,11 @@ if (!Array.prototype.indexOf) {
 
         // Look in Stager's defaults:
         J.mixin(globals, this.stager.getDefaultGlobals());
-
+        
         // Look in current stage:
         stepstage = this.getStage(gameStage);
         if (stepstage) J.mixin(globals, stepstage.globals);
-
+        
         // Look in current step:
         stepstage = this.getStep(gameStage);
         if (stepstage) J.mixin(globals, stepstage.globals);
@@ -20749,7 +20924,7 @@ if (!Array.prototype.indexOf) {
      *
      * 	node.on.data('myLabel', function(){ ... };
      * 	node.once.data('myLabel', function(){ ... };
-     * ```
+     * ```	
      *
      * @param {string} alias The name of alias
      * @param {string|array} events The event/s under which the listeners
@@ -20795,7 +20970,7 @@ if (!Array.prototype.indexOf) {
             // Otherwise, we assume the first parameter is the callback.
             if (modifier) {
                 func = modifier.apply(that.game, arguments);
-            }
+            } 
             J.each(events, function(event) {
                 that.once(event, function() {
                     func.apply(that.game, arguments);
@@ -24908,19 +25083,19 @@ if (!Array.prototype.indexOf) {
 
         /**
          * Force disconnection upon page unload
-         *
+         * 
          * This makes browsers using AJAX to signal disconnection immediately.
          *
-         * Kudos:
+         * Kudos: 
          * http://stackoverflow.com/questions/1704533/intercept-page-exit-event
-         */
+         */       
         window.onunload = function() {
             var i;
             node.socket.disconnect();
             // Do nothing, but gain time.
             for (i = -1 ; ++i < 100000 ; ) { }
         };
-
+    
         // Mark listeners as added.
         this.listenersAdded = true;
 
@@ -30192,17 +30367,19 @@ if (!Array.prototype.indexOf) {
 
         that = this;
 
+        // Should get the game ?
+
         ee = node.getCurrentEventEmitter();
 
         ee.on('STEP_CALLBACK_EXECUTED', function() {
             that.updateAll();
         });
 
-        ee.on('SOCKET_CONNECTED', function() {
+        ee.on('SOCKET_CONNECT', function() {
             that.updateAll();
         });
 
-        ee.on('SOCKET_DICONNECTED', function() {
+        ee.on('SOCKET_DICONNECT', function() {
             that.updateAll();
         });
 
