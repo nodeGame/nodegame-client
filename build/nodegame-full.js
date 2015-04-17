@@ -5155,8 +5155,9 @@ if (!Array.prototype.indexOf) {
             return [];
         }
 
+        // If no available numbers defined, assumes all possible are allowed.
         if ("undefined" === typeof available) {
-            throw new TypeError('available needs to be defined');
+            available = expr;
         }
         if (!JSUS.isArray(available)) {
             if ("string" !== typeof available) {
@@ -5165,7 +5166,7 @@ if (!Array.prototype.indexOf) {
                     "number"   !== typeof available.begin ||
                     "number"   !== typeof available.end
                 )
-                throw new Error('available wrong type');
+                throw new Error('PARSE.range: available wrong type');
             }
         }
 
@@ -5176,7 +5177,8 @@ if (!Array.prototype.indexOf) {
 
             numbers = available.match(/([-+]?\d+)/g);
             if (numbers === null) {
-                throw new Error('no numbers in available');
+                throw new Error(
+                    'PARSE.range: no numbers in available: ' + available);
             }
             lowerBound = Math.min.apply(null, numbers);
 
@@ -5279,13 +5281,13 @@ if (!Array.prototype.indexOf) {
         invalidDot = /\.[^\d]|[^\d]\./;
 
         if (expr.match(invalidChars)) {
-            throw new Error('invalidChars:' + expr);
+            throw new Error('PARSE.range: invalidChars:' + expr);
         }
         if (expr.match(invalidBeforeOpeningBracket)) {
-            throw new Error('invaludBeforeOpeningBracket:' + expr);
+            throw new Error('PARSE.range: invaludBeforeOpeningBracket:' + expr);
         }
         if (expr.match(invalidDot)) {
-            throw new Error('invalidDot:' + expr);
+            throw new Error('PARSE.range: invalidDot:' + expr);
         }
 
         if (JSUS.isArray(available)) {
@@ -13147,6 +13149,9 @@ if (!Array.prototype.indexOf) {
         if (stateObj.hasOwnProperty('onGameover')) {
             this.setOnGameover(stateObj.onGameover);
         }
+
+        this.finalized = true;
+
     };
 
     /**
@@ -13250,8 +13255,6 @@ if (!Array.prototype.indexOf) {
             }
         }
 
-        this.finalized = true;
-
         return result;
     };
 
@@ -13266,7 +13269,6 @@ if (!Array.prototype.indexOf) {
             return;
         }
         this.endAllBlocks();
-        debugger;
 
         for (blockIndex in this.blocks) {
             this.blocks[blockIndex].finalize();
@@ -13298,67 +13300,75 @@ if (!Array.prototype.indexOf) {
     }
 
     Block.prototype.add = function(item, positions) {
-        var parsedPositions;
-        var onlyPosition, i;
-
         if (this.finalized) {
-            throw new Error("Cannot add items after finalization");
+            throw new Error("Block.add: Cannot add items after finalization.");
         }
 
         if ("undefined" === typeof positions || positions === "linear") {
-            parsedPositions = [this.index];
+            this.takenPositions.push(this.index);
+            this.items[this.index] = item;
+
         }
         else {
-            parsedPositions =
-                J.skim(J.range(positions), this.takenPositions);
+            this.unfinishedEntries.push({
+                item: item,
+                positions: positions
+            });
         }
+
         // Index counts how many elements have been added.
         ++this.index;
-
-        // No valid position specified.
-        if (parsedPositions.length === 0) {
-            throw new Error('No valid position specified.');
-        }
-
-        // Only one valid position specified means we add it directly.
-        if (parsedPositions.length === 1) {
-            onlyPosition = parsedPositions[0];
-
-            this.takenPositions.push(onlyPosition);
-            this.items[onlyPosition] = item;
-
-            // Remove taken position from all unfinished items.
-            for (i in this.unfinishedEntries) {
-                if (this.unfinished.hasOwnProperty(i)) {
-                    this.unfinishedEntries[i].positions =
-                        J.skim(this.unfinishedEntries[i].positions,
-                                 onlyPosition);
-                }
-            }
-
-            return;
-        }
-
-        this.unfinishedEntries.push({
-            item: item,
-            positions: parsedPositions
-        });
     };
 
     Block.prototype.finalize = function() {
-        var entry, item, positions;
+        var entry, item, positions, i, chosenPosition;
+        var available = [];
         var sortFunction = function(left, right) {
             return left.positions.length < right.positions.length;
         };
-        while(this.unfinishedEntries.length > 0) {
-            // Sort in descending order according to length of positions.
-            this.unfinishedItems.sort(sortFunction);
 
-            // Apply same sorting to item
+        // Range in which the indeces must be.
+        for (i = 0; i < this.index; ++i) {
+            available[i] = i;
+        }
+        // Accounting for already taken positions.
+        available = J.arrayDiff(available, this.takenPositions);
+        debugger;
+
+        // Parseing all of the position strings into arrays.
+        for (i in this.unfinishedEntries) {
+            if (this.unfinishedEntries.hasOwnProperty(i)) {
+                this.unfinishedEntries[i].positions =
+                    J.range(this.unfinishedEntries[i].positions, available);
+            }
+        }
+
+        // Assigning positions.
+        while(this.unfinishedEntries.length > 0) {
+            // Select entry with least possibilities of where to go.
+            this.unfinishedEntries.sort(sortFunction);
             entry = this.unfinishedEntries.pop();
             item = entry.item;
             positions = entry.positions;
-            this.add(item, positions[J.randomInt(0, positions.length) - 1]);
+
+            // No valid position specified.
+            if (positions.length === 0) {
+                throw new Error('Block.finalize: No valid position specified.');
+            }
+
+            // Chose position randomly among possibilities.
+            chosenPosition =  positions[J.randomInt(0, positions.length) - 1];
+            this.items[chosenPosition] = item;
+            this.takenPositions.push(chosenPosition);
+
+            // Adjust possible positions of remaining entries.
+            for (i in this.unfinishedEntries) {
+                if (this.unfinishedEntries.hasOwnProperty(i)) {
+                    this.unfinishedEntries[i].positions =
+                        J.removeElement(chosenPosition,
+                            this.unfinishedEntries[i].positions);
+                }
+            }
         }
 
         // From now on index counts the execution state.
