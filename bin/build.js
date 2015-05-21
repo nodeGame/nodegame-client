@@ -8,6 +8,7 @@ module.exports.build = build;
 module.exports.build_support = build_support;
 
 var smoosh = require('smoosh'),
+fs = require('fs'),
 path = require('path'),
 J = require('JSUS').JSUS;
 
@@ -17,8 +18,24 @@ version = pkg.version;
 var rootDir = path.resolve(__dirname, '..') + '/';
 var distDir =  rootDir + 'build/';
 
+
+
+function loadTemplate(name) {
+    return fs.readFileSync(path.join(__dirname, 'templates', name), 'utf-8');
+}
+function write(filePath, str, mode) {
+    fs.writeFileSync(filePath, str, { mode: mode || 0666 });
+}
+
+// Create Version File
+var indexFile = loadTemplate('index.browser.js');
+indexFile = indexFile.replace('{VERSION}', "'" + version + "'");
+write(rootDir + 'index.browser.js', indexFile);
+
 // nodegame-client
 var ng_client = [
+
+    // First include.
     rootDir + "index.browser.js",
 
     // Constants.
@@ -123,7 +140,7 @@ function build(options) {
 
     if (!options.bare && !options.JSUS && !options.NDDB && !options.shelf &&
         !options.all && !options.cycle && !options.only) {
-	options.standard = true;
+        options.standard = true;
     }
 
     var out = options.output || "nodegame";
@@ -135,48 +152,48 @@ function build(options) {
 
     // -1. IE - shim
     if (options.ie || options.all) {
-	console.log('  - old IE support');
-	files = files.concat(rootDir + 'ie.support.js');
+        console.log('  - old IE support');
+        files = files.concat(rootDir + 'ie.support.js');
     }
 
     // 0. Shelf.js
     if (options.shelf || options.all) {
-	if (!J.existsSync(shelfDir)) {
-	    console.log('  - ERR: shelf.js not found!');
-	}
-	else {
-	    var shelfjs = shelfDir + 'build/shelf.js';
-	    // Build custom shelf.js if not existing
-	    if (!J.existsSync(shelfjs)) {
-		var shelfjs_build = shelfDir + 'bin/build.js';
-		console.log("\n  - building custom shelf.js")
-		var buildShelf = require(shelfjs_build);
-		buildShelf.build({cycle: true});
+        if (!J.existsSync(shelfDir)) {
+            console.log('  - ERR: shelf.js not found!');
+        }
+        else {
+            var shelfjs = shelfDir + 'build/shelf.js';
+            // Build custom shelf.js if not existing
+            if (!J.existsSync(shelfjs)) {
+                var shelfjs_build = shelfDir + 'bin/build.js';
+                console.log("\n  - building custom shelf.js")
+                var buildShelf = require(shelfjs_build);
+                buildShelf.build({cycle: true});
 
-		// building shelf.js FS as well
-		buildShelf.build({
-		    lib: ['fs'],
-		    output: "shelf-fs",
-		    cycle: true,
-		});
-	    }
+                // building shelf.js FS as well
+                buildShelf.build({
+                    lib: ['fs'],
+                    output: "shelf-fs",
+                    cycle: true,
+                });
+            }
 
-	    console.log('  - shelf.js');
-	    files = files.concat(ng_shelf);
-	}
+            console.log('  - shelf.js');
+            files = files.concat(ng_shelf);
+        }
     }
 
 
     // 1. J
     if (options.JSUS || options.all || options.standard) {
-	console.log('  - JSUS');
-	files = files.concat(ng_jsus);
+        console.log('  - JSUS');
+        files = files.concat(ng_jsus);
     }
 
     // 2. NDDB
     if (options.NDDB || options.all || options.standard) {
-	console.log('  - NDDB');
-	files = files.concat(ng_nddb);
+        console.log('  - NDDB');
+        files = files.concat(ng_nddb);
     }
 
     // 3. nodegame-client core: always built
@@ -185,8 +202,8 @@ function build(options) {
 
     // 4. nodegame-client addons
     if (options.addons || options.all || options.standard) {
-	console.log('  - nodegame-client addons');
-	files = files.concat(ng_addons);
+        console.log('  - nodegame-client addons');
+        files = files.concat(ng_addons);
     }
 
     // 3.B closure
@@ -195,52 +212,52 @@ function build(options) {
 
     // 5. nodegame-window
     if (options.window || options.all) {
-	if (!J.existsSync(ngWdir)) {
-	    console.log('  - ERR: nodegame-window not found!');
-	}
-	else {
-	    console.log('  - nodegame-window');
+        if (!J.existsSync(ngWdir)) {
+            console.log('  - ERR: nodegame-window not found!');
+        }
+        else {
+            console.log('  - nodegame-window');
 
-	    // Build custom shelf.js if not existing
-	    if (!J.existsSync(ngWdir + 'build/nodegame-window.js')) {
-		var window_build = ngWdir + 'bin/build.js';
-		console.log("\n  - building custom nodegame-window.js")
-		var buildWindow = require(window_build);
-		buildWindow.build({all: true});
-	    }
+            // Build custom shelf.js if not existing
+            if (!J.existsSync(ngWdir + 'build/nodegame-window.js')) {
+                var window_build = ngWdir + 'bin/build.js';
+                console.log("\n  - building custom nodegame-window.js")
+                var buildWindow = require(window_build);
+                buildWindow.build({all: true});
+            }
 
-	    files = files.concat(ng_window);
-	}
+            files = files.concat(ng_window);
+        }
 
     }
 
     //5. nodegame-widgets
     if (options.widgets || options.all) {
-	if (!J.existsSync(ngWdgdir)) {
-	    console.log('  - ERR: nodegame-widgets not found!');
-	}
-	else {
-	    console.log('  - nodegame-widgets');
+        if (!J.existsSync(ngWdgdir)) {
+            console.log('  - ERR: nodegame-widgets not found!');
+        }
+        else {
+            console.log('  - nodegame-widgets');
 
-	    // Build custom shelf.js if not existing
-	    if (!J.existsSync(ngWdgdir + 'build/nodegame-widgets.js')) {
-		var widgets_build = ngWdgdir + 'bin/build.js';
-		console.log("\n  - building custom nodegame-widgets.js")
-		var buildWidgets = require(widgets_build);
-		buildWidgets.build({all: true});
-	    }
+            // Build custom shelf.js if not existing
+            if (!J.existsSync(ngWdgdir + 'build/nodegame-widgets.js')) {
+                var widgets_build = ngWdgdir + 'bin/build.js';
+                console.log("\n  - building custom nodegame-widgets.js")
+                var buildWidgets = require(widgets_build);
+                buildWidgets.build({all: true});
+            }
 
-	    files = files.concat(ng_widgets);
-	}
+            files = files.concat(ng_widgets);
+        }
     }
 
     console.log("\n");
 
     var conf = {
-	text: 'nodeGame-client build created!',
-	options: options,
-	out: out,
-	files: files,
+        text: 'nodeGame-client build created!',
+        options: options,
+        out: out,
+        files: files,
     };
 
     smooshIt(conf);
@@ -250,130 +267,130 @@ function build(options) {
 function build_support(options) {
 
     if (options.all) {
-	options.only = ['ie', 'shelf', 'jsus', 'nddb', 'addons', 'window',
+        options.only = ['ie', 'shelf', 'jsus', 'nddb', 'addons', 'window',
                         'widgets'];
     }
 
     var library, out, files, i;
     for (i = 0; i < options.only.length; i++) {
-	library = options.only[i];
+        library = options.only[i];
 
-	out = (options.output) ? options.output : "nodegame-" + library;
+        out = (options.output) ? options.output : "nodegame-" + library;
 
-	console.log('Building support library: ');
-
-
-	// CREATING build array
-	files = [];
-
-	switch (library) {
+        console.log('Building support library: ');
 
 
-	case 'ie':
+        // CREATING build array
+        files = [];
+
+        switch (library) {
+
+
+        case 'ie':
             console.log('  - old IE support');
-	    files = files.concat(rootDir + 'ie.support.js');
-	    break;
+            files = files.concat(rootDir + 'ie.support.js');
+            break;
 
-	case 'shelf':
+        case 'shelf':
 
-	    if (!J.existsSync(shelfDir)) {
-		console.log('  - ERR: shelf.js not found!');
-	    }
-	    else {
-		var shelfjs = shelfDir + 'build/shelf.js';
-		// Build custom shelf.js if not existing
-		if (!J.existsSync(shelfjs)) {
-		    var shelfjs_build = shelfDir + 'bin/build.js';
-		    console.log("\n  - building custom shelf.js")
-		    var buildShelf = require(shelfjs_build);
-		    buildShelf.build({cycle: true});
+            if (!J.existsSync(shelfDir)) {
+                console.log('  - ERR: shelf.js not found!');
+            }
+            else {
+                var shelfjs = shelfDir + 'build/shelf.js';
+                // Build custom shelf.js if not existing
+                if (!J.existsSync(shelfjs)) {
+                    var shelfjs_build = shelfDir + 'bin/build.js';
+                    console.log("\n  - building custom shelf.js")
+                    var buildShelf = require(shelfjs_build);
+                    buildShelf.build({cycle: true});
 
-		    // building shelf.js FS as well
-		    buildShelf.build({
-			lib: ['fs'],
-			output: "shelf-fs",
-			cycle: true,
-		    });
-		}
+                    // building shelf.js FS as well
+                    buildShelf.build({
+                        lib: ['fs'],
+                        output: "shelf-fs",
+                        cycle: true,
+                    });
+                }
 
-		console.log('  - shelf.js');
-		files = files.concat(ng_shelf);
-	    }
-	    break;
+                console.log('  - shelf.js');
+                files = files.concat(ng_shelf);
+            }
+            break;
 
-	case 'jsus':
-	    console.log('  - JSUS');
-	    files = files.concat(ng_jsus);
-	    break;
-
-
-
-	case 'nddb':
-
-	    console.log('  - NDDB');
-	    files = files.concat(ng_nddb);
-	    break;
+        case 'jsus':
+            console.log('  - JSUS');
+            files = files.concat(ng_jsus);
+            break;
 
 
-	case 'addons':
 
-	    console.log('  - nodegame-client addons');
-	    files = files.concat(ng_addons);
-	    break;
+        case 'nddb':
 
-	case 'window':
-
-	    if (!J.existsSync(ngWdir)) {
-		console.log('  - ERR: nodegame-window not found!');
-	    }
-	    else {
-		console.log('  - nodegame-window');
-
-		// Build custom shelf.js if not existing
-		if (!J.existsSync(ngWdir + 'build/nodegame-window.js')) {
-		    var window_build = ngWdir + 'bin/build.js';
-		    console.log("\n  - building custom nodegame-window.js")
-		    var buildWindow = require(window_build);
-		    buildWindow.build({all: true});
-		}
-
-		files = files.concat(ng_window);
-	    }
-	    break;
+            console.log('  - NDDB');
+            files = files.concat(ng_nddb);
+            break;
 
 
-	case 'widgets':
+        case 'addons':
 
-	    if (!J.existsSync(ngWdgdir)) {
-		console.log('  - ERR: nodegame-widgets not found!');
-	    }
-	    else {
-		console.log('  - nodegame-widgets');
+            console.log('  - nodegame-client addons');
+            files = files.concat(ng_addons);
+            break;
 
-		// Build custom shelf.js if not existing
-		if (!J.existsSync(ngWdgdir + 'build/nodegame-widgets.js')) {
-		    var widgets_build = ngWdgdir + 'bin/build.js';
-		    console.log("\n  - building custom nodegame-widgets.js")
-		    var buildWidgets = require(widgets_build);
-		    buildWidgets.build({all: true});
-		}
+        case 'window':
 
-		files = files.concat(ng_widgets);
-	    }
-	    break;
-	}
+            if (!J.existsSync(ngWdir)) {
+                console.log('  - ERR: nodegame-window not found!');
+            }
+            else {
+                console.log('  - nodegame-window');
 
-	console.log("\n");
+                // Build custom shelf.js if not existing
+                if (!J.existsSync(ngWdir + 'build/nodegame-window.js')) {
+                    var window_build = ngWdir + 'bin/build.js';
+                    console.log("\n  - building custom nodegame-window.js")
+                    var buildWindow = require(window_build);
+                    buildWindow.build({all: true});
+                }
+
+                files = files.concat(ng_window);
+            }
+            break;
 
 
-	var conf = {
-	    text: out + ' build created!',
-	    options: options,
-	    out: out,
-	    files: files,
-	};
+        case 'widgets':
 
-	smooshIt(conf);
+            if (!J.existsSync(ngWdgdir)) {
+                console.log('  - ERR: nodegame-widgets not found!');
+            }
+            else {
+                console.log('  - nodegame-widgets');
+
+                // Build custom shelf.js if not existing
+                if (!J.existsSync(ngWdgdir + 'build/nodegame-widgets.js')) {
+                    var widgets_build = ngWdgdir + 'bin/build.js';
+                    console.log("\n  - building custom nodegame-widgets.js")
+                    var buildWidgets = require(widgets_build);
+                    buildWidgets.build({all: true});
+                }
+
+                files = files.concat(ng_widgets);
+            }
+            break;
+        }
+
+        console.log("\n");
+
+
+        var conf = {
+            text: out + ' build created!',
+            options: options,
+            out: out,
+            files: files,
+        };
+
+        smooshIt(conf);
     }
 
     console.log('All additional nodeGame libraries created');
@@ -382,63 +399,63 @@ function build_support(options) {
 
 function smooshIt(conf) {
     if (!conf) {
-	console.log('Cannot smoosh empty conf object!');
-	return false;
+        console.log('Cannot smoosh empty conf object!');
+        return false;
     }
     if (!conf.out) {
-	console.log('Output file name missing. Aborting smooshing');
-	return false;
+        console.log('Output file name missing. Aborting smooshing');
+        return false;
     }
     if (!conf.files || !conf.files.length) {
-	console.log('No files to smoosh. Aborting.');
-	return false;
+        console.log('No files to smoosh. Aborting.');
+        return false;
     }
 
     var text = conf.text || 'Build created!',
     options = conf.options || {},
     files = conf.files,
     out = (path.extname(conf.out) === '.js') ? path.basename(conf.out, '.js')
-	: conf.out;
+        : conf.out;
 
 
     // Configurations for file smooshing.
     var config = {
 
-	// Use JSHINT to spot code irregularities.
-	JSHINT_OPTS: {
-	    boss: true,
-	    forin: true,
-	    browser: true,
-	},
+        // Use JSHINT to spot code irregularities.
+        JSHINT_OPTS: {
+            boss: true,
+            forin: true,
+            browser: true,
+        },
 
-	JAVASCRIPT: {
-	    DIST_DIR: '/' + distDir,
-	}
+        JAVASCRIPT: {
+            DIST_DIR: '/' + distDir,
+        }
     };
 
     config.JAVASCRIPT[out] = files;
 
     var run_it = function(){
-	// https://github.com/fat/smoosh
-	// hand over configurations made above
-	var smooshed = smoosh.config(config);
+        // https://github.com/fat/smoosh
+        // hand over configurations made above
+        var smooshed = smoosh.config(config);
 
-	// removes all files from the build folder
-	if (options.clean) {
-	    smooshed.clean();
-	}
+        // removes all files from the build folder
+        if (options.clean) {
+            smooshed.clean();
+        }
 
-	// builds both uncompressed and compressed files
-        //	    smooshed.build();
-	smooshed.build('uncompressed');
+        // builds both uncompressed and compressed files
+        //          smooshed.build();
+        smooshed.build('uncompressed');
 
-    	if (options.analyse) {
-    	    smooshed.run(); // runs jshint on full build
-    	    smooshed.analyze(); // analyzes everything
-    	}
+        if (options.analyse) {
+            smooshed.run(); // runs jshint on full build
+            smooshed.analyze(); // analyzes everything
+        }
 
-	console.log(text);
-	console.log("\n");
+        console.log(text);
+        console.log("\n");
     }
 
     run_it();

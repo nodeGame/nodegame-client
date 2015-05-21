@@ -29,6 +29,7 @@
  - Enhanced checks for avoiding clients getting out of sync.
  - 'GETTING_DONE' stage level introduced to signal that the DONE procedure is being executed.
  - Travis Integration.
+ - Version number correctly added to build file.
 
 ## 0.9.9
 
