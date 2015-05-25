@@ -103,7 +103,7 @@
         <a href="#node.setup.game_settings">node.setup.game_settings</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.game_metadata">node.setup.game_metadata</a>
+        <a href="#node.setup.metadata">node.setup.metadata</a>
       </div>
       <div class="heading h3">
         <a href="#node.setup.player">node.setup.player</a>
@@ -960,10 +960,10 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.game_metadata">
+<div class="pilwrap" id="node.setup.metadata">
   <h3>
-    <a href="#node.setup.game_metadata" class="pilcrow">&#182;</a>
-    node.setup.game_metadata
+    <a href="#node.setup.metadata" class="pilcrow">&#182;</a>
+    node.setup.metadata
   </h3>
 </div>
 
@@ -972,9 +972,9 @@ the window object in the browser enviroment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;game_metadata&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;setup(&quot;game_metadata&quot;) called before &#39;</span> <span class="o">+</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;setup(&quot;metadata&quot;) called before &#39;</span> <span class="o">+</span>
                           <span class="s1">&#39;node.game was initialized&#39;</span><span class="p">);</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
                     <span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
