@@ -28,7 +28,7 @@
         <a href="#game-constructor">Game constructor</a>
       </div>
       <div class="heading h2">
-        <a href="#private-properties">Private properties</a>
+        <a href="#properties">Properties</a>
       </div>
       <div class="heading h3">
         <a href="#game.metadata">Game.metadata</a>
@@ -41,9 +41,6 @@
       </div>
       <div class="heading h3">
         <a href="#game.ml">Game.ml</a>
-      </div>
-      <div class="heading h2">
-        <a href="#public-properties">Public properties</a>
       </div>
       <div class="heading h3">
         <a href="#game.memory">Game.memory</a>
@@ -220,7 +217,8 @@ MIT Licensed</p>
         <span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameDB</span><span class="p">,</span>
         <span class="nx">GamePlot</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GamePlot</span><span class="p">,</span>
         <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">,</span>
-        <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
+        <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Stager</span><span class="p">,</span>
+        <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span></pre></div>
         </td>
@@ -246,18 +244,18 @@ MIT Licensed</p>
       <span>A valid NodeGameClient object</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">settings</span>
+      <span class="dox_tag_name">setup</span>
       <span class="dox_type">object</span>
       <span>Optional. A configuration object</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">Game</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">Game</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">setup</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
 
-        <span class="nx">settings</span> <span class="o">=</span> <span class="nx">settings</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
+        <span class="nx">setup</span> <span class="o">=</span> <span class="nx">setup</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -273,10 +271,10 @@ MIT Licensed</p>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="private-properties">
+<div class="pilwrap" id="properties">
   <h2>
-    <a href="#private-properties" class="pilcrow">&#182;</a>
-    Private properties
+    <a href="#properties" class="pilcrow">&#182;</a>
+    Properties
   </h2>
 </div>
 
@@ -297,17 +295,21 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>The game's metadata</p>
 
-<p>Contains following properties:
-name, description, version, session</p>
+<p>Contains at least the following properties:</p>
+
+<ul>
+<li>name,</li>
+<li>description,</li>
+<li>version</li>
+</ul>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">metadata</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="nx">name</span><span class="o">:</span>        <span class="nx">settings</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;A nodeGame game&#39;</span><span class="p">,</span>
-            <span class="nx">description</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">description</span> <span class="o">||</span> <span class="s1">&#39;No Description&#39;</span><span class="p">,</span>
-            <span class="nx">version</span><span class="o">:</span>     <span class="nx">settings</span><span class="p">.</span><span class="nx">version</span> <span class="o">||</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
-            <span class="nx">session</span><span class="o">:</span>     <span class="nx">settings</span><span class="p">.</span><span class="nx">session</span> <span class="o">||</span> <span class="s1">&#39;0&#39;</span>
-        <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">metadata</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">merge</span><span class="p">({</span>
+            <span class="nx">name</span><span class="o">:</span>        <span class="s1">&#39;A nodeGame game&#39;</span><span class="p">,</span>
+            <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;No description&#39;</span><span class="p">,</span>
+            <span class="nx">version</span><span class="o">:</span>     <span class="s1">&#39;0.0.1&#39;</span>
+        <span class="p">},</span> <span class="nx">setup</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -322,21 +324,27 @@ name, description, version, session</p>
 
   </div>
   <div class="body"><p>The game's settings</p>
-
-<p>Contains the following properties:</p>
-
-<ul>
-<li>publishLevel: Default: REGULAR (10)</li>
-<li>syncStepping: Default: false</li>
-</ul>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">settings</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="nx">publishLevel</span><span class="o">:</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">publishLevel</span> <span class="o">?</span>
-                <span class="nx">constants</span><span class="p">.</span><span class="nx">publish_levels</span><span class="p">.</span><span class="nx">REGULAR</span> <span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">publishLevel</span><span class="p">,</span>
-            <span class="nx">syncStepping</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">syncStepping</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span>
-        <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">settings</span> <span class="o">=</span> <span class="nx">setup</span><span class="p">.</span><span class="nx">settings</span> <span class="o">||</span> <span class="p">{}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code>        <span class="n">publishLevel:</span> <span class="s">&#39;undefined&#39;</span> <span class="o">===</span> <span class="n">typeof</span> <span class="n">setup</span><span class="o">.</span><span class="n">publishLevel</span> <span class="p">?</span>
+            <span class="n">constants</span><span class="o">.</span><span class="n">publishLevels</span><span class="o">.</span><span class="n">REGULAR</span> <span class="p">:</span> <span class="n">setup</span><span class="o">.</span><span class="n">publishLevel</span><span class="p">,</span>
+        <span class="n">syncStepping:</span> <span class="n">setup</span><span class="o">.</span><span class="n">syncStepping</span> <span class="p">?</span> <span class="n">true</span> <span class="p">:</span> <span class="n">false</span>
+    <span class="p">};</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -398,19 +406,6 @@ name, description, version, session</p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap" id="public-properties">
-  <h2>
-    <a href="#public-properties" class="pilcrow">&#182;</a>
-    Public properties
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
 <div class="pilwrap" id="game.memory">
@@ -453,7 +448,7 @@ automatically inserted in this object</p>
 </div>
 
   </div>
-  <div class="body"><p>The Game Plot</p>
+  <div class="body"><p>The Game plot</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -464,7 +459,7 @@ automatically inserted in this object</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GamePlot</span><span class="p">(</span><span class="k">new</span> <span class="nx">Stager</span><span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">stages</span><span class="p">));</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GamePlot</span><span class="p">(</span><span class="k">new</span> <span class="nx">Stager</span><span class="p">(</span><span class="nx">setup</span><span class="p">.</span><span class="nx">stages</span><span class="p">));</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1410,7 +1405,7 @@ TODO: remove some unused comments in the code.
 </div>
 <p>Sends start / step command to connected clients if option is on.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">syncStepping</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;syncStepping&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">curStep</span><span class="p">.</span><span class="nx">stage</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;ROOM&#39;</span><span class="p">);</span>
             <span class="p">}</span>
@@ -2479,14 +2474,18 @@ value of the update to decide whether is to be published or not.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">shouldPublishUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">myStage</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">levels</span><span class="p">,</span> <span class="nx">myPublishLevel</span><span class="p">,</span> <span class="nx">stageLevels</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span>
                 <span class="s1">&#39;Game.shouldPublishUpdate: type must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="nx">myPublishLevel</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">publishLevel</span><span class="p">;</span>
-        <span class="nx">levels</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">publish_levels</span><span class="p">;</span>
-        <span class="nx">stageLevels</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">;</span></pre></div>
+
+        <span class="nx">myStage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
+        <span class="nx">levels</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">publishLevels</span><span class="p">;</span>
+        <span class="nx">stageLevels</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">;</span>
+
+        <span class="nx">myPublishLevel</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">myStage</span><span class="p">,</span> <span class="s1">&#39;publishLevel&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2500,7 +2499,7 @@ and LOADED stage with syncOnLoaded option.</p>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">myPublishLevel</span> <span class="o">===</span> <span class="nx">levels</span><span class="p">.</span><span class="nx">NONE</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span> <span class="s1">&#39;syncOnLoaded&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">myStage</span><span class="p">,</span> <span class="s1">&#39;syncOnLoaded&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;stageLevel&#39;</span> <span class="o">&amp;&amp;</span>
                 <span class="nx">value</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">===</span> <span class="nx">stageLevels</span><span class="p">.</span><span class="nx">LOADED</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
