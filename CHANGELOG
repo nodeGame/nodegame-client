@@ -30,6 +30,10 @@
  - 'GETTING_DONE' stage level introduced to signal that the DONE procedure is being executed.
  - Travis Integration.
  - Version number correctly added to build file.
+ - `publishLevel` and `syncOnLoaded` are properties of the stager and not of `game.game_settings`.
+ - `game.game_metadata` -> `game.metadata`.
+ - `game.game_settings` -> `game.settings`.
+ - `game.settings` contains treatment's settings now.
 
 ## 0.9.9
 
