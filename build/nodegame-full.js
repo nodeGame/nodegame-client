@@ -19773,7 +19773,7 @@ if (!Array.prototype.indexOf) {
     function NodeGameClient() {
         var that = this;
 
-        this.silly('node: loading.');
+        this.info('node: loading.');
 
         /**
          * ### node.nodename
@@ -19915,6 +19915,8 @@ if (!Array.prototype.indexOf) {
         this.support = {};
 
         // ## Configuration functions
+
+        this.info('node: registering setup functions.');
 
         /**
          * ### node.setup.nodegame
@@ -20294,6 +20296,8 @@ if (!Array.prototype.indexOf) {
             return dstList;
         }
 
+        this.info('node: adding emit/on functions.');
+
         /**
          * ### NodeGameClient.emit
          *
@@ -20381,7 +20385,7 @@ if (!Array.prototype.indexOf) {
 
         // TODO: move aliases into a separate method,
         // like addDefaultIncomingListeners
-        this.info('adding default alias.');
+        this.info('node: adding default alias.');
 
         // ### node.on.txt
         this.alias('txt', 'in.say.TXT');
@@ -20458,12 +20462,12 @@ if (!Array.prototype.indexOf) {
         this.alias('lang','in.say.LANG');
 
         // LISTENERS.
-        this.info('adding default listeners.');
+        this.info('node: adding default listeners.');
 
         this.addDefaultIncomingListeners();
         this.addDefaultInternalListeners();
 
-        this.info('node created.');
+        this.info('node: created.');
     }
 
     // ## Closure

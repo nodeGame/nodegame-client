@@ -254,7 +254,7 @@ multiplayer games in the browser.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NodeGameClient</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node: loading.&#39;</span><span class="p">);</span></pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node: loading.&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -611,7 +611,7 @@ to the browser local database or to a cookie</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node: registering setup functions.&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1302,7 +1302,9 @@ Updates are not possible for the moment.</p>
             <span class="p">}</span>
 
             <span class="k">return</span> <span class="nx">dstList</span><span class="p">;</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node: adding emit/on functions.&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1521,7 +1523,7 @@ has advanced to its next stage or step.</p>
 <p>TODO: move aliases into a separate method,
 like addDefaultIncomingListeners</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;adding default alias.&#39;</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node: adding default alias.&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1727,12 +1729,12 @@ like addDefaultIncomingListeners</p>
 </div>
 <p>LISTENERS.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;adding default listeners.&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node: adding default listeners.&#39;</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultIncomingListeners</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultInternalListeners</span><span class="p">();</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node created.&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node: created.&#39;</span><span class="p">);</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
