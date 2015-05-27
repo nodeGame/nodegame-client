@@ -20707,7 +20707,7 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('node.remoteSetup: property must be string.');
         }
         if ('string' !== typeof to && !J.isArray(to)) {
-            throw new TypeError('node.remoteSetup: to must be string or '
+            throw new TypeError('node.remoteSetup: to must be string or ' +
                                 'array.');
         }
 
