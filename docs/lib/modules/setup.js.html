@@ -31,6 +31,9 @@
         <a href="#node.registersetup">node.registerSetup</a>
       </div>
       <div class="heading h3">
+        <a href="#node.deregistersetup">node.deregisterSetup</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.remotesetup">node.remoteSetup</a>
       </div>
     </div>
@@ -188,7 +191,8 @@ function.</p>
   </div>
   <div class="body"><p>Registers a configuration function</p>
 
-<p>An incoming event listener in.say.SETUP is added automatically.</p>
+<p>Setup functions can be invoked remotely with in.say.SETUP messages
+and the name property stated in <code>msg.text</code>.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -224,6 +228,49 @@ function.</p>
             <span class="k">return</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
         <span class="p">}</span>
 
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.deregistersetup">
+  <h3>
+    <a href="#node.deregistersetup" class="pilcrow">&#182;</a>
+    node.deregisterSetup
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Registers a configuration function</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">feature</span>
+      <span class="dox_type">string</span>
+      <span>The name of the setup feature to deregister</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.setup
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">deregisterSetup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">feature</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">feature</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.deregisterSetup: property must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">feature</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.deregisterSetup: feature &#39;</span> <span class="o">+</span> <span class="nx">property</span> <span class="o">+</span> <span class="s1">&#39; not &#39;</span> <span class="o">+</span>
+                      <span class="s1">&#39;previously registered.&#39;</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">feature</span><span class="p">];</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>

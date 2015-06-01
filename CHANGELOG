@@ -34,6 +34,9 @@
  - `game.game_metadata` -> `game.metadata`.
  - `game.game_settings` -> `game.settings`.
  - `game.settings` contains treatment's settings now.
+ - `#node.socket.reconnect()` reconnects with same settings.
+ - Improved logged output.
+ - `#node.deregisterSetup()`.
 
 ## 0.9.9
 
