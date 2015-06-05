@@ -37,6 +37,9 @@
  - `#node.socket.reconnect()` reconnects with same settings.
  - Improved logged output.
  - `#node.deregisterSetup()`.
+ - `#node.isGameover()`.
+ - EventEmitter and EventEmitterManager can track changes. See `#setRecordChanges()` and `#getChanges()`.
+ - `#EventEmitter.remove() returns removed listeners or empty array.
 
 ## 0.9.9
 
