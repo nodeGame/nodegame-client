@@ -180,7 +180,9 @@ default handlers provided.</p>
             <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.addDefaultIncomingListeners: listeners already &#39;</span> <span class="o">+</span>
                      <span class="s1">&#39;added once. Use the force flag to re-add.&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node: adding incoming listeners.&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -609,17 +611,35 @@ node.game.execStep(stageObj);</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;SETUP&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">payload</span><span class="p">,</span> <span class="nx">feature</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-            <span class="nx">feature</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span>
+            <span class="nx">feature</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">feature</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.on.in.say.SETUP: msg.text must be string.&#39;</span><span class="p">);</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">feature</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.on.in.say.SETUP: no such setup function: &#39;</span> <span class="o">+</span>
+                        <span class="nx">feature</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+
             <span class="nx">payload</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span> <span class="o">?</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">payload</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.on.in.say.SETUP: error while parsing &#39;</span> <span class="o">+</span>
-                         <span class="s1">&#39;incoming remote setup message&#39;</span><span class="p">);</span>
+                         <span class="s1">&#39;payload of incoming remote setup message.&#39;</span><span class="p">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="p">[</span><span class="nx">feature</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">payload</span><span class="p">));</span>
+            <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>node.emit('SETUP_' + feature, payload);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">node</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="p">[</span><span class="nx">feature</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">payload</span><span class="p">));</span>
         <span class="p">});</span></pre></div>
         </td>
       </tr>
@@ -651,7 +671,7 @@ node.game.execStep(stageObj);</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>console.log('GM', msg);</p>
         </td>

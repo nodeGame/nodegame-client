@@ -28,7 +28,7 @@
         <a href="#dependencies">Dependencies</a>
       </div>
       <div class="heading h3">
-        <a href="#loading-event-listeners">Loading Event listeners</a>
+        <a href="#loading-event-listeners.">Loading Event listeners.</a>
       </div>
     </div>
   </div>
@@ -211,7 +211,7 @@ for on line, multiplayer games in the browser.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
-<p>Load main nodegame-client class</p>
+<p>Load main nodegame-client class.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameClient</span> <span class="o">=</span>
         <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/NodeGameClient&#39;</span><span class="p">).</span><span class="nx">NodeGameClient</span><span class="p">;</span></pre></div>
@@ -222,7 +222,7 @@ for on line, multiplayer games in the browser.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
-<p>Load extensions to the prototype</p>
+<p>Load extensions to the prototype.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/log.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/setup.js&#39;</span><span class="p">);</span>
@@ -240,16 +240,18 @@ for on line, multiplayer games in the browser.</p>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="loading-event-listeners">
+<div class="pilwrap" id="loading-event-listeners.">
   <h3>
-    <a href="#loading-event-listeners" class="pilcrow">&#182;</a>
-    Loading Event listeners
+    <a href="#loading-event-listeners." class="pilcrow">&#182;</a>
+    Loading Event listeners.
   </h3>
 </div>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/incoming.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/internal.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/setups.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/aliases.js&#39;</span><span class="p">);</span>
 
 
     <span class="nx">exports</span><span class="p">.</span><span class="nx">getClient</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
