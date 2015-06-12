@@ -284,7 +284,6 @@
                          'payload of incoming remote setup message.');
                 return false;
             }
-            // node.emit('SETUP_' + feature, payload);
             node.setup.apply(node, [feature].concat(payload));
         });
 

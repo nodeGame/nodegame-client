@@ -20330,7 +20330,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Setup
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` configuration module
@@ -20456,7 +20456,7 @@ if (!Array.prototype.indexOf) {
                       'previously registered.');
             return;
         }
-        delete this.setup[feature];
+        this.setup[feature] = null;
     };
 
     /**
@@ -21757,7 +21757,6 @@ if (!Array.prototype.indexOf) {
                          'payload of incoming remote setup message.');
                 return false;
             }
-            // node.emit('SETUP_' + feature, payload);
             node.setup.apply(node, [feature].concat(payload));
         });
 
@@ -28245,13 +28244,17 @@ if (!Array.prototype.indexOf) {
      * @see Widgets.append
      */
     Widgets.prototype.destroyAll = function() {
-        var i;
-        for (i in this.instances) {
-            if (this.instances.hasOwnProperty(i)) {
-                this.instances[i].destroy();
-            }
+        var i, len;
+        i = -1, len = this.instances.length;
+        // Nested widgets can be destroyed by previous calls to destroy,
+        // and each call to destroy modify the array of instances.
+        for ( ; ++i < len ; ) {
+            this.instances[0].destroy();
         }
-        this.instances = [];
+        if (this.instances.length) {
+            node.warn('node.widgets.destroyAll: some widgets could ' +
+                      'not be destroyed.');
+        }
     };
 
     /**
@@ -35133,6 +35136,7 @@ if (!Array.prototype.indexOf) {
     };
 
     VisualTimer.prototype.destroy = function() {
+        console.log('VTTTTTTTTTTTTTTTT Original Destroy!');
         node.timer.destroyTimer(this.gameTimer);
         this.bodyDiv.removeChild(this.mainBox.boxDiv);
         this.bodyDiv.removeChild(this.waitBox.boxDiv);
