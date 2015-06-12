@@ -65,11 +65,11 @@
     // FS
     exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;
 
-    // Load main nodegame-client class
+    // Load main nodegame-client class.
     exports.NodeGameClient =
         require('./lib/core/NodeGameClient').NodeGameClient;
 
-    // Load extensions to the prototype
+    // Load extensions to the prototype.
 
     require('./lib/modules/log.js');
     require('./lib/modules/setup.js');
@@ -85,9 +85,11 @@
     require('./lib/modules/variables.js');
 
 
-    // ### Loading Event listeners
+    // ### Loading Event listeners.
     require('./listeners/incoming.js');
     require('./listeners/internal.js');
+    require('./listeners/setups.js');
+    require('./listeners/aliases.js');
 
 
     exports.getClient = function() {

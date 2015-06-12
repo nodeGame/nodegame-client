@@ -77,7 +77,7 @@
 </div>
 
 
-<p>Copyright(c) 2014 Stefano Balietti
+<p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Listeners for internal messages.</p>
@@ -85,6 +85,8 @@ MIT Licensed</p>
 <p>Internal listeners are not directly associated to messages,
 but they are usually responding to internal nodeGame events,
 such as progressing in the loading chain, or finishing a game stage.</p>
+
+<p><a href='http://nodegame.org'>http://nodegame.org</a></p>
   </div>
 </div>
         </td>
@@ -147,7 +149,7 @@ such as progressing in the loading chain, or finishing a game stage.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultInternalListeners</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">internalAdded</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">internalAdded</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Default internal listeners already added once. &#39;</span> <span class="o">+</span>
                      <span class="s1">&#39;Use the force flag to re-add.&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
@@ -571,8 +573,8 @@ In case the handler returns FALSE, the process is stopped.</p>
             <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">eraseBuffer</span><span class="p">();</span>
         <span class="p">});</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">internalAdded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;internal listeners added&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">internalAdded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node: internal listeners added.&#39;</span><span class="p">);</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
     <span class="p">};</span>
 <span class="p">})(</span>

@@ -9932,13 +9932,11 @@ if (!Array.prototype.indexOf) {
      * @return {mixed} The return value of the callback/s
      */
     EventEmitter.prototype.emit = function() {
-
         var handler, len, args, i, listeners, type, ctx, node;
         var res, tmpRes;
 
         type = arguments[0];
         handler = this.events[type];
-
         if ('undefined' === typeof handler) return;
 
         node = this.node;
@@ -14573,7 +14571,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # SocketFactory
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` component responsible for registering and instantiating
@@ -14637,10 +14635,12 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Socket
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
- * `nodeGame` component responsible for dispatching events and messages
+ * Wrapper class for the actual socket to send messages
+ *
+ * http://nodegame.org
  */
 (function(exports, parent) {
 
@@ -14665,7 +14665,7 @@ if (!Array.prototype.indexOf) {
      */
     function Socket(node) {
 
-        // ## Private properties
+        // ## Public properties
 
         /**
          * ### Socket.buffer
@@ -14743,9 +14743,24 @@ if (!Array.prototype.indexOf) {
          */
         this.url = null;
 
+        /**
+         * ### Socket.type
+         *
+         * The type of socket used
+         */
+        this.type = null;
+
+        /**
+         * ### Socket.type
+         *
+         * If TRUE, outgoing messages will be emitted upon sending
+         *
+         * This allows, for example, to modify all outgoing messages.
+         */
+        this.emitOutMsg = false;
+
         // Experimental Journal.
         // TODO: check if we need it.
-
         this.journalOn = false;
 
         // Experimental
@@ -14789,14 +14804,16 @@ if (!Array.prototype.indexOf) {
      * @see node.setup.socket
      */
     Socket.prototype.setup = function(options) {
-        var type;
         options = options ? J.clone(options) : {};
-        type = options.type;
-        delete options.type;
-        this.userOptions = options;
-        if (type) {
-            this.setSocketType(type, options);
+        if (options.type) {
+            this.setSocketType(options.type, options);
+            options.type = null;
         }
+        if ('undefined' !== typeof options.emitOutMsg) {
+            this.emitOutMsg = options.emitOutMsg;
+            options.emitOutMsg = null;
+        }
+        this.userOptions = options;
     };
 
     /**
@@ -14808,11 +14825,27 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string} type The name of the socket to use.
      * @param {object} options Optional. Configuration options for the socket.
+     *
+     * @return {object} The newly created socket object.
+     *
      * @see SocketFactory
      */
     Socket.prototype.setSocketType = function(type, options) {
-        // returns null on error.
+        if ('string' !== typeof type) {
+            throw new TypeError('Socket.setSocketType: type must be string.');
+        }
+        if (options && 'object' !== typeof options) {
+            throw new TypeError('Socket.setSocketType: options must be ' +
+                                'object or undefined.');
+        }
         this.socket = SocketFactory.get(this.node, type, options);
+
+        if (!this.socket) {
+            throw new Error('Socket.setSocketType: type not found: ' +
+                            type + '.');
+        }
+
+        this.type = type;
         return this.socket;
     };
 
@@ -15224,6 +15257,7 @@ if (!Array.prototype.indexOf) {
      * and sent out whenever the connection is available again.
      */
     Socket.prototype.send = function(msg) {
+        var outEvent;
 
         if (!this.isConnected()) {
             this.node.err('Socket.send: cannot send message. No open socket.');
@@ -15236,17 +15270,22 @@ if (!Array.prototype.indexOf) {
             return false;
         }
 
-        // TODO: add conf variable node.emitOutMsg
-        if (this.node.debug) {
-            this.node.emit(msg.toOutEvent(), msg);
+        // Emit out event, if required.
+        if (this.emitOutMsg) {
+            outEvent = msg.toOutEvent();
+            this.node.events.ee.game.emit(outEvent, msg);
+            this.node.events.ee.stage.emit(outEvent, msg);
+            this.node.events.ee.step.emit(outEvent, msg);
         }
 
         this.socket.send(msg);
         this.node.info('S: ' + msg);
 
+        // Experimental code.
         if (this.journalOn) {
             this.journal.insert(msg);
         }
+        // End experimental code.
 
         return true;
     };
@@ -20076,387 +20115,7 @@ if (!Array.prototype.indexOf) {
          */
         this.support = {};
 
-        // ## Configuration functions
-
-        this.info('node: registering setup functions.');
-
-        /**
-         * ### node.setup.nodegame
-         *
-         * Runs all the registered configuration functions
-         *
-         * Matches the keys of the configuration objects with the name
-         * of the registered functions and executes them.
-         * If no match is found, the configuration function will set
-         * the default values.
-         *
-         * @param {object} options The configuration object
-         */
-        this.registerSetup('nodegame', function(options) {
-            var i, setupOptions;
-            if (options && 'object' !== typeof options) {
-                throw new TypeError('node.setup.nodegame: options must ' +
-                                    'object or undefined.');
-            }
-            options = options || {};
-            for (i in this.setup) {
-                if (this.setup.hasOwnProperty(i)) {
-                    // Old Operas loop over the prototype property as well.
-                    if (i !== 'register' &&
-                        i !== 'nodegame' &&
-                        i !== 'prototype') {
-                        // Like this browsers do not complain in strict mode.
-                        setupOptions = 'undefined' === typeof options[i] ?
-                            undefined : options[i];
-                        this.conf[i] = this.setup[i].call(this, setupOptions);
-                    }
-                }
-            }
-        });
-
-        /**
-         * ### node.setup.socket
-         *
-         * Configures the socket connection to the nodegame-server
-         *
-         * @see node.Socket
-         * @see node.SocketFactory
-         */
-        this.registerSetup('socket', function(conf) {
-            if (!conf) return;
-            this.socket.setup(conf);
-            return conf;
-        });
-
-        /**
-         * ### node.setup.host
-         *
-         * Sets the uri of the host
-         *
-         * If no value is passed, it will try to set the host from
-         * the window object in the browser enviroment.
-         */
-        this.registerSetup('host', function(host) {
-            var tokens;
-            // URL
-            if (!host) {
-                if ('undefined' !== typeof window) {
-                    if ('undefined' !== typeof window.location) {
-                        host = window.location.href;
-                    }
-                }
-            }
-
-            if (host) {
-                tokens = host.split('/').slice(0,-2);
-                // url was not of the form '/channel'
-                if (tokens.length > 1) {
-                    host = tokens.join('/');
-                }
-
-                // Add a trailing slash if missing
-                if (host.lastIndexOf('/') !== host.length) {
-                    host = host + '/';
-                }
-            }
-
-            return host;
-        });
-
-        /**
-         * ### node.setup.verbosity
-         *
-         * Sets the verbosity level for nodegame
-         */
-        this.registerSetup('verbosity', function(level) {
-            if ('string' === typeof level &&
-                constants.verbosity_levels.hasOwnProperty(level)) {
-
-                this.verbosity = constants.verbosity_levels[level];
-            }
-            else if ('number' === typeof level) {
-                this.verbosity = level;
-            }
-            return level;
-        });
-
-        /**
-         * ### node.setup.nodename
-         *
-         * Sets the name for nodegame
-         */
-        this.registerSetup('nodename', function(newName) {
-            newName = newName || 'ng';
-            if ('string' !== typeof newName) {
-                throw new TypeError('node.nodename must be of type string.');
-            }
-            this.nodename = newName;
-            return newName;
-        });
-
-        /**
-         * ### node.setup.debug
-         *
-         * Sets the debug flag for nodegame
-         */
-        this.registerSetup('debug', function(enable) {
-            enable = enable || false;
-            if ('boolean' !== typeof enable) {
-                throw new TypeError('node.debug must be of type boolean.');
-            }
-            this.debug = enable;
-            return enable;
-        });
-
-        /**
-         * ### node.setup.env
-         *
-         * Defines global variables to be stored in `node.env[myvar]`
-         */
-        this.registerSetup('env', function(conf) {
-            var i;
-            if ('undefined' !== typeof conf) {
-                for (i in conf) {
-                    if (conf.hasOwnProperty(i)) {
-                        this.env[i] = conf[i];
-                    }
-                }
-            }
-
-            return conf;
-        });
-
-        /**
-         * ### node.setup.events
-         *
-         * Configure the EventEmitter object
-         *
-         * @see node.EventEmitter
-         */
-        this.registerSetup('events', function(conf) {
-            conf = conf || {};
-            if ('undefined' === typeof conf.history) {
-                conf.history = false;
-            }
-
-            if ('undefined' === typeof conf.dumpEvents) {
-                conf.dumpEvents = false;
-            }
-
-            return conf;
-        });
-
-        /**
-         * ### node.setup.game_settings
-         *
-         * Sets up `node.game.settings`
-         */
-        this.registerSetup('settings', function(settings) {
-            if (!this.game) {
-                this.warn('setup("settings") called before ' +
-                          'node.game was initialized.');
-                throw new node.NodeGameMisconfiguredGameError(
-                    "node.game non-existent");
-            }
-
-            if (settings) {
-                J.mixin(this.game.settings, settings);
-            }
-
-            return this.game.settings;
-        });
-
-        /**
-         * ### node.setup.metadata
-         *
-         * Sets up `node.game.metadata`
-         */
-        this.registerSetup('metadata', function(metadata) {
-            if (!this.game) {
-                this.warn('setup("metadata") called before ' +
-                          'node.game was initialized');
-                throw new node.NodeGameMisconfiguredGameError(
-                    "node.game non-existent");
-            }
-
-            if (metadata) {
-                J.mixin(this.game.metadata, metadata);
-            }
-
-            return this.game.metadata;
-        });
-
-        /**
-         * ### node.setup.player
-         *
-         * Creates the `node.player` object
-         *
-         * @see node.Player
-         * @see node.createPlayer
-         */
-        this.registerSetup('player', function(player) {
-            if (!player) return null;
-            return this.createPlayer(player);
-        });
-
-        /**
-         * ### node.setup.timer
-         *
-         * Setup a timer object
-         *
-         * @see node.timer
-         * @see node.GameTimer
-         */
-        this.registerSetup('timer', function(name, data) {
-            var timer;
-            if (!name) return null;
-            timer = this.timer.timers[name];
-            if (!timer) return null;
-            if (timer.options) {
-                timer.init(data.options);
-            }
-
-            switch (timer.action) {
-            case 'start':
-                timer.start();
-                break;
-            case 'stop':
-                timer.stop();
-                break;
-            case 'restart':
-                timer.restart();
-                break;
-            case 'pause':
-                timer.pause();
-                break;
-            case 'resume':
-                timer.resume();
-            }
-
-            // Last configured timer options.
-            return {
-                name: name,
-                data: data
-            };
-        });
-
-        /**
-         * ### node.setup.plot
-         *
-         * Creates the `node.game.plot` object
-         *
-         * It can either replace current plot object, or append to it.
-         * Updates are not possible for the moment.
-         *
-         * TODO: allows updates in plot.
-         *
-         * @param {object} stagerState Stager state which is passed
-         *   to `Stager.setState`
-         * @param {string} updateRule Optional. Accepted: <replace>, <append>.
-         *   Default: 'replace'
-         *
-         * @see node.game.plot
-         * @see Stager.setState
-         */
-        this.registerSetup('plot', function(stagerState, updateRule) {
-            if (!this.game) {
-                throw new Error("node.setup.plot: node.game not found.");
-            }
-
-            stagerState = stagerState || {};
-
-            if (!this.game.plot) {
-                this.game.plot = new GamePlot();
-            }
-
-            if (!this.game.plot.stager) {
-                this.game.plot.stager = new Stager();
-            }
-
-            this.game.plot.stager.setState(stagerState, updateRule);
-
-            return this.game.plot;
-        });
-
-        /**
-         * ### node.setup.plist
-         *
-         * Updates the player list in Game
-         *
-         * @param {PlayerList} playerList The new player list
-         * @param {string} updateRule Optional. Accepted: <replace>, <append>.
-         *   Default: 'replace'
-         */
-        this.registerSetup('plist', function(playerList, updateRule) {
-            updatePlayerList.call(this, 'pl', playerList, updateRule);
-        });
-
-        /**
-         * ### this.setup.mlist
-         *
-         * Updates the monitor list in Game
-         *
-         * @param {PlayerList} monitorList The new monitor list
-         * @param {string} updateRule Optional. Accepted: <replace>, <append>.
-         *   Default: 'replace'
-         */
-        this.registerSetup('mlist', function(monitorList, updateRule) {
-            updatePlayerList.call(this, 'ml', monitorList, updateRule);
-        });
-
-        /**
-         * ### this.setup.lang
-         *
-         * Sets the default language
-         *
-         * @param {object} language The language object to set as default.
-         */
-        this.registerSetup('lang', function(language) {
-            if (!language) return null;
-            return this.setLanguage(language);
-        });
-
-        // Utility for setup.plist and setup.mlist:
-        function updatePlayerList(dstListName, srcList, updateRule) {
-            var dstList;
-
-            if (!this.game) {
-                this.warn('updatePlayerList called before ' +
-                          'node.game was initialized.');
-                throw new this.NodeGameMisconfiguredGameError(
-                    'node.game non-existent.');
-            }
-
-            if (dstListName === 'pl')      dstList = this.game.pl;
-            else if (dstListName === 'ml') dstList = this.game.ml;
-            else {
-                this.warn('updatePlayerList called with invalid dstListName.');
-                throw new this.NodeGameMisconfiguredGameError(
-                    "invalid dstListName.");
-            }
-
-            if (!dstList) {
-                this.warn('updatePlayerList called before ' +
-                          'node.game was initialized.');
-                throw new this.NodeGameMisconfiguredGameError(
-                    'dstList non-existent.');
-            }
-
-            if (srcList) {
-                if (!updateRule || updateRule === 'replace') {
-                    dstList.clear(true);
-                }
-                else if (updateRule !== 'append') {
-                    throw new this.NodeGameMisconfiguredGameError(
-                        "setup('plist') got invalid updateRule.");
-                }
-
-                // automatic cast from Object to Player
-                dstList.importDB(srcList);
-            }
-
-            return dstList;
-        }
+        // ## Configuration functions.
 
         this.info('node: adding emit/on functions.');
 
@@ -20542,94 +20201,17 @@ if (!Array.prototype.indexOf) {
             return this.events.remove(event, func);
         };
 
+        // Configuration.
 
-        // ADD ALIASES
-
-        // TODO: move aliases into a separate method,
-        // like addDefaultIncomingListeners
-        this.info('node: adding default alias.');
-
-        // ### node.on.txt
-        this.alias('txt', 'in.say.TXT');
-
-        // ### node.on.data
-        this.alias('data', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
-            return function(msg) {
-                if (msg.text === text) {
-                    cb.call(that.game, msg);
-                }
-            };
-        });
-
-        // ### node.on.stage
-        this.alias('stage', 'in.set.STAGE');
-
-        // ### node.on.plist
-        this.alias('plist', ['in.set.PLIST', 'in.say.PLIST']);
-
-        // ### node.on.pconnect
-        this.alias('pconnect', 'in.say.PCONNECT', function(cb) {
-            return function(msg) {
-                cb.call(that.game, msg.data);
-            };
-        });
-
-        // ### node.on.pdisconnect
-        this.alias('pdisconnect', 'in.say.PDISCONNECT', function(cb) {
-            return function(msg) {
-                cb.call(that.game, msg.data);
-            };
-        });
-
-        // ### node.on.preconnect
-        this.alias('preconnect', 'in.say.PRECONNECT', function(cb) {
-            return function(msg) {
-                cb.call(that.game, msg.data);
-            };
-        });
-
-        // ### node.on.mconnect
-        this.alias('mconnect', 'in.say.MCONNECT', function(cb) {
-            return function(msg) {
-                cb.call(that.game, msg.data);
-            };
-        });
-
-        // ### node.on.mreconnect
-        this.alias('mreconnect', 'in.say.MRECONNECT', function(cb) {
-            return function(msg) {
-                cb.call(that.game, msg.data);
-            };
-        });
-
-        // ### node.on.mdisconnect
-        this.alias('mdisconnect', 'in.say.MDISCONNECT', function(cb) {
-            return function(msg) {
-                cb.call(that.game, msg.data);
-            };
-        });
-
-        // ### node.on.stepdone
-        // Uses the step rule to determine when a step is DONE.
-        this.alias('stepdone', 'UPDATED_PLIST', function(cb) {
-            return function() {
-                if (that.game.shouldStep()) {
-                    cb.call(that.game, that.game.pl);
-                }
-            };
-        });
-
-        // ### node.on.lang
-        // Gets language information.
-        this.alias('lang','in.say.LANG');
-
-        // LISTENERS.
-        this.info('node: adding default listeners.');
-
+        // Setup functions.
+        this.addDefaultSetupFunctions();
+        // Aliases.
+        this.addDefaultAliases();
+        // Listeners.
         this.addDefaultIncomingListeners();
         this.addDefaultInternalListeners();
 
-        this.info('node: created.');
+        this.info('node: object created.');
     }
 
     // ## Closure
@@ -20844,12 +20426,14 @@ if (!Array.prototype.indexOf) {
         if ('function' !== typeof func) {
             throw new TypeError('node.registerSetup: func must be function.');
         }
+        if (this.events.recordChanges) {
+            // Do something ? Or integrate with EMIT
+        }
         that = this;
         this.setup[property] = function() {
             that.info('setup ' + property + '.');
             return func.apply(that, arguments);
         }
-
     };
 
     /**
@@ -21931,11 +21515,13 @@ if (!Array.prototype.indexOf) {
     NGC.prototype.addDefaultIncomingListeners = function(force) {
         var node = this;
 
-        if (node.incomingAdded && !force) {
+        if (node.conf.incomingAdded && !force) {
             node.err('node.addDefaultIncomingListeners: listeners already ' +
                      'added once. Use the force flag to re-add.');
             return false;
         }
+
+        this.info('node: adding incoming listeners.');
 
         /**
          * ## in.say.PCONNECT
@@ -22152,16 +21738,26 @@ if (!Array.prototype.indexOf) {
          */
         node.events.ng.on( IN + say + 'SETUP', function(msg) {
             var payload, feature;
-            if (!msg.text) return;
-            feature = msg.text,
+            feature = msg.text;
+            if ('string' !== typeof feature) {
+                node.err('node.on.in.say.SETUP: msg.text must be string.');
+                return false;
+            }
+            if (!node.setup[feature]) {
+                node.err('node.on.in.say.SETUP: no such setup function: ' +
+                        feature + '.');
+                return false;
+            }
+
             payload = 'string' === typeof msg.data ?
                 J.parse(msg.data) : msg.data;
 
             if (!payload) {
                 node.err('node.on.in.say.SETUP: error while parsing ' +
-                         'incoming remote setup message');
+                         'payload of incoming remote setup message.');
                 return false;
             }
+            // node.emit('SETUP_' + feature, payload);
             node.setup.apply(node, [feature].concat(payload));
         });
 
@@ -22300,8 +21896,8 @@ if (!Array.prototype.indexOf) {
         });
 
 
-        node.incomingAdded = true;
-        node.silly('incoming listeners added');
+        node.conf.incomingAdded = true;
+        node.silly('node: incoming listeners added.');
         return true;
     };
 
@@ -22312,7 +21908,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # internal
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Listeners for internal messages.
@@ -22320,6 +21916,8 @@ if (!Array.prototype.indexOf) {
  * Internal listeners are not directly associated to messages,
  * but they are usually responding to internal nodeGame events,
  * such as progressing in the loading chain, or finishing a game stage.
+ *
+ * http://nodegame.org
  */
 (function(exports, parent) {
 
@@ -22358,11 +21956,13 @@ if (!Array.prototype.indexOf) {
      */
     NGC.prototype.addDefaultInternalListeners = function(force) {
         var node = this;
-        if (this.internalAdded && !force) {
+        if (this.conf.internalAdded && !force) {
             this.err('Default internal listeners already added once. ' +
                      'Use the force flag to re-add.');
             return false;
         }
+
+        this.info('node: adding internal listeners.');
 
         function done() {
             var res;
@@ -22576,10 +22176,559 @@ if (!Array.prototype.indexOf) {
             node.socket.eraseBuffer();
         });
 
-        this.internalAdded = true;
-        this.silly('internal listeners added');
+        this.conf.internalAdded = true;
+        this.silly('node: internal listeners added.');
         return true;
     };
+})(
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
+ * # setups
+ * Copyright(c) 2015 Stefano Balietti
+ * MIT Licensed
+ *
+ * Listeners for incoming messages
+ *
+ */
+(function(exports, parent) {
+
+    "use strict";
+
+    var NGC = parent.NodeGameClient;
+
+    var GameMsg = parent.GameMsg,
+    GameSage = parent.GameStage,
+    PlayerList = parent.PlayerList,
+    Player = parent.Player,
+    J = parent.JSUS;
+
+    /**
+     * ## NodeGameClient.addDefaultSetupFunctions
+     *
+     * Adds a battery of setup functions
+     *
+     * Setup functions also add a listener on `in.say.SETUP` for remote setup
+     *
+     * @param {boolean} force Whether to force re-adding the listeners
+     * @return {boolean} TRUE on success
+     */
+    NGC.prototype.addDefaultSetupFunctions = function(force) {
+
+        if (this.conf.setupsAdded && !force) {
+            this.err('node.addDefaultSetups: setup functions already ' +
+                     'added. Use the force flag to re-add.');
+            return false;
+        }
+
+        this.info('node: registering setup functions.');
+
+        /**
+         * ### node.setup.nodegame
+         *
+         * Runs all the registered configuration functions
+         *
+         * Matches the keys of the configuration objects with the name
+         * of the registered functions and executes them.
+         * If no match is found, the configuration function will set
+         * the default values.
+         *
+         * @param {object} options The configuration object
+         */
+        this.registerSetup('nodegame', function(options) {
+            var i, setupOptions;
+
+            if (options && 'object' !== typeof options) {
+                throw new TypeError('node.setup.nodegame: options must ' +
+                                    'object or undefined.');
+            }
+            options = options || {};
+            for (i in this.setup) {
+                if (this.setup.hasOwnProperty(i)) {
+                    // Old Operas loop over the prototype property as well.
+                    if (i !== 'register' &&
+                        i !== 'nodegame' &&
+                        i !== 'prototype') {
+                        // Like this browsers do not complain in strict mode.
+                        setupOptions = 'undefined' === typeof options[i] ?
+                            undefined : options[i];
+                        this.conf[i] = this.setup[i].call(this, setupOptions);
+                    }
+                }
+            }
+        });
+
+        /**
+         * ### node.setup.socket
+         *
+         * Configures the socket connection to the nodegame-server
+         *
+         * @see node.Socket
+         * @see node.SocketFactory
+         */
+        this.registerSetup('socket', function(conf) {
+            if (!conf) return;
+            this.socket.setup(conf);
+            return conf;
+        });
+
+        /**
+         * ### node.setup.host
+         *
+         * Sets the uri of the host
+         *
+         * If no value is passed, it will try to set the host from
+         * the window object in the browser enviroment.
+         */
+        this.registerSetup('host', function(host) {
+            var tokens;
+            // URL
+            if (!host) {
+                if ('undefined' !== typeof window) {
+                    if ('undefined' !== typeof window.location) {
+                        host = window.location.href;
+                    }
+                }
+            }
+
+            if (host) {
+                tokens = host.split('/').slice(0,-2);
+                // url was not of the form '/channel'
+                if (tokens.length > 1) {
+                    host = tokens.join('/');
+                }
+
+                // Add a trailing slash if missing
+                if (host.lastIndexOf('/') !== host.length) {
+                    host = host + '/';
+                }
+            }
+
+            return host;
+        });
+
+        /**
+         * ### node.setup.verbosity
+         *
+         * Sets the verbosity level for nodegame
+         */
+        this.registerSetup('verbosity', function(level) {
+            if ('string' === typeof level &&
+                constants.verbosity_levels.hasOwnProperty(level)) {
+
+                this.verbosity = constants.verbosity_levels[level];
+            }
+            else if ('number' === typeof level) {
+                this.verbosity = level;
+            }
+            return level;
+        });
+
+        /**
+         * ### node.setup.nodename
+         *
+         * Sets the name for nodegame
+         */
+        this.registerSetup('nodename', function(newName) {
+            newName = newName || 'ng';
+            if ('string' !== typeof newName) {
+                throw new TypeError('node.nodename must be of type string.');
+            }
+            this.nodename = newName;
+            return newName;
+        });
+
+        /**
+         * ### node.setup.debug
+         *
+         * Sets the debug flag for nodegame
+         */
+        this.registerSetup('debug', function(enable) {
+            enable = enable || false;
+            if ('boolean' !== typeof enable) {
+                throw new TypeError('node.debug must be of type boolean.');
+            }
+            this.debug = enable;
+            return enable;
+        });
+
+        /**
+         * ### node.setup.env
+         *
+         * Defines global variables to be stored in `node.env[myvar]`
+         */
+        this.registerSetup('env', function(conf) {
+            var i;
+            if ('undefined' !== typeof conf) {
+                for (i in conf) {
+                    if (conf.hasOwnProperty(i)) {
+                        this.env[i] = conf[i];
+                    }
+                }
+            }
+
+            return conf;
+        });
+
+        /**
+         * ### node.setup.events
+         *
+         * Configure the EventEmitter object
+         *
+         * @see node.EventEmitter
+         */
+        this.registerSetup('events', function(conf) {
+            conf = conf || {};
+            if ('undefined' === typeof conf.history) {
+                conf.history = false;
+            }
+
+            if ('undefined' === typeof conf.dumpEvents) {
+                conf.dumpEvents = false;
+            }
+
+            return conf;
+        });
+
+        /**
+         * ### node.setup.game_settings
+         *
+         * Sets up `node.game.settings`
+         */
+        this.registerSetup('settings', function(settings) {
+            if (!this.game) {
+                this.warn('setup("settings") called before ' +
+                          'node.game was initialized.');
+                throw new node.NodeGameMisconfiguredGameError(
+                    "node.game non-existent");
+            }
+
+            if (settings) {
+                J.mixin(this.game.settings, settings);
+            }
+
+            return this.game.settings;
+        });
+
+        /**
+         * ### node.setup.metadata
+         *
+         * Sets up `node.game.metadata`
+         */
+        this.registerSetup('metadata', function(metadata) {
+            if (!this.game) {
+                this.warn('setup("metadata") called before ' +
+                          'node.game was initialized');
+                throw new node.NodeGameMisconfiguredGameError(
+                    "node.game non-existent");
+            }
+
+            if (metadata) {
+                J.mixin(this.game.metadata, metadata);
+            }
+
+            return this.game.metadata;
+        });
+
+        /**
+         * ### node.setup.player
+         *
+         * Creates the `node.player` object
+         *
+         * @see node.Player
+         * @see node.createPlayer
+         */
+        this.registerSetup('player', function(player) {
+            if (!player) return null;
+            return this.createPlayer(player);
+        });
+
+        /**
+         * ### node.setup.timer
+         *
+         * Setup a timer object
+         *
+         * @see node.timer
+         * @see node.GameTimer
+         */
+        this.registerSetup('timer', function(name, data) {
+            var timer;
+            if (!name) return null;
+            timer = this.timer.timers[name];
+            if (!timer) return null;
+            if (timer.options) {
+                timer.init(data.options);
+            }
+
+            switch (timer.action) {
+            case 'start':
+                timer.start();
+                break;
+            case 'stop':
+                timer.stop();
+                break;
+            case 'restart':
+                timer.restart();
+                break;
+            case 'pause':
+                timer.pause();
+                break;
+            case 'resume':
+                timer.resume();
+            }
+
+            // Last configured timer options.
+            return {
+                name: name,
+                data: data
+            };
+        });
+
+        /**
+         * ### node.setup.plot
+         *
+         * Creates the `node.game.plot` object
+         *
+         * It can either replace current plot object, or append to it.
+         * Updates are not possible for the moment.
+         *
+         * TODO: allows updates in plot.
+         *
+         * @param {object} stagerState Stager state which is passed
+         *   to `Stager.setState`
+         * @param {string} updateRule Optional. Accepted: <replace>, <append>.
+         *   Default: 'replace'
+         *
+         * @see node.game.plot
+         * @see Stager.setState
+         */
+        this.registerSetup('plot', function(stagerState, updateRule) {
+            if (!this.game) {
+                throw new Error("node.setup.plot: node.game not found.");
+            }
+
+            stagerState = stagerState || {};
+
+            if (!this.game.plot) {
+                this.game.plot = new GamePlot();
+            }
+
+            if (!this.game.plot.stager) {
+                this.game.plot.stager = new Stager();
+            }
+
+            this.game.plot.stager.setState(stagerState, updateRule);
+
+            return this.game.plot;
+        });
+
+        (function(node) {
+
+            /**
+             * ### node.setup.plist
+             *
+             * Updates the player list in Game
+             *
+             * @param {PlayerList} playerList The new player list
+             * @param {string} updateRule Optional. Accepted: <replace>,
+             *   <append>. Default: 'replace'
+             */
+            node.registerSetup('plist', function(playerList, updateRule) {
+                updatePlayerList.call(this, 'pl', playerList, updateRule);
+            });
+
+            /**
+             * ### this.setup.mlist
+             *
+             * Updates the monitor list in Game
+             *
+             * @param {PlayerList} monitorList The new monitor list
+             * @param {string} updateRule Optional. Accepted: <replace>,
+             *   <append>. Default: 'replace'
+             */
+            node.registerSetup('mlist', function(monitorList, updateRule) {
+                updatePlayerList.call(this, 'ml', monitorList, updateRule);
+            });
+
+            // Utility for setup.plist and setup.mlist:
+            function updatePlayerList(dstListName, srcList, updateRule) {
+                var dstList;
+
+                if (!this.game) {
+                    this.warn('updatePlayerList called before ' +
+                              'node.game was initialized.');
+                    throw new this.NodeGameMisconfiguredGameError(
+                        'node.game non-existent.');
+                }
+
+                if (dstListName === 'pl')      dstList = this.game.pl;
+                else if (dstListName === 'ml') dstList = this.game.ml;
+                else {
+                    this.warn('updatePlayerList: invalid dstListName.');
+                    throw new this.NodeGameMisconfiguredGameError(
+                        "invalid dstListName.");
+                }
+
+                if (!dstList) {
+                    this.warn('updatePlayerList called before ' +
+                              'node.game was initialized.');
+                    throw new this.NodeGameMisconfiguredGameError(
+                        'dstList non-existent.');
+                }
+
+                if (srcList) {
+                    if (!updateRule || updateRule === 'replace') {
+                        dstList.clear(true);
+                    }
+                    else if (updateRule !== 'append') {
+                        throw new this.NodeGameMisconfiguredGameError(
+                            "setup('plist') got invalid updateRule.");
+                    }
+
+                    // automatic cast from Object to Player
+                    dstList.importDB(srcList);
+                }
+
+                return dstList;
+            }
+        })(this);
+
+        /**
+         * ### this.setup.lang
+         *
+         * Sets the default language
+         *
+         * @param {object} language The language object to set as default.
+         */
+        this.registerSetup('lang', function(language) {
+            if (!language) return null;
+            return this.setLanguage(language);
+        });
+
+        this.conf.setupsAdded = true;
+        this.silly('node: setup functions added.');
+        return true;
+    };
+
+})(
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
+ * # aliases
+ * Copyright(c) 2014 Stefano Balietti
+ * MIT Licensed
+ *
+ * Event listener aliases.
+ *
+ */
+(function(exports, parent) {
+
+    "use strict";
+
+    var NGC = parent.NodeGameClient;
+    var J = parent.JSUS;
+
+    /**
+     * ## NodeGameClient.addDefaultAliases
+     *
+     * Adds a battery of setup functions
+     *
+     * @param {boolean} force Whether to force re-adding the aliases
+     * @return {boolean} TRUE on success
+     */
+    NGC.prototype.addDefaultAliases = function(force) {
+        var that;
+        if (this.conf.aliasesAdded && !force) {
+            this.err('node.addDefaultAliases: aliases already ' +
+                     'added. Use the force flag to re-add.');
+            return false;
+        }
+        that = this;
+
+        this.info('node: adding default aliases.');
+
+        // ### node.on.txt
+        this.alias('txt', 'in.say.TXT');
+
+        // ### node.on.data
+        this.alias('data', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
+            return function(msg) {
+                if (msg.text === text) {
+                    cb.call(that.game, msg);
+                }
+            };
+        });
+
+        // ### node.on.stage
+        this.alias('stage', 'in.set.STAGE');
+
+        // ### node.on.plist
+        this.alias('plist', ['in.set.PLIST', 'in.say.PLIST']);
+
+        // ### node.on.pconnect
+        this.alias('pconnect', 'in.say.PCONNECT', function(cb) {
+            return function(msg) {
+                cb.call(that.game, msg.data);
+            };
+        });
+
+        // ### node.on.pdisconnect
+        this.alias('pdisconnect', 'in.say.PDISCONNECT', function(cb) {
+            return function(msg) {
+                cb.call(that.game, msg.data);
+            };
+        });
+
+        // ### node.on.preconnect
+        this.alias('preconnect', 'in.say.PRECONNECT', function(cb) {
+            return function(msg) {
+                cb.call(that.game, msg.data);
+            };
+        });
+
+        // ### node.on.mconnect
+        this.alias('mconnect', 'in.say.MCONNECT', function(cb) {
+            return function(msg) {
+                cb.call(that.game, msg.data);
+            };
+        });
+
+        // ### node.on.mreconnect
+        this.alias('mreconnect', 'in.say.MRECONNECT', function(cb) {
+            return function(msg) {
+                cb.call(that.game, msg.data);
+            };
+        });
+
+        // ### node.on.mdisconnect
+        this.alias('mdisconnect', 'in.say.MDISCONNECT', function(cb) {
+            return function(msg) {
+                cb.call(that.game, msg.data);
+            };
+        });
+
+        // ### node.on.stepdone
+        // Uses the step rule to determine when a step is DONE.
+        this.alias('stepdone', 'UPDATED_PLIST', function(cb) {
+            return function() {
+                if (that.game.shouldStep()) {
+                    cb.call(that.game, that.game.pl);
+                }
+            };
+        });
+
+        // ### node.on.lang
+        // Gets language information.
+        this.alias('lang','in.say.LANG');
+
+        this.silly('node: aliases added.');
+        return true;
+    };
+
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
@@ -27798,11 +27947,16 @@ if (!Array.prototype.indexOf) {
 
             // Add new widgets.
             if (conf.widgets) {
-                for ( name in conf.widgets) {
+                for (name in conf.widgets) {
                     if (conf.widgets.hasOwnProperty(name)) {
                         that.register(name, conf.widgets[name]);
                     }
                 }
+            }
+
+            // Destroy all existing widgets.
+            if (conf.destroyAll) {
+                that.destroyAll();
             }
 
             // Append existing widgets.
@@ -35214,10 +35368,10 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # WaitingRoom
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
- * Checks a list of requirements and displays the results
+ * Display the number of connected / required players to start a game
  *
  * www.nodegame.org
  */
@@ -35241,7 +35395,7 @@ if (!Array.prototype.indexOf) {
 
     WaitingRoom.dependencies = {
         JSUS: {},
-        List: {}
+        VisualTimer: {}
     };
 
     /**
@@ -35270,16 +35424,16 @@ if (!Array.prototype.indexOf) {
         /**
          * ### WaitingRoom.withTimeout
          *
-         * If TRUE, a maximum timeout to the execution of ALL tests is set
+         * The size of the group
          */
         this.groupSize = 0;
 
         /**
-         * ### WaitingRoom.timeoutTime
+         * ### WaitingRoom.maxWaitTime
          *
          * The time in milliseconds for the timeout to expire
          */
-        this.timeoutTime = null;
+        this.maxWaitTime = null;
 
         /**
          * ### WaitingRoom.timeoutId
@@ -35291,9 +35445,16 @@ if (!Array.prototype.indexOf) {
         /**
          * ### WaitingRoom.summary
          *
-         * Span summarizing the status of the tests
+         * Span summarizing the status of the wait room
          */
         this.summary = null;
+
+        /**
+         * ### WaitingRoom.summaryUpdate
+         *
+         * Span displaying the number of connected players
+         */
+        this.summaryUpdate = null;
 
         /**
          * ### WaitingRoom.dots
@@ -35301,20 +35462,6 @@ if (!Array.prototype.indexOf) {
          * Looping dots to give the user the feeling of code execution
          */
         this.dots = null;
-
-        /**
-         * ### WaitingRoom.sayResultLabel
-         *
-         * The label of the SAY message that will be sent to the server
-         */
-        this.sayResultsLabel = options.sayResultLabel || 'requirements';
-
-        /**
-         * ### WaitingRoom.addToResults
-         *
-         *  Callback to add properties to result object sent to server
-         */
-        this.addToResults = options.addToResults || null;
 
         /**
          * ### WaitingRoom.onComplete
@@ -35331,47 +35478,22 @@ if (!Array.prototype.indexOf) {
         this.onSuccess = null;
 
         /**
-         * ### WaitingRoom.onFailure
+         * ### WaitingRoom.onTimeout
          *
          * Callback to be executed at the end of all tests
          */
-        this.onFailure = null;
+        this.onTimeout = null;
+
 
         /**
-         * ### WaitingRoom.list
+         * ### WaitingRoom.timer
          *
-         * `List` to render the results
+         * VisualTimer instance for max wait time.
          *
-         * @see nodegame-server/List
+         * @see VisualTimer
          */
-        // TODO: simplify render syntax.
-        this.list = new W.List({
-            render: {
-                pipeline: renderResult,
-                returnAt: 'first'
-            }
-        });
+        this.timer = null;
 
-        function renderResult(o) {
-            var imgPath, img, span, text;
-            imgPath = '/images/' + (o.content.success ?
-                                    'success-icon.png' : 'delete-icon.png');
-            img = document.createElement('img');
-            img.src = imgPath;
-
-            // Might be the full exception object.
-            if ('object' === typeof o.content.text) {
-                o.content.text = extractErrorMsg(o.content.text);
-            }
-
-            text = document.createTextNode(o.content.text);
-            span = document.createElement('span');
-            span.className = 'requirement';
-            span.appendChild(img);
-
-            span.appendChild(text);
-            return span;
-        }
     }
 
     // ## WaitingRoom methods
@@ -35383,10 +35505,8 @@ if (!Array.prototype.indexOf) {
      *
      * Available options:
      *
-     *   - requirements: array of callback functions or objects formatted as
-     *      { cb: function [, params: object] [, name: string] };
      *   - onComplete: function executed with either failure or success
-     *   - onFailure: function executed when at least one test fails
+     *   - onTimeout: function executed when at least one test fails
      *   - onSuccess: function executed when all tests succeed
      *   - maxWaitTime: max waiting time to execute all tests (in milliseconds)
      *
@@ -35395,13 +35515,6 @@ if (!Array.prototype.indexOf) {
     WaitingRoom.prototype.init = function(conf) {
         if ('object' !== typeof conf) {
             throw new TypeError('WaitingRoom.init: conf must be object.');
-        }
-        if (conf.requirements) {
-            if (!J.isArray(conf.requirements)) {
-                throw new TypeError('WaitingRoom.init: conf.requirements ' +
-                                    'must be array or undefined.');
-            }
-            this.requirements = conf.requirements;
         }
         if ('undefined' !== typeof conf.onComplete) {
             if (null !== conf.onComplete &&
@@ -35421,147 +35534,67 @@ if (!Array.prototype.indexOf) {
             }
             this.onSuccess = conf.onSuccess;
         }
-        if ('undefined' !== typeof conf.onFailure) {
-            if (null !== conf.onFailure &&
-                'function' !== typeof conf.onFailure) {
+        if ('undefined' !== typeof conf.onTimeout) {
+            if (null !== conf.onTimeout &&
+                'function' !== typeof conf.onTimeout) {
 
-                throw new TypeError('WaitingRoom.init: conf.onFailure must ' +
+                throw new TypeError('WaitingRoom.init: conf.onTimeout must ' +
                                     'be function, null or undefined.');
             }
-            this.onFailure = conf.onFailure;
+            this.onTimeout = conf.onTimeout;
         }
-        if (conf.maxExecTime) {
-            if (null !== conf.maxExecTime &&
-                'number' !== typeof conf.maxExecTime) {
+        if (conf.maxWaitTime) {
+            if (null !== conf.maxWaitTime &&
+                'number' !== typeof conf.maxWaitTime) {
 
                 throw new TypeError('WaitingRoom.init: conf.onMaxExecTime ' +
                                     'must be number, null or undefined.');
             }
-            this.withTimeout = !!conf.maxExecTime;
-            this.timeoutTime = conf.maxExecTime;
+            this.maxWaitTime = conf.maxWaitTime;
+            this.startTimer();
         }
-    };
 
-    /**
-     * ### WaitingRoom.addWaitingRoom
-     *
-     * Adds any number of requirements to the requirements array
-     *
-     * Callbacks can be asynchronous or synchronous.
-     *
-     * An asynchronous callback must call the `results` function
-     * passed as input parameter to communicate the outcome of the test.
-     *
-     * A synchronous callback must return the value immediately.
-     *
-     * In both cases the return is an array, where every item is an
-     * error message. Empty array means test passed.
-     *
-     * @see this.requirements
-     */
-    WaitingRoom.prototype.addWaitingRoom = function() {
-        var i, len;
-        i = -1, len = arguments.length;
-        for ( ; ++i < len ; ) {
-            if ('function' !== typeof arguments[i] &&
-                'object' !== typeof arguments[i] ) {
-
-                throw new TypeError('WaitingRoom.addWaitingRoom: ' +
-                                    'requirements must be function or object.');
+        if (conf.poolSize) {
+            if (conf.poolSize && 'number' !== typeof conf.poolSize) {
+                throw new TypeError('WaitingRoom.init: conf.poolSize ' +
+                                    'must be number or undefined.');
             }
-            this.requirements.push(arguments[i]);
-        }
-    };
-
-    /**
-     * ### WaitingRoom.checkWaitingRoom
-     *
-     * Asynchronously or synchronously checks all registered callbacks
-     *
-     * Can add a timeout for the max execution time of the callbacks, if the
-     * corresponding option is set.
-     *
-     * Results are displayed conditionally
-     *
-     * @param {boolean} display If TRUE, results are displayed
-     *
-     * @return {array} The array containing the errors
-     *
-     * @see this.withTimeout
-     * @see this.requirements
-     */
-    WaitingRoom.prototype.checkWaitingRoom = function(display) {
-        var i, len;
-        var errors, cbErrors, cbName, errMsg;
-        if (!this.requirements.length) {
-            throw new Error('WaitingRoom.checkWaitingRoom: no requirements ' +
-                            'to check found.');
+            this.poolSize = conf.poolSize;
         }
 
-        this.updateStillChecking(this.requirements.length, true);
-
-        errors = [];
-        i = -1, len = this.requirements.length;
-        for ( ; ++i < len ; ) {
-            // Get Test Name.
-            if (this.requirements[i] && this.requirements[i].name) {
-                cbName = this.requirements[i].name;
+        if (conf.groupSize) {
+            if (conf.groupSize && 'number' !== typeof conf.groupSize) {
+                throw new TypeError('WaitingRoom.init: conf.groupSize ' +
+                                    'must be number or undefined.');
             }
-            else {
-                cbName = i + 1;
+            this.groupSize = conf.groupSize
+        }
+
+        if (conf.connected) {
+            if (conf.connected && 'number' !== typeof conf.connected) {
+                throw new TypeError('WaitingRoom.init: conf.connected ' +
+                                    'must be number or undefined.');
             }
-            try {
-                resultCb(this, name, i);
-            }
-            catch(e) {
-                errMsg = extractErrorMsg(e);
-                this.updateStillChecking(-1);
-
-                errors.push('An exception occurred in requirement n.' +
-                            cbName + ': ' + errMsg);
-            }
+            this.connected = conf.connected
         }
-
-        if (this.withTimeout) {
-            this.addTimeout();
-        }
-
-        if ('undefined' === typeof display ? true : false) {
-            this.displayResults(errors);
-        }
-
-        if (this.isCheckingFinished()) {
-            this.checkingFinished();
-        }
-
-        return errors;
     };
 
     /**
      * ### WaitingRoom.addTimeout
      *
-     * Starts a timeout for the max execution time of the requirements
+     * Starts a timeout for the max waiting time
      *
-     * Upon time out results are checked, and eventually displayed.
-     *
-     * @see this.stillCheckings
-     * @see this.withTimeout
-     * @see this.requirements
      */
-    WaitingRoom.prototype.addTimeout = function() {
+    WaitingRoom.prototype.startTimer = function() {
         var that = this;
-        var errStr = 'One or more function is taking too long. This is ' +
-            'likely to be due to a compatibility issue with your browser ' +
-            'or to bad network connectivity.';
-
-        this.timeoutId = setTimeout(function() {
-            if (that.stillChecking > 0) {
-                that.displayResults([errStr]);
-            }
-            that.timeoutId = null;
-            that.hasFailed = true;
-            that.checkingFinished();
-        }, this.timeoutTime);
+        if (this.timer) return;
+        if (!this.maxWaitTime) return;
+        this.timer = node.widgets.append('VisualTimer', this.summary, {
+            milliseconds: this.maxWaitTime,
+            timeup: this.onTimeup,
+            update: 1000
+        });
+        this.timer.start();
     };
 
     /**
@@ -35581,151 +35614,41 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### WaitingRoom.updateStillChecking
+     * ### WaitingRoom.updateDisplay
      *
-     * Updates the number of requirements still running on the display
+     * Displays the state of the waiting room on screen
      *
-     * @param {number} update The number of requirements still running, or an
-     *   increment as compared to the current value
-     * @param {boolean} absolute TRUE, if `update` is to be interpreted as an
-     *   absolute value
-     *
-     * @see this.summaryUpdate
-     * @see this.stillCheckings
-     * @see this.requirements
+     * @see WaitingRoom.updateState
      */
-    WaitingRoom.prototype.updateStillChecking = function(update, absolute) {
-        var total, remaining;
-
-        this.stillChecking = absolute ? update : this.stillChecking + update;
-
-        total = this.requirements.length;
-        remaining = total - this.stillChecking;
-        this.summaryUpdate.innerHTML = ' (' +  remaining + ' / ' + total + ')';
-    };
-
-    /**
-     * ### WaitingRoom.isCheckingFinished
-     *
-     * Returns TRUE if all requirements have returned
-     *
-     * @see this.stillCheckings
-     * @see this.requirements
-     */
-    WaitingRoom.prototype.isCheckingFinished = function() {
-        return this.stillChecking <= 0;
-    };
-
-    /**
-     * ### WaitingRoom.CheckingFinished
-     *
-     * Cleans up timer and dots, and executes final requirements accordingly
-     *
-     * First, executes the `onComplete` callback in any case. Then if no
-     * errors have been raised executes the `onSuccess` callback, otherwise
-     * the `onFailure` callback.
-     *
-     * @see this.onComplete
-     * @see this.onSuccess
-     * @see this.onFailure
-     * @see this.stillCheckings
-     * @see this.requirements
-     */
-    WaitingRoom.prototype.checkingFinished = function() {
-        var results;
-
-        if (this.timeoutId) {
-            clearTimeout(this.timeoutId);
+    WaitingRoom.prototype.updateState = function(update) {
+        if (!update) return;
+        if ('number' === typeof update.connected) {
+            this.connected = update.connected;
         }
-
-        this.dots.stop();
-
-        if (this.sayResults) {
-            results = {
-                success: !this.hasFailed,
-                results: this.results
-            };
-
-            if (this.addToResults) {
-                J.mixin(results, this.addToResults());
-            }
-            node.say(this.sayResultsLabel, 'SERVER', results);
+        if ('number' === typeof update.poolSize) {
+            this.poolSize = update.poolSize;
         }
-
-        if (this.onComplete) {
-            this.onComplete();
-        }
-
-        if (this.hasFailed) {
-            if (this.onFailure) this.onFailure();
-        }
-        else if (this.onSuccess) {
-            this.onSuccess();
+        if ('number' === typeof update.groupSize) {
+            this.groupSize = update.groupSize;
         }
     };
 
     /**
-     * ### WaitingRoom.displayResults
+     * ### WaitingRoom.updateDisplay
      *
-     * Displays the results of the requirements on the screen
+     * Displays the state of the waiting room on screen
      *
-     * Creates a new item in the list of results for every error found
-     * in the results array.
-     *
-     * If no error was raised, the results array should be empty.
-     *
-     * @param {array} results The array containing the return values of all
-     *   the requirements
-     *
-     * @see this.onComplete
-     * @see this.onSuccess
-     * @see this.onFailure
-     * @see this.stillCheckings
-     * @see this.requirements
+     * @see WaitingRoom.updateState
      */
-    WaitingRoom.prototype.displayResults = function(results) {
-        var i, len;
-
-        if (!this.list) {
-            throw new Error('WaitingRoom.displayResults: list not found. ' +
-                            'Have you called .append() first?');
-        }
-
-        if (!J.isArray(results)) {
-            throw new TypeError('WaitingRoom.displayResults: results must ' +
-                                'be array.');
-        }
-
-        // No errors.
-        if (!results.length) {
-            // Last check and no previous errors.
-            if (!this.hasFailed && this.stillChecking <= 0) {
-                // All tests passed.
-                this.list.addDT({
-                    success: true,
-                    text:'All tests passed.'
-                });
-            }
-        }
-        else {
-            // Add the errors.
-            i = -1, len = results.length;
-            for ( ; ++i < len ; ) {
-                this.list.addDT({
-                    success: false,
-                    text: results[i]
-                });
-            }
-        }
-        // Parse deletes previously existing nodes in the list.
-        this.list.parse();
+    WaitingRoom.prototype.updateDisplay = function() {
+        this.summaryUpdate.innerHTML = this.connected + ' / ' + this.poolSize;
     };
 
     WaitingRoom.prototype.append = function() {
 
         this.summary = document.createElement('span');
         this.summary.appendChild(
-            document.createTextNode('Evaluating requirements'));
+            document.createTextNode('Waiting for all players to connect: '));
 
         this.summaryUpdate = document.createElement('span');
         this.summary.appendChild(this.summaryUpdate);
@@ -35734,94 +35657,132 @@ if (!Array.prototype.indexOf) {
 
         this.summary.appendChild(this.dots.span);
 
+        if (this.maxWaitTime) {
+            this.startTimer();
+        }
+
         this.bodyDiv.appendChild(this.summary);
 
-        this.bodyDiv.appendChild(this.list.getRoot());
+
     };
 
     WaitingRoom.prototype.listeners = function() {
         var that;
         that = this;
-        node.registerSetup('requirements', function(conf) {
+        node.registerSetup('waitroom', function(conf) {
             if (!conf) return;
             if ('object' !== typeof conf) {
-                node.warn('requirements widget: invalid setup object: ' + conf);
+                node.warn('waiting room widget: invalid setup object: ' + conf);
                 return;
             }
             // Configure all requirements.
             that.init(conf);
-            // Start a checking immediately if requested.
-            if (conf.doChecking) that.checkWaitingRoom();
 
             return conf;
+        });
+
+        // NodeGame Listeners.
+        node.on.data('PLAYERSCONNECTED', function(msg) {
+
+            if (!msg.data) return;
+            that.connected = msg.data;
+            that.updateDisplay();
+        });
+
+        node.on.data('TIME', function(msg) {
+            timeIsUp(msg.data);
+        });
+
+
+        // Start waiting time timer.
+        node.on.data('WAITTIME', function(msg) {
+
+            // Avoid running multiple timers.
+            // if (timeCheck) clearInterval(timeCheck);
+
+            that.updateState(msg.data);
+            that.updateDisplay();
+
+        });
+
+        node.on('SOCKET_DISCONNECT', function() {
+            var connStatus;
+            // Terminate countdown.
+            // clearInterval(timeCheck);
+            // Write about disconnection in page.
+            connStatus = document.getElementById('connectionStatus');
+            if (connStatus) {
+                connStatus. innerHTML = '<span style="color: red">You have been ' +
+                    '<strong>disconnected</strong>. Please try again later.' +
+                    '</span><br><br>';
+            }
+            // Enough to not display it in case of page refresh.
+            setTimeout(function() {
+                alert('Disconnection from server detected!');
+            }, 200);
         });
     };
 
     WaitingRoom.prototype.destroy = function() {
-        node.deregisterSetup('requirements');
+        node.deregisterSetup('waitroom');
     };
 
     // ## Helper methods
 
-    function resultCb(that, name, i) {
-        var req, update, res;
+    function Countdown() {
+        var PrevMin = (minutes < 10) ? "0" : ":";
+        var PrevSec = (seconds < 10) ? ":0" : ":";
+        var TimeNow = PrevMin + minutes + PrevSec + seconds;
 
-        update = function(success, errors, data) {
-            that.updateStillChecking(-1);
-            if (!success) {
-                that.hasFailed = true;
+        if (DHTML) {
+            if (NS4) {
+                setContent("id", "Uhr", null, '<span class="Uhr">' + TimeNow + "<\/span>");
             }
-
-            if (errors) {
-                if (!J.isArray(errors)) {
-                    throw new Error('WaitingRoom.checkWaitingRoom: ' +
-                                    'errors must be array or undefined.');
-                }
-                that.displayResults(errors);
+            else {
+                setContent("id", "Uhr", null, TimeNow);
             }
-
-            that.results.push({
-                name: name,
-                success: success,
-                errors: errors,
-                data: data
-            });
-
-            if (that.isCheckingFinished()) {
-                that.checkingFinished();
+            if (minutes > 0 && seconds == 0) {
+                minutes--;
+                seconds = 59;
             }
-        };
-
-        req = that.requirements[i];
-        if ('function' === typeof req) {
-            res = req(update);
+            else seconds--;
         }
-        else if ('object' === typeof req) {
-            res = req.cb(update, req.params || {});
-        }
-        else {
-            throw new TypeError('WaitingRoom.checkWaitingRoom: invalid ' +
-                                'requirement: ' + name + '.');
-        }
-        // Synchronous checking.
-        if (res) update(res.success, res.errors, res.data);
     }
 
-    function extractErrorMsg(e) {
-        var errMsg;
-        if (e.msg) {
-            errMsg = e.msg;
+    function timeIsUp(data) {
+        var timeOut;
+
+        console.log('TIME IS UP!');
+        return;
+
+        // if (alreadyTimeUp) return;
+        // alreadyTimeUp = true;
+
+        // clearInterval(timeCheck);
+
+        // All players have connected. Game starts.
+        if (data && data.over === 'AllPlayersConnected') return;
+
+        node.socket.disconnect();
+
+        // Enough Time passed, not enough players connected.
+        if (data && data.over === 'Time elapsed!!!') {
+
+            timeOut = "<h3 align='center'>Thank you for your patience.<br>";
+            timeOut += "Unfortunately, there are not enough participants in your group to start the experiment.<br>";
+            timeOut += "You will be payed out a fix amount for your participation up to this point.<br><br>";
+            timeOut += "Please go back to Amazon Mechanical Turk web site and submit the hit.<br>";
+            timeOut += "We usually pay within 24 hours. <br>For any problems, please look for a HIT called <strong>ETH Descil Trouble Ticket</strong> and file a new trouble ticket reporting the exit code as written below.<br><br>";
+            timeOut += "Exit Code: " + data.exit + "<br> </h3>";
         }
-        else if (e.message) {
-            errMsg = e.message;
-        }
-        else if (e.description) {
-            errMsg.description;
-        }
+
+        // Too much time passed, but no message from server received.
         else {
-            errMsg = e.toString();
+            timeOut = "An error has occurred. You seem to be waiting for too long. ";
+            timeOut += "Please look for a HIT called <strong>ETH Descil Trouble Ticket</strong> and file a new trouble ticket reporting your experience."
         }
-        return errMsg;
+
+        document.getElementById("startPage").innerHTML = timeOut;
     }
 
 })(node);

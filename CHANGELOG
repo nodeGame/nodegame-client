@@ -40,6 +40,7 @@
  - `#node.isGameover()`.
  - EventEmitter and EventEmitterManager can track changes. See `#setRecordChanges()` and `#getChanges()`.
  - `#EventEmitter.remove() returns removed listeners or empty array.
+ - `Socket.emitOutMsg` option.
 
 ## 0.9.9
 

@@ -87,6 +87,8 @@ var ng_client = [
 
     rootDir + "listeners/incoming.js",
     rootDir + "listeners/internal.js",
+    rootDir + "listeners/setups.js",
+    rootDir + "listeners/aliases.js",
 ];
 
 // ng-addons

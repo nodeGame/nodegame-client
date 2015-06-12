@@ -1,6 +1,6 @@
 /**
  * # internal
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Listeners for internal messages.
@@ -8,6 +8,8 @@
  * Internal listeners are not directly associated to messages,
  * but they are usually responding to internal nodeGame events,
  * such as progressing in the loading chain, or finishing a game stage.
+ *
+ * http://nodegame.org
  */
 (function(exports, parent) {
 
@@ -46,11 +48,13 @@
      */
     NGC.prototype.addDefaultInternalListeners = function(force) {
         var node = this;
-        if (this.internalAdded && !force) {
+        if (this.conf.internalAdded && !force) {
             this.err('Default internal listeners already added once. ' +
                      'Use the force flag to re-add.');
             return false;
         }
+
+        this.info('node: adding internal listeners.');
 
         function done() {
             var res;
@@ -264,8 +268,8 @@
             node.socket.eraseBuffer();
         });
 
-        this.internalAdded = true;
-        this.silly('internal listeners added');
+        this.conf.internalAdded = true;
+        this.silly('node: internal listeners added.');
         return true;
     };
 })(

@@ -42,11 +42,13 @@
     NGC.prototype.addDefaultIncomingListeners = function(force) {
         var node = this;
 
-        if (node.incomingAdded && !force) {
+        if (node.conf.incomingAdded && !force) {
             node.err('node.addDefaultIncomingListeners: listeners already ' +
                      'added once. Use the force flag to re-add.');
             return false;
         }
+
+        this.info('node: adding incoming listeners.');
 
         /**
          * ## in.say.PCONNECT
@@ -263,16 +265,26 @@
          */
         node.events.ng.on( IN + say + 'SETUP', function(msg) {
             var payload, feature;
-            if (!msg.text) return;
-            feature = msg.text,
+            feature = msg.text;
+            if ('string' !== typeof feature) {
+                node.err('node.on.in.say.SETUP: msg.text must be string.');
+                return false;
+            }
+            if (!node.setup[feature]) {
+                node.err('node.on.in.say.SETUP: no such setup function: ' +
+                        feature + '.');
+                return false;
+            }
+
             payload = 'string' === typeof msg.data ?
                 J.parse(msg.data) : msg.data;
 
             if (!payload) {
                 node.err('node.on.in.say.SETUP: error while parsing ' +
-                         'incoming remote setup message');
+                         'payload of incoming remote setup message.');
                 return false;
             }
+            // node.emit('SETUP_' + feature, payload);
             node.setup.apply(node, [feature].concat(payload));
         });
 
@@ -411,8 +423,8 @@
         });
 
 
-        node.incomingAdded = true;
-        node.silly('incoming listeners added');
+        node.conf.incomingAdded = true;
+        node.silly('node: incoming listeners added.');
         return true;
     };
 
