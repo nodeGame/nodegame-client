@@ -59,7 +59,9 @@
             }
             options = options || {};
             for (i in this.setup) {
-                if (this.setup.hasOwnProperty(i)) {
+                if (this.setup.hasOwnProperty(i) &&
+                    'function' === typeof this.setup[i]) {
+
                     // Old Operas loop over the prototype property as well.
                     if (i !== 'register' &&
                         i !== 'nodegame' &&

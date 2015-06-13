@@ -11747,20 +11747,11 @@ if (!Array.prototype.indexOf) {
      *  `count`: The id of the player within a PlayerList object
      *  `admin`: Whether the player is an admin
      *  `disconnected`: Whether the player has disconnected
-     *
-     * Others properties are public and can be changed during the game.
-     *
      *  `lang`: the language chosen by player (default English)
      *  `name`: An alphanumeric name associated to the player
      *  `stage`: The current stage of the player as relative to a game
      *  `ip`: The ip address of the player
      *
-     * All the additional properties in the configuration object passed
-     * to the constructor are also created as *private* and cannot be further
-     * modified during the game.
-     *
-     * For security reasons, non-default properties cannot be `function`, and
-     * cannot overwrite any previously existing property.
      */
 
     // Expose Player constructor
@@ -11896,22 +11887,6 @@ if (!Array.prototype.indexOf) {
             nativeName: 'English',
             path: 'en/'
         };
-
-        /**
-         * ## Extra properties
-         *
-         * For security reasons, they cannot be of type function, and they
-         * cannot overwrite any previously defined variable
-         */
-        for (key in player) {
-            if (player.hasOwnProperty(key)) {
-                if ('function' !== typeof player[key]) {
-                    if (!this.hasOwnProperty(key)) {
-                        this[key] = player[key];
-                    }
-                }
-            }
-        }
     }
 
     // ## Player methods
@@ -15208,8 +15183,8 @@ if (!Array.prototype.indexOf) {
             }
         }
         else {
-            this.node.warn('Socket.startSession: cannot set cookies. Session ' +
-                           'support disabled');
+            this.node.warn('Socket.startSession: cannot set cookies, session ' +
+                           'support disabled.');
         }
         return true;
     };
@@ -19954,16 +19929,11 @@ if (!Array.prototype.indexOf) {
 
     var ErrorManager = parent.ErrorManager,
         EventEmitterManager = parent.EventEmitterManager,
-        EventEmitter = parent.EventEmitter,
         GameMsgGenerator = parent.GameMsgGenerator,
         Socket = parent.Socket,
-        GameStage = parent.GameStage,
-        GameMsg = parent.GameMsg,
         Game = parent.Game,
-        Timer = parent.Timer,
-        Player = parent.Player,
         GameSession = parent.GameSession,
-        J = parent.JSUS,
+        Timer = parent.Timer,
         constants = parent.constants;
 
     /**
@@ -20024,7 +19994,7 @@ if (!Array.prototype.indexOf) {
         /**
          * ### node.events
          *
-         * Instance of the EventEmitter class
+         * Instance of the EventEmitterManager class
          *
          * Takes care of emitting the events and calling the
          * proper listener functions
@@ -20058,6 +20028,8 @@ if (!Array.prototype.indexOf) {
          * Contains a reference to all session variables
          *
          * Session variables can be saved and restored at a later stage
+         *
+         * @experimental
          */
         this.session = new GameSession(this);
 
@@ -20681,10 +20653,11 @@ if (!Array.prototype.indexOf) {
             this.player.stateLevel > constants.stateLevels.STARTING &&
             this.player.stateLevel !== constants.stateLevels.GAMEOVER) {
             throw new this.NodeGameIllegalOperationError(
-                'node.createPlayer: cannot create player while game is running');
+                'node.createPlayer: cannot create player ' +
+                    'while game is running.');
         }
         if (this.game.pl.exist(player.id)) {
-            throw new Error('node.createPlayer: already id already found in ' +
+            throw new Error('node.createPlayer: id already found in ' +
                             'playerList: ' + player.id);
         }
         // Cast to player (will perform consistency checks)
@@ -22245,7 +22218,9 @@ if (!Array.prototype.indexOf) {
             }
             options = options || {};
             for (i in this.setup) {
-                if (this.setup.hasOwnProperty(i)) {
+                if (this.setup.hasOwnProperty(i) &&
+                    'function' === typeof this.setup[i]) {
+
                     // Old Operas loop over the prototype property as well.
                     if (i !== 'register' &&
                         i !== 'nodegame' &&
@@ -27834,7 +27809,7 @@ if (!Array.prototype.indexOf) {
         if (!title) {
             if (this.headingDiv) {
                 this.panelDiv.removeChild(this.headingDiv);
-                delete this.headingDiv;
+                this.headingDiv = null;
             }
         }
         else {
@@ -28081,6 +28056,9 @@ if (!Array.prototype.indexOf) {
         widget.className = wProto.className;
         widget.context = wProto.context;
 
+        // Add random unique widget id.
+        widget.wid = '' + J.randomInt(0,10000000000000000000);
+
         // Call listeners.
 
         // Start recording changes.
@@ -28088,9 +28066,6 @@ if (!Array.prototype.indexOf) {
 
         // Register listeners.
         widget.listeners.call(widget);
-
-        // Add random unique widget id.
-        widget.wid = '' + J.randomInt(0,10000000000000000000);
 
         // Get registered listeners, clear changes, and stop recording.
         changes = node.events.getChanges(true);
@@ -28140,9 +28115,7 @@ if (!Array.prototype.indexOf) {
                     break;
                 }
             }
-
         };
-
 
         // User listeners.
         attachListeners(options, widget);
@@ -35136,7 +35109,6 @@ if (!Array.prototype.indexOf) {
     };
 
     VisualTimer.prototype.destroy = function() {
-        console.log('VTTTTTTTTTTTTTTTT Original Destroy!');
         node.timer.destroyTimer(this.gameTimer);
         this.bodyDiv.removeChild(this.mainBox.boxDiv);
         this.bodyDiv.removeChild(this.waitBox.boxDiv);
@@ -35392,7 +35364,7 @@ if (!Array.prototype.indexOf) {
     WaitingRoom.version = '0.1.0';
     WaitingRoom.description = 'Displays a waiting room for clients.';
 
-    WaitingRoom.title = 'WaitingRoom';
+    WaitingRoom.title = 'Waiting Room';
     WaitingRoom.className = 'waitingRoom';
 
     // ## Dependencies
@@ -35710,16 +35682,17 @@ if (!Array.prototype.indexOf) {
         });
 
         node.on('SOCKET_DISCONNECT', function() {
-            var connStatus;
             // Terminate countdown.
-            // clearInterval(timeCheck);
-            // Write about disconnection in page.
-            connStatus = document.getElementById('connectionStatus');
-            if (connStatus) {
-                connStatus. innerHTML = '<span style="color: red">You have been ' +
-                    '<strong>disconnected</strong>. Please try again later.' +
-                    '</span><br><br>';
+            if (that.timer) {
+                that.timer.stop();
+                that.timer.destroy();
             }
+
+            // Write about disconnection in page.
+            that.summary.innerHTML = '<span style="color: red">You have been ' +
+                '<strong>disconnected</strong>. Please try again later.' +
+                '</span><br><br>';
+
             // Enough to not display it in case of page refresh.
             setTimeout(function() {
                 alert('Disconnection from server detected!');
@@ -35740,7 +35713,8 @@ if (!Array.prototype.indexOf) {
 
         if (DHTML) {
             if (NS4) {
-                setContent("id", "Uhr", null, '<span class="Uhr">' + TimeNow + "<\/span>");
+                setContent("id", "Uhr", null,
+                           '<span class="Uhr">' + TimeNow + "<\/span>");
             }
             else {
                 setContent("id", "Uhr", null, TimeNow);
@@ -35773,17 +35747,30 @@ if (!Array.prototype.indexOf) {
         if (data && data.over === 'Time elapsed!!!') {
 
             timeOut = "<h3 align='center'>Thank you for your patience.<br>";
-            timeOut += "Unfortunately, there are not enough participants in your group to start the experiment.<br>";
-            timeOut += "You will be payed out a fix amount for your participation up to this point.<br><br>";
-            timeOut += "Please go back to Amazon Mechanical Turk web site and submit the hit.<br>";
-            timeOut += "We usually pay within 24 hours. <br>For any problems, please look for a HIT called <strong>ETH Descil Trouble Ticket</strong> and file a new trouble ticket reporting the exit code as written below.<br><br>";
+            timeOut += "Unfortunately, there are not enough participants in ";
+            timeOut += "your group to start the experiment.<br>";
+
+            timeOut += "You will be payed out a fix amount for your ";
+            timeOut += "participation up to this point.<br><br>";
+
+            timeOut += "Please go back to Amazon Mechanical Turk ";
+            timeOut += "web site and submit the hit.<br>";
+
+            timeOut += "We usually pay within 24 hours. <br>For any ";
+            timeOut += "problems, please look for a HIT called ";
+            timeOut += "<strong>ETH Descil Trouble Ticket</strong> and file ";
+            timtOut += "a new trouble ticket reporting the exit code ";
+            timeOut += "as written below.<br><br>";
+
             timeOut += "Exit Code: " + data.exit + "<br> </h3>";
         }
 
         // Too much time passed, but no message from server received.
         else {
-            timeOut = "An error has occurred. You seem to be waiting for too long. ";
-            timeOut += "Please look for a HIT called <strong>ETH Descil Trouble Ticket</strong> and file a new trouble ticket reporting your experience."
+            timeOut = "An error has occurred. You seem to be ";
+            timeOut += "waiting for too long. Please look for a HIT called ";
+            timeOut += "<strong>ETH Descil Trouble Ticket</strong> and file ";
+            timeOut += "a new trouble ticket reporting your experience."
         }
 
         document.getElementById("startPage").innerHTML = timeOut;

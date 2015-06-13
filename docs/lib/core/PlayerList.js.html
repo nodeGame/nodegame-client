@@ -133,9 +133,6 @@
         <a href="#player.lang">Player.lang</a>
       </div>
       <div class="heading h2">
-        <a href="#extra-properties">Extra properties</a>
-      </div>
-      <div class="heading h2">
         <a href="#player-methods">Player methods</a>
       </div>
       <div class="heading h3">
@@ -1370,21 +1367,11 @@ array of PlayerList instances and returns it.</p>
  <code>id</code>: The nodeGame session id associate to the player
  <code>count</code>: The id of the player within a PlayerList object
  <code>admin</code>: Whether the player is an admin
- <code>disconnected</code>: Whether the player has disconnected</p>
-
-<p>Others properties are public and can be changed during the game.</p>
-
-<p><code>lang</code>: the language chosen by player (default English)
+ <code>disconnected</code>: Whether the player has disconnected
+ <code>lang</code>: the language chosen by player (default English)
  <code>name</code>: An alphanumeric name associated to the player
  <code>stage</code>: The current stage of the player as relative to a game
  <code>ip</code>: The ip address of the player</p>
-
-<p>All the additional properties in the configuration object passed
-to the constructor are also created as <em>private</em> and cannot be further
-modified during the game.</p>
-
-<p>For security reasons, non-default properties cannot be <code>function</code>, and
-cannot overwrite any previously existing property.</p>
   </div>
 </div>
         </td>
@@ -1723,34 +1710,7 @@ case of reconnections it can change</p>
             <span class="nx">shortName</span><span class="o">:</span> <span class="s1">&#39;en&#39;</span><span class="p">,</span>
             <span class="nx">nativeName</span><span class="o">:</span> <span class="s1">&#39;English&#39;</span><span class="p">,</span>
             <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;en/&#39;</span>
-        <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="extra-properties">
-  <h2>
-    <a href="#extra-properties" class="pilcrow">&#182;</a>
-    Extra properties
-  </h2>
-</div>
-
-  </div>
-  <div class="body"><p>For security reasons, they cannot be of type function, and they
-cannot overwrite any previously defined variable</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">player</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">player</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">player</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
+        <span class="p">};</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
