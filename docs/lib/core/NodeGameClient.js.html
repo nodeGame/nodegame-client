@@ -139,16 +139,10 @@ multiplayer games in the browser.</p>
 
     <span class="kd">var</span> <span class="nx">ErrorManager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">ErrorManager</span><span class="p">,</span>
         <span class="nx">EventEmitterManager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">EventEmitterManager</span><span class="p">,</span>
-        <span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">EventEmitter</span><span class="p">,</span>
         <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
         <span class="nx">Socket</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Socket</span><span class="p">,</span>
-        <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
-        <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
         <span class="nx">Game</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Game</span><span class="p">,</span>
         <span class="nx">Timer</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Timer</span><span class="p">,</span>
-        <span class="nx">Player</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
-        <span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameSession</span><span class="p">,</span>
-        <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
         <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -284,7 +278,7 @@ multiplayer games in the browser.</p>
 </div>
 
   </div>
-  <div class="body"><p>Instance of the EventEmitter class</p>
+  <div class="body"><p>Instance of the EventEmitterManager class</p>
 
 <p>Takes care of emitting the events and calling the
 proper listener functions</p>
