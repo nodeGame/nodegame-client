@@ -41,6 +41,7 @@
  - EventEmitter and EventEmitterManager can track changes. See `#setRecordChanges()` and `#getChanges()`.
  - `#EventEmitter.remove() returns removed listeners or empty array.
  - `Socket.emitOutMsg` option.
+ - Not possible to add properties to Player object in constructor.
 
 ## 0.9.9
 
