@@ -709,7 +709,7 @@ Updates are not possible for the moment.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">playerList</span>
+      <span class="dox_tag_name">list</span>
       <span class="dox_type">PlayerList</span>
       <span>The new player list</span>
     </div>
@@ -722,8 +722,8 @@ Updates are not possible for the moment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;plist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">playerList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">updatePlayerList</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;pl&#39;</span><span class="p">,</span> <span class="nx">playerList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;plist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">updatePlayerList</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;pl&#39;</span><span class="p">,</span> <span class="nx">list</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">);</span>
             <span class="p">});</span></pre></div>
         </td>
       </tr>
@@ -743,7 +743,7 @@ Updates are not possible for the moment.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">monitorList</span>
+      <span class="dox_tag_name">list</span>
       <span class="dox_type">PlayerList</span>
       <span>The new monitor list</span>
     </div>
@@ -756,8 +756,8 @@ Updates are not possible for the moment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;mlist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">monitorList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">updatePlayerList</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;ml&#39;</span><span class="p">,</span> <span class="nx">monitorList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;mlist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">updatePlayerList</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;ml&#39;</span><span class="p">,</span> <span class="nx">list</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">);</span>
             <span class="p">});</span></pre></div>
         </td>
       </tr>
@@ -769,38 +769,7 @@ Updates are not possible for the moment.</p>
 <p>Utility for setup.plist and setup.mlist:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="kd">function</span> <span class="nx">updatePlayerList</span><span class="p">(</span><span class="nx">dstListName</span><span class="p">,</span> <span class="nx">srcList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">dstList</span><span class="p">;</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList called before &#39;</span> <span class="o">+</span>
-                              <span class="s1">&#39;node.game was initialized.&#39;</span><span class="p">);</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
-                        <span class="s1">&#39;node.game non-existent.&#39;</span><span class="p">);</span>
-                <span class="p">}</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="nx">dstListName</span> <span class="o">===</span> <span class="s1">&#39;pl&#39;</span><span class="p">)</span>      <span class="nx">dstList</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">;</span>
-                <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">dstListName</span> <span class="o">===</span> <span class="s1">&#39;ml&#39;</span><span class="p">)</span> <span class="nx">dstList</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">;</span>
-                <span class="k">else</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList: invalid dstListName.&#39;</span><span class="p">);</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
-                        <span class="s2">&quot;invalid dstListName.&quot;</span><span class="p">);</span>
-                <span class="p">}</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">dstList</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;updatePlayerList called before &#39;</span> <span class="o">+</span>
-                              <span class="s1">&#39;node.game was initialized.&#39;</span><span class="p">);</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
-                        <span class="s1">&#39;dstList non-existent.&#39;</span><span class="p">);</span>
-                <span class="p">}</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="nx">srcList</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">updateRule</span> <span class="o">||</span> <span class="nx">updateRule</span> <span class="o">===</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">dstList</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
-                    <span class="p">}</span>
-                    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">throw</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
-                            <span class="s2">&quot;setup(&#39;plist&#39;) got invalid updateRule.&quot;</span><span class="p">);</span>
-                    <span class="p">}</span></pre></div>
+                <span class="kd">var</span> <span class="nx">dstList</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -808,12 +777,33 @@ Updates are not possible for the moment.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
-<p>automatic cast from Object to Player</p>
+<p>Initial setup call. Nothing to do.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                    <span class="nx">dstList</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">srcList</span><span class="p">);</span>
-                <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">srcList</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">updateRule</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 
-                <span class="k">return</span> <span class="nx">dstList</span><span class="p">;</span>
+                <span class="nx">dstList</span> <span class="o">=</span> <span class="nx">dstListName</span> <span class="o">===</span> <span class="s1">&#39;pl&#39;</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">;</span>
+                <span class="nx">updateRule</span> <span class="o">=</span> <span class="nx">updateRule</span> <span class="o">||</span> <span class="s1">&#39;replace&#39;</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">===</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">dstList</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;setup.&#39;</span> <span class="o">+</span> <span class="nx">dstListName</span> <span class="o">+</span> <span class="s1">&#39;ist: invalid &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;updateRule: &#39;</span> <span class="o">+</span> <span class="nx">updateRule</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+</div>
+<p>Import clients (if any).
+Automatic cast from Object to Player.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">srcList</span><span class="p">)</span> <span class="nx">dstList</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">srcList</span><span class="p">);</span>
+
+                <span class="k">return</span> <span class="p">{</span> <span class="nx">updateRule</span><span class="o">:</span> <span class="nx">updateRule</span><span class="p">,</span> <span class="nx">list</span><span class="o">:</span> <span class="nx">srcList</span> <span class="p">};</span>
             <span class="p">}</span>
         <span class="p">})(</span><span class="k">this</span><span class="p">);</span></pre></div>
         </td>

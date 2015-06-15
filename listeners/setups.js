@@ -346,12 +346,12 @@
              *
              * Updates the player list in Game
              *
-             * @param {PlayerList} playerList The new player list
+             * @param {PlayerList} list The new player list
              * @param {string} updateRule Optional. Accepted: <replace>,
              *   <append>. Default: 'replace'
              */
-            node.registerSetup('plist', function(playerList, updateRule) {
-                updatePlayerList.call(this, 'pl', playerList, updateRule);
+            node.registerSetup('plist', function(list, updateRule) {
+                return updatePlayerList.call(this, 'pl', list, updateRule);
             });
 
             /**
@@ -359,54 +359,36 @@
              *
              * Updates the monitor list in Game
              *
-             * @param {PlayerList} monitorList The new monitor list
+             * @param {PlayerList} list The new monitor list
              * @param {string} updateRule Optional. Accepted: <replace>,
              *   <append>. Default: 'replace'
              */
-            node.registerSetup('mlist', function(monitorList, updateRule) {
-                updatePlayerList.call(this, 'ml', monitorList, updateRule);
+            node.registerSetup('mlist', function(list, updateRule) {
+                return updatePlayerList.call(this, 'ml', list, updateRule);
             });
 
             // Utility for setup.plist and setup.mlist:
             function updatePlayerList(dstListName, srcList, updateRule) {
                 var dstList;
+                // Initial setup call. Nothing to do.
+                if (!srcList && !updateRule) return;
 
-                if (!this.game) {
-                    this.warn('updatePlayerList called before ' +
-                              'node.game was initialized.');
-                    throw new this.NodeGameMisconfiguredGameError(
-                        'node.game non-existent.');
+                dstList = dstListName === 'pl' ? this.game.pl : this.game.ml;
+                updateRule = updateRule || 'replace';
+
+                if (updateRule === 'replace') {
+                    dstList.clear(true);
+                }
+                else if (updateRule !== 'append') {
+                    throw new Error('setup.' + dstListName + 'ist: invalid ' +
+                                    'updateRule: ' + updateRule + '.');
                 }
 
-                if (dstListName === 'pl')      dstList = this.game.pl;
-                else if (dstListName === 'ml') dstList = this.game.ml;
-                else {
-                    this.warn('updatePlayerList: invalid dstListName.');
-                    throw new this.NodeGameMisconfiguredGameError(
-                        "invalid dstListName.");
-                }
+                // Import clients (if any).
+                // Automatic cast from Object to Player.
+                if (srcList) dstList.importDB(srcList);
 
-                if (!dstList) {
-                    this.warn('updatePlayerList called before ' +
-                              'node.game was initialized.');
-                    throw new this.NodeGameMisconfiguredGameError(
-                        'dstList non-existent.');
-                }
-
-                if (srcList) {
-                    if (!updateRule || updateRule === 'replace') {
-                        dstList.clear(true);
-                    }
-                    else if (updateRule !== 'append') {
-                        throw new this.NodeGameMisconfiguredGameError(
-                            "setup('plist') got invalid updateRule.");
-                    }
-
-                    // automatic cast from Object to Player
-                    dstList.importDB(srcList);
-                }
-
-                return dstList;
+                return { updateRule: updateRule, list: srcList };
             }
         })(this);
 

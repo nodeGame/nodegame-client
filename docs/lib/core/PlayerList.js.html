@@ -749,8 +749,17 @@ TODO remove after transition is complete</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">confirm</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">confirm</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
+        <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">confirm</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+</div>
+<p>TODO: check do we need this?</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -993,7 +1002,7 @@ for example: PLAYING, DONE, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Cast the gameStage to object. It can throw errors.</p>
         </td>
@@ -1043,7 +1052,7 @@ for example: PLAYING, DONE, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Players in same stage, step and round.</p>
         </td>
@@ -1063,7 +1072,7 @@ for example: PLAYING, DONE, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Players in current stage up to the reference step.</p>
         </td>
@@ -1073,7 +1082,7 @@ for example: PLAYING, DONE, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Player in another stage or in later step.</p>
         </td>
@@ -1086,7 +1095,7 @@ for example: PLAYING, DONE, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Player before given step.</p>
         </td>
@@ -1100,7 +1109,7 @@ for example: PLAYING, DONE, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>If outliers are not allowed returns false if one was found.</p>
         </td>
@@ -1110,7 +1119,7 @@ for example: PLAYING, DONE, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>If the stageLevel check is required let's do it!</p>
         </td>
@@ -1384,7 +1393,7 @@ array of PlayerList instances and returns it.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Expose Player constructor</p>
         </td>
