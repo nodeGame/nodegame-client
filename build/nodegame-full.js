@@ -15728,7 +15728,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Game
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Handles the flow of the game
@@ -16548,7 +16548,8 @@ if (!Array.prototype.indexOf) {
             }
 
         }
-        return this.execStep(this.getCurrentStepObj());
+        this.execStep(this.getCurrentGameStage());
+        return true;
     };
 
     /**
@@ -16556,34 +16557,65 @@ if (!Array.prototype.indexOf) {
      *
      * Executes the specified stage object
      *
-     * @param {object} stage Full stage object to execute
+     * @param {GameStage} step Step to execute
+     *
      * @return {boolean} The result of the execution of the step callback
      */
-    Game.prototype.execStep = function(stage) {
-        var cb, res, node;
-        node = this.node;
+    Game.prototype.execStep = function(step) {
+        var cb, res;
+        var frame, frameOptions;
 
-        if (!stage || 'object' !== typeof stage) {
-            throw new node.NodeGameRuntimeError(
-                'game.execStep requires a valid object');
+        if ('object' !== typeof step) {
+            throw new Error('Game.execStep: step must be object.');
         }
 
-        cb = stage.cb;
+        cb = this.plot.getProperty(step, 'cb');
+        frame = this.plot.getProperty(step, 'frame');
 
+        if (frame) {
+            if (!this.node.window) {
+                throw new Error('Game.execStep: frame option in step ' +
+                                step + ', but nodegame-window is not loaded.');
+            }
+
+            if ('object' === typeof frame) {
+                frameOptions = frame.options;
+                frame = frame.uri;
+            }
+
+            this.node.window.loadFrame(frame, function() {
+                this.execCallback(cb);
+            }, frameOptions);
+        }
+        else {
+            this.execCallback(cb);
+        }
+    };
+
+    /**
+     * ## Game.execCallback
+     *
+     * Executes a callback
+     *
+     * @param {function} cb The callback to execute
+     *
+     * @return {mixed} res The return value of the callback
+     */
+    Game.prototype.execCallback = function(cb) {
+        var res;
         this.setStageLevel(constants.stageLevels.EXECUTING_CALLBACK);
 
         // Execute custom callback. Can throw errors.
-        res = cb.call(node.game);
+        res = cb.call(this.node.game);
         if (res === false) {
             // A non fatal error occurred.
-            node.err('A non fatal error occurred while executing ' +
-                     'the callback of stage ' + this.getCurrentGameStage());
+            this.node.err('A non fatal error occurred in callback ' +
+                          'of stage ' + this.getCurrentGameStage());
         }
 
         this.setStageLevel(constants.stageLevels.CALLBACK_EXECUTED);
-        node.emit('STEP_CALLBACK_EXECUTED');
+        this.node.emit('STEP_CALLBACK_EXECUTED');
         // Internal listeners will check whether we need to emit PLAYING.
-        return res;
     };
 
     /**
@@ -24491,9 +24523,9 @@ if (!Array.prototype.indexOf) {
 
         // Adapt the uri if necessary.
         if (this.channelURI &&
-            (uri.charAt(0) !== '/' || uri.substr(0,7) !== 'http://')) {
+            (uri.charAt(0) !== '/' && uri.substr(0,7) !== 'http://')) {
 
-            uri = this.channelURI + uri + '/';
+            uri = this.channelURI + uri;
         }
 
         if (this.cacheSupported === null) {
