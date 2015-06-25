@@ -41,6 +41,8 @@
  - EventEmitter and EventEmitterManager can track changes. See `#setRecordChanges()` and `#getChanges()`.
  - `#EventEmitter.remove() returns removed listeners or empty array.
  - `Socket.emitOutMsg` option.
+ - Frame loading can be defined directly in the game stage/step definition.
+ - New stage properties can be defined globally: `frame` and `cb`.
 
 ## 0.9.9
 
