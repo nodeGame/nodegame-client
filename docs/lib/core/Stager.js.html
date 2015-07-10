@@ -465,10 +465,6 @@ then that function is used instead.</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Stager.setDefaultStepRule</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
       <span class="dox_type">Stager.getDefaultStepRule</span>
     </div>
     <div class="dox_tag_title">See</div>
@@ -746,7 +742,7 @@ Available only when nodegame is executed in <em>flexible</em> mode.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
-<p>Initial default:</p>
+<p>Initial default.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">defaultStepRule</span> <span class="o">=</span> <span class="nx">stepRules</span><span class="p">.</span><span class="nx">SOLO</span><span class="p">;</span>
         <span class="p">}</span>
@@ -2492,7 +2488,7 @@ Optionally, checks also for id uniqueness.</p>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">unique</span> <span class="o">&amp;&amp;</span> <span class="nx">that</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">return</span> <span class="s1">&#39;step ID already existing: &#39;</span> <span class="o">+</span> <span class="nx">step</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span>
-                <span class="s1">&#39;. Use extendStep to modify it.&#39;</span><span class="p">;</span>
+                <span class="s1">&#39;. Use extendStep to modify it&#39;</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
