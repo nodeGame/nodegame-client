@@ -12363,7 +12363,6 @@ if (!Array.prototype.indexOf) {
          * step/stage. If a step/stage object defines a `steprule` property,
          * then that function is used instead.
          *
-         * @see Stager.setDefaultStepRule
          * @see Stager.getDefaultStepRule
          * @see GamePlot.getStepRule
          */
@@ -12494,7 +12493,7 @@ if (!Array.prototype.indexOf) {
             this.defaultStepRule = stepRule;
         }
         else {
-            // Initial default:
+            // Initial default.
             this.defaultStepRule = stepRules.SOLO;
         }
     };
@@ -12788,7 +12787,7 @@ if (!Array.prototype.indexOf) {
                                 'function or undefined.');
         }
         if (!this.steps[stepId]) {
-            throw new Error('Stager.extendStage: stageId not found: ' +
+            throw new Error('Stager.extendStep: stepId not found: ' +
                             stepId + '.');
         }
 
@@ -12814,7 +12813,7 @@ if (!Array.prototype.indexOf) {
      */
     Stager.prototype.extendStage = function(stageId, update) {
         if ('string' !== typeof stageId) {
-            throw new TypeError('Stager.extendStage: stageId must be a string.');
+            throw new TypeError('Stager.extendStage: stageId must be string.');
         }
         if (!update || 'object' !== typeof update) {
             throw new TypeError('Stager.extendStage: update must be object.');
@@ -13009,8 +13008,8 @@ if (!Array.prototype.indexOf) {
      * Returns the sequence of stages
      *
      * @param {string} format 'hstages' for an array of human-readable stage
-     *   descriptions, 'hsteps' for an array of human-readable step descriptions,
-     *   'o' for the internal JavaScript object
+     *   descriptions, 'hsteps' for an array of human-readable step
+         descriptions, 'o' for the internal JavaScript object
      *
      * @return {array|object|null} The stage sequence in requested format. NULL
      *   on error.
@@ -13425,7 +13424,7 @@ if (!Array.prototype.indexOf) {
 
         if (unique && that.steps.hasOwnProperty(step.id)) {
             return 'step ID already existing: ' + step.id +
-                '. Use extendStep to modify it.';
+                '. Use extendStep to modify it';
         }
         return null;
     };
@@ -15409,7 +15408,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GameDB
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Provides a simple, lightweight NO-SQL database for nodeGame
@@ -20808,7 +20807,10 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # SAY, SET, GET, DONE
- * Copyright(c) 2014 Stefano Balietti
+ *
+ * Implementation of node.[say|set|get|done].
+ *
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  */
 (function(exports, parent) {
@@ -20816,6 +20818,7 @@ if (!Array.prototype.indexOf) {
     "use strict";
 
     var NGC = parent.NodeGameClient;
+    var J = parent.JSUS;
 
     var GETTING_DONE = parent.constants.stageLevels.GETTING_DONE;
 
@@ -21102,6 +21105,7 @@ if (!Array.prototype.indexOf) {
     NGC.prototype.done = function() {
         var that, game, doneCb, len, args, i;
         var arg1, arg2;
+        var stepTime, setObj;
 
         game = this.game;
 
@@ -21113,11 +21117,15 @@ if (!Array.prototype.indexOf) {
         // Evaluating `done` callback if any.
         doneCb = game.plot.getProperty(game.getCurrentGameStage(), 'done');
 
-        // TODO optimize
-        if (doneCb && !doneCb.apply(game, arguments)) {
-            if (!ok) return;
-        }
+        // If a `done` callback returns false, exit.
+        if (doneCb && !doneCb.apply(game, arguments)) return;
 
+        // Build set object (will be sent to server).
+        stepTime = this.timer.getTimeSince('stepping');
+        setObj = { time: stepTime };
+
+        // Keep track that the game will be done (done is asynchronous)
+        // to avoid calling `node.done` multiple times in the same stage.
         game.willBeDone = true;
 
         len = arguments.length;
@@ -21128,14 +21136,35 @@ if (!Array.prototype.indexOf) {
         switch(len) {
 
         case 0:
+            this.set('done', setObj);
             setTimeout(function() { that.events.emit('DONE'); }, 0);
             break;
         case 1:
             arg1 = arguments[0];
+            if ('object' === typeof arg1) J.mixin(setObj, arg1);
+            else setObj.value = arg1;
+            this.set('done', setObj);
             setTimeout(function() { that.events.emit('DONE', arg1); }, 0);
             break;
         case 2:
             arg1 = arguments[0], arg2 = arguments[1];
+            // Send first setObj.
+            if ('object' === typeof arg1) {
+                J.mixin(setObj, arg1);
+            }
+            else {
+                setObj.value = arg1;
+            }
+            this.set('done', setObj);
+            // Send second setObj.
+            setObj = { time: stepTime };
+            if ('object' === typeof arg2) {
+                J.mixin(setObj, arg2);
+            }
+            else {
+                setObj.value = arg2;
+            }
+            this.set('done', setObj);
             setTimeout(function() { that.events.emit('DONE', arg1, arg2); }, 0);
             break;
         default:
@@ -21143,6 +21172,14 @@ if (!Array.prototype.indexOf) {
             args[0] = 'DONE';
             for (i = 1; i < len; i++) {
                 args[i+1] = arguments[i];
+                if ('object' === typeof arguments[i]) {
+                    J.mixin(setObj, arguments[i]);
+                }
+                else {
+                    setObj.value = arguments[i];
+                }
+                this.set('done', setObj);
+                if (i !== len-1) setObj = { time: stepTime };
             }
             setTimeout(function() {
                 that.events.emit.apply(that.events, args);

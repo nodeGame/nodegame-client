@@ -43,6 +43,7 @@
  - `Socket.emitOutMsg` option.
  - Frame loading can be defined directly in the game stage/step definition.
  - New stage properties can be defined globally: `frame` and `cb`.
+ - Parameters given to `#node.done()` are automatically sent to server with `#node.set()`.
 
 ## 0.9.9
 
