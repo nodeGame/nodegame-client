@@ -522,7 +522,7 @@ this case it must be emitted last.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">done</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">game</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">stepTime</span><span class="p">,</span> <span class="nx">setObj</span><span class="p">;</span></pre></div>
+        <span class="kd">var</span> <span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">setObj</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -566,9 +566,13 @@ this case it must be emitted last.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
-<p>Build set object (will be sent to server).</p>
+<p>Build set object (will be sent to server).
+Back-compatible checks.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">setObj</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">time</span><span class="o">:</span> <span class="nx">stepTime</span> <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span> <span class="o">&amp;&amp;</span> <span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">isTimeup</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">timeup</span> <span class="o">=</span> <span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">isTimeup</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="nx">setObj</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">time</span><span class="o">:</span> <span class="nx">stepTime</span> <span class="p">,</span> <span class="nx">timeup</span><span class="o">:</span> <span class="nx">timeup</span> <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -634,7 +638,7 @@ timeout in a different branch for optimization.</p>
 </div>
 <p>Send second setObj.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">setObj</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">time</span><span class="o">:</span> <span class="nx">stepTime</span> <span class="p">};</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">setObj</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">time</span><span class="o">:</span> <span class="nx">stepTime</span> <span class="p">,</span> <span class="nx">timeup</span><span class="o">:</span> <span class="nx">timeup</span> <span class="p">};</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">arg2</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="nx">setObj</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">);</span>
             <span class="p">}</span>
@@ -656,7 +660,7 @@ timeout in a different branch for optimization.</p>
                     <span class="nx">setObj</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
                 <span class="p">}</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">,</span> <span class="nx">setObj</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="nx">len</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="nx">setObj</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">time</span><span class="o">:</span> <span class="nx">stepTime</span> <span class="p">};</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="nx">len</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="nx">setObj</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">time</span><span class="o">:</span> <span class="nx">stepTime</span> <span class="p">,</span> <span class="nx">timeup</span><span class="o">:</span> <span class="nx">timeup</span> <span class="p">};</span>
             <span class="p">}</span>
             <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>

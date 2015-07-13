@@ -19895,6 +19895,15 @@ if (!Array.prototype.indexOf) {
         return this.status === GameTimer.PAUSED;
     };
 
+    /**
+     * ### GameTimer.isPaused
+     *
+     * Return TRUE if the time expired
+     */
+    GameTimer.prototype.isTimeup = function() {
+        return this.timeLeft !== null && this.timeLeft <= 0;
+    };
+
     // Do a timer update.
     // Return false if timer ran out, true otherwise.
     function updateCallback(that) {
@@ -21106,7 +21115,7 @@ if (!Array.prototype.indexOf) {
     NGC.prototype.done = function() {
         var that, game, doneCb, len, args, i;
         var arg1, arg2;
-        var stepTime, setObj;
+        var stepTime, timeup, setObj;
 
         // Get step execution time.
         stepTime = this.timer.getTimeSince('step');
@@ -21124,7 +21133,11 @@ if (!Array.prototype.indexOf) {
         if (doneCb && !doneCb.apply(game, arguments)) return;
 
         // Build set object (will be sent to server).
-        setObj = { time: stepTime };
+        // Back-compatible checks.
+        if (game.timer && game.timer.isTimeup) {
+            timeup = game.timer.isTimeup();
+        }
+        setObj = { time: stepTime , timeup: timeup };
 
         // Keep track that the game will be done (done is asynchronous)
         // to avoid calling `node.done` multiple times in the same stage.
@@ -21159,7 +21172,7 @@ if (!Array.prototype.indexOf) {
             }
             this.set('done', setObj);
             // Send second setObj.
-            setObj = { time: stepTime };
+            setObj = { time: stepTime , timeup: timeup };
             if ('object' === typeof arg2) {
                 J.mixin(setObj, arg2);
             }
@@ -21181,7 +21194,7 @@ if (!Array.prototype.indexOf) {
                     setObj.value = arguments[i];
                 }
                 this.set('done', setObj);
-                if (i !== len-1) setObj = { time: stepTime };
+                if (i !== len-1) setObj = { time: stepTime , timeup: timeup };
             }
             setTimeout(function() {
                 that.events.emit.apply(that.events, args);
@@ -31793,6 +31806,11 @@ if (!Array.prototype.indexOf) {
          */
         this.languagesLoaded = false;
 
+        /**
+         * ## LanguageSelector.usingButtons
+         *
+         * Flag indicating if the interface should have buttons
+         */
         this.usingButtons = null;
 
         /**
@@ -31822,7 +31840,7 @@ if (!Array.prototype.indexOf) {
             that.availableLanguages = msg.data;
             if (that.usingButtons) {
 
-                // Creates labled buttons.
+                // Creates labeled buttons.
                 for (language in msg.data) {
                     if (msg.data.hasOwnProperty(language)) {
                         that.optionsLabel[language] = W.getElement('label',
@@ -34733,7 +34751,6 @@ if (!Array.prototype.indexOf) {
 
     node.widgets.register('VisualTimer', VisualTimer);
 
-
     // ## Meta-data
 
     VisualTimer.version = '0.5.0';
@@ -35067,10 +35084,9 @@ if (!Array.prototype.indexOf) {
       * @see VisualTimer.restart
       */
     VisualTimer.prototype.startWaiting = function(options) {
-        if (typeof options === 'undefined') {
+        if ('undefined' === typeof options) {
             options = {};
         }
-        options = J.clone(options);
         if (typeof options.milliseconds === 'undefined') {
             options.milliseconds = this.gameTimer.timeLeft;
         }
@@ -35101,14 +35117,13 @@ if (!Array.prototype.indexOf) {
       * @see VisualTimer.restart
       */
     VisualTimer.prototype.startTiming = function(options) {
-        if (typeof options === 'undefined') {
+        if ('undefined' === typeof options) {
             options = {};
         }
-        options = J.clone(options);
-        if (typeof options.mainBoxOptions === 'undefined') {
+        if ('undefined' === typeof options.mainBoxOptions) {
             options.mainBoxOptions = {};
         }
-        if (typeof options.waitBoxOptions === 'undefined') {
+        if ('undefined' === typeof options.waitBoxOptions) {
             options.waitBoxOptions = {};
         }
         options.activeBox = this.mainBox;
@@ -35143,6 +35158,19 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### VisualTimer.isTimeup
+     *
+     * Returns TRUE if the timer expired
+     *
+     * This method is added for backward compatibility.
+     *
+     * @see GameTimer.isTimeup
+     */
+    VisualTimer.prototype.isTimeup = function() {
+        return this.gameTimer.isTimeup();
+    };
+
+    /**
      * ### VisualTimer.doTimeUp
      *
      * Stops the timer and calls the timeup
@@ -35162,14 +35190,12 @@ if (!Array.prototype.indexOf) {
         var that = this;
 
         node.on('PLAYING', function() {
-            var stepObj, timer, options;
+            var timer, options, step;
             if (that.options.startOnPlaying) {
-                stepObj = node.game.getCurrentStep();
-                if (!stepObj) return;
-                timer = stepObj.timer;
+                step = node.game.getCurrentGameStage();
+                timer = node.game.plot.getProperty(step, 'timer');
                 if (timer) {
-                    // TODO: should be that.options.
-                    options = processOptions(timer, this.options);
+                    options = that.processOptions(timer);
                     that.startTiming(options);
                 }
             }
@@ -35190,24 +35216,20 @@ if (!Array.prototype.indexOf) {
         this.bodyDiv.removeChild(this.waitBox.boxDiv);
     };
 
-    // ## Helper functions
-
     /**
-     * ### processOptions
+     * ### VisualTimer.processOptions
      *
-     * Clones and mixes in user options with current options
+     * Clones and cleans user options
      *
-     * Return object is transformed accordingly.
+     * Adds the default 'timeup' function as `node.done`.
      *
      * @param {object} options Configuration options
-     * @param {object} curOptions Current configuration of VisualTimer
      *
      * @return {object} Clean, valid configuration object
      */
-    function processOptions(inOptions, curOptions) {
+    VisualTimer.prototype.processOptions = function(inOptions) {
         var options, typeofOptions;
         options = {};
-        inOptions = J.clone(inOptions);
         typeofOptions = typeof inOptions;
         switch (typeofOptions) {
 
@@ -35215,7 +35237,7 @@ if (!Array.prototype.indexOf) {
             options.milliseconds = inOptions;
             break;
         case 'object':
-            options = inOptions;
+            options = J.clone(inOptions);
             if ('function' === typeof options.milliseconds) {
                 options.milliseconds = options.milliseconds.call(node.game);
             }
@@ -35228,18 +35250,18 @@ if (!Array.prototype.indexOf) {
             break;
         }
 
-        J.mixout(options, curOptions || {});
-
         if (!options.milliseconds) {
             throw new Error('VisualTimer processOptions: milliseconds cannot ' +
                             'be 0 or undefined.');
         }
 
         if ('undefined' === typeof options.timeup) {
-            options.timeup = 'DONE';
+            options.timeup = function() {
+                node.done();
+            }
         }
         return options;
-    }
+    };
 
    /**
      * # TimerBox
