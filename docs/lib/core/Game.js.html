@@ -115,9 +115,6 @@
         <a href="#game.getcurrentstepproperty">Game.getCurrentStepProperty</a>
       </div>
       <div class="heading h3">
-        <a href="#game.getcurrentstep">Game.getCurrentStep</a>
-      </div>
-      <div class="heading h3">
         <a href="#game.getcurrentgamestage">Game.getCurrentGameStage</a>
       </div>
       <div class="heading h3">
@@ -164,6 +161,9 @@
       </div>
       <div class="heading h3">
         <a href="#game.shouldemitplaying">Game.shouldEmitPlaying</a>
+      </div>
+      <div class="heading h3">
+        <a href="#game.comparecurrentstep">Game.compareCurrentStep</a>
       </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
@@ -2044,53 +2044,6 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="game.getcurrentstep">
-  <h3>
-    <a href="#game.getcurrentstep" class="pilcrow">&#182;</a>
-    Game.getCurrentStep
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Returns the object representing the current game step.</p>
-
-<p>The returning object includes all the properties, such as:
-<em>id</em>, <em>cb</em>, <em>timer</em>, etc.</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">object</span>
-      <span>The game-step as defined in the stager.</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">Stager</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">GamePlot
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentStepProperty</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">propertyName</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">step</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">propertyName</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.getCurrentStepProperty: propertyName &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;must be string&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="nx">step</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
-        <span class="k">return</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">[</span><span class="nx">propertyName</span><span class="p">]</span> <span class="o">?</span>
-            <span class="kc">null</span> <span class="o">:</span> <span class="nx">step</span><span class="p">[</span><span class="nx">propertyName</span><span class="p">];</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
 <div class="pilwrap" id="game.getcurrentgamestage">
   <h3>
     <a href="#game.getcurrentgamestage" class="pilcrow">&#182;</a>
@@ -2176,7 +2129,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
+  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.
 The stage level, must also be sent in the published update,
@@ -2294,7 +2247,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
+  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.</p>
         </td>
@@ -2409,7 +2362,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
+  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.</p>
         </td>
@@ -2543,7 +2496,7 @@ value of the update to decide whether is to be published or not.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
+  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
 </div>
 <p>Two cases are handled outside of the switch: NO msg
 and LOADED stage with syncOnLoaded option.</p>
@@ -2561,7 +2514,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
+  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
 </div>
 <p>Else will be evaluated below.</p>
         </td>
@@ -2571,7 +2524,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
+  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
 </div>
 <p>Check all the other cases.</p>
         </td>
@@ -2595,7 +2548,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
+  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
 </div>
 <p>Unknown values of publishLevels are treated as ALL.</p>
         </td>
@@ -2885,7 +2838,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
+  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
 </div>
 <p>Should emit PLAYING only after LOADED.</p>
         </td>
@@ -2900,6 +2853,45 @@ method call.</p>
         <span class="nx">syncOnLoaded</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">curGameStage</span><span class="p">,</span> <span class="s1">&#39;syncOnLoaded&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">syncOnLoaded</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">isStepLoaded</span><span class="p">(</span><span class="nx">curGameStage</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="game.comparecurrentstep">
+  <h3>
+    <a href="#game.comparecurrentstep" class="pilcrow">&#182;</a>
+    Game.compareCurrentStep
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the relative order of a step with the current step</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">step</span>
+      <span class="dox_type">GameStage</span>
+      <span class="dox_type">string</span>
+      <span>The step to compare</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">number</span>
+      <span>0 if comparing step is the same as current step,
+  -1 if current step is before comparing step, 1 if current step
+  is after comparing step</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">compareCurrentStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">normalizedStep</span><span class="p">;</span>
+        <span class="nx">normalizedStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">normalizeGameStage</span><span class="p">(</span><span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">step</span><span class="p">));</span>
+        <span class="k">return</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span> <span class="nx">normalizedStep</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>

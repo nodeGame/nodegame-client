@@ -68,18 +68,19 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>Establishes a connection with a nodeGame server</p>
 
-<p>Events related to the connection include <em>SOCKET_CONNECT</em> and
-<em>PLAYER_CREATED</em>.</p>
+<p>If channel does not begin with <code>http://</code>, if executed in the browser,
+the connect method will try to add the value of <code>window.location.host</code>
+in front of channel to avoid cross-domain errors (as of Socket.io >= 1).</p>
 
-<p>Depending on the type of socket chosen (e.g. Direct or IO), the channel
-parameter is optional or not.</p>
+<p>Depending on the type of socket chosen (e.g. Direct or IO), the first
+parameter might be optional.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">channel</span>
       <span class="dox_type">string</span>
-      <span>Optional. The channel to connect to</span>
+      <span>The channel to connect to</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">socketOptions</span>
@@ -91,6 +92,13 @@ parameter is optional or not.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">channel</span><span class="p">,</span> <span class="nx">socketOptions</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">channel</span> <span class="o">&amp;&amp;</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;http://&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span> <span class="o">&amp;&amp;</span>
+                <span class="nb">window</span><span class="p">.</span><span class="nx">location</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="nx">channel</span> <span class="o">=</span> <span class="s1">&#39;http://&#39;</span> <span class="o">+</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">host</span> <span class="o">+</span> <span class="nx">channel</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">channel</span><span class="p">,</span> <span class="nx">socketOptions</span><span class="p">);</span>
     <span class="p">};</span>
 
