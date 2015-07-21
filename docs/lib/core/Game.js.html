@@ -249,19 +249,12 @@ MIT Licensed</p>
       <span class="dox_type">NodeGameClient</span>
       <span>A valid NodeGameClient object</span>
     </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">setup</span>
-      <span class="dox_type">object</span>
-      <span>Optional. A configuration object</span>
-    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">Game</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">setup</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">Game</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
-
-        <span class="nx">setup</span> <span class="o">=</span> <span class="nx">setup</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -314,11 +307,11 @@ from the file <code>package.json</code> inside the game folder.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">metadata</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">merge</span><span class="p">({</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">metadata</span> <span class="o">=</span> <span class="p">{</span>
             <span class="nx">name</span><span class="o">:</span>        <span class="s1">&#39;A nodeGame game&#39;</span><span class="p">,</span>
             <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;No description&#39;</span><span class="p">,</span>
             <span class="nx">version</span><span class="o">:</span>     <span class="s1">&#39;0.0.1&#39;</span>
-        <span class="p">},</span> <span class="nx">setup</span><span class="p">);</span></pre></div>
+        <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -340,7 +333,7 @@ depending also on the chosen treatment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">settings</span> <span class="o">=</span> <span class="nx">setup</span><span class="p">.</span><span class="nx">settings</span> <span class="o">||</span> <span class="p">{}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">settings</span> <span class="o">=</span> <span class="p">{}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -455,7 +448,7 @@ automatically inserted in this object</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GamePlot</span><span class="p">(</span><span class="k">new</span> <span class="nx">Stager</span><span class="p">(</span><span class="nx">setup</span><span class="p">.</span><span class="nx">stages</span><span class="p">));</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GamePlot</span><span class="p">(</span><span class="k">new</span> <span class="nx">Stager</span><span class="p">());</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -794,15 +787,14 @@ This options is useful when a player reconnets.</p>
 </div>
 <p>INIT the game.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">onInit</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getOnInit</span><span class="p">();</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">globals</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getGlobals</span><span class="p">(</span><span class="nx">startStage</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">onInit</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;INIT&#39;</span><span class="p">);</span>
-                <span class="nx">onInit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-            <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">onInit</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getOnInit</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">globals</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getGlobals</span><span class="p">(</span><span class="nx">startStage</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">onInit</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;INIT&#39;</span><span class="p">);</span>
+            <span class="nx">onInit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
         <span class="p">}</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="nx">startStage</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">);</span>
@@ -999,15 +991,13 @@ TODO: avoid pollution of the game object.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
-<p>Call gameover callback, if it exists:</p>
+<p>Call gameover callback, if it exists.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">onGameover</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getOnGameover</span><span class="p">();</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">onGameover</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">FINISHING</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">onGameover</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getOnGameover</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">onGameover</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">FINISHING</span><span class="p">);</span>
 
-                <span class="nx">onGameover</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-            <span class="p">}</span>
+            <span class="nx">onGameover</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">);</span>
