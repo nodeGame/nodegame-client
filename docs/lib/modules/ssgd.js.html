@@ -458,7 +458,8 @@ this case it must be emitted last.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">done</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">game</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">setObj</span><span class="p">;</span></pre></div>
+        <span class="kd">var</span> <span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">autoSet</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -507,7 +508,9 @@ Back-compatible checks.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span> <span class="o">&amp;&amp;</span> <span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">isTimeup</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">timeup</span> <span class="o">=</span> <span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">isTimeup</span><span class="p">();</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+        <span class="nx">autoSet</span> <span class="o">=</span> <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span> <span class="s1">&#39;autoSet&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -536,12 +539,12 @@ timeout in a different branch for optimization.</p>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">));</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">autoSet</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">));</span>
             <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">);</span> <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
             <span class="nx">arg1</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">));</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">autoSet</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">));</span>
             <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">);</span> <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
@@ -553,19 +556,12 @@ timeout in a different branch for optimization.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
-<p>Send first setObj.</p>
+<p>Send two setObjs.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">));</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
-</div>
-<p>Send second setObj.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">));</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">autoSet</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">));</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">));</span>
+            <span class="p">}</span>
             <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">);</span> <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">default</span><span class="o">:</span>
@@ -573,7 +569,7 @@ timeout in a different branch for optimization.</p>
             <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;DONE&#39;</span><span class="p">;</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">]));</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">autoSet</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]));</span>
             <span class="p">}</span>
             <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
