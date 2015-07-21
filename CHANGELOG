@@ -45,6 +45,8 @@
  - New stage properties can be defined globally: `frame` and `cb`.
  - Parameters given to `#node.done()` are automatically sent to server with `#node.set()`; the time from the beginning of the step, and a flag indicating if it was timeup are added to the parameters, if not already specified.
  - Flattened down the structure of entries in `node.game.memory`. Removed GameBit.
+ - `#node.set(obj, to) takes only one object and a recipient (was node.set(key, value, to).
+ - `autoSet` option specifies whether a SET message should be sent to SERVER when node.done() is called.
 
 
 ## 0.9.9
