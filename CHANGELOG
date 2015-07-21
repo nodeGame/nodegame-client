@@ -44,6 +44,7 @@
  - Frame loading can be defined directly in the game stage/step definition.
  - New stage properties can be defined globally: `frame` and `cb`.
  - Parameters given to `#node.done()` are automatically sent to server with `#node.set()`; the time from the beginning of the step, and a flag indicating if it was timeup are added to the parameters, if not already specified.
+ - Flattened down the structure of entries in `node.game.memory`. Removed GameBit.
 
 
 ## 0.9.9
