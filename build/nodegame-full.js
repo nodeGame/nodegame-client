@@ -14767,7 +14767,9 @@ if (!Array.prototype.indexOf) {
                 indexes: true
             }
         });
-        this.journal.comparator('stage', parent.GameBit.compareState);
+        this.journal.comparator('stage', function(o1, o2) {
+            return parent.GameStage.compare(o1.stage, o2.stage);
+        });
 
         if (!this.journal.player) {
             this.journal.hash('to', function(gb) {
@@ -15414,34 +15416,28 @@ if (!Array.prototype.indexOf) {
  *
  * Entries are stored as GameBit messages.
  *
- * It automatically creates three indexes.
+ * It automatically creates indexes.
  *
  * 1. by player,
- * 2. by stage,
- * 3. by key.
+ * 2. by stage
  *
- * Uses GameStage.compare to compare the stage property of each entry.
- *
- * @see GameBit
  * @see GameStage.compare
  */
 (function(exports, parent) {
 
     "use strict";
 
-    // ## Global scope
+    // ## Global scope.
     var JSUS = parent.JSUS,
     NDDB = parent.NDDB,
     GameStage = parent.GameStage;
 
-    // Inheriting from NDDB
+    // Inheriting from NDDB.
     GameDB.prototype = new NDDB();
     GameDB.prototype.constructor = GameDB;
 
-
     // Expose constructors
     exports.GameDB = GameDB;
-    exports.GameBit = GameBit;
 
     /**
      * ## GameDB constructor
@@ -15464,260 +15460,35 @@ if (!Array.prototype.indexOf) {
 
         NDDB.call(this, options, db);
 
-        this.comparator('stage', GameBit.compareState);
+        this.comparator('stage', function(o1, o2) {
+            return GameStage.compare(o1.stage, o2.stage);
+        });
 
         if (!this.player) {
-            this.hash('player', function(gb) {
-                return gb.player;
+            this.hash('player', function(o) {
+                return o.player;
             });
         }
         if (!this.stage) {
-            this.hash('stage', function(gb) {
-                if (gb.stage) {
-                    return GameStage.toHash(gb.stage, 'S.s.r');
+            this.hash('stage', function(o) {
+                if (o.stage) {
+                    return GameStage.toHash(o.stage, 'S.s.r');
                 }
             });
         }
-        if (!this.key) {
-            this.hash('key', function(gb) {
-                return gb.key;
-            });
-        }
+
+        this.on('insert', function(o) {
+            if ('string' !== typeof o.player) {
+                throw new Error('GameDB.insert: player field ' +
+                                'missing or invalid: ', o);
+            }
+            if (!o.stage) throw new Error('GameDB.insert: stage field ' +
+                                          'missing or invalid: ', o);
+            if (!o.timestamp) o.timestamp = Date ? Date.now() : null;
+        });
 
         this.node = this.__shared.node;
     }
-
-    // ## GameDB methods
-
-    /**
-     * ### GameDB.syncWithNode
-     *
-     * If set, automatically adds property to newly inserted items
-     *
-     * Adds `node.player` and `node.game.getCurrentGameStage()`
-     *
-     * @param {NodeGameClient} node A NodeGameClient instance
-     */
-    GameDB.prototype.syncWithNode = function(node) {
-        if ('object' !== typeof node) {
-            throw new Error('GameDB.syncWithNode: invalid parameter received');
-        }
-        this.node = node;
-    }
-
-    /**
-     * ### GameDB.add
-     *
-     * Creates a GameBit and adds it to the database
-     *
-     * @param {string} key An alphanumeric id for the entry
-     * @param {mixed} value Optional. The value to store
-     * @param {Player} player Optional. The player associated to the entry
-     * @param {GameStage} player Optional. The stage associated to the entry
-     *
-     * @return {boolean} TRUE, if insertion was successful
-     *
-     * @see GameBit
-     */
-    GameDB.prototype.add = function(key, value, player, stage) {
-        var gb;
-        if ('string' !== typeof key) {
-            throw new TypeError('GameDB.add: key must be string.');
-        }
-
-        if (this.node) {
-            if ('undefined' === typeof player) {
-                player = this.node.player;
-            }
-            if ('undefined' === typeof stage) {
-                stage = this.node.game.getCurrentGameStage();
-            }
-        }
-        gb = new GameBit({
-            player: player,
-            key: key,
-            value: value,
-            stage: stage
-        });
-        this.insert(gb);
-        return gb;
-    };
-
-    /**
-     * ## GameBit
-     *
-     * Container of relevant information for the game
-     *
-     * A GameBit unit always contains the following properties:
-     *
-     * - stage GameStage
-     * - player Player
-     * - key
-     * - value
-     * - time
-     */
-
-    // ## GameBit methods
-
-    /**
-     * ### GameBit constructor
-     *
-     * Creates a new instance of GameBit
-     */
-    function GameBit(options) {
-        this.stage = options.stage;
-        this.player = options.player;
-        this.key = options.key;
-        this.value = options.value;
-        this.time = (Date) ? Date.now() : null;
-    }
-
-    /**
-     * ### GameBit.toString
-     *
-     * Returns a string representation of the instance of GameBit
-     *
-     * @return {string} string representation of the instance of GameBit
-     */
-    GameBit.prototype.toString = function() {
-        return this.player + ', ' + GameStage.stringify(this.stage) +
-            ', ' + this.key + ', ' + this.value;
-    };
-
-    /**
-     * ### GameBit.equals (static)
-     *
-     * Compares two GameBit objects
-     *
-     * Returns TRUE if the attributes of `player`, `stage`, and `key`
-     * are identical.
-     *
-     * If the strict parameter is set, also the `value` property
-     * is used for comparison
-     *
-     * @param {GameBit} gb1 The first game-bit to compare
-     * @param {GameBit} gb2 The second game-bit to compare
-     * @param {boolean} strict Optional. If TRUE, compares also the
-     *  `value` property
-     *
-     * @return {boolean} TRUE, if the two objects are equals
-     *
-     * @see GameBit.comparePlayer
-     * @see GameBit.compareState
-     * @see GameBit.compareKey
-     * @see GameBit.compareValue
-     */
-    GameBit.equals = function(gb1, gb2, strict) {
-        if (!gb1 || !gb2) return false;
-        strict = strict || false;
-        if (GameBit.comparePlayer(gb1, gb2) !== 0) return false;
-        if (GameBit.compareState(gb1, gb2) !== 0) return false;
-        if (GameBit.compareKey(gb1, gb2) !== 0) return false;
-        if (strict &&
-            gb1.value && GameBit.compareValue(gb1, gb2) !== 0) return false;
-        return true;
-    };
-
-    /**
-     * ### GameBit.comparePlayer (static)
-     *
-     * Sort two game-bits by player numerical id
-     *
-     * Returns a numerical id that can assume the following values
-     *
-     * - `-1`: the player id of the second game-bit is larger
-     * - `1`: the player id of the first game-bit is larger
-     * - `0`: the two gamebits belong to the same player
-     *
-     * @param {GameBit} gb1 The first game-bit to compare
-     * @param {GameBit} gb2 The second game-bit to compare
-     *
-     * @return {number} The result of the comparison
-     */
-    GameBit.comparePlayer = function(gb1, gb2) {
-        if (!gb1 && !gb2) return 0;
-        if (!gb1) return 1;
-        if (!gb2) return -1;
-        if (gb1.player === gb2.player) return 0;
-        if (gb1.player > gb2.player) return 1;
-        return -1;
-    };
-
-    /**
-     * ### GameBit.compareState (static)
-     *
-     * Sort two game-bits by their stage property
-     *
-     * GameStage.compare is used for comparison
-     *
-     * @param {GameBit} gb1 The first game-bit to compare
-     * @param {GameBit} gb2 The second game-bit to compare
-     *
-     * @return {number} The result of the comparison
-     *
-     *  @see GameStage.compare
-     */
-    GameBit.compareState = function(gb1, gb2) {
-        return GameStage.compare(gb1.stage, gb2.stage);
-    };
-
-    /**
-     * ### GameBit.compareKey (static)
-     *
-     *  Sort two game-bits by their key property
-     *
-     * Returns a numerical id that can assume the following values
-     *
-     * - `-1`: the key of the first game-bit comes first alphabetically
-     * - `1`: the key of the second game-bit comes first alphabetically
-     * - `0`: the two gamebits have the same key
-     *
-     * @param {GameBit} gb1 The first game-bit to compare
-     * @param {GameBit} gb2 The second game-bit to compare
-     *
-     * @return {number} The result of the comparison
-     */
-    GameBit.compareKey = function(gb1, gb2) {
-        if (!gb1 && !gb2) return 0;
-        if (!gb1) return 1;
-        if (!gb2) return -1;
-        if (gb1.key === gb2.key) return 0;
-        if (gb1.key < gb2.key) return -1;
-        return 1;
-    };
-
-    /**
-     * ### GameBit.compareValue (static)
-     *
-     * Sorts two game-bits by their value property
-     *
-     * Uses JSUS.equals for equality. If they differs,
-     * further comparison is performed, but results will be inaccurate
-     * for objects.
-     *
-     * Returns a numerical id that can assume the following values
-     *
-     * - `-1`: the value of the first game-bit comes first alphabetically or
-     *    numerically
-     * - `1`: the value of the second game-bit comes first alphabetically or
-     *   numerically
-     * - `0`: the two gamebits have identical value properties
-     *
-     * @param {GameBit} gb1 The first game-bit to compare
-     * @param {GameBit} gb2 The second game-bit to compare
-     *
-     * @return {number} The result of the comparison
-     *
-     * @see JSUS.equals
-     */
-    GameBit.compareValue = function(gb1, gb2) {
-        if (!gb1 && !gb2) return 0;
-        if (!gb1) return 1;
-        if (!gb2) return -1;
-        if (JSUS.equals(gb1.value, gb2.value)) return 0;
-        if (gb1.value > gb2.value) return 1;
-        return -1;
-    };
 
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -20865,24 +20636,25 @@ if (!Array.prototype.indexOf) {
      *
      * Stores a key-value pair in the server memory
      *
-     * @param {string} key An alphanumeric (must not be unique)
-     * @param {mixed} value The value to store (can be of any type)
-     * @param {string} to The recipient
+     * @param {object|string} The value to set
+     * @param {string} to The recipient. Default `SERVER`
      *
      * @return {boolean} TRUE, if SET message is sent
      */
-    NGC.prototype.set = function(key, value, to) {
-        var msg;
-        if ('string' !== typeof key) {
-            throw new TypeError('node.set: key must be string.');
+    NGC.prototype.set = function(o, to) {
+        var msg, tmp;
+        if ('string' === typeof o) {
+            tmp = o, o = {}, o[tmp] = true;
+        }
+        if ('object' !== typeof o) {
+            throw new TypeError('node.set: o must be object or string.');
         }
         msg = this.msg.create({
             action: this.constants.action.SET,
             target: this.constants.target.DATA,
             to: to || 'SERVER',
             reliable: 1,
-            text: key,
-            data: value
+            data: o
         });
         return this.socket.send(msg);
     };
@@ -21034,72 +20806,25 @@ if (!Array.prototype.indexOf) {
         return res;
     };
 
-// OLD DONE
-
-//     /**
-//      * ### NodeGameClient.done
-//      *
-//      * Emits a DONE event
-//      *
-//      * A DONE event signals that the player has completed
-//      * a game step. After a DONE event the step rules are
-//      * evaluated.
-//      *
-//      * Accepts any number of input parameters that will be
-//      * passed to `emit`.
-//      *
-//      * @see NodeGameClient.emit
-//      * @emits DONE
-//      */
-//     NGC.prototype.done = function() {
-//         var args, len;
-//         switch(arguments.length) {
-//
-//         case 0:
-//             this.emit('DONE');
-//             break;
-//         case 1:
-//             this.emit('DONE', arguments[0]);
-//             break;
-//         case 2:
-//             this.emit('DONE', arguments[0], arguments[1]);
-//             break;
-//         default:
-//
-//             len = arguments.length;
-//             args = new Array(len - 1);
-//             for (i = 1; i < len; i++) {
-//                 args[i - 1] = arguments[i];
-//             }
-//             this.emit.apply('DONE', args);
-//         }
-//     };
-
-
     /**
      * ### NodeGameClient.done
      *
-     * Asynchrounously emits a DONE event (if authorized)
+     * Marks the end of a game step
      *
-     * A DONE event signals that the player has completed a game step.
+     * It performs the following sequence of operations:
      *
-     * After a DONE event, the `done` handler of the stage/step is
-     * evaluated, and if successful, the step rules are evaluated, and
-     * eventually the client will move forward in the game.
-     *
-     * This method cannot be called again until the DONE event is
-     * emitted and evaluated. Then, two scenarios are possible:
-     *
-     *   - The `done` handler returns FALSE, and the procedure is
-     *     aborted. `node.done()` can be called immediately after.
-     *
-     *   - The `done` handler returns TRUE, and the client prepares to
-     *     to step. Until the next step is executed (might need to
-     *     wait for other players as well), `node.done()` cannot be
-     *     called again.
-     *
-     * If `node.done()` is called during an unauthorized state, an
-     * error message will be logged and the function returns FALSE.
+     *  - Checks if `done` was already called in the same stage, and
+     *      if so returns with a warning.
+     *  - Checks it there a `done` hanlder in the step, and if so
+     *      executes. If the return value is falsy procedure stops.
+     *  - Marks the step as `willBeDone` and no further callas to
+     *      `node.done` are allowed in the same step.
+     *  - Creates and send a SET message to server containing the time
+     *      passed from the beginning of the step, if `done` was a timeup
+     *      event, passing along any other parameter given to `node.done`
+     *  - Asynchronously emits 'DONE', which starts the procedure to
+     *      evaluate the step rule, and eventually to enter into the next
+     *      step.
      *
      * Technical note. The done event needs to be asynchronous because
      * it can be triggered by the callback of a load frame, and in
@@ -21137,7 +20862,6 @@ if (!Array.prototype.indexOf) {
         if (game.timer && game.timer.isTimeup) {
             timeup = game.timer.isTimeup();
         }
-        setObj = { time: stepTime , timeup: timeup };
 
         // Keep track that the game will be done (done is asynchronous)
         // to avoid calling `node.done` multiple times in the same stage.
@@ -21151,35 +20875,20 @@ if (!Array.prototype.indexOf) {
         switch(len) {
 
         case 0:
-            this.set('done', setObj);
+            this.set(getSetObj(stepTime, timeup));
             setTimeout(function() { that.events.emit('DONE'); }, 0);
             break;
         case 1:
             arg1 = arguments[0];
-            if ('object' === typeof arg1) J.mixin(setObj, arg1);
-            else setObj.value = arg1;
-            this.set('done', setObj);
+            this.set(getSetObj(stepTime, timeup, arg1));
             setTimeout(function() { that.events.emit('DONE', arg1); }, 0);
             break;
         case 2:
             arg1 = arguments[0], arg2 = arguments[1];
             // Send first setObj.
-            if ('object' === typeof arg1) {
-                J.mixin(setObj, arg1);
-            }
-            else {
-                setObj.value = arg1;
-            }
-            this.set('done', setObj);
+            this.set(getSetObj(stepTime, timeup, arg1));
             // Send second setObj.
-            setObj = { time: stepTime , timeup: timeup };
-            if ('object' === typeof arg2) {
-                J.mixin(setObj, arg2);
-            }
-            else {
-                setObj.value = arg2;
-            }
-            this.set('done', setObj);
+            this.set(getSetObj(stepTime, timeup, arg2));
             setTimeout(function() { that.events.emit('DONE', arg1, arg2); }, 0);
             break;
         default:
@@ -21187,14 +20896,7 @@ if (!Array.prototype.indexOf) {
             args[0] = 'DONE';
             for (i = 1; i < len; i++) {
                 args[i+1] = arguments[i];
-                if ('object' === typeof arguments[i]) {
-                    J.mixin(setObj, arguments[i]);
-                }
-                else {
-                    setObj.value = arguments[i];
-                }
-                this.set('done', setObj);
-                if (i !== len-1) setObj = { time: stepTime , timeup: timeup };
+                this.set(getSetObj(stepTime, timeup, arguments[i]));
             }
             setTimeout(function() {
                 that.events.emit.apply(that.events, args);
@@ -21203,6 +20905,19 @@ if (!Array.prototype.indexOf) {
 
         return true;
     };
+
+    // ## Helper methods
+
+    function getSetObj(time, timeup, arg) {
+        var o;
+        o = { time: time , timeup: timeup };
+        if ('object' === typeof arg) J.mixin(o, arg);
+        else if ('string' === typeof arg || 'number' === typeof arg) {
+            o[arg] = true;
+        }
+        o.done = true;
+        return o;
+    }
 
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -21539,7 +21254,7 @@ if (!Array.prototype.indexOf) {
     var NGC = parent.NodeGameClient;
 
     var GameMsg = parent.GameMsg,
-    GameSage = parent.GameStage,
+    GameStage = parent.GameStage,
     PlayerList = parent.PlayerList,
     Player = parent.Player,
     J = parent.JSUS;
@@ -21688,24 +21403,18 @@ if (!Array.prototype.indexOf) {
         });
 
         /**
-         * ## in.set.STATE
-         *
-         * Adds an entry to the memory object
-         *
-         * TODO: check, this should be a player update
-         */
-        node.events.ng.on( IN + set + 'STATE', function(msg) {
-            node.game.memory.add(msg.text, msg.data, msg.from);
-        });
-
-        /**
          * ## in.set.DATA
          *
          * Adds an entry to the memory object
          *
+         * Creates a message using the fields `text`, `data`, `stage`
+         * and `from` of the incoming set.DATA message. If `data` is
+         * not defined it is set to TRUE.
          */
         node.events.ng.on( IN + set + 'DATA', function(msg) {
-            node.game.memory.add(msg.text, msg.data, msg.from);
+            var o = msg.data;
+            o.player = msg.from, o.stage = msg.stage;
+            node.game.memory.insert(o);
         });
 
         /**

@@ -463,7 +463,9 @@ TODO: check if we need it.</p>
                 <span class="nx">indexes</span><span class="o">:</span> <span class="kc">true</span>
             <span class="p">}</span>
         <span class="p">});</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">journal</span><span class="p">.</span><span class="nx">comparator</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareState</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">journal</span><span class="p">.</span><span class="nx">comparator</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">o1</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">o2</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
+        <span class="p">});</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">journal</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">journal</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb</span><span class="p">)</span> <span class="p">{</span>

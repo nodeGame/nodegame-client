@@ -16,7 +16,7 @@
     var NGC = parent.NodeGameClient;
 
     var GameMsg = parent.GameMsg,
-    GameSage = parent.GameStage,
+    GameStage = parent.GameStage,
     PlayerList = parent.PlayerList,
     Player = parent.Player,
     J = parent.JSUS;
@@ -165,24 +165,18 @@
         });
 
         /**
-         * ## in.set.STATE
-         *
-         * Adds an entry to the memory object
-         *
-         * TODO: check, this should be a player update
-         */
-        node.events.ng.on( IN + set + 'STATE', function(msg) {
-            node.game.memory.add(msg.text, msg.data, msg.from);
-        });
-
-        /**
          * ## in.set.DATA
          *
          * Adds an entry to the memory object
          *
+         * Creates a message using the fields `text`, `data`, `stage`
+         * and `from` of the incoming set.DATA message. If `data` is
+         * not defined it is set to TRUE.
          */
         node.events.ng.on( IN + set + 'DATA', function(msg) {
-            node.game.memory.add(msg.text, msg.data, msg.from);
+            var o = msg.data;
+            o.player = msg.from, o.stage = msg.stage;
+            node.game.memory.insert(o);
         });
 
         /**
