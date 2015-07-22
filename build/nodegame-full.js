@@ -1177,7 +1177,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # JSUS: JavaScript UtilS.
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Collection of general purpose javascript functions. JSUS helps!
@@ -1270,7 +1270,7 @@ if (!Array.prototype.indexOf) {
         // TODO: this is true also for {}
         if (additional.prototype) {
             JSUS.extend(additional.prototype, target.prototype || target);
-        };
+        }
 
         return target;
     };
@@ -1310,9 +1310,9 @@ if (!Array.prototype.indexOf) {
      * @return {boolean} TRUE when executed inside Node.JS environment
      */
     JSUS.isNodeJS = function() {
-	return 'undefined' !== typeof module
-	    && 'undefined' !== typeof module.exports
-	    && 'function' === typeof require;
+        return 'undefined' !== typeof module &&
+            'undefined' !== typeof module.exports &&
+            'function' === typeof require;
     };
 
     // ## Node.JS includes
@@ -2272,8 +2272,8 @@ if (!Array.prototype.indexOf) {
      */
     DOM.sprintf = function(string, args, root) {
 
-        var text, textNode, span, idx_start, idx_finish, idx_replace, idxs;
-        var spans, key, i, returnElement;
+        var text, span, idx_start, idx_finish, idx_replace, idxs;
+        var spans, key, i;
 
         root = root || document.createElement('span');
         spans = {};
@@ -3402,7 +3402,7 @@ if (!Array.prototype.indexOf) {
                 };
             })();
         }
-        return Object.create
+        return Object.create;
     })();
 
     /**
@@ -3463,14 +3463,11 @@ if (!Array.prototype.indexOf) {
 
                 if (!o2[p] && o1[p]) return false;
 
-                switch (typeof o1[p]) {
-                case 'function':
+                if ('function' === typeof o1[p]) {
                     if (o1[p].toString() !== o2[p].toString()) return false;
-
-                    /* falls through */
-                default:
-                    if (!OBJ.equals(o1[p], o2[p])) return false;
                 }
+                else
+                    if (!OBJ.equals(o1[p], o2[p])) return false;
             }
         }
 
@@ -3760,13 +3757,12 @@ if (!Array.prototype.indexOf) {
                     }
                     return obj.apply(clone, args);
                 }
-            }
+            };
         }
         else {
             clone = Object.prototype.toString.call(obj) === '[object Array]' ?
                 [] : {};
         }
-
         for (i in obj) {
             // It is not NULL and it is an object.
             // Even if it is an array we need to use CLONE,
@@ -4732,7 +4728,7 @@ if (!Array.prototype.indexOf) {
         if ('number' !== typeof sigma) {
             throw new TypeError('nextLogNormal: sigma must be number.');
         }
-        return Math.exp(nextNormal(mu, sigma));
+        return Math.exp(RANDOM.nextNormal(mu, sigma));
     };
 
     /**
@@ -4811,7 +4807,7 @@ if (!Array.prototype.indexOf) {
     RANDOM.nextGamma = function(alpha, k) {
         var intK, kDiv, alphaDiv;
         var u1, u2, u3;
-        var x, i, len, tmp;
+        var x, i, tmp;
 
         if ('number' !== typeof alpha) {
             throw new TypeError('nextGamma: alpha must be number.');
@@ -5504,7 +5500,7 @@ if (!Array.prototype.indexOf) {
             res = (funcNameRegex).exec(func.toString());
             return (res && res.length > 1) ? res[1].trim() : "";
         };
-    };
+    }
 
     JSUS.extend(PARSE);
 
@@ -5733,7 +5729,7 @@ if (!Array.prototype.indexOf) {
         if (db) {
             this.importDB(db);
         }
-    };
+    }
 
     /**
      * ### NDDB.addFilter
@@ -5800,9 +5796,9 @@ if (!Array.prototype.indexOf) {
                     var d, c;
                     for (d in elem) {
                         c = that.getComparator(d);
-                        value[d] = value[0]['*']
+                        value[d] = value[0]['*'];
                         if (c(elem, value, 1) > 0) {
-                            value[d] = value[1]['*']
+                            value[d] = value[1]['*'];
                             if (c(elem, value, -1) < 0) {
                                 return elem;
                             }
@@ -5814,7 +5810,7 @@ if (!Array.prototype.indexOf) {
                     else if ('undefined' !== typeof J.getNestedValue(d,elem)) {
                         return elem;
                     }
-                }
+                };
             }
             else {
                 return function(elem) {
@@ -5824,7 +5820,7 @@ if (!Array.prototype.indexOf) {
                     else if ('undefined' !== typeof J.getNestedValue(d,elem)) {
                         return elem;
                     }
-                }
+                };
             }
         };
 
@@ -5925,9 +5921,9 @@ if (!Array.prototype.indexOf) {
                     var d, c;
                     for (d in elem) {
                         c = that.getComparator(d);
-                        value[d] = value[0]['*']
+                        value[d] = value[0]['*'];
                         if (c(elem, value, 1) > 0) {
-                            value[d] = value[1]['*']
+                            value[d] = value[1]['*'];
                             if (c(elem, value, -1) < 0) {
                                 return elem;
                             }
@@ -6014,11 +6010,11 @@ if (!Array.prototype.indexOf) {
                     for (i = 0; i < len; i++) {
                         obj[d] = value[i];
                         if (comparator(elem, obj, 0) === 0) {
-                            return
+                            return;
                         }
                     }
                     return elem;
-                }
+                };
             }
         };
 
@@ -6099,13 +6095,13 @@ if (!Array.prototype.indexOf) {
      * @param {string} text Optional. The error text. Default, 'generic error'
      */
     NDDB.prototype.throwErr = function(type, method, text) {
-        var errMsg, miss;
+        var errMsg;
         text = text || 'generic error';
         errMsg = this._getConstrName();
         if (method) errMsg = errMsg + '.' + method;
         errMsg = errMsg + ': ' + text + '.';
         if (type === 'TypeError') throw new TypeError(errMsg);
-        throw new Error(errMg);
+        throw new Error(errMsg);
     };
 
     /**
@@ -6264,10 +6260,16 @@ if (!Array.prototype.indexOf) {
             this.throwErr('TypeError', 'initLog', 'ctx must be object or ' +
                           'function');
         }
-        this.log = function(){
-            return cb.apply(ctx, arguments);
+        this.log = function() {
+            var args, i, len;
+            len = arguments.length;
+            args = new Array(len);
+            for (i = 0; i < len; i++) {
+                args[i] = arguments[i];
+            }
+            return cb.apply(ctx, args);
         };
-    }
+    };
 
     /**
      * ### NDDB._getConstrName
@@ -6310,7 +6312,7 @@ if (!Array.prototype.indexOf) {
 
 
     /**
-     * ## .nddb_insert
+     * ## nddb_insert
      *
      * Insert an item into db and performs update operations
      *
@@ -6617,7 +6619,7 @@ if (!Array.prototype.indexOf) {
      * @see NDDB.compare
      */
     NDDB.prototype.getComparator = function(d) {
-        var len, comparator, comparators;
+        var i, len, comparator, comparators;
 
         // Given field or '*'.
         if ('string' === typeof d) {
@@ -6698,7 +6700,7 @@ if (!Array.prototype.indexOf) {
 
                 return trigger2 === 0 ? 1 : 0;
 
-            }
+            };
         }
         return comparator;
     };
@@ -6957,7 +6959,7 @@ if (!Array.prototype.indexOf) {
      * @param {string} oldIdx Optional. The old index name, if any.
      */
     NDDB.prototype._indexIt = function(o, dbidx, oldIdx) {
-        var func, id, index, key;
+        var func, index, key;
         if (!o || J.isEmpty(this.__I)) return;
 
         for (key in this.__I) {
@@ -6991,7 +6993,7 @@ if (!Array.prototype.indexOf) {
      * @see NDDB.view
      */
     NDDB.prototype._viewIt = function(o) {
-        var func, id, index, key, settings;
+        var func, index, key, settings;
         if (!o || J.isEmpty(this.__V)) return false;
 
         for (key in this.__V) {
@@ -7032,7 +7034,7 @@ if (!Array.prototype.indexOf) {
      * @see NDDB.hash
      */
     NDDB.prototype._hashIt = function(o) {
-        var h, id, hash, key, settings, oldHash;
+        var h, hash, key, settings, oldHash;
         if (!o || J.isEmpty(this.__H)) return false;
 
         for (key in this.__H) {
@@ -7149,22 +7151,93 @@ if (!Array.prototype.indexOf) {
     /**
      * ### NDDB.emit
      *
-     * Fires all the listeners associated with an event
+     * Fires all the listeners associated with an event (optimized)
      *
      * Accepts any number of parameters, the first one is the name
      * of the event, and the remaining will be passed to the event listeners.
      */
     NDDB.prototype.emit = function() {
-        var i, event;
-        event = Array.prototype.splice.call(arguments, 0, 1);
-        if ('string' !== typeof event[0]) {
+        var event;
+        var h, h2;
+        var i, len, argLen, args;
+        event = arguments[0];
+        if ('string' !== typeof event) {
             this.throwErr('TypeError', 'emit', 'first argument must be string');
         }
-        if (!this.hooks[event] || !this.hooks[event].length) {
-            return;
+        if (!this.hooks[event]) {
+            this.throwErr('TypeError', 'emit', 'unknown event: ' + event);
         }
-        for (i = 0; i < this.hooks[event].length; i++) {
-            this.hooks[event][i].apply(this, arguments);
+        len = this.hooks[event].length;
+        if (!len) return;
+        argLen = arguments.length;
+
+        switch(len) {
+
+        case 1:
+            h = this.hooks[event][0];
+            if (argLen === 1) h.call(this);
+            else if (argLen === 2) h.call(this, arguments[1]);
+            else if (argLen === 3) {
+                h.call(this, arguments[1], arguments[2]);
+            }
+            else {
+                args = new Array(argLen-1);
+                for (i = 0; i < argLen; i++) {
+                    args[i] = arguments[i+1];
+                }
+                h.apply(this, args);
+            }
+            break;
+        case 2:
+            h = this.hooks[event][0], h2 = this.hooks[event][1];
+            if (argLen === 1) {
+                h.call(this);
+                h2.call(this);
+            }
+            else if (argLen === 2) {
+                h.call(this, arguments[1]);
+                h2.call(this, arguments[1]);
+            }
+            else if (argLen === 3) {
+                h.call(this, arguments[1], arguments[2]);
+                h2.call(this, arguments[1], arguments[2]);
+            }
+            else {
+                args = new Array(argLen-1);
+                for (i = 0; i < argLen; i++) {
+                    args[i] = arguments[i+1];
+                }
+                h.apply(this, args);
+                h2.apply(this, args);
+            }
+            break;
+        default:
+
+             if (argLen === 1) {
+                 for (i = 0; i < len; i++) {
+                     this.hooks[event][i].call(this);
+                 }
+            }
+            else if (argLen === 2) {
+                for (i = 0; i < len; i++) {
+                    this.hooks[event][i].call(this, arguments[1]);
+                }
+            }
+            else if (argLen === 3) {
+                for (i = 0; i < len; i++) {
+                    this.hooks[event][i].call(this, arguments[1], arguments[2]);
+                }
+            }
+            else {
+                args = new Array(argLen-1);
+                for (i = 0; i < argLen; i++) {
+                    args[i] = arguments[i+1];
+                }
+                for (i = 0; i < len; i++) {
+                    this.hooks[event][i].apply(this, args);
+                }
+
+            }
         }
     };
 
@@ -7192,7 +7265,7 @@ if (!Array.prototype.indexOf) {
      *   if an error was detected
      */
     NDDB.prototype._analyzeQuery = function(d, op, value) {
-        var i, len, newValue, errText;
+        var i, len, errText;
 
         if ('undefined' === typeof d) {
             queryError.call(this, 'undefined dimension', d, op, value);
@@ -7549,7 +7622,7 @@ if (!Array.prototype.indexOf) {
                     if (result !== 0) return result;
                 }
                 return result;
-            }
+            };
         }
         // Single dimension.
         else {
@@ -7603,7 +7676,7 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### NDDB.each || NDDB.forEach
+     * ### NDDB.each || NDDB.forEach (optimized)
      *
      * Applies a callback function to each element in the db
      *
@@ -7617,7 +7690,7 @@ if (!Array.prototype.indexOf) {
      * @see NDDB.map
      */
     NDDB.prototype.each = NDDB.prototype.forEach = function() {
-        var func, i, db, len;
+        var func, i, db, len, args, argLen;
         func = arguments[0];
         if ('function' !== typeof func) {
             this.throwErr('TypeError', 'each',
@@ -7625,9 +7698,33 @@ if (!Array.prototype.indexOf) {
         }
         db = this.fetch();
         len = db.length;
-        for (i = 0 ; i < len ; i++) {
-            arguments[0] = db[i];
-            func.apply(this, arguments);
+        argLen = arguments.length;
+        switch(argLen) {
+        case 1:
+            for (i = 0 ; i < len ; i++) {
+                func.call(this, db[i]);
+            }
+            break;
+        case 2:
+            for (i = 0 ; i < len ; i++) {
+                func.call(this, db[i], arguments[1]);
+            }
+            break;
+        case 3:
+            for (i = 0 ; i < len ; i++) {
+                func.call(this, db[i], arguments[1], arguments[2]);
+            }
+            break;
+        default:
+            args = new Array(argLen+1);
+            args[0] = null;
+            for (i = 1; i < argLen; i++) {
+                args[i] = arguments[i];
+            }
+            for (i = 0 ; i < len ; i++) {
+                args[0] = db[i];
+                func.apply(this, args);
+            }
         }
     };
 
@@ -7647,6 +7744,7 @@ if (!Array.prototype.indexOf) {
      */
     NDDB.prototype.map = function() {
         var func, i, db, len, out, o;
+        var args, argLen;
         func = arguments[0];
         if ('function' !== typeof func) {
             this.throwErr('TypeError', 'map',
@@ -7654,11 +7752,38 @@ if (!Array.prototype.indexOf) {
         }
         db = this.fetch();
         len = db.length;
+        argLen = arguments.length;
         out = [];
-        for (i = 0 ; i < db.length ; i++) {
-            arguments[0] = db[i];
-            o = func.apply(this, arguments);
-            if ('undefined' !== typeof o) out.push(o);
+        switch(argLen) {
+        case 1:
+            for (i = 0 ; i < len ; i++) {
+                o = func.call(this, db[i]);
+                if ('undefined' !== typeof o) out.push(o);
+            }
+            break;
+        case 2:
+            for (i = 0 ; i < len ; i++) {
+                o = func.call(this, db[i], arguments[1]);
+                if ('undefined' !== typeof o) out.push(o);
+            }
+            break;
+        case 3:
+            for (i = 0 ; i < len ; i++) {
+                o = func.call(this, db[i], arguments[1], arguments[2]);
+                if ('undefined' !== typeof o) out.push(o);
+            }
+            break;
+        default:
+            args = new Array(argLen+1);
+            args[0] = null;
+            for (i = 1; i < argLen; i++) {
+                args[i] = arguments[i];
+            }
+            for (i = 0 ; i < len ; i++) {
+                args[0] = db[i];
+                o = func.apply(this, args);
+                if ('undefined' !== typeof o) out.push(o);
+            }
         }
         return out;
     };
@@ -7749,13 +7874,13 @@ if (!Array.prototype.indexOf) {
             this.hashtray.clear();
 
             for (i in this.__H) {
-                if (this[i]) delete this[i]
+                if (this[i]) delete this[i];
             }
             for (i in this.__C) {
-                if (this[i]) delete this[i]
+                if (this[i]) delete this[i];
             }
             for (i in this.__I) {
-                if (this[i]) delete this[i]
+                if (this[i]) delete this[i];
             }
         }
         else {
@@ -8099,11 +8224,11 @@ if (!Array.prototype.indexOf) {
 
     function getValuesArray(o, key) {
         return J.obj2Array(o, 1);
-    };
+    }
 
     function getKeyValuesArray(o, key) {
         return J.obj2KeyedArray(o, 1);
-    };
+    }
 
 
     function getValuesArray_KeyString(o, key) {
@@ -8111,14 +8236,14 @@ if (!Array.prototype.indexOf) {
         if ('undefined' !== typeof el) {
             return J.obj2Array(el,1);
         }
-    };
+    }
 
     function getValuesArray_KeyArray(o, key) {
         var el = J.subobj(o, key);
         if (!J.isEmpty(el)) {
             return J.obj2Array(el,1);
         }
-    };
+    }
 
 
     function getKeyValuesArray_KeyString(o, key) {
@@ -8126,14 +8251,14 @@ if (!Array.prototype.indexOf) {
         if ('undefined' !== typeof el) {
             return key.split('.').concat(J.obj2KeyedArray(el));
         }
-    };
+    }
 
     function getKeyValuesArray_KeyArray(o, key) {
         var el = J.subobj(o, key);
         if (!J.isEmpty(el)) {
             return J.obj2KeyedArray(el);
         }
-    };
+    }
 
     /**
      * ### NDDB._fetchArray
@@ -8207,7 +8332,7 @@ if (!Array.prototype.indexOf) {
         }
 
         return out;
-    }
+    };
 
     /**
      * ### NDDB.fetchArray
@@ -8849,7 +8974,7 @@ if (!Array.prototype.indexOf) {
      */
     NDDB.prototype.storageAvailable = function() {
         return ('function' === typeof store);
-    }
+    };
 
     /**
      * ### NDDB.save
@@ -8997,7 +9122,7 @@ if (!Array.prototype.indexOf) {
 
     function findCallback(obj) {
         return obj.cb;
-    };
+    }
 
     /**
      * ### QueryBuilder.get
@@ -9017,13 +9142,12 @@ if (!Array.prototype.indexOf) {
      *   conditions
      */
     QueryBuilder.prototype.get = function() {
-        var line, lineLen, f1, f2, f3, type1, type2, i;
+        var line, lineLen, f1, f2, f3, type1, type2;
         var query = this.query, pointer = this.pointer;
-        var operators = this.operators;
 
         // Ready to support nested queries, not yet implemented.
         if (pointer === 0) {
-            line = query[pointer]
+            line = query[pointer];
             lineLen = line.length;
 
             if (lineLen === 1) {
@@ -9040,18 +9164,18 @@ if (!Array.prototype.indexOf) {
                     return function(elem) {
                         if ('undefined' !== typeof f1(elem)) return elem;
                         if ('undefined' !== typeof f2(elem)) return elem;
-                    }
+                    };
                 case 'AND':
                     return function(elem) {
                         if ('undefined' !== typeof f1(elem) &&
                             'undefined' !== typeof f2(elem)) return elem;
-                    }
+                    };
 
                 case 'NOT':
                     return function(elem) {
                         if ('undefined' !== typeof f1(elem) &&
                             'undefined' === typeof f2(elem)) return elem;
-                    }
+                    };
                 }
             }
 
@@ -9124,7 +9248,7 @@ if (!Array.prototype.indexOf) {
 
                     }
                     return elem;
-                }
+                };
 
             }
 
@@ -21385,14 +21509,11 @@ if (!Array.prototype.indexOf) {
 
     var NGC = parent.NodeGameClient;
 
-    var GameMsg = parent.GameMsg,
-    GameStage = parent.GameStage,
-    PlayerList = parent.PlayerList,
+    var PlayerList = parent.PlayerList,
     Player = parent.Player,
     J = parent.JSUS;
 
-    var action = parent.constants.action,
-    target = parent.constants.target;
+    var action = parent.constants.action;
 
     var say = action.SAY + '.',
     set = action.SET + '.',
@@ -21815,23 +21936,12 @@ if (!Array.prototype.indexOf) {
 
     var NGC = parent.NodeGameClient;
 
-    var GameMsg = parent.GameMsg,
-    GameStage = parent.GameStage,
-    PlayerList = parent.PlayerList,
-    Player = parent.Player,
-    J = parent.JSUS,
+    var GameStage = parent.GameStage,
     constants = parent.constants;
 
-    var action = constants.action,
-        target = constants.target,
-        stageLevels = constants.stageLevels;
+    var stageLevels = constants.stageLevels,
+    gcommands = constants.gamecommands;
 
-    var say = action.SAY + '.',
-    set = action.SET + '.',
-    get = action.GET + '.',
-    OUT = constants.OUT;
-
-    var gcommands = constants.gamecommands;
     var CMD = 'NODEGAME_GAMECOMMAND_';
 
     /**
@@ -22089,11 +22199,11 @@ if (!Array.prototype.indexOf) {
 
     var NGC = parent.NodeGameClient;
 
-    var GameMsg = parent.GameMsg,
-    GameSage = parent.GameStage,
-    PlayerList = parent.PlayerList,
-    Player = parent.Player,
-    J = parent.JSUS;
+    var J = parent.JSUS,
+    GamePlot = parent.GamePlot,
+    Stager = parent.Stager;
+
+    var constants = parent.constants;
 
     /**
      * ## NodeGameClient.addDefaultSetupFunctions
@@ -22290,13 +22400,6 @@ if (!Array.prototype.indexOf) {
          * Sets up `node.game.settings`
          */
         this.registerSetup('settings', function(settings) {
-            if (!this.game) {
-                this.warn('setup("settings") called before ' +
-                          'node.game was initialized.');
-                throw new node.NodeGameMisconfiguredGameError(
-                    "node.game non-existent");
-            }
-
             if (settings) {
                 J.mixin(this.game.settings, settings);
             }
@@ -22310,13 +22413,6 @@ if (!Array.prototype.indexOf) {
          * Sets up `node.game.metadata`
          */
         this.registerSetup('metadata', function(metadata) {
-            if (!this.game) {
-                this.warn('setup("metadata") called before ' +
-                          'node.game was initialized');
-                throw new node.NodeGameMisconfiguredGameError(
-                    "node.game non-existent");
-            }
-
             if (metadata) {
                 J.mixin(this.game.metadata, metadata);
             }
@@ -22504,7 +22600,6 @@ if (!Array.prototype.indexOf) {
     "use strict";
 
     var NGC = parent.NodeGameClient;
-    var J = parent.JSUS;
 
     /**
      * ## NodeGameClient.addDefaultAliases

@@ -56,7 +56,7 @@
 </div>
 
 
-<p>Copyright(c) 2014 Stefano Balietti
+<p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Collections of rules to determine whether the game should step.</p>
@@ -182,7 +182,6 @@ but has to wait before going to the next one</p>
 step and DONE. My own stage does not matter.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">.</span><span class="nx">OTHERS_SYNC_STEP</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">())</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="nx">stage</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">first</span><span class="p">().</span><span class="nx">stage</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">arePlayersSync</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">,</span>

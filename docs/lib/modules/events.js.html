@@ -41,7 +41,7 @@
 </div>
 
 
-<p>Copyright(c) 2014 Stefano Balietti
+<p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p><code>nodeGame</code> events handling</p>
@@ -109,7 +109,7 @@ new step.</p></li>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">gameStage</span><span class="p">,</span> <span class="nx">stageLevel</span><span class="p">,</span> <span class="nx">stateLevel</span><span class="p">;</span></pre></div>
+        <span class="kd">var</span> <span class="nx">gameStage</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -120,7 +120,7 @@ new step.</p></li>
 <p>NodeGame default listeners</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">ng</span><span class="p">;</span>
-        <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">()</span>
+        <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gameStage</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">ng</span><span class="p">;</span></pre></div>
         </td>
       </tr>

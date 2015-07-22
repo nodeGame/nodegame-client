@@ -44,7 +44,7 @@
 </div>
 
 
-<p>Copyright(c) 2014 Stefano Balietti
+<p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p><code>nodeGame</code> aliasing module</p>
@@ -66,10 +66,7 @@ MIT Licensed</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-    <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
-    <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
-    <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span></pre></div>
         </td>
@@ -91,20 +88,22 @@ MIT Licensed</p>
 after the alias. The alias can be used as a shortcut to register
 to new listeners on the given events.</p>
 
-<p>```javascript
-  // The node.on.data alias example with modifier function
-  // only DATA msg with the right label will be fired.
-  this.alias('data', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
-      return function(msg) {
-          if (msg.text === text) {
-              cb.call(that.game, msg);
-          }
-      };
-  });</p>
 
-<p>node.on.data('myLabel', function(){ ... };
-  node.once.data('myLabel', function(){ ... };
-```  </p>
+<div class="highlight"><pre><code>  <span class="c1">// The node.on.data alias example with modifier function</span>
+  <span class="c1">// only DATA msg with the right label will be fired.</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.DATA&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
+          <span class="p">}</span>
+      <span class="p">};</span>
+  <span class="p">});</span>
+
+ <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;myLabel&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span> <span class="p">...</span> <span class="p">};</span>
+ <span class="nx">node</span><span class="p">.</span><span class="nx">once</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;myLabel&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span> <span class="p">...</span> <span class="p">};</span>
+</code></pre></div>
+
+
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -131,10 +130,10 @@ to new listeners on the given events.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">alias</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">alias</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">modifier</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">func</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">alias</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.alias: alias must be string.&#39;</span><span class="p">);</span>
-  <span class="p">}</span>
+        <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">events</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">events</span> <span class="o">=</span> <span class="p">[</span><span class="nx">events</span><span class="p">];</span>
         <span class="p">}</span>
@@ -183,7 +182,7 @@ Otherwise, we assume the first parameter is the callback.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">modifier</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">func</span> <span class="o">=</span> <span class="nx">modifier</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
-            <span class="p">}</span> 
+            <span class="p">}</span>
             <span class="nx">J</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">that</span><span class="p">.</span><span class="nx">once</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                     <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>

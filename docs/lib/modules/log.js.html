@@ -113,7 +113,7 @@ smaller than <code>this.remoteVerbosity</code>.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">level</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">numLevel</span><span class="p">,</span> <span class="nx">hash</span>
+        <span class="kd">var</span> <span class="nx">numLevel</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">txt</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 
         <span class="nx">level</span>  <span class="o">=</span> <span class="nx">level</span> <span class="o">||</span> <span class="s1">&#39;info&#39;</span><span class="p">;</span>
