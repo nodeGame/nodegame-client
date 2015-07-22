@@ -1,6 +1,6 @@
 /**
  * # nodeGame IE support
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Shims of methods required by nodeGame, but missing in old IE browsers
@@ -32,7 +32,7 @@ if (!JSON) {
 (function () {
     "use strict";
 
-    var global = Function('return this')()
+    var global = new Function('return this')()
       , JSON = global.JSON
       ;
 

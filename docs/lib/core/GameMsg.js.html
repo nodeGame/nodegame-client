@@ -649,14 +649,9 @@ TODO: Create an hash method as for GameStage</span>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toSMS</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-
-        <span class="kd">var</span> <span class="nx">parseDate</span> <span class="o">=</span> <span class="sr">/\w+/</span><span class="p">;</span> <span class="c1">// Select the second word;</span>
-        <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">parseDate</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">created</span><span class="p">);</span>
-
         <span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">from</span> <span class="o">+</span> <span class="s1">&#39;]-&gt;[&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">to</span> <span class="o">+</span> <span class="s1">&#39;]\t&#39;</span><span class="p">;</span>
         <span class="nx">line</span> <span class="o">+=</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span><span class="o">+</span> <span class="s1">&#39;\t&#39;</span><span class="p">;</span>
         <span class="nx">line</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">text</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">;</span>
-
         <span class="k">return</span> <span class="nx">line</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>

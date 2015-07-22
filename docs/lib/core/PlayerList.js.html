@@ -213,7 +213,6 @@ MIT Licensed</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
         <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">,</span>
         <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
-        <span class="nx">Game</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Game</span><span class="p">,</span>
         <span class="nx">NodeGameRuntimeError</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameRuntimeError</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">stageLevels</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">;</span>
@@ -1216,7 +1215,7 @@ for example: PLAYING, DONE, etc.</p>
                                 <span class="s1">&#39;&gt; 0: &#39;</span> <span class="o">+</span> <span class="nx">N</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">groups</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getNGroups</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">,</span> <span class="nx">N</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">array2Groups</span><span class="p">(</span><span class="nx">groups</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">array2Groups</span><span class="p">(</span><span class="nx">groups</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1261,7 +1260,7 @@ for example: PLAYING, DONE, etc.</p>
                                 <span class="s1">&#39;&gt; 0: &#39;</span> <span class="o">+</span> <span class="nx">N</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">groups</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getGroupsSizeN</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">,</span> <span class="nx">N</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">array2Groups</span><span class="p">(</span><span class="nx">groups</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">array2Groups</span><span class="p">(</span><span class="nx">groups</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1358,9 +1357,9 @@ array of PlayerList instances and returns it.</p>
         <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">array</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
             <span class="nx">array</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlayerList</span><span class="p">(</span><span class="nx">settings</span><span class="p">,</span> <span class="nx">array</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-        <span class="p">};</span>
+        <span class="p">}</span>
         <span class="k">return</span> <span class="nx">array</span><span class="p">;</span>
-    <span class="p">};</span>
+    <span class="p">}</span>
 
     <span class="nx">syncTypes</span> <span class="o">=</span> <span class="p">{</span><span class="nx">STAGE</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">STAGE_UPTO</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">EXACT</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">};</span></pre></div>
         </td>
