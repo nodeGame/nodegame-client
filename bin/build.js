@@ -97,7 +97,7 @@ var ng_addons = [
 ];
 
 // jsus
-var JSUSdir = J.resolveModuleDir('JSUS');
+var JSUSdir = J.resolveModuleDir('JSUS', __dirname);
 
 var ng_jsus = [
     JSUSdir + "jsus.js",

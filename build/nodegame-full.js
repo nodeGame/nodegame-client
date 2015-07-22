@@ -1339,7 +1339,7 @@ if (!Array.prototype.indexOf) {
 /**
  * # COMPATIBILITY
  *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Tests browsers ECMAScript 5 compatibility
@@ -1347,6 +1347,7 @@ if (!Array.prototype.indexOf) {
  * For more information see http://kangax.github.com/es5-compat-table/
  */
 (function(JSUS) {
+    "use strict";
 
     function COMPATIBILITY() {}
 
@@ -1401,13 +1402,14 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ARRAY
- *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions to manipulate arrays
  */
 (function(JSUS) {
+
+    "use strict";
 
     function ARRAY() {}
 
@@ -1487,7 +1489,7 @@ if (!Array.prototype.indexOf) {
      * @return {array} The final sequence
      */
     ARRAY.seq = function(start, end, increment, func) {
-        var i;
+        var i, out;
         if ('number' !== typeof start) return false;
         if (start === Infinity) return false;
         if ('number' !== typeof end) return false;
@@ -1550,29 +1552,46 @@ if (!Array.prototype.indexOf) {
     /**
      * ## ARRAY.map
      *
-     * Applies a callback function to each element in the db, store
-     * the results in an array and returns it
+     * Executes a callback to each element of the array and returns the result
      *
      * Any number of additional parameters can be passed after the
-     * callback function
+     * callback function.
      *
      * @return {array} The result of the mapping execution
+     *
      * @see ARRAY.each
      */
     ARRAY.map = function() {
-        if (arguments.length < 2) return;
-        var args = Array.prototype.slice.call(arguments),
-        array = args.shift(),
-        func = args[0];
+        var i, len, args, out, o;
+        var array, func;
+
+        array = arguments[0];
+        func = arguments[1];
 
         if (!ARRAY.isArray(array)) {
-            JSUS.log('ARRAY.map() the first argument must be an array. ' +
-                     'Found: ' + array);
+            JSUS.log('ARRAY.map: first parameter must be array. Found: ' +
+                     array);
+            return;
+        }
+        if ('function' !== typeof func) {
+            JSUS.log('ARRAY.map: second parameter must be function. Found: ' +
+                     func);
             return;
         }
 
-        var out = [], o;
-        for (var i = 0; i < array.length; i++) {
+        len = arguments.length;
+        if (len === 3) args = [null, arguments[2]];
+        else if (len === 4) args = [null, arguments[2], arguments[3]];
+        else {
+            len = len - 1;
+            args = new Array(len);
+            for (i = 1; i < (len); i++) {
+                args[i] = arguments[i+1];
+            }
+        }
+
+        out = [], len = array.length;
+        for (i = 0; i < len; i++) {
             args[0] = array[i];
             o = func.apply(this, args);
             if ('undefined' !== typeof o) out.push(o);
@@ -1595,6 +1614,7 @@ if (!Array.prototype.indexOf) {
      * @param {array} haystack The array to search in
      *
      * @return {mixed} The element that was removed, FALSE if none was removed
+     *
      * @see JSUS.equals
      */
     ARRAY.removeElement = function(needle, haystack) {
@@ -1605,7 +1625,7 @@ if (!Array.prototype.indexOf) {
             func = JSUS.equals;
         }
         else {
-            func = function(a,b) {
+            func = function(a, b) {
                 return (a === b);
             };
         }
@@ -1646,7 +1666,6 @@ if (!Array.prototype.indexOf) {
                 return true;
             }
         }
-        // <!-- console.log(needle, haystack); -->
         return false;
     };
 
@@ -1675,7 +1694,8 @@ if (!Array.prototype.indexOf) {
     /**
      * ## ARRAY.getGroupsSizeN
      *
-     * Returns an array of array containing N elements each
+     * Returns an array of arrays containing N elements each
+     *
      * The last group could have less elements
      *
      * @param {array} array The array to split in subgroups
@@ -2162,6 +2182,8 @@ if (!Array.prototype.indexOf) {
  * will receive further explanation.
  */
 (function(JSUS) {
+
+    "use strict";
 
     function DOM() {}
 
@@ -3230,7 +3252,7 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### DOM.removeElement
+     * ### DOM.removeEvent
      *
      * Removes an event listener from an element (cross-browser)
      *
@@ -3257,14 +3279,14 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # EVAL
- *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
- * Collection of static functions related to the evaluation
- * of strings as JavaScript commands
+ * Evaluation of strings as JavaScript commands
  */
 (function(JSUS) {
+
+    "use strict";
 
     function EVAL() {}
 
@@ -3313,13 +3335,14 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # OBJ
- *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions to manipulate JavaScript objects
  */
 (function(JSUS) {
+
+    "use strict";
 
     function OBJ() {}
 
@@ -3328,6 +3351,61 @@ if (!Array.prototype.indexOf) {
     if ('undefined' !== typeof JSUS.compatibility) {
         compatibility = JSUS.compatibility();
     }
+
+    /**
+     * ## OBJ.createObj
+     *
+     * Polyfill for Object.create (when missing)
+     */
+    OBJ.createObj = (function() {
+        // From MDN Object.create (Polyfill)
+        if (typeof Object.create !== 'function') {
+            // Production steps of ECMA-262, Edition 5, 15.2.3.5
+            // Reference: http://es5.github.io/#x15.2.3.5
+            return (function() {
+                // To save on memory, use a shared constructor
+                function Temp() {}
+
+                // make a safe reference to Object.prototype.hasOwnProperty
+                var hasOwn = Object.prototype.hasOwnProperty;
+
+                return function(O) {
+                    // 1. If Type(O) is not Object or Null
+                    if (typeof O != 'object') {
+                        throw TypeError('Object prototype may only ' +
+                            'be an Object or null');
+                    }
+
+                    // 2. Let obj be the result of creating a new object as if
+                    //    by the expression new Object() where Object is the
+                    //    standard built-in constructor with that name
+                    // 3. Set the [[Prototype]] internal property of obj to O.
+                    Temp.prototype = O;
+                    var obj = new Temp();
+                    Temp.prototype = null;
+
+                    // 4. If the argument Properties is present and not
+                    //    undefined, add own properties to obj as if by calling
+                    //    the standard built-in function Object.defineProperties
+                    //    with arguments obj and Properties.
+                    if (arguments.length > 1) {
+                        // Object.defineProperties does ToObject on
+                        // its first argument.
+                        var Properties = Object(arguments[1]);
+                        for (var prop in Properties) {
+                            if (hasOwn.call(Properties, prop)) {
+                                obj[prop] = Properties[prop];
+                            }
+                        }
+                    }
+
+                    // 5. Return obj
+                    return obj;
+                };
+            })();
+        }
+        return Object.create
+    })();
 
     /**
      * ## OBJ.equals
@@ -3669,9 +3747,22 @@ if (!Array.prototype.indexOf) {
         // NaN and +-Infinity are numbers, so no check is necessary.
 
         if ('function' === typeof obj) {
-            //          clone = obj;
-            // <!-- Check when and if we need this -->
-            clone = function() { return obj.apply(clone, arguments); };
+            clone = function() {
+                var len, args;
+                len = arguments.length;
+                if (!len) return obj.call(clone);
+                else if (len === 1) return obj.call(clone, arguments[0]);
+                else if (len === 2) {
+                    return obj.call(clone, arguments[0], arguments[1]);
+                }
+                else {
+                    args = new Array(len);
+                    for (i = 0; i < len; i++) {
+                        args[i] = arguments[i];
+                    }
+                    return obj.apply(clone, args);
+                }
+            }
         }
         else {
             clone = Object.prototype.toString.call(obj) === '[object Array]' ?
@@ -3679,23 +3770,11 @@ if (!Array.prototype.indexOf) {
         }
 
         for (i in obj) {
-            // TODO: index i is being updated, so apply is called on the
-            // last element, instead of the correct one.
-            //if ('function' === typeof obj[i]) {
-            //    value = function() { return obj[i].apply(clone, arguments); };
-            //}
-            // It is not NULL and it is an object
+            // It is not NULL and it is an object.
+            // Even if it is an array we need to use CLONE,
+            // because `slice()` does not clone arrays of objects.
             if (obj[i] && 'object' === typeof obj[i]) {
-                // Is an array.
-                if (Object.prototype.toString.call(obj[i]) ===
-                    '[object Array]') {
-
-                    value = obj[i].slice(0);
-                }
-                // Is an object.
-                else {
-                    value = OBJ.clone(obj[i]);
-                }
+                value = OBJ.clone(obj[i]);
             }
             else {
                 value = obj[i];
@@ -3714,21 +3793,65 @@ if (!Array.prototype.indexOf) {
                     });
                 }
                 else {
-                    // or we try...
-                    try {
-                        Object.defineProperty(clone, i, {
-                            value: value,
-                            writable: true,
-                            configurable: true
-                        });
-                    }
-                    catch(e) {
-                        clone[i] = value;
-                    }
+                    setProp(clone, i, value);
                 }
             }
         }
         return clone;
+    };
+
+    function setProp(clone, i, value) {
+        try {
+            Object.defineProperty(clone, i, {
+                value: value,
+                writable: true,
+                configurable: true
+            });
+        }
+        catch(e) {
+            clone[i] = value;
+        }
+    }
+
+
+    /**
+     * ## OBJ.classClone
+     *
+     * Creates a copy (keeping class) of the object passed as parameter
+     *
+     * Recursively scans all the properties of the object to clone.
+     * The clone is an instance of the type of obj.
+     *
+     * @param {object} obj The object to clone
+     * @param {Number} depth how deep the copy should be
+     *
+     * @return {object} The clone of the object
+     */
+    OBJ.classClone = function(obj, depth) {
+        var clone, i;
+        if (depth === 0) {
+            return obj;
+        }
+
+        if (obj && 'object' === typeof obj) {
+            clone = Object.prototype.toString.call(obj) === '[object Array]' ?
+                [] : JSUS.createObj(obj.constructor.prototype);
+
+            for (i in obj) {
+                if (obj.hasOwnProperty(i)) {
+                    if (obj[i] && 'object' === typeof obj[i]) {
+                        clone[i] = JSUS.classClone(obj[i], depth - 1);
+                    }
+                    else {
+                        clone[i] = obj[i];
+                    }
+                }
+            }
+            return clone;
+        }
+        else {
+            return JSUS.clone(obj);
+        }
     };
 
     /**
@@ -4427,14 +4550,14 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # RANDOM
- *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
- * Collection of static functions related to the generation of
- * pseudo-random numbers
+ * Generates pseudo-random numbers
  */
 (function(JSUS) {
+
+    "use strict";
 
     function RANDOM() {}
 
@@ -4736,7 +4859,6 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # TIME
- *
  * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
@@ -4744,6 +4866,8 @@ if (!Array.prototype.indexOf) {
  * manipulation, and formatting of time strings in JavaScript
  */
 (function (JSUS) {
+
+    "use strict";
 
     function TIME() {}
 
@@ -4841,13 +4965,14 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # PARSE
- *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions related to parsing strings
  */
 (function(JSUS) {
+
+    "use strict";
 
     function PARSE() {}
 
@@ -4887,7 +5012,7 @@ if (!Array.prototype.indexOf) {
      * @see http://stackoverflow.com/q/901115/3347292
      */
     PARSE.getQueryString = function(name, referer) {
-        var regex;
+        var regex, results;
         if (referer && 'string' !== typeof referer) {
             throw new TypeError('JSUS.getQueryString: referer must be string ' +
                                 'or undefined.');
@@ -5138,10 +5263,11 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string} expr The string specifying the selection expression
      * @param {mixed} available
-     *  - string adhering to be interpreted according to the same rules as
+     *  - string to be interpreted according to the same rules as
      *       `expr`
      *  - array containing the available elements
      *  - object providing functions next, isFinished and attributes begin, end
+     *
      * @return {array} The array containing the specified values
      */
     // available can be an array, a string or a object.
@@ -5149,14 +5275,15 @@ if (!Array.prototype.indexOf) {
         var i, x;
         var solution = [];
         var begin, end, lowerBound, numbers;
-        var invalidChars, invalidBeforeOpeningBracket;
+        var invalidChars, invalidBeforeOpeningBracket, invalidDot;
 
         if ("undefined" === typeof expr) {
             return [];
         }
 
+        // If no available numbers defined, assumes all possible are allowed.
         if ("undefined" === typeof available) {
-            throw new TypeError('available needs to be defined');
+            available = expr;
         }
         if (!JSUS.isArray(available)) {
             if ("string" !== typeof available) {
@@ -5165,8 +5292,11 @@ if (!Array.prototype.indexOf) {
                     "number"   !== typeof available.begin ||
                     "number"   !== typeof available.end
                 )
-                throw new Error('available wrong type');
+                throw new Error('PARSE.range: available wrong type');
             }
+        }
+        else if (available.length === 0) {
+            return [];
         }
 
         // If the availble points are also only given implicitly, compute set
@@ -5176,7 +5306,8 @@ if (!Array.prototype.indexOf) {
 
             numbers = available.match(/([-+]?\d+)/g);
             if (numbers === null) {
-                throw new Error('no numbers in available');
+                throw new Error(
+                    'PARSE.range: no numbers in available: ' + available);
             }
             lowerBound = Math.min.apply(null, numbers);
 
@@ -5279,13 +5410,13 @@ if (!Array.prototype.indexOf) {
         invalidDot = /\.[^\d]|[^\d]\./;
 
         if (expr.match(invalidChars)) {
-            throw new Error('invalidChars:' + expr);
+            throw new Error('PARSE.range: invalidChars:' + expr);
         }
         if (expr.match(invalidBeforeOpeningBracket)) {
-            throw new Error('invaludBeforeOpeningBracket:' + expr);
+            throw new Error('PARSE.range: invaludBeforeOpeningBracket:' + expr);
         }
         if (expr.match(invalidDot)) {
-            throw new Error('invalidDot:' + expr);
+            throw new Error('PARSE.range: invalidDot:' + expr);
         }
 
         if (JSUS.isArray(available)) {
@@ -5376,6 +5507,7 @@ if (!Array.prototype.indexOf) {
             return (res && res.length > 1) ? res[1].trim() : "";
         };
     };
+
     JSUS.extend(PARSE);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
@@ -6134,8 +6266,14 @@ if (!Array.prototype.indexOf) {
             this.throwErr('TypeError', 'initLog', 'ctx must be object or ' +
                           'function');
         }
-        this.log = function(){
-            return cb.apply(ctx, arguments);
+        this.log = function() {
+            var args, i, len;
+            len = arguments.length;
+            args = new Array(len);
+            for (i = 0; i < len; i++) {
+                args[i] = arguments[i];
+            }
+            return cb.apply(ctx, args);
         };
     }
 
@@ -6202,8 +6340,8 @@ if (!Array.prototype.indexOf) {
     function nddb_insert(o, update) {
         var nddbid;
         if (('object' !== typeof o) && ('function' !== typeof o)) {
-            this.throwErr('TypeError', 'insert', 'object or function expected ' +
-                          typeof o + ' received.');
+            this.throwErr('TypeError', 'insert', 'object or function ' +
+                          'expected, ' + typeof o + ' received.');
         }
 
         // Check / create a global index.
@@ -6211,7 +6349,8 @@ if (!Array.prototype.indexOf) {
             // Create internal idx.
             nddbid = J.uniqueKey(this.nddbid.resolve);
             if (!nddbid) {
-                this.throwErr('Error', 'insert', 'failed to create index: ' + o);
+                this.throwErr('Error', 'insert',
+                              'failed to create index: ' + o);
             }
             if (df) {
                 Object.defineProperty(o, '_nddbid', { value: nddbid });
@@ -7018,22 +7157,93 @@ if (!Array.prototype.indexOf) {
     /**
      * ### NDDB.emit
      *
-     * Fires all the listeners associated with an event
+     * Fires all the listeners associated with an event (optimized)
      *
      * Accepts any number of parameters, the first one is the name
      * of the event, and the remaining will be passed to the event listeners.
      */
     NDDB.prototype.emit = function() {
-        var i, event;
-        event = Array.prototype.splice.call(arguments, 0, 1);
-        if ('string' !== typeof event[0]) {
+        var event;
+        var h, h2;
+        var i, len, argLen, args;
+        event = arguments[0];
+        if ('string' !== typeof event) {
             this.throwErr('TypeError', 'emit', 'first argument must be string');
         }
-        if (!this.hooks[event] || !this.hooks[event].length) {
-            return;
+        if (!this.hooks[event]) {
+            this.throwErr('TypeError', 'emit', 'unknown event: ' + event);
         }
-        for (i = 0; i < this.hooks[event].length; i++) {
-            this.hooks[event][i].apply(this, arguments);
+        len = this.hooks[event].length;
+        if (!len) return;
+        argLen = arguments.length;
+
+        switch(len) {
+
+        case 1:
+            h = this.hooks[event][0];
+            if (argLen === 1) h.call(this);
+            else if (argLen === 2) h.call(this, arguments[1]);
+            else if (argLen === 3) {
+                h.call(this, arguments[1], arguments[2]);
+            }
+            else {
+                args = new Array(argLen-1);
+                for (i = 0; i < argLen; i++) {
+                    args[i] = arguments[i+1];
+                }
+                h.apply(this, args);
+            }
+            break;
+        case 2:
+            h = this.hooks[event][0], h2 = this.hooks[event][1];
+            if (argLen === 1) {
+                h.call(this);
+                h2.call(this);
+            }
+            else if (argLen === 2) {
+                h.call(this, arguments[1]);
+                h2.call(this, arguments[1]);
+            }
+            else if (argLen === 3) {
+                h.call(this, arguments[1], arguments[2]);
+                h2.call(this, arguments[1], arguments[2]);
+            }
+            else {
+                args = new Array(argLen-1);
+                for (i = 0; i < argLen; i++) {
+                    args[i] = arguments[i+1];
+                }
+                h.apply(this, args);
+                h2.apply(this, args);
+            }
+            break;
+        default:
+
+             if (argLen === 1) {
+                 for (i = 0; i < len; i++) {
+                     this.hooks[event][i].call(this);
+                 }
+            }
+            else if (argLen === 2) {
+                for (i = 0; i < len; i++) {
+                    this.hooks[event][i].call(this, arguments[1]);
+                }
+            }
+            else if (argLen === 3) {
+                for (i = 0; i < len; i++) {
+                    this.hooks[event][i].call(this, arguments[1], arguments[2]);
+                }
+            }
+            else {
+                args = new Array(argLen-1);
+                for (i = 0; i < argLen; i++) {
+                    args[i] = arguments[i+1];
+                }
+                for (i = 0; i < len; i++) {
+                    this.hooks[event][i].apply(this, args);
+                }
+
+            }
         }
     };
 
@@ -7319,7 +7529,8 @@ if (!Array.prototype.indexOf) {
     NDDB.prototype.exists = function(o) {
         var i, len, db;
         if ('object' !== typeof o && 'function' !== typeof o) {
-            this.throwErr('TypeError', 'exists', 'o must be object or function');
+            this.throwErr('TypeError', 'exists',
+                          'o must be object or function');
         }
         db = this.fetch();
         len = db.length;
@@ -7413,7 +7624,7 @@ if (!Array.prototype.indexOf) {
             func = function(a,b) {
                 var i, result;
                 for (i = 0; i < d.length; i++) {
-                    result = that.getComparator(d[i]).call(that,a,b);
+                    result = that.getComparator(d[i]).call(that, a, b);
                     if (result !== 0) return result;
                 }
                 return result;
@@ -7471,7 +7682,7 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### NDDB.each || NDDB.forEach
+     * ### NDDB.each || NDDB.forEach (optimized)
      *
      * Applies a callback function to each element in the db
      *
@@ -7485,7 +7696,7 @@ if (!Array.prototype.indexOf) {
      * @see NDDB.map
      */
     NDDB.prototype.each = NDDB.prototype.forEach = function() {
-        var func, i, db, len;
+        var func, i, db, len, args, argLen;
         func = arguments[0];
         if ('function' !== typeof func) {
             this.throwErr('TypeError', 'each',
@@ -7493,9 +7704,33 @@ if (!Array.prototype.indexOf) {
         }
         db = this.fetch();
         len = db.length;
-        for (i = 0 ; i < len ; i++) {
-            arguments[0] = db[i];
-            func.apply(this, arguments);
+        argLen = arguments.length;
+        switch(argLen) {
+        case 1:
+            for (i = 0 ; i < len ; i++) {
+                func.call(this, db[i]);
+            }
+            break;
+        case 2:
+            for (i = 0 ; i < len ; i++) {
+                func.call(this, db[i], arguments[1]);
+            }
+            break;
+        case 3:
+            for (i = 0 ; i < len ; i++) {
+                func.call(this, db[i], arguments[1], arguments[2]);
+            }
+            break;
+        default:
+            args = new Array(argLen+1);
+            args[0] = null;
+            for (i = 1; i < argLen; i++) {
+                args[i] = arguments[i];
+            }
+            for (i = 0 ; i < len ; i++) {
+                args[0] = db[i];
+                func.apply(this, args);
+            }
         }
     };
 
@@ -7515,17 +7750,46 @@ if (!Array.prototype.indexOf) {
      */
     NDDB.prototype.map = function() {
         var func, i, db, len, out, o;
+        var args, argLen;
         func = arguments[0];
         if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'map', 'first argument must be function');
+            this.throwErr('TypeError', 'map',
+                          'first argument must be function');
         }
         db = this.fetch();
         len = db.length;
+        argLen = arguments.length;
         out = [];
-        for (i = 0 ; i < db.length ; i++) {
-            arguments[0] = db[i];
-            o = func.apply(this, arguments);
-            if ('undefined' !== typeof o) out.push(o);
+        switch(argLen) {
+        case 1:
+            for (i = 0 ; i < len ; i++) {
+                o = func.call(this, db[i]);
+                if ('undefined' !== typeof o) out.push(o);
+            }
+            break;
+        case 2:
+            for (i = 0 ; i < len ; i++) {
+                o = func.call(this, db[i], arguments[1]);
+                if ('undefined' !== typeof o) out.push(o);
+            }
+            break;
+        case 3:
+            for (i = 0 ; i < len ; i++) {
+                o = func.call(this, db[i], arguments[1], arguments[2]);
+                if ('undefined' !== typeof o) out.push(o);
+            }
+            break;
+        default:
+            args = new Array(argLen+1);
+            args[0] = null;
+            for (i = 1; i < argLen; i++) {
+                args[i] = arguments[i];
+            }
+            for (i = 0 ; i < len ; i++) {
+                args[0] = db[i];
+                o = func.apply(this, args);
+                if ('undefined' !== typeof o) out.push(o);
+            }
         }
         return out;
     };
@@ -7711,7 +7975,6 @@ if (!Array.prototype.indexOf) {
      *
      * A new NDDB object breeded, so that further methods can be chained.
      *
-     * @api private
      * @param {string} key1 First property to compare
      * @param {string} key2 Second property to compare
      * @param {function} comparator Optional. A comparator function.
@@ -7724,6 +7987,8 @@ if (!Array.prototype.indexOf) {
      * @return {NDDB} A new database containing the joined entries
      *
      * @see NDDB.breed
+     *
+     * @api private
      */
     NDDB.prototype._join = function(key1, key2, comparator, pos, select) {
         var out, idxs, foreign_key, key;
@@ -15526,13 +15791,10 @@ if (!Array.prototype.indexOf) {
      * Creates a new instance of Game
      *
      * @param {NodeGameClient} node A valid NodeGameClient object
-     * @param {object} setup Optional. A configuration object
      */
-    function Game(node, setup) {
+    function Game(node) {
 
         this.node = node;
-
-        setup = setup || {};
 
         // This updates are never published.
         this.setStateLevel(constants.stateLevels.UNINITIALIZED, 'S');
@@ -15554,11 +15816,11 @@ if (!Array.prototype.indexOf) {
          *  - description,
          *  - version
          */
-        this.metadata = J.merge({
+        this.metadata = {
             name:        'A nodeGame game',
             description: 'No description',
             version:     '0.0.1'
-        }, setup);
+        };
 
         /**
          * ### Game.settings
@@ -15569,7 +15831,7 @@ if (!Array.prototype.indexOf) {
          * contained in the game folder: `game/game.settings`,
          * depending also on the chosen treatment.
          */
-        this.settings = setup.settings || {}
+        this.settings = {}
 
         /**
          * ### Game.pl
@@ -15630,7 +15892,7 @@ if (!Array.prototype.indexOf) {
          *
          * @see GamePlot
          */
-        this.plot = new GamePlot(new Stager(setup.stages));
+        this.plot = new GamePlot(new Stager());
 
         // Overriding stdout for game plot and stager.
         this.plot.setDefaultLog(function() {
@@ -15771,15 +16033,15 @@ if (!Array.prototype.indexOf) {
         startStage = options.startStage || new GameStage();
 
         // INIT the game.
-        if (this.plot && this.plot.stager) {
-            onInit = this.plot.stager.getOnInit();
-            this.globals = this.plot.getGlobals(startStage);
-            if (onInit) {
-                this.setStateLevel(constants.stateLevels.INITIALIZING);
-                node.emit('INIT');
-                onInit.call(node.game);
-            }
+
+        onInit = this.plot.stager.getOnInit();
+        this.globals = this.plot.getGlobals(startStage);
+        if (onInit) {
+            this.setStateLevel(constants.stateLevels.INITIALIZING);
+            node.emit('INIT');
+            onInit.call(node.game);
         }
+
         this.setStateLevel(constants.stateLevels.INITIALIZED);
 
         this.setCurrentGameStage(startStage, 'S');
@@ -15878,14 +16140,11 @@ if (!Array.prototype.indexOf) {
 
         node.emit('GAME_ALMOST_OVER');
 
-        // Call gameover callback, if it exists:
-        if (this.plot && this.plot.stager) {
-            onGameover = this.plot.stager.getOnGameover();
-            if (onGameover) {
-                this.setStateLevel(constants.stateLevels.FINISHING);
-
-                onGameover.call(node.game);
-            }
+        // Call gameover callback, if it exists.
+        onGameover = this.plot.stager.getOnGameover();
+        if (onGameover) {
+            this.setStateLevel(constants.stateLevels.FINISHING);
+            onGameover.call(node.game);
         }
 
         this.setStateLevel(constants.stateLevels.GAMEOVER);
@@ -20840,7 +21099,8 @@ if (!Array.prototype.indexOf) {
     NGC.prototype.done = function() {
         var that, game, doneCb, len, args, i;
         var arg1, arg2;
-        var stepTime, timeup, setObj;
+        var stepTime, timeup;
+        var autoSet;
 
         // Get step execution time.
         stepTime = this.timer.getTimeSince('step');
@@ -20863,6 +21123,8 @@ if (!Array.prototype.indexOf) {
             timeup = game.timer.isTimeup();
         }
 
+        autoSet = game.plot.getProperty(game.getCurrentGameStage(), 'autoSet');
+
         // Keep track that the game will be done (done is asynchronous)
         // to avoid calling `node.done` multiple times in the same stage.
         game.willBeDone = true;
@@ -20875,20 +21137,21 @@ if (!Array.prototype.indexOf) {
         switch(len) {
 
         case 0:
-            this.set(getSetObj(stepTime, timeup));
+            if (autoSet) this.set(getSetObj(stepTime, timeup));
             setTimeout(function() { that.events.emit('DONE'); }, 0);
             break;
         case 1:
             arg1 = arguments[0];
-            this.set(getSetObj(stepTime, timeup, arg1));
+            if (autoSet) this.set(getSetObj(stepTime, timeup, arg1));
             setTimeout(function() { that.events.emit('DONE', arg1); }, 0);
             break;
         case 2:
             arg1 = arguments[0], arg2 = arguments[1];
-            // Send first setObj.
-            this.set(getSetObj(stepTime, timeup, arg1));
-            // Send second setObj.
-            this.set(getSetObj(stepTime, timeup, arg2));
+            // Send two setObjs.
+            if (autoSet) {
+                this.set(getSetObj(stepTime, timeup, arg1));
+                this.set(getSetObj(stepTime, timeup, arg2));
+            }
             setTimeout(function() { that.events.emit('DONE', arg1, arg2); }, 0);
             break;
         default:
@@ -20896,7 +21159,7 @@ if (!Array.prototype.indexOf) {
             args[0] = 'DONE';
             for (i = 1; i < len; i++) {
                 args[i+1] = arguments[i];
-                this.set(getSetObj(stepTime, timeup, arguments[i]));
+                if (autoSet) this.set(getSetObj(stepTime, timeup, args[i+1]));
             }
             setTimeout(function() {
                 that.events.emit.apply(that.events, args);
