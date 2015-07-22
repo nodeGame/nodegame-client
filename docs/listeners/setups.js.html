@@ -102,11 +102,11 @@ MIT Licensed</p>
 
     <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-    <span class="nx">GameSage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
-    <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">,</span>
-    <span class="nx">Player</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
-    <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
+    <span class="nx">GamePlot</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GamePlot</span><span class="p">,</span>
+    <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -481,13 +481,6 @@ the window object in the browser enviroment.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;settings&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;setup(&quot;settings&quot;) called before &#39;</span> <span class="o">+</span>
-                          <span class="s1">&#39;node.game was initialized.&#39;</span><span class="p">);</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
-                    <span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
-            <span class="p">}</span>
-
             <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">settings</span><span class="p">,</span> <span class="nx">settings</span><span class="p">);</span>
             <span class="p">}</span>
@@ -512,13 +505,6 @@ the window object in the browser enviroment.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;setup(&quot;metadata&quot;) called before &#39;</span> <span class="o">+</span>
-                          <span class="s1">&#39;node.game was initialized&#39;</span><span class="p">);</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">(</span>
-                    <span class="s2">&quot;node.game non-existent&quot;</span><span class="p">);</span>
-            <span class="p">}</span>
-
             <span class="k">if</span> <span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">metadata</span><span class="p">,</span> <span class="nx">metadata</span><span class="p">);</span>
             <span class="p">}</span>

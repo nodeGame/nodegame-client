@@ -12,11 +12,11 @@
 
     var NGC = parent.NodeGameClient;
 
-    var GameMsg = parent.GameMsg,
-    GameSage = parent.GameStage,
-    PlayerList = parent.PlayerList,
-    Player = parent.Player,
-    J = parent.JSUS;
+    var J = parent.JSUS,
+    GamePlot = parent.GamePlot,
+    Stager = parent.Stager;
+
+    var constants = parent.constants;
 
     /**
      * ## NodeGameClient.addDefaultSetupFunctions
@@ -213,13 +213,6 @@
          * Sets up `node.game.settings`
          */
         this.registerSetup('settings', function(settings) {
-            if (!this.game) {
-                this.warn('setup("settings") called before ' +
-                          'node.game was initialized.');
-                throw new node.NodeGameMisconfiguredGameError(
-                    "node.game non-existent");
-            }
-
             if (settings) {
                 J.mixin(this.game.settings, settings);
             }
@@ -233,13 +226,6 @@
          * Sets up `node.game.metadata`
          */
         this.registerSetup('metadata', function(metadata) {
-            if (!this.game) {
-                this.warn('setup("metadata") called before ' +
-                          'node.game was initialized');
-                throw new node.NodeGameMisconfiguredGameError(
-                    "node.game non-existent");
-            }
-
             if (metadata) {
                 J.mixin(this.game.metadata, metadata);
             }

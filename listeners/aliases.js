@@ -11,7 +11,6 @@
     "use strict";
 
     var NGC = parent.NodeGameClient;
-    var J = parent.JSUS;
 
     /**
      * ## NodeGameClient.addDefaultAliases

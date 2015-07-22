@@ -17,23 +17,12 @@
 
     var NGC = parent.NodeGameClient;
 
-    var GameMsg = parent.GameMsg,
-    GameStage = parent.GameStage,
-    PlayerList = parent.PlayerList,
-    Player = parent.Player,
-    J = parent.JSUS,
+    var GameStage = parent.GameStage,
     constants = parent.constants;
 
-    var action = constants.action,
-        target = constants.target,
-        stageLevels = constants.stageLevels;
+    var stageLevels = constants.stageLevels,
+    gcommands = constants.gamecommands;
 
-    var say = action.SAY + '.',
-    set = action.SET + '.',
-    get = action.GET + '.',
-    OUT = constants.OUT;
-
-    var gcommands = constants.gamecommands;
     var CMD = 'NODEGAME_GAMECOMMAND_';
 
     /**

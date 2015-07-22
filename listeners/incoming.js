@@ -15,14 +15,11 @@
 
     var NGC = parent.NodeGameClient;
 
-    var GameMsg = parent.GameMsg,
-    GameStage = parent.GameStage,
-    PlayerList = parent.PlayerList,
+    var PlayerList = parent.PlayerList,
     Player = parent.Player,
     J = parent.JSUS;
 
-    var action = parent.constants.action,
-    target = parent.constants.target;
+    var action = parent.constants.action;
 
     var say = action.SAY + '.',
     set = action.SET + '.',

@@ -96,23 +96,12 @@ such as progressing in the loading chain, or finishing a game stage.</p>
 
     <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-    <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
-    <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">,</span>
-    <span class="nx">Player</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
-    <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
+    <span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
     <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">action</span><span class="p">,</span>
-        <span class="nx">target</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span>
-        <span class="nx">stageLevels</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">stageLevels</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">,</span>
+    <span class="nx">gcommands</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">gamecommands</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">say</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
-    <span class="nx">set</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">SET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
-    <span class="nx">get</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">GET</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
-    <span class="nx">OUT</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">OUT</span><span class="p">;</span>
-
-    <span class="kd">var</span> <span class="nx">gcommands</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">gamecommands</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">CMD</span> <span class="o">=</span> <span class="s1">&#39;NODEGAME_GAMECOMMAND_&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
