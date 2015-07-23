@@ -161,41 +161,17 @@ sent by players will be filtered out by the server.</p>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">to</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">to</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.remoteCommand: to must be string &#39;</span> <span class="o">+</span>
-                                <span class="nx">or</span> <span class="nx">array</span><span class="p">.</span><span class="s1">&#39;);</span>
-<span class="s1">        }</span>
+                                <span class="s1">&#39;or array.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
 
-<span class="s1">        msg = this.msg.create({</span>
-<span class="s1">            target: this.constants.target.GAMECOMMAND,</span>
-<span class="s1">            text: command,</span>
-<span class="s1">            data: options,</span>
-<span class="s1">            to: to</span>
-<span class="s1">        });</span>
-<span class="s1">        this.socket.send(msg);</span>
-<span class="s1">    };</span>
-
-
-<span class="s1">//----{DIVIDER}----</span>
-<span class="s1">    NGC.prototype.remoteAlert = function(text, to) {</span>
-<span class="s1">        var msg;</span>
-<span class="s1">        if (&#39;</span><span class="nx">string</span><span class="s1">&#39; !== typeof text) {</span>
-<span class="s1">            throw new TypeError(&#39;</span><span class="nx">node</span><span class="p">.</span><span class="nx">remoteAlert</span><span class="o">:</span> <span class="nx">text</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">string</span><span class="p">.</span><span class="s1">&#39;);</span>
-<span class="s1">        }</span>
-<span class="s1">        if (&#39;</span><span class="kc">undefined</span><span class="s1">&#39; === typeof to) {</span>
-<span class="s1">            throw new TypeError(&#39;</span><span class="nx">node</span><span class="p">.</span><span class="nx">remoteAlert</span><span class="o">:</span> <span class="nx">to</span> <span class="nx">must</span> <span class="nx">be</span> <span class="nx">string</span><span class="p">.</span><span class="s1">&#39;);</span>
-<span class="s1">        }</span>
-<span class="s1">        msg = this.msg.create({</span>
-<span class="s1">            target: this.constants.target.ALERT,</span>
-<span class="s1">            text: text,</span>
-<span class="s1">            to: to</span>
-<span class="s1">        });</span>
-<span class="s1">        this.socket.send(msg);</span>
-<span class="s1">    };</span>
-
-<span class="s1">})(</span>
-<span class="s1">    &#39;</span><span class="kc">undefined</span><span class="s1">&#39; != typeof node ? node : module.exports,</span>
-<span class="s1">    &#39;</span><span class="kc">undefined</span><span class="err">&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
-<span class="p">);</span>
-</pre></div>
+        <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">GAMECOMMAND</span><span class="p">,</span>
+            <span class="nx">text</span><span class="o">:</span> <span class="nx">command</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="nx">options</span><span class="p">,</span>
+            <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span>
+        <span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -229,7 +205,27 @@ with a global <em>alert</em> method.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>undefined</pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remoteAlert</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">msg</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.remoteAlert: text must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.remoteAlert: to must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ALERT</span><span class="p">,</span>
+            <span class="nx">text</span><span class="o">:</span> <span class="nx">text</span><span class="p">,</span>
+            <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span>
+        <span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+    <span class="p">};</span>
+
+<span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
         </td>
       </tr>
   </tbody>

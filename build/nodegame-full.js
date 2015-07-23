@@ -9501,7 +9501,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Variables
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` variables and constants module
@@ -9881,7 +9881,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ErrorManager
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Handles runtime errors
@@ -9892,11 +9892,6 @@ if (!Array.prototype.indexOf) {
 
     // ## Global scope
     var J = parent.JSUS;
-
-    parent.NodeGameRuntimeError = NodeGameRuntimeError;
-    parent.NodeGameStageCallbackError = NodeGameStageCallbackError;
-    parent.NodeGameMisconfiguredGameError = NodeGameMisconfiguredGameError;
-    parent.NodeGameIllegalOperationError = NodeGameIllegalOperationError;
 
     parent.ErrorManager = ErrorManager;
 
@@ -9953,78 +9948,6 @@ if (!Array.prototype.indexOf) {
 //         }
     };
 
-    /**
-     * ## NodeGameRuntimeError
-     *
-     * An error occurred during the execution of nodeGame
-     */
-    function NodeGameRuntimeError(msg) {
-        //Error.apply(this, arguments);
-        this.msg = msg;
-        this.stack = (new Error()).stack;
-        throw new Error('Runtime: ' + msg);
-    }
-
-    NodeGameRuntimeError.prototype = new Error();
-    NodeGameRuntimeError.prototype.constructor = NodeGameRuntimeError;
-    NodeGameRuntimeError.prototype.name = 'NodeGameRuntimeError';
-
-
-    /**
-     * ## NodeGameStageCallbackError
-     *
-     * An error occurred during the execution of one of the stage callbacks
-     */
-    function NodeGameStageCallbackError(msg) {
-        //Error.apply(this, arguments);
-        this.msg = msg;
-        this.stack = (new Error()).stack;
-        throw 'StageCallback: ' + msg;
-    }
-
-    NodeGameStageCallbackError.prototype = new Error();
-    NodeGameStageCallbackError.prototype.constructor =
-        NodeGameStageCallbackError;
-    NodeGameStageCallbackError.prototype.name =
-        'NodeGameStageCallbackError';
-
-
-    /**
-     * ## NodeGameMisconfiguredGameError
-     *
-     * An error occurred during the configuration of the Game
-     */
-    function NodeGameMisconfiguredGameError(msg) {
-        //Error.apply(this, arguments);
-        this.msg = msg;
-        this.stack = (new Error()).stack;
-        throw 'MisconfiguredGame: ' + msg;
-    }
-
-    NodeGameMisconfiguredGameError.prototype = new Error();
-    NodeGameMisconfiguredGameError.prototype.constructor =
-        NodeGameMisconfiguredGameError;
-    NodeGameMisconfiguredGameError.prototype.name =
-        'NodeGameMisconfiguredGameError';
-
-
-    /**
-     * ## NodeGameIllegalOperationError
-     *
-     * An error occurred during the configuration of the Game
-     */
-    function NodeGameIllegalOperationError(msg) {
-        //Error.apply(this, arguments);
-        this.msg = msg;
-        this.stack = (new Error()).stack;
-        throw 'IllegalOperation: ' + msg;
-    }
-
-    NodeGameIllegalOperationError.prototype = new Error();
-    NodeGameIllegalOperationError.prototype.constructor =
-        NodeGameIllegalOperationError;
-    NodeGameIllegalOperationError.prototype.name =
-        'NodeGameIllegalOperationError';
 
 // ## Closure
 })(
@@ -10034,7 +9957,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # EventEmitter
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Event emitter engine for `nodeGame`
@@ -11115,7 +11038,7 @@ if (!Array.prototype.indexOf) {
 /**
  * # GameStage
  *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Representation of the stage of a game:
@@ -12189,7 +12112,7 @@ if (!Array.prototype.indexOf) {
 /**
  * # GameMsg
  *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` exchangeable data format
@@ -14707,7 +14630,7 @@ if (!Array.prototype.indexOf) {
 /**
  * # GameMsgGenerator
  *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` component rensponsible creating messages
@@ -17112,7 +17035,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GameSession
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` session manager
@@ -17466,7 +17389,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GroupManager
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` group manager
@@ -17869,17 +17792,20 @@ if (!Array.prototype.indexOf) {
         group.addMember(item);
     }
 
-    // Here follows previous implementation of GroupManager, called RMatcher - scarcely commented.
-    // RMatcher is not the same as a GroupManager, but does something very useful:
+    // Here follows previous implementation of GroupManager, called RMatcher
+    // RMatcher is not the same as a GroupManager, and does this:
     // It assigns elements to groups based on a set of preferences
 
     // elements: what you want in the group
-    // pools: array of array. it is set of preferences (elements from the first array will be used first
+    // pools: array of array. it is set of preferences
+    // (elements from the first array will be used first)
 
     // Groups.rowLimit determines how many unique elements per row
 
-    // Group.match returns an array of length N, where N is the length of _elements_.
-    // The t-th position in the matched array is the match for t-th element in the _elements_ array.
+    // Group.match returns an array of length N,
+    // where N is the length of _elements_.
+    // The t-th position in the matched array is the match
+    // for t-th element in the _elements_ array.
     // The matching is done trying to follow the preference in the pool.
 
 
@@ -18031,7 +17957,9 @@ if (!Array.prototype.indexOf) {
     };
 
 
-    RMatcher.prototype.switchFromGroup = function(fromGroup, toGroup, fromRow, leftOvers) {
+    RMatcher.prototype.switchFromGroup = function(fromGroup, toGroup,
+                                                  fromRow, leftOvers) {
+
         var toRow, j, n, x, h, switched;
         for (toRow = 0; toRow < fromGroup.elements.length; toRow++) {
 
@@ -18052,9 +17980,9 @@ if (!Array.prototype.indexOf) {
                                 if (toGroup.matches.done) {
 
 
-                                    //	console.log('is done')
-                                    //	console.log(toGroup);
-                                    //	console.log('is done')
+                                    //  console.log('is done')
+                                    //  console.log(toGroup);
+                                    //  console.log('is done')
 
                                     this.doneCounter++;
                                 }
@@ -18603,7 +18531,8 @@ if (!Array.prototype.indexOf) {
         console.log('elements: ', this.elements);
         console.log('pool: ', this.pool);
         console.log('left over: ', this.leftOver);
-        console.log('hits: ' + this.matches.total + '/' + this.matches.requested);
+        console.log('hits: ' + this.matches.total + '/' +
+                    this.matches.requested);
         console.log('matched: ', this.matched);
     };
 
@@ -18616,7 +18545,7 @@ if (!Array.prototype.indexOf) {
      *
      * Resets match and possibly also elements and pool.
      *
-     * @param {boolean} all If TRUE, also _elements_ and _pool_ will be deletedx
+     * @param {boolean} all If TRUE, also _elements_ and _pool_ will be deleted
      */
     Group.prototype.reset = function(all) {
 
@@ -18687,9 +18616,9 @@ if (!Array.prototype.indexOf) {
             elements = getElements(),
             pools = getPools();
 
-            //		console.log('NN ' , numbers);
-            //		console.log(elements);
-            //		console.log(pools)
+            //          console.log('NN ' , numbers);
+            //          console.log(elements);
+            //          console.log(pools)
             rm.init(elements, pools);
 
             var matched = rm.match();
@@ -18720,7 +18649,8 @@ if (!Array.prototype.indexOf) {
     //simulateMatch(1000000000);
 
     //var myElements = [ [ 1, 5], [ 6, 9 ], [ 2, 3, 4, 7, 8 ] ];
-    //var myPools = [ [ [ ], [ 1,  5, 6, 7] ], [ [4], [ 3, 9] ], [ [], [ 2, 8] ] ];
+    //var myPools = [ [ [ ], [ 1,  5, 6, 7] ], [ [4], [ 3, 9] ],
+    //                [ [], [ 2, 8] ] ];
 
     //4.07A 25
     //4.77C 25
@@ -18766,18 +18696,19 @@ if (!Array.prototype.indexOf) {
 
 
 
-    //20961392604176200	SUB	A	1351591619837
-    //19868497151402600000	SUB	A	1351591620386
-    //5688413461195620000	SUB	A	1351591652731
-    //2019166870553500000	SUB	B	1351591653043
-    //389546331863136000	SUB	B	1351591653803
-    //1886985572967670000	SUB	C	1351591654603
-    //762387587655923000	SUB	C	1351591654648
-    //1757870795266120000	SUB	B	1351591655960
-    //766044637969952000	SUB	A	1351591656253
+    //20961392604176200 SUB     A       1351591619837
+    //19868497151402600000      SUB     A       1351591620386
+    //5688413461195620000       SUB     A       1351591652731
+    //2019166870553500000       SUB     B       1351591653043
+    //389546331863136000        SUB     B       1351591653803
+    //1886985572967670000       SUB     C       1351591654603
+    //762387587655923000        SUB     C       1351591654648
+    //1757870795266120000       SUB     B       1351591655960
+    //766044637969952000        SUB     A       1351591656253
 
     //var myElements = [ [ 3, 5 ], [ 8, 9, 1, 7, 6 ], [ 2, 4 ] ];
-    //var myPools = [ [ [ 6 ], [ 9, 7 ] ], [ [], [ 8, 1, 5, 4 ] ], [ [], [ 2, 3 ] ] ];
+    //var myPools = [ [ [ 6 ], [ 9, 7 ] ], [ [], [ 8, 1, 5, 4 ] ],
+    //                [ [], [ 2, 3 ] ] ];
 
     //var myElements = [ [ '13988427821680113598', '102698780807709949' ],
     //  [],
@@ -18795,28 +18726,28 @@ if (!Array.prototype.indexOf) {
     //
     //
     //for (var j = 0; j < myRM.groups.length; j++) {
-    //	var g = myRM.groups[j];
-    //	for (var h = 0; h < g.elements.length; h++) {
-    //		if (g.matched[h].length !== g.rowLimit) {
-    //			console.log('Wrong match: ' + j + '-' + h);
+    //  var g = myRM.groups[j];
+    //  for (var h = 0; h < g.elements.length; h++) {
+    //          if (g.matched[h].length !== g.rowLimit) {
+    //                  console.log('Wrong match: ' + j + '-' + h);
     //
-    //			console.log(myRM.options.elements);
-    //			console.log(myRM.options.pools);
-    ////			console.log(matched);
-    //		}
-    //	}
+    //                  console.log(myRM.options.elements);
+    //                  console.log(myRM.options.pools);
+    ////                        console.log(matched);
+    //          }
+    //  }
     //}
 
     //if (!myRM.allGroupsDone()) {
-    //	console.log('ERROR')
-    //	console.log(myElements);
-    //	console.log(myPools);
-    //	console.log(myMatch);
+    //  console.log('ERROR')
+    //  console.log(myElements);
+    //  console.log(myPools);
+    //  console.log(myMatch);
     //
-    //	console.log('---')
-    //	J.each(myRM.groups, function(g) {
-    //		console.log(g.pool);
-    //	});
+    //  console.log('---')
+    //  J.each(myRM.groups, function(g) {
+    //          console.log(g.pool);
+    //  });
     //}
 
     //console.log(myElements);
@@ -18867,8 +18798,6 @@ if (!Array.prototype.indexOf) {
     //console.log(g.elements);
     //console.log(g.matched);
 
-
-
     // ## Closure
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -18877,7 +18806,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # RoleMapper
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` manager of player ids and aliases
@@ -19337,7 +19266,7 @@ if (!Array.prototype.indexOf) {
     /**
      * # GameTimer
      *
-     * Copyright(c) 2014 Stefano Balietti
+     * Copyright(c) 2015 Stefano Balietti
      * MIT Licensed
      *
      * Creates a controllable timer object for nodeGame.
@@ -19932,7 +19861,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # NodeGameClient
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * nodeGame: Real-time social experiments in the browser.
@@ -20590,7 +20519,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Connect
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` connect module
@@ -21140,7 +21069,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Commands
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` commands
@@ -21209,7 +21138,8 @@ if (!Array.prototype.indexOf) {
                             command + '.');
         }
         if ('string' !== typeof to && !J.isArray(to)) {
-            throw new TypeError('node.remoteCommand: to must be string or array.');
+            throw new TypeError('node.remoteCommand: to must be string ' +
+                                'or array.');
         }
 
         msg = this.msg.create({
@@ -21335,7 +21265,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GetJSON
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` JSON fetching
@@ -21383,7 +21313,8 @@ if (!Array.prototype.indexOf) {
         }
 
         if ('undefined' !== typeof doneCb && 'function' !== typeof doneCb) {
-            throw new Error('NGC.getJSON: doneCb must be undefined or function');
+            throw new Error('NGC.getJSON: doneCb must be undefined or ' +
+                            'function');
         }
 
         // If no URIs are given, we're done:
@@ -21453,7 +21384,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # incoming
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Listeners for incoming messages
@@ -22548,7 +22479,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # aliases
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Event listener aliases.
@@ -22664,7 +22595,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # TriggerManager
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Manages a collection of trigger functions to be called sequentially
@@ -22798,8 +22729,9 @@ if (!Array.prototype.indexOf) {
                                 'be string.');
         }
         if (returnAt !== f && returnAt !== l) {
-            throw new TypeError('TriggerManager.setReturnAt: returnAt must be ' +
-                                f + ' or ' + l + '. Given:' + returnAt + '.');
+            throw new TypeError('TriggerManager.setReturnAt: returnAt must ' +
+                                'be ' + f + ' or ' + l + '. Given: ' +
+                                returnAt + '.');
         }
         this.returnAt = returnAt;
     };
@@ -25099,7 +25031,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ui-behavior
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow UI Behavior module
@@ -25799,7 +25731,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # selector
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Utility functions to create and manipulate meaninful HTML select lists for
@@ -26023,7 +25955,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # extra
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow extras
@@ -26400,7 +26332,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Canvas
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML canvas that can be manipulated by an api
@@ -26945,7 +26877,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Table
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML table that can be manipulated by an api.
@@ -27950,7 +27882,6 @@ if (!Array.prototype.indexOf) {
      *   or FALSE if an error occurs
      */
     Widgets.prototype.register = function(name, w) {
-        var i;
         if ('string' !== typeof name) {
             throw new TypeError('Widgets.register: name must be string.');
         }
@@ -27986,7 +27917,7 @@ if (!Array.prototype.indexOf) {
      * @TODO: add example.
      */
     Widgets.prototype.get = function(widgetName, options) {
-        var wProto, widget;
+        var WidgetPrototype, widget;
         var changes, origDestroy;
         var that;
         if ('string' !== typeof widgetName) {
@@ -28000,32 +27931,33 @@ if (!Array.prototype.indexOf) {
         that = this;
         options = options || {};
 
-        wProto = J.getNestedValue(widgetName, this.widgets);
+        WidgetPrototype = J.getNestedValue(widgetName, this.widgets);
 
-        if (!wProto) {
+        if (!WidgetPrototype) {
             throw new Error('Widgets.get: ' + widgetName + ' not found.');
         }
 
-        node.info('creating widget ' + wProto.name + ' v.' +  wProto.version);
+        node.info('creating widget ' + WidgetPrototype.name +
+                  ' v.' +  WidgetPrototype.version);
 
-        if (!this.checkDependencies(wProto)) {
+        if (!this.checkDependencies(WidgetPrototype)) {
             throw new Error('Widgets.get: ' + widgetName + ' has unmet ' +
                             'dependencies.');
         }
 
         // Add missing properties to the user options
-        J.mixout(options, J.clone(wProto.defaults));
+        J.mixout(options, J.clone(WidgetPrototype.defaults));
 
         // Create widget.
-        widget = new wProto(options);
+        widget = new WidgetPrototype(options);
 
         // Re-inject defaults.
         widget.defaults = options;
 
-        widget.title = wProto.title;
-        widget.footer = wProto.footer;
-        widget.className = wProto.className;
-        widget.context = wProto.context;
+        widget.title = WidgetPrototype.title;
+        widget.footer = WidgetPrototype.footer;
+        widget.className = WidgetPrototype.className;
+        widget.context = WidgetPrototype.context;
 
         // Add random unique widget id.
         widget.wid = '' + J.randomInt(0,10000000000000000000);
@@ -28292,7 +28224,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Chat
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates a simple configurable chat
@@ -28437,7 +28369,7 @@ if (!Array.prototype.indexOf) {
          * Function which displays the sender's name
          */
         this.displayName = null;
-        this.init(options)
+        this.init(options);
     }
 
     // ## Chat methods
@@ -28668,8 +28600,6 @@ if (!Array.prototype.indexOf) {
     }
 
     ChernoffFaces.prototype.init = function(options) {
-        var that = this;
-
         var controlsOptions;
 
         this.features = options.features || this.features ||
@@ -29287,7 +29217,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ChernoffFacesSimple
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Displays multidimensional data in the shape of a Chernoff Face.
@@ -29314,7 +29244,7 @@ if (!Array.prototype.indexOf) {
 
     ChernoffFaces.version = '0.3';
     ChernoffFaces.description =
-        'Display parametric data in the form of a Chernoff Face.'
+        'Display parametric data in the form of a Chernoff Face.';
 
     // ## Dependencies
     ChernoffFaces.dependencies = {
@@ -29352,7 +29282,6 @@ if (!Array.prototype.indexOf) {
     }
 
     ChernoffFaces.prototype.init = function(options) {
-        var that = this;
         this.id = options.id || this.id;
         var PREF = this.id + '_';
 
@@ -29363,7 +29292,6 @@ if (!Array.prototype.indexOf) {
                         options.controls : true;
 
         var idCanvas = (options.idCanvas) ? options.idCanvas : PREF + 'canvas';
-        var idButton = (options.idButton) ? options.idButton : PREF + 'button';
 
         this.dims = {
             width:  options.width ?
@@ -29461,15 +29389,13 @@ if (!Array.prototype.indexOf) {
 
     // FacePainter
     // The class that actually draws the faces on the Canvas
-    function FacePainter (canvas, settings) {
-
+    function FacePainter(canvas, settings) {
         this.canvas = new node.window.Canvas(canvas);
-
         this.scaleX = canvas.width / ChernoffFaces.defaults.canvas.width;
         this.scaleY = canvas.height / ChernoffFaces.defaults.canvas.heigth;
-    };
+    }
 
-    //Draws a Chernoff face.
+    // Draws a Chernoff face.
     FacePainter.prototype.draw = function(face, x, y) {
         if (!face) return;
         this.face = face;
@@ -29498,31 +29424,30 @@ if (!Array.prototype.indexOf) {
     FacePainter.prototype.redraw = function(face, x, y) {
         this.canvas.clear();
         this.draw(face,x,y);
-    }
+    };
 
     FacePainter.prototype.scale = function(x, y) {
         this.canvas.scale(this.scaleX, this.scaleY);
-    }
+    };
 
     // TODO: Improve. It eats a bit of the margins
     FacePainter.prototype.fit2Canvas = function(face) {
+        var ratio;
         if (!this.canvas) {
             console.log('No canvas found');
             return;
         }
 
         if (this.canvas.width > this.canvas.height) {
-            var ratio = this.canvas.width / face.head_radius *
-                face.head_scale_x;
+            ratio = this.canvas.width / face.head_radius * face.head_scale_x;
         }
         else {
-            var ratio = this.canvas.height / face.head_radius *
-                face.head_scale_y;
+            ratio = this.canvas.height / face.head_radius * face.head_scale_y;
         }
 
         face.scaleX = ratio / 2;
         face.scaleY = ratio / 2;
-    }
+    };
 
     FacePainter.prototype.drawHead = function(face, x, y) {
 
@@ -29566,7 +29491,7 @@ if (!Array.prototype.indexOf) {
             color: face.color,
             lineWidth: face.lineWidth
         });
-    }
+    };
 
     FacePainter.prototype.drawPupils = function(face, x, y) {
 
@@ -29884,8 +29809,8 @@ if (!Array.prototype.indexOf) {
         return new FaceVector(out);
     };
 
-    function FaceVector (faceVector) {
-        var faceVector = faceVector || {};
+    function FaceVector(faceVector) {
+        faceVector = faceVector || {};
 
         this.scaleX = faceVector.scaleX || 1;
         this.scaleY = faceVector.scaleY || 1;
@@ -29906,7 +29831,7 @@ if (!Array.prototype.indexOf) {
             }
         }
 
-    };
+    }
 
     //Constructs a random face vector.
     FaceVector.prototype.shuffle = function() {
@@ -29948,7 +29873,7 @@ if (!Array.prototype.indexOf) {
             if (this.hasOwnProperty(key)) {
                 out += key + ' ' + this[key];
             }
-        };
+        }
         return out;
     };
 
@@ -29956,7 +29881,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Controls
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates and manipulates a set of forms
@@ -29968,11 +29893,6 @@ if (!Array.prototype.indexOf) {
     "use strict";
 
     // TODO: handle different events, beside onchange
-
-    var J = node.JSUS;
-    var sliderControls = SliderControls;
-    var jQuerySlider = jQuerySliderControls;
-    var radioControls = RadioControls;
 
     node.widgets.register('Controls', Controls);
 
@@ -30314,7 +30234,7 @@ if (!Array.prototype.indexOf) {
 
     // overriding populate also. There is an error with the Label
     RadioControls.prototype.populate = function() {
-        var key, id, attributes, container, elem, that;
+        var key, id, attributes, elem, that;
         that = this;
 
         if (!this.radioElem) {
@@ -30396,7 +30316,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # D3
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Integrates nodeGame with the D3 library to plot a real-time chart
@@ -30493,28 +30413,25 @@ if (!Array.prototype.indexOf) {
         y: [D3ts.defaults.height, 0]
     };
 
-    function D3ts (options) {
+    function D3ts(options) {
+        var o, x, y;
         D3.call(this, options);
 
-
-        var o = this.options = JSUS.merge(D3ts.defaults, options);
-
-        var n = this.n = o.n;
-
+        this.options = o = JSUS.merge(D3ts.defaults, options);
+        this.n = o.n;
         this.data = [0];
 
         this.margin = o.margin;
 
-        var width = this.width = o.width - this.margin.left - this.margin.right;
-        var height = this.height = o.height - this.margin.top -
-                     this.margin.bottom;
+        this.width = o.width - this.margin.left - this.margin.right;
+        this.height = o.height - this.margin.top - this.margin.bottom;
 
-        // identity function
-        var x = this.x = d3.scale.linear()
+        // Identity function.
+        this.x = x = d3.scale.linear()
             .domain(o.domain.x)
             .range(o.range.x);
 
-        var y = this.y = d3.scale.linear()
+        this.y = y = d3.scale.linear()
             .domain(o.domain.y)
             .range(o.range.y);
 
@@ -30606,7 +30523,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DataBar
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates a form to send DATA packages to other clients / SERVER
@@ -30693,8 +30610,7 @@ if (!Array.prototype.indexOf) {
 
     var J = node.JSUS;
 
-    var Table = node.window.Table,
-    GameStage = node.GameStage;
+    var Table = node.window.Table;
 
     node.widgets.register('DebugInfo', DebugInfo);
 
@@ -30775,13 +30691,13 @@ if (!Array.prototype.indexOf) {
         }
 
         stageLevel = J.getKeyByValue(node.constants.stageLevels,
-                                     node.game.getStageLevel())
+                                     node.game.getStageLevel());
 
         stateLevel = J.getKeyByValue(node.constants.stateLevels,
-                                     node.game.getStateLevel())
+                                     node.game.getStateLevel());
 
         winLevel = J.getKeyByValue(node.constants.windowLevels,
-                                   W.getStateLevel())
+                                   W.getStateLevel());
 
 
         errMsg = node.errorManager.lastErr || miss;
@@ -30837,19 +30753,16 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DisconnectBox
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
- * Shows current, previous and next stage.
+ * Shows a disconnect button
  *
  * www.nodegame.org
  */
 (function(node) {
 
     "use strict";
-
-    var JSUS = node.JSUS;
-    var Table = W.Table;
 
     node.widgets.register('DisconnectBox', DisconnectBox);
 
@@ -30923,7 +30836,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DynamicTable
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Extends the GameTable widgets by allowing dynamic reshaping
@@ -30939,9 +30852,10 @@ if (!Array.prototype.indexOf) {
     "use strict";
 
     var GameStage = node.GameStage,
-    PlayerList = node.PlayerList,
     Table = node.window.Table,
-    HTMLRenderer = node.window.HTMLRenderer;
+    HTMLRenderer = node.window.HTMLRenderer,
+    J = node.JSUS;
+
 
     node.widgets.register('DynamicTable', DynamicTable);
 
@@ -31051,7 +30965,7 @@ if (!Array.prototype.indexOf) {
             // Left
             if (bindings.left) {
                 var l = bindings.left.call(that, msg);
-                if (!JSUS.in_array(l, that.left)) {
+                if (!J.inArray(l, that.left)) {
                     that.header.push(l);
                 }
             }
@@ -31076,7 +30990,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Feedback
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Sends a feedback message to the server
@@ -31169,15 +31083,13 @@ if (!Array.prototype.indexOf) {
         this.bodyDiv.appendChild(this.submit);
     };
 
+    Feedback.prototype.listeners = function() {};
 
-    Feedback.prototype.listeners = function() {
-        var that = this;
-    };
 })(node);
 
 /**
  * # GameBoard
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Displays a table of currently connected players
@@ -31187,8 +31099,6 @@ if (!Array.prototype.indexOf) {
 (function(node) {
 
     "use strict";
-
-    var PlayerList = node.PlayerList;
 
     node.widgets.register('GameBoard', GameBoard);
 
@@ -31342,7 +31252,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GameSummary
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Shows the configuration options of a game in a box
@@ -31420,7 +31330,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GameTable
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates a table that renders in each cell data captured by fired events
@@ -31582,7 +31492,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # LanguageSelector
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Manages and displays information about languages available and selected
@@ -31593,8 +31503,7 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J = node.JSUS,
-        game = node.game;
+    var J = node.JSUS;
 
     node.widgets.register('LanguageSelector', LanguageSelector);
 
@@ -31831,8 +31740,6 @@ if (!Array.prototype.indexOf) {
      * @see LanguageSelector.onLangCallback
      */
     LanguageSelector.prototype.init = function(options) {
-        var that = this;
-
         J.mixout(options, this.options);
         this.options = options;
 
@@ -31938,7 +31845,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # MoneyTalks
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Displays a box for formatting currency
@@ -31948,8 +31855,6 @@ if (!Array.prototype.indexOf) {
 (function(node) {
 
     "use strict";
-
-    var J = node.JSUS;
 
     node.widgets.register('MoneyTalks', MoneyTalks);
 
@@ -32066,8 +31971,8 @@ if (!Array.prototype.indexOf) {
     MoneyTalks.prototype.update = function(amount) {
         if ('number' !== typeof amount) {
             // Try to parse strings
-            amount = parseInt(amount);
-            if (isNaN(n) || !isFinite(n)) {
+            amount = parseInt(amount, 10);
+            if (isNaN(amount) || !isFinite(amount)) {
                 return;
             }
         }
@@ -32078,7 +31983,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # MsgBar
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates a tool for sending messages to other connected clients
@@ -32089,9 +31994,7 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var GameMsg = node.GameMsg,
-        GameStage = node.GameStage,
-        JSUS = node.JSUS,
+    var JSUS = node.JSUS,
         Table = W.Table;
 
     node.widgets.register('MsgBar', MsgBar);
@@ -32300,7 +32203,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # NDDBBrowser
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates an interface to interact with an NDDB database
@@ -32313,8 +32216,7 @@ if (!Array.prototype.indexOf) {
 
     node.widgets.register('NDDBBrowser', NDDBBrowser);
 
-    var JSUS = node.JSUS,
-    NDDB = node.NDDB,
+    var NDDB = node.NDDB,
     TriggerManager = node.TriggerManager;
 
     // ## Defaults
@@ -32460,7 +32362,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # NextPreviousState
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Simple widget to step through the stages of the game
@@ -32537,7 +32439,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Requirements
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Checks a list of requirements and displays the results
@@ -32851,7 +32753,7 @@ if (!Array.prototype.indexOf) {
      */
     Requirements.prototype.checkRequirements = function(display) {
         var i, len;
-        var errors, cbErrors, cbName, errMsg;
+        var errors, cbName, errMsg;
         if (!this.requirements.length) {
             throw new Error('Requirements.checkRequirements: no requirements ' +
                             'to check found.');
@@ -32870,7 +32772,7 @@ if (!Array.prototype.indexOf) {
                 cbName = i + 1;
             }
             try {
-                resultCb(this, name, i);
+                resultCb(this, cbName, i);
             }
             catch(e) {
                 errMsg = extractErrorMsg(e);
@@ -33175,7 +33077,7 @@ if (!Array.prototype.indexOf) {
             errMsg = e.message;
         }
         else if (e.description) {
-            errMsg.description;
+            errMsg = errMsg.description;
         }
         else {
             errMsg = e.toString();
@@ -33187,7 +33089,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ServerInfoDisplay
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Displays information about the server
@@ -33203,7 +33105,7 @@ if (!Array.prototype.indexOf) {
     // ## Meta-data
 
     ServerInfoDisplay.version = '0.4.1';
-    ServerInfoDisplay.description = 'Displays information about the server.'
+    ServerInfoDisplay.description = 'Displays information about the server.';
 
     ServerInfoDisplay.title = 'Server Info';
     ServerInfoDisplay.className = 'serverinfodisplay';
@@ -33309,7 +33211,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # StateBar
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Provides a simple interface to change the game stages
@@ -33347,7 +33249,7 @@ if (!Array.prototype.indexOf) {
      * Appends widget to `this.bodyDiv`
      */
     StateBar.prototype.append = function() {
-        var prefix, that = this;
+        var prefix;
         var idButton, idStageField, idRecipientField;
         var sendButton, stageField, recipientField;
 
@@ -33366,11 +33268,6 @@ if (!Array.prototype.indexOf) {
         this.bodyDiv.appendChild(recipientField);
 
         sendButton = node.window.addButton(this.bodyDiv, idButton);
-
-        //node.on('UPDATED_PLIST', function() {
-        //    node.window.populateRecipientSelector(
-        //        that.recipient, node.game.pl);
-        //});
 
         sendButton.onclick = function() {
             var to;
@@ -33394,7 +33291,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualRound
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Display information about rounds and/or stage in the game
@@ -33634,7 +33531,7 @@ if (!Array.prototype.indexOf) {
      * @see VisualRound.init
      */
     VisualRound.prototype.setDisplayMode = function(displayModeNames) {
-        var index, compoundDisplayModeName, compoundDisplayMode, displayModes;
+        var index, compoundDisplayModeName, displayModes;
 
         // Validation of input parameter.
         if (!J.isArray(displayModeNames)) {
@@ -33807,7 +33704,7 @@ if (!Array.prototype.indexOf) {
    /**
      * # EmptyDisplayMode
      *
-     * Copyright(c) 2014 Stefano Balietti
+     * Copyright(c) 2015 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays nothing
@@ -33883,7 +33780,7 @@ if (!Array.prototype.indexOf) {
     /**
      * # CountUpStages
      *
-     * Copyright(c) 2014 Stefano Balietti
+     * Copyright(c) 2015 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the current
@@ -34028,7 +33925,7 @@ if (!Array.prototype.indexOf) {
    /**
      * # CountDownStages
      *
-     * Copyright(c) 2014 Stefano Balietti
+     * Copyright(c) 2015 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the remaining
@@ -34133,7 +34030,7 @@ if (!Array.prototype.indexOf) {
    /**
      * # CountUpRounds
      *
-     * Copyright(c) 2014 Stefano Balietti
+     * Copyright(c) 2015 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the current
@@ -34278,7 +34175,7 @@ if (!Array.prototype.indexOf) {
    /**
      * # CountDownRounds
      *
-     * Copyright(c) 2014 Stefano Balietti
+     * Copyright(c) 2015 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the remaining
@@ -34383,7 +34280,7 @@ if (!Array.prototype.indexOf) {
     /**
      * # CompoundDisplayMode
      *
-     * Copyright(c) 2014 Stefano Balietti
+     * Copyright(c) 2015 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the
@@ -34516,7 +34413,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualStage
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Shows current, previous and next stage.
@@ -34527,7 +34424,6 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var JSUS = node.JSUS;
     var Table = node.window.Table;
 
     node.widgets.register('VisualStage', VisualStage);
@@ -34630,7 +34526,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualTimer
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Display a timer for the game. Timer can trigger events.
@@ -35153,7 +35049,7 @@ if (!Array.prototype.indexOf) {
         if ('undefined' === typeof options.timeup) {
             options.timeup = function() {
                 node.done();
-            }
+            };
         }
         return options;
     };
@@ -35161,7 +35057,7 @@ if (!Array.prototype.indexOf) {
    /**
      * # TimerBox
      *
-     * Copyright(c) 2014 Stefano Balietti
+     * Copyright(c) 2015 Stefano Balietti
      * MIT Licensed
      *
      * Represents a box wherin to display a `VisualTimer`
@@ -35348,8 +35244,6 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J = node.JSUS;
-
     node.widgets.register('WaitingRoom', WaitingRoom);
 
     // ## Meta-data
@@ -35521,7 +35415,7 @@ if (!Array.prototype.indexOf) {
                 throw new TypeError('WaitingRoom.init: conf.groupSize ' +
                                     'must be number or undefined.');
             }
-            this.groupSize = conf.groupSize
+            this.groupSize = conf.groupSize;
         }
 
         if (conf.connected) {
@@ -35529,7 +35423,7 @@ if (!Array.prototype.indexOf) {
                 throw new TypeError('WaitingRoom.init: conf.connected ' +
                                     'must be number or undefined.');
             }
-            this.connected = conf.connected
+            this.connected = conf.connected;
         }
     };
 
@@ -35540,7 +35434,6 @@ if (!Array.prototype.indexOf) {
      *
      */
     WaitingRoom.prototype.startTimer = function() {
-        var that = this;
         if (this.timer) return;
         if (!this.maxWaitTime) return;
         if (!this.timerDiv) {
@@ -35699,7 +35592,6 @@ if (!Array.prototype.indexOf) {
     // ## Helper methods
 
     function timeIsUp(data) {
-        var timeOut;
         console.log('TIME IS UP!');
 
         if (this.alreadyTimeUp) return;
@@ -35721,7 +35613,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Wall
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates a wall where log and other information is added
@@ -35841,10 +35733,12 @@ if (!Array.prototype.indexOf) {
      * Writes into this.buffer if document is not ready yet.
      */
     Wall.prototype.write = function(text) {
+        var mark;
         if (document.readyState !== 'complete') {
-            this.buffer.push(s);
-        } else {
-            var mark = this.counter++ + ') ' + J.getTime() + ' ';
+            this.buffer.push(text);
+        }
+        else {
+            mark = this.counter++ + ') ' + J.getTime() + ' ';
             this.wall.innerHTML = mark + text + "\n" + this.wall.innerHTML;
         }
     };
