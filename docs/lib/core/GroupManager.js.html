@@ -209,7 +209,7 @@
 </div>
 
 
-<p>Copyright(c) 2014 Stefano Balietti
+<p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p><code>nodeGame</code> group manager</p>
@@ -1035,8 +1035,8 @@ cleared.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
-<p>Here follows previous implementation of GroupManager, called RMatcher - scarcely commented.
-RMatcher is not the same as a GroupManager, but does something very useful:
+<p>Here follows previous implementation of GroupManager, called RMatcher
+RMatcher is not the same as a GroupManager, and does this:
 It assigns elements to groups based on a set of preferences</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>
@@ -1048,7 +1048,8 @@ It assigns elements to groups based on a set of preferences</p>
   <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>elements: what you want in the group
-pools: array of array. it is set of preferences (elements from the first array will be used first</p>
+pools: array of array. it is set of preferences
+(elements from the first array will be used first)</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
@@ -1068,8 +1069,10 @@ pools: array of array. it is set of preferences (elements from the first array w
 <div class="pilwrap">
   <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
-<p>Group.match returns an array of length N, where N is the length of <em>elements</em>.
-The t-th position in the matched array is the match for t-th element in the <em>elements</em> array.
+<p>Group.match returns an array of length N,
+where N is the length of <em>elements</em>.
+The t-th position in the matched array is the match
+for t-th element in the <em>elements</em> array.
 The matching is done trying to follow the preference in the pool.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">RMatcher</span> <span class="o">=</span> <span class="nx">RMatcher</span><span class="p">;</span>
@@ -1328,7 +1331,9 @@ The matching is done trying to follow the preference in the pool.</p>
     <span class="p">};</span>
 
 
-    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">switchFromGroup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fromGroup</span><span class="p">,</span> <span class="nx">toGroup</span><span class="p">,</span> <span class="nx">fromRow</span><span class="p">,</span> <span class="nx">leftOvers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">RMatcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">switchFromGroup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fromGroup</span><span class="p">,</span> <span class="nx">toGroup</span><span class="p">,</span>
+                                                  <span class="nx">fromRow</span><span class="p">,</span> <span class="nx">leftOvers</span><span class="p">)</span> <span class="p">{</span>
+
         <span class="kd">var</span> <span class="nx">toRow</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">switched</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">toRow</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">toRow</span> <span class="o">&lt;</span> <span class="nx">fromGroup</span><span class="p">.</span><span class="nx">elements</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">toRow</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
 
@@ -1355,8 +1360,8 @@ The matching is done trying to follow the preference in the pool.</p>
   <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>console.log('is done')
-console.log(toGroup);
-console.log('is done')</p>
+ console.log(toGroup);
+ console.log('is done')</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>                                    <span class="k">this</span><span class="p">.</span><span class="nx">doneCounter</span><span class="o">++</span><span class="p">;</span>
                                 <span class="p">}</span>
@@ -2504,7 +2509,8 @@ elements in earlier pools have more chances to be used</p>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;elements: &#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">elements</span><span class="p">);</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;pool: &#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">pool</span><span class="p">);</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;left over: &#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">leftOver</span><span class="p">);</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;hits: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">total</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">requested</span><span class="p">);</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;hits: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">total</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">requested</span><span class="p">);</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;matched: &#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">matched</span><span class="p">);</span>
     <span class="p">};</span>
 
@@ -2531,7 +2537,7 @@ elements in earlier pools have more chances to be used</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">all</span>
       <span class="dox_type">boolean</span>
-      <span>If TRUE, also <em>elements</em> and <em>pool</em> will be deletedx</span>
+      <span>If TRUE, also <em>elements</em> and <em>pool</em> will be deleted</span>
     </div>
   </div>
 </div>
@@ -2621,9 +2627,9 @@ console.log(getPools())</p>
   <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code><span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;NN &#39;</span> <span class="p">,</span> <span class="n">numbers</span><span class="p">);</span>
-<span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">elements</span><span class="p">);</span>
-<span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">pools</span><span class="p">)</span>
+<div class="highlight"><pre><code>     <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;NN &#39;</span> <span class="p">,</span> <span class="n">numbers</span><span class="p">);</span>
+     <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">elements</span><span class="p">);</span>
+     <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">pools</span><span class="p">)</span>
 </code></pre></div>
 
 
@@ -2672,7 +2678,8 @@ console.log(getPools())</p>
   <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
 </div>
 <p>var myElements = [ [ 1, 5], [ 6, 9 ], [ 2, 3, 4, 7, 8 ] ];
-var myPools = [ [ [ ], [ 1,  5, 6, 7] ], [ [4], [ 3, 9] ], [ [], [ 2, 8] ] ];</p>
+var myPools = [ [ [ ], [ 1,  5, 6, 7] ], [ [4], [ 3, 9] ],
+               [ [], [ 2, 8] ] ];</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
@@ -2729,15 +2736,15 @@ B</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
 </div>
-<p>20961392604176200    SUB A   1351591619837
-19868497151402600000    SUB A   1351591620386
-5688413461195620000    SUB A   1351591652731
-2019166870553500000    SUB B   1351591653043
-389546331863136000    SUB B   1351591653803
-1886985572967670000    SUB C   1351591654603
-762387587655923000    SUB C   1351591654648
-1757870795266120000    SUB B   1351591655960
-766044637969952000    SUB A   1351591656253</p>
+<p>20961392604176200 SUB     A       1351591619837
+19868497151402600000      SUB     A       1351591620386
+5688413461195620000       SUB     A       1351591652731
+2019166870553500000       SUB     B       1351591653043
+389546331863136000        SUB     B       1351591653803
+1886985572967670000       SUB     C       1351591654603
+762387587655923000        SUB     C       1351591654648
+1757870795266120000       SUB     B       1351591655960
+766044637969952000        SUB     A       1351591656253</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
@@ -2748,7 +2755,8 @@ B</p>
   <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
 </div>
 <p>var myElements = [ [ 3, 5 ], [ 8, 9, 1, 7, 6 ], [ 2, 4 ] ];
-var myPools = [ [ [ 6 ], [ 9, 7 ] ], [ [], [ 8, 1, 5, 4 ] ], [ [], [ 2, 3 ] ] ];</p>
+var myPools = [ [ [ 6 ], [ 9, 7 ] ], [ [], [ 8, 1, 5, 4 ] ],
+               [ [], [ 2, 3 ] ] ];</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
@@ -2772,21 +2780,21 @@ myRM.init(myElements, myPools);</p>
 <p>var myMatch = myRM.match();</p>
 
 <p>for (var j = 0; j &lt; myRM.groups.length; j++) {
-var g = myRM.groups[j];
-for (var h = 0; h &lt; g.elements.length; h++) {
-    if (g.matched[h].length !== g.rowLimit) {
-        console.log('Wrong match: ' + j + '-' + h);</p>
+ var g = myRM.groups[j];
+ for (var h = 0; h &lt; g.elements.length; h++) {
+         if (g.matched[h].length !== g.rowLimit) {
+                 console.log('Wrong match: ' + j + '-' + h);</p>
 
 
-<div class="highlight"><pre><code>    <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">myRM</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">elements</span><span class="p">);</span>
-    <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">myRM</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">pools</span><span class="p">);</span>
+<div class="highlight"><pre><code>             <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">myRM</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">elements</span><span class="p">);</span>
+             <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">myRM</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">pools</span><span class="p">);</span>
 </code></pre></div>
 
 
 
-<p>//            console.log(matched);
-    }
-}
+<p>//                        console.log(matched);
+         }
+ }
 }</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>
@@ -2798,15 +2806,15 @@ for (var h = 0; h &lt; g.elements.length; h++) {
   <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
 </div>
 <p>if (!myRM.allGroupsDone()) {
-console.log('ERROR')
-console.log(myElements);
-console.log(myPools);
-console.log(myMatch);</p>
+ console.log('ERROR')
+ console.log(myElements);
+ console.log(myPools);
+ console.log(myMatch);</p>
 
 <p>console.log('---')
-J.each(myRM.groups, function(g) {
-    console.log(g.pool);
-});
+ J.each(myRM.groups, function(g) {
+         console.log(g.pool);
+ });
 }</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>

@@ -1,6 +1,6 @@
 /**
  * # incoming
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Listeners for incoming messages

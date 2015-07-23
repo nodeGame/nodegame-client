@@ -1,6 +1,6 @@
 /**
  * # TriggerManager
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Manages a collection of trigger functions to be called sequentially
@@ -134,8 +134,9 @@
                                 'be string.');
         }
         if (returnAt !== f && returnAt !== l) {
-            throw new TypeError('TriggerManager.setReturnAt: returnAt must be ' +
-                                f + ' or ' + l + '. Given:' + returnAt + '.');
+            throw new TypeError('TriggerManager.setReturnAt: returnAt must ' +
+                                'be ' + f + ' or ' + l + '. Given: ' +
+                                returnAt + '.');
         }
         this.returnAt = returnAt;
     };
