@@ -1,6 +1,6 @@
 /**
  * # nodeGame IE support
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Shims of methods required by nodeGame, but missing in old IE browsers
@@ -32,7 +32,7 @@ if (!JSON) {
 (function () {
     "use strict";
 
-    var global = Function('return this')()
+    var global = new Function('return this')()
       , JSON = global.JSON
       ;
 
@@ -9813,7 +9813,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Stepping Rules
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Collections of rules to determine whether the game should step.
@@ -9867,7 +9867,6 @@ if (!Array.prototype.indexOf) {
     // All the players in the player list must be sync in the same
     // step and DONE. My own stage does not matter.
     exports.stepRules.OTHERS_SYNC_STEP = function(stage, myStageLevel, pl) {
-        var stage;
         if (!pl.size()) return false;
         stage = pl.first().stage;
         return pl.arePlayersSync(stage, node.constants.stageLevels.DONE,
@@ -9937,7 +9936,6 @@ if (!Array.prototype.indexOf) {
         that = this;
         if (!J.isNodeJS()) {
             window.onerror = function(msg, url, linenumber) {
-                var msg;
                 msg = url + ' ' + linenumber + ': ' + msg;
                 that.lastError = msg;
                 node.err(msg);
@@ -10255,8 +10253,9 @@ if (!Array.prototype.indexOf) {
         }
 
         // Log the event into node.history object, if present.
-        if (node.conf && node.conf.events
-            && node.conf.events.history) {
+        if (node.conf && node.conf.events &&
+            node.conf.events.history) {
+
             this.history.insert({
                 stage: node.game.getCurrentGameStage(),
                 args: arguments
@@ -10323,7 +10322,7 @@ if (!Array.prototype.indexOf) {
     EventEmitter.prototype.remove = EventEmitter.prototype.off =
     function(type, listener) {
 
-        var listeners, len, i, type, node, found, name, removed;
+        var listeners, len, i, node, found, name, removed;
 
         removed = [];
         node = this.node;
@@ -10361,7 +10360,7 @@ if (!Array.prototype.indexOf) {
                 if ('function' === typeof this.events[type]) {
 
                     if ('function' === typeof listener) {
-                        if (listener == this.events[type]) found = true
+                        if (listener == this.events[type]) found = true;
                     }
                     else {
                         // String.
@@ -10526,7 +10525,7 @@ if (!Array.prototype.indexOf) {
         // Groups disabled for the moment.
         // this.createEEGroup('game', 'step', 'stage', 'game');
         // this.createEEGroup('stage', 'stage', 'game');
-    };
+    }
 
     // ## EventEmitterManager methods
 
@@ -11052,7 +11051,7 @@ if (!Array.prototype.indexOf) {
 
             this.history.rebuildIndexes();
 
-            hash = new GameStage(session.stage).toHash('S.s.r');
+            hash = new GameStage(stage).toHash('S.s.r');
 
             if (!this.history.stage) {
                 node.silly('No past events to re-emit found.');
@@ -11429,9 +11428,7 @@ if (!Array.prototype.indexOf) {
     // Setting up global scope variables
     var J = parent.JSUS,
         NDDB = parent.NDDB,
-        GameStage = parent.GameStage,
-        Game = parent.Game,
-        NodeGameRuntimeError = parent.NodeGameRuntimeError;
+        GameStage = parent.GameStage;
 
     var stageLevels = parent.constants.stageLevels;
     var stateLevels = parent.constants.stateLevels;
@@ -11619,15 +11616,13 @@ if (!Array.prototype.indexOf) {
      */
     PlayerList.prototype.get = function(id) {
         var player;
-        if ('undefined' === typeof id) {
-            throw new NodeGameRuntimeError(
-                    'PlayerList.get: id was not given');
+        if ('string' !== typeof id) {
+            throw new TypeError('PlayerList.get: id must be string.');
 
         }
         player = this.id.get(id);
         if (!player) {
-            throw new NodeGameRuntimeError(
-                    'PlayerList.get: Player not found (id ' + id + ')');
+            throw new Error('PlayerList.get: Player not found: ' + id + '.');
         }
         return player;
     };
@@ -11925,7 +11920,7 @@ if (!Array.prototype.indexOf) {
                                 '> 0: ' + N + '.');
         }
         groups = J.getNGroups(this.db, N);
-        return PlayerList.array2Groups(groups);
+        return array2Groups(groups);
     };
 
     /**
@@ -11946,7 +11941,7 @@ if (!Array.prototype.indexOf) {
                                 '> 0: ' + N + '.');
         }
         groups = J.getGroupsSizeN(this.db, N);
-        return PlayerList.array2Groups(groups);
+        return array2Groups(groups);
     };
 
     /**
@@ -11990,9 +11985,9 @@ if (!Array.prototype.indexOf) {
         i = -1, len = array.length;
         for ( ; ++i < len ; ) {
             array[i] = new PlayerList(settings, array[i]);
-        };
+        }
         return array;
-    };
+    }
 
     syncTypes = {STAGE: '', STAGE_UPTO: '', EXACT: ''};
 
@@ -12439,14 +12434,9 @@ if (!Array.prototype.indexOf) {
      * TODO: Create an hash method as for GameStage
      */
     GameMsg.prototype.toSMS = function() {
-
-        var parseDate = /\w+/; // Select the second word;
-        var results = parseDate.exec(this.created);
-
         var line = '[' + this.from + ']->[' + this.to + ']\t';
         line += '|' + this.action + '.' + this.target + '|'+ '\t';
         line += ' ' + this.text + ' ';
-
         return line;
     };
 
@@ -12493,7 +12483,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Stager
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` container and builder of the game sequence
@@ -12695,8 +12685,8 @@ if (!Array.prototype.indexOf) {
      */
     Stager.prototype.registerGeneralNext = function(func) {
         if (func !== null && 'function' !== typeof func) {
-            throw new TypError('Stager.registerGeneralNext: ' +
-                               'func must be function or undefined.');
+            throw new TypeError('Stager.registerGeneralNext: ' +
+                                'func must be function or undefined.');
         }
         this.generalNextFunction = func;
     };
@@ -13277,7 +13267,6 @@ if (!Array.prototype.indexOf) {
         var seqIdx;
         var seqObj;
         var stepPrefix;
-        var gameOver = false;
 
         switch (format) {
         case 'hstages':
@@ -13685,7 +13674,7 @@ if (!Array.prototype.indexOf) {
                 '. Use extendStep to modify it';
         }
         return null;
-    };
+    }
 
     /**
      * checkStageValidity
@@ -13721,7 +13710,7 @@ if (!Array.prototype.indexOf) {
         }
 
         return null;
-    };
+    }
 
     /**
      * handleAlias
@@ -13794,7 +13783,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GamePlot
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` container of game stages functions
@@ -13806,12 +13795,9 @@ if (!Array.prototype.indexOf) {
     // ## Global scope
     exports.GamePlot = GamePlot;
 
-    var Stager = parent.Stager;
     var GameStage = parent.GameStage;
     var J = parent.JSUS;
 
-    var NodeGameMisconfiguredGameError = parent.NodeGameMisconfiguredGameError,
-    NodeGameRuntimeError = parent.NodeGameRuntimeError;
     // ## Constants
     GamePlot.GAMEOVER = 'NODEGAME_GAMEOVER';
     GamePlot.END_SEQ  = 'NODEGAME_END_SEQ';
@@ -13856,8 +13842,7 @@ if (!Array.prototype.indexOf) {
     GamePlot.prototype.init = function(stager) {
         if (stager) {
             if ('object' !== typeof stager) {
-                throw new NodeGameMisconfiguredGameError(
-                    'GamePlot.init: called with invalid stager.');
+                throw new Error('GamePlot.init: called with invalid stager.');
             }
             this.stager = stager;
         }
@@ -13877,7 +13862,8 @@ if (!Array.prototype.indexOf) {
      */
     GamePlot.prototype.setDefaultLog = function(log) {
         if ('function' !== typeof log) {
-            throw new TypeError('GamePlot.setDefaultLog: log must be function.');
+            throw new TypeError('GamePlot.setDefaultLog: log must be ' +
+                                'function.');
         }
         this.log = log;
         if (this.stager) this.stager.log = this.log;
@@ -13904,7 +13890,7 @@ if (!Array.prototype.indexOf) {
         // Find out flexibility mode:
         var flexibleMode = this.isFlexibleMode();
 
-        var seqIdx, seqObj = null, stageObj;
+        var seqObj = null, stageObj;
         var stageNo, stepNo;
         var normStage = null;
         var nextStage = null;
@@ -13933,9 +13919,8 @@ if (!Array.prototype.indexOf) {
             stageObj = this.stager.stages[curStage.stage];
 
             if ('undefined' === typeof stageObj) {
-                throw new NodeGameRunTimeError(
-                    'GamePlot.next: received nonexistent stage: ' +
-                        curStage.stage);
+                throw new Error('Gameplot.next: received nonexistent stage: ' +
+                                curStage.stage);
             }
 
             // Find step number:
@@ -13946,9 +13931,8 @@ if (!Array.prototype.indexOf) {
                 stepNo = stageObj.steps.indexOf(curStage.step) + 1;
             }
             if (stepNo < 1) {
-                throw new NodeGameRunTimeError(
-                    'GamePlot.next: received nonexistent step: ' +
-                          stageObj.id + '.' + curStage.step);
+                throw new Error('GamePlot.next: received nonexistent step: ' +
+                                stageObj.id + '.' + curStage.step);
             }
 
             // Handle stepping:
@@ -14079,7 +14063,7 @@ if (!Array.prototype.indexOf) {
         if (!this.stager) return GamePlot.NO_SEQ;
 
         var normStage;
-        var seqIdx, seqObj = null, stageObj = null;
+        var seqObj = null, stageObj = null;
         var prevSeqObj;
         var stageNo, stepNo, prevStepNo;
 
@@ -14845,12 +14829,11 @@ if (!Array.prototype.indexOf) {
     // Storage for socket types.
     var types = {};
 
-    function checkContract( proto ) {
+    function checkContract(Proto) {
         var test;
-        test = new proto();
+        test = new Proto();
         if (!test.send) return false;
         if (!test.connect) return false;
-
         return true;
     }
 
@@ -14909,8 +14892,6 @@ if (!Array.prototype.indexOf) {
     var GameMsg = parent.GameMsg,
     SocketFactory = parent.SocketFactory,
     J = parent.JSUS;
-
-    var action = parent.action;
 
     /**
      * ## Socket constructor
@@ -15522,7 +15503,7 @@ if (!Array.prototype.indexOf) {
         error = (e) ? text + ": " + e : text;
         this.node.err('Socket.secureParse: ' + error);
         return false;
-    };
+    }
 
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -15531,8 +15512,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # SocketIo
- *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Implementation of a remote socket communicating over HTTP
@@ -15548,10 +15528,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Global scope
 
-    var GameMsg = node.GameMsg,
-    Player = node.Player,
-    GameMsgGenerator = node.GameMsgGenerator,
-    J = node.JSUS;
+    var J = node.JSUS;
 
     exports.SocketIo = SocketIo;
 
@@ -15686,8 +15663,7 @@ if (!Array.prototype.indexOf) {
     "use strict";
 
     // ## Global scope.
-    var JSUS = parent.JSUS,
-    NDDB = parent.NDDB,
+    var NDDB = parent.NDDB,
     GameStage = parent.GameStage;
 
     // Inheriting from NDDB.
@@ -15770,11 +15746,10 @@ if (!Array.prototype.indexOf) {
     exports.Game = Game;
 
     var GameStage = parent.GameStage,
-        GameDB = parent.GameDB,
-        GamePlot = parent.GamePlot,
-        PlayerList = parent.PlayerList,
-        Stager = parent.Stager,
-        J = parent.JSUS;
+    GameDB = parent.GameDB,
+    GamePlot = parent.GamePlot,
+    PlayerList = parent.PlayerList,
+    Stager = parent.Stager;
 
     var constants = parent.constants;
 
@@ -15824,7 +15799,7 @@ if (!Array.prototype.indexOf) {
          * contained in the game folder: `game/game.settings`,
          * depending also on the chosen treatment.
          */
-        this.settings = {}
+        this.settings = {};
 
         /**
          * ### Game.pl
@@ -16266,8 +16241,7 @@ if (!Array.prototype.indexOf) {
         stepRule = this.plot.getStepRule(this.getCurrentGameStage());
 
         if ('function' !== typeof stepRule) {
-            throw new this.node.NodeGameMisconfiguredGameError(
-                'Game.shouldStep: stepRule is not a function.');
+            throw new TypeError('Game.shouldStep: stepRule is not a function.');
         }
 
         stageLevel = stageLevel || this.getStageLevel();
@@ -16323,8 +16297,7 @@ if (!Array.prototype.indexOf) {
         var minCallback = null, maxCallback = null, exactCallback = null;
 
         if (!this.isSteppable()) {
-            throw new this.node.NodeGameMisconfiguredGameError(
-                'Game.gotoStep: game cannot be stepped.');
+            throw new Error('Game.gotoStep: game cannot be stepped.');
         }
 
         if ('string' !== typeof nextStep && 'object' !== typeof nextStep) {
@@ -16408,7 +16381,7 @@ if (!Array.prototype.indexOf) {
                 // Load the listeners for the stage, if any:
                 for (ev in nextStageObj.on) {
                     if (nextStageObj.on.hasOwnProperty(ev)) {
-                        node.events.ee.stage.on(ev, nextStageObjs.on[ev]);
+                        node.events.ee.stage.on(ev, nextStageObj.on[ev]);
                     }
                 }
             }
@@ -16559,7 +16532,7 @@ if (!Array.prototype.indexOf) {
             // Load the listeners for the step, if any:
             for (ev in nextStepObj.on) {
                 if (nextStepObj.on.hasOwnProperty(ev)) {
-                    node.events.ee.step.on(ev, nextStepObjs.on[ev]);
+                    node.events.ee.step.on(ev, nextStepObj.on[ev]);
                 }
             }
 
@@ -16583,7 +16556,7 @@ if (!Array.prototype.indexOf) {
      * @return {boolean} The result of the execution of the step callback
      */
     Game.prototype.execStep = function(step) {
-        var cb, res;
+        var cb;
         var frame, frameOptions;
 
         if ('object' !== typeof step) {
@@ -16789,8 +16762,8 @@ if (!Array.prototype.indexOf) {
         var node;
         node = this.node;
         if ('number' !== typeof stateLevel) {
-            throw new node.NodeGameMisconfiguredGameError(
-                'setStateLevel called with invalid parameter: ' + stateLevel);
+            throw new TypeError('Game.setStateLevel: stateLevel must be ' +
+                                'number. Found: ' + stateLevel);
         }
         // Important: First publish, then actually update.
         if (mod === 'F' || (!mod && this.getStateLevel() !== stateLevel)) {
@@ -16844,8 +16817,8 @@ if (!Array.prototype.indexOf) {
         var node;
         node = this.node;
         if ('number' !== typeof stageLevel) {
-            throw new node.NodeGameMisconfiguredGameError(
-                'setStageLevel called with invalid parameter: ' + stageLevel);
+            throw new TypeError('Game.setStageLevel: stageLevel must be ' +
+                                'number. Found: ' + stageLevel);
         }
         // Important: First publish, then actually update.
         if (mod === 'F' || (!mod && this.getStageLevel() !== stageLevel)) {
@@ -17150,10 +17123,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Global scope
 
-    var GameMsg = node.GameMsg,
-    Player = node.Player,
-    GameMsgGenerator = node.GameMsgGenerator,
-    J = node.JSUS;
+    var J = node.JSUS;
 
     // Exposing constructor.
     exports.GameSession = GameSession;
@@ -17250,7 +17220,8 @@ if (!Array.prototype.indexOf) {
 //            return true;
 //        }
 //        catch(e) {
-//            node.err('could not restore game stage. An error has occurred: ' + e);
+//            node.err('could not restore game stage. ' +
+//                     'An error has occurred: ' + e);
 //            return false;
 //        }
 //
@@ -18932,7 +18903,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Timer
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Timing-related utility functions
@@ -18943,7 +18914,6 @@ if (!Array.prototype.indexOf) {
 
     // ## Global scope
     var J = parent.JSUS;
-    var constants = parent.constants;
 
     // Exposing Timer constructor
     exports.Timer = Timer;
@@ -19163,8 +19133,7 @@ if (!Array.prototype.indexOf) {
             };
         }
 
-        tentativeName = emit
-            ? 'rndEmit_' + hook + '_' + J.randomInt(0, 1000000)
+        tentativeName = emit ? 'rndEmit_' + hook + '_' + J.randomInt(0, 1000000)
             : 'rndExec_' + J.randomInt(0, 1000000);
 
         // Create and run timer:
@@ -19707,8 +19676,8 @@ if (!Array.prototype.indexOf) {
             }
             hook = hook.hook;
         }
-        if(!name) {
-            name = JSUS.uniqueKey(this.hookNames,'timerHook');
+        if (!name) {
+            name = J.uniqueKey(this.hookNames, 'timerHook');
         }
         for (i = 0; i < this.hooks.length; i++) {
             if (this.hooks[i].name === name) {
@@ -19993,7 +19962,6 @@ if (!Array.prototype.indexOf) {
      * Creates a new NodeGameClient object
      */
     function NodeGameClient() {
-        var that = this;
 
         this.info('node: loading.');
 
@@ -20277,7 +20245,7 @@ if (!Array.prototype.indexOf) {
      *   the log entry. Default: 'ng> '
      */
     NGC.prototype.log = function(txt, level, prefix) {
-        var numLevel, hash
+        var numLevel;
         if ('undefined' === typeof txt) return;
 
         level  = level || 'info';
@@ -20365,13 +20333,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Global scope
 
-    var GameMsg = node.GameMsg,
-    Player = node.Player,
-    Game = node.Game,
-    GamePlot = node.GamePlot,
-    Stager = node.Stager,
-    GameMsgGenerator = node.GameMsgGenerator,
-    J = node.JSUS;
+    var J = node.JSUS;
 
     var NGC = node.NodeGameClient;
 
@@ -20414,8 +20376,8 @@ if (!Array.prototype.indexOf) {
 
         func = this.setup[property];
         if (!func) {
-            throw new Error('node.setup: no such property to configure: '
-                            + property + '.');
+            throw new Error('node.setup: no such property to configure: ' +
+                            property + '.');
         }
 
         // Setup the property using rest of arguments:
@@ -20453,7 +20415,7 @@ if (!Array.prototype.indexOf) {
         this.setup[property] = function() {
             that.info('setup ' + property + '.');
             return func.apply(that, arguments);
-        }
+        };
     };
 
     /**
@@ -20466,13 +20428,12 @@ if (!Array.prototype.indexOf) {
      * @see node.setup
      */
     NGC.prototype.deregisterSetup = function(feature) {
-        var that;
         if ('string' !== typeof feature) {
             throw new TypeError('node.deregisterSetup: property must ' +
                                 'be string.');
         }
         if (!this.setup[feature]) {
-            this.warn('node.deregisterSetup: feature ' + property + ' not ' +
+            this.warn('node.deregisterSetup: feature ' + feature + ' not ' +
                       'previously registered.');
             return;
         }
@@ -20530,7 +20491,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Alias
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` aliasing module
@@ -20541,10 +20502,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Global scope
 
-    var GameMsg = node.GameMsg,
-    Player = node.Player,
-    GameMsgGenerator = node.GameMsgGenerator,
-    J = node.JSUS;
+    var J = node.JSUS;
 
     var NGC = node.NodeGameClient;
 
@@ -20569,8 +20527,8 @@ if (!Array.prototype.indexOf) {
      *       };
      *   });
      *
-     * 	node.on.data('myLabel', function(){ ... };
-     * 	node.once.data('myLabel', function(){ ... };
+     *  node.on.data('myLabel', function(){ ... };
+     *  node.once.data('myLabel', function(){ ... };
      * ```
      *
      * @param {string} alias The name of alias
@@ -20581,10 +20539,10 @@ if (!Array.prototype.indexOf) {
      *   actually be invoked when the aliased event is fired.
      */
     NGC.prototype.alias = function(alias, events, modifier) {
-	var that, func;
+        var that;
         if ('string' !== typeof alias) {
             throw new TypeError('node.alias: alias must be string.');
-	}
+        }
         if ('string' === typeof events) {
             events = [events];
         }
@@ -20763,7 +20721,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Events
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` events handling
@@ -20808,11 +20766,11 @@ if (!Array.prototype.indexOf) {
      * @see EventEmitterManager
      */
     NGC.prototype.getCurrentEventEmitter = function() {
-        var gameStage, stageLevel, stateLevel;
+        var gameStage;
 
         // NodeGame default listeners
         if (!this.game) return this.events.ee.ng;
-        gameStage = this.game.getCurrentGameStage()
+        gameStage = this.game.getCurrentGameStage();
         if (!gameStage) return this.events.ee.ng;
 
         // Game listeners.
@@ -21297,7 +21255,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Extra
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` extra functions
@@ -21306,7 +21264,7 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var NGC = parent.NodeGameClient
+    var NGC = parent.NodeGameClient;
 
     /**
      * ### node.env
@@ -21330,7 +21288,8 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('node.env: env must be string.');
         }
         if (func && 'function' !== typeof func) {
-            throw new TypeError('node.env: func must be function or undefined.');
+            throw new TypeError('node.env: func must be function ' +
+                                'or undefined.');
         }
         if (ctx && 'object' !== typeof ctx) {
             throw new TypeError('node.env: ctx must be object or undefined.');
@@ -23075,7 +23034,7 @@ if (!Array.prototype.indexOf) {
 
         function completed(event) {
             var iframeDoc;
-            iframeDoc = JSUS.getIFrameDocument(iframe);
+            iframeDoc = J.getIFrameDocument(iframe);
 
             // Detaching the function to avoid double execution.
             iframe.removeEventListener('load', completed, false);
@@ -23105,7 +23064,7 @@ if (!Array.prototype.indexOf) {
             // IE < 10 gives 'Permission Denied' if trying to access
             // the iframeDoc from the context of the function above.
             // We need to re-get it from the DOM.
-            iframeDoc = JSUS.getIFrameDocument(iframe);
+            iframeDoc = J.getIFrameDocument(iframe);
 
             // readyState === "complete" works also in oldIE.
             if (event.type === 'load' ||
@@ -24117,7 +24076,7 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('GameWindow.initLibs: globalLibs must be ' +
                                 'array or undefined.');
         }
-        if (frameLibs && 'object' !== typeof framLibs) {
+        if (frameLibs && 'object' !== typeof frameLibs) {
             throw new TypeError('GameWindow.initLibs: frameLibs must be ' +
                                 'object or undefined.');
         }
@@ -25079,7 +25038,6 @@ if (!Array.prototype.indexOf) {
          * @see node.setup
          */
         node.registerSetup('header', function(conf) {
-            var url, cb, options;
             var frameName, force, root, rootName;
             if (!conf) return;
 
@@ -25282,7 +25240,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # lockScreen
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Locks / Unlocks the screen
@@ -25295,8 +25253,6 @@ if (!Array.prototype.indexOf) {
 (function(window, node) {
 
     "use strict";
-
-    var J = node.JSUS;
 
     var GameWindow = node.GameWindow;
     var screenLevels = node.constants.screenLevels;
@@ -25387,12 +25343,14 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    function getElement(idOrObj) {
+    var J = node.JSUS;
+
+    function getElement(idOrObj, prefix) {
         var el;
         if ('string' === typeof idOrObj) {
             el = W.getElementById(idOrObj);
         }
-        else if (JSUS.isElement(idOrObj)) {
+        else if (J.isElement(idOrObj)) {
             el = idOrObj;
         }
         else {
@@ -25494,7 +25452,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # WaitScreen
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Covers the screen with a gray layer, disables inputs, and displays a message
@@ -25771,7 +25729,7 @@ if (!Array.prototype.indexOf) {
      * @see WaitScreen.lock
      */
     WaitScreen.prototype.unlock = function() {
-        var j, i, len, inputs, nInputs;
+        var i, len;
 
         if (this.waitingDiv) {
             if (this.waitingDiv.style.display === '') {
@@ -26543,7 +26501,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # HTMLRenderer
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Renders javascript objects into HTML following a pipeline
@@ -26672,10 +26630,12 @@ if (!Array.prototype.indexOf) {
         });
 
         this.tm.addTrigger(function(el) {
+            var html;
             if (!el) return;
-            if (el.content && el.content.parse
-                && 'function' === typeof el.content.parse) {
-                var html = el.content.parse();
+            if (el.content && el.content.parse &&
+                'function' === typeof el.content.parse) {
+
+                html = el.content.parse();
                 if (JSUS.isElement(html) || JSUS.isNode(html)) {
                     return html;
                 }
@@ -26785,7 +26745,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # List
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML list that can be manipulated by an api
@@ -26796,7 +26756,6 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var JSUS = node.JSUS;
     var NDDB = node.NDDB;
 
     var HTMLRenderer = node.window.HTMLRenderer;
