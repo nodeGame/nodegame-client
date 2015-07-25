@@ -9644,6 +9644,10 @@ if (!Array.prototype.indexOf) {
     // @see node.constants.remoteVerbosity
     k.target.LOG = 'LOG';
 
+    // #### target.BYE
+    // Force disconnection upon reception.
+    k.target.BYE  = 'BYE';
+
     //#### not used targets (for future development)
 
 
@@ -9651,7 +9655,6 @@ if (!Array.prototype.indexOf) {
 
     k.target.TXT  = 'TXT';    // Text msg
 
-    k.target.BYE  = 'BYE';    // Force disconnects
     k.target.ACK  = 'ACK';    // A reliable msg was received correctly
 
     k.target.WARN = 'WARN';   // To do.
@@ -10145,7 +10148,6 @@ if (!Array.prototype.indexOf) {
                 break;
 
             default:
-                // slower
                 len = arguments.length;
                 args = new Array(len - 1);
                 for (i = 1; i < len; i++) {
@@ -15078,8 +15080,8 @@ if (!Array.prototype.indexOf) {
      *
      * Calls the disconnect method on the actual socket object
      */
-    Socket.prototype.disconnect = function() {
-        if (!this.connecting && !this.connected) {
+    Socket.prototype.disconnect = function(force) {
+        if (!force && !this.connecting && !this.connected) {
             node.warn('Socket.disconnect: socket is not connected.');
             return;
         }
@@ -16204,6 +16206,9 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string|GameStage} nextStep A game stage object, or a string like
      *   GAME_OVER.
+     * @param {object} options Optional. Additional options, such as:
+     *   `willBeDone` (immediately calls `node.done()`, useful
+     *   for reconnections)
      *
      * @see Game.execStep
      * @see GameStage
@@ -16211,7 +16216,7 @@ if (!Array.prototype.indexOf) {
      * TODO: harmonize return values
      * TODO: remove some unused comments in the code.
      */
-    Game.prototype.gotoStep = function(nextStep) {
+    Game.prototype.gotoStep = function(nextStep, options) {
         var curStep;
         var curStageObj, nextStepObj, nextStageObj;
         var ev, node;
@@ -16228,6 +16233,12 @@ if (!Array.prototype.indexOf) {
                                 'an object or a string.');
         }
 
+        if (options && 'object' !== typeof options) {
+            throw new TypeError('Game.gotoStep: options must be object or ' +
+                                'undefined.');
+        }
+
+        options = options || {};
         curStep = this.getCurrentGameStage();
         node = this.node;
 
@@ -16274,6 +16285,11 @@ if (!Array.prototype.indexOf) {
             if (!nextStageObj) return false;
             nextStepObj = this.plot.getStep(nextStep);
             if (!nextStepObj) return false;
+
+            // Check options.
+            // TODO: this does not lock screen / stop timer.
+            if (options.willBeDone) this.willBeDone = true;
+
 
             // stageLevel needs to be changed (silent), otherwise it stays DONE
             // for a short time in the new game stage:
@@ -20376,7 +20392,7 @@ if (!Array.prototype.indexOf) {
      *
      * Accepts any number of extra parameters that are sent as option values.
      *
-     * @param {string} property The feature to configure
+     * @param {string} feature The feature to configure
      * @param {string|array} to The id of the remote client to configure
      *
      * @return{boolean} TRUE, if configuration is successful
@@ -20384,29 +20400,39 @@ if (!Array.prototype.indexOf) {
      * @see node.setup
      * @see JSUS.stringifyAll
      */
-    NGC.prototype.remoteSetup = function(property, to) {
-        var msg, payload;
+    NGC.prototype.remoteSetup = function(feature, to) {
+        var msg, payload, len;
 
-        if ('string' !== typeof 'property') {
-            throw new TypeError('node.remoteSetup: property must be string.');
+        if ('string' !== typeof feature) {
+            throw new TypeError('node.remoteSetup: feature must be string.');
         }
         if ('string' !== typeof to && !J.isArray(to)) {
             throw new TypeError('node.remoteSetup: to must be string or ' +
                                 'array.');
         }
+        len = arguments.length;
+        if (len > 2) {
+            if (len === 3) payload = [arguments[2]];
+            else if (len === 4) payload = [arguments[2], arguments[3]];
+            else {
+                payload = new Array(len - 2);
+                for (i = 2; i < len; i++) {
+                    payload[i - 2] = arguments[i];
+                }
+            }
+            payload = J.stringifyAll(payload);
 
-        payload = J.stringifyAll(Array.prototype.slice.call(arguments, 2));
-
-        if (!payload) {
-            this.err('node.remoteSetup: an error occurred while ' +
-                     'stringifying payload.');
-            return false;
+            if (!payload) {
+                this.err('node.remoteSetup: an error occurred while ' +
+                         'stringifying payload.');
+                return false;
+            }
         }
 
         msg = this.msg.create({
             target: this.constants.target.SETUP,
             to: to,
-            text: property,
+            text: feature,
             data: payload
         });
 
@@ -20596,9 +20622,8 @@ if (!Array.prototype.indexOf) {
         if (this.player &&
             this.player.stateLevel > constants.stateLevels.STARTING &&
             this.player.stateLevel !== constants.stateLevels.GAMEOVER) {
-            throw new this.NodeGameIllegalOperationError(
-                'node.createPlayer: cannot create player ' +
-                    'while game is running.');
+            throw new Error('node.createPlayer: cannot create player ' +
+                            'while game is running.');
         }
         if (this.game.pl.exist(player.id)) {
             throw new Error('node.createPlayer: id already found in ' +
@@ -21439,6 +21464,24 @@ if (!Array.prototype.indexOf) {
          * @emit UDATED_PLIST
          * @see Game.pl
          */
+        node.events.ng.on( IN + say + 'BYE', function(msg) {
+            var force;
+            if (msg.data) {
+                // Options for reconnections, for example.
+                // Sending data, do something before disconnect.
+            }
+            force = true;
+            node.socket.disconnect(force);
+        });
+
+        /**
+         * ## in.say.PCONNECT
+         *
+         * Adds a new player to the player list
+         *
+         * @emit UDATED_PLIST
+         * @see Game.pl
+         */
         node.events.ng.on( IN + say + 'PCONNECT', function(msg) {
             if (!msg.data) return;
             node.game.pl.add(new Player(msg.data));
@@ -22031,13 +22074,19 @@ if (!Array.prototype.indexOf) {
          * ## NODEGAME_GAMECOMMAND: goto_step
          *
          */
-        this.events.ng.on(CMD + gcommands.goto_step, function(step) {
+        this.events.ng.on(CMD + gcommands.goto_step, function(options) {
+            var step;
             if (!node.game.isSteppable()) {
                 node.err('Game cannot be stepped.');
                 return;
             }
-
-            node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step);
+            // Adjust parameters.
+            if (options.targetStep) step = options.targetStep;
+            else {
+                step = options;
+                options = undefined;
+            }
+            node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step, options);
             if (step !== parent.GamePlot.GAMEOVER) {
                 step = new GameStage(step);
                 if (!node.game.plot.getStep(step)) {
@@ -22045,7 +22094,7 @@ if (!Array.prototype.indexOf) {
                     return;
                 }
             }
-            node.game.gotoStep(step);
+            node.game.gotoStep(step, options);
         });
 
         /**

@@ -28,6 +28,9 @@
         <a href="#in.say.pconnect">in.say.PCONNECT</a>
       </div>
       <div class="heading h2">
+        <a href="#in.say.pconnect">in.say.PCONNECT</a>
+      </div>
+      <div class="heading h2">
         <a href="#in.say.pdisconnect">in.say.PDISCONNECT</a>
       </div>
       <div class="heading h2">
@@ -177,6 +180,47 @@ default handlers provided.</p>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node: adding incoming listeners.&#39;</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="in.say.pconnect">
+  <h2>
+    <a href="#in.say.pconnect" class="pilcrow">&#182;</a>
+    in.say.PCONNECT
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Adds a new player to the player list</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.pl
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;BYE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">force</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>Options for reconnections, for example.
+Sending data, do something before disconnect.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="p">}</span>
+            <span class="nx">force</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">(</span><span class="nx">force</span><span class="p">);</span>
+        <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -488,7 +532,7 @@ not defined it is set to TRUE.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
 <p>TODO: renable when it does not cause problems.
 At the moment the AdminServer sends this kind of msg
@@ -519,7 +563,7 @@ node.game.execStep(stageObj);</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>node.game.setStageLevel(msg.data);</p>
         </td>
@@ -640,7 +684,7 @@ node.game.execStep(stageObj);</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>console.log('GM', msg);</p>
         </td>

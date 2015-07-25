@@ -503,13 +503,27 @@ In case the handler returns FALSE, the process is stopped.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">CMD</span> <span class="o">+</span> <span class="nx">gcommands</span><span class="p">.</span><span class="nx">goto_step</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">CMD</span> <span class="o">+</span> <span class="nx">gcommands</span><span class="p">.</span><span class="nx">goto_step</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">step</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isSteppable</span><span class="p">())</span> <span class="p">{</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Game cannot be stepped.&#39;</span><span class="p">);</span>
                 <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>Adjust parameters.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">targetStep</span><span class="p">)</span> <span class="nx">step</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">targetStep</span><span class="p">;</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">step</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
+                <span class="nx">options</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
             <span class="p">}</span>
-
-            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;BEFORE_GAMECOMMAND&#39;</span><span class="p">,</span> <span class="nx">gcommands</span><span class="p">.</span><span class="nx">goto_step</span><span class="p">,</span> <span class="nx">step</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;BEFORE_GAMECOMMAND&#39;</span><span class="p">,</span> <span class="nx">gcommands</span><span class="p">.</span><span class="nx">goto_step</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">step</span> <span class="o">!==</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GamePlot</span><span class="p">.</span><span class="nx">GAMEOVER</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">step</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">step</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">step</span><span class="p">))</span> <span class="p">{</span>
@@ -517,7 +531,7 @@ In case the handler returns FALSE, the process is stopped.</p>
                     <span class="k">return</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">gotoStep</span><span class="p">(</span><span class="nx">step</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">gotoStep</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
         <span class="p">});</span></pre></div>
         </td>
       </tr>

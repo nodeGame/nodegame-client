@@ -222,13 +222,19 @@
          * ## NODEGAME_GAMECOMMAND: goto_step
          *
          */
-        this.events.ng.on(CMD + gcommands.goto_step, function(step) {
+        this.events.ng.on(CMD + gcommands.goto_step, function(options) {
+            var step;
             if (!node.game.isSteppable()) {
                 node.err('Game cannot be stepped.');
                 return;
             }
-
-            node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step);
+            // Adjust parameters.
+            if (options.targetStep) step = options.targetStep;
+            else {
+                step = options;
+                options = undefined;
+            }
+            node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step, options);
             if (step !== parent.GamePlot.GAMEOVER) {
                 step = new GameStage(step);
                 if (!node.game.plot.getStep(step)) {
@@ -236,7 +242,7 @@
                     return;
                 }
             }
-            node.game.gotoStep(step);
+            node.game.gotoStep(step, options);
         });
 
         /**

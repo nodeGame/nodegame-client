@@ -55,6 +55,24 @@
          * @emit UDATED_PLIST
          * @see Game.pl
          */
+        node.events.ng.on( IN + say + 'BYE', function(msg) {
+            var force;
+            if (msg.data) {
+                // Options for reconnections, for example.
+                // Sending data, do something before disconnect.
+            }
+            force = true;
+            node.socket.disconnect(force);
+        });
+
+        /**
+         * ## in.say.PCONNECT
+         *
+         * Adds a new player to the player list
+         *
+         * @emit UDATED_PLIST
+         * @see Game.pl
+         */
         node.events.ng.on( IN + say + 'PCONNECT', function(msg) {
             if (!msg.data) return;
             node.game.pl.add(new Player(msg.data));
