@@ -47,6 +47,7 @@
  - Flattened down the structure of entries in `node.game.memory`. Removed GameBit.
  - `#node.set(obj, to) takes only one object and a recipient (was node.set(key, value, to).
  - `autoSet` option specifies whether a SET message should be sent to SERVER when node.done() is called.
+ - Game message target `BYE` causes a client side disconnection.
 
 
 ## 0.9.9
