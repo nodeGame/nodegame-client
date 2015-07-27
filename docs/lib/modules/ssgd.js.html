@@ -405,7 +405,6 @@ If timeout === -1, the listener is never removed.</p>
 will be removed immediately after its execution.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="nx">g</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;GET RETURN&#39;</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">success</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
