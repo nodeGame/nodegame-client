@@ -48,6 +48,7 @@
  - `#node.set(obj, to) takes only one object and a recipient (was node.set(key, value, to).
  - `autoSet` option specifies whether a SET message should be sent to SERVER when node.done() is called.
  - Game message target `BYE` causes a client side disconnection.
+ - `#node.get()` syntax changed. Fourth parameters is `options` and contains more options.
 
 
 ## 0.9.9
