@@ -5,7 +5,7 @@ node_js:
 before_install:
 # Get installer script.
   - cd bin
-  - wget https://github.com/nodeGame/nodegame/raw/master/bin/install-nodegame-for-module.sh
+  - wget https://raw.githubusercontent.com/nodeGame/nodegame/msg_queue_module/bin/install-nodegame-for-module.sh
   - chmod a+x install-nodegame-for-module.sh
   - cd ..
 install:
