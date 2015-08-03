@@ -11,44 +11,59 @@ var stager = ngc.getStager();
 module.exports = node;
 node.verbosity = 0;
 
-// stager.stageBlock('0..1');
+function decorateStager(stager) {
 
-stager.next({
-    id: 'stage 1',
-    cb: function() { console.log('stage 1') }
-}, '0..1');
+    // stager.stageBlock('0..1');
 
-// stager.endBlock();
+    stager.next({
+        id: 'stage 1',
+        cb: function() { console.log('stage 1') }
+    }, '0..1');
 
-stager.stageBlock('0..1');
+    // stager.endBlock();
 
-stager.next('stage 2', '0..1');
+    stager.stageBlock('0..1');
 
-stager.step({
-    id: 'step 2.1',
-    cb: function() { console.log('step 2.1') }
-});
-stager.step({
-    id: 'step 2.2',
-    cb: function() { console.log('step 2.2') }
-});
+    stager.next('stage 2', '0..1');
 
-stager.next('stage 3', '0..1');
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() { console.log('step 2.2') }
+    });
 
-stager.endBlock();
+    stager.next('stage 3', '0..1');
 
-stager.gameover();
+    stager.endBlock();
 
-// Default auto step.
-stager.setDefaultStepRule(ngc.stepRules.WAIT);
+    stager.gameover();
 
-// stager.endBlock();
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+    // stager.endBlock();
+}
+
+decorateStager(stager);
 
 stager.finalize();
 
 console.log(stager.getSequence('hsteps'));
 
+stager.init()
+
+decorateStager(stager);
+
+stager.finalize();
+
+console.log(stager.getSequence('hsteps'));
+
+
 return;
+
 
 debugger
 

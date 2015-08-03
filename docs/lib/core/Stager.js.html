@@ -349,7 +349,6 @@ MIT Licensed</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
         <span class="p">}</span></pre></div>
         </td>
@@ -849,9 +848,7 @@ stage and a step with the same name as the stage otherwise.</p>
 </div>
 
   </div>
-  <div class="body"><p>Resets sequence</p>
-
-<p>TODO: should blocks be cleared also ? Merge with clear?</p>
+  <div class="body"><p>Clears the state of the stager and add a default block</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
@@ -860,11 +857,16 @@ stage and a step with the same name as the stage otherwise.</p>
       <span class="dox_type">Stager</span>
       <span>this object</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.clear
+  </span>
+    </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">stageBlock</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;__default_block&#39;</span> <span class="p">});</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
