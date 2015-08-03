@@ -3,6 +3,7 @@ var log = console.log;
 
 var ngc = require('../index.js');
 var Stager = ngc.Stager;
+var GamePlot = ngc.GamePlot;
 
 var node = ngc.getClient();
 var stager = ngc.getStager();
@@ -10,13 +11,16 @@ var stager = ngc.getStager();
 module.exports = node;
 node.verbosity = 0;
 
-
 stager
-    .next('stage 1', function() { console.log('aa'); return false; })
+    // .beginBlock()
+    .next({
+        id: 'stage 1',
+        cb: function() { console.log('aa'); }
+    })
     .next('stage 2')
     .next('stage 3')
+    // .endBlock()
     .gameover();
-
 
 var tmp, res;
 var stagerState = stager.getState();
@@ -26,15 +30,20 @@ node.setup('plot', stagerState);
 node.createPlayer({ id: 'testid' });
 node.game.start({ step: false });
 
-// First step.
-res = node.game.step();
-
+debugger
 
 // Step through.
-while (res) {
-    tmp = node.game.getCurrentStepObject();
-    console.log('Stage id: ', tmp.id);
+while (hasNextStep()) {
     res = node.game.step();
+    tmp = node.game.getCurrentStepObj();
+    console.log('Stage id: ', tmp.id);
+}
+
+function hasNextStep() {
+    var curStep, nextStep;
+    curStep = node.game.getCurrentGameStage();
+    nextStep = node.game.plot.next(curStep);
+    return nextStep !== GamePlot.GAMEOVER && nextStep !== GamePlot.END_SEQ;
 }
 
 return;
