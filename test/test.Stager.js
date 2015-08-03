@@ -1,39 +1,45 @@
-var node = require('../index.js');
 var util = require('util');
-module.exports = node;
-node.verbosity = 100;
-
-var Stager = require('../lib/core/Stager').Stager;
-var stager = new Stager();
 var log = console.log;
 
-var stepWoop = {
-    id: 'woop',
-    cb: function() { log("woop woop!"); },
-    globals: { GLOB: 42 }
-};
+var ngc = require('../index.js');
+var Stager = ngc.Stager;
 
-var stepBeep = {
-    id: 'beep',
-    cb: function() { log("beep beep!"); },
-    myProp: 23
-};
+var node = ngc.getClient();
+var stager = ngc.getStager();
 
-var stepDurr = {
-    id: 'durr',
-    cb: function() { log("durr durr!"); }
-};
+module.exports = node;
+node.verbosity = 0;
 
-var stepBlah = {
-    id: 'blah',
-    cb: function() { log("blah blah!"); }
-};
 
-var stageMain = {
-    id: 'main',
-    steps: [ 'woop', 'beep' ]
-};
+stager
+    .next('stage 1', function() { console.log('aa'); return false; })
+    .next('stage 2')
+    .next('stage 3')
+    .gameover();
 
+
+var tmp, res;
+var stagerState = stager.getState();
+
+// Setup.
+node.setup('plot', stagerState);
+node.createPlayer({ id: 'testid' });
+node.game.start({ step: false });
+
+debugger
+
+// First step.
+res = node.game.step();
+
+
+// Step through.
+while (res) {
+    tmp = node.game.getCurrentStepObject();
+    console.log('Stage id: ', tmp.id);
+    res = node.game.step();
+}
+
+return;
 
 // Simple mode test:
 console.log();
@@ -67,7 +73,8 @@ console.log("Extraction of 'main':");
 console.log(util.inspect(stager.extractStage('main'), false, 4));
 console.log();
 console.log("Extraction of ['blah', 'durrurrurr', 'blah']:");
-console.log(util.inspect(stager.extractStage(['blah', 'durrurrurr', 'blah']), false, 4));
+console.log(util.inspect(stager.extractStage(['blah', 'durrurrurr', 'blah']),
+                         false, 4));
 console.log();
 
 /*
