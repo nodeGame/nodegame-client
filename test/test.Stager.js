@@ -17,13 +17,14 @@ node.verbosity = 0;
 stager.next({
     id: 'stage 1',
     cb: function() { console.log('stage 1') }
-}, '0..2');
+}, '0..1');
 
 // stager.endBlock();
 
 stager.stageBlock('0..1');
 
 stager.next('stage 2', '0..1');
+
 stager.step({
     id: 'step 2.1',
     cb: function() { console.log('step 2.1') }
@@ -43,6 +44,12 @@ stager.gameover();
 stager.setDefaultStepRule(ngc.stepRules.WAIT);
 
 // stager.endBlock();
+
+stager.finalize();
+
+console.log(stager.getSequence('hsteps'));
+
+return;
 
 debugger
 
