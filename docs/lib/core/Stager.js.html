@@ -1382,7 +1382,7 @@ onGameover.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.setDefaultGlobals: &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;defaultGlobals must be object.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">mixin</span><span class="p">)</span> <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultGlobals</span><span class="p">,</span> <span class="nx">defaultGlobals</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">mixin</span><span class="p">)</span> <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultGlobals</span><span class="p">,</span> <span class="nx">defaultGlobals</span><span class="p">);</span>
         <span class="k">else</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultGlobals</span> <span class="o">=</span> <span class="nx">defaultGlobals</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -1513,7 +1513,7 @@ onGameover.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.setDefaultProperties: &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;defaultProperties must be object.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">mixin</span><span class="p">)</span> <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultProperties</span><span class="p">,</span> <span class="nx">defaultProperties</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">mixin</span><span class="p">)</span> <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultProperties</span><span class="p">,</span> <span class="nx">defaultProperties</span><span class="p">);</span>
         <span class="k">else</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultProperties</span> <span class="o">=</span> <span class="nx">defaultProperties</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -1870,7 +1870,7 @@ then a step with the same name as the stage will be created.</li>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.addStage: stage id already &#39;</span> <span class="o">+</span>
-                            <span class="o">+</span> <span class="s1">&#39;existing: &#39;</span> <span class="o">+</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span>
+                            <span class="s1">&#39;existing: &#39;</span> <span class="o">+</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span>
                             <span class="s1">&#39;. Use extendStage to modify it.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -1958,7 +1958,7 @@ then a step with the same name as the stage will be created.</li>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">currentType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2008,7 +2008,7 @@ then a step with the same name as the stage will be created.</li>
 <p>Add step block inside stage block.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">beginBlock</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s2">&quot;__steps_&quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="p">});</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2052,7 +2052,7 @@ unique in the sequence.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">positions</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">stageName</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">stageName</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.next: stage.id must be string.&#39;</span><span class="p">);</span>
@@ -2351,7 +2351,6 @@ indefinitely.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">finalize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">currentItem</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">outermostBlock</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">blockIndex</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">sequence</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
@@ -2442,7 +2441,7 @@ different sequence from the Block hierarchy.</p>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2612,7 +2611,7 @@ different sequence from the Block hierarchy.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">=</span> <span class="s2">&quot;__step&quot;</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">beginBlock</span><span class="p">(</span><span class="nx">position</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2771,7 +2770,7 @@ redefines them.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">newCallback</span><span class="p">,</span> <span class="nx">oldCallback</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">newCallback</span><span class="p">,</span> <span class="nx">oldCallback</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStep: stepId must be a&#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39; string.&#39;</span><span class="p">);</span>
@@ -2859,6 +2858,8 @@ redefines them.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">attribute</span><span class="p">,</span> <span class="nx">newCallback</span><span class="p">,</span> <span class="nx">oldCallback</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stageId</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: stageId must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;a string.&#39;</span><span class="p">);</span>
@@ -2897,7 +2898,7 @@ redefines them.</p>
             <span class="k">if</span> <span class="p">(</span><span class="nx">update</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">attribute</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">update</span><span class="p">[</span><span class="nx">attribute</span><span class="p">].</span><span class="nx">extend</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">newCallback</span> <span class="o">=</span> <span class="nx">update</span><span class="p">[</span><span class="nx">attribute</span><span class="p">].</span><span class="nx">cb</span><span class="p">;</span>
-                    <span class="nx">oldCallback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">].</span><span class="nx">cb</span><span class="p">;</span>
+                    <span class="nx">oldCallback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stageId</span><span class="p">].</span><span class="nx">cb</span><span class="p">;</span>
                     <span class="nx">update</span><span class="p">[</span><span class="nx">attribute</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                         <span class="nx">oldCallback</span><span class="p">();</span>
                         <span class="nx">newCallback</span><span class="p">();</span>
@@ -3009,7 +3010,6 @@ redefines them.</p>
         <span class="kd">var</span> <span class="nx">seqIdx</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">seqObj</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">stepPrefix</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">gameOver</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
         <span class="k">switch</span> <span class="p">(</span><span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span> <span class="s1">&#39;hstages&#39;</span><span class="o">:</span>
@@ -3336,8 +3336,8 @@ The callback given here is used to determine the next stage.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">registerGeneralNext</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">func</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypError</span><span class="p">(</span><span class="s1">&#39;Stager.registerGeneralNext: &#39;</span> <span class="o">+</span>
-                               <span class="s1">&#39;func must be function or undefined.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.registerGeneralNext: &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;func must be function or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">generalNextFunction</span> <span class="o">=</span> <span class="nx">func</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -4149,7 +4149,7 @@ If the next item is not a Block it is returned, otherwise next is
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
