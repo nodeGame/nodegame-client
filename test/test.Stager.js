@@ -12,14 +12,30 @@ var stager = ngc.getStager();
 module.exports = node;
 node.verbosity = 0;
 
+// stager.stageBlock('0..1');
+
 stager.next({
     id: 'stage 1',
     cb: function() { console.log('stage 1') }
+}, '0..2');
+
+// stager.endBlock();
+
+stager.stageBlock('0..1');
+
+stager.next('stage 2', '0..1');
+stager.step({
+    id: 'step 2.1',
+    cb: function() { console.log('step 2.1') }
+});
+stager.step({
+    id: 'step 2.2',
+    cb: function() { console.log('step 2.2') }
 });
 
-stager.next('stage 2');
+stager.next('stage 3', '0..1');
 
-stager.next('stage 3');
+stager.endBlock();
 
 stager.gameover();
 
@@ -28,6 +44,7 @@ stager.setDefaultStepRule(ngc.stepRules.WAIT);
 
 // stager.endBlock();
 
+debugger
 
 var tmp, res;
 var stagerState = stager.getState();
