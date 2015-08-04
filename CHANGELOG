@@ -2,6 +2,7 @@
 
 ## 0.9.10
 
+ - Enhanced stager, builds blocks and randomize blocks, stages, and steps.
  - Optimized EventEmitter.
  - `#node.done()` is asynchronous to avoid calling multiple node.done() in the same step.
  - `#node.done()` evaluates the done handler immediately, and then eventually emit 'DONE'. This makes node.done and emit('DONE') different, because emit('DONE') does not evaluate the done handler any more.
