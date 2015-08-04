@@ -47,25 +47,50 @@ function decorateStager(stager) {
     // stager.endBlock();
 }
 
+function decorateStagerSimple(stager) {
+
+
+    stager.next({
+        id: 'stage 1',
+        cb: function() { console.log('stage 1') }
+    });
+
+    stager.next('stage 2');
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() { console.log('step 2.2') }
+    });
+
+    stager.next('stage 3');
+
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+    // stager.endBlock();
+}
+
 decorateStager(stager);
 
 stager.finalize();
 
-console.log(stager.getSequence('hsteps'));
+// console.log(stager.getSequence('hsteps'));
 
 stager.init()
 
-decorateStager(stager);
+decorateStagerSimple(stager);
 
 stager.finalize();
 
-console.log(stager.getSequence('hsteps'));
-
-
-return;
-
-
-debugger
+// console.log(stager.getSequence('hsteps'));
+// console.log(stager.blocks);
 
 var tmp, res;
 var stagerState = stager.getState();
