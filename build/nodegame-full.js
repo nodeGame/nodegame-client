@@ -5206,96 +5206,110 @@ if (!Array.prototype.indexOf) {
     /**
      * ## PARSE.range
      *
-     * Decodes strings into an array of integers
+     * Decodes semantic strings into an array of integers
      *
      * Let n, m  and l be integers, then the tokens of the string are
      * interpreted in the following way:
-     * - `*`: Any integer.
-     * - `n`: The integer `n`.
-     * - `begin`: The smallest integer in `available`.
-     * - `end`: The largest integer in `available`.
-     * - `<n`, `<=n`, `>n`, `>=n`: Any integer (strictly) smaller/larger than n.
-     * - `n..m`, `[n,m]`: Any integer between n and m (both inclusively).
-     * - `n..l..m`: Any i
-     * - `[n,m)`: Any integer between n (inclusively) and m (exclusively).
-     * - `(n,m]`: Any integer between n (exclusively) and m (inclusively).
-     * - `(n,m)`: Any integer between n and m (both exclusively).
-     * - `%n`: Divisible by n.
-     * - `%n = m`: Divisible with rest m.
-     * - `!`: Not.
-     * - `|`, `||`, `,`: Or.
-     * - `&`, `&&`: And.
+     *
+     *  - `*`: Any integer
+     *  - `n`: The integer `n`
+     *  - `begin`: The smallest integer in `available`
+     *  - `end`: The largest integer in `available`
+     *  - `<n`, `<=n`, `>n`, `>=n`: Any integer (strictly) smaller/larger than n
+     *  - `n..m`, `[n,m]`: Any integer between n and m (both inclusively)
+     *  - `n..l..m`: Any i
+     *  - `[n,m)`: Any integer between n (inclusively) and m (exclusively)
+     *  - `(n,m]`: Any integer between n (exclusively) and m (inclusively)
+     *  - `(n,m)`: Any integer between n and m (both exclusively)
+     *  - `%n`: Divisible by n
+     *  - `%n = m`: Divisible with rest m
+     *  - `!`: Logical not
+     *  - `|`, `||`, `,`: Logical or
+     *  - `&`, `&&`: Logical and
+     *
      * The elements of the resulting array are all elements of the `available`
      * array which satisfy the expression defined by `expr`.
      *
-     * Example:
-     * PARSE.range('2..5, >8 & !11', '[-2,12]');
-     *      // [2,3,4,5,9,10,12]
-     * PARSE.range('begin...end/2 | 3*end/4...3...end', '[0,40) & %2 = 1');
-     *      // [1,3,5,7,9,11,13,15,17,19,29,35] (end == 39)
-     * PARSE.range('<=19, 22, %5', '>6 & !>27');
-     *      // [7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,25]
-     * PARSE.range('*','(3,8) & !%4, 22, (10,12]');
-     *      // [5,6,7,11,12,22]
-     * PARSE.range('<4', {
-     *      begin: 0,
-     *      end: 21,
-     *      prev: 0,
-     *      cur: 1,
-     *      next: function() {
-     *          var temp = this.prev;
-     *          this.prev = this.cur;
-     *          this.cur += temp;
-     *          return this.cur;
-     *      },
-     *      isFinished: function() {
-     *          return this.cur + this.prev > this.end;
-     *      }
-     * });
-     *      // [5, 8, 13, 21]
+     * Examples:
      *
+     *   PARSE.range('2..5, >8 & !11', '[-2,12]'); // [2,3,4,5,9,10,12]
+     *
+     *   PARSE.range('begin...end/2 | 3*end/4...3...end', '[0,40) & %2 = 1');
+     *        // [1,3,5,7,9,11,13,15,17,19,29,35] (end == 39)
+     *
+     *   PARSE.range('<=19, 22, %5', '>6 & !>27');
+     *        // [7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,25]
+     *
+     *   PARSE.range('*','(3,8) & !%4, 22, (10,12]'); // [5,6,7,11,12,22]
+     *
+     *   PARSE.range('<4', {
+     *       begin: 0,
+     *       end: 21,
+     *       prev: 0,
+     *       cur: 1,
+     *       next: function() {
+     *           var temp = this.prev;
+     *           this.prev = this.cur;
+     *           this.cur += temp;
+     *           return this.cur;
+     *       },
+     *       isFinished: function() {
+     *           return this.cur + this.prev > this.end;
+     *       }
+     *   }); // [5, 8, 13, 21]
      *
      * @param {string} expr The string specifying the selection expression
-     * @param {mixed} available
-     *  - string to be interpreted according to the same rules as
-     *       `expr`
-     *  - array containing the available elements
-     *  - object providing functions next, isFinished and attributes begin, end
+     * @param {mixed} available Optional. If undefined `expr` is used. If:
+     *  - string: it is interpreted according to the same rules as `expr`;
+     *  - array: it is used as it is;
+     *  - object: provide functions next, isFinished and attributes begin, end
      *
      * @return {array} The array containing the specified values
+     *
+     * @see JSUS.eval
      */
-    // available can be an array, a string or a object.
     PARSE.range = function(expr, available) {
         var i, x;
-        var solution = [];
+        var solution;
         var begin, end, lowerBound, numbers;
         var invalidChars, invalidBeforeOpeningBracket, invalidDot;
 
-        if ("undefined" === typeof expr) {
-            return [];
-        }
+        solution = [];
+        if ('undefined' === typeof expr) return solution;
 
         // If no available numbers defined, assumes all possible are allowed.
-        if ("undefined" === typeof available) {
+        if ('undefined' === typeof available) {
             available = expr;
         }
-        if (!JSUS.isArray(available)) {
-            if ("string" !== typeof available) {
-                if ("function" !== typeof available.next ||
-                    "function" !== typeof available.isFinished ||
-                    "number"   !== typeof available.begin ||
-                    "number"   !== typeof available.end
-                )
-                throw new Error('PARSE.range: available wrong type');
+        else if (JSUS.isArray(available)) {
+            if (available.length === 0) return solution;
+            begin = Math.min.apply(null, available);
+            end = Math.max.apply(null, available);
+        }
+        else if ('object' === typeof available) {
+            if ('function' !== typeof available.next) {
+                throw new TypeError('PARSE.range: available.next must be ' +
+                                    'function.');
             }
-        }
-        else if (available.length === 0) {
-            return [];
-        }
+            if ('function' !== typeof available.isFinished) {
+                throw new TypeError('PARSE.range: available.isFinished must ' +
+                                    'be function.');
+            }
+            if ('number' !== typeof available.begin) {
+                throw new TypeError('PARSE.range: available.begin must be ' +
+                                    'number.');
+            }
+            if ('number' !== typeof available.end) {
+                throw new TypeError('PARSE.range: available.end must be ' +
+                                    'number.');
+            }
 
-        // If the availble points are also only given implicitly, compute set
-        // of available numbers by first guessing a bound.
-        if ("string" === typeof available) {
+            begin = available.begin;
+            end = available.end;
+        }
+        else if ('string' === typeof available) {
+            // If the availble points are also only given implicitly,
+            // compute set of available numbers by first guessing a bound.
             available = preprocessRange(available);
 
             numbers = available.match(/([-+]?\d+)/g);
@@ -5316,34 +5330,32 @@ if (!Array.prototype.indexOf) {
                     return this.value > this.end;
                 }
             });
-        }
-        if (JSUS.isArray(available)) {
             begin = Math.min.apply(null, available);
             end = Math.max.apply(null, available);
         }
         else {
-            begin = available.begin;
-            end = available.end;
+            throw new TypeError('PARSE.range: available must be string, ' +
+                                'array, object or undefined.');
         }
 
         // end -> maximal available value.
-        expr = expr.replace(/end/g, parseInt(end));
+        expr = expr.replace(/end/g, parseInt(end, 10));
 
         // begin -> minimal available value.
-        expr = expr.replace(/begin/g, parseInt(begin));
+        expr = expr.replace(/begin/g, parseInt(begin, 10));
 
         // Do all computations.
         expr = preprocessRange(expr);
 
         // Round all floats
         expr = expr.replace(/([-+]?\d+\.\d+)/g, function(match, p1) {
-            return parseInt(p1);
+            return parseInt(p1, 10);
         });
 
         // Validate expression to only contain allowed symbols.
         invalidChars = /[^ \*\d<>=!\|&\.\[\],\(\)\-\+%]/g;
         if (expr.match(invalidChars)) {
-            throw new Error('invalidChars:' + expr);
+            throw new Error('PARSE.range: invalid characters found: ' + expr);
         }
 
         // & -> && and | -> ||.
@@ -5392,9 +5404,11 @@ if (!Array.prototype.indexOf) {
         // * -> true.
         expr = expr.replace('*', 1);
 
+        // Remove spaces.
+        expr = expr.replace(/\s/g, '');
+
         // a, b -> (a) || (b)
         expr = expr.replace(/\)[,] *(!*)\(/g, ")||$1(");
-
 
         // Validating the expression before eval"ing it.
         invalidChars = /[^ \d<>=!\|&,\(\)\-\+%x\.]/g;
@@ -5404,19 +5418,20 @@ if (!Array.prototype.indexOf) {
         invalidDot = /\.[^\d]|[^\d]\./;
 
         if (expr.match(invalidChars)) {
-            throw new Error('PARSE.range: invalidChars:' + expr);
+            throw new Error('PARSE.range: invalid characters found: ' + expr);
         }
         if (expr.match(invalidBeforeOpeningBracket)) {
-            throw new Error('PARSE.range: invaludBeforeOpeningBracket:' + expr);
+            throw new Error('PARSE.range: invalid character before opending ' +
+                            'bracket found: ' + expr);
         }
         if (expr.match(invalidDot)) {
-            throw new Error('PARSE.range: invalidDot:' + expr);
+            throw new Error('PARSE.range: invalid dot found: ' + expr);
         }
 
         if (JSUS.isArray(available)) {
             for (i in available) {
                 if (available.hasOwnProperty(i)) {
-                    x = parseInt(available[i]);
+                    x = parseInt(available[i], 10);
                     if (JSUS.eval(expr.replace(/x/g, x))) {
                         solution.push(x);
                     }
@@ -5425,7 +5440,7 @@ if (!Array.prototype.indexOf) {
         }
         else {
             while (!available.isFinished()) {
-                x = parseInt(available.next());
+                x = parseInt(available.next(), 10);
                 if (JSUS.eval(expr.replace(/x/g, x))) {
                     solution.push(x);
                 }
@@ -5436,18 +5451,18 @@ if (!Array.prototype.indexOf) {
 
     function preprocessRange(expr) {
         var mult = function(match, p1, p2, p3) {
-            var n1 = parseInt(p1);
-            var n3 = parseInt(p3);
+            var n1 = parseInt(p1, 10);
+            var n3 = parseInt(p3, 10);
             return p2 == '*' ? n1*n3 : n1/n3;
         };
         var add = function(match, p1, p2, p3) {
-            var n1 = parseInt(p1);
-            var n3 = parseInt(p3);
+            var n1 = parseInt(p1, 10);
+            var n3 = parseInt(p3, 10);
             return p2 == '-' ? n1 - n3 : n1 + n3;
         };
         var mod = function(match, p1, p2, p3) {
-            var n1 = parseInt(p1);
-            var n3 = parseInt(p3);
+            var n1 = parseInt(p1, 10);
+            var n3 = parseInt(p3, 10);
             return n1 % n3;
         };
 
@@ -12441,7 +12456,6 @@ if (!Array.prototype.indexOf) {
             this.setState(stateObj);
         }
         else {
-            this.clear();
             this.init();
         }
 
@@ -12651,14 +12665,14 @@ if (!Array.prototype.indexOf) {
     /**
      * ### Stager.init
      *
-     * Resets sequence
-     *
-     * TODO: should blocks be cleared also ? Merge with clear?
+     * Clears the state of the stager and add a default block
      *
      * @return {Stager} this object
+     *
+     * @see Stager.clear
      */
     Stager.prototype.init = function() {
-        this.sequence = [];
+        this.clear();
         this.stageBlock('linear', { id: '__default_block' });
         return this;
     };
@@ -12908,7 +12922,7 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('Stager.setDefaultGlobals: ' +
                                 'defaultGlobals must be object.');
         }
-        if (mixin) J.mixin(this.defaultGlobals, defaultGlobals)
+        if (mixin) J.mixin(this.defaultGlobals, defaultGlobals);
         else this.defaultGlobals = defaultGlobals;
     };
 
@@ -12963,7 +12977,7 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('Stager.setDefaultProperties: ' +
                                 'defaultProperties must be object.');
         }
-        if (mixin) J.mixin(this.defaultProperties, defaultProperties)
+        if (mixin) J.mixin(this.defaultProperties, defaultProperties);
         else this.defaultProperties = defaultProperties;
     };
 
@@ -13128,7 +13142,7 @@ if (!Array.prototype.indexOf) {
 
         if (this.stages.hasOwnProperty(stage.id)) {
             throw new Error('Stager.addStage: stage id already ' +
-                            + 'existing: ' + stage.id +
+                            'existing: ' + stage.id +
                             '. Use extendStage to modify it.');
         }
 
@@ -13180,7 +13194,7 @@ if (!Array.prototype.indexOf) {
 
         this.defaultSteps[this.currentType] = [];
         return this;
-    }
+    };
 
     /**
      * ## Stager.handleStageAdd
@@ -13206,7 +13220,7 @@ if (!Array.prototype.indexOf) {
 
         // Add step block inside stage block.
         this.beginBlock('linear', { id: "__steps_" + name });
-    }
+    };
 
     /**
      * ### Stager.next
@@ -13225,7 +13239,7 @@ if (!Array.prototype.indexOf) {
      * @see Stager.addStage
      */
     Stager.prototype.next = function(stage, positions) {
-        var i, id, cb, stageName;
+        var id, cb, stageName;
         if ('object' === typeof stage) {
             if ('string' !== typeof stage.id) {
                 throw new TypeError('Stager.next: stage.id must be string.');
@@ -13373,7 +13387,6 @@ if (!Array.prototype.indexOf) {
     Stager.prototype.finalize = function() {
         var currentItem;
         var outermostBlock, type, blockIndex;
-        var sequence;
 
         if (this.finalized) {
             return this;
@@ -13438,8 +13451,7 @@ if (!Array.prototype.indexOf) {
 
         this.finalized = false;
         return this;
-    }
-
+    };
 
     //////////// Blocks
 
@@ -13525,7 +13537,7 @@ if (!Array.prototype.indexOf) {
         this.currentBlockType = "__step";
         this.beginBlock(position, options);
         return this;
-    }
+    };
 
     /**
      * ## Stager.stageBlock
@@ -13602,7 +13614,7 @@ if (!Array.prototype.indexOf) {
      * @see Stager.addStep
      */
     Stager.prototype.extendStep = function(stepId, update) {
-        var newCallback, oldCallback;
+        var newCallback, oldCallback, attribute;
         if ('string' !== typeof stepId) {
             throw new TypeError('Stager.extendStep: stepId must be a' +
                                 ' string.');
@@ -13631,7 +13643,7 @@ if (!Array.prototype.indexOf) {
 
         for (attribute in update) {
             if (update.hasOwnProperty(attribute)) {
-                if (update[attribute].extend) {
+                if (update[attribute] && update[attribute].extend) {
                     newCallback = update[attribute].cb;
                     oldCallback = this.steps[stepId].cb;
                     update[attribute] = function() {
@@ -13666,6 +13678,8 @@ if (!Array.prototype.indexOf) {
      * @see Stager.addStage
      */
     Stager.prototype.extendStage = function(stageId, update) {
+        var attribute, newCallback, oldCallback;
+
         if ('string' !== typeof stageId) {
             throw new TypeError('Stager.extendStage: stageId must be ' +
                                 'a string.');
@@ -13702,9 +13716,9 @@ if (!Array.prototype.indexOf) {
 
         for (attribute in update) {
             if (update.hasOwnProperty(attribute)) {
-                if (update[attribute].extend) {
+                if (update[attribute] && update[attribute].extend) {
                     newCallback = update[attribute].cb;
-                    oldCallback = this.steps[stepId].cb;
+                    oldCallback = this.steps[stageId].cb;
                     update[attribute] = function() {
                         oldCallback();
                         newCallback();
@@ -13765,7 +13779,6 @@ if (!Array.prototype.indexOf) {
         var seqIdx;
         var seqObj;
         var stepPrefix;
-        var gameOver = false;
 
         switch (format) {
         case 'hstages':
@@ -13982,8 +13995,8 @@ if (!Array.prototype.indexOf) {
      */
     Stager.prototype.registerGeneralNext = function(func) {
         if (func !== null && 'function' !== typeof func) {
-            throw new TypError('Stager.registerGeneralNext: ' +
-                               'func must be function or undefined.');
+            throw new TypeError('Stager.registerGeneralNext: ' +
+                                'func must be function or undefined.');
         }
         this.generalNextFunction = func;
     };
@@ -14397,7 +14410,7 @@ if (!Array.prototype.indexOf) {
         this.finalized = false;
 
         return this;
-    }
+    };
 
     // ## Closure
 })(
