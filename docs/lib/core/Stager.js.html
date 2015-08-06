@@ -33,9 +33,6 @@
       <div class="heading h2">
         <a href="#stager-methods">Stager methods</a>
       </div>
-      <div class="heading h3">
-        <a href="#init---clear">Init / Clear</a>
-      </div>
       <div class="heading h2">
         <a href="#stager.clear">Stager.clear</a>
       </div>
@@ -89,6 +86,12 @@
       </div>
       <div class="heading h3">
         <a href="#stager.init">Stager.init</a>
+      </div>
+      <div class="heading h2">
+        <a href="#stager.finalize">Stager.finalize</a>
+      </div>
+      <div class="heading h2">
+        <a href="#stager.reset">Stager.reset</a>
       </div>
       <div class="heading h3">
         <a href="#stager.setstate">Stager.setState</a>
@@ -161,12 +164,6 @@
       </div>
       <div class="heading h3">
         <a href="#stager.gameover">Stager.gameover</a>
-      </div>
-      <div class="heading h2">
-        <a href="#stager.finalize">Stager.finalize</a>
-      </div>
-      <div class="heading h2">
-        <a href="#stager.reset">Stager.reset</a>
       </div>
       <div class="heading h2">
         <a href="#stager.beginblock">Stager.beginBlock</a>
@@ -387,13 +384,10 @@ MIT Licensed</p>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="init---clear">
-  <h3>
-    <a href="#init---clear" class="pilcrow">&#182;</a>
-    Init / Clear
-  </h3>
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
-
+<p>Init, clear, finalize, reset..</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
@@ -877,6 +871,135 @@ stage and a step with the same name as the stage otherwise.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
+<p>Finalize.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.finalize">
+  <h2>
+    <a href="#stager.finalize" class="pilcrow">&#182;</a>
+    Stager.finalize
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Builds stage and step sequence from the Block hieararchy</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">Stager</span>
+      <span>Reference to the current instance for method chaining</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">finalize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">currentItem</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">outermostBlock</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">blockIndex</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">endAllBlocks</span><span class="p">();</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">blockIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">blockIndex</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="o">++</span><span class="nx">blockIndex</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">blockIndex</span><span class="p">].</span><span class="nx">finalize</span><span class="p">();</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+</div>
+<p>Do we really need this ???.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">type</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">steps</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span>
+                <span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">outermostBlock</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+</div>
+<p>Create sequence.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">currentItem</span> <span class="o">=</span> <span class="nx">outermostBlock</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+        <span class="k">while</span> <span class="p">(</span><span class="o">!!</span><span class="nx">currentItem</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">currentItem</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;__stage&quot;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">currentItem</span><span class="p">.</span><span class="nx">item</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">currentItem</span><span class="p">.</span><span class="nx">type</span><span class="p">].</span><span class="nx">steps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span>
+                    <span class="nx">currentItem</span><span class="p">.</span><span class="nx">item</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">currentItem</span> <span class="o">=</span> <span class="nx">outermostBlock</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.reset">
+  <h2>
+    <a href="#stager.reset" class="pilcrow">&#182;</a>
+    Stager.reset
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Undoes Stager.finalize</p>
+
+<p>Allows to call Stager.finalize again to build a potentially
+different sequence from the Block hierarchy.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reset</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">blockIndex</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">blockIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">blockIndex</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="o">++</span><span class="nx">blockIndex</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">blockIndex</span><span class="p">].</span><span class="nx">reset</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">type</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">steps</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+</div>
 <p>Setters, Getters.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>
@@ -937,7 +1060,7 @@ the state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Clear previous state:</p>
         </td>
@@ -956,7 +1079,7 @@ the state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Add steps:</p>
         </td>
@@ -970,7 +1093,7 @@ the state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Add stages:
 first, handle all non-aliases
@@ -988,7 +1111,7 @@ first, handle all non-aliases
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>second, handle all aliases
 (key of <code>stages</code> entry is different from <code>id</code> field of
@@ -1006,7 +1129,7 @@ its value)</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Add sequence blocks:</p>
         </td>
@@ -1020,7 +1143,7 @@ its value)</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>switch (seqObj.type) {
 case 'gameover':
@@ -1033,7 +1156,7 @@ break;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>case 'plain':
 if (!this.next(seqObj.id)) {
@@ -1048,7 +1171,7 @@ break;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>case 'repeat':
 if (!this.repeat(seqObj.id, seqObj.num)) {
@@ -1062,7 +1185,7 @@ break;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>case 'loop':
 if (!this.loop(seqObj.id, seqObj.cb)) {
@@ -1077,7 +1200,7 @@ break;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>case 'doLoop':
 if (!this.doLoop(seqObj.id, seqObj.cb)) {
@@ -1090,7 +1213,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>}
 break;</p>
@@ -1101,7 +1224,7 @@ break;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>default:
 // Unknown type:
@@ -1114,7 +1237,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>}</p>
         </td>
@@ -1125,7 +1248,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Set general next-decider:</p>
         </td>
@@ -1137,7 +1260,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>Set specific next-deciders:</p>
         </td>
@@ -1151,7 +1274,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>Set default step-rule:</p>
         </td>
@@ -1163,7 +1286,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>Set default globals:</p>
         </td>
@@ -1175,7 +1298,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>Set default properties:</p>
         </td>
@@ -1187,7 +1310,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Set onInit:</p>
         </td>
@@ -1199,7 +1322,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>Set onGameover:</p>
         </td>
@@ -1208,7 +1331,6 @@ throw new Error('Stager.setState: invalid' +
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1223,12 +1345,13 @@ throw new Error('Stager.setState: invalid' +
 </div>
 
   </div>
-  <div class="body"><p>Returns a copy of the internal state of the Stager</p>
+  <div class="body"><p>Finalizes the stager and returns a copy of internal state</p>
 
-<p>Fields of returned object:
-steps, stages, sequence, generalNextFunction, nextFunctions,
+<p>Fields of returned object:</p>
+
+<p>steps, stages, sequence, generalNextFunction, nextFunctions,
 defaultStepRule, defaultGlobals, defaultProperties, onInit,
-onGameover.</p>
+onGameover, blocks.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
@@ -1239,7 +1362,11 @@ onGameover.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Stager.setState
+      <span class="dox_type">Stager.setState</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.finalize
   </span>
     </div>
   </div>
@@ -1280,14 +1407,18 @@ onGameover.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">steprule</span>
+      <span class="dox_tag_name">stepRule</span>
       <span class="dox_type">function</span>
       <span>Optional. The step-rule function.
-  If not given, the initial default is restored.</span>
+  If undefined, the <code>SOLO</code> rule is set.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Stager.defaultStepRule
+      <span class="dox_type">Stager.defaultStepRule</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">stepRules
   </span>
     </div>
   </div>
@@ -1309,7 +1440,7 @@ onGameover.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>Initial default.</p>
         </td>
@@ -1357,7 +1488,7 @@ onGameover.</p>
 </div>
 
   </div>
-  <div class="body"><p>Sets the default globals</p>
+  <div class="body"><p>Sets/mixes in the default globals</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1366,6 +1497,13 @@ onGameover.</p>
       <span class="dox_type">object</span>
       <span>The map of default global
   variables</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">mixin</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. If TRUE, parameter defaultGlobals
+   will be mixed-in with current globals, otherwise it will replace
+     it. Default FALSE.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -1495,6 +1633,13 @@ onGameover.</p>
       <span class="dox_tag_name">defaultProperties</span>
       <span class="dox_type">object</span>
       <span>The map of default properties</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">mixin</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. If TRUE, parameter defaulProperties
+   will be mixed-in with current globals, otherwise it will replace
+     it. Default FALSE.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -1758,9 +1903,9 @@ onGameover.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
-<p>//// Add stages, steps.</p>
+<p>Add stages, steps.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
@@ -1861,6 +2006,10 @@ then a step with the same name as the stage will be created.</li>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">unique</span><span class="p">;</span>
 
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.addStage: stage must be object.&#39;</span><span class="p">)</span>
+        <span class="p">}</span>
+
         <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">&amp;&amp;</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.addStage: stage must have &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;either a steps or a cb property.&#39;</span><span class="p">);</span>
@@ -1882,14 +2031,13 @@ then a step with the same name as the stage will be created.</li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
+  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
 </div>
 <p>Step.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">stage</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="nx">id</span><span class="o">:</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
                 <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span> <span class="p">]</span>
             <span class="p">};</span>
@@ -1899,20 +2047,28 @@ then a step with the same name as the stage will be created.</li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
 </div>
 <p>Stage.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">else</span> <span class="p">{</span>
-
-            <span class="nx">res</span> <span class="o">=</span> <span class="nx">checkStageValidity</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stage</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">else</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+</div>
+<p>TODO: merge with requirements above.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">res</span> <span class="o">=</span> <span class="nx">checkStageValidity</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stage</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.addStage: invalid stage &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;received: &#39;</span> <span class="o">+</span> <span class="nx">res</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">;</span>
         <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1941,6 +2097,12 @@ then a step with the same name as the stage will be created.</li>
       <span class="dox_type">string</span>
       <span>Optional. Positions within the
      enclosing Block that this step can occupy.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">Stager</span>
+      <span>Reference to the current instance for method chaining</span>
     </div>
   </div>
 </div>
@@ -1986,7 +2148,7 @@ then a step with the same name as the stage will be created.</li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
+  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
 <p>Begin stage block.</p>
         </td>
@@ -2005,7 +2167,7 @@ then a step with the same name as the stage will be created.</li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
+  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
 </div>
 <p>Add step block inside stage block.</p>
         </td>
@@ -2089,7 +2251,7 @@ unique in the sequence.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
 </div>
 <p>Ste: commented out.
 if (cb) this.step({id: id, cb: cb}, '0');</p>
@@ -2100,7 +2262,7 @@ if (cb) this.step({id: id, cb: cb}, '0');</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
+  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
 </div>
 <p>TODO: do we need this also ?
 this.defaultSteps[id] = [id];</p>
@@ -2328,130 +2490,9 @@ indefinitely.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
+  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
 </div>
-<p>////////// Finalize</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="stager.finalize">
-  <h2>
-    <a href="#stager.finalize" class="pilcrow">&#182;</a>
-    Stager.finalize
-  </h2>
-</div>
-
-  </div>
-  <div class="body"><p>Builds stage and step sequence from the Block hieararchy</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">finalize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">currentItem</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">outermostBlock</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">blockIndex</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">endAllBlocks</span><span class="p">();</span>
-
-        <span class="k">for</span> <span class="p">(</span><span class="nx">blockIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">blockIndex</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-            <span class="o">++</span><span class="nx">blockIndex</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">blockIndex</span><span class="p">].</span><span class="nx">finalize</span><span class="p">();</span>
-        <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
-</div>
-<p>Do we really need this ???.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">type</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">steps</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span>
-                <span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
-        <span class="nx">outermostBlock</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
-</div>
-<p>Create sequence.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">currentItem</span> <span class="o">=</span> <span class="nx">outermostBlock</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
-        <span class="k">while</span> <span class="p">(</span><span class="o">!!</span><span class="nx">currentItem</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">currentItem</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;__stage&quot;</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">currentItem</span><span class="p">.</span><span class="nx">item</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">currentItem</span><span class="p">.</span><span class="nx">type</span><span class="p">].</span><span class="nx">steps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span>
-                    <span class="nx">currentItem</span><span class="p">.</span><span class="nx">item</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="nx">currentItem</span> <span class="o">=</span> <span class="nx">outermostBlock</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
-        <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="stager.reset">
-  <h2>
-    <a href="#stager.reset" class="pilcrow">&#182;</a>
-    Stager.reset
-  </h2>
-</div>
-
-  </div>
-  <div class="body"><p>Undoes Stager.finalize</p>
-
-<p>Allows to call Stager.finalize again to build a potentially
-different sequence from the Block hierarchy.</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reset</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">blockIndex</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">blockIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">blockIndex</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-            <span class="o">++</span><span class="nx">blockIndex</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">blockIndex</span><span class="p">].</span><span class="nx">reset</span><span class="p">();</span>
-        <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">type</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">steps</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
-</div>
-<p>////////// Blocks</p>
+<p>Block operations.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
@@ -2475,7 +2516,23 @@ different sequence from the Block hierarchy.</p>
       <span class="dox_tag_name">positions</span>
       <span class="dox_type">string</span>
       <span>Optional. Positions within the
-      enclosing Block that this block can occupy.</span>
+   enclosing Block that this block can occupy.</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>for the Block constructor</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">Stager</span>
+      <span>Reference to the current instance for method chainining</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Block
+  </span>
     </div>
   </div>
 </div>
@@ -2557,7 +2614,6 @@ different sequence from the Block hierarchy.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">endBlocks</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
-
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">endBlock</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
         <span class="p">}</span>
@@ -2723,7 +2779,7 @@ different sequence from the Block hierarchy.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
+  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
 </div>
 <p>/////////// Extend, Modify</p>
         </td>
@@ -2966,7 +3022,7 @@ redefines them.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
+  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
 </div>
 <p>/// Get Info out.</p>
         </td>
@@ -3188,7 +3244,7 @@ stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
+  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
 </div>
 <p>undefined (default) -> true</p>
         </td>
@@ -3206,7 +3262,7 @@ stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
+  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
 </div>
 <p>Add step objects:</p>
         </td>
@@ -3221,7 +3277,7 @@ stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
+  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
 </div>
 <p>Add stage object:</p>
         </td>
@@ -3232,7 +3288,7 @@ stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
+  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
 </div>
 <p>If given id is alias, also add alias:</p>
         </td>
@@ -3242,7 +3298,7 @@ stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
+  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
 </div>
 <p>Add mini-sequence:</p>
         </td>
@@ -3299,7 +3355,7 @@ stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
+  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
 </div>
 <p>/// Flexible Mode</p>
         </td>
@@ -3441,7 +3497,7 @@ Available only when nodegame is executed in <em>flexible</em> mode.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
+  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>checkStepValidity</p>
@@ -3483,7 +3539,7 @@ Optionally, checks also for id uniqueness.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">checkStepValidity</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">unique</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">step</span><span class="p">)</span>  <span class="k">return</span> <span class="s1">&#39;missing step object&#39;</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">)</span>  <span class="k">return</span> <span class="s1">&#39;step must be object&#39;</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;missing ID&#39;</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;missing callback&#39;</span><span class="p">;</span>
 
@@ -3498,7 +3554,7 @@ Optionally, checks also for id uniqueness.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
+  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>checkStageValidity</p>
@@ -3535,7 +3591,8 @@ Checks for referenced step existence.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">checkStageValidity</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">unique</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;missing stage object&#39;</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;stage must be object&#39;</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;missing ID&#39;</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">||</span> <span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="s1">&#39;missing &quot;steps&quot; array&#39;</span><span class="p">;</span>
@@ -3550,11 +3607,11 @@ Checks for referenced step existence.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
+  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
 </div>
 <p>Check whether the all referenced steps exist.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="s1">&#39;unknown step &quot;&#39;</span> <span class="o">+</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">;</span>
             <span class="p">}</span>
@@ -3566,7 +3623,7 @@ Checks for referenced step existence.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
+  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>handleAlias</p>
@@ -3624,7 +3681,7 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
+  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
 </div>
 <p>Check ID validity:</p>
         </td>
@@ -3642,7 +3699,7 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
+  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
 </div>
 <p>Check uniqueness:</p>
         </td>
@@ -3658,7 +3715,7 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
+  <a class="pilcrow" href="#section-116" id="section-116">&#182;</a>
 </div>
 <p>Add alias:</p>
         </td>
@@ -3962,7 +4019,7 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-128" id="section-128">&#182;</a>
+  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
 </div>
 <p>Cache the current state before finalization for later reset.</p>
         </td>
@@ -3976,7 +4033,7 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
+  <a class="pilcrow" href="#section-130" id="section-130">&#182;</a>
 </div>
 <p>Range in which the indeces must be.</p>
         </td>
@@ -3988,7 +4045,7 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-130" id="section-130">&#182;</a>
+  <a class="pilcrow" href="#section-131" id="section-131">&#182;</a>
 </div>
 <p>Accounting for already taken positions.</p>
         </td>
@@ -3998,7 +4055,7 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-131" id="section-131">&#182;</a>
+  <a class="pilcrow" href="#section-132" id="section-132">&#182;</a>
 </div>
 <p>Parseing all of the position strings into arrays.</p>
         </td>
@@ -4014,7 +4071,7 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-132" id="section-132">&#182;</a>
+  <a class="pilcrow" href="#section-133" id="section-133">&#182;</a>
 </div>
 <p>Assigning positions.</p>
         </td>
@@ -4024,7 +4081,7 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-133" id="section-133">&#182;</a>
+  <a class="pilcrow" href="#section-134" id="section-134">&#182;</a>
 </div>
 <p>Select entry with least possibilities of where to go.</p>
         </td>
@@ -4037,7 +4094,7 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-134" id="section-134">&#182;</a>
+  <a class="pilcrow" href="#section-135" id="section-135">&#182;</a>
 </div>
 <p>No valid position specified.</p>
         </td>
@@ -4050,7 +4107,7 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-135" id="section-135">&#182;</a>
+  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
 </div>
 <p>Chose position randomly among possibilities.</p>
         </td>
@@ -4063,7 +4120,7 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
+  <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
 </div>
 <p>Adjust possible positions of remaining entries.</p>
         </td>
