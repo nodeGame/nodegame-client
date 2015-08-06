@@ -2072,7 +2072,7 @@ then a step with the same name as the stage will be created.</li>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.addStage: stage must have &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;either a steps or a cb property.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.addStage: stage.steps must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;array or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
@@ -2149,7 +2149,8 @@ function. A step will be created with the same name of the stage.</p>
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">stage</span>
-      <span class="dox_type">various</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">object</span>
       <span>A valid step object or the stepId string.</span>
     </div>
     <div class="dox_tag_detail">
@@ -2171,7 +2172,7 @@ function. A step will be created with the same name of the stage.</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">step</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="nx">id</span><span class="o">:</span> <span class="nx">step</span><span class="p">,</span>
-                <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){}</span>
+                <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{}</span>
             <span class="p">};</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">step</span><span class="p">);</span>
@@ -2196,10 +2197,9 @@ function. A step will be created with the same name of the stage.</p>
 </div>
 
   </div>
-  <div class="body"><p>Adds stage block to sequence</p>
+  <div class="body"><p>Adds a stage block to sequence</p>
 
-<p>The <code>id</code> parameter must have the form 'stageID' or
-'stageID AS alias'.
+<p>The <code>id</code> parameter must have the form 'stageID' or 'stageID AS alias'.
 stageID must be a valid stage and it (or alias if given) must be
 unique in the sequence.</p>
   </div>
@@ -2208,6 +2208,7 @@ unique in the sequence.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">id</span>
       <span class="dox_type">string</span>
+      <span class="dox_type">object</span>
       <span>A valid stage name with optional alias</span>
     </div>
     <div class="dox_tag_title">Returns</div>
