@@ -969,7 +969,7 @@ stage and a step with the same name as the stage otherwise.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
-<p>Do we really need this ???.</p>
+<p>TODO: Do we really need this ???.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">type</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultSteps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
@@ -3767,7 +3767,8 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
                 <span class="nx">cb</span><span class="o">:</span> <span class="nx">cb</span> <span class="o">||</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentStepObj</span><span class="p">().</span><span class="nx">id</span><span class="p">);</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">done</span><span class="p">();</span>
-                <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nx">alias</span><span class="o">:</span> <span class="nx">alias</span>
             <span class="p">});</span>
         <span class="p">}</span></pre></div>
         </td>

@@ -18,6 +18,57 @@ if ('undefined' === typeof console) {
     this.console = {log: function() {}};
 }
 
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
+// Global_Objects/Date/now
+if (!Date.now) {
+    Date.now = function now() {
+        return new Date().getTime();
+    };
+}
+
+// http://stackoverflow.com/questions/2790001/
+// fixing-javascript-array-functions-in-internet-explorer-indexof-foreach-etc
+if (!('indexOf' in Array.prototype)) {
+    Array.prototype.indexOf= function(find, i /*opt*/) {
+        if (i===undefined) i= 0;
+        if (i<0) i+= this.length;
+        if (i<0) i= 0;
+        for (var n= this.length; i<n; i++)
+            if (i in this && this[i]===find)
+                return i;
+        return -1;
+    };
+}
+if (!('lastIndexOf' in Array.prototype)) {
+    Array.prototype.lastIndexOf= function(find, i /*opt*/) {
+        if (i===undefined) i= this.length-1;
+        if (i<0) i+= this.length;
+        if (i>this.length-1) i= this.length-1;
+        for (i++; i-->0;) /* i++ because from-argument is sadly inclusive */
+            if (i in this && this[i]===find)
+                return i;
+        return -1;
+    };
+}
+
+if (typeof Object.create !== 'function') {
+    Object.create = (function() {
+        var Temp = function() {};
+        return function (prototype) {
+            if (arguments.length > 1) {
+                throw Error('Second argument not supported');
+            }
+            if (typeof prototype != 'object') {
+                throw TypeError('Argument must be an object');
+            }
+            Temp.prototype = prototype;
+            var result = new Temp();
+            Temp.prototype = null;
+            return result;
+        };
+    })();
+}
+
 /**
    JSON2
    http://www.JSON.org/json2.js
@@ -12634,7 +12685,7 @@ if (!Array.prototype.indexOf) {
         /**
          * ### Stager.log
          *
-         * Default stdout output. Override to redirect.
+         * Default standard output. Override to redirect.
          */
         this.log = console.log;
 
@@ -12644,6 +12695,10 @@ if (!Array.prototype.indexOf) {
                 throw new TypeError('Stager: stateObj must be object.');
             }
             this.setState(stateObj);
+        }
+        else {
+            // Add first block.
+            this.stageBlock('linear', { id: '__default_block' });
         }
     }
 
@@ -12716,7 +12771,7 @@ if (!Array.prototype.indexOf) {
                 this.blocks[blockIndex].finalize();
         }
 
-        // Do we really need this ???.
+        // TODO: Do we really need this ???.
         for (type in this.defaultSteps) {
             if (this.defaultSteps.hasOwnProperty(type)) {
                 this.stages[type].steps = J.clone(
@@ -13474,8 +13529,17 @@ if (!Array.prototype.indexOf) {
     /**
      * ## Stager.handleStageAdd
      *
-     * TODO: document
+     * Performs several meta operations necessary to add a stage block
      *
+     * Operations:
+     *
+     *  - Ends any unclosed blocks.
+     *  - Begin a new enclosing block.
+     *  - Adds a stage block.
+     *  - Adds a steps block.
+     *
+     * @param {object} stage The stage to add containing its type
+     * @param {string} positions Optional. The allowed positions for the stage
      */
     Stager.prototype.handleStageAdd = function(stage, positions) {
         var name;
@@ -13640,7 +13704,7 @@ if (!Array.prototype.indexOf) {
         return false;
     };
 
-    ///////////// Extend, Modify
+    // Extend, Modify
 
 
     /**
@@ -13807,8 +13871,7 @@ if (!Array.prototype.indexOf) {
         }
     };
 
-    ///// Get Info out.
-
+    // Get Info out.
 
     /**
      * ### Stager.getSequence
@@ -13933,8 +13996,6 @@ if (!Array.prototype.indexOf) {
         return result;
     };
 
-
-
     /**
      * ### Stager.extractStage
      *
@@ -14026,7 +14087,7 @@ if (!Array.prototype.indexOf) {
     };
 
 
-    ///// Flexible Mode
+    // Flexible Mode
 
     /**
      * ### Stager.registerGeneralNext
@@ -14209,7 +14270,8 @@ if (!Array.prototype.indexOf) {
                 cb: cb || function() {
                     this.node.log(this.getCurrentStepObj().id);
                     this.node.done();
-                }
+                },
+                alias: alias
             });
         }
 
@@ -14323,15 +14385,13 @@ if (!Array.prototype.indexOf) {
      */
     Block.prototype.add = function(item, positions) {
         if (this.finalized) {
-            throw new Error("Block.add: Cannot add items after" +
-                            " finalization.");
+            throw new Error('Block.add: stager already finalized, cannot add ' +
+                            'further items.');
         }
 
-        if ("undefined" === typeof positions ||
-            positions === "linear") {
-                this.takenPositions.push(this.numberOfItems);
-                this.items[this.numberOfItems] = item;
-
+        if ('undefined' === typeof positions || positions === 'linear') {
+            this.takenPositions.push(this.numberOfItems);
+            this.items[this.numberOfItems] = item;
         }
         else {
             this.unfinishedEntries.push({
@@ -34148,7 +34208,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    VisualRound.version = '0.2.0';
+    VisualRound.version = '0.2.1';
     VisualRound.description = 'Display number of current round and/or stage.' +
         'Can also display countdown and total number of rounds and/or stages.';
 
@@ -34525,7 +34585,9 @@ if (!Array.prototype.indexOf) {
             this.curRound = node.player.stage.round;
 
             if (stage) {
-                this.curStage = idseq.indexOf(stage.id)+1;
+                // TODO: Check the change. It was:
+                // this.curStage = idseq.indexOf(stage.id)+1;
+                this.curStage = node.player.stage.stage;
                 this.totRound = this.stager.sequence[this.curStage -1].num || 1;
             }
             else {

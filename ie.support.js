@@ -18,6 +18,57 @@ if ('undefined' === typeof console) {
     this.console = {log: function() {}};
 }
 
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
+// Global_Objects/Date/now
+if (!Date.now) {
+    Date.now = function now() {
+        return new Date().getTime();
+    };
+}
+
+// http://stackoverflow.com/questions/2790001/
+// fixing-javascript-array-functions-in-internet-explorer-indexof-foreach-etc
+if (!('indexOf' in Array.prototype)) {
+    Array.prototype.indexOf= function(find, i /*opt*/) {
+        if (i===undefined) i= 0;
+        if (i<0) i+= this.length;
+        if (i<0) i= 0;
+        for (var n= this.length; i<n; i++)
+            if (i in this && this[i]===find)
+                return i;
+        return -1;
+    };
+}
+if (!('lastIndexOf' in Array.prototype)) {
+    Array.prototype.lastIndexOf= function(find, i /*opt*/) {
+        if (i===undefined) i= this.length-1;
+        if (i<0) i+= this.length;
+        if (i>this.length-1) i= this.length-1;
+        for (i++; i-->0;) /* i++ because from-argument is sadly inclusive */
+            if (i in this && this[i]===find)
+                return i;
+        return -1;
+    };
+}
+
+if (typeof Object.create !== 'function') {
+    Object.create = (function() {
+        var Temp = function() {};
+        return function (prototype) {
+            if (arguments.length > 1) {
+                throw Error('Second argument not supported');
+            }
+            if (typeof prototype != 'object') {
+                throw TypeError('Argument must be an object');
+            }
+            Temp.prototype = prototype;
+            var result = new Temp();
+            Temp.prototype = null;
+            return result;
+        };
+    })();
+}
+
 /**
    JSON2
    http://www.JSON.org/json2.js
