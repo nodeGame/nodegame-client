@@ -79,6 +79,12 @@ function decorateStagerSimple(stager) {
 
 decorateStager(stager);
 
+debugger
+
+stager.finalize();
+
+stager.reset();
+
 stager.finalize();
 
 // console.log(stager.getSequence('hsteps'));

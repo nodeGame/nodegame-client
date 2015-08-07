@@ -12672,15 +12672,28 @@ if (!Array.prototype.indexOf) {
          */
         this.currentBlockType = "__default";
 
+//         /**
+//          * ### Stager.defaultSteps
+//          *
+//          * Holds the default steps of each stage
+//          *
+//          * Default steps are either none if any step is defined for that
+//          * stage and a step with the same name as the stage otherwise.
+//          */
+//         this.defaultSteps = {};
+
+
         /**
-         * ### Stager.defaultSteps
+         * ### Stager.toSkip
          *
-         * Holds the default steps of each stage
-         *
-         * Default steps are either none if any step is defined for that
-         * stage and a step with the same name as the stage otherwise.
+         * List of stages and steps to skip when building the sequence.
          */
-        this.defaultSteps = {};
+        this.toSkip = {
+
+            stages: {},
+
+            steps: {}
+        };
 
         /**
          * ### Stager.log
@@ -12729,7 +12742,7 @@ if (!Array.prototype.indexOf) {
         this.finalized = false;
         this.currentType = "__default";
         this.currentBlockType = "__default";
-        this.defaultSteps = {};
+        // this.defaultSteps = {};
         return this;
     };
 
@@ -12759,37 +12772,34 @@ if (!Array.prototype.indexOf) {
      */
     Stager.prototype.finalize = function() {
         var currentItem;
-        var outermostBlock, type, blockIndex;
+        var outermostBlock, blockIndex;
+debugger
+        if (this.finalized) return this;
 
-        if (this.finalized) {
-            return this;
-        }
+        // Ends and finalize all blocks.
         this.endAllBlocks();
-
-        for (blockIndex = 0; blockIndex < this.blocks.length;
-            ++blockIndex) {
-                this.blocks[blockIndex].finalize();
+        for (blockIndex = 0; blockIndex < this.blocks.length; ++blockIndex) {
+            this.blocks[blockIndex].finalize();
         }
 
         // TODO: Do we really need this ???.
-        for (type in this.defaultSteps) {
-            if (this.defaultSteps.hasOwnProperty(type)) {
-                this.stages[type].steps = J.clone(
-                    this.defaultSteps[type]
-                );
-            }
-        }
+//         for (type in this.defaultSteps) {
+//             if (this.defaultSteps.hasOwnProperty(type)) {
+//                 this.stages[type].steps = J.clone(
+//                     this.defaultSteps[type]
+//                 );
+//             }
+//         }
 
         outermostBlock = this.blocks[0];
         // Create sequence.
         currentItem = outermostBlock.next();
         while (!!currentItem) {
             if (currentItem.type === "__stage") {
-                    this.sequence.push(currentItem.item);
+                this.sequence.push(currentItem.item);
             }
             else {
-                this.stages[currentItem.type].steps.push(
-                    currentItem.item);
+                this.stages[currentItem.type].steps.push(currentItem.item);
             }
             currentItem = outermostBlock.next();
         }
@@ -12820,11 +12830,11 @@ if (!Array.prototype.indexOf) {
             this.blocks[blockIndex].reset();
         }
         this.sequence = [];
-        for (type in this.defaultSteps) {
-            if (this.defaultSteps.hasOwnProperty(type)) {
-                this.stages[type].steps = this.defaultSteps[type];
-            }
-        }
+//         for (type in this.defaultSteps) {
+//             if (this.defaultSteps.hasOwnProperty(type)) {
+//                 this.stages[type].steps = this.defaultSteps[type];
+//             }
+//         }
 
         this.finalized = false;
         return this;
@@ -13367,7 +13377,7 @@ if (!Array.prototype.indexOf) {
             item: step.id
         }, positions);
 
-        this.defaultSteps[this.currentType] = [];
+        // this.defaultSteps[this.currentType] = [];
         return this;
     };
 
@@ -13845,10 +13855,10 @@ if (!Array.prototype.indexOf) {
     /**
      * ### Stager.skip
      *
-     * Removes one stage from the sequence.
+     * Removes one stage from the sequence, but keeps it in the list of stages
      *
-     * @param {string} stageId The id of the stage to remove from
-     *   sequence.
+     * @param {string} stageId The id of the stage to remove from sequence
+     *
      * @see Stager.addStage
      */
     Stager.prototype.skip = function(stageId) {
@@ -14410,20 +14420,22 @@ if (!Array.prototype.indexOf) {
      */
     Block.prototype.finalize = function() {
         var entry, item, positions, i, chosenPosition;
-        var available = [];
-        var sortFunction = function(left, right) {
+        var available;
+        var sortFunction;
+
+        if (this.finalized) return;
+
+        available = [];
+        sortFunction = function(left, right) {
             return left.positions.length < right.positions.length;
         };
 
-        if (this.finalized) {
-            return;
-        }
         // Cache the current state before finalization for later reset.
         this.resetCache = J.classClone({
             takenPositions: this.takenPositions,
             unfinishedEntries: this.unfinishedEntries,
             items: this.items
-        },3);
+        }, 3);
 
         // Range in which the indeces must be.
         for (i = 0; i < this.numberOfItems; ++i) {
@@ -14451,8 +14463,8 @@ if (!Array.prototype.indexOf) {
 
             // No valid position specified.
             if (positions.length === 0) {
-                throw new Error("Block.finalize: No valid position " +
-                    "specified in Block " + this.id);
+                throw new Error('Block.finalize: No valid position ' +
+                    'specified in Block ' + this.id + '.');
             }
 
             // Chose position randomly among possibilities.
