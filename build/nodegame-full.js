@@ -13377,7 +13377,8 @@ if (!Array.prototype.indexOf) {
 
             var stageName;
             stageName = checkStageParameter(this, stage, 'next');
-            if (!stageName) return null;
+
+            positions = checkPositionsParameter(positions, 'next');
 
             handleStageAdd(this, {
                 type: 'plain',
@@ -13406,7 +13407,6 @@ if (!Array.prototype.indexOf) {
 
             var stageName;
             stageName = checkStageParameter(this, stage, 'next');
-            if (!stageName) return null;
 
             if ('number' !== typeof nRepeats ||
                 isNaN(nRepeats) ||
@@ -13415,6 +13415,8 @@ if (!Array.prototype.indexOf) {
                 throw new Error('Stager.repeat: nRepeats must be a positive ' +
                                 'number. Found: ' + nRepeats + '.');
             }
+
+            positions = checkPositionsParameter(positions, 'repeat');
 
             handleStageAdd(this, {
                 type: 'repeat',
@@ -14090,7 +14092,7 @@ if (!Array.prototype.indexOf) {
      * @return {Stager|null} this object on success, NULL on error
      *
      * @see Stager.loop
-     * @see StagerdoLoop
+     * @see Stager.doLoop
      *
      * @api private
      */
@@ -14098,18 +14100,19 @@ if (!Array.prototype.indexOf) {
         var stageName;
 
         stageName = checkStageParameter(that, stage, type);
-        if (!stageName) return null;
 
         if ('undefined' === typeof loopFunc) {
             loopFunc = function() { return true; };
         }
 
-        if ('function' !== typeof func) {
+        if ('function' !== typeof loopFunc) {
             throw new TypeError('Stager.' + type + ': loopFunc must be ' +
                                 'function. Found: ' + loopFunc + '.');
         }
 
-        that.handleStageAdd({
+        positions = checkPositionsParameter(positions, type);
+
+        handleStageAdd(that, {
             type: type,
             id: stageName,
             cb: loopFunc
@@ -14283,6 +14286,34 @@ if (!Array.prototype.indexOf) {
                             'received: ' + stage);
         }
         return stageName;
+    }
+
+    /**
+     * ### checkPositionsParameter
+     *
+     * Check validity of a positions parameter
+     *
+     * Called by: `stage`, `repeat`, `doLoop`, 'loop`.
+     *
+     * @param {string|number} stage The positions parameter to validate
+     * @param {string} method The name of the method calling the validation
+     *
+     * @api private
+     */
+    function checkPositionsParameter(positions, method) {
+        var err;
+        if ('undefined' === typeof positions) return;
+        if ('number' === typeof positions) {
+            if (isNaN(positions) || positions < 0) err = true;
+            else positions += '';
+        }
+
+        if (err || 'string' !== typeof positions) {
+            throw new TypeError('Stager.' + method + ': positions must ' +
+                                'be string, a positive number, or ' +
+                                'undefined. Found: ' + positions + '.');
+        }
+        return positions;
     }
 
     /**

@@ -9,7 +9,7 @@ var node = ngc.getClient();
 var stager = ngc.getStager();
 
 module.exports = node;
-node.verbosity = 0;
+node.verbosity = -1000;
 
 function decorateStager(stager) {
 
@@ -77,6 +77,76 @@ function decorateStagerSimple(stager) {
     // stager.endBlock();
 }
 
+function decorateStagerLoop(stager) {
+    var counter;
+    counter = 0;
+
+    stager.loop(
+        {
+            id: 'stage 1',
+            cb: function() { console.log('stage 1') }
+        },
+        function() {
+            return ++counter < 3
+        }
+    );
+
+    stager.loop('stage 2', function() {
+        return ++counter < 5;
+    });
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() { console.log('step 2.2') }
+    });
+
+    stager.loop('stage 3',  function() {
+        return ++counter < 8;
+    });
+
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+    // stager.endBlock();
+}
+
+function decorateStagerRepeat(stager) {
+
+
+    stager.stage({
+        id: 'stage 1',
+        cb: function() { console.log('stage 1') }
+    });
+
+    stager.repeat('stage 2', 2);
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() { console.log('step 2.2') }
+    });
+
+    stager.repeat('stage 3', 1);
+
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+    // stager.endBlock();
+}
+
 debugger
 
 decorateStager(stager);
@@ -85,17 +155,13 @@ debugger
 
 stager.finalize();
 
-stager.reset();
-
-stager.finalize();
+// stager.reset();
 
 // console.log(stager.getSequence('hsteps'));
 
-stager.init()
+// decorateStagerSimple(stager);
 
-decorateStagerSimple(stager);
-
-stager.finalize();
+// stager.finalize();
 
 // console.log(stager.getSequence('hsteps'));
 // console.log(stager.blocks);
