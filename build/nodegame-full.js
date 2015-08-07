@@ -12672,17 +12672,6 @@ if (!Array.prototype.indexOf) {
          */
         this.currentBlockType = "__default";
 
-//         /**
-//          * ### Stager.defaultSteps
-//          *
-//          * Holds the default steps of each stage
-//          *
-//          * Default steps are either none if any step is defined for that
-//          * stage and a step with the same name as the stage otherwise.
-//          */
-//         this.defaultSteps = {};
-
-
         /**
          * ### Stager.toSkip
          *
@@ -12742,7 +12731,6 @@ if (!Array.prototype.indexOf) {
         this.finalized = false;
         this.currentType = "__default";
         this.currentBlockType = "__default";
-        // this.defaultSteps = {};
         return this;
     };
 
@@ -12773,26 +12761,20 @@ if (!Array.prototype.indexOf) {
     Stager.prototype.finalize = function() {
         var currentItem;
         var outermostBlock, blockIndex;
-debugger
-        if (this.finalized) return this;
 
-        // Ends and finalize all blocks.
+        // Already finalized.
+        if (this.finalized) return this;
+        // Nothing to do, finalize called to early.
+        if (!this.blocks.length) return;
+
+        // Closes unclosed blocks.
         this.endAllBlocks();
+        // Fixes the position of unfixed elements inside each block.
         for (blockIndex = 0; blockIndex < this.blocks.length; ++blockIndex) {
             this.blocks[blockIndex].finalize();
         }
-
-        // TODO: Do we really need this ???.
-//         for (type in this.defaultSteps) {
-//             if (this.defaultSteps.hasOwnProperty(type)) {
-//                 this.stages[type].steps = J.clone(
-//                     this.defaultSteps[type]
-//                 );
-//             }
-//         }
-
+        // Take outermost block and start building sequence.
         outermostBlock = this.blocks[0];
-        // Create sequence.
         currentItem = outermostBlock.next();
         while (!!currentItem) {
             if (currentItem.type === "__stage") {
@@ -12830,12 +12812,6 @@ debugger
             this.blocks[blockIndex].reset();
         }
         this.sequence = [];
-//         for (type in this.defaultSteps) {
-//             if (this.defaultSteps.hasOwnProperty(type)) {
-//                 this.stages[type].steps = this.defaultSteps[type];
-//             }
-//         }
-
         this.finalized = false;
         return this;
     };
@@ -13305,7 +13281,6 @@ debugger
      *    copied.
      *
      * @see Stager.checkStepValidity
-     * @see Stager.checkStageValidity
      */
     Stager.prototype.addStage = function(stage) {
         var res, i;
@@ -13377,12 +13352,11 @@ debugger
             item: step.id
         }, positions);
 
-        // this.defaultSteps[this.currentType] = [];
         return this;
     };
 
     /**
-     * ### Stager.next
+     * ### Stager.next | stage
      *
      * Adds a stage block to sequence
      *
@@ -13390,90 +13364,69 @@ debugger
      * stageID must be a valid stage and it (or alias if given) must be
      * unique in the sequence.
      *
-     * @param {string|object} id A valid stage name with optional alias
+     * @param {string|object} id A stage name with optional alias
+     *   or a stage object.
+     * @param {string} positions Optional. Allowed positions for the stage
      *
      * @return {Stager|null} this object on success, NULL on error
      *
      * @see Stager.addStage
      */
-    Stager.prototype.next = function(stage, positions) {
-        var id, cb, stageName;
-        if ('object' === typeof stage) {
-            if ('string' !== typeof stage.id) {
-                throw new TypeError('Stager.next: stage.id must be string.');
-            }
-            if (stage.cb && 'function' !== typeof stage.cb) {
-                throw new TypeError('Stager.next: stage.cb must be function ' +
-                                    'or undefined.');
-            }
-            id = stage.id;
-            cb = stage.cb;
-        }
-        else {
-            if ('string' !== typeof stage) {
-                throw new TypeError('Stager.next: stage must be string or ' +
-                                    'object.');
-            }
-            id = stage;
-        }
+    Stager.prototype.stage = Stager.prototype.next =
+        function(stage, positions) {
 
-        stageName = handleAlias(this, id, cb);
-        if (stageName === null) {
-            throw new Error('Stager.next: invalid stage name received: ' +
-                           stage);
-        }
+            var stageName;
+            stageName = checkStageParameter(this, stage, 'next');
+            if (!stageName) return null;
 
-        this.handleStageAdd({
-            type: 'plain',
-            id: stageName
-        }, positions);
+            handleStageAdd(this, {
+                type: 'plain',
+                id: stageName
+            }, positions);
 
-        // Ste: commented out.
-        // if (cb) this.step({id: id, cb: cb}, '0');
-
-        // TODO: do we need this also ?
-        // this.defaultSteps[id] = [id];
-
-        return this;
-    };
+            return this;
+        };
 
     /**
-     * ### Stager.repeat
+     * ### Stager.repeat | repeatStage
      *
      * Adds repeated stage block to sequence
      *
-     * @param {string} id A valid stage name with optional alias
-     * @param {number} nRepeats The number of repetitions
+     * @param {string|object} stage A stage name with optional alias
+     *   or a stage object.
+     * @param {string} positions Optional. Allowed positions for the stage
      *
      * @return {Stager|null} this object on success, NULL on error
      *
      * @see Stager.addStage
      * @see Stager.next
      */
-    Stager.prototype.repeat = function(id, nRepeats, positions) {
-        var stageName = handleAlias(this, id);
+    Stager.prototype.repeatStage = Stager.prototype.repeat =
+        function(stage, nRepeats, positions) {
 
-        if (stageName === null) {
-            throw new Error('Stager.repeat: ' +
-                            'received invalid stage name.');
-        }
+            var stageName;
+            stageName = checkStageParameter(this, stage, 'next');
+            if (!stageName) return null;
 
-        if ('number' !== typeof nRepeats) {
-            throw new Error('Stager.repeat: ' +
-                            'received invalid number of repetitions.');
-        }
+            if ('number' !== typeof nRepeats ||
+                isNaN(nRepeats) ||
+                nRepeats <= 0) {
 
-        this.handleStageAdd({
-            type: 'repeat',
-            id: stageName,
-            num: nRepeats
-        }, positions);
+                throw new Error('Stager.repeat: nRepeats must be a positive ' +
+                                'number. Found: ' + nRepeats + '.');
+            }
 
-        return this;
-    };
+            handleStageAdd(this, {
+                type: 'repeat',
+                id: stageName,
+                num: parseInt(nRepeats, 10)
+            }, positions);
+
+            return this;
+        };
 
     /**
-     * ### Stager.loop
+     * ### Stager.loop | loopStage
      *
      * Adds looped stage block to sequence
      *
@@ -13484,10 +13437,10 @@ debugger
      * If no callback function is specified the loop is repeated
      * indefinitely.
      *
-     * @param {string} id A valid stage name with optional alias
-     * @param {function} func Optional. Callback returning TRUE for
-     *   repetition.
-     *   Default: a function that returns always TRUE
+     * @param {string|object} stage A stage name with optional alias
+     *   or a stage object.
+     * @param {function} loopFunc Optional. Callback returning TRUE for
+     *   repetition. Default: a function that returns always TRUE
      *
      * @return {Stager|null} this object on success, NULL on error
      *
@@ -13495,22 +13448,24 @@ debugger
      * @see Stager.next
      * @see Stager.doLoop
      */
-    Stager.prototype.loop = function(id, func, positions) {
-        return addLoop(this, 'loop', id, func, positions);
-    };
+    Stager.prototype.loopStage = Stager.prototype.loop =
+        function(stage, loopFunc, positions) {
+
+            return addLoop(this, 'loop', stage, loopFunc, positions);
+        };
 
     /**
-     * ### Stager.doLoop
+     * ### Stager.doLoop | doLoopStage
      *
      * Adds alternatively looped stage block to sequence
      *
      * The given stage will be repeated once plus as many times as the
      * `func` callback returns TRUE.
      *
-     * @param {string} id A valid stage name with optional alias
-     * @param {function} func Optional. Callback returning TRUE for
-     *   repetition.
-     *   Default: a function that returns always TRUE
+     * @param {string|object} stage A stage name with optional alias
+     *   or a stage object.
+     * @param {function} loopFunc Optional. Callback returning TRUE for
+     *   repetition. Default: a function that returns always TRUE
      *
      * @return {Stager|null} this object on success, NULL on error
      *
@@ -13518,10 +13473,11 @@ debugger
      * @see Stager.next
      * @see Stager.loop
      */
-    Stager.prototype.doLoop = function(id, func, positions) {
-        return addLoop(this, 'doLoop', id, func, positions);
-    };
+    Stager.prototype.doLoopStage = Stager.prototype.doLoop =
+        function(stage, loopFunc, positions) {
 
+            return addLoop(this, 'doLoop', stage, loopFunc, positions);
+        };
 
     /**
      * ### Stager.gameover
@@ -13530,45 +13486,9 @@ debugger
      *
      * @return {Stager} this object
      */
-    Stager.prototype.gameover = function(positions) {
-        this.handleStageAdd({ type: 'gameover' }, positions);
+    Stager.prototype.gameover = function() {
+        handleStageAdd(this, { type: 'gameover' });
         return this;
-    };
-
-
-    /**
-     * ## Stager.handleStageAdd
-     *
-     * Performs several meta operations necessary to add a stage block
-     *
-     * Operations:
-     *
-     *  - Ends any unclosed blocks.
-     *  - Begin a new enclosing block.
-     *  - Adds a stage block.
-     *  - Adds a steps block.
-     *
-     * @param {object} stage The stage to add containing its type
-     * @param {string} positions Optional. The allowed positions for the stage
-     */
-    Stager.prototype.handleStageAdd = function(stage, positions) {
-        var name;
-        name = stage.id || stage.type;
-
-        // Begin stage block.
-        if (this.currentType !== "__default") this.endBlocks(2);
-
-        this.beginBlock(positions, { id: "__enclosing_" + name });
-
-        this.getCurrentBlock().add({
-            type: "__stage",
-            item: stage
-        });
-
-        this.currentType = name;
-
-        // Add step block inside stage block.
-        this.beginBlock('linear', { id: "__steps_" + name });
     };
 
     // Block operations.
@@ -14153,41 +14073,60 @@ debugger
 
 
     // ## Stager private methods
-    function addLoop(that, type, id, func, positions) {
-        var stageName = handleAlias(that, id);
 
-        if (stageName === null) {
-            throw new Error('Stager.' + type +
-                            ': received invalid stage name.');
-        }
 
-        if ('undefined' === typeof func) {
-            func = function() { return true; };
+    /**
+     * ### addLoop
+     *
+     * Handles adding a looped stage (doLoop or loop)
+     *
+     * @param {object} that Reference to Stager object
+     * @param {string} type The type of loop (doLoop or loop)
+     * @param {string|object} stage The stage to loop
+     * @param {function} loopFunc The function checking the
+     * @param {string} positions Optional. Positions within the
+     *      enclosing Block that this block can occupy.
+     *
+     * @return {Stager|null} this object on success, NULL on error
+     *
+     * @see Stager.loop
+     * @see StagerdoLoop
+     *
+     * @api private
+     */
+    function addLoop(that, type, stage, loopFunc, positions) {
+        var stageName;
+
+        stageName = checkStageParameter(that, stage, type);
+        if (!stageName) return null;
+
+        if ('undefined' === typeof loopFunc) {
+            loopFunc = function() { return true; };
         }
 
         if ('function' !== typeof func) {
-            throw new Error('Stager.' + type + ': received invalid' +
-                            ' callback.');
+            throw new TypeError('Stager.' + type + ': loopFunc must be ' +
+                                'function. Found: ' + loopFunc + '.');
         }
 
         that.handleStageAdd({
             type: type,
             id: stageName,
-            cb: func
+            cb: loopFunc
         }, positions);
-
 
         return that;
     }
 
     /**
-     * checkStepValidity
+     * ### checkStepValidity
      *
      * Returns whether given step is valid
      *
      * Checks for existence and type correctness of the fields.
      * Optionally, checks also for id uniqueness.
      *
+     * @param {object} that Reference to Stager object
      * @param {object} step The step object
      * @param {boolean} unique If TRUE, checks also for id uniqueness
      *
@@ -14248,7 +14187,7 @@ debugger
 //     }
 
     /**
-     * handleAlias
+     * ### handleAlias
      *
      * Handles stage id and alias strings
      *
@@ -14303,6 +14242,86 @@ debugger
         return id;
     }
 
+    /**
+     * ### checkStageParameter
+     *
+     * Check validity of a stage parameter
+     *
+     * Called by: `stage`, `repeat`, `doLoop`, 'loop`.
+     *
+     * @param {Stager} that Stager object
+     * @param {string|object} stage The stage to validate
+     * @param {string} method The name of the method calling the validation
+     *
+     * @api private
+     */
+    function checkStageParameter(that, stage, method) {
+        var id, cb, stageName;
+        if ('object' === typeof stage) {
+            if ('string' !== typeof stage.id) {
+                throw new TypeError('Stager.' + method + ': stage.id must ' +
+                                    'be string.');
+            }
+            if (stage.cb && 'function' !== typeof stage.cb) {
+                throw new TypeError('Stager.' + method + ': stage.cb must ' +
+                                    'be function or undefined.');
+            }
+            id = stage.id;
+            cb = stage.cb;
+        }
+        else {
+            if ('string' !== typeof stage) {
+                throw new TypeError('Stager.' + method + ': stage must be ' +
+                                    'string or object.');
+            }
+            id = stage;
+        }
+
+        stageName = handleAlias(that, id, cb);
+        if (stageName === null) {
+            throw new Error('Stager.' + method + ': invalid stage name ' +
+                            'received: ' + stage);
+        }
+        return stageName;
+    }
+
+    /**
+     * ### Stager.handleStageAdd
+     *
+     * Performs several meta operations necessary to add a stage block
+     *
+     * Operations:
+     *
+     *  - Ends any unclosed blocks.
+     *  - Begin a new enclosing block.
+     *  - Adds a stage block.
+     *  - Adds a steps block.
+     *
+     * @param {Stager} that Stager object
+     * @param {object} stage The stage to add containing its type
+     * @param {string} positions Optional. The allowed positions for the stage
+     *
+     * @api private
+     */
+    function handleStageAdd(that, stage, positions) {
+        var name;
+        name = stage.id || stage.type;
+
+        // Begin stage block.
+        if (that.currentType !== "__default") that.endBlocks(2);
+
+        that.beginBlock(positions, { id: "__enclosing_" + name });
+
+        that.getCurrentBlock().add({
+            type: "__stage",
+            item: stage
+        });
+
+        that.currentType = name;
+
+        // Add step block inside stage block.
+        that.beginBlock('linear', { id: "__steps_" + name });
+    }
 
     // ## Block
     /**

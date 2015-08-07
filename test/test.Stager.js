@@ -77,6 +77,8 @@ function decorateStagerSimple(stager) {
     // stager.endBlock();
 }
 
+debugger
+
 decorateStager(stager);
 
 debugger
