@@ -149,7 +149,7 @@ function decorateStagerRepeat(stager) {
 
 debugger
 
-decorateStager(stager);
+decorateStagerRepeat(stager);
 
 debugger
 

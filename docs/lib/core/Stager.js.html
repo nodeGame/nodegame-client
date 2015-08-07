@@ -247,7 +247,7 @@
         <a href="#block.positions">Block.positions</a>
       </div>
       <div class="heading h3">
-        <a href="#block.tajenpositions">Block.tajenPositions</a>
+        <a href="#block.takenpositions">Block.takenPositions</a>
       </div>
       <div class="heading h3">
         <a href="#block.items">Block.items</a>
@@ -278,6 +278,12 @@
       </div>
       <div class="heading h2">
         <a href="#block.reset">Block.reset</a>
+      </div>
+      <div class="heading h2">
+        <a href="#helper-functions">Helper Functions</a>
+      </div>
+      <div class="heading h3">
+        <a href="#sortfunction">sortFunction</a>
       </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
@@ -2564,7 +2570,6 @@ indefinitely.</p>
         <span class="nx">block</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Block</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">block</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">block</span><span class="p">);</span>
-
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -2582,8 +2587,16 @@ indefinitely.</p>
   </div>
   <div class="body"><p>Ends the current Block.</p>
 
-<p>param {object} options Optional If options.finalize is set, the
-     block gets finalized.</p>
+<p>param {object} options Optional If <code>options.finalize</code> is set, the
+  block gets finalized.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">Stager</span>
+      <span>Reference to the current instance for method chainining</span>
+    </div>
   </div>
 </div>
         </td>
@@ -2680,7 +2693,13 @@ indefinitely.</p>
       <span class="dox_tag_name">positions</span>
       <span class="dox_type">string</span>
       <span>Optional. Positions within the
-     enclosing Block that this block can occupy.</span>
+  enclosing Block that this block can occupy.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">Stager</span>
+      <span>Reference to the current instance for method chainining</span>
     </div>
   </div>
 </div>
@@ -2711,7 +2730,13 @@ indefinitely.</p>
       <span class="dox_tag_name">positions</span>
       <span class="dox_type">string</span>
       <span>Optional. Positions within the
-     enclosing Block that this block can occupy.</span>
+  enclosing Block that this block can occupy.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">Stager</span>
+      <span>Reference to the current instance for method chainining</span>
     </div>
   </div>
 </div>
@@ -2746,7 +2771,13 @@ indefinitely.</p>
       <span class="dox_tag_name">positions</span>
       <span class="dox_type">string</span>
       <span>Optional. Positions within the
-     enclosing Block that this block can occupy.</span>
+  enclosing Block that this block can occupy.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">Stager</span>
+      <span>Reference to the current instance for method chainining</span>
     </div>
   </div>
 </div>
@@ -2784,13 +2815,20 @@ indefinitely.</p>
       <span>Optional. Positions within the
      enclosing Block that this block can occupy.</span>
     </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">boolean</span>
+      <span>Currently open block, or FALSE if no
+  unfinished block is found</span>
+    </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentBlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">[</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span><span class="mi">1</span><span class="p">];</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -3243,9 +3281,7 @@ stage.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extractStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">,</span> <span class="nx">useSeq</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="nx">steps</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">stages</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">sequence</span><span class="o">:</span> <span class="p">[]</span>
-        <span class="p">};</span>
+        <span class="kd">var</span> <span class="nx">result</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">stepIdx</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">stageId</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">stageObj</span><span class="p">;</span>
@@ -3257,7 +3293,9 @@ stage.</p>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">ids</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">idArray</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">ids</span> <span class="p">];</span>
         <span class="p">}</span>
-        <span class="k">else</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        <span class="k">else</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+
+        <span class="nx">result</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">steps</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">stages</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">sequence</span><span class="o">:</span> <span class="p">[]</span> <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -3365,7 +3403,7 @@ stage.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStepsFromStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStepsOfStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">].</span><span class="nx">steps</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -4042,7 +4080,12 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <span class="dox_tag_name">positions</span>
       <span class="dox_type">string</span>
       <span>Optional. Positions within the
-     enclosing Block that this block can occupy.</span>
+     enclosing Block that this block can occupy</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Configuration object</span>
     </div>
   </div>
 </div>
@@ -4090,10 +4133,10 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="block.tajenpositions">
+<div class="pilwrap" id="block.takenpositions">
   <h3>
-    <a href="#block.tajenpositions" class="pilcrow">&#182;</a>
-    Block.tajenPositions
+    <a href="#block.takenpositions" class="pilcrow">&#182;</a>
+    Block.takenPositions
   </h3>
 </div>
 
@@ -4245,9 +4288,9 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
       <span class="dox_tag_name">positions.</span>
       <span class="dox_type">string</span>
       <span>The positions where item can be added
-     Setting this parameter to "linear" or undefined adds the
-     item to the next free n-th position where this is the n-th
-     call to add.</span>
+  Setting this parameter to "linear" or undefined adds the
+  item to the next free n-th position where this is the n-th
+  call to add.</span>
     </div>
   </div>
 </div>
@@ -4285,20 +4328,18 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
 
   </div>
   <div class="body"><p>Processes all unfinished entries, assigns each to a position</p>
+
+<p>Sets the finalized flag.</p>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">finalize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">entry</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">positions</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">chosenPosition</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">entry</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">positions</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">chosenPosition</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">available</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">sortFunction</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 
-        <span class="nx">available</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="nx">sortFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">left</span><span class="p">.</span><span class="nx">positions</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="nx">right</span><span class="p">.</span><span class="nx">positions</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="p">};</span></pre></div>
+        <span class="nx">available</span> <span class="o">=</span> <span class="p">[];</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -4342,14 +4383,13 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
 </div>
-<p>Parseing all of the position strings into arrays.</p>
+<p>Parsing all of the position strings into arrays.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">positions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span><span class="p">;</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">=</span>
-                    <span class="nx">J</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">available</span><span class="p">);</span>
-            <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">positions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">=</span>
+                <span class="nx">J</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">available</span><span class="p">);</span>
         <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -4435,8 +4475,17 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
   <div class="body"><p>Gets the next item in a hierarchy of Blocks</p>
 
 <p>If there is not next item, false is returned.
-If the next item is not a Block it is returned, otherwise next is
- called recursively.</p>
+If the next item is another Block, next is called recursively.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">boolean</span>
+      <span>The the item in hierarchy, or FALSE
+  if none is found.</span>
+    </div>
   </div>
 </div>
         </td>
@@ -4491,9 +4540,48 @@ If the next item is not a Block it is returned, otherwise next is
         <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">items</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="helper-functions">
+  <h2>
+    <a href="#helper-functions" class="pilcrow">&#182;</a>
+    Helper Functions
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="sortfunction">
+  <h3>
+    <a href="#sortfunction" class="pilcrow">&#182;</a>
+    sortFunction
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sorts elements in block by number of available positions</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">API</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">private
+</span>
+    </span>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">sortFunction</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">left</span><span class="p">.</span><span class="nx">positions</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="nx">right</span><span class="p">.</span><span class="nx">positions</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
