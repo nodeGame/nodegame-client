@@ -957,12 +957,6 @@ is terminated.</p>
   <div class="body"><p>Builds stage and step sequence from the Block hieararchy</p>
   </div>
   <div class="details">
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">Stager</span>
-      <span>Reference to the current instance for method chaining</span>
-    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.reset
@@ -1037,7 +1031,6 @@ is terminated.</p>
             <span class="nx">currentItem</span> <span class="o">=</span> <span class="nx">outermostBlock</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1058,12 +1051,6 @@ is terminated.</p>
 different sequence from the Block hierarchy.</p>
   </div>
   <div class="details">
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">Stager</span>
-      <span>Reference to the current instance for method chaining</span>
-    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.finalize
@@ -1084,7 +1071,6 @@ different sequence from the Block hierarchy.</p>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -4457,7 +4443,6 @@ the alias, if existent. Checks whether parameter is valid and unique.</p>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -4540,7 +4525,6 @@ If the next item is another Block, next is called recursively.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">items</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
