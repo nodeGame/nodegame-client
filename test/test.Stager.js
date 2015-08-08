@@ -1,23 +1,115 @@
 var util = require('util');
+    should = require('should');
+
 var log = console.log;
 
 var ngc = require('../index.js');
 var Stager = ngc.Stager;
 var GamePlot = ngc.GamePlot;
+var J = ngc.JSUS;
 
 var node = ngc.getClient();
-var stager = ngc.getStager();
 
 module.exports = node;
 node.verbosity = -1000;
 
+function verySimple(stager) {
+    stager.next('stage 1');
+    stager.next('stage 2');
+    stager.next('stage 3');
+}
+
+function simple(stager) {
+
+    stager.next({
+        id: 'stage 1',
+        cb: function() {
+            console.log('stage 1')
+            node.done();
+        }
+    });
+
+    stager.next('stage 2');
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() { console.log('step 2.2') }
+    });
+
+    stager.next('stage 3');
+
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+    // stager.endBlock();
+}
+
+var tmp, res;
+var stager, stagerState;
+
+describe('Stager', function() {
+
+    describe('simple stage add', function() {
+        before(function() {
+            stager = ngc.getStager();
+            // Adds 3 stages sequentially.
+            verySimple(stager);
+            console.log(stager);
+        });
+        it('should have 3 stages of 3 steps', function() {
+            J.size(stager.stages).should.eql(3);
+            J.size(stager.steps).should.eql(3);
+        });
+        it('should have 3 stages of 1 step each', function() {
+            J.size(stager.stages).should.eql(3);
+            J.size(stager.steps).should.eql(3);
+        });
+
+    });
+
+});
+
+// Setup.
+// node.setup('plot', stagerState);
+// node.createPlayer({ id: 'testid' });
+// node.game.start({ step: false });
+
+// // Step through.
+// while (hasNextStep()) {
+//     node.game.step();
+//     tmp = node.game.getCurrentStepObj();
+//     console.log('Stage id: ', tmp.id);
+// }
+//
+// function hasNextStep() {
+//     var curStep, nextStep;
+//     curStep = node.game.getCurrentGameStage();
+//     nextStep = node.game.plot.next(curStep);
+//     return nextStep !== GamePlot.GAMEOVER && nextStep !== GamePlot.END_SEQ;
+// }
+//
+// return;
+
+
+
 function decorateStager(stager) {
+
 
     // stager.stageBlock('0..1');
 
     stager.next({
         id: 'stage 1',
-        cb: function() { console.log('stage 1') }
+        cb: function() {
+            console.log('stage 1');
+            node.done();
+        }
     }, '0..1');
 
     // stager.endBlock();
@@ -47,37 +139,6 @@ function decorateStager(stager) {
     // stager.endBlock();
 }
 
-function decorateStagerSimple(stager) {
-
-
-    stager.next({
-        id: 'stage 1',
-        cb: function() { console.log('stage 1') }
-    });
-
-    stager.next('stage 2');
-
-    stager.step({
-        id: 'step 2.1',
-        cb: function() { console.log('step 2.1') }
-    });
-    stager.step({
-        id: 'step 2.2',
-        cb: function() { console.log('step 2.2') }
-    });
-
-    stager.next('stage 3');
-
-
-    stager.gameover();
-
-    // Default auto step.
-    stager.setDefaultStepRule(ngc.stepRules.WAIT);
-
-    // stager.endBlock();
-}
-
-
 function decorateStagerRepeat(stager) {
 
 
@@ -106,6 +167,9 @@ function decorateStagerRepeat(stager) {
     stager.setDefaultStepRule(ngc.stepRules.WAIT);
 
     // stager.endBlock();
+    stager.setOnGameOver(function() {
+        console.log('Game over!');
+    });
 }
 
 
@@ -154,6 +218,9 @@ function decorateStagerLoop(stager) {
     // Default auto step.
     stager.setDefaultStepRule(ngc.stepRules.WAIT);
 
+    stager.setOnGameOver(function() {
+        console.log('Game over!');
+    });
 }
 
 function decorateStagerDoLoop(stager) {
@@ -196,25 +263,28 @@ function decorateStagerDoLoop(stager) {
         return ++counter < 6;
     });
 
-
     stager.gameover();
 
     // Default auto step.
     stager.setDefaultStepRule(ngc.stepRules.WAIT);
 
+    stager.setOnGameOver(function() {
+        console.log('Game over!');
+    });
+
 }
 
-decorateStagerRepeat(stager);
-
-debugger
-
-stager.skip('stage 2', 'step 2.2');
-console.log(stager.toSkip);
-console.log(stager.isSkipped('stage 2', 'step 2.1'));
-
-stager.finalize();
-
-debugger
+// decorateStagerRepeat(stager);
+//
+// debugger
+//
+// stager.skip('stage 2', 'step 2.2');
+// console.log(stager.toSkip);
+// console.log(stager.isSkipped('stage 2', 'step 2.1'));
+//
+// stager.finalize();
+//
+// debugger
 
 // stager.reset();
 
@@ -227,29 +297,7 @@ debugger
 // console.log(stager.getSequence('hsteps'));
 // console.log(stager.blocks);
 
-var tmp, res;
-var stagerState = stager.getState();
-
-// Setup.
-node.setup('plot', stagerState);
-node.createPlayer({ id: 'testid' });
-
-node.game.start({ step: false });
-// Step through.
-while (hasNextStep()) {
-    node.game.step();
-    tmp = node.game.getCurrentStepObj();
-    console.log('Stage id: ', tmp.id);
-}
-
-function hasNextStep() {
-    var curStep, nextStep;
-    curStep = node.game.getCurrentGameStage();
-    nextStep = node.game.plot.next(curStep);
-    return nextStep !== GamePlot.GAMEOVER && nextStep !== GamePlot.END_SEQ;
-}
-
-return;
+return
 
 // Simple mode test:
 console.log();
