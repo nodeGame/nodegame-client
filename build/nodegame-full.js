@@ -12754,12 +12754,10 @@ if (!Array.prototype.indexOf) {
      *
      * Builds stage and step sequence from the Block hieararchy
      *
-     * @return {Stager} Reference to the current instance for method chaining
-     *
      * @see Stager.reset
      */
     Stager.prototype.finalize = function() {
-        var currentItem;
+        var currentItem, stageId, stepId;
         var outermostBlock, blockIndex;
 
         // Already finalized.
@@ -12778,15 +12776,27 @@ if (!Array.prototype.indexOf) {
         currentItem = outermostBlock.next();
         while (!!currentItem) {
             if (currentItem.type === "__stage") {
-                this.sequence.push(currentItem.item);
+                stageId = currentItem.item.id;
+                // Add it to sequence if it was
+                // not marked as `toSkip`, or it is a gameover stage.
+                if (currentItem.item.type === 'gameover' ||
+                    !this.isSkipped(stageId)) {
+
+                    this.sequence.push(currentItem.item);
+                }
             }
             else {
-                this.stages[currentItem.type].steps.push(currentItem.item);
+                // It is a step, currentItem.type = stage id (TODO: change).
+                stageId = currentItem.type;
+                stepId = currentItem.item;
+                // Add it to sequence if it was not marked as `toSkip`.
+                if (!this.isSkipped(stageId, stepId)) {
+                    this.stages[stageId].steps.push(stepId);
+                }
             }
             currentItem = outermostBlock.next();
         }
         this.finalized = true;
-        return this;
     };
 
     /**
@@ -12796,8 +12806,6 @@ if (!Array.prototype.indexOf) {
      *
      * Allows to call `Stager.finalize` again to build a potentially
      * different sequence from the Block hierarchy.
-     *
-     * @return {Stager} Reference to the current instance for method chaining
      *
      * @see Stager.finalize
      */
@@ -12813,7 +12821,6 @@ if (!Array.prototype.indexOf) {
         }
         this.sequence = [];
         this.finalized = false;
-        return this;
     };
 
     // Setters, Getters.
@@ -13515,7 +13522,6 @@ if (!Array.prototype.indexOf) {
         block = new Block(positions, options);
         this.unfinishedBlocks.push(block);
         this.blocks.push(block);
-
         return this;
     };
 
@@ -13524,8 +13530,10 @@ if (!Array.prototype.indexOf) {
      *
      * Ends the current Block.
      *
-     * param {object} options Optional If options.finalize is set, the
-     *      block gets finalized.
+     * param {object} options Optional If `options.finalize` is set, the
+     *   block gets finalized.
+     *
+     * @return {Stager} Reference to the current instance for method chainining
      */
     Stager.prototype.endBlock = function(options) {
         var block = this.unfinishedBlocks.pop();
@@ -13575,7 +13583,9 @@ if (!Array.prototype.indexOf) {
      * Begins a new Block of steps
      *
      * @param {string} positions Optional. Positions within the
-     *      enclosing Block that this block can occupy.
+     *   enclosing Block that this block can occupy.
+     *
+     * @return {Stager} Reference to the current instance for method chainining
      */
     Stager.prototype.stepBlock = function(position, options) {
         this.currentBlockType = "__step";
@@ -13589,7 +13599,9 @@ if (!Array.prototype.indexOf) {
      * Begins a new Block of stages
      *
      * @param {string} positions Optional. Positions within the
-     *      enclosing Block that this block can occupy.
+     *   enclosing Block that this block can occupy.
+     *
+     * @return {Stager} Reference to the current instance for method chainining
      */
     Stager.prototype.stageBlock = function(positions, options) {
         if (this.currentType !== "__default") {
@@ -13607,7 +13619,9 @@ if (!Array.prototype.indexOf) {
      * Ends current Block and begins a new one of the same type
      *
      * @param {string} positions Optional. Positions within the
-     *      enclosing Block that this block can occupy.
+     *   enclosing Block that this block can occupy.
+     *
+     * @return {Stager} Reference to the current instance for method chainining
      */
     Stager.prototype.nextBlock = function(positions, options) {
         this.endBlock();
@@ -13627,17 +13641,18 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string} positions Optional. Positions within the
      *      enclosing Block that this block can occupy.
+     *
+     * @return {object|boolean} Currently open block, or FALSE if no
+     *   unfinished block is found
      */
     Stager.prototype.getCurrentBlock = function(options) {
         if (this.unfinishedBlocks.length > 0) {
-            return this.unfinishedBlocks[
-                this.unfinishedBlocks.length -1];
+            return this.unfinishedBlocks[this.unfinishedBlocks.length -1];
         }
         return false;
     };
 
     // Extend, Modify
-
 
     /**
      * ### Stager.extendStep
@@ -13777,30 +13792,62 @@ if (!Array.prototype.indexOf) {
     /**
      * ### Stager.skip
      *
-     * Removes one stage from the sequence, but keeps it in the list of stages
+     * Marks a stage or as step as `toSkip` and won't be added to sequence
      *
-     * @param {string} stageId The id of the stage to remove from sequence
+     * Must be called before invoking `Stager.finalize()`.
      *
-     * @see Stager.addStage
+     * @param {string} stageId The id of the stage to skip
+     * @param {string} stepId Optional. The id of the step within
+     *   the stage to skip
+     *
+     * @see Stager.unskip
+     * @see Stager.finalize
      */
-    Stager.prototype.skip = function(stageId) {
-        var i, len;
-        if ('string' !== typeof stageId) {
-            throw new TypeError('Stager.skip: stageId must be a' +
-                                ' string.');
+    Stager.prototype.skip = function(stageId, stepId) {
+        if (this.finalized) {
+            throw new Error('Stager.skip: stager has been ' +
+                            'already finalized.');
         }
-        if (!this.stages[stageId]) {
-            throw new Error('Stager.skip: stageId not found: ' +
-                            stageId + '.');
-        }
+        setSkipStageStep(this, stageId, stepId, true, 'skip');
+    };
 
-        i = -1, len = this.sequence.length;
-        for ( ; ++i < len ; ) {
-            if (this.sequence[i].id === stageId) {
-                this.sequence.splice(i,1);
-                break;
-            }
+    /**
+     * ### Stager.unskip
+     *
+     * Unskips a stage or step
+     *
+     * Must be called before invoking `Stager.finalize()`.
+     *
+     * @param {string} stageId The id of the stage
+     * @param {string} stepId Optional. The id of the step within the stage
+     *
+     * @see Stager.skip
+     * @see Stager.finalize
+     */
+    Stager.prototype.unskip = function(stageId, stepId) {
+        if (this.finalized) {
+            throw new Error('Stager.unskip: stager has been ' +
+                            'already finalized.');
         }
+        setSkipStageStep(this, stageId, stepId, null, 'unskip');
+    };
+
+    /**
+     * ### Stager.isSkipped
+     *
+     * Returns TRUE if a stage or step is currently marked as `toSkip`
+     *
+     * @param {string} stageId The id of the stage
+     * @param {string} stepId Optional. The id of the step within the stage
+     *
+     * @return {boolean} TRUE, if the stage or step is marked as `toSkip`
+     *
+     * @see Stager.skip
+     * @see Stager.unskip
+     */
+    Stager.prototype.isSkipped = function(stageId, stepId) {
+        return !!setSkipStageStep(this, stageId, stepId, undefined,
+                                  'isSkipped');
     };
 
     // Get Info out.
@@ -13948,9 +13995,7 @@ if (!Array.prototype.indexOf) {
      * @see Stager.setState
      */
     Stager.prototype.extractStage = function(ids, useSeq) {
-        var result = {
-            steps: {}, stages: {}, sequence: []
-        };
+        var result;
         var stepIdx, stepId;
         var stageId;
         var stageObj;
@@ -13963,6 +14008,8 @@ if (!Array.prototype.indexOf) {
             idArray = [ ids ];
         }
         else return null;
+
+        result = { steps: {}, stages: {}, sequence: [] };
 
         // undefined (default) -> true
         useSeq = (useSeq === false) ? false : true;
@@ -14013,11 +14060,10 @@ if (!Array.prototype.indexOf) {
      * @return {array|null} The steps in the stage. NULL on invalid
      *   stage.
      */
-    Stager.prototype.getStepsFromStage = function(id) {
+    Stager.prototype.getStepsOfStage = function(id) {
         if (!this.stages[id]) return null;
         return this.stages[id].steps;
     };
-
 
     // Flexible Mode
 
@@ -14317,7 +14363,7 @@ if (!Array.prototype.indexOf) {
     }
 
     /**
-     * ### Stager.handleStageAdd
+     * ### handleStageAdd
      *
      * Performs several meta operations necessary to add a stage block
      *
@@ -14354,6 +14400,41 @@ if (!Array.prototype.indexOf) {
         that.beginBlock('linear', { id: "__steps_" + name });
     }
 
+    /**
+     * ### setSkipStageStep
+     *
+     * Sets/Gets the value for the flag `toSkip` for a stage or a step
+     *
+     *
+     * @param {Stager} that Stager object
+     * @param {string} stageId The id of the stage
+     * @param {string} stepId Optional. The id of the step within the stage
+     * @param {mixed} value If defined, is assigned to the stage or step
+     * @param {string} method The name of the method calling the validation
+     *
+     * @return {boolean|null} The current value for the stage or step
+     *
+     * @api private
+     */
+    function setSkipStageStep(that, stageId, stepId, value, method) {
+        if ('string' !== typeof stageId) {
+            throw new TypeError('Stager.' + method + ': stageId must ' +
+                                'be string.');
+        }
+        if (stepId) {
+            if ('string' !== typeof stepId) {
+                throw new TypeError('Stager.' + method + ': stepId must ' +
+                                    'be string or undefined.');
+            }
+            if ('undefined' !== typeof value) {
+                that.toSkip.steps[stageId + '.' + stepId] = value;
+            }
+            return that.toSkip.steps[stageId + '.' + stepId];
+        }
+        if ('undefined' !== typeof value) that.toSkip.stages[stageId] = value;
+        return that.toSkip.stages[stageId];
+    }
+
     // ## Block
     /**
      * ## Block constructor
@@ -14361,7 +14442,8 @@ if (!Array.prototype.indexOf) {
      * Creates a new instance of Block
      *
      * @param {string} positions Optional. Positions within the
-     *      enclosing Block that this block can occupy.
+     *      enclosing Block that this block can occupy
+     * @param {object} options Optional. Configuration object
      */
     function Block(positions, options) {
         options = options || {};
@@ -14381,7 +14463,7 @@ if (!Array.prototype.indexOf) {
         this.positions = positions;
 
         /**
-         * ### Block.tajenPositions
+         * ### Block.takenPositions
          *
          * Positions within this Block that this are occupied
          */
@@ -14439,9 +14521,9 @@ if (!Array.prototype.indexOf) {
      *
      * @param {object} item. The item to be added
      * @param {string} positions. The positions where item can be added
-     *      Setting this parameter to "linear" or undefined adds the
-     *      item to the next free n-th position where this is the n-th
-     *      call to add.
+     *   Setting this parameter to "linear" or undefined adds the
+     *   item to the next free n-th position where this is the n-th
+     *   call to add.
      */
     Block.prototype.add = function(item, positions) {
         if (this.finalized) {
@@ -14467,18 +14549,16 @@ if (!Array.prototype.indexOf) {
      * ## Block.finalize
      *
      * Processes all unfinished entries, assigns each to a position
+     *
+     * Sets the finalized flag.
      */
     Block.prototype.finalize = function() {
-        var entry, item, positions, i, chosenPosition;
+        var entry, item, positions, i, len, chosenPosition;
         var available;
-        var sortFunction;
 
         if (this.finalized) return;
 
         available = [];
-        sortFunction = function(left, right) {
-            return left.positions.length < right.positions.length;
-        };
 
         // Cache the current state before finalization for later reset.
         this.resetCache = J.classClone({
@@ -14494,13 +14574,12 @@ if (!Array.prototype.indexOf) {
         // Accounting for already taken positions.
         available = J.arrayDiff(available, this.takenPositions);
 
-        // Parseing all of the position strings into arrays.
-        for (i in this.unfinishedEntries) {
-            if (this.unfinishedEntries.hasOwnProperty(i)) {
-                positions = this.unfinishedEntries[i].positions;
-                this.unfinishedEntries[i].positions =
-                    J.range(positions, available);
-            }
+        // Parsing all of the position strings into arrays.
+        i = -1, len = this.unfinishedEntries.length;
+        for ( ; ++i < len ; ) {
+            positions = this.unfinishedEntries[i].positions;
+            this.unfinishedEntries[i].positions =
+                J.range(positions, available);
         }
 
         // Assigning positions.
@@ -14532,7 +14611,6 @@ if (!Array.prototype.indexOf) {
             }
         }
         this.finalized = true;
-        return this;
     };
 
     /**
@@ -14541,8 +14619,10 @@ if (!Array.prototype.indexOf) {
      * Gets the next item in a hierarchy of Blocks
      *
      * If there is not next item, false is returned.
-     * If the next item is not a Block it is returned, otherwise next is
-     *  called recursively.
+     * If the next item is another Block, next is called recursively.
+     *
+     * @return {object|boolean} The the item in hierarchy, or FALSE
+     *   if none is found.
      */
     Block.prototype.next = function() {
         var item;
@@ -14579,9 +14659,20 @@ if (!Array.prototype.indexOf) {
         this.items = this.resetCache.items;
         this.index = 0;
         this.finalized = false;
-
-        return this;
     };
+
+    // ## Helper Functions
+
+    /**
+     * ### sortFunction
+     *
+     * Sorts elements in block by number of available positions
+     *
+     * @api private
+     */
+    function sortFunction(left, right) {
+        return left.positions.length < right.positions.length;
+    }
 
     // ## Closure
 })(
@@ -14680,19 +14771,20 @@ if (!Array.prototype.indexOf) {
     /**
      * ### GamePlot.next
      *
-     * Returns the next stage in the stager
+     * Returns the next stage in the sequence
      *
      * If the step in `curStage` is an integer and out of bounds,
      * that bound is assumed.
      *
      * @param {GameStage} curStage The GameStage of reference
+     *
      * @return {GameStage|string} The GameStage coming after _curStage_
-     * in the plot
+     *   in the plot
      *
      * @see GameStage
      */
     GamePlot.prototype.next = function(curStage) {
-        // GamePlot was not correctly initialized
+        // GamePlot was not correctly initialized.
         if (!this.stager) return GamePlot.NO_SEQ;
 
         // Find out flexibility mode:
@@ -14775,6 +14867,8 @@ if (!Array.prototype.indexOf) {
 
             return GamePlot.END_SEQ;
         }
+
+        // Standard Mode.
         else {
             if (curStage.stage === 0) {
                 return new GameStage({
@@ -14785,14 +14879,18 @@ if (!Array.prototype.indexOf) {
             }
 
             // Get normalized GameStage:
+            // makes sures stage is with numbers and not strings.
             normStage = this.normalizeGameStage(curStage);
             if (normStage === null) {
-                throw new Error('next received invalid stage: ' + curStage);
+                throw new Error('GamePlot.next: invalid stage: ' + curStage);
             }
+
             stageNo  = normStage.stage;
             stepNo   = normStage.step;
             seqObj   = this.stager.sequence[stageNo - 1];
             if (seqObj.type === 'gameover') return GamePlot.GAMEOVER;
+
+            // Get stage object.
             stageObj = this.stager.stages[seqObj.id];
 
             // Handle stepping:
@@ -15408,14 +15506,6 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### GamePlot.getAllParams
-     *
-     * TODO: To remove once transition is complete
-     * @deprecated
-     */
-    GamePlot.prototype.getAllParams = GamePlot.prototype.getStep;
-
-    /**
      * ### GamePlot.normalizeGameStage
      *
      * Converts the GameStage fields to numbers
@@ -15425,8 +15515,6 @@ if (!Array.prototype.indexOf) {
      * @param {GameStage} gameStage The GameStage object
      *
      * @return {GameStage|null} The normalized GameStage object; NULL on error
-     *
-     * @api private
      */
     GamePlot.prototype.normalizeGameStage = function(gameStage) {
         var stageNo, stageObj, stepNo, seqIdx, seqObj;

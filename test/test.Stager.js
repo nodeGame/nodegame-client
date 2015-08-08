@@ -77,45 +77,6 @@ function decorateStagerSimple(stager) {
     // stager.endBlock();
 }
 
-function decorateStagerLoop(stager) {
-    var counter;
-    counter = 0;
-
-    stager.loop(
-        {
-            id: 'stage 1',
-            cb: function() { console.log('stage 1') }
-        },
-        function() {
-            return ++counter < 3
-        }
-    );
-
-    stager.loop('stage 2', function() {
-        return ++counter < 5;
-    });
-
-    stager.step({
-        id: 'step 2.1',
-        cb: function() { console.log('step 2.1') }
-    });
-    stager.step({
-        id: 'step 2.2',
-        cb: function() { console.log('step 2.2') }
-    });
-
-    stager.loop('stage 3',  function() {
-        return ++counter < 8;
-    });
-
-
-    stager.gameover();
-
-    // Default auto step.
-    stager.setDefaultStepRule(ngc.stepRules.WAIT);
-
-    // stager.endBlock();
-}
 
 function decorateStagerRepeat(stager) {
 
@@ -147,13 +108,113 @@ function decorateStagerRepeat(stager) {
     // stager.endBlock();
 }
 
-debugger
+
+function decorateStagerLoop(stager) {
+    var counter;
+    counter = 0;
+
+    stager.loop(
+        {
+            id: 'stage 1',
+            cb: function() {
+                counter++;
+                console.log('stage 1')
+            }
+        },
+        function() {
+            return counter < 3;
+        }
+    );
+
+    stager.loop('stage 2', function() {
+        return counter < 5;
+    });
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() {
+            counter++;
+            console.log('step 2.2')
+        }
+    });
+
+    stager.loop('stage 3',  function() {
+        // Notice: counter is double incremented when
+        // hasNextStep is called.
+        return ++counter < 6;
+    });
+
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+}
+
+function decorateStagerDoLoop(stager) {
+    var counter;
+    counter = 0;
+
+    stager.doLoop(
+        {
+            id: 'stage 1',
+            cb: function() {
+                counter++;
+                console.log('stage 1')
+            }
+        },
+        function() {
+            return counter < 3;
+        }
+    );
+
+    stager.doLoop('stage 2', function() {
+        return counter < 5;
+    });
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() {
+            counter++;
+            console.log('step 2.2')
+        }
+    });
+
+    stager.doLoop('stage 3',  function() {
+        // Notice: counter is double incremented when
+        // hasNextStep is called.
+        // console.log(counter);
+        return ++counter < 6;
+    });
+
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+}
 
 decorateStagerRepeat(stager);
 
 debugger
 
+stager.skip('stage 2', 'step 2.2');
+console.log(stager.toSkip);
+console.log(stager.isSkipped('stage 2', 'step 2.1'));
+
 stager.finalize();
+
+debugger
 
 // stager.reset();
 
