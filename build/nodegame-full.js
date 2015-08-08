@@ -12489,6 +12489,21 @@ if (!Array.prototype.indexOf) {
     var stepRules = parent.stepRules;
     var J = parent.JSUS;
 
+    // ## Static methods
+
+    /**
+     * ## Stager.defaultCallback
+     *
+     * Default callback added to steps when none is specified
+     *
+     * @see Stager.setDefaultCallback
+     * @see Stager.getDefaultCallback
+     */
+    Stager.defaultCallback = function() {
+        this.node.log(this.getCurrentStepObj().id);
+        this.node.done();
+    };
+
     /**
      * ## Stager constructor
      *
@@ -12675,14 +12690,19 @@ if (!Array.prototype.indexOf) {
         /**
          * ### Stager.toSkip
          *
-         * List of stages and steps to skip when building the sequence.
+         * List of stages and steps to skip when building the sequence
          */
         this.toSkip = {
-
             stages: {},
-
             steps: {}
         };
+
+        /**
+         * ## Stager.defaultCallback
+         *
+         * Default callback assigned to a step if none is provided
+         */
+        this.defaultCallback = null;
 
         /**
          * ### Stager.log
@@ -12731,6 +12751,8 @@ if (!Array.prototype.indexOf) {
         this.finalized = false;
         this.currentType = "__default";
         this.currentBlockType = "__default";
+        this.toSkip = { stages: {}, steps: {} };
+        this.defaultCallback = null;
         return this;
     };
 
@@ -12987,6 +13009,16 @@ if (!Array.prototype.indexOf) {
             this.setOnGameover(stateObj.onGameover);
         }
 
+        // Set toSkip.
+        if (stateObj.hasOwnProperty('toSkip')) {
+            this.toSkip = stateObj.toSkip;
+        }
+
+        // Set defaultCallback
+        if (stateObj.hasOwnProperty('defaultCallback')) {
+            this.setDefaultCallback(stateObj.defaultCallback);
+        }
+
         this.finalized = true;
     };
 
@@ -13020,7 +13052,9 @@ if (!Array.prototype.indexOf) {
             defaultProperties:   this.defaultProperties,
             onInit:              this.onInit,
             onGameover:          this.onGameover,
-            blocks:              this.blocks
+            blocks:              this.blocks,
+            toSkip:              this.toSkip,
+            defaultCallback:     this.defaultCallback
         });
     };
 
@@ -13060,6 +13094,42 @@ if (!Array.prototype.indexOf) {
      */
     Stager.prototype.getDefaultStepRule = function() {
         return this.defaultStepRule;
+    };
+
+    /**
+     * ### Stager.setDefaultCallback
+     *
+     * Sets the default callback
+     *
+     * @param {function|null} cb The default callback or null to unset it
+     *
+     * @see Stager.defaultCallback
+     * @see Stager.getDefaultCallback
+     */
+    Stager.prototype.setDefaultCallback = function(cb) {
+        if (cb !== null && 'function' !== typeof cb) {
+            throw new TypeError('Stager.setDefaultCallback: ' +
+                                'defaultCallback must be function or null.');
+        }
+        this.defaultCallback = cb;
+    };
+
+    /**
+     * ### Stager.getDefaultCallback
+     *
+     * Returns the default callback
+     *
+     * If the default callback is not set return the static function
+     * `Stager.defaultCallback`
+     *
+     * @return {function} The default callback
+     *
+     * @see Stager.defaultCallback (static)
+     * @see Stager.defaultCallback
+     * @see Stager.setDefaultCallback
+     */
+    Stager.prototype.getDefaultCallback = function() {
+        return this.defaultCallback || Stager.defaultCallback;
     };
 
     /**
@@ -13287,25 +13357,13 @@ if (!Array.prototype.indexOf) {
      * @param {object} stage A valid stage or step object. Shallowly
      *    copied.
      *
-     * @see Stager.checkStepValidity
+     * @see checkStageValidity
      */
     Stager.prototype.addStage = function(stage) {
-        var res, i;
+        var res, i, stageId;
 
-        if ('object' !== typeof stage) {
-            throw new TypeError('Stager.addStage: stage must be object.')
-        }
-        if ((!stage.steps && !stage.cb) || (stage.steps && stage.cb)) {
-            throw new TypeError('Stager.addStage: stage must have ' +
-                                'either a steps or a cb property.');
-        }
-        if (stage.steps && !J.isArray(stage.steps)) {
-            throw new TypeError('Stager.addStage: stage.steps must be ' +
-                                'array or undefined.');
-        }
-        if ('string' !== typeof stage.id) {
-            throw new TypeError('Stager.addStage: id must be string.');
-        }
+        checkStageValidity(stage, 'addStage');
+
         if (this.stages.hasOwnProperty(stage.id)) {
             throw new Error('Stager.addStage: stage id already ' +
                             'existing: ' + stage.id +
@@ -13321,17 +13379,17 @@ if (!Array.prototype.indexOf) {
                 steps: [ stage.id ]
             };
         }
-        // Check whether the all referenced steps exist.
         else {
-
+            // Missing steps are added with default callback.
             for (i = 0; i < stage.steps.length; ++i) {
                 if (!this.steps[stage.steps[i]]) {
-                    throw new Error('Stager.addStage: stage ' + stage.id +
-                                    ': unknown step "' + stage.steps[i] + '".');
+                    this.addStep({
+                        id: stage.steps[i],
+                        cb: this.getDefaultCallback()
+                    });
                 }
             }
         }
-        //
         this.stages[stage.id] = stage;
     };
 
@@ -13384,7 +13442,6 @@ if (!Array.prototype.indexOf) {
 
             var stageName;
             stageName = checkStageParameter(this, stage, 'next');
-
             positions = checkPositionsParameter(positions, 'next');
 
             handleStageAdd(this, {
@@ -14197,51 +14254,44 @@ if (!Array.prototype.indexOf) {
         return null;
     }
 
-//     /**
-//      * checkStageValidity
-//      *
-//      * Returns whether given stage is valid
-//      *
-//      * Checks for existence and type correctness of the fields.
-//      * Checks for referenced step existence.
-//      *
-//      * @param {object} stage The stage object
-//      *
-//      * @return {string} NULL for valid stages, error description else
-//      *
-//      * @see Stager.addStage
-//      *
-//      * @api private
-//      */
-//     function checkStageValidity(that, stage, unique) {
-//         var i;
-//         if ('object' !== typeof stage) return 'stage must be object';
-//         if ('string' !== typeof stage.id) return 'missing ID';
-//         if (!stage.steps || !stage.steps.length) {
-//             return 'missing "steps" array';
-//         }
-//
-//         if (unique && that.stages.hasOwnProperty(stage.id)) {
-//             return 'stage id already existing: ' + stage.id +
-//                 '. Use extendStage to modify it';
-//         }
-//
-//         // Check whether the all referenced steps exist.
-//         for (i = 0; i < stage.steps.length; ++i) {
-//             if (!that.steps[stage.steps[i]]) {
-//                 return 'unknown step "' + stage.steps[i] + '"';
-//             }
-//         }
-//         return null;
-//     }
+     /**
+      * checkStageValidity
+      *
+      * Returns whether given stage is valid
+      *
+      * Checks for syntactic validity of the stage object. Does not validate
+      * whether the stage name is unique, the steps exists, etc.
+      *
+      * @param {object} stage The stage to validate
+      *
+      * @see Stager.addStage
+      *
+      * @api private
+      */
+     function checkStageValidity(stage, method) {
+        if ('object' !== typeof stage) {
+            throw new TypeError('Stager.' + method + ': stage must be object.')
+        }
+        if ((!stage.steps && !stage.cb) || (stage.steps && stage.cb)) {
+            throw new TypeError('Stager.' + method + ': stage must have ' +
+                                'either a steps or a cb property.');
+        }
+        if (stage.steps && !J.isArray(stage.steps)) {
+            throw new TypeError('Stager.' + method + ': stage.steps must be ' +
+                                'array or undefined.');
+        }
+        if ('string' !== typeof stage.id) {
+            throw new TypeError('Stager.' + method + ': id must be string.');
+        }
+     }
 
     /**
      * ### handleAlias
      *
      * Handles stage id and alias strings
      *
-     * Takes a string like 'stageID' or 'stageID AS alias' and registers
-     * the alias, if existent. Checks whether parameter is valid and unique.
+     * Takes a string like 'stageID' or 'stageID AS alias' and return 'alias'.
+     * Checks that alias and stage id are different.
      *
      * @param {object} that Reference to Stager object
      * @param {string} nameAndAlias The stage-name string
@@ -14254,41 +14304,25 @@ if (!Array.prototype.indexOf) {
      *
      * @api private
      */
-    function handleAlias(that, nameAndAlias, cb) {
-        var tokens = nameAndAlias.split(' AS ');
-        var id = tokens[0].trim();
-        var alias = tokens[1] ? tokens[1].trim() : undefined;
-        var stageName = alias || id;
-        var seqIdx;
+    function extractAlias(that, nameAndAlias, method) {
+        var tokens, id, alias;
 
-        // Check ID validity:
-        if (!that.stages[id]) {
-            that.addStage({
-                id: id,
-                cb: cb || function() {
-                    this.node.log(this.getCurrentStepObj().id);
-                    this.node.done();
-                },
-                alias: alias
-            });
+        tokens = nameAndAlias.split(' AS ');
+        id = tokens[0].trim();
+        alias = tokens[1] ? tokens[1].trim() : undefined;
+        if (id === alias) {
+            throw new Error('Stager.' + method + ': id equal to alias: ' +
+                            nameAndAlias + '.');
         }
-
-        // Check uniqueness:
-        for (seqIdx in that.sequence) {
-            if (that.sequence.hasOwnProperty(seqIdx) &&
-                that.sequence[seqIdx].id === stageName) {
-                throw new Error('Stager.handleAlias: ' +
-                                'received non-unique stage name.');
-            }
+        if (alias && !that.stages[id]) {
+            throw new Error('Stager.' + method + ': alias is referencing ' +
+                            'non-existing stage: ' + id + '.');
         }
-
-        // Add alias:
-        if (alias) {
-            that.stages[alias] = that.stages[id];
-            return alias;
+        if (alias && that.stages[alias]) {
+            throw new Error('Stager.' + method + ': alias is not unique: ' +
+                            alias + '.');
         }
-
-        return id;
+        return alias;
     }
 
     /**
@@ -14305,18 +14339,12 @@ if (!Array.prototype.indexOf) {
      * @api private
      */
     function checkStageParameter(that, stage, method) {
-        var id, cb, stageName;
+        var id, alias;
         if ('object' === typeof stage) {
-            if ('string' !== typeof stage.id) {
-                throw new TypeError('Stager.' + method + ': stage.id must ' +
-                                    'be string.');
-            }
-            if (stage.cb && 'function' !== typeof stage.cb) {
-                throw new TypeError('Stager.' + method + ': stage.cb must ' +
-                                    'be function or undefined.');
-            }
+            checkStageValidity(stage);
             id = stage.id;
-            cb = stage.cb;
+            // A new stage is created if not found.
+            if (!that.stages[id]) that.addStage(stage);
         }
         else {
             if ('string' !== typeof stage) {
@@ -14324,14 +14352,21 @@ if (!Array.prototype.indexOf) {
                                     'string or object.');
             }
             id = stage;
+            // See whether the stage id contains an alias. Throws errors.
+            alias = extractAlias(that, id, method);
+            // Alias must reference an existing stage.
+            if (alias) {
+                that.stages[alias] = that.stages[id];
+            }
+            else if (!that.stages[id]) {
+                that.addStage({
+                    id: id,
+                    cb: that.getDefaultCallback()
+                });
+            }
         }
 
-        stageName = handleAlias(that, id, cb);
-        if (stageName === null) {
-            throw new Error('Stager.' + method + ': invalid stage name ' +
-                            'received: ' + stage);
-        }
-        return stageName;
+        return alias || id;
     }
 
     /**

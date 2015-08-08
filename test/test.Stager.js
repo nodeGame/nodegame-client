@@ -50,14 +50,14 @@ var stager, stagerState;
 
 describe('Stager', function() {
 
-    describe('simple stage add', function() {
+    describe('simple stage add: default steps', function() {
         before(function() {
             stager = ngc.getStager();
             stager.next('stage 1');
             stager.next('stage 2');
             stager.next('stage 3');
         });
-        it('should have 3 stages of 3 steps', function() {
+        it('should have 3 stages and 3 steps', function() {
             J.size(stager.stages).should.eql(3);
             J.size(stager.steps).should.eql(3);
         });
@@ -68,6 +68,41 @@ describe('Stager', function() {
         });
     });
 
+     describe('simple stage add: steps defined', function() {
+         before(function() {
+             stager = ngc.getStager();
+             stager.next({
+                 id: 'stage 1',
+                 steps: [ 'step 1.1', 'step 1.2', 'step 1.3' ]
+             });
+
+         });
+         it('should have 1 stage and 3 steps', function() {
+             J.size(stager.stages).should.eql(1);
+             J.size(stager.steps).should.eql(3);
+         });
+         it('should have 3 stages of 1 step each', function() {
+
+         });
+     });
+
+//     describe('simple stage add default step overwritten', function() {
+//         before(function() {
+//             stager = ngc.getStager();
+//             stager
+//                 .stage('stage 1')
+//                 .step('step 1.1')
+//                 .step('step 1.2')
+//
+//         });
+//         it('should have 1 stage of 2 steps', function() {
+//             J.size(stager.stages).should.eql(1);
+//             J.size(stager.steps).should.eql(2);
+//         });
+//         it('should have 3 stages of 1 step each', function() {
+//
+//         });
+//     });
 });
 
 // Setup.
