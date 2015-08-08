@@ -13,12 +13,6 @@ var node = ngc.getClient();
 module.exports = node;
 node.verbosity = -1000;
 
-function verySimple(stager) {
-    stager.next('stage 1');
-    stager.next('stage 2');
-    stager.next('stage 3');
-}
-
 function simple(stager) {
 
     stager.next({
@@ -59,19 +53,19 @@ describe('Stager', function() {
     describe('simple stage add', function() {
         before(function() {
             stager = ngc.getStager();
-            // Adds 3 stages sequentially.
-            verySimple(stager);
-            console.log(stager);
+            stager.next('stage 1');
+            stager.next('stage 2');
+            stager.next('stage 3');
         });
         it('should have 3 stages of 3 steps', function() {
             J.size(stager.stages).should.eql(3);
             J.size(stager.steps).should.eql(3);
         });
         it('should have 3 stages of 1 step each', function() {
-            J.size(stager.stages).should.eql(3);
-            J.size(stager.steps).should.eql(3);
+            stager.steps['stage 1'].id.should.eql('stage 1');
+            stager.steps['stage 2'].id.should.eql('stage 2');
+            stager.steps['stage 3'].id.should.eql('stage 3');
         });
-
     });
 
 });
