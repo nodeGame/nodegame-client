@@ -2265,12 +2265,12 @@ following fields:</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">unique</span><span class="p">;</span>
-        <span class="nx">unique</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="nx">res</span> <span class="o">=</span> <span class="nx">checkStepValidity</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">unique</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.addStep: invalid step received: &#39;</span> <span class="o">+</span>
-                            <span class="nx">res</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="nx">checkStepValidity</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;addStep&#39;</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.addStep: step id already &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;existing: &#39;</span> <span class="o">+</span> <span class="nx">step</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span>
+                            <span class="s1">&#39;. Use extendStep to modify it.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">step</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -3929,31 +3929,20 @@ Available only when nodegame is executed in <em>flexible</em> mode.</p>
   </div>
   <div class="body"><p>Returns whether given step is valid</p>
 
-<p>Checks for existence and type correctness of the fields.
-Optionally, checks also for id uniqueness.</p>
+<p>Checks for syntactic validity of the step object. Does not validate
+whether the name is unique, etc.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">that</span>
-      <span class="dox_type">object</span>
-      <span>Reference to Stager object</span>
-    </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">step</span>
       <span class="dox_type">object</span>
       <span>The step object</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">unique</span>
-      <span class="dox_type">boolean</span>
-      <span>If TRUE, checks also for id uniqueness</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span class="dox_tag_name">method</span>
       <span class="dox_type">string</span>
-      <span>NULL for valid stages, error description else</span>
+      <span>The name of the method calling the validation</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -3968,16 +3957,22 @@ Optionally, checks also for id uniqueness.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">checkStepValidity</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">unique</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">)</span>  <span class="k">return</span> <span class="s1">&#39;step must be object&#39;</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;missing ID&#39;</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;missing callback&#39;</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">unique</span> <span class="o">&amp;&amp;</span> <span class="nx">that</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="s1">&#39;step ID already existing: &#39;</span> <span class="o">+</span> <span class="nx">step</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span>
-                <span class="s1">&#39;. Use extendStep to modify it&#39;</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">checkStepValidity</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: step must be object.&#39;</span><span class="p">)</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: step.cb must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;function.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: step.id must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: step.id cannot &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be an empty string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -4001,6 +3996,11 @@ whether the stage name is unique, the steps exists, etc.</p>
       <span class="dox_type">object</span>
       <span>The stage to validate</span>
     </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">method</span>
+      <span class="dox_type">string</span>
+      <span>The name of the method calling the validation</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.addStage
@@ -4014,7 +4014,7 @@ whether the stage name is unique, the steps exists, etc.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>     <span class="kd">function</span> <span class="nx">checkStageValidity</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">checkStageValidity</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: stage must be object.&#39;</span><span class="p">)</span>
         <span class="p">}</span>
@@ -4027,7 +4027,12 @@ whether the stage name is unique, the steps exists, etc.</p>
                                 <span class="s1">&#39;array or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: id must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: stage.id must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: stage.id cannot &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be an empty string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
      <span class="p">}</span></pre></div>
         </td>
@@ -4061,9 +4066,9 @@ Checks that alias and stage id are different.</p>
       <span>The stage-name string</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">cb</span>
-      <span class="dox_type">function</span>
-      <span>Optional. The callback for the stage</span>
+      <span class="dox_tag_name">method</span>
+      <span class="dox_type">string</span>
+      <span>The name of the method calling the validation</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -4151,7 +4156,7 @@ Checks that alias and stage id are different.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">checkStageParameter</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">alias</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">checkStageValidity</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
+            <span class="nx">checkStageValidity</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">method</span><span class="p">);</span>
             <span class="nx">id</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span></pre></div>
         </td>
       </tr>

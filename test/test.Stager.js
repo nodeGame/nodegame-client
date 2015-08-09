@@ -1,5 +1,5 @@
 var util = require('util');
-    should = require('should');
+should = require('should');
 
 var log = console.log;
 
@@ -12,6 +12,13 @@ var node = ngc.getClient();
 
 module.exports = node;
 node.verbosity = -1000;
+
+// stager = ngc.getStager();
+// stager.next({
+//     id: 'a',
+//     steps: [ '' ]
+// });
+// return
 
 function simple(stager) {
 
@@ -45,14 +52,87 @@ function simple(stager) {
     // stager.endBlock();
 }
 
-var tmp, res;
+var i, len, tmp, res;
 var stager, stagerState;
+
+var operations = [ 'next', 'repeat', 'loop', 'doLoop' ];
+
 
 describe('Stager', function() {
 
-    describe('simple stage add: default steps', function() {
+    describe('constructor', function() {
         before(function() {
             stager = ngc.getStager();
+        });
+        it('should have 1 block', function() {
+            stager.blocks.length.should.eql(1);
+        });
+        it('should have 0 steps, 0 stages', function() {
+            J.size(stager.stages).should.eql(0);
+            J.size(stager.steps).should.eql(0);
+        });
+    });
+
+    describe('#addStage', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() { console.log('ahah'); };
+            stager.addStage({
+                id: 'stage 1',
+                cb: tmp
+            });
+        });
+        it('should have 1 stage and 1 steps', function() {
+            J.size(stager.stages).should.eql(1);
+            J.size(stager.steps).should.eql(1);
+        });
+        it('should have the 1 stage correctly named', function() {
+            stager.stages['stage 1'].id.should.eql('stage 1');
+        });
+        it('should have the 1 step correctly named', function() {
+            stager.steps['stage 1'].id.should.eql('stage 1');
+        });
+        it('should have the 1 step assigned to the same stage', function() {
+            stager.stages['stage 1'].steps[0].should.eql('stage 1');
+        });
+        it('should have the specified callback in the step', function() {
+            stager.steps['stage 1'].cb.should.eql(tmp);
+        });
+        it('should not create a new block', function() {
+            stager.blocks.length.should.eql(1);
+        });
+    });
+
+    describe('#addStep', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() { console.log('ahah'); };
+            stager.addStep({
+                id: 'step 1',
+                cb: tmp
+            });
+        });
+        it('should have 1 stage and 1 steps', function() {
+            J.size(stager.stages).should.eql(0);
+            J.size(stager.steps).should.eql(1);
+        });
+        it('should have the 1 step correctly named', function() {
+            stager.steps['step 1'].id.should.eql('step 1');
+        });
+        it('should have the specified callback in the step', function() {
+            stager.steps['step 1'].cb.should.eql(tmp);
+        });
+        it('should not create a new block', function() {
+            stager.blocks.length.should.eql(1);
+        });
+    });
+
+    describe('simple stage add: 3 stages with default step: next', function() {
+        before(function() {
+            stager = ngc.getStager();
+            tmp = null, i = null, len = null, res = null, stagerStage = null;
             stager.next('stage 1');
             stager.next('stage 2');
             stager.next('stage 3');
@@ -61,48 +141,159 @@ describe('Stager', function() {
             J.size(stager.stages).should.eql(3);
             J.size(stager.steps).should.eql(3);
         });
-        it('should have 3 stages of 1 step each', function() {
+        it('should have 3 steps correctly named', function() {
             stager.steps['stage 1'].id.should.eql('stage 1');
             stager.steps['stage 2'].id.should.eql('stage 2');
             stager.steps['stage 3'].id.should.eql('stage 3');
         });
+        it('should have 3 stages of 1 step each', function() {
+            stager.stages['stage 1'].steps[0].should.eql('stage 1');
+            stager.stages['stage 2'].steps[0].should.eql('stage 2');
+            stager.stages['stage 3'].steps[0].should.eql('stage 3');
+        });
+        it('should create 6 new blocks', function() {
+            stager.blocks.length.should.eql(7);
+        });
     });
 
-     describe('simple stage add: steps defined', function() {
-         before(function() {
-             stager = ngc.getStager();
-             stager.next({
-                 id: 'stage 1',
-                 steps: [ 'step 1.1', 'step 1.2', 'step 1.3' ]
-             });
+    describe('simple stage add: 1 stage steps defined: next', function() {
+        before(function() {
+            stager = ngc.getStager();
+            tmp = null, i = null, len = null, res = null, stagerStage = null;
+            stager.next({
+                id: 'stage 1',
+                steps: [ 'step 1.1', 'step 1.2', 'step 1.3' ]
+            });
+        });
+        it('should have 1 stage and 3 steps', function() {
+            J.size(stager.stages).should.eql(1);
+            J.size(stager.steps).should.eql(3);
+        });
+        it('should have the 3 steps correctly named', function() {
+            stager.steps['step 1.1'].id.should.eql('step 1.1');
+            stager.steps['step 1.2'].id.should.eql('step 1.2');
+            stager.steps['step 1.3'].id.should.eql('step 1.3');
+        });
+        it('should have the 3 steps assigned to the same stage', function() {
+            stager.stages['stage 1'].steps[0].should.eql('step 1.1');
+            stager.stages['stage 1'].steps[1].should.eql('step 1.2');
+            stager.stages['stage 1'].steps[2].should.eql('step 1.3');
+        });
+        it('should create 2 new blocks', function() {
+            stager.blocks.length.should.eql(3);
+        });
+    });
 
-         });
-         it('should have 1 stage and 3 steps', function() {
-             J.size(stager.stages).should.eql(1);
-             J.size(stager.steps).should.eql(3);
-         });
-         it('should have 3 stages of 1 step each', function() {
 
-         });
-     });
+    describe('simple stage add: 1 stage cb defined: next', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() { console.log('ahah'); };
+            stager.next({
+                id: 'stage 1',
+                cb: tmp
+            });
 
-//     describe('simple stage add default step overwritten', function() {
-//         before(function() {
-//             stager = ngc.getStager();
-//             stager
-//                 .stage('stage 1')
-//                 .step('step 1.1')
-//                 .step('step 1.2')
-//
-//         });
-//         it('should have 1 stage of 2 steps', function() {
-//             J.size(stager.stages).should.eql(1);
-//             J.size(stager.steps).should.eql(2);
-//         });
-//         it('should have 3 stages of 1 step each', function() {
-//
-//         });
-//     });
+        });
+        it('should have 1 stage and 1 steps', function() {
+            J.size(stager.stages).should.eql(1);
+            J.size(stager.steps).should.eql(1);
+        });
+        it('should have the 1 step correctly named', function() {
+            stager.steps['stage 1'].id.should.eql('stage 1');
+        });
+        it('should have the 1 step assigned to the same stage', function() {
+            stager.stages['stage 1'].steps[0].should.eql('stage 1');
+        });
+        it('should have the specified callback in the step', function() {
+            stager.steps['stage 1'].cb.should.eql(tmp);
+        });
+        it('should create 2 new blocks', function() {
+            stager.blocks.length.should.eql(3);
+        });
+
+    });
+
+    describe('failing simple add', function() {
+        beforeEach(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() { console.log('ahah'); };
+
+        });
+        it('should fail if stage id is not a (non-empty) string', function() {
+            (function() {
+                stager.addStage({ id: null, cb: tmp});
+            }).should.throw();
+            (function() {
+                stager.next('');
+            }).should.throw();
+            (function() {
+                stager.next({
+                    id: {},
+                    cb: tmp
+                });
+            }).should.throw();
+        });
+        it('should fail if step id is not a (non-empty) string', function() {
+            (function() {
+                stager.addStep({ id: null, cb: tmp});
+            }).should.throw();
+            (function() {
+                stager.next({
+                    id: 'stage 1',
+                    steps: [ '' ]
+                });
+            }).should.throw();
+        });
+        it('should fail if stage cb is not a function', function() {
+            (function() {
+                stager.addStage({ id: 'a', cb: null});
+            }).should.throw();
+            (function() {
+                stager.next({
+                    id: 'a',
+                    cb: {}
+                });
+            }).should.throw();
+        });
+        it('should fail if step cb is not a function', function() {
+            (function() {
+                stager.addStep({ id: 'a', cb: 'a'});
+            }).should.throw();
+        });
+        it('other fails', function() {
+            (function() {
+                stager.addStep();
+            }).should.throw();
+            (function() {
+                stager.addStage();
+            }).should.throw();
+            (function() {
+                stager.next();
+            }).should.throw();
+        });
+
+    });
+
+    //     describe('simple stage add default step overwritten', function() {
+    //         before(function() {
+    //             stager = ngc.getStager();
+    //             stager
+    //                 .stage('stage 1')
+    //                 .step('step 1.1')
+    //                 .step('step 1.2')
+    //
+    //         });
+    //         it('should have 1 stage of 2 steps', function() {
+    //             J.size(stager.stages).should.eql(1);
+    //             J.size(stager.steps).should.eql(2);
+    //         });
+    //         it('should have 3 stages of 1 step each', function() {
+    //
+    //         });
+    //     });
 });
 
 // Setup.
@@ -347,13 +538,13 @@ var flag = false;
 stager
     .repeat('main', 2)
     .loop('durr', function() {
-            if (counter++ >= 3) return false;
-            return true;
-        })
+        if (counter++ >= 3) return false;
+        return true;
+    })
     .next('blah')
     .next('durr AS durrurrurr')
     .gameover()
-    ;
+;
 
 // Testing extraction:
 console.log("Extraction of 'main':");
@@ -365,62 +556,62 @@ console.log(util.inspect(stager.extractStage(['blah', 'durrurrurr', 'blah']),
 console.log();
 
 /*
-console.log('Sequence (JS object):');
-console.log(stager.getSequence('o'));
-console.log();
+  console.log('Sequence (JS object):');
+  console.log(stager.getSequence('o'));
+  console.log();
 
-console.log('Sequence (human readable stages):');
-console.log(stager.getSequence('hstages'));
-console.log();
+  console.log('Sequence (human readable stages):');
+  console.log(stager.getSequence('hstages'));
+  console.log();
 
-console.log('Sequence (human readable steps):');
-console.log(stager.getSequence('hsteps'));
-console.log();
+  console.log('Sequence (human readable steps):');
+  console.log(stager.getSequence('hsteps'));
+  console.log();
 
-// Testing state getter/setter:
-console.log('State:');
-console.log(stager.getState());
-console.log();
-stager.setState(stager.getState());
-console.log('State (after get+set):');
-console.log(stager.getState());
-console.log();
+  // Testing state getter/setter:
+  console.log('State:');
+  console.log(stager.getState());
+  console.log();
+  stager.setState(stager.getState());
+  console.log('State (after get+set):');
+  console.log(stager.getState());
+  console.log();
 
-stager.seqTestRun(false);
+  stager.seqTestRun(false);
 */
 
 
 // Expert mode test:
 /*
-console.log();
-console.log('EXPERT MODE');
-console.log('===========');
+  console.log();
+  console.log('EXPERT MODE');
+  console.log('===========');
 
-stager.clear();
+  stager.clear();
 
-stager.addStep(stepWoop);
-stager.addStep(stepBeep);
+  stager.addStep(stepWoop);
+  stager.addStep(stepBeep);
 
-stager.addStage(stepDurr);
-stager.addStage(stepBlah);
-stager.addStage(stageMain);
+  stager.addStage(stepDurr);
+  stager.addStage(stepBlah);
+  stager.addStage(stageMain);
 
-flag = false;
+  flag = false;
 
-stager.registerNext('main', function() { return 'blah'; });
-stager.registerGeneralNext(function() {
-    if (!flag) { flag = true; return 'durr'; }
-    return null;
-});
+  stager.registerNext('main', function() { return 'blah'; });
+  stager.registerGeneralNext(function() {
+  if (!flag) { flag = true; return 'durr'; }
+  return null;
+  });
 
-// Testing state getter/setter:
-console.log('State:');
-console.log(stager.getState());
-console.log();
-stager.setState(stager.getState());
-console.log('State (after get+set):');
-console.log(stager.getState());
-console.log();
+  // Testing state getter/setter:
+  console.log('State:');
+  console.log(stager.getState());
+  console.log();
+  stager.setState(stager.getState());
+  console.log('State (after get+set):');
+  console.log(stager.getState());
+  console.log();
 
-stager.seqTestRun(true, 'main');
+  stager.seqTestRun(true, 'main');
 */
