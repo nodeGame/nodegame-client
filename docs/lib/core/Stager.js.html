@@ -241,6 +241,9 @@
         <a href="#addloop">addLoop</a>
       </div>
       <div class="heading h3">
+        <a href="#checkfinalized">checkFinalized</a>
+      </div>
+      <div class="heading h3">
         <a href="#checkstepvalidity">checkStepValidity</a>
       </div>
       <div class="heading h3">
@@ -1064,7 +1067,7 @@ is terminated.</p>
 </div>
 <p>Already finalized.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2414,10 +2417,13 @@ function. A step will be created with the same name of the stage.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">positions</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="nx">checkFinalized</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">);</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">step</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="nx">id</span><span class="o">:</span> <span class="nx">step</span><span class="p">,</span>
-                <span class="nx">cb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{}</span>
+                <span class="nx">cb</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDefaultCallback</span><span class="p">()</span>
             <span class="p">};</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">step</span><span class="p">);</span>
@@ -2477,8 +2483,10 @@ unique in the sequence.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span>
         <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">positions</span><span class="p">)</span> <span class="p">{</span>
-
             <span class="kd">var</span> <span class="nx">stageName</span><span class="p">;</span>
+
+            <span class="nx">checkFinalized</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;next&#39;</span><span class="p">);</span>
+
             <span class="nx">stageName</span> <span class="o">=</span> <span class="nx">checkStageParameter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;next&#39;</span><span class="p">);</span>
             <span class="nx">positions</span> <span class="o">=</span> <span class="nx">checkPositionsParameter</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="s1">&#39;next&#39;</span><span class="p">);</span>
 
@@ -2538,8 +2546,10 @@ unique in the sequence.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">repeatStage</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">repeat</span> <span class="o">=</span>
         <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">nRepeats</span><span class="p">,</span> <span class="nx">positions</span><span class="p">)</span> <span class="p">{</span>
-
             <span class="kd">var</span> <span class="nx">stageName</span><span class="p">;</span>
+
+            <span class="nx">checkFinalized</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;repeat&#39;</span><span class="p">);</span>
+
             <span class="nx">stageName</span> <span class="o">=</span> <span class="nx">checkStageParameter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;next&#39;</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">nRepeats</span> <span class="o">||</span>
@@ -3267,10 +3277,7 @@ redefines them.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">skip</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.skip: stager has been &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;already finalized.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="nx">checkFinalized</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;skip&#39;</span><span class="p">);</span>
         <span class="nx">setSkipStageStep</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="s1">&#39;skip&#39;</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -3315,10 +3322,7 @@ redefines them.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">unskip</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.unskip: stager has been &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;already finalized.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="nx">checkFinalized</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;unskip&#39;</span><span class="p">);</span>
         <span class="nx">setSkipStageStep</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="s1">&#39;unskip&#39;</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -3891,6 +3895,8 @@ Available only when nodegame is executed in <em>flexible</em> mode.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">addLoop</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">loopFunc</span><span class="p">,</span> <span class="nx">positions</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">stageName</span><span class="p">;</span>
 
+        <span class="nx">checkFinalized</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
+
         <span class="nx">stageName</span> <span class="o">=</span> <span class="nx">checkStageParameter</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">loopFunc</span><span class="p">)</span> <span class="p">{</span>
@@ -3907,6 +3913,47 @@ Available only when nodegame is executed in <em>flexible</em> mode.</p>
         <span class="p">},</span> <span class="nx">positions</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="checkfinalized">
+  <h3>
+    <a href="#checkfinalized" class="pilcrow">&#182;</a>
+    checkFinalized
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Check whether the stager is already finalized, and throws an error if so</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">that</span>
+      <span class="dox_type">object</span>
+      <span>Reference to Stager object</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">method</span>
+      <span class="dox_type">string</span>
+      <span>The name of the method calling the validation</span>
+    </div>
+    <div class="dox_tag_title">API</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">private
+</span>
+    </span>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">checkFinalized</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: stager has been &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;already finalized.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -3973,7 +4020,7 @@ whether the name is unique, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
+  <a class="pilcrow" href="#section-124" id="section-124">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>checkStageValidity</p>
@@ -4157,7 +4204,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
+  <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
 </div>
 <p>A new stage is created if not found.</p>
         </td>
@@ -4174,7 +4221,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
+  <a class="pilcrow" href="#section-128" id="section-128">&#182;</a>
 </div>
 <p>See whether the stage id contains an alias. Throws errors.</p>
         </td>
@@ -4184,7 +4231,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-128" id="section-128">&#182;</a>
+  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
 </div>
 <p>Alias must reference an existing stage.</p>
         </td>
@@ -4311,7 +4358,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-131" id="section-131">&#182;</a>
+  <a class="pilcrow" href="#section-132" id="section-132">&#182;</a>
 </div>
 <p>Begin stage block.</p>
         </td>
@@ -4330,7 +4377,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-132" id="section-132">&#182;</a>
+  <a class="pilcrow" href="#section-133" id="section-133">&#182;</a>
 </div>
 <p>Add step block inside stage block.</p>
         </td>
@@ -4706,7 +4753,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-146" id="section-146">&#182;</a>
+  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
 </div>
 <p>Cache the current state before finalization for later reset.</p>
         </td>
@@ -4720,7 +4767,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
+  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
 </div>
 <p>Range in which the indeces must be.</p>
         </td>
@@ -4732,7 +4779,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
+  <a class="pilcrow" href="#section-149" id="section-149">&#182;</a>
 </div>
 <p>Accounting for already taken positions.</p>
         </td>
@@ -4742,7 +4789,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-149" id="section-149">&#182;</a>
+  <a class="pilcrow" href="#section-150" id="section-150">&#182;</a>
 </div>
 <p>Parsing all of the position strings into arrays.</p>
         </td>
@@ -4757,7 +4804,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-150" id="section-150">&#182;</a>
+  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
 </div>
 <p>Assigning positions.</p>
         </td>
@@ -4767,7 +4814,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
+  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
 </div>
 <p>Select entry with least possibilities of where to go.</p>
         </td>
@@ -4780,7 +4827,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
+  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
 </div>
 <p>No valid position specified.</p>
         </td>
@@ -4793,7 +4840,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
+  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
 </div>
 <p>Chose position randomly among possibilities.</p>
         </td>
@@ -4806,7 +4853,7 @@ Checks that alias and stage id are different.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
+  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
 </div>
 <p>Adjust possible positions of remaining entries.</p>
         </td>

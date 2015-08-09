@@ -71,6 +71,9 @@ describe('Stager', function() {
             J.size(stager.stages).should.eql(0);
             J.size(stager.steps).should.eql(0);
         });
+        it('should have empty sequence', function() {
+            stager.sequence.length.should.eql(0);
+        });
     });
 
     describe('#addStage', function() {
@@ -102,6 +105,9 @@ describe('Stager', function() {
         it('should not create a new block', function() {
             stager.blocks.length.should.eql(1);
         });
+        it('should have empty sequence', function() {
+            stager.sequence.length.should.eql(0);
+        });
     });
 
     describe('#addStep', function() {
@@ -126,6 +132,9 @@ describe('Stager', function() {
         });
         it('should not create a new block', function() {
             stager.blocks.length.should.eql(1);
+        });
+        it('should have empty sequence', function() {
+            stager.sequence.length.should.eql(0);
         });
     });
 
@@ -182,6 +191,9 @@ describe('Stager', function() {
         it('should create 2 new blocks', function() {
             stager.blocks.length.should.eql(3);
         });
+        it('should have empty sequence', function() {
+            stager.sequence.length.should.eql(0);
+        });
     });
 
 
@@ -212,8 +224,75 @@ describe('Stager', function() {
         it('should create 2 new blocks', function() {
             stager.blocks.length.should.eql(3);
         });
-
+        it('should have empty sequence', function() {
+            stager.sequence.length.should.eql(0);
+        });
     });
+
+    describe('#clear, #init', function() {
+        before(function() {
+            stager = ngc.getStager();
+            tmp = null, i = null, len = null, res = null, stagerStage = null;
+            stager.next('1').next('2');
+        });
+        it('should remove everything when #clear is invoked', function() {
+            stager.clear();
+            J.size(stager.stages).should.eql(0);
+            J.size(stager.steps).should.eql(0);
+            stager.blocks.length.should.eql(0);
+            stager.sequence.length.should.eql(0);
+        });
+        it('should add 1 default block when init is invoked', function() {
+            stager.init();
+            J.size(stager.stages).should.eql(0);
+            J.size(stager.steps).should.eql(0);
+            stager.sequence.length.should.eql(0);
+            stager.blocks.length.should.eql(1);
+        });
+    });
+
+
+    describe('#finalize, #reset', function() {
+        before(function() {
+            stager = ngc.getStager();
+            tmp = null, i = null, len = null, res = null, stagerStage = null;
+            stager.next('1').next('2');
+            stager.finalize();
+        });
+        it('should be finalized', function() {
+            stager.finalized.should.be.true;
+        });
+        it('should add 2 stages in the sequence', function() {
+            stager.sequence.length.should.eql(2);
+        });
+        it('should have stage "1", then "2" in the sequence', function() {
+            stager.sequence[0].id.should.eql('1');
+            stager.sequence[1].id.should.eql('2');
+        });
+        it('should have stages of type "plain" in the sequence', function() {
+            stager.sequence[0].type.should.eql('plain');
+            stager.sequence[1].type.should.eql('plain');
+        });
+        it('should not alter blocks, stages, steps', function() {
+            J.size(stager.stages).should.eql(2);
+            J.size(stager.steps).should.eql(2);
+            stager.blocks.length.should.eql(5);
+        });
+        // RESET.
+        it('should delete the sequence when reset is invoked', function() {
+            stager.reset();
+            stager.sequence.length.should.eql(0);
+        });
+        it('should keep other structures when reset is invoked', function() {
+            J.size(stager.stages).should.eql(2);
+            J.size(stager.steps).should.eql(2);
+            stager.blocks.length.should.eql(5);
+        });
+        it('should not be finalized after reset is invoked', function() {
+            stager.finalized.should.be.false;
+        });
+    });
+
 
     describe('should fail', function() {
         beforeEach(function() {
@@ -315,6 +394,23 @@ describe('Stager', function() {
                 }, -3);
             }).should.throw();
         });
+        it('if attempting to modify sequence after stager was finalized',
+           function() {
+
+               (function() {
+                   stager.next('stage').finalize();
+                   stager.next('ahah');
+               }).should.throw();
+               (function() {
+                   stager.repeat('ahah');
+               }).should.throw();
+               (function() {
+                   stager.loop('ahah');
+               }).should.throw();
+               (function() {
+                   stager.step({ id: 'a', cb: function() {} });
+               }).should.throw();
+           });
 
         it('other fails', function() {
             (function() {
