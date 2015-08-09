@@ -129,7 +129,7 @@ describe('Stager', function() {
         });
     });
 
-    describe('simple stage add: 3 stages with default step: next', function() {
+    describe('#next: 3 stages with default step', function() {
         before(function() {
             stager = ngc.getStager();
             tmp = null, i = null, len = null, res = null, stagerStage = null;
@@ -156,7 +156,7 @@ describe('Stager', function() {
         });
     });
 
-    describe('simple stage add: 1 stage steps defined: next', function() {
+    describe('#next: 1 stage steps defined', function() {
         before(function() {
             stager = ngc.getStager();
             tmp = null, i = null, len = null, res = null, stagerStage = null;
@@ -185,7 +185,7 @@ describe('Stager', function() {
     });
 
 
-    describe('simple stage add: 1 stage cb defined: next', function() {
+    describe('#next: 1 stage cb defined', function() {
         before(function() {
             stager = ngc.getStager();
             i = null, len = null, res = null, stagerStage = null;
@@ -215,14 +215,14 @@ describe('Stager', function() {
 
     });
 
-    describe('failing simple add', function() {
+    describe('should fail', function() {
         beforeEach(function() {
             stager = ngc.getStager();
             i = null, len = null, res = null, stagerStage = null;
             tmp = function() { console.log('ahah'); };
 
         });
-        it('should fail if stage id is not a (non-empty) string', function() {
+        it('if stage id is not a (non-empty) string', function() {
             (function() {
                 stager.addStage({ id: null, cb: tmp});
             }).should.throw();
@@ -236,7 +236,7 @@ describe('Stager', function() {
                 });
             }).should.throw();
         });
-        it('should fail if step id is not a (non-empty) string', function() {
+        it('if step id is not a (non-empty) string', function() {
             (function() {
                 stager.addStep({ id: null, cb: tmp});
             }).should.throw();
@@ -247,7 +247,7 @@ describe('Stager', function() {
                 });
             }).should.throw();
         });
-        it('should fail if stage cb is not a function', function() {
+        it('if stage cb is not a function', function() {
             (function() {
                 stager.addStage({ id: 'a', cb: null});
             }).should.throw();
@@ -258,11 +258,64 @@ describe('Stager', function() {
                 });
             }).should.throw();
         });
-        it('should fail if step cb is not a function', function() {
+        it('if step cb is not a function', function() {
             (function() {
                 stager.addStep({ id: 'a', cb: 'a'});
             }).should.throw();
         });
+        it('if repetition parameter is not a positive number', function() {
+            (function() {
+                stager.repeat('ahah');
+            }).should.throw();
+            (function() {
+                stager.repeat('ahah', -2);
+            }).should.throw();
+            (function() {
+                stager.repeat('ahah', NaN);
+            }).should.throw();
+            (function() {
+                stager.repeat('ahah', {});
+            }).should.throw();
+            (function() {
+                stager.repeat({
+                    id: 'ahah',
+                    cb: function() {}
+                });
+            }).should.throw();
+            (function() {
+                stager.repeat({
+                    id: 'ahah',
+                    cb: function() {}
+                }, -3);
+            }).should.throw();
+        });
+        it('if loop function is not a function', function() {
+            (function() {
+                stager.loop('ahah');
+            }).should.throw();
+            (function() {
+                stager.loop('ahah', -2);
+            }).should.throw();
+            (function() {
+                stager.doLoop('ahah', NaN);
+            }).should.throw();
+            (function() {
+                stager.doLoop('ahah', {});
+            }).should.throw();
+            (function() {
+                stager.loop({
+                    id: 'ahah',
+                    cb: function() {}
+                });
+            }).should.throw();
+            (function() {
+                stager.doLoop({
+                    id: 'ahah',
+                    cb: function() {}
+                }, -3);
+            }).should.throw();
+        });
+
         it('other fails', function() {
             (function() {
                 stager.addStep();
@@ -277,23 +330,6 @@ describe('Stager', function() {
 
     });
 
-    //     describe('simple stage add default step overwritten', function() {
-    //         before(function() {
-    //             stager = ngc.getStager();
-    //             stager
-    //                 .stage('stage 1')
-    //                 .step('step 1.1')
-    //                 .step('step 1.2')
-    //
-    //         });
-    //         it('should have 1 stage of 2 steps', function() {
-    //             J.size(stager.stages).should.eql(1);
-    //             J.size(stager.steps).should.eql(2);
-    //         });
-    //         it('should have 3 stages of 1 step each', function() {
-    //
-    //         });
-    //     });
 });
 
 // Setup.

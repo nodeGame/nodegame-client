@@ -50,6 +50,7 @@
  - `autoSet` option specifies whether a SET message should be sent to SERVER when node.done() is called.
  - Game message target `BYE` causes a client side disconnection.
  - `#node.get()` syntax changed. Fourth parameters is `options` and contains more options.
+ - `#Stager.loop()` and `#Stager.doLoop()` must have a loop function, no default provided.
 
 
 ## 0.9.9
