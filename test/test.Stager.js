@@ -14,10 +14,18 @@ module.exports = node;
 node.verbosity = -1000;
 
 // stager = ngc.getStager();
-// stager.next({
-//     id: 'a',
-//     steps: [ '' ]
-// });
+// stager.next('1').next('2');
+// console.log(stager.blocks);
+// debugger
+// stager.finalize();
+// stager.reset();
+// console.log(stager.blocks);
+// debugger
+// stager.next('3').next('4').next('5');
+// debugger
+// stager.finalize();
+// console.log(stager.sequence);
+// console.log(stager.getSequence('hsteps'));
 // return
 
 function simple(stager) {
@@ -42,7 +50,6 @@ function simple(stager) {
     });
 
     stager.next('stage 3');
-
 
     stager.gameover();
 
@@ -291,6 +298,30 @@ describe('Stager', function() {
         it('should not be finalized after reset is invoked', function() {
             stager.finalized.should.be.false;
         });
+        it('should allow to add more stages and steps after reset', function() {
+            stager
+                .repeat('3', 3)
+                .loop({
+                    id: '4',
+                    steps: [ '4.1', '4.2', '4.3' ]
+                }, function () { return Math.random() < 0.5; })
+                .doLoop('5', function() { return true })
+
+            J.size(stager.stages).should.eql(5);
+            J.size(stager.steps).should.eql(7);
+            stager.blocks.length.should.eql(11);
+            stager.sequence.length.should.eql(0);
+        });
+
+        it('should finalize correctly again after reset', function() {
+            stager.finalize();
+            J.size(stager.stages).should.eql(5);
+            J.size(stager.steps).should.eql(7);
+            stager.blocks.length.should.eql(11);
+            console.log(stager.sequence);
+            stager.sequence.length.should.eql(5);
+        });
+
     });
 
 
