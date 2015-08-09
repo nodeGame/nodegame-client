@@ -17,8 +17,8 @@ install:
   - bin/install-nodegame-for-module.sh -g "nodegame-window nodegame-widgets JSUS NDDB shelf.js nodegame-server descil-mturk nodegame-requirements nodegame-monitor nodegame-db nodegame-mongodb"
   - npm install
 script:
-# Add nodegame-client tests here.
-
+# nodegame-client tests here.
+  - npm test
 # Test Ultimatum game.
   - cd nodegame/games
   - git clone https://github.com/nodeGame/ultimatum.git
