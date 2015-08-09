@@ -326,6 +326,15 @@ describe('Stager', function() {
             (function() {
                 stager.next();
             }).should.throw();
+            (function() {
+                stager.loop();
+            }).should.throw();
+            (function() {
+                stager.doLoop();
+            }).should.throw();
+            (function() {
+                stager.repeat();
+            }).should.throw();
         });
 
     });
