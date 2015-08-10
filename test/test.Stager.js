@@ -369,28 +369,92 @@ describe('Stager', function() {
         });
     });
 
-    describe('#clear, #init', function() {
+    describe('#next: 3 stages with default step', function() {
         before(function() {
             stager = ngc.getStager();
             tmp = null, i = null, len = null, res = null, stagerStage = null;
-            stager.next('1').next('2');
+            stager.next('stage 1');
+            stager.next('stage 2');
+            stager.next('stage 3');
         });
-        it('should remove everything when #clear is invoked', function() {
-            stager.clear();
-            J.size(stager.stages).should.eql(0);
-            J.size(stager.steps).should.eql(0);
-            stager.blocks.length.should.eql(0);
-            stager.sequence.length.should.eql(0);
+        it('should have 3 stages and 3 steps', function() {
+            J.size(stager.stages).should.eql(3);
+            J.size(stager.steps).should.eql(3);
         });
-        it('should add 1 default block when init is invoked', function() {
-            stager.init();
-            J.size(stager.stages).should.eql(0);
-            J.size(stager.steps).should.eql(0);
-            stager.sequence.length.should.eql(0);
-            stager.blocks.length.should.eql(1);
+        it('should have 3 steps correctly named', function() {
+            stager.steps['stage 1'].id.should.eql('stage 1');
+            stager.steps['stage 2'].id.should.eql('stage 2');
+            stager.steps['stage 3'].id.should.eql('stage 3');
+        });
+        it('should have 3 stages of 1 step each', function() {
+            stager.stages['stage 1'].steps[0].should.eql('stage 1');
+            stager.stages['stage 2'].steps[0].should.eql('stage 2');
+            stager.stages['stage 3'].steps[0].should.eql('stage 3');
+        });
+        it('should create 6 new blocks', function() {
+            stager.blocks.length.should.eql(7);
         });
     });
 
+    describe('#repeat', function() {
+        before(function() {
+            stager = ngc.getStager();
+            tmp = null, i = null, len = null, res = null, stagerStage = null;
+            stager.repeat('1', 10);
+        });
+        it('should have 1 stage and 1 step', function() {
+            J.size(stager.stages).should.eql(1);
+            J.size(stager.steps).should.eql(1);
+        });
+        it('should have the num property in finalized sequence ', function() {
+            stager.finalize();
+            stager.sequence[0].num.should.eql(10);
+        });
+        it('should have the type "repeat" in finalized sequence ', function() {
+            stager.sequence[0].type.should.eql('repeat');
+        });
+
+    });
+
+    describe('#loop', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() { return Math.random() < 0.5; };
+            stager.loop('1', tmp);
+        });
+        it('should have 1 stage and 1 step', function() {
+            J.size(stager.stages).should.eql(1);
+            J.size(stager.steps).should.eql(1);
+        });
+        it('should have the num property in finalized sequence ', function() {
+            stager.finalize();
+            stager.sequence[0].cb.should.eql(tmp);
+        });
+        it('should have the type "repeat" in finalized sequence ', function() {
+            stager.sequence[0].type.should.eql('loop');
+        });
+    });
+
+    describe('#doLoop', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() { return Math.random() < 0.5; };
+            stager.doLoop('1', tmp);
+        });
+        it('should have 1 stage and 1 step', function() {
+            J.size(stager.stages).should.eql(1);
+            J.size(stager.steps).should.eql(1);
+        });
+        it('should have the num property in finalized sequence ', function() {
+            stager.finalize();
+            stager.sequence[0].cb.should.eql(tmp);
+        });
+        it('should have the type "repeat" in finalized sequence ', function() {
+            stager.sequence[0].type.should.eql('doLoop');
+        });
+    });
 
     describe('#finalize, #reset', function() {
         before(function() {
@@ -467,6 +531,53 @@ describe('Stager', function() {
 
         });
 
+    });
+
+    describe('#next: 3 stage with default step: 2 aliases', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() { console.log('ahah'); };
+            stager.addStage({
+                id: 'last',
+                cb: tmp
+            });
+            stager.next('stage 1');
+            stager.next('stage 1 AS stage 2');
+            stager.next('last AS stage 3');
+        });
+        it('should have 4 stages and 3 steps', function() {
+            J.size(stager.stages).should.eql(4);
+            J.size(stager.steps).should.eql(2);
+        });
+        it('should have 3 steps correctly named', function() {
+            stager.steps['stage 1'].id.should.eql('stage 1');
+            stager.steps['last'].id.should.eql('last');
+        });
+        it('should have 3 stages of 1 step each', function() {
+            stager.stages['stage 1'].steps[0].should.eql('stage 1');
+            stager.stages['stage 2'].steps[0].should.eql('stage 1');
+            stager.stages['stage 3'].steps[0].should.eql('last')
+            stager.stages['last'].steps[0].should.eql('last');
+        });
+        it('should create 6 new blocks', function() {
+            stager.blocks.length.should.eql(7);
+        });
+
+        it('should have correct sequence when finalized', function() {
+            stager.finalize();
+            stager.sequence.length.should.be.eql(3);
+            stager.sequence[0].id.should.be.eql('stage 1');
+            stager.sequence[1].id.should.be.eql('stage 2');
+            stager.sequence[2].id.should.be.eql('stage 3');
+
+            stager.sequence[0].steps[0].should.be.eql('stage 1');
+            stager.sequence[0].steps.length.should.be.eql(1);
+            stager.sequence[1].steps[0].should.be.eql('stage 1');
+            stager.sequence[1].steps.length.should.be.eql(1);
+            stager.sequence[2].steps[0].should.be.eql('last');
+            stager.sequence[2].steps.length.should.be.eql(1);
+        });
     });
 
     describe('#skip, #unskip, #isSkipped', function() {
