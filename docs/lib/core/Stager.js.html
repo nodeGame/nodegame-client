@@ -262,7 +262,7 @@
         <a href="#checkstepparameter">checkStepParameter</a>
       </div>
       <div class="heading h3">
-        <a href="#checkstageparameter">checkStageParameter</a>
+        <a href="#handlestageparameter">handleStageParameter</a>
       </div>
       <div class="heading h3">
         <a href="#checkpositionsparameter">checkPositionsParameter</a>
@@ -2670,7 +2670,7 @@ unique in the sequence.</p>
             <span class="kd">var</span> <span class="nx">stageName</span><span class="p">;</span>
 
             <span class="nx">checkFinalized</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;next&#39;</span><span class="p">);</span>
-            <span class="nx">stageName</span> <span class="o">=</span> <span class="nx">checkStageParameter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;next&#39;</span><span class="p">);</span>
+            <span class="nx">stageName</span> <span class="o">=</span> <span class="nx">handleStageParameter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;next&#39;</span><span class="p">);</span>
             <span class="nx">positions</span> <span class="o">=</span> <span class="nx">checkPositionsParameter</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="s1">&#39;next&#39;</span><span class="p">);</span>
 
             <span class="nx">handleStageAdd</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">{</span>
@@ -2742,7 +2742,7 @@ unique in the sequence.</p>
 
             <span class="nx">checkFinalized</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;repeat&#39;</span><span class="p">);</span>
 
-            <span class="nx">stageName</span> <span class="o">=</span> <span class="nx">checkStageParameter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;next&#39;</span><span class="p">);</span>
+            <span class="nx">stageName</span> <span class="o">=</span> <span class="nx">handleStageParameter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;next&#39;</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">nRepeats</span> <span class="o">||</span>
                 <span class="nb">isNaN</span><span class="p">(</span><span class="nx">nRepeats</span><span class="p">)</span> <span class="o">||</span>
@@ -4097,7 +4097,7 @@ Available only when nodegame is executed in <em>flexible</em> mode.</p>
 
         <span class="nx">checkFinalized</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
 
-        <span class="nx">stageName</span> <span class="o">=</span> <span class="nx">checkStageParameter</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
+        <span class="nx">stageName</span> <span class="o">=</span> <span class="nx">handleStageParameter</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">loopFunc</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;: loopFunc must be &#39;</span> <span class="o">+</span>
@@ -4553,10 +4553,10 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="checkstageparameter">
+<div class="pilwrap" id="handlestageparameter">
   <h3>
-    <a href="#checkstageparameter" class="pilcrow">&#182;</a>
-    checkStageParameter
+    <a href="#handlestageparameter" class="pilcrow">&#182;</a>
+    handleStageParameter
   </h3>
 </div>
 
@@ -4597,7 +4597,7 @@ whether the stage name is unique, the steps exists, etc.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">checkStageParameter</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">handleStageParameter</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">tokens</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">alias</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">id</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span></pre></div>

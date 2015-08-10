@@ -14,121 +14,10 @@ module.exports = node;
 node.verbosity = -1000;
 
 
-
-// stager = ngc.getStager();
-// tmp = null, i = null, len = null, res = null, stagerStage = null;
-// stager.next('1').next('2');
-// stager.finalize();
-// debugger
-// stager.reset();
-// debugger
-// stager.finalize();
-//
-// return
-
-// TODO: understand difference between .step and passing a stage with
-// a steps array.
-
-// Skip - unskip might not work correctly, depending of how steps are added.
-
-// Skip - unskip
-
-// stager = ngc.getStager();
-// decorateStagerRepeat(stager);
-//
-// debugger
-//
-// stager.skip('stage 2', 'step 2.2');
-// console.log(stager.toSkip);
-// console.log(stager.isSkipped('stage 2', 'step 2.1'));
-//
-// stager.finalize();
-//
-// debugger
-//
-// console.log(stager.getSequence('hsteps'));
-// // console.log(stager.blocks);
-//
-//
-// stager = ngc.getStager();
-// stager
-//     .next('1')
-//     .next('2');
-//
-//     stager.step({
-//         id: 'step 2.1',
-//         cb: function() { console.log('step 2.1') }
-//     });
-//     stager.step({
-//         id: 'step 2.2',
-//         cb: function() { console.log('step 2.2') }
-//     });
-//
-//     stager.next({
-//         id: '3',
-//         steps: [ '3.1', '3.2', '3.3' ]
-//     });
-//
-// // stager.skip('2');
-// debugger
-// stager.skip('2', 'step 2.1');
-//
-//
-// stager.finalize();
-//
-// console.log(stager.getSequence('hsteps'));
-//
-// return
-
-// Finalize - Reset - Finalize
-// stager = ngc.getStager();
-// stager.next('1').next('2');
-// console.log(stager.blocks);
-// debugger
-// stager.finalize();
-// stager.reset();
-// console.log(stager.blocks);
-// debugger
-// stager.next('3').next('4').next('5');
-// debugger
-// stager.finalize();
-// console.log(stager.sequence);
-// console.log(stager.getSequence('hsteps'));
-// return
-
-function simple(stager) {
-
-    stager.next({
-        id: 'stage 1',
-        cb: function() {
-            console.log('stage 1')
-            node.done();
-        }
-    });
-
-    stager.next('stage 2');
-
-    stager.step({
-        id: 'step 2.1',
-        cb: function() { console.log('step 2.1') }
-    });
-    stager.step({
-        id: 'step 2.2',
-        cb: function() { console.log('step 2.2') }
-    });
-
-    stager.next('stage 3');
-
-    stager.gameover();
-
-    // Default auto step.
-    stager.setDefaultStepRule(ngc.stepRules.WAIT);
-
-    // stager.endBlock();
-}
-
 var i, len, tmp, res;
 var stager, stagerState;
+
+var stepRule, globals, properties, init, gameover;
 
 var operations = [ 'next', 'repeat', 'loop', 'doLoop' ];
 
@@ -610,6 +499,106 @@ describe('Stager', function() {
         it('should add 2 steps in stage 3 in the sequence', function() {
             stager.sequence[1].steps[0].should.eql('3.1');
             stager.sequence[1].steps[1].should.eql('3.2');
+        });
+    });
+
+    describe('#set|getDefaultCallback', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() {
+                if (Math.random() < 0.5) node.done();
+            };
+
+            stager.setDefaultCallback(tmp);
+
+            stager
+                .next('1')
+                .next({
+                    id: '2',
+                    steps: [ '2.1', '2.2' ]
+                })
+                .next({
+                    id: '3',
+                    cb: function() {}
+                });
+        });
+        it('should set default callback', function() {
+            stager.defaultCallback.should.eql(tmp);
+        });
+        it('should return default callback', function() {
+            stager.getDefaultCallback().should.eql(tmp);
+        });
+        it('should add default callback to steps without cb', function() {
+            stager.steps['1'].cb.should.eql(tmp);
+            stager.steps['2.1'].cb.should.eql(tmp);
+            stager.steps['2.2'].cb.should.eql(tmp);
+            stager.steps['3'].cb.should.not.eql(tmp);
+        });
+    });
+
+
+    describe('various set|get', function() {
+        before(function() {
+            stager = ngc.getStager();
+            tmp = null, i = null, len = null, res = null, stagerStage = null;
+
+            stepRule = function() { return Math.random() < 0.5 };
+            globals = { a: 1, b: 2, c: 3 };
+            properties = { z: 1, x: 2, y: 3 };
+            init = function () { console.log('init'); };
+            gameover = function () { console.log('gameover'); };
+
+            stager.setDefaultStepRule(stepRule);
+            stager.setDefaultGlobals(globals);
+            stager.setDefaultProperties(properties);
+            stager.setOnInit(init);
+            stager.setOnGameOver(gameover);
+
+        });
+        after(function() {
+            stepRule = null, globals = null, properties = null, init = null,
+            gameover = null;
+        });
+        it('should set default stepRule', function() {
+            stager.getDefaultStepRule().should.eql(stepRule);
+        });
+        it('should set default globals', function() {
+            stager.getDefaultGlobals().should.eql(globals);
+        });
+        it('should set default properties', function() {
+            stager.getDefaultProperties().should.eql(properties);
+        });
+        it('should set default init function', function() {
+            stager.getOnInit().should.eql(init);
+        });
+        it('should set default gameover function', function() {
+            stager.getOnGameover().should.eql(gameover);
+            stager.getOnGameOver().should.eql(gameover);
+        });
+        it('should mixin default globals', function() {
+            var g;
+            stager.setDefaultGlobals({ c: 4, d: 5}, true);
+            g = stager.getDefaultGlobals();
+            g.a.should.eql(1);
+            g.b.should.eql(2);
+            g.c.should.eql(4);
+            g.d.should.eql(5);
+        });
+        it('should mixin default properties', function() {
+            var g;
+            stager.setDefaultProperties({ y: 4, w: 5}, true);
+            g = stager.getDefaultProperties();
+            g.z.should.eql(1);
+            g.x.should.eql(2);
+            g.y.should.eql(4);
+            g.w.should.eql(5);
+        });
+        it('should set one default property', function() {
+            var g;
+            stager.setDefaultProperty('foo', 0);
+            g = stager.getDefaultProperties();
+            g.foo.should.eql(0);
         });
     });
 
