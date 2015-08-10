@@ -13,6 +13,64 @@ var node = ngc.getClient();
 module.exports = node;
 node.verbosity = -1000;
 
+
+// TODO: understand difference between .step and passing a stage with
+// a steps array.
+
+// Skip - unskip might not work correctly, depending of how steps are added.
+
+// Skip - unskip
+
+// stager = ngc.getStager();
+// decorateStagerRepeat(stager);
+//
+// debugger
+//
+// stager.skip('stage 2', 'step 2.2');
+// console.log(stager.toSkip);
+// console.log(stager.isSkipped('stage 2', 'step 2.1'));
+//
+// stager.finalize();
+//
+// debugger
+//
+// console.log(stager.getSequence('hsteps'));
+// // console.log(stager.blocks);
+//
+//
+// stager = ngc.getStager();
+// stager
+//     .next('1')
+//     .next('2');
+//
+//     stager.step({
+//         id: 'step 2.1',
+//         cb: function() { console.log('step 2.1') }
+//     });
+//     stager.step({
+//         id: 'step 2.2',
+//         cb: function() { console.log('step 2.2') }
+//     });
+//
+//     stager.next({
+//         id: '3',
+//         steps: [ '3.1', '3.2', '3.3' ]
+//     });
+//
+// console.log(
+//
+// // stager.skip('2');
+// debugger
+// stager.skip('2', 'step 2.1');
+//
+//
+// stager.finalize();
+//
+// console.log(stager.getSequence('hsteps'));
+//
+// return
+
+// Finalize - Reset - Finalize
 // stager = ngc.getStager();
 // stager.next('1').next('2');
 // console.log(stager.blocks);
@@ -83,14 +141,16 @@ describe('Stager', function() {
         });
     });
 
-    describe('#addStage', function() {
+    describe('#addStage: stage with callback defined', function() {
         before(function() {
             stager = ngc.getStager();
             i = null, len = null, res = null, stagerStage = null;
             tmp = function() { console.log('ahah'); };
             stager.addStage({
                 id: 'stage 1',
-                cb: tmp
+                cb: tmp,
+                a: 1,
+                b: 2
             });
         });
         it('should have 1 stage and 1 steps', function() {
@@ -115,6 +175,63 @@ describe('Stager', function() {
         it('should have empty sequence', function() {
             stager.sequence.length.should.eql(0);
         });
+        it('should keep extra properties of the stage', function() {
+            stager.stages['stage 1'].a.should.eql(1);
+            stager.stages['stage 1'].b.should.eql(2);
+        });
+        it('should remove the cb field', function() {
+            stager.stages['stage 1'].should.not.have.property('cb');
+        });
+    });
+
+    describe('#addStage: stage with steps array defined', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() { console.log('ahah'); };
+            stager.addStage({
+                id: 'stage 1',
+                steps: ['1.1', '1.2', {
+                    id: '1.3',
+                    cb: tmp
+                }],
+                a: 1,
+                b: 2
+            });
+        });
+        it('should have 1 stage and 3 steps', function() {
+            J.size(stager.stages).should.eql(1);
+            J.size(stager.steps).should.eql(3);
+        });
+        it('should have the 1 stage correctly named', function() {
+            stager.stages['stage 1'].id.should.eql('stage 1');
+        });
+        it('should have the 3 step correctly named', function() {
+            stager.steps['1.1'].id.should.eql('1.1');
+            stager.steps['1.2'].id.should.eql('1.2');
+            stager.steps['1.3'].id.should.eql('1.3');
+        });
+        it('should have the 3 step assigned to the same stage', function() {
+            stager.stages['stage 1'].steps[0].should.eql('1.1');
+            stager.stages['stage 1'].steps[1].should.eql('1.2');
+            stager.stages['stage 1'].steps[2].should.eql('1.3');
+        });
+        it('should have the specified callback in the last step', function() {
+            stager.steps['1.3'].cb.should.eql(tmp);
+        });
+        it('should not create a new block', function() {
+            stager.blocks.length.should.eql(1);
+        });
+        it('should have empty sequence', function() {
+            stager.sequence.length.should.eql(0);
+        });
+        it('should keep extra properties of the stage', function() {
+            stager.stages['stage 1'].a.should.eql(1);
+            stager.stages['stage 1'].b.should.eql(2);
+        });
+        it('should not have a cb field', function() {
+            stager.stages['stage 1'].should.not.have.property('cb');
+        });
     });
 
     describe('#addStep', function() {
@@ -124,7 +241,9 @@ describe('Stager', function() {
             tmp = function() { console.log('ahah'); };
             stager.addStep({
                 id: 'step 1',
-                cb: tmp
+                cb: tmp,
+                a: 1,
+                b: 2
             });
         });
         it('should have 1 stage and 1 steps', function() {
@@ -142,6 +261,10 @@ describe('Stager', function() {
         });
         it('should have empty sequence', function() {
             stager.sequence.length.should.eql(0);
+        });
+        it('should keep extra properties of the step', function() {
+            stager.steps['step 1'].a.should.eql(1);
+            stager.steps['step 1'].b.should.eql(2);
         });
     });
 
@@ -318,12 +441,40 @@ describe('Stager', function() {
             J.size(stager.stages).should.eql(5);
             J.size(stager.steps).should.eql(7);
             stager.blocks.length.should.eql(11);
-            console.log(stager.sequence);
             stager.sequence.length.should.eql(5);
         });
 
     });
 
+    describe('#skip, #unskip, #isSkipped', function() {
+        before(function() {
+            stager = ngc.getStager();
+            tmp = null, i = null, len = null, res = null, stagerStage = null;
+            stager
+                .next('1')
+                .next('2')
+                .next({
+                    id: '3',
+                    steps: [ '3.1', '3.2', '3.3' ]
+                });
+            stager.skip('2');
+            stager.skip('3', '3.3');
+            stager.finalize();
+        });
+        it('should fill in the toSkip object', function() {
+            stager.toSkip.stages['2'].should.be.true;
+            stager.toSkip.steps['3.3.3'].should.be.true;
+        });
+
+        it('should update isSkipped', function() {
+            stager.isSkipped('2').should.be.true
+            stager.isSkipped('3', '3.3').should.be.true;
+        });
+        it('should add 2 stages in the sequence', function() {
+            stager.sequence.length.should.eql(2);
+            // console.log(stager.getSequence('hsteps'));
+        });
+    });
 
     describe('should fail', function() {
         beforeEach(function() {
@@ -467,6 +618,8 @@ describe('Stager', function() {
     });
 
 });
+
+return;
 
 // Setup.
 // node.setup('plot', stagerState);
@@ -666,30 +819,6 @@ function decorateStagerDoLoop(stager) {
 
 }
 
-// decorateStagerRepeat(stager);
-//
-// debugger
-//
-// stager.skip('stage 2', 'step 2.2');
-// console.log(stager.toSkip);
-// console.log(stager.isSkipped('stage 2', 'step 2.1'));
-//
-// stager.finalize();
-//
-// debugger
-
-// stager.reset();
-
-// console.log(stager.getSequence('hsteps'));
-
-// decorateStagerSimple(stager);
-
-// stager.finalize();
-
-// console.log(stager.getSequence('hsteps'));
-// console.log(stager.blocks);
-
-return
 
 // Simple mode test:
 console.log();
