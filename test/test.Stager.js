@@ -14,6 +14,18 @@ module.exports = node;
 node.verbosity = -1000;
 
 
+
+// stager = ngc.getStager();
+// tmp = null, i = null, len = null, res = null, stagerStage = null;
+// stager.next('1').next('2');
+// stager.finalize();
+// debugger
+// stager.reset();
+// debugger
+// stager.finalize();
+//
+// return
+
 // TODO: understand difference between .step and passing a stage with
 // a steps array.
 
@@ -56,8 +68,6 @@ node.verbosity = -1000;
 //         id: '3',
 //         steps: [ '3.1', '3.2', '3.3' ]
 //     });
-//
-// console.log(
 //
 // // stager.skip('2');
 // debugger
@@ -403,6 +413,10 @@ describe('Stager', function() {
             stager.sequence[0].type.should.eql('plain');
             stager.sequence[1].type.should.eql('plain');
         });
+        it('should have steps in the stages of the sequence', function() {
+            stager.sequence[0].steps[0].should.eql('1');
+            stager.sequence[1].steps[0].should.eql('2');
+        });
         it('should not alter blocks, stages, steps', function() {
             J.size(stager.stages).should.eql(2);
             J.size(stager.steps).should.eql(2);
@@ -442,6 +456,15 @@ describe('Stager', function() {
             J.size(stager.steps).should.eql(7);
             stager.blocks.length.should.eql(11);
             stager.sequence.length.should.eql(5);
+
+            stager.sequence[0].steps[0].should.eql('1');
+            stager.sequence[1].steps[0].should.eql('2');
+            stager.sequence[2].steps[0].should.eql('3');
+            stager.sequence[3].steps[0].should.eql('4.1');
+            stager.sequence[3].steps[1].should.eql('4.2');
+            stager.sequence[3].steps[2].should.eql('4.3');
+            stager.sequence[4].steps[0].should.eql('5');
+
         });
 
     });
@@ -468,11 +491,14 @@ describe('Stager', function() {
 
         it('should update isSkipped', function() {
             stager.isSkipped('2').should.be.true
-            stager.isSkipped('3', '3.3').should.be.true;
+            stager.isSkipped('3', '3.3.3').should.be.true;
         });
         it('should add 2 stages in the sequence', function() {
             stager.sequence.length.should.eql(2);
-            // console.log(stager.getSequence('hsteps'));
+        });
+        it('should add 2 steps in stage 3 in the sequence', function() {
+            stager.sequence[1].steps[0].should.eql('3.1');
+            stager.sequence[1].steps[1].should.eql('3.2');
         });
     });
 
@@ -591,6 +617,27 @@ describe('Stager', function() {
                }).should.throw();
                (function() {
                    stager.step({ id: 'a', cb: function() {} });
+               }).should.throw();
+           });
+        it('if skip, unskip are called with wrong parameters',
+           function() {
+               (function() {
+                   stager.skip('');
+               }).should.throw();
+               (function() {
+                   stager.skip(4);
+               }).should.throw();
+               (function() {
+                   stager.skip(undefined, '1');
+               }).should.throw();
+               (function() {
+                   stager.unskip('');
+               }).should.throw();
+               (function() {
+                   stager.unskip(4);
+               }).should.throw();
+               (function() {
+                   stager.unskip(undefined, '1');
                }).should.throw();
            });
 
