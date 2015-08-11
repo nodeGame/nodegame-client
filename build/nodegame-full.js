@@ -13406,7 +13406,9 @@ if (!Array.prototype.indexOf) {
      *     case steps with the same id must not have been defined before.
      *
      * - cb (function): The callback function. If this field is used,
-     *   then a step with the same name as the stage will be created.
+     *     then a step with the same name as the stage will be created,
+     *     containing all the properties. The stage will be an empty
+     *     container referencing
      *
      * @param {object} stage A valid stage or step object. Shallowly
      *    copied.
@@ -13427,15 +13429,13 @@ if (!Array.prototype.indexOf) {
 
         // The stage contains only 1 step inside given through the callback
         // function. A step will be created as a clone of the stage.
-        // The stage is modified to have the 'ste
         if (stage.cb) {
-            step = {
+            this.addStep({
                 id: id,
                 cb: stage.cb
-            }
-            this.addStep(step);
-            stage.steps = [ id ];
+            });
             delete stage.cb;
+            stage.steps = [ id ];
         }
         else {
             // Missing steps are added with default callback (if string),
@@ -13515,7 +13515,7 @@ if (!Array.prototype.indexOf) {
             var stageName;
 
             checkFinalized(this, 'next');
-            stageName = checkStageParameter(this, stage, 'next');
+            stageName = handleStageParameter(this, stage, 'next');
             positions = checkPositionsParameter(positions, 'next');
 
             handleStageAdd(this, {
@@ -13548,7 +13548,7 @@ if (!Array.prototype.indexOf) {
 
             checkFinalized(this, 'repeat');
 
-            stageName = checkStageParameter(this, stage, 'next');
+            stageName = handleStageParameter(this, stage, 'next');
 
             if ('number' !== typeof nRepeats ||
                 isNaN(nRepeats) ||
@@ -13634,28 +13634,26 @@ if (!Array.prototype.indexOf) {
         return this;
     };
 
-    // Extend, Modify
+    // Extend stages, modify sequence
 
     /**
      * ### Stager.extendStep
      *
-     * Extends existing step
+     * Extends an existing step
      *
-     * Extends an existing game step object. The extension object must
-     * have at least an id field that matches an already existing step.
-     *
-     * If a valid object is provided, the fields of the new object are
-     * merged into the existing object (done via JSUS.mixin). Note that
-     * this overwrites already existing fields if the new object
-     * redefines them.
+     * Properties of the step are overwritten by the properties of the
+     * update object. If a property of the update object is a function
+     * it will receive as first parameter the old value of the extended
+     * step.
      *
      * @param {string} stepId The id of the step to update
      * @param {object} update The object containing the properties to update
      *
      * @see Stager.addStep
+     * @see extendStageStep
      */
     Stager.prototype.extendStep = function(stepId, update) {
-        var newCallback, oldCallback, attribute;
+        var step, attribute;
         if ('string' !== typeof stepId) {
             throw new TypeError('Stager.extendStep: stepId must be a' +
                                 ' string.');
@@ -13664,38 +13662,17 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('Stager.extendStep: update must be' +
                                 ' object.');
         }
-        if (update.id) {
+        if (update.hasOwnProperty('id')) {
             throw new TypeError('Stager.extendStep: update.id must ' +
                                 'be undefined.');
         }
-        if (update.cb &&
-            'function' !== typeof update.cb &&
-            'object' !== typeof update.cb &&
-            !(update.cb.cb && update.cb.extend)) {
-            throw new TypeError('Stager.extendStep: update.cb must ' +
-                                'be function, undefined or an object' +
-                                'with the properties "extend" and' +
-                                ' "cb".');
-        }
-        if (!this.steps[stepId]) {
-            throw new Error('Stager.extendStage: stageId not found: ' +
+        step = this.steps[stepId];
+        if (!step) {
+            throw new Error('Stager.extendStep: stepId not found: ' +
                             stepId + '.');
         }
 
-        for (attribute in update) {
-            if (update.hasOwnProperty(attribute)) {
-                if (update[attribute] && update[attribute].extend) {
-                    newCallback = update[attribute].cb;
-                    oldCallback = this.steps[stepId].cb;
-                    update[attribute] = function() {
-                        oldCallback();
-                        newCallback();
-                    };
-                }
-            }
-        }
-
-        J.mixin(this.steps[stepId], update);
+        extendStageStep(step, update);
     };
 
     /**
@@ -13703,23 +13680,24 @@ if (!Array.prototype.indexOf) {
      *
      * Extends an existing stage
      *
-     * Extends an existing game stage object. The updating object cannot
-     * have an `id` property, and if `cb` property is set, it must be
-     * function.
+     * Properties of the stage are overwritten by the properties of the
+     * update object. If a property of the update object is a function
+     * it will receive as first parameter the old value of the extended
+     * stage.
      *
-     * If a valid object is provided, the fields of the new object are
-     * merged into the existing object (done via JSUS.mixin). Note that
-     * this overwrites already existing fields if the new object
-     * redefines them.
+     * Constraints on the update object:
+     *
+     *   - cannot contain properties `id` and `cb`
+     *   - if specified, property `steps` must be a non-empty array.
      *
      * @param {string} stageId The id of the stage to update
-     * @param {object} update The object containing the properties to
-     *   update
+     * @param {object} update The object containing the properties to update
      *
      * @see Stager.addStage
+     * @see updateStageStep
      */
     Stager.prototype.extendStage = function(stageId, update) {
-        var attribute, newCallback, oldCallback;
+        var stage;
 
         if ('string' !== typeof stageId) {
             throw new TypeError('Stager.extendStage: stageId must be ' +
@@ -13729,46 +13707,26 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('Stager.extendStage: update must be' +
                                 ' object.');
         }
-        if (update.id) {
+        if (update.hasOwnProperty('id')) {
             throw new TypeError('Stager.extendStage: update.id must ' +
                                 'be undefined.');
         }
-        if (update.cb &&
-            'function' !== typeof update.cb &&
-            'object' !== typeof update.cb &&
-            !(update.cb.cb && update.cb.extend)) {
-            throw new TypeError('Stager.extendStep: update.cb must ' +
-                                'be function, undefined or an object' +
-                                'with the properties "extend" and' +
-                                ' "cb".');
+        if (update.hasOwnProperty('cb')) {
+            throw new TypeError('Stager.extendStage: update.cb must ' +
+                                'be undefined.');
         }
-        if (update.steps && !J.isArray(update.steps)) {
+        if (update.steps && (!J.isArray(update.steps) || update.steps.length)) {
             throw new TypeError('Stager.extendStage: update.steps ' +
-                                'must be array or undefined.');
+                                'must be a non-empty array or undefined.');
         }
-        if (update.steps && update.cb) {
-            throw new TypeError('Stager.extendStage: update must have' +
-                                ' either a steps or a cb property.');
-        }
-        if (!this.stages[stageId]) {
+
+        stage = this.stages[stageId];
+        if (!stage) {
             throw new Error('Stager.extendStage: stageId not found: ' +
                             stageId + '.');
         }
 
-        for (attribute in update) {
-            if (update.hasOwnProperty(attribute)) {
-                if (update[attribute] && update[attribute].extend) {
-                    newCallback = update[attribute].cb;
-                    oldCallback = this.steps[stageId].cb;
-                    update[attribute] = function() {
-                        oldCallback();
-                        newCallback();
-                    };
-                }
-            }
-        }
-
-        J.mixin(this.stages[stageId], update);
+        extendStageStep(stage, update);
     };
 
     /**
@@ -14274,7 +14232,7 @@ if (!Array.prototype.indexOf) {
 
         checkFinalized(that, type);
 
-        stageName = checkStageParameter(that, stage, type);
+        stageName = handleStageParameter(that, stage, type);
 
         if ('function' !== typeof loopFunc) {
             throw new TypeError('Stager.' + type + ': loopFunc must be ' +
@@ -14308,8 +14266,10 @@ if (!Array.prototype.indexOf) {
     function addStepsToCurrentBlock(that, stage) {
         var curBlock;
         var i, len;
-        // return;
         curBlock = that.getCurrentBlock();
+
+        if (!stage) debugger
+
         i = -1, len = stage.steps.length;
         for ( ; ++i < len ; ) {
             // Add step, if not already added.
@@ -14356,8 +14316,7 @@ if (!Array.prototype.indexOf) {
      * @param {string} nameAndAlias The stage-name string
      * @param {string} method The name of the method calling the validation
      *
-     * @return {string} the alias part of the parameter if it exists,
-     *  the stageID part otherwise
+     * @return {object} Object with properties id and alias (if found)
      *
      * @see Stager.next
      * @see handleAlias
@@ -14381,7 +14340,7 @@ if (!Array.prototype.indexOf) {
             throw new Error('Stager.' + method + ': alias is not unique: ' +
                             alias + '.');
         }
-        return alias;
+        return tokens;
     }
 
     /**
@@ -14510,7 +14469,7 @@ if (!Array.prototype.indexOf) {
     }
 
     /**
-     * ### checkStageParameter
+     * ### handleStageParameter
      *
      * Check validity of a stage parameter, eventually adds it if missing
      *
@@ -14524,10 +14483,15 @@ if (!Array.prototype.indexOf) {
      *
      * @api private
      */
-    function checkStageParameter(that, stage, method) {
-        var id, alias;
+    function handleStageParameter(that, stage, method) {
+        var tokens, id, alias;
         if ('object' === typeof stage) {
             id = stage.id;
+            // It's a step.
+            if (stage.cb) {
+                if (!that.steps[id]) that.addStep(stage);
+                stage = { id: id, steps: [ id ] };
+            }
             // A new stage is created if not found (performs validation).
             if (!that.stages[id]) that.addStage(stage);
         }
@@ -14536,10 +14500,12 @@ if (!Array.prototype.indexOf) {
                 throw new TypeError('Stager.' + method + ': stage must be ' +
                                     'string or object.');
             }
-            id = stage;
+
             // See whether the stage id contains an alias. Throws errors.
-            alias = handleAlias(that, id, method);
-            // Alias must reference an existing stage.
+            tokens = handleAlias(that, stage, method);
+            alias = tokens.alias;
+            id = tokens.id;
+            // Alias must reference an existing stage (checked before).
             if (alias) {
                 that.stages[alias] = that.stages[id];
             }
@@ -14619,6 +14585,64 @@ if (!Array.prototype.indexOf) {
 
         // Add step block inside stage block.
         that.beginBlock('linear', { id: "__steps_" + name });
+    }
+
+    /**
+     * ## extendStageStep
+     *
+     * Extends the properties of a stage step with those from an update object
+     *
+     * Properties of the extended stage/step are overwritten with the
+     * corresponding properties of the update object. However if the
+     * property of the update object is a function, it is wrapped in
+     * another function that passes the old value of property of the
+     * extended step/stage object as the first parameter to the
+     * extending function. Any other parameters will be passed
+     * along in 2nd, 3rd, etc. position.
+     *
+     * @param {object} original The original object
+     * @param {object} update The update object
+     */
+    function extendStageStep(original, update) {
+        var property;
+
+        for (property in update) {
+            if (update.hasOwnProperty(property)) {
+                // Extend function with wrapping function.
+                if ('function' === typeof update[property]) {
+
+                    (function(oldCb, newCb) {
+                        original[property] = function() {
+                            var args, i, len;
+                            len = arguments.length;
+                            args = new Array(len+1);
+                            args[0] = oldCb;
+                            switch(len) {
+                            case 1:
+                                args[1] = arguments[0]; break;
+                            case 2:
+                                args[1] = arguments[0];
+                                args[2] = arguments[1]; break;
+                            case 3:
+                                args[1] = arguments[0];
+                                args[2] = arguments[1];
+                                args[3] = arguments[2]; break;
+                            default:
+                                i = -1;
+                                for ( ; ++i < len ; ) {
+                                    args[i+1] = arguments[i];
+                                }
+                            }
+                            newCb.apply(this, args);
+                        };
+                    })(original[property], update[property]);
+                }
+                // Otherwise overwrite.
+                else {
+                    original[property] = update[property];
+                }
+            }
+        }
     }
 
     /**
@@ -15475,7 +15499,6 @@ if (!Array.prototype.indexOf) {
     GamePlot.prototype.getSequenceObject = function(gameStage) {
         var seqObj;
         var i, len;
-
         if (!this.stager) return null;
         gameStage = new GameStage(gameStage);
         if ('number' === typeof gameStage.stage) {
@@ -15542,8 +15565,9 @@ if (!Array.prototype.indexOf) {
             // this.stager.steps[stageObj.steps[gameStage.step - 1]] : null;
 
             seqObj = this.getSequenceObject(gameStage);
-            stepObj = this.stager.steps[seqObj.steps[gameStage.step - 1]];
-
+            if (seqObj) {
+                stepObj = this.stager.steps[seqObj.steps[gameStage.step - 1]];
+            }
         }
         else {
             // was:
