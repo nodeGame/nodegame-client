@@ -3070,9 +3070,12 @@ stage.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: update.cb must &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;be undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">update</span><span class="p">.</span><span class="nx">steps</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="o">||</span> <span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: update.steps &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;must be a non-empty array or undefined.&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">update</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;steps&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+            <span class="p">((</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">||</span>
+             <span class="nx">update</span><span class="p">.</span><span class="nx">steps</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">||</span> <span class="nx">update</span><span class="p">.</span><span class="nx">steps</span> <span class="o">===</span> <span class="kc">null</span><span class="p">))</span> <span class="p">{</span>
+
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: if defined update.steps &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;must be a non-empty array.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="nx">stage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">];</span>

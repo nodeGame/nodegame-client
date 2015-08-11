@@ -13,77 +13,12 @@ var node = ngc.getClient();
 module.exports = node;
 node.verbosity = -1000;
 
-
 var i, len, tmp, res;
 var stager, stagerState;
 
 var stepRule, globals, properties, init, gameover, done;
 
 var operations = [ 'next', 'repeat', 'loop', 'doLoop' ];
-
-// stager = ngc.getStager();
-// i = null, len = null, res = null, stagerStage = null;
-// tmp = function() {
-//     a = (a || 0) + 1;
-// };
-// done = function(increment) {
-//     b = (b || 0) + 1;
-// };
-// stager.addStage({
-//     id: 'stage 1',
-//     cb: tmp,
-//     done: done,
-//     c: 3,
-//     d: 4,
-//     e: 5
-// });
-//
-//
-//
-// stager.extendStep('stage 1', {
-//     cb: function(old) {
-//         old();
-//         a++;
-//     },
-//     done: function(old, increment) {
-//         old();
-//         b = b + increment;
-//     },
-//     c: 'a',
-//     e: undefined
-// });
-// return
-// stager = ngc.getStager();
-//
-// stager.next({
-//     id: '1',
-//     cb: function() { console.log('old'); },
-//     done: function() { console.log('old done'); }
-// });
-//
-// stager.extendStep('1', {
-//     cb: function(old) {
-//         old();
-//         console.log('uh');
-//     },
-//     done: function(old, a, b) {
-//         console.log(arguments);
-//         old();
-//         console.log(a, b);
-//     }
-// });
-//
-//
-// // console.log(stager.steps['1'].cb.toString());
-//
-// stager.steps['1'].cb();
-// stager.steps['1'].done(1, 2);
-//
-// console.log(stager.stages['1']);
-// console.log(stager.steps['1']);
-//
-// return;
-
 
 describe('Stager', function() {
 
@@ -992,6 +927,63 @@ describe('Stager', function() {
                 stager.repeat();
             }).should.throw();
         });
+
+
+        it('if extendStep|Stage are referencing non-existing steps|stages',
+           function() {
+               (function() {
+                   stager.extendStep('ahah', { a: 1});
+               }).should.throw();
+               (function() {
+                   stager.extendStage('bb', { a: 1});
+               }).should.throw();
+           });
+
+        it('if extendStep|Stage are called with wrong parameters',
+           function() {
+               stager.next('foo');
+               (function() {
+                   stager.extendStep('foo');
+               }).should.throw();
+               (function() {
+                   stager.extendStep('foo', 1);
+               }).should.throw();
+               (function() {
+                   stager.extendStep('foo', { id: 'fi' });
+               }).should.throw();
+               (function() {
+                   stager.extendStep('foo', { id: undefined });
+               }).should.throw();               (function() {
+                   stager.extendStep(undefined, { a: 1 });
+               }).should.throw();
+               (function() {
+                   stager.extendStage('foo');
+               }).should.throw();
+               (function() {
+                   stager.extendStage('foo', 1);
+               }).should.throw();
+               (function() {
+                   stager.extendStage('foo', { id: 'fi' });
+               }).should.throw();
+               (function() {
+                   stager.extendStage('foo', { cb: function() {} });
+               }).should.throw();
+               (function() {
+                   stager.extendStage('foo', { cb: undefined });
+               }).should.throw();
+               (function() {
+                   stager.extendStage('foo', { steps: undefined });
+               }).should.throw();
+               (function() {
+                   stager.extendStage('foo', { steps: [] });
+               }).should.throw();
+               (function() {
+                   stager.extendStage('foo', { id: undefined });
+               }).should.throw();               (function() {
+                   stager.extendStage(undefined, { a: 1 });
+               }).should.throw();
+           });
+
 
     });
 
