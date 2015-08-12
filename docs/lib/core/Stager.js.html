@@ -4824,14 +4824,28 @@ along in 2nd, 3rd, etc. position.</p>
 </div>
 <p>Extend function with wrapping function.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">[</span><span class="nx">property</span><span class="p">])</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">[</span><span class="nx">property</span><span class="p">])</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-157" id="section-157">&#182;</a>
+</div>
+<p>Saving a copy of original property.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                    <span class="nx">saveExtendedProperty</span><span class="p">(</span><span class="nx">original</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
 
                     <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">oldCb</span><span class="p">,</span> <span class="nx">newCb</span><span class="p">)</span> <span class="p">{</span>
+
                         <span class="nx">original</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                            <span class="kd">var</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+                            <span class="kd">var</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">extCopyName</span><span class="p">;</span>
+
+
+
                             <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
                             <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
-                            <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">oldCb</span><span class="p">;</span>
+                            <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">original</span><span class="p">.</span><span class="nx">__extended</span><span class="p">[</span><span class="nx">extCopy</span><span class="p">]</span>
                             <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
                             <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
                                 <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="k">break</span><span class="p">;</span>
@@ -4857,7 +4871,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-157" id="section-157">&#182;</a>
+  <a class="pilcrow" href="#section-158" id="section-158">&#182;</a>
 </div>
 <p>Otherwise overwrite.</p>
         </td>
@@ -4866,6 +4880,12 @@ along in 2nd, 3rd, etc. position.</p>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">saveExtendedProperty</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">obj</span><span class="p">.</span><span class="nx">extended</span><span class="p">)</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">__extended</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">obj</span><span class="p">.</span><span class="nx">__extended</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">name</span><span class="p">;</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -5215,7 +5235,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-171" id="section-171">&#182;</a>
+  <a class="pilcrow" href="#section-172" id="section-172">&#182;</a>
 </div>
 <p>Save the id of the added item.</p>
         </td>
@@ -5299,7 +5319,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-174" id="section-174">&#182;</a>
+  <a class="pilcrow" href="#section-175" id="section-175">&#182;</a>
 </div>
 <p>Range in which the indeces must be.</p>
         </td>
@@ -5311,7 +5331,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-175" id="section-175">&#182;</a>
+  <a class="pilcrow" href="#section-176" id="section-176">&#182;</a>
 </div>
 <p>Accounting for already taken positions.</p>
         </td>
@@ -5321,7 +5341,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-176" id="section-176">&#182;</a>
+  <a class="pilcrow" href="#section-177" id="section-177">&#182;</a>
 </div>
 <p>Parsing all of the position strings into arrays.</p>
         </td>
@@ -5336,7 +5356,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-177" id="section-177">&#182;</a>
+  <a class="pilcrow" href="#section-178" id="section-178">&#182;</a>
 </div>
 <p>Assigning positions.</p>
         </td>
@@ -5346,7 +5366,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-178" id="section-178">&#182;</a>
+  <a class="pilcrow" href="#section-179" id="section-179">&#182;</a>
 </div>
 <p>Select entry with least possibilities of where to go.</p>
         </td>
@@ -5359,7 +5379,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-179" id="section-179">&#182;</a>
+  <a class="pilcrow" href="#section-180" id="section-180">&#182;</a>
 </div>
 <p>No valid position specified.</p>
         </td>
@@ -5372,7 +5392,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-180" id="section-180">&#182;</a>
+  <a class="pilcrow" href="#section-181" id="section-181">&#182;</a>
 </div>
 <p>Chose position randomly among possibilities.</p>
         </td>
@@ -5385,7 +5405,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-181" id="section-181">&#182;</a>
+  <a class="pilcrow" href="#section-182" id="section-182">&#182;</a>
 </div>
 <p>Adjust possible positions of remaining entries.</p>
         </td>
