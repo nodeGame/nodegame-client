@@ -13,6 +13,87 @@ var node = ngc.getClient();
 module.exports = node;
 node.verbosity = -1000;
 
+var idxs = {};
+
+getCb = function(name) {
+    var idx, len, exts;
+    exts = a.__extended[name];
+    if (!exts) return null;
+    if ('undefined' === typeof idxs[name]) idxs[name] = exts.length-1;
+    else idxs[name]--;
+    if (idxs[name] === 0)  {
+        idxs[name] = exts.length;
+        return exts[0];
+    }
+    else return exts[idxs[name]];
+}
+a = {
+    cb: function(a) { console.log('old: ' + a) }
+};
+
+a = {
+    __extended: {cb: [a.cb] },
+
+    cb: function(a) {
+        var old;
+        old = getCb('cb');
+        old(1);
+        console.log('new: ', a);
+    }
+}
+
+a = {
+    __extended: {cb: a.__extended.cb.concat([a.cb]) },
+
+    cb: function(a) {
+        var old;
+        // old = getCb('cb'); // this.plot.getSuper('cb');
+        // old(2);
+        console.log('newer: ', a);
+    }
+}
+
+
+a = {
+    __extended: {cb: a.__extended.cb.concat([a.cb]) },
+
+    cb: function(a) {
+        var old;
+        old = getCb('cb'); // this.plot.getSuper('cb');
+        old(3);
+        console.log('even newer: ', a);
+    }
+}
+
+
+a.cb.call(this, 4);
+
+console.log('----');
+
+console.log(idxs);
+
+a = {
+    __extended: {cb: a.__extended.cb.concat([a.cb]) },
+
+    cb: function(a) {
+        var old;
+        old = getCb('cb'); // this.plot.getSuper('cb');
+        old(5);
+        console.log('even newer: ', a);
+    }
+}
+
+
+a.cb.call(this, 6);
+a.cb.call(this, 6);
+
+
+console.log(a.__extended);
+console.log(idxs);
+
+
+return;
+
 var i, len, tmp, res;
 var stager, stagerState;
 
