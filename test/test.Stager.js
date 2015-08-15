@@ -654,11 +654,11 @@ describe('Stager', function() {
             });
 
         });
-        it('should have extended `cb` with wrap function', function() {
+        it('should have extended `cb`', function() {
             stager.steps['step 1'].cb();
             i.should.eql(2);
         });
-        it('should have extended `done` with wrap function', function() {
+        it('should have extended `done`', function() {
             stager.steps['step 1'].done(2);
             len.should.eql(3);
         });
@@ -674,90 +674,193 @@ describe('Stager', function() {
         it('should have added `foo`', function() {
             stager.steps['stage 1'].foo.should.eql('foo1');
         });
-        it('should have extended `cb` with wrap function (2)', function() {
+        it('should have extended `cb` (2)', function() {
             stager.steps['stage 1'].cb();
             i.should.eql(4);
         });
 
     });
 
-     describe('#extendStage: update function', function() {
-         before(function() {
-             stager = ngc.getStager();
-             i = null, len = null, res = null, stagerStage = null;
-             tmp = function() {
-                 i = (i || 0) + 1;
-             };
-             done = function(increment) {
-                 len = (len || 0) + increment;
-             };
-             stager.addStage({
-                 id: 'stage 1',
-                 cb: tmp,
-                 done: done,
-                 c: 3,
-                 d: 4,
-                 e: 5
-             });
+    describe('#extendStep: object', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() {
+                i = (i || 0) + 1;
+            };
+            done = function(increment) {
+                len = (len || 0) + increment;
+            };
+            stager.addStep({
+                id: 'step 1',
+                cb: tmp,
+                done: done,
+                c: 3,
+                d: 4,
+                e: 5
+            });
 
-             stager.next('stage 2');
+            stager.next('stage 1');
 
-             stager.extendStage('stage 1', function(o) {
-                 o._done = o.done;
-                 o.done = function(increment) {
-                     this._done((increment-1));
-                     len = len + increment;
-                 };
-                 o.c = 'a';
-                 o.e = undefined;
-                 return o;
-             });
+            stager.extendStep('step 1', {
+                cb: function() {
+                    i = 10;
+                },
+                done: function(increment) {
+                    len = 1 + increment;
+                },
+                c: 'a',
+                e: undefined
+            });
 
-             stager.extendStep('stage 1', function(o) {
-                 o._cb = o.cb;
-                 o.cb = function() {
-                     this._cb();
-                     i++;
-                 }
-                 return o;
-             });
+        });
+        it('should have extended `cb`', function() {
+            stager.steps['step 1'].cb();
+            i.should.eql(10);
+        });
+        it('should have extended `done`', function() {
+            stager.steps['step 1'].done(2);
+            len.should.eql(3);
+        });
+        it('should have overwritten `c`', function() {
+            stager.steps['step 1'].c.should.eql('a');
+        });
+        it('should have not overwritten `d`', function() {
+            stager.steps['step 1'].d.should.eql(4);
+        });
+        it('should have overwritten `e`', function() {
+            (typeof stager.steps['step 1'].e).should.eql('undefined');
+        });
 
-             stager.extendStep('stage 2', function(o) {
-                 o._cb = o.cb;
-                 o.cb = function() {
-                     if ('undefined' !== typeof this._cb) i++;
-                     i++;
-                 };
-                 o.foo = 'foo1';
-                 return o;
-             });
-         });
-         it('should have extended `cb` with wrap function', function() {
-             stager.steps['stage 1'].cb();
-             i.should.eql(2);
-         });
-         it('should have extended `done` with wrap function', function() {
-             stager.stages['stage 1'].done(2);
-             len.should.eql(3);
-         });
-         it('should have overwritten `c`', function() {
-             stager.stages['stage 1'].c.should.eql('a');
-         });
-         it('should have not overwritten `d`', function() {
-             stager.stages['stage 1'].d.should.eql(4);
-         });
-         it('should have overwritten `e`', function() {
-             (typeof stager.stages['stage 1'].e).should.eql('undefined');
-         });
-         it('should have added `foo`', function() {
-             stager.steps['stage 2'].foo.should.eql('foo1');
-         });
-         it('should have extended `cb` with wrap function (2)', function() {
-             stager.steps['stage 2'].cb();
-             i.should.eql(4);
-         });
+    });
 
-     });
+    describe('#extendStage: update function', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() {
+                i = (i || 0) + 1;
+            };
+            done = function(increment) {
+                len = (len || 0) + increment;
+            };
+            stager.addStage({
+                id: 'stage 1',
+                cb: tmp,
+                done: done,
+                c: 3,
+                d: 4,
+                e: 5
+            });
+
+            stager.next('stage 2');
+
+            stager.extendStage('stage 1', function(o) {
+                o._done = o.done;
+                o.done = function(increment) {
+                    this._done((increment-1));
+                    len = len + increment;
+                };
+                o.c = 'a';
+                o.e = undefined;
+                return o;
+            });
+
+            stager.extendStep('stage 1', function(o) {
+                o._cb = o.cb;
+                o.cb = function() {
+                    this._cb();
+                    i++;
+                }
+                return o;
+            });
+
+            stager.extendStep('stage 2', function(o) {
+                o._cb = o.cb;
+                o.cb = function() {
+                    if ('undefined' !== typeof this._cb) i++;
+                    i++;
+                };
+                o.foo = 'foo1';
+                return o;
+            });
+        });
+        it('should have extended `cb`', function() {
+            stager.steps['stage 1'].cb();
+            i.should.eql(2);
+        });
+        it('should have extended `done`', function() {
+            stager.stages['stage 1'].done(2);
+            len.should.eql(3);
+        });
+        it('should have overwritten `c`', function() {
+            stager.stages['stage 1'].c.should.eql('a');
+        });
+        it('should have not overwritten `d`', function() {
+            stager.stages['stage 1'].d.should.eql(4);
+        });
+        it('should have overwritten `e`', function() {
+            (typeof stager.stages['stage 1'].e).should.eql('undefined');
+        });
+        it('should have added `foo`', function() {
+            stager.steps['stage 2'].foo.should.eql('foo1');
+        });
+        it('should have extended `cb` (2)', function() {
+            stager.steps['stage 2'].cb();
+            i.should.eql(4);
+        });
+
+    });
+
+    describe('#extendStage: object', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() {
+                i = (i || 0) + 1;
+            };
+            done = function(increment) {
+                len = (len || 0) + increment;
+            };
+            stager.addStage({
+                id: 'stage 1',
+                cb: tmp,
+                done: done,
+                c: 3,
+                d: 4,
+                e: 5
+            });
+
+            stager.next('stage 1');
+
+            stager.extendStage('stage 1', {
+                done: function(increment) {
+                    len = 1 + increment;
+                },
+                c: 'a',
+                e: undefined
+            });
+
+        });
+        it('should have not extended `cb` in step', function() {
+            stager.steps['stage 1'].cb();
+            i.should.eql(1);
+        });
+        it('should have extended `done`', function() {
+            stager.stages['stage 1'].done(2);
+            len.should.eql(3);
+        });
+        it('should have overwritten `c`', function() {
+            stager.stages['stage 1'].c.should.eql('a');
+        });
+        it('should have not overwritten `d`', function() {
+            stager.stages['stage 1'].d.should.eql(4);
+        });
+        it('should have overwritten `e`', function() {
+            (typeof stager.stages['stage 1'].e).should.eql('undefined');
+        });
+
+    });
 
     describe('should fail', function() {
         beforeEach(function() {
