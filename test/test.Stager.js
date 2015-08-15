@@ -13,87 +13,6 @@ var node = ngc.getClient();
 module.exports = node;
 node.verbosity = -1000;
 
-var idxs = {};
-
-getCb = function(name) {
-    var idx, len, exts;
-    exts = a.__extended[name];
-    if (!exts) return null;
-    if ('undefined' === typeof idxs[name]) idxs[name] = exts.length-1;
-    else idxs[name]--;
-    if (idxs[name] === 0)  {
-        idxs[name] = exts.length;
-        return exts[0];
-    }
-    else return exts[idxs[name]];
-}
-a = {
-    cb: function(a) { console.log('old: ' + a) }
-};
-
-a = {
-    __extended: {cb: [a.cb] },
-
-    cb: function(a) {
-        var old;
-        old = getCb('cb');
-        old(1);
-        console.log('new: ', a);
-    }
-}
-
-a = {
-    __extended: {cb: a.__extended.cb.concat([a.cb]) },
-
-    cb: function(a) {
-        var old;
-        // old = getCb('cb'); // this.plot.getSuper('cb');
-        // old(2);
-        console.log('newer: ', a);
-    }
-}
-
-
-a = {
-    __extended: {cb: a.__extended.cb.concat([a.cb]) },
-
-    cb: function(a) {
-        var old;
-        old = getCb('cb'); // this.plot.getSuper('cb');
-        old(3);
-        console.log('even newer: ', a);
-    }
-}
-
-
-a.cb.call(this, 4);
-
-console.log('----');
-
-console.log(idxs);
-
-a = {
-    __extended: {cb: a.__extended.cb.concat([a.cb]) },
-
-    cb: function(a) {
-        var old;
-        old = getCb('cb'); // this.plot.getSuper('cb');
-        old(5);
-        console.log('even newer: ', a);
-    }
-}
-
-
-a.cb.call(this, 6);
-a.cb.call(this, 6);
-
-
-console.log(a.__extended);
-console.log(idxs);
-
-
-return;
-
 var i, len, tmp, res;
 var stager, stagerState;
 
@@ -687,7 +606,7 @@ describe('Stager', function() {
         });
     });
 
-    describe('#extendStep', function() {
+    describe('#extendStep: update function', function() {
         before(function() {
             stager = ngc.getStager();
             i = null, len = null, res = null, stagerStage = null;
@@ -708,27 +627,32 @@ describe('Stager', function() {
 
             stager.next('stage 1');
 
-            stager.extendStep('step 1', {
-                cb: function(old) {
-                    old();
+            stager.extendStep('step 1', function(o) {
+                o._cb = o.cb;
+                o.cb = function() {
+                    this._cb();
                     i++;
-                },
-                done: function(old, increment) {
-                    old((increment-1));
+                };
+                o._done = o.done;
+                o.done = function(increment) {
+                    this._done((increment-1));
                     len = len + increment;
-                },
-                c: 'a',
-                e: undefined
+                };
+                o.c = 'a';
+                o.e = undefined;
+                return o;
             });
 
-
-            stager.extendStep('stage 1', {
-                cb: function(old) {
-                    if ('undefined' !== typeof old) i++;
+            stager.extendStep('stage 1', function(o) {
+                o.__cb = o.cb;
+                o.cb = function() {
+                    if ('undefined' !== typeof this.__cb) i++;
                     i++;
-                },
-                foo: 'foo1'
+                };
+                o.foo = 'foo1';
+                return o;
             });
+
         });
         it('should have extended `cb` with wrap function', function() {
             stager.steps['step 1'].cb();
@@ -757,77 +681,83 @@ describe('Stager', function() {
 
     });
 
-    describe('#extendStage', function() {
-        before(function() {
-            stager = ngc.getStager();
-            i = null, len = null, res = null, stagerStage = null;
-            tmp = function() {
-                i = (i || 0) + 1;
-            };
-            done = function(increment) {
-                len = (len || 0) + increment;
-            };
-            stager.addStage({
-                id: 'stage 1',
-                cb: tmp,
-                done: done,
-                c: 3,
-                d: 4,
-                e: 5
-            });
+     describe('#extendStage: update function', function() {
+         before(function() {
+             stager = ngc.getStager();
+             i = null, len = null, res = null, stagerStage = null;
+             tmp = function() {
+                 i = (i || 0) + 1;
+             };
+             done = function(increment) {
+                 len = (len || 0) + increment;
+             };
+             stager.addStage({
+                 id: 'stage 1',
+                 cb: tmp,
+                 done: done,
+                 c: 3,
+                 d: 4,
+                 e: 5
+             });
 
-            stager.next('stage 2');
+             stager.next('stage 2');
 
-            stager.extendStage('stage 1', {
-                done: function(old, increment) {
-                    old((increment-1));
-                    len = len + increment;
-                },
-                c: 'a',
-                e: undefined
-            });
+             stager.extendStage('stage 1', function(o) {
+                 o._done = o.done;
+                 o.done = function(increment) {
+                     this._done((increment-1));
+                     len = len + increment;
+                 };
+                 o.c = 'a';
+                 o.e = undefined;
+                 return o;
+             });
 
-            stager.extendStep('stage 1', {
-                cb: function(old) {
-                    old();
-                    i++;
-                }
-            });
+             stager.extendStep('stage 1', function(o) {
+                 o._cb = o.cb;
+                 o.cb = function() {
+                     this._cb();
+                     i++;
+                 }
+                 return o;
+             });
 
-            stager.extendStep('stage 2', {
-                cb: function(old) {
-                    if ('undefined' !== typeof old) i++;
-                    i++;
-                },
-                foo: 'foo1'
-            });
-        });
-        it('should have extended `cb` with wrap function', function() {
-            stager.steps['stage 1'].cb();
-            i.should.eql(2);
-        });
-        it('should have extended `done` with wrap function', function() {
-            stager.stages['stage 1'].done(2);
-            len.should.eql(3);
-        });
-        it('should have overwritten `c`', function() {
-            stager.stages['stage 1'].c.should.eql('a');
-        });
-        it('should have not overwritten `d`', function() {
-            stager.stages['stage 1'].d.should.eql(4);
-        });
-        it('should have overwritten `e`', function() {
-            (typeof stager.stages['stage 1'].e).should.eql('undefined');
-        });
-        it('should have added `foo`', function() {
-            stager.steps['stage 2'].foo.should.eql('foo1');
-        });
-        it('should have extended `cb` with wrap function (2)', function() {
-            stager.steps['stage 2'].cb();
-            i.should.eql(4);
-        });
+             stager.extendStep('stage 2', function(o) {
+                 o._cb = o.cb;
+                 o.cb = function() {
+                     if ('undefined' !== typeof this._cb) i++;
+                     i++;
+                 };
+                 o.foo = 'foo1';
+                 return o;
+             });
+         });
+         it('should have extended `cb` with wrap function', function() {
+             stager.steps['stage 1'].cb();
+             i.should.eql(2);
+         });
+         it('should have extended `done` with wrap function', function() {
+             stager.stages['stage 1'].done(2);
+             len.should.eql(3);
+         });
+         it('should have overwritten `c`', function() {
+             stager.stages['stage 1'].c.should.eql('a');
+         });
+         it('should have not overwritten `d`', function() {
+             stager.stages['stage 1'].d.should.eql(4);
+         });
+         it('should have overwritten `e`', function() {
+             (typeof stager.stages['stage 1'].e).should.eql('undefined');
+         });
+         it('should have added `foo`', function() {
+             stager.steps['stage 2'].foo.should.eql('foo1');
+         });
+         it('should have extended `cb` with wrap function (2)', function() {
+             stager.steps['stage 2'].cb();
+             i.should.eql(4);
+         });
 
-    });
+     });
 
     describe('should fail', function() {
         beforeEach(function() {
