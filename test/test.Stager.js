@@ -1020,7 +1020,6 @@ describe('Stager', function() {
                    stager.unskip(undefined, '1');
                }).should.throw();
            });
-
         it('other fails', function() {
             (function() {
                 stager.addStep();
@@ -1041,8 +1040,6 @@ describe('Stager', function() {
                 stager.repeat();
             }).should.throw();
         });
-
-
         it('if extendStep|Stage are referencing non-existing steps|stages',
            function() {
                (function() {
@@ -1052,7 +1049,6 @@ describe('Stager', function() {
                    stager.extendStage('bb', { a: 1});
                }).should.throw();
            });
-
         it('if extendStep|Stage are called with wrong parameters',
            function() {
                stager.next('foo');
@@ -1097,8 +1093,6 @@ describe('Stager', function() {
                    stager.extendStage(undefined, { a: 1 });
                }).should.throw();
            });
-
-
         it('if extendStep|Stage update functions returns a non valid element',
            function() {
                (function() {
@@ -1128,10 +1122,7 @@ describe('Stager', function() {
                    });
                }).should.throw();
            });
-
-
     });
-
 });
 
 return;

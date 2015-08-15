@@ -390,9 +390,7 @@ MIT Licensed</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
-
-    <span class="kd">var</span> <span class="nx">df</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">compatibility</span><span class="p">().</span><span class="nx">defineProperty</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1234,7 +1232,7 @@ not marked as <code>toSkip</code>, or it is a gameover stage.</p>
 <p>Add it to sequence if it was not marked as <code>toSkip</code>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isSkipped</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">length</span>
+                    <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
                     <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">stageId</span><span class="p">)</span> <span class="p">{</span>
                             <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">steps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">stepId</span><span class="p">);</span>
@@ -1279,7 +1277,7 @@ different sequence from the Block hierarchy.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reset</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">blockIndex</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">blockIndex</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">lenCache</span><span class="p">,</span> <span class="nx">lenBlocks</span><span class="p">,</span> <span class="nx">blocks</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span></pre></div>
@@ -1727,7 +1725,7 @@ throw new Error('Stager.setState: invalid' +
 <p>Cache reset.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;cacheReset&#39;</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">cacheReset</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">cacheReset</span><span class="p">;</span>
         <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -2966,12 +2964,12 @@ must always be a function.</p>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">step</span> <span class="o">=</span> <span class="nx">update</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">step</span><span class="p">));</span>
-            <span class="nx">validateExtendedStep</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+            <span class="nx">validateExtendedStep</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">step</span><span class="p">;</span>
 
         <span class="p">}</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">update</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">validateExtendedStep</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">update</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
+            <span class="nx">validateExtendedStep</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">update</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
             <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
@@ -4195,8 +4193,6 @@ already added to current block, and if not, it adds it.</p>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="nx">curBlock</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getCurrentBlock</span><span class="p">();</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span><span class="p">)</span> <span class="kr">debugger</span>
-
         <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
@@ -4428,7 +4424,7 @@ whether the name is unique, etc.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">checkStepValidity</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: step must be object.&#39;</span><span class="p">)</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: step must be object.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: step.cb must be &#39;</span> <span class="o">+</span>
@@ -4485,7 +4481,7 @@ whether the stage name is unique, the steps exists, etc.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">checkStageValidity</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: stage must be object.&#39;</span><span class="p">)</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: stage must be object.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">&amp;&amp;</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: stage must have &#39;</span> <span class="o">+</span>
@@ -4709,9 +4705,8 @@ whether the stage name is unique, the steps exists, etc.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">checkStepParameter</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">id</span> <span class="o">=</span> <span class="nx">step</span><span class="p">;</span>
             <span class="nx">step</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">id</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span>
+                <span class="nx">id</span><span class="o">:</span> <span class="nx">step</span><span class="p">,</span>
                 <span class="nx">cb</span><span class="o">:</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getDefaultCallback</span><span class="p">()</span>
             <span class="p">};</span>
         <span class="p">}</span>
@@ -4730,7 +4725,7 @@ whether the stage name is unique, the steps exists, etc.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">])</span> <span class="nx">that</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">step</span><span class="p">);</span>
 
-        <span class="k">return</span> <span class="nx">step</span><span class="p">.</span><span class="nx">id</span>
+        <span class="k">return</span> <span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -5026,71 +5021,12 @@ along in 2nd, 3rd, etc. position.</p>
     </div>
   </div>
 </div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">extendStageStep</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">original</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">property</span><span class="p">;</span>
-
-        <span class="k">for</span> <span class="p">(</span><span class="nx">property</span> <span class="k">in</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">update</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">property</span><span class="p">))</span> <span class="p">{</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-161" id="section-161">&#182;</a>
-</div>
-<p>Extend function with wrapping function.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">[</span><span class="nx">property</span><span class="p">])</span> <span class="p">{</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-162" id="section-162">&#182;</a>
-</div>
-<p>Saving a copy of original property.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>                    <span class="nx">saveExtendedProperty</span><span class="p">(</span><span class="nx">original</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
-
-                    <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">oldCb</span><span class="p">,</span> <span class="nx">newCb</span><span class="p">)</span> <span class="p">{</span>
-
-                        <span class="nx">original</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                            <span class="kd">var</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">extCopyName</span><span class="p">;</span>
 
 
-                            <span class="nx">newCb</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
-                        <span class="p">};</span>
-                    <span class="p">})(</span><span class="nx">original</span><span class="p">[</span><span class="nx">property</span><span class="p">],</span> <span class="nx">update</span><span class="p">[</span><span class="nx">property</span><span class="p">]);</span>
-                <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-163" id="section-163">&#182;</a>
-</div>
-<p>Otherwise overwrite.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">original</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">update</span><span class="p">[</span><span class="nx">property</span><span class="p">];</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-164" id="section-164">&#182;</a>
-</div>
-<p>OLD
-    function extendStageStep(original, update) {
-        var property;</p>
+<div class="highlight"><pre><code><span class="n">function</span> <span class="n">extendStageStep</span><span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="n">update</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">var</span> <span class="n">property</span><span class="p">;</span>
 
-
-<div class="highlight"><pre><code>    <span class="k">for</span> <span class="p">(</span><span class="n">property</span> <span class="n">in</span> <span class="n">update</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">property</span> <span class="n">in</span> <span class="n">update</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">hasOwnProperty</span><span class="p">(</span><span class="n">property</span><span class="p">))</span> <span class="p">{</span>
             <span class="sr">//</span> <span class="n">Extend</span> <span class="n">function</span> <span class="n">with</span> <span class="n">wrapping</span> <span class="n">function</span><span class="o">.</span>
             <span class="k">if</span> <span class="p">(</span><span class="s">&#39;function&#39;</span> <span class="o">===</span> <span class="n">typeof</span> <span class="n">update</span><span class="p">[</span><span class="n">property</span><span class="p">])</span> <span class="p">{</span>
@@ -5139,11 +5075,7 @@ along in 2nd, 3rd, etc. position.</p>
 
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">saveExtendedProperty</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">obj</span><span class="p">.</span><span class="nx">extended</span><span class="p">)</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">__extended</span> <span class="o">=</span> <span class="p">{};</span>
-        <span class="nx">obj</span><span class="p">.</span><span class="nx">__extended</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">;</span>
-        <span class="k">return</span> <span class="nx">name</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -5492,11 +5424,11 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-178" id="section-178">&#182;</a>
+  <a class="pilcrow" href="#section-174" id="section-174">&#182;</a>
 </div>
 <p>Save the id of the added item.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">allItemsIds</span><span class="p">[</span><span class="nx">item</span><span class="p">.</span><span class="nx">item</span><span class="p">];</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">allItemsIds</span><span class="p">[</span><span class="nx">item</span><span class="p">.</span><span class="nx">item</span><span class="p">]</span> <span class="o">=</span> <span class="nx">item</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">positions</span> <span class="o">||</span> <span class="nx">positions</span> <span class="o">===</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">numberOfItems</span><span class="p">);</span>
@@ -5576,7 +5508,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-181" id="section-181">&#182;</a>
+  <a class="pilcrow" href="#section-177" id="section-177">&#182;</a>
 </div>
 <p>Range in which the indeces must be.</p>
         </td>
@@ -5588,7 +5520,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-182" id="section-182">&#182;</a>
+  <a class="pilcrow" href="#section-178" id="section-178">&#182;</a>
 </div>
 <p>Accounting for already taken positions.</p>
         </td>
@@ -5598,7 +5530,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-183" id="section-183">&#182;</a>
+  <a class="pilcrow" href="#section-179" id="section-179">&#182;</a>
 </div>
 <p>Parsing all of the position strings into arrays.</p>
         </td>
@@ -5613,7 +5545,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-184" id="section-184">&#182;</a>
+  <a class="pilcrow" href="#section-180" id="section-180">&#182;</a>
 </div>
 <p>Assigning positions.</p>
         </td>
@@ -5623,7 +5555,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-185" id="section-185">&#182;</a>
+  <a class="pilcrow" href="#section-181" id="section-181">&#182;</a>
 </div>
 <p>Select entry with least possibilities of where to go.</p>
         </td>
@@ -5636,7 +5568,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-186" id="section-186">&#182;</a>
+  <a class="pilcrow" href="#section-182" id="section-182">&#182;</a>
 </div>
 <p>No valid position specified.</p>
         </td>
@@ -5649,7 +5581,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-187" id="section-187">&#182;</a>
+  <a class="pilcrow" href="#section-183" id="section-183">&#182;</a>
 </div>
 <p>Chose position randomly among possibilities.</p>
         </td>
@@ -5662,7 +5594,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-188" id="section-188">&#182;</a>
+  <a class="pilcrow" href="#section-184" id="section-184">&#182;</a>
 </div>
 <p>Adjust possible positions of remaining entries.</p>
         </td>
