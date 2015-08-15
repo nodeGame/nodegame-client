@@ -12489,6 +12489,8 @@ if (!Array.prototype.indexOf) {
     var stepRules = parent.stepRules;
     var J = parent.JSUS;
 
+    var df = J.compatibility().defineProperty;
+
     // ## Static methods
 
     /**
@@ -13416,7 +13418,7 @@ if (!Array.prototype.indexOf) {
      * @see checkStageValidity
      */
     Stager.prototype.addStage = function(stage) {
-        var i, id, step;
+        var id;
 
         checkStageValidity(stage, 'addStage');
 
@@ -13438,29 +13440,8 @@ if (!Array.prototype.indexOf) {
             stage.steps = [ id ];
         }
         else {
-            // Missing steps are added with default callback (if string),
-            // or as they are if object.
-            for (i = 0; i < stage.steps.length; ++i) {
-                if ('object' === typeof stage.steps[i]) {
-                    // Throw error if step.id is not unique.
-                    this.addStep(stage.steps[i]);
-                    // Substitute with its id.
-                    stage.steps[i] = stage.steps[i].id;
-                }
-                else if ('string' === typeof stage.steps[i]) {
-                    if (!this.steps[stage.steps[i]]) {
-                        this.addStep({
-                            id: stage.steps[i],
-                            cb: this.getDefaultCallback()
-                        });
-                    }
-                }
-                else {
-                    throw new TypeError('Stager.addStage: stage ' + id +
-                                        ': items of the steps array ' +
-                                        'must be string or undefined.');
-                }
-            }
+            // Process every step in the array. Steps array is modified.
+            handleStepsArray(this, id, stage.steps, 'addStage');
         }
         this.stages[id] = stage;
     };
@@ -13641,38 +13622,42 @@ if (!Array.prototype.indexOf) {
      *
      * Extends an existing step
      *
-     * Properties of the step are overwritten by the properties of the
-     * update object. If a property of the update object is a function
-     * it will receive as first parameter the old value of the extended
-     * step.
+     * Notice: properties `id` cannot be modified, and property `cb`
+     * must always be a function.
      *
      * @param {string} stepId The id of the step to update
-     * @param {object} update The object containing the properties to update
+     * @param {object|function} update The object containing the
+     *   properties to update, or an update function that takes a copy
+     *   of current step and returns the whole new updated step
      *
      * @see Stager.addStep
-     * @see extendStageStep
+     * @see validateExtendedStep
      */
     Stager.prototype.extendStep = function(stepId, update) {
-        var step, attribute;
+        var step;
         if ('string' !== typeof stepId) {
             throw new TypeError('Stager.extendStep: stepId must be a' +
                                 ' string.');
-        }
-        if (!update || 'object' !== typeof update) {
-            throw new TypeError('Stager.extendStep: update must be' +
-                                ' object.');
-        }
-        if (update.hasOwnProperty('id')) {
-            throw new TypeError('Stager.extendStep: update.id must ' +
-                                'be undefined.');
         }
         step = this.steps[stepId];
         if (!step) {
             throw new Error('Stager.extendStep: stepId not found: ' +
                             stepId + '.');
         }
+        if ('function' === typeof update) {
+            step = update(J.clone(step));
+            validateExtendedStep(stepId, step, false)
+            this.steps[stepId] = step;
 
-        extendStageStep(step, update);
+        }
+        else if (update && 'object' === typeof update) {
+            validateExtendedStep(stepId, update, false)
+            J.mixin(step, update);
+        }
+        else {
+            throw new TypeError('Stager.extendStep: update must be object ' +
+                                'or function. Step id: ' + stepId + '.');
+        }
     };
 
     /**
@@ -13680,21 +13665,15 @@ if (!Array.prototype.indexOf) {
      *
      * Extends an existing stage
      *
-     * Properties of the stage are overwritten by the properties of the
-     * update object. If a property of the update object is a function
-     * it will receive as first parameter the old value of the extended
-     * stage.
-     *
-     * Constraints on the update object:
-     *
-     *   - cannot contain properties `id` and `cb`
-     *   - if specified, property `steps` must be a non-empty array.
+     * Notice: properties `id` and `cb` cannot be modified / added.
      *
      * @param {string} stageId The id of the stage to update
-     * @param {object} update The object containing the properties to update
+     * @param {object|function} update The object containing the
+     *   properties to update, or an update function that takes a copy
+     *   of current stage and returns the whole new updated stage
      *
      * @see Stager.addStage
-     * @see updateStageStep
+     * @see validateExtendedStage
      */
     Stager.prototype.extendStage = function(stageId, update) {
         var stage;
@@ -13703,33 +13682,32 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('Stager.extendStage: stageId must be ' +
                                 'a string.');
         }
-        if (!update || 'object' !== typeof update) {
-            throw new TypeError('Stager.extendStage: update must be' +
-                                ' object.');
-        }
-        if (update.hasOwnProperty('id')) {
-            throw new TypeError('Stager.extendStage: update.id must ' +
-                                'be undefined.');
-        }
-        if (update.hasOwnProperty('cb')) {
-            throw new TypeError('Stager.extendStage: update.cb must ' +
-                                'be undefined.');
-        }
-        if (update.hasOwnProperty('steps') &&
-            ((!J.isArray(update.steps) || !update.steps.length) ||
-             update.steps === undefined || update.steps === null)) {
-
-            throw new TypeError('Stager.extendStage: if defined update.steps ' +
-                                'must be a non-empty array.');
-        }
-
         stage = this.stages[stageId];
         if (!stage) {
             throw new Error('Stager.extendStage: stageId not found: ' +
                             stageId + '.');
         }
 
-        extendStageStep(stage, update);
+        if ('function' === typeof update) {
+            stage = update(J.clone(stage));
+            if (!stage || 'object' !== typeof stage ||
+                !stage.id || !stage.steps) {
+
+                throw new TypeError('Stager.extendStage: update function ' +
+                                    'must return an object with id and steps.');
+            }
+            validateExtendedStage(this, stageId, stage, true);
+            this.stages[stageId] = stage;
+
+        }
+        else if (update && 'object' === typeof update) {
+            validateExtendedStage(this, stageId, update, false);
+            J.mixin(stage, update);
+        }
+        else {
+            throw new TypeError('Stager.extendStage: update must be object ' +
+                                'or function.');
+        }
     };
 
     /**
@@ -14210,6 +14188,43 @@ if (!Array.prototype.indexOf) {
 
     // ## Stager private methods
 
+    /**
+     * ### handleStepsArray
+     *
+     * Validates the items of a steps array, creates new steps if necessary
+     *
+     * @param {Stager} that Stager object
+     * @param {string} stageId The original stage id
+     * @param {array} steps The array of steps to validate
+     * @param {string} method The name of the method invoking the method
+     */
+    function handleStepsArray(that, stageId, steps, method) {
+        var i, len;
+        i = -1, len = steps.length;
+        // Missing steps are added with default callback (if string),
+        // or as they are if object.
+        for ( ; ++i < len ; ) {
+            if ('object' === typeof steps[i]) {
+                // Throw error if step.id is not unique.
+                that.addStep(steps[i]);
+                // Substitute with its id.
+                steps[i] = steps[i].id;
+            }
+            else if ('string' === typeof steps[i]) {
+                if (!that.steps[steps[i]]) {
+                    that.addStep({
+                        id: steps[i],
+                        cb: that.getDefaultCallback()
+                    });
+                }
+            }
+            else {
+                throw new TypeError('Stager.' + method + ': stage ' +
+                                    stageId  + ': items of the steps array ' +
+                                    'must be string or object.');
+            }
+        }
+    }
 
     /**
      * ### addLoop
@@ -14440,6 +14455,87 @@ if (!Array.prototype.indexOf) {
      }
 
     /**
+     * ### validateExtendedStep
+     *
+     * Validates the modification to a step (already known as object)
+     *
+     * Each step inside the steps array is validated via `handleStepsArray`.
+     *
+     * @param {string} stepId The original step id
+     * @param {object} update The update/updated object
+     * @param {boolean} updateFunction TRUE if the update object is the
+     *    value returned by an update function
+     *
+     * @see handleStepsArray
+     */
+    function validateExtendedStep(stepId, update, updateFunction) {
+        if (updateFunction) {
+            if (!step || 'object' !== typeof step) {
+                throw new TypeError('Stager.extendStep: update function ' +
+                                    'must return an object with id and cb: ' +
+                                    stepId + '.');
+            }
+            if (step.id !== stepId) {
+                throw new Error('Stager.extendStep: update function ' +
+                                'cannot alter the step id: ' + stepId + '.');
+            }
+            if ('function' !== typeof step.cb) {
+                throw new TypeError('Stager.extendStep: update function ' +
+                                    'must return an object with a valid ' +
+                                    'callback. Step id:' + stepId + '.');
+            }
+        }
+        else {
+             if (update.hasOwnProperty('id')) {
+                throw new Error('Stager.extendStep: update.id cannot be set.' +
+                               stepId + '.');
+            }
+            if ('function' !== typeof update.cb) {
+                throw new TypeError('Stager.extendStep: update.cb must be ' +
+                                    'function. Step id: ' + stepId + '.');
+            }
+        }
+    }
+
+    /**
+     * ### validateExtendedStage
+     *
+     * Validates the modification to a stage (already known as object)
+     *
+     * Each step inside the steps array is validated via `handleStepsArray`.
+     *
+     * @param {Stager} that Stager object
+     * @param {string} stageId The original stage id
+     * @param {object} update The update/updated object
+     * @param {boolean} updateFunction TRUE if the update object is the
+     *    value returned by an update function
+     *
+     * @see handleStepsArray
+     */
+    function validateExtendedStage(that, stageId, update, updateFunction) {
+        if ((updateFunction && update.id !== stageId) ||
+            (!updateFunction && update.hasOwnProperty('id'))) {
+
+            throw new Error('Stager.extendStage: id cannot be altered.');
+        }
+        if (update.hasOwnProperty('cb')) {
+            throw new TypeError('Stager.extendStage: update.cb cannot be ' +
+                                'specified.');
+        }
+        if (update.hasOwnProperty('steps')) {
+            if ((!J.isArray(update.steps) || !update.steps.length) ||
+                update.steps === undefined || update.steps === null) {
+
+                throw new Error('Stager.extendStage: found update.steps, but ' +
+                                'it is not a non-empty array.');
+            }
+
+            // Process every step in the array. Steps array is modified.
+            handleStepsArray(that, stageId, update.steps, 'extendStage');
+        }
+    }
+
+    /**
      * ### checkStepParameter
      *
      * Check validity of a stage parameter, eventually adds it if missing
@@ -14603,10 +14699,11 @@ if (!Array.prototype.indexOf) {
      * extending function. Any other parameters will be passed
      * along in 2nd, 3rd, etc. position.
      *
+     * @param {Stager} that Stager object
      * @param {object} original The original object
      * @param {object} update The update object
      */
-    function extendStageStep(original, update) {
+    function extendStageStep(that, original, update) {
         var property;
 
         for (property in update) {
@@ -14614,28 +14711,15 @@ if (!Array.prototype.indexOf) {
                 // Extend function with wrapping function.
                 if ('function' === typeof update[property]) {
 
+                    // Saving a copy of original property.
+                    saveExtendedProperty(original, property);
+
                     (function(oldCb, newCb) {
+
                         original[property] = function() {
-                            var args, i, len;
-                            len = arguments.length;
-                            args = new Array(len+1);
-                            args[0] = oldCb;
-                            switch(len) {
-                            case 1:
-                                args[1] = arguments[0]; break;
-                            case 2:
-                                args[1] = arguments[0];
-                                args[2] = arguments[1]; break;
-                            case 3:
-                                args[1] = arguments[0];
-                                args[2] = arguments[1];
-                                args[3] = arguments[2]; break;
-                            default:
-                                i = -1;
-                                for ( ; ++i < len ; ) {
-                                    args[i+1] = arguments[i];
-                                }
-                            }
+                            var args, i, len, extCopyName;
+
+
                             newCb.apply(this, args);
                         };
                     })(original[property], update[property]);
@@ -14646,6 +14730,62 @@ if (!Array.prototype.indexOf) {
                 }
             }
         }
+    }
+
+    // OLD
+//     function extendStageStep(original, update) {
+//         var property;
+//
+//         for (property in update) {
+//             if (update.hasOwnProperty(property)) {
+//                 // Extend function with wrapping function.
+//                 if ('function' === typeof update[property]) {
+//
+//                     // Saving a copy of original property.
+//                     saveExtendedProperty(original, property);
+//
+//                     (function(oldCb, newCb) {
+//
+//                         original[property] = function() {
+//                             var args, i, len, extCopyName;
+//
+//
+//
+//                             len = arguments.length;
+//                             args = new Array(len+1);
+//                             args[0] = original.__extended[extCopy]
+//                             switch(len) {
+//                             case 1:
+//                                 args[1] = arguments[0]; break;
+//                             case 2:
+//                                 args[1] = arguments[0];
+//                                 args[2] = arguments[1]; break;
+//                             case 3:
+//                                 args[1] = arguments[0];
+//                                 args[2] = arguments[1];
+//                                 args[3] = arguments[2]; break;
+//                             default:
+//                                 i = -1;
+//                                 for ( ; ++i < len ; ) {
+//                                     args[i+1] = arguments[i];
+//                                 }
+//                             }
+//                             newCb.apply(this, args);
+//                         };
+//                     })(original[property], update[property]);
+//                 }
+//                 // Otherwise overwrite.
+//                 else {
+//                     original[property] = update[property];
+//                 }
+//             }
+//         }
+//     }
+
+    function saveExtendedProperty(obj, name) {
+        if (!obj.extended) obj.__extended = {};
+        obj.__extended[name] = cb;
+        return name;
     }
 
     /**
