@@ -1,3 +1,186 @@
+var util = require('util');
+should = require('should');
+
+var log = console.log;
+
+var ngc = require('../index.js');
+var Stager = ngc.Stager;
+var GamePlot = ngc.GamePlot;
+var GameStage = ngc.GameStage;
+var J = ngc.JSUS;
+
+var node = ngc.getClient();
+node.verbosity = -1000;
+
+var stager, stagerState;
+var stepRule, globals, properties, init, gameover, done, stage;
+
+stager = ngc.getStager();
+
+stage = {
+    id: '3',
+    steps: ['step3-1', 'step3-2', 'step3-3']
+};
+
+stager.addStage(stage);
+
+stager
+    .next('1')
+    .next('2')
+    .repeat('3', 3)
+    .next('4')
+    .repeat('5', 5)
+    .finalize();
+
+// plot = new GamePlot(stager);
+// debugger
+// a  = plot.next('3.1.1');
+// console.log(a);
+// return
+
+module.exports = node;
+module.parent.exports = node;
+
+describe('GamePlot', function() {
+
+
+    describe('#constructor', function() {
+        before(function(){
+            plot = new GamePlot(stager);
+        });
+        it('should create a stager object', function() {
+            (typeof plot.stager).should.eql('object');
+        });
+    });
+
+    describe('#next()', function() {
+        it('should return 1.1.1', function() {
+            GameStage.compare(plot.next('0.0.0'),'1.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 2.1.1', function() {
+            GameStage.compare(plot.next('1.1.1'),'2.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.1.1', function() {
+            GameStage.compare(plot.next('2.1.1'),'3.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.2.1', function() {
+            GameStage.compare(plot.next('3.1.1'),'3.2.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.3.1', function() {
+            GameStage.compare(plot.next('3.2.1'),'3.3.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.1.2', function() {
+            GameStage.compare(plot.next('3.3.1'),'3.1.2')
+                .should.be.equal(0);
+        });
+
+        it('should return false when reached end of the stages', function() {
+            plot.next('5.1.1').should.be.false;
+        });
+    });
+    //
+    describe('#previous()', function() {
+        it('should return 1.1.1', function() {
+            GameStage.compare(plot.previous('2.1.1'),'1.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 2.1.1', function() {
+            GameStage.compare(plot.previous('3.1.1'),'2.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.1.1', function() {
+            GameStage.compare(plot.previous('3.2.1'),'3.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.2.1', function() {
+            GameStage.compare(plot.previous('3.3.1'),'3.2.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.3.1', function() {
+            GameStage.compare(plot.previous('3.1.2'),'3.3.1')
+                .should.be.equal(0);
+        });
+
+        it('should return false at beginning of the stages', function() {
+            plot.previous('1.1.1').should.be.false;
+        });
+    });
+
+    describe('#jump() forward', function() {
+        it('should return 2.1.1', function() {
+            GameStage.compare(plot.jump('1.1.1', 1), '2.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.1.1', function() {
+            GameStage.compare(plot.jump('3.1.1', 1), '3.2.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.2.1', function() {
+            GameStage.compare(plot.jump('3.3.1', 1), '3.1.2')
+                .should.be.equal(0);
+        });
+        it('should return 3.3.1', function() {
+            GameStage.compare(plot.jump('3.1.1', 2), '3.3.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.3.1', function() {
+            GameStage.compare(plot.jump('3.1.1', 5), '3.3.2')
+                .should.be.equal(0);
+        });
+        it('should return false at beginning of the stages', function() {
+            plot.jump('5.1.1',1).should.be.false;
+        });
+    });
+
+    describe('#jump() backward', function() {
+        it('should return 1.1.1 (jump -1)', function() {
+            GameStage.compare(plot.jump('2.1.1', -1), '1.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.1.1 (jump -1)', function() {
+            GameStage.compare(plot.jump('3.2.1', -1), '3.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.3.1 (jump -1)', function() {
+            GameStage.compare(plot.jump('3.1.2', -1), '3.3.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.1.1 (jump -2)', function() {
+            GameStage.compare(plot.jump('3.3.1', -2), '3.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.1.1 (jump -5)', function() {
+            GameStage.compare(plot.jump('3.3.2', -5), '3.1.1')
+                .should.be.equal(0);
+        });
+        it('should return false at beginning of the stages', function() {
+            plot.jump('1.1.1',-1).should.be.false;
+        });
+
+    });
+
+//     describe('#get()', function() {
+//         it('should return 2.1.1', function() {
+//             stager.get('2.1.1').should.be.eql(stages[1]);
+//         });
+//     });
+//
+//     describe('#getProperty()', function() {
+//         it('should return 2.1.1', function() {
+//             stager.getProperty('2.1.1.', 'timer')
+//                 .should.be.eql(stages[1].timer);
+//         });
+//     });
+
+
+
+});
+
 // var node = require('../index.js');
 // module.exports = node;
 // node.verbosity = 100;
