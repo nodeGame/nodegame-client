@@ -1099,6 +1099,37 @@ describe('Stager', function() {
            });
 
 
+        it('if extendStep|Stage update functions returns a non valid element',
+           function() {
+               (function() {
+                   stager.extendStep('foo', function() {});
+               }).should.throw();
+               (function() {
+                   stager.extendStage('foo', function() {});
+               }).should.throw();
+               (function() {
+                   stager.extendStep('foo', function() {
+                       return { id: 'a' };
+                   });
+               }).should.throw();
+               (function() {
+                   stager.extendStage('foo', function() {
+                       return { id: 'a' };
+                   });
+               }).should.throw();
+               (function() {
+                   stager.extendStep('foo', function() {
+                       return { id: 'foo', cb: function() {} };
+                   });
+               }).should.throw();
+               (function() {
+                   stager.extendStage('foo', function() {
+                       return { id: 'foo', cb: function() {} };
+                   });
+               }).should.throw();
+           });
+
+
     });
 
 });
