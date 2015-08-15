@@ -12,7 +12,7 @@ var J = ngc.JSUS;
 var node = ngc.getClient();
 node.verbosity = -1000;
 
-var stager, stagerState;
+var stager, plot, stagerState;
 var stepRule, globals, properties, init, gameover, done, stage;
 
 stager = ngc.getStager();
