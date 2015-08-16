@@ -131,6 +131,43 @@ describe('Stager', function() {
         });
     });
 
+    describe('#cloneStage', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() { i = 1 };
+            stager.addStage({
+                id: 'stage 1',
+                steps: ['a', 'b'],
+                done: tmp,
+                a: 1,
+                b: 2
+            });
+            stager.cloneStage('stage 1', 'clone');
+
+        });
+        it('should have created clone', function() {
+            (typeof stager.stages['clone']).should.eql('object');
+        });
+        it('should have copied all properties into clone', function() {
+            var c = stager.stages['clone'];
+            c.id.should.eql('clone');
+            c.a.should.eql(1);
+            c.b.should.eql(2);
+            c.done();
+            i.should.eql(1);
+        });
+        it('should have copied by value and not by reference', function() {
+            var c = stager.stages['clone'];
+            var o = stager.stages['stage 1'];
+            c.b = 3;
+            o.b.should.eql(2);
+            c.done = function() { i = 2 };
+            o.done();
+            i.should.eql(1);
+        });
+    });
+
     describe('#addStep', function() {
         before(function() {
             stager = ngc.getStager();
@@ -162,6 +199,42 @@ describe('Stager', function() {
         it('should keep extra properties of the step', function() {
             stager.steps['step 1'].a.should.eql(1);
             stager.steps['step 1'].b.should.eql(2);
+        });
+    });
+
+    describe('#cloneStep', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() { i = 1 };
+            stager.addStep({
+                id: 'step 1',
+                cb: tmp,
+                a: 1,
+                b: 2
+            });
+            stager.cloneStep('step 1', 'clone');
+
+        });
+        it('should have created clone', function() {
+            (typeof stager.steps['clone']).should.eql('object');
+        });
+        it('should have copied all properties into clone', function() {
+            var c = stager.steps['clone'];
+            c.id.should.eql('clone');
+            c.a.should.eql(1);
+            c.b.should.eql(2);
+            c.cb();
+            i.should.eql(1);
+        });
+        it('should have copied by value and not by reference', function() {
+            var c = stager.steps['clone'];
+            var o = stager.steps['step 1'];
+            c.b = 3;
+            o.b.should.eql(2);
+            c.cb = function() { i = 2 };
+            o.cb();
+            i.should.eql(1);
         });
     });
 
@@ -1120,6 +1193,40 @@ describe('Stager', function() {
                    stager.extendStage('foo', function() {
                        return { id: 'foo', cb: function() {} };
                    });
+               }).should.throw();
+           });
+        it('if cloneStep|Stage are referencing non-existing steps|stages',
+           function() {
+               (function() {
+                   stager.cloneStep('ahah', 'a');
+               }).should.throw();
+               (function() {
+                   stager.cloneStage('bb', 'b');
+               }).should.throw();
+           });
+
+        it('if cloneStep|Stage are using an already taken id for clone',
+           function() {
+               (function() {
+                   stager.cloneStep('foo', 'foo');
+               }).should.throw();
+               (function() {
+                   stager.cloneStage('foo', 'foo');
+               }).should.throw();
+           });
+        it('if cloneStep|Stage are called with wrong parameters',
+           function() {
+               (function() {
+                   stager.cloneStep(null, 'foo');
+               }).should.throw();
+               (function() {
+                   stager.cloneStep('foo', {});
+               }).should.throw();
+               (function() {
+                   stager.cloneStage(undefined, 'foo');
+               }).should.throw();
+               (function() {
+                   stager.cloneStage('foo', 3);
                }).should.throw();
            });
     });

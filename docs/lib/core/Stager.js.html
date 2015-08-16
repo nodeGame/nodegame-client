@@ -166,6 +166,12 @@
         <a href="#stager.addstage">Stager.addStage</a>
       </div>
       <div class="heading h3">
+        <a href="#stager.clonestep">Stager.cloneStep</a>
+      </div>
+      <div class="heading h3">
+        <a href="#stager.clonestage">Stager.cloneStage</a>
+      </div>
+      <div class="heading h3">
         <a href="#stager.step">Stager.step</a>
       </div>
       <div class="heading h3">
@@ -2541,6 +2547,133 @@ function. A step will be created with same id and callback.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="stager.clonestep">
+  <h3>
+    <a href="#stager.clonestep" class="pilcrow">&#182;</a>
+    Stager.cloneStep
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Clones a stage and assigns a new id to it</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stepId</span>
+      <span class="dox_type">string</span>
+      <span>The name of the stage to clone</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">newStepId</span>
+      <span class="dox_type">string</span>
+      <span>The new unique id to assign to the clone</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>step Reference to the cloned step</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.addStep
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">cloneStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">newStepId</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">step</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.cloneStep: stepId must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">newStepId</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.cloneStep: newStepId must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">newStepId</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.cloneStep: newStepId already taken: &#39;</span> <span class="o">+</span>
+                            <span class="nx">newStepId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">step</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.cloneStep: step not found: &#39;</span> <span class="o">+</span>
+                            <span class="nx">stepId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">step</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">step</span><span class="p">);</span>
+        <span class="nx">step</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">newStepId</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">step</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">step</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.clonestage">
+  <h3>
+    <a href="#stager.clonestage" class="pilcrow">&#182;</a>
+    Stager.cloneStage
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Clones a stage and assigns a new id to it</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stageId</span>
+      <span class="dox_type">string</span>
+      <span>The id of the stage to clone</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">newStageId</span>
+      <span class="dox_type">string</span>
+      <span>The new unique id to assign to the clone</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>stage Reference to the cloned stage</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.addStage
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">cloneStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">newStageId</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stageId</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.cloneStage: stageId must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">newStageId</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.cloneStage: newStageId must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">newStageId</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.cloneStage: newStageId already taken: &#39;</span> <span class="o">+</span>
+                            <span class="nx">newStageId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">stage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.cloneStage: stage not found: &#39;</span> <span class="o">+</span>
+                            <span class="nx">stageId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">stage</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
+        <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">newStageId</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">stage</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="stager.step">
   <h3>
     <a href="#stager.step" class="pilcrow">&#182;</a>
@@ -2657,7 +2790,7 @@ unique in the sequence.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
+  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
 </div>
 <p>Must be done after handleStageAdd is called.</p>
         </td>
@@ -2739,7 +2872,7 @@ unique in the sequence.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
+  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
 </div>
 <p>Must be done after handleStageAdd is called.</p>
         </td>
@@ -2901,7 +3034,7 @@ never executed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
+  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
 </div>
 <p>Extend stages, modify sequence</p>
         </td>
@@ -3200,7 +3333,7 @@ must always be a function.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
+  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
 </div>
 <p>Block operations.</p>
         </td>
@@ -3520,7 +3653,7 @@ must always be a function.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-120" id="section-120">&#182;</a>
+  <a class="pilcrow" href="#section-122" id="section-122">&#182;</a>
 </div>
 <p>Get Info out.</p>
         </td>
@@ -3742,7 +3875,7 @@ stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
+  <a class="pilcrow" href="#section-125" id="section-125">&#182;</a>
 </div>
 <p>undefined (default) -> true</p>
         </td>
@@ -3760,7 +3893,7 @@ stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-124" id="section-124">&#182;</a>
+  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
 </div>
 <p>Add step objects:</p>
         </td>
@@ -3775,7 +3908,7 @@ stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-125" id="section-125">&#182;</a>
+  <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
 </div>
 <p>Add stage object:</p>
         </td>
@@ -3786,7 +3919,7 @@ stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
+  <a class="pilcrow" href="#section-128" id="section-128">&#182;</a>
 </div>
 <p>If given id is alias, also add alias:</p>
         </td>
@@ -3796,7 +3929,7 @@ stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
+  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
 </div>
 <p>Add mini-sequence:</p>
         </td>
@@ -3853,7 +3986,7 @@ stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
+  <a class="pilcrow" href="#section-131" id="section-131">&#182;</a>
 </div>
 <p>Flexible Mode</p>
         </td>
@@ -4013,7 +4146,7 @@ Available only when nodegame is executed in <em>flexible</em> mode.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-134" id="section-134">&#182;</a>
+  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
 </div>
 <p>Missing steps are added with default callback (if string),
 or as they are if object.</p>
@@ -4025,7 +4158,7 @@ or as they are if object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-135" id="section-135">&#182;</a>
+  <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
 </div>
 <p>Throw error if step.id is not unique.</p>
         </td>
@@ -4035,7 +4168,7 @@ or as they are if object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
+  <a class="pilcrow" href="#section-138" id="section-138">&#182;</a>
 </div>
 <p>Substitute with its id.</p>
         </td>
@@ -4148,7 +4281,7 @@ or as they are if object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-138" id="section-138">&#182;</a>
+  <a class="pilcrow" href="#section-140" id="section-140">&#182;</a>
 </div>
 <p>Must be done after handleStageAdd is called.</p>
         </td>
@@ -4200,7 +4333,7 @@ already added to current block, and if not, it adds it.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-140" id="section-140">&#182;</a>
+  <a class="pilcrow" href="#section-142" id="section-142">&#182;</a>
 </div>
 <p>Add step, if not already added.</p>
         </td>
@@ -4444,7 +4577,7 @@ whether the name is unique, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-145" id="section-145">&#182;</a>
+  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>checkStageValidity</p>
@@ -4649,7 +4782,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
+  <a class="pilcrow" href="#section-150" id="section-150">&#182;</a>
 </div>
 <p>Process every step in the array. Steps array is modified.</p>
         </td>
@@ -4719,7 +4852,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-150" id="section-150">&#182;</a>
+  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
 </div>
 <p>A new step is created if not found (performs validation).</p>
         </td>
@@ -4785,7 +4918,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
+  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
 </div>
 <p>It's a step.</p>
         </td>
@@ -4798,7 +4931,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
+  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
 </div>
 <p>A new stage is created if not found (performs validation).</p>
         </td>
@@ -4814,7 +4947,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
+  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
 </div>
 <p>See whether the stage id contains an alias. Throws errors.</p>
         </td>
@@ -4826,7 +4959,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
+  <a class="pilcrow" href="#section-157" id="section-157">&#182;</a>
 </div>
 <p>Alias must reference an existing stage (checked before).</p>
         </td>
@@ -4953,7 +5086,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-158" id="section-158">&#182;</a>
+  <a class="pilcrow" href="#section-160" id="section-160">&#182;</a>
 </div>
 <p>Begin stage block.</p>
         </td>
@@ -4973,7 +5106,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-159" id="section-159">&#182;</a>
+  <a class="pilcrow" href="#section-161" id="section-161">&#182;</a>
 </div>
 <p>Add step block inside stage block.</p>
         </td>
@@ -5424,7 +5557,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-174" id="section-174">&#182;</a>
+  <a class="pilcrow" href="#section-176" id="section-176">&#182;</a>
 </div>
 <p>Save the id of the added item.</p>
         </td>
@@ -5508,7 +5641,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-177" id="section-177">&#182;</a>
+  <a class="pilcrow" href="#section-179" id="section-179">&#182;</a>
 </div>
 <p>Range in which the indeces must be.</p>
         </td>
@@ -5520,7 +5653,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-178" id="section-178">&#182;</a>
+  <a class="pilcrow" href="#section-180" id="section-180">&#182;</a>
 </div>
 <p>Accounting for already taken positions.</p>
         </td>
@@ -5530,7 +5663,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-179" id="section-179">&#182;</a>
+  <a class="pilcrow" href="#section-181" id="section-181">&#182;</a>
 </div>
 <p>Parsing all of the position strings into arrays.</p>
         </td>
@@ -5545,7 +5678,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-180" id="section-180">&#182;</a>
+  <a class="pilcrow" href="#section-182" id="section-182">&#182;</a>
 </div>
 <p>Assigning positions.</p>
         </td>
@@ -5555,7 +5688,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-181" id="section-181">&#182;</a>
+  <a class="pilcrow" href="#section-183" id="section-183">&#182;</a>
 </div>
 <p>Select entry with least possibilities of where to go.</p>
         </td>
@@ -5568,7 +5701,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-182" id="section-182">&#182;</a>
+  <a class="pilcrow" href="#section-184" id="section-184">&#182;</a>
 </div>
 <p>No valid position specified.</p>
         </td>
@@ -5581,7 +5714,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-183" id="section-183">&#182;</a>
+  <a class="pilcrow" href="#section-185" id="section-185">&#182;</a>
 </div>
 <p>Chose position randomly among possibilities.</p>
         </td>
@@ -5594,7 +5727,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-184" id="section-184">&#182;</a>
+  <a class="pilcrow" href="#section-186" id="section-186">&#182;</a>
 </div>
 <p>Adjust possible positions of remaining entries.</p>
         </td>
