@@ -169,8 +169,8 @@
         node.events.ng.on( IN + get + 'DATA', function(msg) {
             var res;
 
-            if ('string' !== typeof msg.text || msg.text === '') {
-                node.warn('node.in.get.DATA: invalid / missing event name.');
+            if ('string' !== typeof msg.text || msg.text.trim() === '') {
+                node.err('"in.get.DATA": msg.data must be a non-empty string.');
                 return;
             }
             res = node.emit(get + msg.text, msg);
@@ -214,38 +214,6 @@
         });
 
         /**
-         * ## in.say.STAGE
-         *
-         * Updates the game stage
-         */
-        node.events.ng.on( IN + say + 'STAGE', function(msg) {
-            var stageObj;
-            if (!msg.data) {
-                node.warn('Received in.say.STAGE msg with empty stage');
-                return;
-            }
-            stageObj = node.game.plot.getStep(msg.data);
-
-            if (!stageObj) {
-                node.err('Received in.say.STAGE msg with invalid stage');
-                return;
-            }
-            // TODO: renable when it does not cause problems.
-            // At the moment the AdminServer sends this kind of msg
-            // each time an admin publishes its own state
-            //node.game.execStep(stageObj);
-        });
-
-        /**
-         * ## in.say.STAGE_LEVEL
-         *
-         * Updates the stage level
-         */
-        node.events.ng.on( IN + say + 'STAGE_LEVEL', function(msg) {
-            //node.game.setStageLevel(msg.data);
-        });
-
-        /**
          * ## in.say.REDIRECT
          *
          * Redirects to a new page
@@ -253,9 +221,13 @@
          * @see node.redirect
          */
         node.events.ng.on( IN + say + 'REDIRECT', function(msg) {
-            if (!msg.data) return;
+            if ('string' !== typeof msg.data) {
+                node.err('"in.say.REDIRECT": msg.data must be string: ' +
+                         msg.data);
+                return false;
+            }
             if ('undefined' === typeof window || !window.location) {
-                node.err('window.location not found. Cannot redirect');
+                node.err('"in.say.REDIRECT": window.location not found.');
                 return false;
             }
 
@@ -276,22 +248,23 @@
             var payload, feature;
             feature = msg.text;
             if ('string' !== typeof feature) {
-                node.err('node.on.in.say.SETUP: msg.text must be string.');
-                return false;
+                node.err('"in.say.SETUP": msg.text must be string: ' +
+                         ferature);
+                return;
             }
             if (!node.setup[feature]) {
-                node.err('node.on.in.say.SETUP: no such setup function: ' +
-                        feature + '.');
-                return false;
+                node.err('"in.say.SETUP": no such setup function: ' +
+                         feature);
+                return;
             }
 
             payload = 'string' === typeof msg.data ?
                 J.parse(msg.data) : msg.data;
 
             if (!payload) {
-                node.err('node.on.in.say.SETUP: error while parsing ' +
+                node.err('"in.say.SETUP": error while parsing ' +
                          'payload of incoming remote setup message.');
-                return false;
+                return;
             }
             node.setup.apply(node, [feature].concat(payload));
         });
@@ -305,8 +278,13 @@
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
             // console.log('GM', msg);
-            if (!msg.text || !parent.constants.gamecommands[msg.text]) {
-                node.err('node.on.in.say.GAMECOMMAND: unknown game command ' +
+            if ('string' !== typeof msg.text) {
+                node.err('"in.say.GAMECOMMAND": msg.text must be string: ' +
+                         msg.text);
+                return;
+            }
+            if (!parent.constants.gamecommands[msg.text]) {
+                node.err('"in.say.GAMECOMMAND": unknown game command ' +
                          'received: ' + msg.text);
                 return;
             }
@@ -323,13 +301,13 @@
          * @see node.setup
          */
         node.events.ng.on( IN + say + 'ALERT', function(msg) {
-            if (J.isEmpty(msg.text)) {
-                node.err('Alert message received, but content is empty.');
+            if ('string' !== typeof msg.text || msg.text.trim() === '') {
+                node.err('"in.say.ALERT": msg.text must be a non-empty string');
                 return;
             }
             if ('undefined' !== typeof window) {
                 if ('undefined' === typeof alert) {
-                    node.err('Alert msg received, but alert is not defined:' +
+                    node.err('"in.say.ALERT": alert is not defined: ' +
                              msg.text);
                     return;
                 }

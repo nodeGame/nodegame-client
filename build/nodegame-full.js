@@ -12489,8 +12489,6 @@ if (!Array.prototype.indexOf) {
     var stepRules = parent.stepRules;
     var J = parent.JSUS;
 
-    var df = J.compatibility().defineProperty;
-
     // ## Static methods
 
     /**
@@ -12838,7 +12836,7 @@ if (!Array.prototype.indexOf) {
                 stepId = currentItem.item;
                 // Add it to sequence if it was not marked as `toSkip`.
                 if (!this.isSkipped(stageId, stepId)) {
-                    i = -1, len = this.sequence.length
+                    i = -1, len = this.sequence.length;
                     for ( ; ++i < len ; ) {
                         if (this.sequence[i].id === stageId) {
                             this.sequence[i].steps.push(stepId);
@@ -12864,7 +12862,7 @@ if (!Array.prototype.indexOf) {
      * @see Stager.cacheReset
      */
     Stager.prototype.reset = function() {
-        var type, blockIndex;
+        var blockIndex;
         var i, lenCache, lenBlocks, blocks;
 
         if (!this.finalized) return this;
@@ -13072,7 +13070,7 @@ if (!Array.prototype.indexOf) {
 
         // Cache reset.
         if (stateObj.hasOwnProperty('cacheReset')) {
-            this.cacheReset = stageObj.cacheReset
+            this.cacheReset = stageObj.cacheReset;
         }
 
         // Mark finalized.
@@ -13430,7 +13428,7 @@ if (!Array.prototype.indexOf) {
         }
 
         // The stage contains only 1 step inside given through the callback
-        // function. A step will be created as a clone of the stage.
+        // function. A step will be created with same id and callback.
         if (stage.cb) {
             this.addStep({
                 id: id,
@@ -13444,6 +13442,77 @@ if (!Array.prototype.indexOf) {
             handleStepsArray(this, id, stage.steps, 'addStage');
         }
         this.stages[id] = stage;
+    };
+
+    /**
+     * ### Stager.cloneStep
+     *
+     * Clones a stage and assigns a new id to it
+     *
+     * @param {string} stepId The name of the stage to clone
+     * @param {string} newStepId The new unique id to assign to the clone
+     *
+     * @return {object} step Reference to the cloned step
+     *
+     * @see Stager.addStep
+     */
+    Stager.prototype.cloneStep = function(stepId, newStepId) {
+        var step;
+        if ('string' !== typeof stepId) {
+            throw new TypeError('Stager.cloneStep: stepId must be string.');
+        }
+        if ('string' !== typeof newStepId) {
+            throw new TypeError('Stager.cloneStep: newStepId must be string.');
+        }
+        if (this.steps[newStepId]) {
+            throw new Error('Stager.cloneStep: newStepId already taken: ' +
+                            newStepId + '.');
+        }
+        step = this.steps[stepId];
+        if (!step) {
+            throw new Error('Stager.cloneStep: step not found: ' +
+                            stepId + '.');
+        }
+        step = J.clone(step);
+        step.id = newStepId;
+        this.addStep(step);
+        return step;
+    };
+
+    /**
+     * ### Stager.cloneStage
+     *
+     * Clones a stage and assigns a new id to it
+     *
+     * @param {string} stageId The id of the stage to clone
+     * @param {string} newStageId The new unique id to assign to the clone
+     *
+     * @return {object} stage Reference to the cloned stage
+     *
+     * @see Stager.addStage
+     */
+    Stager.prototype.cloneStage = function(stageId, newStageId) {
+        var stage;
+        if ('string' !== typeof stageId) {
+            throw new TypeError('Stager.cloneStage: stageId must be string.');
+        }
+        if ('string' !== typeof newStageId) {
+            throw new TypeError('Stager.cloneStage: newStageId must ' +
+                                'be string.');
+        }
+        if (this.stages[newStageId]) {
+            throw new Error('Stager.cloneStage: newStageId already taken: ' +
+                            newStageId + '.');
+        }
+        stage = this.stages[stageId];
+        if (!stage) {
+            throw new Error('Stager.cloneStage: stage not found: ' +
+                            stageId + '.');
+        }
+        stage = J.clone(stage);
+        stage.id = newStageId;
+        this.addStage(stage);
+        return stage;
     };
 
     /**
@@ -13646,12 +13715,12 @@ if (!Array.prototype.indexOf) {
         }
         if ('function' === typeof update) {
             step = update(J.clone(step));
-            validateExtendedStep(stepId, step, false)
+            validateExtendedStep(stepId, step, true);
             this.steps[stepId] = step;
 
         }
         else if (update && 'object' === typeof update) {
-            validateExtendedStep(stepId, update, false)
+            validateExtendedStep(stepId, update, false);
             J.mixin(step, update);
         }
         else {
@@ -13706,7 +13775,7 @@ if (!Array.prototype.indexOf) {
         }
         else {
             throw new TypeError('Stager.extendStage: update must be object ' +
-                                'or function.');
+                                'or function. Stage id: ' + stageId + '.');
         }
     };
 
@@ -14286,8 +14355,6 @@ if (!Array.prototype.indexOf) {
         var i, len;
         curBlock = that.getCurrentBlock();
 
-        if (!stage) debugger
-
         i = -1, len = stage.steps.length;
         for ( ; ++i < len ; ) {
             // Add step, if not already added.
@@ -14395,7 +14462,7 @@ if (!Array.prototype.indexOf) {
      */
     function checkStepValidity(step, method) {
         if ('object' !== typeof step) {
-            throw new TypeError('Stager.' + method + ': step must be object.')
+            throw new TypeError('Stager.' + method + ': step must be object.');
         }
         if ('function' !== typeof step.cb) {
             throw new TypeError('Stager.' + method + ': step.cb must be ' +
@@ -14428,7 +14495,7 @@ if (!Array.prototype.indexOf) {
       */
     function checkStageValidity(stage, method) {
         if ('object' !== typeof stage) {
-            throw new TypeError('Stager.' + method + ': stage must be object.')
+            throw new TypeError('Stager.' + method + ': stage must be object.');
         }
         if ((!stage.steps && !stage.cb) || (stage.steps && stage.cb)) {
             throw new TypeError('Stager.' + method + ': stage must have ' +
@@ -14470,16 +14537,16 @@ if (!Array.prototype.indexOf) {
      */
     function validateExtendedStep(stepId, update, updateFunction) {
         if (updateFunction) {
-            if (!step || 'object' !== typeof step) {
+            if (!update || 'object' !== typeof update) {
                 throw new TypeError('Stager.extendStep: update function ' +
                                     'must return an object with id and cb: ' +
                                     stepId + '.');
             }
-            if (step.id !== stepId) {
+            if (update.id !== stepId) {
                 throw new Error('Stager.extendStep: update function ' +
                                 'cannot alter the step id: ' + stepId + '.');
             }
-            if ('function' !== typeof step.cb) {
+            if ('function' !== typeof update.cb) {
                 throw new TypeError('Stager.extendStep: update function ' +
                                     'must return an object with a valid ' +
                                     'callback. Step id:' + stepId + '.');
@@ -14487,8 +14554,8 @@ if (!Array.prototype.indexOf) {
         }
         else {
              if (update.hasOwnProperty('id')) {
-                throw new Error('Stager.extendStep: update.id cannot be set.' +
-                               stepId + '.');
+                throw new Error('Stager.extendStep: update.id cannot be set. ' +
+                               'Step id: ' + stepId + '.');
             }
             if ('function' !== typeof update.cb) {
                 throw new TypeError('Stager.extendStep: update.cb must be ' +
@@ -14516,18 +14583,20 @@ if (!Array.prototype.indexOf) {
         if ((updateFunction && update.id !== stageId) ||
             (!updateFunction && update.hasOwnProperty('id'))) {
 
-            throw new Error('Stager.extendStage: id cannot be altered.');
+            throw new Error('Stager.extendStage: id cannot be altered: ' +
+                            stageId + '.');
         }
         if (update.hasOwnProperty('cb')) {
             throw new TypeError('Stager.extendStage: update.cb cannot be ' +
-                                'specified.');
+                                'specified. Stage id: ' + stageId + '.');
         }
         if (update.hasOwnProperty('steps')) {
             if ((!J.isArray(update.steps) || !update.steps.length) ||
                 update.steps === undefined || update.steps === null) {
 
                 throw new Error('Stager.extendStage: found update.steps, but ' +
-                                'it is not a non-empty array.');
+                                'it is not a non-empty array. Stage id: ' +
+                               stageId + '.');
             }
 
             // Process every step in the array. Steps array is modified.
@@ -14550,9 +14619,8 @@ if (!Array.prototype.indexOf) {
      */
     function checkStepParameter(that, step, method) {
         if ('string' === typeof step) {
-            id = step;
             step = {
-                id: id,
+                id: step,
                 cb: that.getDefaultCallback()
             };
         }
@@ -14564,7 +14632,7 @@ if (!Array.prototype.indexOf) {
         // A new step is created if not found (performs validation).
         if (!that.steps[step.id]) that.addStep(step);
 
-        return step.id
+        return step.id;
     }
 
     /**
@@ -14609,9 +14677,16 @@ if (!Array.prototype.indexOf) {
                 that.stages[alias] = that.stages[id];
             }
             else if (!that.stages[id]) {
+                // Add the step if not existing.
+                if (!that.steps[id]) {
+                    that.addStep({
+                        id: id,
+                        cb: that.getDefaultCallback()
+                    });
+                }
                 that.addStage({
                     id: id,
-                    cb: that.getDefaultCallback()
+                    steps: [ id ]
                 });
             }
         }
@@ -14703,36 +14778,6 @@ if (!Array.prototype.indexOf) {
      * @param {object} original The original object
      * @param {object} update The update object
      */
-    function extendStageStep(that, original, update) {
-        var property;
-
-        for (property in update) {
-            if (update.hasOwnProperty(property)) {
-                // Extend function with wrapping function.
-                if ('function' === typeof update[property]) {
-
-                    // Saving a copy of original property.
-                    saveExtendedProperty(original, property);
-
-                    (function(oldCb, newCb) {
-
-                        original[property] = function() {
-                            var args, i, len, extCopyName;
-
-
-                            newCb.apply(this, args);
-                        };
-                    })(original[property], update[property]);
-                }
-                // Otherwise overwrite.
-                else {
-                    original[property] = update[property];
-                }
-            }
-        }
-    }
-
-    // OLD
 //     function extendStageStep(original, update) {
 //         var property;
 //
@@ -14781,12 +14826,6 @@ if (!Array.prototype.indexOf) {
 //             }
 //         }
 //     }
-
-    function saveExtendedProperty(obj, name) {
-        if (!obj.extended) obj.__extended = {};
-        obj.__extended[name] = cb;
-        return name;
-    }
 
     /**
      * ### setSkipStageStep
@@ -14926,7 +14965,7 @@ if (!Array.prototype.indexOf) {
         }
 
         // Save the id of the added item.
-        this.allItemsIds[item.item];
+        this.allItemsIds[item.item] = item;
 
         if ('undefined' === typeof positions || positions === 'linear') {
             this.takenPositions.push(this.numberOfItems);
@@ -23077,8 +23116,8 @@ if (!Array.prototype.indexOf) {
         node.events.ng.on( IN + get + 'DATA', function(msg) {
             var res;
 
-            if ('string' !== typeof msg.text || msg.text === '') {
-                node.warn('node.in.get.DATA: invalid / missing event name.');
+            if ('string' !== typeof msg.text || msg.text.trim() === '') {
+                node.err('"in.get.DATA": msg.data must be a non-empty string.');
                 return;
             }
             res = node.emit(get + msg.text, msg);
@@ -23122,38 +23161,6 @@ if (!Array.prototype.indexOf) {
         });
 
         /**
-         * ## in.say.STAGE
-         *
-         * Updates the game stage
-         */
-        node.events.ng.on( IN + say + 'STAGE', function(msg) {
-            var stageObj;
-            if (!msg.data) {
-                node.warn('Received in.say.STAGE msg with empty stage');
-                return;
-            }
-            stageObj = node.game.plot.getStep(msg.data);
-
-            if (!stageObj) {
-                node.err('Received in.say.STAGE msg with invalid stage');
-                return;
-            }
-            // TODO: renable when it does not cause problems.
-            // At the moment the AdminServer sends this kind of msg
-            // each time an admin publishes its own state
-            //node.game.execStep(stageObj);
-        });
-
-        /**
-         * ## in.say.STAGE_LEVEL
-         *
-         * Updates the stage level
-         */
-        node.events.ng.on( IN + say + 'STAGE_LEVEL', function(msg) {
-            //node.game.setStageLevel(msg.data);
-        });
-
-        /**
          * ## in.say.REDIRECT
          *
          * Redirects to a new page
@@ -23161,9 +23168,13 @@ if (!Array.prototype.indexOf) {
          * @see node.redirect
          */
         node.events.ng.on( IN + say + 'REDIRECT', function(msg) {
-            if (!msg.data) return;
+            if ('string' !== typeof msg.data) {
+                node.err('"in.say.REDIRECT": msg.data must be string: ' +
+                         msg.data);
+                return false;
+            }
             if ('undefined' === typeof window || !window.location) {
-                node.err('window.location not found. Cannot redirect');
+                node.err('"in.say.REDIRECT": window.location not found.');
                 return false;
             }
 
@@ -23184,22 +23195,23 @@ if (!Array.prototype.indexOf) {
             var payload, feature;
             feature = msg.text;
             if ('string' !== typeof feature) {
-                node.err('node.on.in.say.SETUP: msg.text must be string.');
-                return false;
+                node.err('"in.say.SETUP": msg.text must be string: ' +
+                         ferature);
+                return;
             }
             if (!node.setup[feature]) {
-                node.err('node.on.in.say.SETUP: no such setup function: ' +
-                        feature + '.');
-                return false;
+                node.err('"in.say.SETUP": no such setup function: ' +
+                         feature);
+                return;
             }
 
             payload = 'string' === typeof msg.data ?
                 J.parse(msg.data) : msg.data;
 
             if (!payload) {
-                node.err('node.on.in.say.SETUP: error while parsing ' +
+                node.err('"in.say.SETUP": error while parsing ' +
                          'payload of incoming remote setup message.');
-                return false;
+                return;
             }
             node.setup.apply(node, [feature].concat(payload));
         });
@@ -23213,8 +23225,13 @@ if (!Array.prototype.indexOf) {
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
             // console.log('GM', msg);
-            if (!msg.text || !parent.constants.gamecommands[msg.text]) {
-                node.err('node.on.in.say.GAMECOMMAND: unknown game command ' +
+            if ('string' !== typeof msg.text) {
+                node.err('"in.say.GAMECOMMAND": msg.text must be string: ' +
+                         msg.text);
+                return;
+            }
+            if (!parent.constants.gamecommands[msg.text]) {
+                node.err('"in.say.GAMECOMMAND": unknown game command ' +
                          'received: ' + msg.text);
                 return;
             }
@@ -23231,13 +23248,13 @@ if (!Array.prototype.indexOf) {
          * @see node.setup
          */
         node.events.ng.on( IN + say + 'ALERT', function(msg) {
-            if (J.isEmpty(msg.text)) {
-                node.err('Alert message received, but content is empty.');
+            if ('string' !== typeof msg.text || msg.text.trim() === '') {
+                node.err('"in.say.ALERT": msg.text must be a non-empty string');
                 return;
             }
             if ('undefined' !== typeof window) {
                 if ('undefined' === typeof alert) {
-                    node.err('Alert msg received, but alert is not defined:' +
+                    node.err('"in.say.ALERT": alert is not defined: ' +
                              msg.text);
                     return;
                 }
@@ -23501,82 +23518,77 @@ if (!Array.prototype.indexOf) {
 
         /**
          * ## NODEGAME_GAMECOMMAND: start
-         *
          */
         this.events.ng.on(CMD + gcommands.start, function(options) {
             if (!node.game.isStartable()) {
-                node.err('Game cannot be started.');
+                node.err('"' + CMD + gcommands.start + '": game cannot ' +
+                         'be started now.');
                 return;
             }
-
             node.emit('BEFORE_GAMECOMMAND', gcommands.start, options);
             node.game.start(options);
         });
 
         /**
          * ## NODEGAME_GAMECMD: pause
-         *
          */
         this.events.ng.on(CMD + gcommands.pause, function(options) {
             if (!node.game.isPausable()) {
-                node.err('Game cannot be paused.');
+                node.err('"' + CMD + gcommands.pause + '": game cannot ' +
+                         'be paused now.');
                 return;
             }
-
             node.emit('BEFORE_GAMECOMMAND', gcommands.pause, options);
             node.game.pause(options);
         });
 
         /**
          * ## NODEGAME_GAMECOMMAND: resume
-         *
          */
         this.events.ng.on(CMD + gcommands.resume, function(options) {
             if (!node.game.isResumable()) {
-                node.err('Game cannot be resumed.');
+                node.err('"' + CMD + gcommands.resume + '": game cannot ' +
+                         'be resumed now.');
                 return;
             }
-
             node.emit('BEFORE_GAMECOMMAND', gcommands.resume, options);
             node.game.resume(options);
         });
 
         /**
          * ## NODEGAME_GAMECOMMAND: step
-         *
          */
         this.events.ng.on(CMD + gcommands.step, function(options) {
             if (!node.game.isSteppable()) {
-                node.err('Game cannot be stepped.');
+                node.err('"' + CMD + gcommands.step + '": game cannot ' +
+                         'be stepped now.');
                 return;
             }
-
             node.emit('BEFORE_GAMECOMMAND', gcommands.step, options);
             node.game.step();
         });
 
         /**
          * ## NODEGAME_GAMECOMMAND: stop
-         *
          */
         this.events.ng.on(CMD + gcommands.stop, function(options) {
             if (!node.game.isStoppable()) {
-                node.err('Game cannot be stopped.');
+                node.err('"' + CMD + gcommands.stop + '": game cannot ' +
+                         'be stopped now.');
                 return;
             }
-
             node.emit('BEFORE_GAMECOMMAND', gcommands.stop, options);
             node.game.stop();
         });
 
         /**
          * ## NODEGAME_GAMECOMMAND: goto_step
-         *
          */
         this.events.ng.on(CMD + gcommands.goto_step, function(options) {
             var step;
             if (!node.game.isSteppable()) {
-                node.err('Game cannot be stepped.');
+                node.err('"' + CMD + gcommands.goto_step + '": game cannot ' +
+                         'be stepped now.');
                 return;
             }
             // Adjust parameters.
@@ -23589,7 +23601,8 @@ if (!Array.prototype.indexOf) {
             if (step !== parent.GamePlot.GAMEOVER) {
                 step = new GameStage(step);
                 if (!node.game.plot.getStep(step)) {
-                    node.err('Non-existing game step.');
+                    node.err('"' + CMD + gcommands.goto_step + '": ' +
+                             'step not found: ' + step);
                     return;
                 }
             }
@@ -23598,7 +23611,6 @@ if (!Array.prototype.indexOf) {
 
         /**
          * ## NODEGAME_GAMECOMMAND: clear_buffer
-         *
          */
         this.events.ng.on(CMD + gcommands.clear_buffer, function() {
             node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
@@ -23607,7 +23619,6 @@ if (!Array.prototype.indexOf) {
 
         /**
          * ## NODEGAME_GAMECOMMAND: erase_buffer
-         *
          */
         this.events.ng.on(CMD + gcommands.erase_buffer, function() {
             node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
