@@ -4966,10 +4966,25 @@ whether the stage name is unique, the steps exists, etc.</p>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">alias</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">that</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">alias</span><span class="p">]</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
             <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-158" id="section-158">&#182;</a>
+</div>
+<p>Add the step if not existing.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="nx">that</span><span class="p">.</span><span class="nx">addStep</span><span class="p">({</span>
+                        <span class="nx">id</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span>
+                        <span class="nx">cb</span><span class="o">:</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getDefaultCallback</span><span class="p">()</span>
+                    <span class="p">});</span>
+                <span class="p">}</span>
                 <span class="nx">that</span><span class="p">.</span><span class="nx">addStage</span><span class="p">({</span>
                     <span class="nx">id</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span>
-                    <span class="nx">cb</span><span class="o">:</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getDefaultCallback</span><span class="p">()</span>
+                    <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span> <span class="nx">id</span> <span class="p">]</span>
                 <span class="p">});</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -5086,7 +5101,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-160" id="section-160">&#182;</a>
+  <a class="pilcrow" href="#section-161" id="section-161">&#182;</a>
 </div>
 <p>Begin stage block.</p>
         </td>
@@ -5106,7 +5121,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-161" id="section-161">&#182;</a>
+  <a class="pilcrow" href="#section-162" id="section-162">&#182;</a>
 </div>
 <p>Add step block inside stage block.</p>
         </td>
@@ -5557,7 +5572,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-176" id="section-176">&#182;</a>
+  <a class="pilcrow" href="#section-177" id="section-177">&#182;</a>
 </div>
 <p>Save the id of the added item.</p>
         </td>
@@ -5641,7 +5656,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-179" id="section-179">&#182;</a>
+  <a class="pilcrow" href="#section-180" id="section-180">&#182;</a>
 </div>
 <p>Range in which the indeces must be.</p>
         </td>
@@ -5653,7 +5668,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-180" id="section-180">&#182;</a>
+  <a class="pilcrow" href="#section-181" id="section-181">&#182;</a>
 </div>
 <p>Accounting for already taken positions.</p>
         </td>
@@ -5663,7 +5678,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-181" id="section-181">&#182;</a>
+  <a class="pilcrow" href="#section-182" id="section-182">&#182;</a>
 </div>
 <p>Parsing all of the position strings into arrays.</p>
         </td>
@@ -5678,7 +5693,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-182" id="section-182">&#182;</a>
+  <a class="pilcrow" href="#section-183" id="section-183">&#182;</a>
 </div>
 <p>Assigning positions.</p>
         </td>
@@ -5688,7 +5703,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-183" id="section-183">&#182;</a>
+  <a class="pilcrow" href="#section-184" id="section-184">&#182;</a>
 </div>
 <p>Select entry with least possibilities of where to go.</p>
         </td>
@@ -5701,7 +5716,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-184" id="section-184">&#182;</a>
+  <a class="pilcrow" href="#section-185" id="section-185">&#182;</a>
 </div>
 <p>No valid position specified.</p>
         </td>
@@ -5714,7 +5729,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-185" id="section-185">&#182;</a>
+  <a class="pilcrow" href="#section-186" id="section-186">&#182;</a>
 </div>
 <p>Chose position randomly among possibilities.</p>
         </td>
@@ -5727,7 +5742,7 @@ along in 2nd, 3rd, etc. position.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-186" id="section-186">&#182;</a>
+  <a class="pilcrow" href="#section-187" id="section-187">&#182;</a>
 </div>
 <p>Adjust possible positions of remaining entries.</p>
         </td>

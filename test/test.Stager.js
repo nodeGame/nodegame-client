@@ -335,6 +335,35 @@ describe('Stager', function() {
         });
     });
 
+    describe('#next: 1 stage already existing step with same name', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() { i = 1 };
+            stager.addStep({
+                id: 'instructions',
+                cb: tmp
+            });
+            stager.next('instructions');
+
+        });
+        it('should have 1 stage and 1 steps', function() {
+            J.size(stager.stages).should.eql(1);
+            J.size(stager.steps).should.eql(1);
+        });
+        it('should have step and stage correctly named', function() {
+            stager.steps['instructions'].id.should.eql('instructions');
+            stager.stages['instructions'].id.should.eql('instructions');
+        });
+        it('should have the 1 step assigned to the same stage', function() {
+            stager.steps['instructions'].cb();
+            i.should.eql(1);
+        });
+        it('should have empty sequence', function() {
+            stager.sequence.length.should.eql(0);
+        });
+    });
+
     describe('#next: 3 stages with default step', function() {
         before(function() {
             stager = ngc.getStager();
