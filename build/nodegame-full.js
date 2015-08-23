@@ -5741,6 +5741,14 @@ if (!Array.prototype.indexOf) {
         // Objects shared (not cloned) among breeded NDDB instances
         this.__shared = {};
 
+        // ### __formats
+        // Currently supported formats for saving/loading items.
+        this.__formats = {};
+
+        // ### __defaultFormat
+        // Default format for saving and loading items.
+        this.__defaultFormat = null;
+
         // ### log
         // Std out for log messages
         //
@@ -5786,7 +5794,13 @@ if (!Array.prototype.indexOf) {
            }
 
            return trigger2 === 0 ? 1 : 0;
-       });
+        });
+
+        // Add default formats (e.g. CSV, JSON in Node.js).
+        // See `/lib/fs.js`.
+        if ('function' === typeof this.addDefaultFormats) {
+            this.addDefaultFormats();
+        }
 
         // Mixing in user options and defaults.
         this.init(options);
@@ -5795,7 +5809,7 @@ if (!Array.prototype.indexOf) {
         if (db) {
             this.importDB(db);
         }
-    }
+    };
 
     /**
      * ### NDDB.addFilter
@@ -5822,7 +5836,7 @@ if (!Array.prototype.indexOf) {
      * @param {string} op An alphanumeric id
      * @param {function} cb The callback function
      *
-     * @see QueryBuilder.registerDefaultOperators
+     * @see QueryBuilder.addDefaultOperators
      */
     NDDB.prototype.addFilter = function(op, cb) {
         this.filters[op] = cb;
@@ -5830,7 +5844,7 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### NDDB.registerDefaultFilters
+     * ### NDDB.addDefaultFilters
      *
      * Register default filters for NDDB
      *
@@ -6307,6 +6321,18 @@ if (!Array.prototype.indexOf) {
                 }
             }
         }
+
+        if (options.formats) {
+            if ('object' !== typeof options.formats) {
+                errMsg = 'options.formats must be object or undefined';
+                this.throwErr('TypeError', 'init', errMsg);
+            }
+            for (i in options.formats) {
+                if (options.formats.hasOwnProperty(i)) {
+                    this.addFormat(i, options.formats[i]);
+                }
+            }
+        }
     };
 
     /**
@@ -6550,6 +6576,7 @@ if (!Array.prototype.indexOf) {
         options.hooks = this.hooks;
         options.globalCompare = this.globalCompare;
         options.filters = this.__userDefinedFilters;
+        options.formats = this.__formats;
 
         // Must be removed before cloning.
         if (options.log) {
@@ -9026,108 +9053,232 @@ if (!Array.prototype.indexOf) {
         return this.tags[tag];
     };
 
-    // ## Persistance
+    // ## Save/Load.
+
 
     /**
-     * ### NDDB.storageAvailable
+     * ### NDDB.load
      *
-     * Returns true if db can be saved to a persistent medium
-     *
-     * It checks for the existence of a global `store` object,
-     * usually provided  by libraries like `shelf.js`.
-     *
-     * return {boolean} TRUE, if storage is available
+     * Reads items in the specified format and loads them into db asynchronously
      */
-    NDDB.prototype.storageAvailable = function() {
-        return ('function' === typeof store);
+    NDDB.prototype.load = function(file, cb, options) {
+        executeSaveLoad(this, 'load', file, cb, options);
     };
 
     /**
      * ### NDDB.save
      *
-     * Saves the database to a persistent medium in JSON format
-     *
-     * Looks for a global store` method to load from the browser database.
-     * The `store` method is supploed by shelf.js.
-     * If no `store` object is found, an error is issued and the database
-     * is not saved.
-     *
-     * Cyclic objects are decycled, and do not cause errors.
-     * Upon loading, the cycles are restored.
-     *
-     * @param {string} file The  identifier for the browser database
-     * @param {function} cb Optional. A callback to execute after
-     *    the database is saved
-     * @param {compress} boolean Optional. If TRUE, output will be compressed.
-     *    Defaults, FALSE
-     *
-     * @see NDDB.load
-     * @see NDDB.stringify
-     * @see https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+     * Saves items in the specified format asynchronously
      */
-    NDDB.prototype.save = function(file, cb, compress) {
-        if ('string' !== typeof file) {
-            this.throwErr('TypeError', 'save', 'file must be string');
-        }
-        compress = compress || false;
-        // Try to save in the browser, e.g. with Shelf.js.
-        if (!this.storageAvailable()) {
-            this.throwErr('Error', 'save', 'no persistent storage available');
-        }
-        store(file, this.stringify(compress));
-        if (cb) cb();
+    NDDB.prototype.save = function(file, cb, options) {
+        executeSaveLoad(this, 'save', file, cb, options);
     };
 
     /**
-     * ### NDDB.load
+     * ### NDDB.loadSync
      *
-     * Loads a JSON object into the database from a persistent medium
-     *
-     * Looks for a global `store` method to load from the browser database.
-     * The `store` method is supplied by shelf.js.
-     * If no `store` object is found, an error is issued and the database
-     * is not loaded.
-     *
-     * Cyclic objects previously decycled will be retrocycled.
-     *
-     * @param {string} file The file system path, or the identifier
-     *   for the browser database
-     * @param {function} cb Optional. A callback to execute after
-     *   the database was saved
-     *
-     * @see NDDB.loadCSV
-     * @see NDDB.save
-     * @see NDDB.stringify
-     * @see JSUS.parse
-     * @see https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+     * Reads items in the specified format and loads them into db synchronously
      */
-    NDDB.prototype.load = function(file, cb, options) {
-        var items, i;
-        if ('string' !== typeof file) {
-            this.throwErr('TypeError', 'load', 'file must be string');
-        }
-        if (!this.storageAvailable()) {
-            this.throwErr('Error', 'load', 'no persistent storage found');
-        }
-
-        items = store(file);
-
-        if ('undefined' === typeof items) {
-            // Nothing to load.
-            return;
-        }
-        if ('string' === typeof items) {
-            items = J.parse(items);
-        }
-        if (!J.isArray(items)) {
-            this.throwErr('Error', 'load', 'expects to load an array');
-        }
-        for (i = 0; i < items.length; i++) {
-            // Retrocycle, if necessary and possible.
-            items[i] = NDDB.retrocycle(items[i]);
-        }
-        this.importDB(items);
+    NDDB.prototype.loadSync = function(file, cb, options) {
+        executeSaveLoad(this, 'loadSync', file, cb, options);
     };
+
+    /**
+     * ### NDDB.saveSync
+     *
+     * Saves items in the specified format synchronously
+     */
+    NDDB.prototype.saveSync = function(file, cb, options) {
+        executeSaveLoad(this, 'saveSync', file, cb, options);
+    };
+
+    // ## Formats.
+
+    /**
+     * ### NDDB.addFormat
+     *
+     * Registers a _format_ function
+     *
+     * The format object is of the type:
+     *
+     *     {
+     *       load:     function() {},
+     *       save:     function() {},
+     *       loadSync: function() {},
+     *       saveSync: function() {}
+     *     }
+     *
+     * @param {string|array} format The format name/s
+     * @param {object} The format object containing at least one
+     *   pair of save/load functions (sync and async)
+     */
+    NDDB.prototype.addFormat = function(format, obj) {
+        var f, i, len;
+        validateFormatParameters(this, format, obj);
+        if (!J.isArray(format)) format = [format];
+        i = -1, len = format.length;
+        for ( ; ++i < len ; ) {
+            f = format[i];
+            if ('string' !== typeof f || f.trim() === '') {
+                this.throwErr('TypeError', 'addFormat', 'format must be ' +
+                              'a non-empty string');
+            }
+            this.__formats[f] = obj;
+        }
+    };
+
+    /**
+     * ### NDDB.getFormat
+     *
+     * Returns the requested  _format_ function
+     *
+     * @param {string} format The format name
+     * @param {string} method Optional. One of:
+     *   `save`,`load`,`saveString`,`loadString`.
+     *
+     * @return {function|object} Format object or function or NULL if not found.
+     */
+    NDDB.prototype.getFormat = function(format, method) {
+        var f, op;
+        if ('string' !== typeof format) {
+            this.throwErr('TypeError', 'getFormat', 'format must be string');
+        }
+        if (method && 'string' !== typeof method) {
+            this.throwErr('TypeError', 'getFormat', 'method must be string ' +
+                          'or undefined');
+        }
+        f = this.__formats[format];
+        if (f && method) f = f[method];
+        return f || null;
+    };
+
+    /**
+     * ### NDDB.setDefaultFormat
+     *
+     * Sets the default format
+     *
+     * @param {string} format The format name or null
+     *
+     * @see NDDB.getDefaultFormat
+     */
+    NDDB.prototype.setDefaultFormat = function(format) {
+        var f, op;
+        if (format !== null &&
+            ('string' !== typeof format || format.trim() === '')) {
+
+            this.throwErr('TypeError', 'setDefaultFormat', 'format must be ' +
+                          'a non-empty string or null');
+        }
+        if (format && !this.__formats[format]) {
+            this.throwErr('Error', 'setDefaultFormat', 'unknown format: ' +
+                          format);
+        }
+        this.__defaultFormat = format;
+    };
+
+    /**
+     * ### NDDB.getDefaultFormat
+     *
+     * Returns the default format
+     *
+     * @see NDDB.setDefaultFormat
+     */
+    NDDB.prototype.getDefaultFormat = function() {
+        return this.__defaultFormat;
+    };
+
+    /**
+     * ### NDDB.addDefaultFormats
+     *
+     * Dummy property. If overwritten it will be invoked by constructor
+     */
+    NDDB.prototype.addDefaultFormats = null;
+
+
+    // ## Helper Methods
+
+
+    function validateSaveLoadParameters(that, method, file, cb, options) {
+        if ('string' !== typeof file || file.trim() === '') {
+            that.throwErr('TypeError', method, 'file must be ' +
+                          'a non-empty string');
+        }
+        if (cb && 'function' !== typeof cb) {
+            that.throwErr('TypeError', method, 'cb must be function ' +
+                          'or undefined');
+        }
+        if (options && 'object' !== typeof options) {
+            that.throwErr('TypeError', method, 'options must be object ' +
+                          'or undefined');
+        }
+    }
+
+    function getFormat(file) {
+        var format;
+        format = file.lastIndexOf('.');
+        if (format < 0) format = 'json';
+        else format = file.substr(format+1);
+        return format;
+    }
+
+    function executeSaveLoad(that, method, file, cb, options) {
+        var ff, format, compress;
+        validateSaveLoadParameters(that, method, file, cb, options);
+        if (!that.storageAvailable()) {
+            that.throwErr('Error', 'save', 'no persistent storage available');
+        }
+        options = options || {};
+        format = getFormat(file);
+        ff = that.getFormat(format, method);
+        // Try to get default format, if the extension is not recognized.
+        if (!ff) format = that.getDefaultFormat();
+        if (format) ff = that.getFormat(format, method);
+        if (!ff) {
+            that.throwErr('Error', method, format + '.' + method +
+                          ' not found');
+        }
+        ff(that, file, cb, options);
+    }
+
+    function validateFormatParameters(that, format, obj) {
+        if ('string' !== typeof format &&
+            !J.isArray(format) && !format.length) {
+
+            that.throwErr('TypeError', 'addFormat', 'format must be ' +
+                            'a non-empty string or array');
+        }
+        if ('object' !== typeof obj) {
+            that.throwErr('TypeError', 'addFormat', 'obj must be object');
+        }
+        if (!obj.save && !obj.saveSync) {
+            that.throwErr('Error', 'addFormat', 'format must ' +
+                          'at least one save function: sync or async');
+        }
+        if (!obj.load && !obj.loadSync) {
+            that.throwErr('Error', 'addFormat', 'format must ' +
+                          'at least one load function: sync or async');
+        }
+        if (obj.save || obj.load) {
+            if ('function' !== typeof obj.save) {
+                that.throwErr('TypeError', 'addFormat',
+                              'save function is not a function');
+            }
+            if ('function' !== typeof obj.load) {
+                that.throwErr('TypeError', 'addFormat',
+                              'load function is not a function');
+            }
+        }
+        if (obj.saveSync || obj.loadSync) {
+            if ('function' !== typeof obj.saveSync) {
+                that.throwErr('TypeError', 'addFormat',
+                              'saveSync function is not a function');
+            }
+            if ('function' !== typeof obj.loadSync) {
+                that.throwErr('TypeError', 'addFormat',
+                              'loadSync function is not a function');
+            }
+        }
+    }
 
     /**
      * # QueryBuilder
@@ -9537,6 +9688,87 @@ if (!Array.prototype.indexOf) {
         module.parent.exports.store ||
         require('shelf.js/build/shelf-fs.js').store : this.store
 );
+
+/**
+ * # NDDB: browser.js
+ * Copyright(c) 2015 Stefano Balietti
+ * MIT Licensed.
+ *
+ * NDDB browser routines to save and load items
+ *
+ * Cyclic objects are decycled, and do not cause errors.
+ * Upon loading, the cycles are restored.
+ *
+ * Loads a JSON object into the database from a persistent medium
+ *
+ * Looks for a global `store` method to load from the browser database.
+ * The `store` method is supplied by shelf.js.
+ * If no `store` object is found, an error is issued and the database
+ * is not loaded.
+ *
+ * @see NDDB.stringify
+ * @see JSUS.parse
+ * @see https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+ *
+ * ---
+ */
+
+/**
+ * ### NDDB.storageAvailable
+ *
+ * Returns true if db can be saved to a persistent medium
+ *
+ * It checks for the existence of a global `store` object,
+ * usually provided  by libraries like `shelf.js`.
+ *
+ * return {boolean} TRUE, if storage is available
+ */
+NDDB.prototype.storageAvailable = function() {
+    return ('function' === typeof store);
+};
+
+/**
+ * ### NDDB.addDefaultFormats
+ *
+ * Overrides default `addDefaultFormats` with the store methods for the browser
+ */
+NDDB.prototype.addDefaultFormats = function() {
+
+    this.__formats['store'] = {
+        // Sync.
+        loadSync: function(that, file, cb, options) {
+            var items, i;
+
+            items = store(file);
+
+            if ('undefined' === typeof items) {
+                // Nothing to load.
+                return;
+            }
+            if ('string' === typeof items) {
+                items = JSUS.parse(items);
+            }
+            if (!JSUS.isArray(items)) {
+                that.throwErr('Error', 'load', 'expects to load an array');
+            }
+            for (i = 0; i < items.length; i++) {
+                // Retrocycle, if necessary and possible.
+                items[i] = NDDB.retrocycle(items[i]);
+            }
+            that.importDB(items);
+            if (cb) cb();
+        },
+
+        saveSync: function(that, file, cb, options) {
+            store(file, that.stringify(!!options.compress));
+            if (cb) cb();
+        }
+
+    };
+
+    // Set default format.
+    this.setDefaultFormat('store');
+};
 
 /**
  * # nodeGame: Social Experiments in the Browser

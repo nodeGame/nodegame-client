@@ -1,12 +1,38 @@
 var util = require('util'),
 should = require('should');
 
-var ngc = module.exports.node = require('./../index.js');
+var ngc = require('../index.js');
 
 var PlayerList = ngc.PlayerList,
 Player = ngc.Player,
 GameDB = ngc.GameDB,
 GameStage = ngc.GameStage;
+
+var node = ngc.getClient();
+var stager = ngc.getStager();
+
+module.exports = node;
+node.verbosity = 0;
+
+// var db = new GameDB({
+//     shared: { node: node }
+// });
+//
+// db.insert({
+//     player: '1',
+//     ahah: 'ah',
+//     stage: new GameStage({
+//         stage: 3,
+//         step: 2,
+//         round: 1
+//     })
+// });
+//
+// db.save('/tmp/a.csv', null, {
+//     headers: true
+// });
+
+return;
 
 var test_gs = null,
 gs_321 = new GameStage({
@@ -37,7 +63,7 @@ player = new Player ({
     count: 1,
     name: 'Ste',
     stage: {round: 1},
-    ip:	'1.2.3.4',
+    ip: '1.2.3.4',
 }),
 player2 = new Player ({
     id: 2,
@@ -45,7 +71,7 @@ player2 = new Player ({
     count: 2,
     name: 'Ste2',
     stage: {round: 1},
-    ip:	'1.2.3.5',
+    ip: '1.2.3.5',
 }),
 player3 = new Player ({
     id: 3,
@@ -53,7 +79,7 @@ player3 = new Player ({
     count: 3,
     name: 'Ste3',
     stage: {round: 1},
-    ip:	'1.2.3.6',
+    ip: '1.2.3.6',
 }),
 player4 = new Player ({
     id: 4,
@@ -61,7 +87,7 @@ player4 = new Player ({
     count: 4,
     name: 'Ste4',
     stage: {round: 1},
-    ip:	'1.2.3.7',
+    ip: '1.2.3.7',
 });
 
 
@@ -79,33 +105,35 @@ function samePlayer(pl1, pl2) {
 describe('GameDB', function() {
 
     describe('#add(key, value, player, state)', function() {
-	before(function(){
-	    db.add('foo', 'bar', player, gs_321);
-	});
-	it('should result in a player list of length 1', function() {
-	    db.length.should.equal(1);
-	});
-	it('adding other three items should result in length = 4', function() {
-	    db.add('foo2', 'bar2', player2, gs_321);
-	    db.add('foo3', 'bar3', player3, gs_321);
-	    db.add('foo4', 'bar4', player4, gs_321);
-	    db.length.should.equal(4);
-	});
+        before(function(){
+            db.add('foo', 'bar', player, gs_321);
+        });
+        it('should result in a player list of length 1', function() {
+            db.length.should.equal(1);
+        });
+        it('adding other three items should result in length = 4', function() {
+            db.add('foo2', 'bar2', player2, gs_321);
+            db.add('foo3', 'bar3', player3, gs_321);
+            db.add('foo4', 'bar4', player4, gs_321);
+            db.length.should.equal(4);
+        });
 
     });
 
 //    describe('#select()', function() {
-//	before(function(){
-//	    test_db = null;
-//	});
-//	it("db.select('stage', '=', '3.2.1') should consist of 4 items", function() {
-//	    db.select('stage', '=', '3.2.1').length.should.equal(4);
-//	});
-//	it("db.select('player', '=', player4) should consist of 1 item", function() {
-//	    db.select('player', '=', player4).length.should.equal(1);
-//	});
+//      before(function(){
+//          test_db = null;
+//      });
+//      it("db.select('stage', '=', '3.2.1') should consist of 4 items",
+            // function() {
+//          db.select('stage', '=', '3.2.1').length.should.equal(4);
+//      });
+//      it("db.select('player', '=', player4) should consist of 1 item",
+        // function() {
+//          db.select('player', '=', player4).length.should.equal(1);
+//      });
 //
-//	// TODO: try different combinations
+//      // TODO: try different combinations
 //    });
 
 });

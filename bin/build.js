@@ -115,6 +115,7 @@ var ng_jsus = [
 var NDDBdir = J.resolveModuleDir('NDDB', __dirname);
 var ng_nddb = [
     NDDBdir + "nddb.js",
+    NDDBdir + "lib/browser.js"
 ];
 
 // nodegame-window
