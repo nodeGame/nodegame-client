@@ -153,6 +153,10 @@ MIT Licensed</p>
         <span class="kd">var</span> <span class="nx">writer</span><span class="p">,</span> <span class="nx">writeHeaders</span><span class="p">,</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">na</span><span class="p">,</span> <span class="nx">row</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">adapter</span><span class="p">;</span>
 
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;node.saveMemory is deprecated and will be discontinued. &#39;</span> <span class="o">+</span>
+                    <span class="s1">&#39;Use the save function of the memory object or another &#39;</span> <span class="o">+</span>
+                    <span class="s1">&#39;csv function.&#39;</span><span class="p">);</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.writeCsv: path must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
@@ -274,6 +278,9 @@ be specified in the <code>options</code> parameter.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveMemory</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">gamedb</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">memory</span><span class="p">;</span>
 
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;node.saveMemory is deprecated and will be discontinued. &#39;</span> <span class="o">+</span>
+                    <span class="s1">&#39;Use the save function of the memory object instead.&#39;</span><span class="p">);</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.saveMemory: format must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
@@ -374,6 +381,11 @@ stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
                                                       <span class="nx">gamedb</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">ipath</span><span class="p">,</span> <span class="nx">indexData</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">memory</span><span class="p">;</span>
+
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;node.saveMemoryIndexes is deprecated and will be &#39;</span> <span class="o">+</span>
+                    <span class="s1">&#39;discontinued. Use the saveIndexes function &#39;</span> <span class="o">+</span>
+                    <span class="s1">&#39;of the memory object instead.&#39;</span><span class="p">);</span>
+
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
