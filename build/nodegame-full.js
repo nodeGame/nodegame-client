@@ -5806,10 +5806,8 @@ if (!Array.prototype.indexOf) {
         this.init(options);
 
         // Importing items, if any.
-        if (db) {
-            this.importDB(db);
-        }
-    };
+        if (db) this.importDB(db);
+    }
 
     /**
      * ### NDDB.addFilter
@@ -9060,8 +9058,16 @@ if (!Array.prototype.indexOf) {
      * ### NDDB.load
      *
      * Reads items in the specified format and loads them into db asynchronously
+     *
+     * @param {string} file The name of the file or other persistent storage
+     * @param {object} options Optional. A configuration object. Available
+     *    options are format-dependent.
+     * @param {function} cb Optional. A callback function to execute at
+     *    the end of the operation. If options is not specified,
+     *    cb is the second parameter.
      */
-    NDDB.prototype.load = function(file, cb, options) {
+    NDDB.prototype.load = function(file, options, cb) {
+        if (arguments.length === 2) cb = options, options = undefined;
         executeSaveLoad(this, 'load', file, cb, options);
     };
 
@@ -9069,8 +9075,11 @@ if (!Array.prototype.indexOf) {
      * ### NDDB.save
      *
      * Saves items in the specified format asynchronously
+     *
+     * @see NDDB.load
      */
-    NDDB.prototype.save = function(file, cb, options) {
+    NDDB.prototype.save = function(file, options, cb) {
+        if (arguments.length === 2) cb = options, options = undefined;
         executeSaveLoad(this, 'save', file, cb, options);
     };
 
@@ -9078,8 +9087,11 @@ if (!Array.prototype.indexOf) {
      * ### NDDB.loadSync
      *
      * Reads items in the specified format and loads them into db synchronously
+     *
+     * @see NDDB.load
      */
-    NDDB.prototype.loadSync = function(file, cb, options) {
+    NDDB.prototype.loadSync = function(file, options, cb) {
+        if (arguments.length === 2) cb = options, options = undefined;
         executeSaveLoad(this, 'loadSync', file, cb, options);
     };
 
@@ -9087,8 +9099,11 @@ if (!Array.prototype.indexOf) {
      * ### NDDB.saveSync
      *
      * Saves items in the specified format synchronously
+     *
+     * @see NDDB.load
      */
-    NDDB.prototype.saveSync = function(file, cb, options) {
+    NDDB.prototype.saveSync = function(file, options, cb) {
+        if (arguments.length === 2) cb = options, options = undefined;
         executeSaveLoad(this, 'saveSync', file, cb, options);
     };
 
@@ -9102,10 +9117,10 @@ if (!Array.prototype.indexOf) {
      * The format object is of the type:
      *
      *     {
-     *       load:     function() {},
-     *       save:     function() {},
-     *       loadSync: function() {},
-     *       saveSync: function() {}
+     *       load:     function() {}, // Async
+     *       save:     function() {}, // Async
+     *       loadSync: function() {}, // Sync
+     *       saveSync: function() {}  // Sync
      *     }
      *
      * @param {string|array} format The format name/s
@@ -9139,7 +9154,7 @@ if (!Array.prototype.indexOf) {
      * @return {function|object} Format object or function or NULL if not found.
      */
     NDDB.prototype.getFormat = function(format, method) {
-        var f, op;
+        var f;
         if ('string' !== typeof format) {
             this.throwErr('TypeError', 'getFormat', 'format must be string');
         }
@@ -9162,8 +9177,7 @@ if (!Array.prototype.indexOf) {
      * @see NDDB.getDefaultFormat
      */
     NDDB.prototype.setDefaultFormat = function(format) {
-        var f, op;
-        if (format !== null &&
+         if (format !== null &&
             ('string' !== typeof format || format.trim() === '')) {
 
             this.throwErr('TypeError', 'setDefaultFormat', 'format must be ' +
@@ -9197,7 +9211,17 @@ if (!Array.prototype.indexOf) {
 
     // ## Helper Methods
 
-
+    /**
+     * ### validateSaveLoadParameters
+     *
+     * Validates the parameters of a call to save, saveSync, load, loadSync
+     *
+     * @param {NDDB} that The reference to the current instance
+     * @param {string} method The name of the method invoking validation
+     * @param {string} file The file parameter
+     * @param {function} cb The callback parameter
+     * @param {object} The options parameter
+     */
     function validateSaveLoadParameters(that, method, file, cb, options) {
         if ('string' !== typeof file || file.trim() === '') {
             that.throwErr('TypeError', method, 'file must be ' +
@@ -9213,33 +9237,94 @@ if (!Array.prototype.indexOf) {
         }
     }
 
-    function getFormat(file) {
+    /**
+     * ### extractExtension
+     *
+     * Extracts the extension from a file name
+     *
+     * @param {string} file The filename
+     *
+     * @return {string} The extension or NULL if not found
+     */
+    function extractExtension(file) {
         var format;
         format = file.lastIndexOf('.');
-        if (format < 0) format = 'json';
-        else format = file.substr(format+1);
-        return format;
+        return format < 0 ? null : file.substr(format+1);
     }
 
+    /**
+     * ### executeSaveLoad
+     *
+     * Fetches the right format and executes save, saveSync, load, or loadSync
+     *
+     * @param {NDDB} that The reference to the current instance
+     * @param {string} method The name of the method invoking validation
+     * @param {string} file The file parameter
+     * @param {function} cb The callback parameter
+     * @param {object} The options parameter
+     */
     function executeSaveLoad(that, method, file, cb, options) {
-        var ff, format, compress;
+        var ff, format;
         validateSaveLoadParameters(that, method, file, cb, options);
         if (!that.storageAvailable()) {
             that.throwErr('Error', 'save', 'no persistent storage available');
         }
         options = options || {};
-        format = getFormat(file);
-        ff = that.getFormat(format, method);
-        // Try to get default format, if the extension is not recognized.
-        if (!ff) format = that.getDefaultFormat();
-        if (format) ff = that.getFormat(format, method);
-        if (!ff) {
-            that.throwErr('Error', method, format + '.' + method +
-                          ' not found');
-        }
+        format = extractExtension(file);
+        // If try to get the format function based on the extension,
+        // otherwise try to use the default one. Throws errors.
+        ff = findFormatFunction(that, method, format);
         ff(that, file, cb, options);
     }
 
+    /**
+     * ### findFormatFunction
+     *
+     * Returns the requested format function or the default one
+     *
+     * Throws errors.
+     *
+     * @param {NDDB} that The reference to the current instance
+     * @param {string} method The name of the method invoking validation
+     * @param {string} format The requested parameter
+     *
+     * @return {function} The requested format function
+     */
+    function findFormatFunction(that, method, format) {
+        var ff, defFormat;
+        if (format) ff = that.getFormat(format);
+        if (ff) {
+            if (!ff[method]) {
+                that.throwErr('Error', method, 'format ' + format + ' found, ' +
+                              'but method ' + method + ' not available');
+            }
+            ff = ff[method];
+        }
+        // Try to get default format, if the extension is not recognized.
+        if (!ff) {
+            defFormat = that.getDefaultFormat();
+            if (!defFormat) {
+                that.throwErr('Error', method, 'format ' + format + ' not ' +
+                              'found and no default format specified');
+            }
+            ff = that.getFormat(defFormat, method);
+            if (!ff) {
+                that.throwErr('Error', method, 'format ' + format + ' not ' +
+                              'found, but default format has no method ' +
+                              method);
+            }
+        }
+        return ff;
+    }
+    /**
+     * ### validateFormatParameters
+     *
+     * Validates the parameters of a call to save, saveSync, load, loadSync
+     *
+     * @param {NDDB} that The reference to the current instance
+     * @param {string|array} method The name/s of format/s
+     * @param {object} obj The format object
+     */
     function validateFormatParameters(that, format, obj) {
         if ('string' !== typeof format &&
             !J.isArray(format) && !format.length) {
@@ -9688,87 +9773,6 @@ if (!Array.prototype.indexOf) {
         module.parent.exports.store ||
         require('shelf.js/build/shelf-fs.js').store : this.store
 );
-
-/**
- * # NDDB: browser.js
- * Copyright(c) 2015 Stefano Balietti
- * MIT Licensed.
- *
- * NDDB browser routines to save and load items
- *
- * Cyclic objects are decycled, and do not cause errors.
- * Upon loading, the cycles are restored.
- *
- * Loads a JSON object into the database from a persistent medium
- *
- * Looks for a global `store` method to load from the browser database.
- * The `store` method is supplied by shelf.js.
- * If no `store` object is found, an error is issued and the database
- * is not loaded.
- *
- * @see NDDB.stringify
- * @see JSUS.parse
- * @see https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
- *
- * ---
- */
-
-/**
- * ### NDDB.storageAvailable
- *
- * Returns true if db can be saved to a persistent medium
- *
- * It checks for the existence of a global `store` object,
- * usually provided  by libraries like `shelf.js`.
- *
- * return {boolean} TRUE, if storage is available
- */
-NDDB.prototype.storageAvailable = function() {
-    return ('function' === typeof store);
-};
-
-/**
- * ### NDDB.addDefaultFormats
- *
- * Overrides default `addDefaultFormats` with the store methods for the browser
- */
-NDDB.prototype.addDefaultFormats = function() {
-
-    this.__formats['store'] = {
-        // Sync.
-        loadSync: function(that, file, cb, options) {
-            var items, i;
-
-            items = store(file);
-
-            if ('undefined' === typeof items) {
-                // Nothing to load.
-                return;
-            }
-            if ('string' === typeof items) {
-                items = JSUS.parse(items);
-            }
-            if (!JSUS.isArray(items)) {
-                that.throwErr('Error', 'load', 'expects to load an array');
-            }
-            for (i = 0; i < items.length; i++) {
-                // Retrocycle, if necessary and possible.
-                items[i] = NDDB.retrocycle(items[i]);
-            }
-            that.importDB(items);
-            if (cb) cb();
-        },
-
-        saveSync: function(that, file, cb, options) {
-            store(file, that.stringify(!!options.compress));
-            if (cb) cb();
-        }
-
-    };
-
-    // Set default format.
-    this.setDefaultFormat('store');
-};
 
 /**
  * # nodeGame: Social Experiments in the Browser
