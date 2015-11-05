@@ -1991,26 +1991,22 @@ describe('Moving through the sequence', function() {
             stager = ngc.getStager();
             i = null, len = null, res = null, stagerStage = null;
 
-            stager.addStage({id: 'stage 1'});
-
             stager.next('stage 1');
             stager.step('step 1.1', '*');
             stager.step('step 1.2', '*');
             stager.step('step 1.3', '*');
 
-            result = testPositions(stager, 100);
-            console.log(Object.keys(result))
-        });
+            result = testPositions(stager, 100);        });
 
         it('should have called the three steps', function() {
-            J.isArray(result['stage 1.1']).should.eql(true);
-            J.isArray(result['stage 1.2']).should.eql(true);
-            J.isArray(result['stage 1.3']).should.eql(true);
+            J.isArray(result['step 1.1']).should.eql(true);
+            J.isArray(result['step 1.2']).should.eql(true);
+            J.isArray(result['step 1.3']).should.eql(true);
         });
         it('should have called the three steps 100 times each', function() {
-            result['stage 1.1'].length.should.eql(100);
-            result['stage 1.2'].length.should.eql(100);
-            result['stage 1.3'].length.should.eql(100);
+            result['step 1.1'].length.should.eql(100);
+            result['step 1.2'].length.should.eql(100);
+            result['step 1.3'].length.should.eql(100);
         });
 
 //         it('should have called the three in the right order', function() {
@@ -2073,7 +2069,7 @@ function test2variable1fixed() {
             if (i !== 0 && i !== 2) should.fail();
             sum = sum + i;
         });
-        sum.should.be.within(80,120);
+        sum.should.be.within(70,130);
         sum = 0;
         result['stage 2'].forEach(function(i) {
             i.should.eql(1);
@@ -2085,7 +2081,7 @@ function test2variable1fixed() {
             if (i !== 0 && i !== 2) should.fail();
             sum = sum + i;
         });
-        sum.should.be.within(80,120);
+        sum.should.be.within(70,130);
     });
 }
 
