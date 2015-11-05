@@ -201,9 +201,10 @@ for on line, multiplayer games in the browser.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
-<p>FS</p>
+<p>FS
+exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameFS</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/NodeGameFS&#39;</span><span class="p">).</span><span class="nx">NodeGameFS</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -276,10 +277,17 @@ TODO: should they use the new operator?</p>
         <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span> <span class="o">=</span>
             <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameMisconfiguredGameError</span><span class="p">;</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameIllegalOperationError</span> <span class="o">=</span>
-            <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameIllegalOperationError</span><span class="p">;</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">fs</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameFS</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
-
-        <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
+            <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameIllegalOperationError</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>node.fs = new exports.NodeGameFS(node);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
     <span class="p">};</span>
 
     <span class="nx">exports</span><span class="p">.</span><span class="nx">getStager</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>

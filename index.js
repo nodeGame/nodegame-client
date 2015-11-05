@@ -63,7 +63,7 @@
     exports.TriggerManager = require('./addons/TriggerManager').TriggerManager;
 
     // FS
-    exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;
+    // exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;
 
     // Load main nodegame-client class.
     exports.NodeGameClient =
@@ -108,7 +108,7 @@
             exports.NodeGameMisconfiguredGameError;
         node.NodeGameIllegalOperationError =
             exports.NodeGameIllegalOperationError;
-        node.fs = new exports.NodeGameFS(node);
+        // node.fs = new exports.NodeGameFS(node);
 
         return node;
     };

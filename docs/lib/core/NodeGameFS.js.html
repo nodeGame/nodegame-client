@@ -31,9 +31,6 @@
         <a href="#nodegamefs.writecsv--node.js-">NodeGameFS.writeCsv (Node.JS)</a>
       </div>
       <div class="heading h3">
-        <a href="#nodegamefs.savememory--node.js-">NodeGameFS.saveMemory (Node.JS)</a>
-      </div>
-      <div class="heading h3">
         <a href="#nodegamefs.savememoryindexes--node.js-">NodeGameFS.saveMemoryIndexes (Node.JS)</a>
       </div>
     </div>
@@ -57,6 +54,10 @@
 MIT Licensed</p>
 
 <p><code>nodeGame</code> file system module</p>
+
+<p>This file is not used anymore, as was superseeded by NDDB >= 1.4.0</p>
+  </div>
+  <div class="details">
   </div>
 </div>
         </td>
@@ -232,101 +233,6 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nodegamefs.savememory--node.js-">
-  <h3>
-    <a href="#nodegamefs.savememory--node.js-" class="pilcrow">&#182;</a>
-    NodeGameFS.saveMemory (Node.JS)
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Serializes all the entries of the memory object</p>
-
-<p>By default, no headers are added. If requested, headers can
-be specified in the <code>options</code> parameter.</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">format</span>
-      <span class="dox_type">string</span>
-      <span>The format of the files</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">path</span>
-      <span class="dox_type">string</span>
-      <span>The path to the csv file</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">options</span>
-      <span class="dox_type">options</span>
-      <span>Optional. Configuration options</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">gamedb</span>
-      <span class="dox_type">gamedb</span>
-      <span>Optional. Dumps gamedb instead of node.game.memory</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">NodeGameFS.writeCsv
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NodeGameFS</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveMemory</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">gamedb</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">memory</span><span class="p">;</span>
-
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;node.saveMemory is deprecated and will be discontinued. &#39;</span> <span class="o">+</span>
-                    <span class="s1">&#39;Use the save function of the memory object instead.&#39;</span><span class="p">);</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.saveMemory: format must be string.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">inArray</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">]))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.saveMemory: unknown format: &#39;</span> <span class="o">+</span>
-                                <span class="nx">format</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.memory2csv: path must be string.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.saveMemory: options must be object or &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">writeHeaders</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">gamedb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gamedb</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.fs.saveMemory: gamedb must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;instance of GameDB or undefined.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="nx">memory</span> <span class="o">=</span> <span class="nx">gamedb</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">format</span> <span class="o">===</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">writeCsv</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">memory</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(),</span> <span class="nx">options</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
-</div>
-<p>Params: path, callback, compress.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">memory</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
 <div class="pilwrap" id="nodegamefs.savememoryindexes--node.js-">
   <h3>
     <a href="#nodegamefs.savememoryindexes--node.js-" class="pilcrow">&#182;</a>
@@ -455,8 +361,75 @@ stage_3.1.1.nddb, or player_18432986411.nddb`, etc.</p>
 <span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
-<span class="p">);</span>
-</pre></div>
+<span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>/**
+ * NodeGameFS.saveMemory (Node.JS)
+ *
+ * Serializes all the entries of the memory object
+ *
+ * By default, no headers are added. If requested, headers can
+ * be specified in the <code>options</code> parameter.
+ *
+ * @param {string} format The format of the files
+ * @param {string} path The path to the csv file
+ * @param {options} options Optional. Configuration options
+ * @param {gamedb} gamedb Optional. Dumps gamedb instead of node.game.memory
+ *
+ * @see NodeGameFS.writeCsv
+ */
+NodeGameFS.prototype.saveMemory = function(format, path, options, gamedb) {
+    var memory;</p>
+
+
+<div class="highlight"><pre><code><span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;node.saveMemory is deprecated and will be discontinued. &#39;</span> <span class="o">+</span>
+            <span class="s">&#39;Use the save function of the memory object instead.&#39;</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="s">&#39;string&#39;</span> <span class="o">!==</span> <span class="n">typeof</span> <span class="nb">format</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">throw</span> <span class="k">new</span> <span class="n">TypeError</span><span class="p">(</span><span class="s">&#39;node.saveMemory: format must be string.&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">J</span><span class="o">.</span><span class="n">inArray</span><span class="p">(</span><span class="nb">format</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;json&#39;</span><span class="p">,</span> <span class="s">&#39;csv&#39;</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="n">throw</span> <span class="k">new</span> <span class="n">TypeError</span><span class="p">(</span><span class="s">&#39;node.saveMemory: unknown format: &#39;</span> <span class="o">+</span>
+                        <span class="nb">format</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="s">&#39;string&#39;</span> <span class="o">!==</span> <span class="n">typeof</span> <span class="n">path</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">throw</span> <span class="k">new</span> <span class="n">TypeError</span><span class="p">(</span><span class="s">&#39;node.memory2csv: path must be string.&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">options</span> <span class="o">&amp;&amp;</span> <span class="s">&#39;object&#39;</span> <span class="o">!==</span> <span class="n">typeof</span> <span class="n">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">throw</span> <span class="k">new</span> <span class="n">TypeError</span><span class="p">(</span><span class="s">&#39;node.saveMemory: options must be object or &#39;</span> <span class="o">+</span>
+                        <span class="s">&#39;undefined.&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">options</span> <span class="o">=</span> <span class="n">options</span> <span class="o">||</span> <span class="p">{};</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">options</span><span class="o">.</span><span class="n">headers</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">options</span><span class="o">.</span><span class="n">writeHeaders</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">writeHeaders</span> <span class="o">=</span> <span class="n">false</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">gamedb</span> <span class="o">&amp;&amp;</span> <span class="s">&#39;object&#39;</span> <span class="o">!==</span> <span class="n">typeof</span> <span class="n">gamedb</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">throw</span> <span class="k">new</span> <span class="n">TypeError</span><span class="p">(</span><span class="s">&#39;node.fs.saveMemory: gamedb must be &#39;</span> <span class="o">+</span>
+                        <span class="s">&#39;instance of GameDB or undefined.&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">memory</span> <span class="o">=</span> <span class="n">gamedb</span> <span class="o">||</span> <span class="n">this</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">memory</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nb">format</span> <span class="o">===</span> <span class="s">&#39;csv&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">this</span><span class="o">.</span><span class="n">writeCsv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">memory</span><span class="o">.</span><span class="n">fetch</span><span class="p">(),</span> <span class="n">options</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">else</span> <span class="p">{</span>
+    <span class="sr">//</span> <span class="n">Params:</span> <span class="n">path</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">compress</span><span class="o">.</span>
+    <span class="n">memory</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">null</span><span class="p">,</span> <span class="n">false</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+
+<p>};</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
   </tbody>
