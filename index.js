@@ -102,12 +102,8 @@
         // TODO: should they use the new operator?
         node.Stager = exports.Stager;
         node.stepRules = exports.stepRules;
-        node.NodeGameRuntimeError = exports.NodeGameRuntimeError;
-        node.NodeGameStageCallbackError = exports.NodeGameStageCallbackError;
-        node.NodeGameMisconfiguredGameError =
-            exports.NodeGameMisconfiguredGameError;
-        node.NodeGameIllegalOperationError =
-            exports.NodeGameIllegalOperationError;
+
+        // Removed.
         // node.fs = new exports.NodeGameFS(node);
 
         return node;
