@@ -26,9 +26,7 @@ var operations = [ 'next', 'repeat', 'loop', 'doLoop' ];
 
 var stager = new Stager();
 
-
 function decorateStager(stager) {
-
 
     // stager.stageBlock('0..1');
 
@@ -1876,7 +1874,7 @@ describe('Stager', function() {
 });
 
 
-describe('Moving through the sequence', function() {
+scribe('Moving through the sequence', function() {
 
 
     describe('#next: 3 fixed positions. Mode (A).', function() {
@@ -1996,7 +1994,17 @@ describe('Moving through the sequence', function() {
             stager.step('step 1.2', '*');
             stager.step('step 1.3', '*');
 
-            result = testPositions(stager, 100);        });
+            result = testPositions(stager, 100);
+        });
+
+        it('should have removed default step from stage 1', function() {
+            typeof(result['stage 1'] + '').should.eql('undefined');
+        });
+        it('should have called only the three steps', function() {
+            var keys;
+            keys = Object.keys(result).sort();
+            keys.should.eql(['step 1.1', 'step 1.2', 'step 1.3']);
+        });
 
         it('should have called the three steps', function() {
             J.isArray(result['step 1.1']).should.eql(true);
