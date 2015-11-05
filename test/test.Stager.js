@@ -17,255 +17,241 @@ var i, len, tmp, res;
 var stager, stagerState;
 
 var stepRule, globals, properties, init, gameover, done;
+var result;
 
 var operations = [ 'next', 'repeat', 'loop', 'doLoop' ];
 
 // HERE
 
-// var stager = new Stager();
-//
-//
-// function decorateStager(stager) {
-//
-//
-//     // stager.stageBlock('0..1');
-//
-//     stager.next({
-//         id: 'stage 1',
-//         cb: function() {
-//             console.log('stage 1');
-//             node.done();
-//         }
-//     }, '0..1');
-//
-//     // stager.endBlock();
-//
-//     stager.stageBlock('0..1');
-//
-//     stager.next('stage 2', '0..1');
-//
-//     stager.step({
-//         id: 'step 2.1',
-//         cb: function() { console.log('step 2.1') }
-//     });
-//     stager.step({
-//         id: 'step 2.2',
-//         cb: function() { console.log('step 2.2') }
-//     });
-//
-//     stager.next('stage 3', '0..1');
-//
-//     stager.endBlock();
-//
-//     stager.gameover();
-//
-//     // Default auto step.
-//     stager.setDefaultStepRule(ngc.stepRules.WAIT);
-//
-//     // stager.endBlock();
-// }
-//
-// function decorateStagerRepeat(stager) {
-//
-//
-//     stager.stage({
-//         id: 'stage 1',
-//         cb: function() { console.log('stage 1') }
-//     });
-//
-//     stager.repeat('stage 2', 2);
-//
-//     stager.step({
-//         id: 'step 2.1',
-//         cb: function() { console.log('step 2.1') }
-//     });
-//     stager.step({
-//         id: 'step 2.2',
-//         cb: function() { console.log('step 2.2') }
-//     });
-//
-//     stager.repeat('stage 3', 1);
-//
-//
-//     stager.gameover();
-//
-//     // Default auto step.
-//     stager.setDefaultStepRule(ngc.stepRules.WAIT);
-//
-//     // stager.endBlock();
-//     stager.setOnGameOver(function() {
-//         console.log('Game over!');
-//     });
-// }
-//
-//
-// function decorateStagerLoop(stager) {
-//     var counter;
-//     counter = 0;
-//
-//     stager.loop(
-//         {
-//             id: 'stage 1',
-//             cb: function() {
-//                 counter++;
-//                 console.log('stage 1')
-//             }
-//         },
-//         function() {
-//             return counter < 3;
-//         }
-//     );
-//
-//     stager.loop('stage 2', function() {
-//         return counter < 5;
-//     });
-//
-//     stager.step({
-//         id: 'step 2.1',
-//         cb: function() { console.log('step 2.1') }
-//     });
-//     stager.step({
-//         id: 'step 2.2',
-//         cb: function() {
-//             counter++;
-//             console.log('step 2.2')
-//         }
-//     });
-//
-//     stager.loop('stage 3',  function() {
-//         // Notice: counter is double incremented when
-//         // hasNextStep is called.
-//         return ++counter < 6;
-//     });
-//
-//
-//     stager.gameover();
-//
-//     // Default auto step.
-//     stager.setDefaultStepRule(ngc.stepRules.WAIT);
-//
-//     stager.setOnGameOver(function() {
-//         console.log('Game over!');
-//     });
-// }
-//
-// function decorateStagerDoLoop(stager) {
-//     var counter;
-//     counter = 0;
-//
-//     stager.doLoop(
-//         {
-//             id: 'stage 1',
-//             cb: function() {
-//                 counter++;
-//                 console.log('stage 1')
-//             }
-//         },
-//         function() {
-//             return counter < 3;
-//         }
-//     );
-//
-//     stager.doLoop('stage 2', function() {
-//         return counter < 5;
-//     });
-//
-//     stager.step({
-//         id: 'step 2.1',
-//         cb: function() { console.log('step 2.1') }
-//     });
-//     stager.step({
-//         id: 'step 2.2',
-//         cb: function() {
-//             counter++;
-//             console.log('step 2.2')
-//         }
-//     });
-//
-//     stager.doLoop('stage 3',  function() {
-//         // Notice: counter is double incremented when
-//         // hasNextStep is called.
-//         // console.log(counter);
-//         return ++counter < 6;
-//     });
-//
-//     stager.gameover();
-//
-//     // Default auto step.
-//     stager.setDefaultStepRule(ngc.stepRules.WAIT);
-//
-//     stager.setOnGameOver(function() {
-//         console.log('Game over!');
-//     });
-//
-// }
-//
-// decorateStager(stager);
-//
-// // Setup.
-// node.setup('plot', stagerState);
-// node.createPlayer({ id: 'testid' });
-// node.game.start({ step: false });
-//
-// // Step through.
-// while (hasNextStep()) {
-//     node.game.step();
-//     tmp = node.game.getCurrentStepObj();
-//     console.log('Stage id: ', tmp.id);
-// }
-//
-// function hasNextStep() {
-//     var curStep, nextStep;
-//     curStep = node.game.getCurrentGameStage();
-//     nextStep = node.game.plot.next(curStep);
-//     return nextStep !== GamePlot.GAMEOVER && nextStep !== GamePlot.END_SEQ;
-// }
-//
-//
-//
-//
-// return;
+
+var stager = new Stager();
 
 
-//  i = null, len = null, res = null, stagerStage = null;
-//             tmp = function() {
-//                 i = (i || 0) + 1;
-//             };
-//             done = function(increment) {
-//                 len = (len || 0) + increment;
-//             };
-//             stager.addStep({
-//                 id: 'step 1',
-//                 cb: tmp,
-//                 done: done,
-//                 c: 3,
-//                 d: 4,
-//                 e: 5
-//             });
-//
-//             stager.next('stage 1');
-//
-// debugger
-//
-//             stager.extendAllSteps(function(o) {
-//                 o._cb = o.cb;
-//                 o.cb = function() {
-//                     this._cb();
-//                     i++;
-//                 };
-//                 o._done = o.done;
-//                 o.done = function(increment) {
-//                     this._done((increment-1));
-//                     len = len + increment;
-//                 };
-//                 o.c = 'a';
-//                 o.e = undefined;
-//                 return o;
-//             });
-//
-// // END
-//
-// return
+function decorateStager(stager) {
+
+
+    // stager.stageBlock('0..1');
+
+    stager.next({
+        id: 'stage 1',
+        cb: function() {
+            console.log('stage 1');
+            node.done();
+        }
+    }, '0..1');
+
+    // stager.endBlock();
+
+    stager.stageBlock('0..1');
+
+    stager.next('stage 2', '0..1');
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() { console.log('step 2.2') }
+    });
+
+    stager.next('stage 3', '0..1');
+
+    stager.endBlock();
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+    // stager.endBlock();
+}
+
+function decorateStagerRepeat(stager) {
+
+
+    stager.stage({
+        id: 'stage 1',
+        cb: function() { console.log('stage 1') }
+    });
+
+    stager.repeat('stage 2', 2);
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() { console.log('step 2.2') }
+    });
+
+    stager.repeat('stage 3', 1);
+
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+    // stager.endBlock();
+    stager.setOnGameOver(function() {
+        console.log('Game over!');
+    });
+}
+
+
+function decorateStagerLoop(stager) {
+    var counter;
+    counter = 0;
+
+    stager.loop(
+        {
+            id: 'stage 1',
+            cb: function() {
+                counter++;
+                console.log('stage 1')
+            }
+        },
+        function() {
+            return counter < 3;
+        }
+    );
+
+    stager.loop('stage 2', function() {
+        return counter < 5;
+    });
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() {
+            counter++;
+            console.log('step 2.2')
+        }
+    });
+
+    stager.loop('stage 3',  function() {
+        // Notice: counter is double incremented when
+        // hasNextStep is called.
+        return ++counter < 6;
+    });
+
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+    stager.setOnGameOver(function() {
+        console.log('Game over!');
+    });
+}
+
+function decorateStagerDoLoop(stager) {
+    var counter;
+    counter = 0;
+
+    stager.doLoop(
+        {
+            id: 'stage 1',
+            cb: function() {
+                counter++;
+                console.log('stage 1')
+            }
+        },
+        function() {
+            return counter < 3;
+        }
+    );
+
+    stager.doLoop('stage 2', function() {
+        return counter < 5;
+    });
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() {
+            counter++;
+            console.log('step 2.2')
+        }
+    });
+
+    stager.doLoop('stage 3',  function() {
+        // Notice: counter is double incremented when
+        // hasNextStep is called.
+        // console.log(counter);
+        return ++counter < 6;
+    });
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+    stager.setOnGameOver(function() {
+        console.log('Game over!');
+    });
+
+}
+
+// Setup.
+
+function initGame(stager) {
+    var sstate, mynode;
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+    stager.reset();
+    sstate = stager.getState();
+    mynode = ngc.getClient();
+    mynode.verbosity = -1000;
+    mynode.setup('plot', sstate);
+    mynode.createPlayer({ id: 'testid' });
+    mynode.game.start({ step: false });
+    return mynode.game;
+}
+
+function goThroughSteps(game, result) {
+    var id, counter;
+    result = result || {};
+    counter = 0;
+
+    // Step through.
+    while (hasNextStep(game)) {
+        game.step();
+        tmp = game.getCurrentStepObj();
+        id = tmp.id;
+        if (!result[id]) result[id] = [];
+        result[id].push(counter);
+        counter ++;
+    }
+    return result;
+}
+
+function hasNextStep(game) {
+    var curStep, nextStep;
+    curStep = game.getCurrentGameStage();
+    nextStep = game.plot.next(curStep);
+    return nextStep !== GamePlot.GAMEOVER && nextStep !== GamePlot.END_SEQ;
+}
+
+function testPositions(stager, len) {
+    var i, len, game, result;
+    i = -1;
+    result = {};
+    for ( ; ++i < len ; ) {
+        game = initGame(stager);
+        debugger
+        goThroughSteps(game, result);
+    }
+    return result;
+}
 
 describe('Stager', function() {
 
@@ -1172,7 +1158,7 @@ describe('Stager', function() {
     });
 
     describe('#extendAllSteps: object', function() {
-         before(function() {
+        before(function() {
             stager = ngc.getStager();
             i = null, len = null, res = null, stagerStage = null;
             tmp = function() {
@@ -1812,158 +1798,296 @@ describe('Stager', function() {
                }).should.throw();
            });
     });
+
+    describe('#extendStep: update function', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() {
+                i = (i || 0) + 1;
+            };
+            done = function(increment) {
+                len = (len || 0) + increment;
+            };
+            stager.addStep({
+                id: 'step 1',
+                cb: tmp,
+                done: done,
+                c: 3,
+                d: 4,
+                e: 5
+            });
+
+            stager.next('stage 1');
+
+            stager.extendStep('step 1', function(o) {
+                o._cb = o.cb;
+                o.cb = function() {
+                    this._cb();
+                    i++;
+                };
+                o._done = o.done;
+                o.done = function(increment) {
+                    this._done((increment-1));
+                    len = len + increment;
+                };
+                o.c = 'a';
+                o.e = undefined;
+                return o;
+            });
+
+            stager.extendStep('stage 1', function(o) {
+                o.__cb = o.cb;
+                o.cb = function() {
+                    if ('undefined' !== typeof this.__cb) i++;
+                    i++;
+                };
+                o.foo = 'foo1';
+                return o;
+            });
+
+        });
+        it('should have extended `cb`', function() {
+            stager.steps['step 1'].cb();
+            i.should.eql(2);
+        });
+        it('should have extended `done`', function() {
+            stager.steps['step 1'].done(2);
+            len.should.eql(3);
+        });
+        it('should have overwritten `c`', function() {
+            stager.steps['step 1'].c.should.eql('a');
+        });
+        it('should have not overwritten `d`', function() {
+            stager.steps['step 1'].d.should.eql(4);
+        });
+        it('should have overwritten `e`', function() {
+            (typeof stager.steps['step 1'].e).should.eql('undefined');
+        });
+        it('should have added `foo`', function() {
+            stager.steps['stage 1'].foo.should.eql('foo1');
+        });
+        it('should have extended `cb` (2)', function() {
+            stager.steps['stage 1'].cb();
+            i.should.eql(4);
+        });
+
+    });
 });
 
-describe('#extendStep: update function', function() {
-    before(function() {
-        stager = ngc.getStager();
-        i = null, len = null, res = null, stagerStage = null;
-        tmp = function() {
-            i = (i || 0) + 1;
-        };
-        done = function(increment) {
-            len = (len || 0) + increment;
-        };
-        stager.addStep({
-            id: 'step 1',
-            cb: tmp,
-            done: done,
-            c: 3,
-            d: 4,
-            e: 5
+
+describe('Moving through the sequence', function() {
+
+
+    describe('#next: 3 fixed positions. Mode (A).', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+
+            stager.next('stage 1', '0');
+            stager.next('stage 2', '1');
+            stager.next('stage 3', '2');
+
+            result = testPositions(stager, 100);
         });
 
-        stager.next('stage 1');
+        test3fixed();
+    });
 
-        stager.extendStep('step 1', function(o) {
-            o._cb = o.cb;
-            o.cb = function() {
-                this._cb();
-                i++;
-            };
-            o._done = o.done;
-            o.done = function(increment) {
-                this._done((increment-1));
-                len = len + increment;
-            };
-            o.c = 'a';
-            o.e = undefined;
-            return o;
+    describe('#next: 3 fixed positions. Mode (B).', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+
+            stager.next('stage 1');
+            stager.next('stage 2');
+            stager.next('stage 3');
+
+            result = testPositions(stager, 100);
         });
 
-        stager.extendStep('stage 1', function(o) {
-            o.__cb = o.cb;
-            o.cb = function() {
-                if ('undefined' !== typeof this.__cb) i++;
-                i++;
-            };
-            o.foo = 'foo1';
-            return o;
+        test3fixed();
+    });
+
+    describe('#next: 3 fixed positions. Mode (C).', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+
+            stager.next('stage 1');
+            stager.next('stage 2');
+            stager.next('stage 3', '*');
+
+            result = testPositions(stager, 100);
         });
 
-    });
-    it('should have extended `cb`', function() {
-        stager.steps['step 1'].cb();
-        i.should.eql(2);
-    });
-    it('should have extended `done`', function() {
-        stager.steps['step 1'].done(2);
-        len.should.eql(3);
-    });
-    it('should have overwritten `c`', function() {
-        stager.steps['step 1'].c.should.eql('a');
-    });
-    it('should have not overwritten `d`', function() {
-        stager.steps['step 1'].d.should.eql(4);
-    });
-    it('should have overwritten `e`', function() {
-        (typeof stager.steps['step 1'].e).should.eql('undefined');
-    });
-    it('should have added `foo`', function() {
-        stager.steps['stage 1'].foo.should.eql('foo1');
-    });
-    it('should have extended `cb` (2)', function() {
-        stager.steps['stage 1'].cb();
-        i.should.eql(4);
+        test3fixed();
     });
 
+    describe('#next: 3 fixed positions. Mode (D).', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+
+            stager.next('stage 1');
+            stager.next('stage 2', '1');
+            stager.next('stage 3', '*');
+
+            result = testPositions(stager, 100);
+        });
+
+        test3fixed();
+    });
+
+    describe('#next: 3 fixed positions. Mode (E).', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+
+            stager.next('stage 1');
+            stager.next('stage 2', '1');
+            stager.next('stage 3');
+
+            result = testPositions(stager, 100);
+        });
+
+        test3fixed();
+    });
+
+    describe('#next: two variable positions, 1 fixed. Mode(A).', function() {
+        before(function() {
+            stager = ngc.getStager();
+            result = null;
+
+            stager.next('stage 1', '0,2');
+            stager.next('stage 2', '1');
+            stager.next('stage 3', '0,2');
+
+            result = testPositions(stager, 100);
+        });
+
+        test2variable1fixed();
+
+    });
+
+    describe('#next: two variable positions, 1 fixed. Mode(B).', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+
+            stager.next('stage 1', '*');
+            stager.next('stage 2', '1');
+            stager.next('stage 3', '*');
+
+            result = testPositions(stager, 100);
+        });
+
+        test2variable1fixed(result);
+
+    });
+
+    describe('#next: variable steps within stage', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+
+            stager.addStage({id: 'stage 1'});
+
+            stager.next('stage 1');
+            stager.step('step 1.1', '*');
+            stager.step('step 1.2', '*');
+            stager.step('step 1.3', '*');
+
+            result = testPositions(stager, 100);
+            console.log(Object.keys(result))
+        });
+
+        it('should have called the three steps', function() {
+            J.isArray(result['stage 1.1']).should.eql(true);
+            J.isArray(result['stage 1.2']).should.eql(true);
+            J.isArray(result['stage 1.3']).should.eql(true);
+        });
+        it('should have called the three steps 100 times each', function() {
+            result['stage 1.1'].length.should.eql(100);
+            result['stage 1.2'].length.should.eql(100);
+            result['stage 1.3'].length.should.eql(100);
+        });
+
+//         it('should have called the three in the right order', function() {
+//             var sum = 0;
+//             result['stage 1.1'].forEach(function(i) { sum = sum + i; });
+//             sum.should.eql(0);
+//             sum = 0;
+//             result['stage 1.2'].forEach(function(i) { sum = sum + i; });
+//             sum.should.eql(100);
+//             sum = 0;
+//             result['stage 1.3'].forEach(function(i) { sum = sum + i; });
+//             sum.should.eql(200);
+//         });
+
+    });
 });
 
 
-describe('#', function() {
-    before(function() {
-        stager = ngc.getStager();
-        i = null, len = null, res = null, stagerStage = null;
-        tmp = function() {
-            i = (i || 0) + 1;
-        };
-        done = function(increment) {
-            len = (len || 0) + increment;
-        };
-        stager.addStep({
-            id: 'step 1',
-            cb: tmp,
-            done: done,
-            c: 3,
-            d: 4,
-            e: 5
+function test3fixed() {
+    it('should have called the three steps', function() {
+        J.isArray(result['stage 1']).should.eql(true);
+        J.isArray(result['stage 2']).should.eql(true);
+        J.isArray(result['stage 3']).should.eql(true);
+    });
+    it('should have called the three steps 100 times each', function() {
+        result['stage 1'].length.should.eql(100);
+        result['stage 2'].length.should.eql(100);
+        result['stage 3'].length.should.eql(100);
+    });
+
+    it('should have called the three in the right order', function() {
+        var sum = 0;
+        result['stage 1'].forEach(function(i) { sum = sum + i; });
+        sum.should.eql(0);
+        sum = 0;
+        result['stage 2'].forEach(function(i) { sum = sum + i; });
+        sum.should.eql(100);
+        sum = 0;
+        result['stage 3'].forEach(function(i) { sum = sum + i; });
+        sum.should.eql(200);
+    });
+}
+
+function test2variable1fixed() {
+    console.log('11', result);
+    it('should have called the three steps', function() {
+        J.isArray(result['stage 1']).should.eql(true);
+        J.isArray(result['stage 2']).should.eql(true);
+        J.isArray(result['stage 3']).should.eql(true);
+    });
+    it('should have called the three steps 100 times each', function() {
+        result['stage 1'].length.should.eql(100);
+        result['stage 2'].length.should.eql(100);
+        result['stage 3'].length.should.eql(100);
+    });
+
+    it('should have called the three in the right order', function() {
+        var sum = 0;
+        result['stage 1'].forEach(function(i) {
+            if (i !== 0 && i !== 2) should.fail();
+            sum = sum + i;
         });
-
-        stager.next('stage 1');
-
-        stager.extendStep('step 1', function(o) {
-            o._cb = o.cb;
-            o.cb = function() {
-                this._cb();
-                i++;
-            };
-            o._done = o.done;
-            o.done = function(increment) {
-                this._done((increment-1));
-                len = len + increment;
-            };
-            o.c = 'a';
-            o.e = undefined;
-            return o;
+        sum.should.be.within(80,120);
+        sum = 0;
+        result['stage 2'].forEach(function(i) {
+            i.should.eql(1);
+            sum = sum + i;
         });
-
-        stager.extendStep('stage 1', function(o) {
-            o.__cb = o.cb;
-            o.cb = function() {
-                if ('undefined' !== typeof this.__cb) i++;
-                i++;
-            };
-            o.foo = 'foo1';
-            return o;
+        sum.should.eql(100);
+        sum = 0;
+        result['stage 3'].forEach(function(i) {
+            if (i !== 0 && i !== 2) should.fail();
+            sum = sum + i;
         });
-
+        sum.should.be.within(80,120);
     });
-    it('should have extended `cb`', function() {
-        stager.steps['step 1'].cb();
-        i.should.eql(2);
-    });
-    it('should have extended `done`', function() {
-        stager.steps['step 1'].done(2);
-        len.should.eql(3);
-    });
-    it('should have overwritten `c`', function() {
-        stager.steps['step 1'].c.should.eql('a');
-    });
-    it('should have not overwritten `d`', function() {
-        stager.steps['step 1'].d.should.eql(4);
-    });
-    it('should have overwritten `e`', function() {
-        (typeof stager.steps['step 1'].e).should.eql('undefined');
-    });
-    it('should have added `foo`', function() {
-        stager.steps['stage 1'].foo.should.eql('foo1');
-    });
-    it('should have extended `cb` (2)', function() {
-        stager.steps['stage 1'].cb();
-        i.should.eql(4);
-    });
-
-});
+}
 
 
 return;
