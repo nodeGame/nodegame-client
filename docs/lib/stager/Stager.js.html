@@ -4447,7 +4447,8 @@ already added to current block, and if not, it adds it.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
 </div>
-<p>Add step, if not already added.</p>
+<p>Add step, if not already added.
+TODO: This If might be always true.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">curBlock</span><span class="p">.</span><span class="nx">hasItem</span><span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
                 <span class="nx">curBlock</span><span class="p">.</span><span class="nx">add</span><span class="p">({</span>

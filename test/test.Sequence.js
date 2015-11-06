@@ -11,240 +11,30 @@ var J = ngc.JSUS;
 var result;
 var stager = new Stager();
 
-//stager.stage('stage 1');
-//stager.step('step 1.1');
-//stager.step('step 1.2', '0..2');
-//stager.step('step 1.3');
+
+// stager.next('stage 1', '*');
+// stager.next('stage 2', '1');
+// stager.next('stage 3', '*');
 //
-//debugger
-//result = testPositions(stager, 100);
+// a = stager.getState();
 //
-//return;
+// debugger
+// result = testPositions(stager, 100);
+// debugger
+//
+// return;
 
-function decorateStager(stager) {
+// stager.stage('stage 1');
+// stager.step('step 1.1', '1');
+// stager.step('step 1.2', '0..2');
+// stager.step('step 1.3', '2');
+//
+//
+// result = testPositions(stager, 100);
+// debugger
+//
+// return;
 
-    // stager.stageBlock('0..1');
-
-    stager.next({
-        id: 'stage 1',
-        cb: function() {
-            console.log('stage 1');
-            node.done();
-        }
-    }, '0..1');
-
-    // stager.endBlock();
-
-    stager.stageBlock('0..1');
-
-    stager.next('stage 2', '0..1');
-
-    stager.step({
-        id: 'step 2.1',
-        cb: function() { console.log('step 2.1') }
-    });
-    stager.step({
-        id: 'step 2.2',
-        cb: function() { console.log('step 2.2') }
-    });
-
-    stager.next('stage 3', '0..1');
-
-    stager.endBlock();
-
-    stager.gameover();
-
-    // Default auto step.
-    stager.setDefaultStepRule(ngc.stepRules.WAIT);
-
-    // stager.endBlock();
-}
-
-function decorateStagerRepeat(stager) {
-
-
-    stager.stage({
-        id: 'stage 1',
-        cb: function() { console.log('stage 1') }
-    });
-
-    stager.repeat('stage 2', 2);
-
-    stager.step({
-        id: 'step 2.1',
-        cb: function() { console.log('step 2.1') }
-    });
-    stager.step({
-        id: 'step 2.2',
-        cb: function() { console.log('step 2.2') }
-    });
-
-    stager.repeat('stage 3', 1);
-
-
-    stager.gameover();
-
-    // Default auto step.
-    stager.setDefaultStepRule(ngc.stepRules.WAIT);
-
-    // stager.endBlock();
-    stager.setOnGameOver(function() {
-        console.log('Game over!');
-    });
-}
-
-
-function decorateStagerLoop(stager) {
-    var counter;
-    counter = 0;
-
-    stager.loop(
-        {
-            id: 'stage 1',
-            cb: function() {
-                counter++;
-                console.log('stage 1')
-            }
-        },
-        function() {
-            return counter < 3;
-        }
-    );
-
-    stager.loop('stage 2', function() {
-        return counter < 5;
-    });
-
-    stager.step({
-        id: 'step 2.1',
-        cb: function() { console.log('step 2.1') }
-    });
-    stager.step({
-        id: 'step 2.2',
-        cb: function() {
-            counter++;
-            console.log('step 2.2')
-        }
-    });
-
-    stager.loop('stage 3',  function() {
-        // Notice: counter is double incremented when
-        // hasNextStep is called.
-        return ++counter < 6;
-    });
-
-
-    stager.gameover();
-
-    // Default auto step.
-    stager.setDefaultStepRule(ngc.stepRules.WAIT);
-
-    stager.setOnGameOver(function() {
-        console.log('Game over!');
-    });
-}
-
-function decorateStagerDoLoop(stager) {
-    var counter;
-    counter = 0;
-
-    stager.doLoop(
-        {
-            id: 'stage 1',
-            cb: function() {
-                counter++;
-                console.log('stage 1')
-            }
-        },
-        function() {
-            return counter < 3;
-        }
-    );
-
-    stager.doLoop('stage 2', function() {
-        return counter < 5;
-    });
-
-    stager.step({
-        id: 'step 2.1',
-        cb: function() { console.log('step 2.1') }
-    });
-    stager.step({
-        id: 'step 2.2',
-        cb: function() {
-            counter++;
-            console.log('step 2.2')
-        }
-    });
-
-    stager.doLoop('stage 3',  function() {
-        // Notice: counter is double incremented when
-        // hasNextStep is called.
-        // console.log(counter);
-        return ++counter < 6;
-    });
-
-    stager.gameover();
-
-    // Default auto step.
-    stager.setDefaultStepRule(ngc.stepRules.WAIT);
-
-    stager.setOnGameOver(function() {
-        console.log('Game over!');
-    });
-
-}
-
-// Setup.
-
-function initGame(stager) {
-    var sstate, mynode;
-    stager.setDefaultStepRule(ngc.stepRules.WAIT);
-    stager.reset();
-    sstate = stager.getState();
-    mynode = ngc.getClient();
-    mynode.verbosity = -1000;
-    mynode.setup('plot', sstate);
-    mynode.createPlayer({ id: 'testid' });
-    mynode.game.start({ step: false });
-    return mynode.game;
-}
-
-function goThroughSteps(game, result) {
-    var id, counter;
-    result = result || {};
-    counter = 0;
-
-    // Step through.
-    while (hasNextStep(game)) {
-        game.step();
-        tmp = game.getCurrentStepObj();
-        id = tmp.id;
-        if (!result[id]) result[id] = [];
-        result[id].push(counter);
-        counter ++;
-    }
-    return result;
-}
-
-function hasNextStep(game) {
-    var curStep, nextStep;
-    curStep = game.getCurrentGameStage();
-    nextStep = game.plot.next(curStep);
-    return nextStep !== GamePlot.GAMEOVER && nextStep !== GamePlot.END_SEQ;
-}
-
-function testPositions(stager, len) {
-    var i, len, game, result;
-    i = -1;
-    result = {};
-    for ( ; ++i < len ; ) {
-        game = initGame(stager);
-        debugger
-        goThroughSteps(game, result);
-    }
-    return result;
-}
 
 describe('Moving through the sequence', function() {
 
@@ -541,4 +331,233 @@ function test2variable1fixed() {
         });
         sum.should.be.within(70,130);
     });
+}
+
+
+// Setup functions.
+
+function initGame(stager) {
+    var sstate, mynode;
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+    stager.reset();
+    sstate = stager.getState();
+    mynode = ngc.getClient();
+    mynode.verbosity = -1000;
+    mynode.setup('plot', sstate);
+    mynode.createPlayer({ id: 'testid' });
+    mynode.game.start({ step: false });
+    return mynode.game;
+}
+
+function goThroughSteps(game, result) {
+    var id, counter;
+    result = result || {};
+    counter = 0;
+
+    // Step through.
+    while (hasNextStep(game)) {
+        game.step();
+        tmp = game.getCurrentStepObj();
+        id = tmp.id;
+        if (!result[id]) result[id] = [];
+        result[id].push(counter);
+        counter ++;
+    }
+    return result;
+}
+
+function hasNextStep(game) {
+    var curStep, nextStep;
+    curStep = game.getCurrentGameStage();
+    nextStep = game.plot.next(curStep);
+    return nextStep !== GamePlot.GAMEOVER && nextStep !== GamePlot.END_SEQ;
+}
+
+function testPositions(stager, len) {
+    var i, len, game, result;
+    i = -1;
+    result = {};
+    for ( ; ++i < len ; ) {
+        game = initGame(stager);
+        debugger
+        goThroughSteps(game, result);
+    }
+    return result;
+}
+
+// Old stuff.
+
+
+function decorateStager(stager) {
+
+    // stager.stageBlock('0..1');
+
+    stager.next({
+        id: 'stage 1',
+        cb: function() {
+            console.log('stage 1');
+            node.done();
+        }
+    }, '0..1');
+
+    // stager.endBlock();
+
+    stager.stageBlock('0..1');
+
+    stager.next('stage 2', '0..1');
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() { console.log('step 2.2') }
+    });
+
+    stager.next('stage 3', '0..1');
+
+    stager.endBlock();
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+    // stager.endBlock();
+}
+
+function decorateStagerRepeat(stager) {
+
+
+    stager.stage({
+        id: 'stage 1',
+        cb: function() { console.log('stage 1') }
+    });
+
+    stager.repeat('stage 2', 2);
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() { console.log('step 2.2') }
+    });
+
+    stager.repeat('stage 3', 1);
+
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+    // stager.endBlock();
+    stager.setOnGameOver(function() {
+        console.log('Game over!');
+    });
+}
+
+
+function decorateStagerLoop(stager) {
+    var counter;
+    counter = 0;
+
+    stager.loop(
+        {
+            id: 'stage 1',
+            cb: function() {
+                counter++;
+                console.log('stage 1')
+            }
+        },
+        function() {
+            return counter < 3;
+        }
+    );
+
+    stager.loop('stage 2', function() {
+        return counter < 5;
+    });
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() {
+            counter++;
+            console.log('step 2.2')
+        }
+    });
+
+    stager.loop('stage 3',  function() {
+        // Notice: counter is double incremented when
+        // hasNextStep is called.
+        return ++counter < 6;
+    });
+
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+    stager.setOnGameOver(function() {
+        console.log('Game over!');
+    });
+}
+
+function decorateStagerDoLoop(stager) {
+    var counter;
+    counter = 0;
+
+    stager.doLoop(
+        {
+            id: 'stage 1',
+            cb: function() {
+                counter++;
+                console.log('stage 1')
+            }
+        },
+        function() {
+            return counter < 3;
+        }
+    );
+
+    stager.doLoop('stage 2', function() {
+        return counter < 5;
+    });
+
+    stager.step({
+        id: 'step 2.1',
+        cb: function() { console.log('step 2.1') }
+    });
+    stager.step({
+        id: 'step 2.2',
+        cb: function() {
+            counter++;
+            console.log('step 2.2')
+        }
+    });
+
+    stager.doLoop('stage 3',  function() {
+        // Notice: counter is double incremented when
+        // hasNextStep is called.
+        // console.log(counter);
+        return ++counter < 6;
+    });
+
+    stager.gameover();
+
+    // Default auto step.
+    stager.setDefaultStepRule(ngc.stepRules.WAIT);
+
+    stager.setOnGameOver(function() {
+        console.log('Game over!');
+    });
+
 }
