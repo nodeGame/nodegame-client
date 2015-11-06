@@ -485,9 +485,7 @@ MIT Licensed</p>
         <span class="kd">var</span> <span class="nx">entry</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">positions</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">chosenPosition</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">available</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-
-        <span class="nx">available</span> <span class="o">=</span> <span class="p">[];</span></pre></div>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -495,27 +493,16 @@ MIT Licensed</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
-<p>Range in which the indeces must be.</p>
+<p>Range in which the indeces must be,
+accounting for already taken positions.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">available</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
-        <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">available</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">arrayDiff</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
-</div>
-<p>Accounting for already taken positions.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">available</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">arrayDiff</span><span class="p">(</span><span class="nx">available</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>Parsing all of the position strings into arrays.</p>
         </td>
@@ -530,7 +517,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>Assigning positions.</p>
         </td>
@@ -540,7 +527,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Select entry with least possibilities of where to go.</p>
         </td>
@@ -553,7 +540,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>No valid position specified.</p>
         </td>
@@ -566,7 +553,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>Chose position randomly among possibilities.</p>
         </td>
@@ -579,7 +566,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>Adjust possible positions of remaining entries.</p>
         </td>

@@ -11,15 +11,15 @@ var J = ngc.JSUS;
 var result;
 var stager = new Stager();
 
-// tager.stage('stage 1');
-// tager.step('step 1.1', '1');
-// tager.step('step 1.2', '0..2');
-// tager.step('step 1.3', '2');
+//stager.stage('stage 1');
+//stager.step('step 1.1');
+//stager.step('step 1.2', '0..2');
+//stager.step('step 1.3');
 //
-// ebugger
-// esult = testPositions(stager, 100);
+//debugger
+//result = testPositions(stager, 100);
 //
-// eturn;
+//return;
 
 function decorateStager(stager) {
 
@@ -413,65 +413,67 @@ describe('Moving through the sequence', function() {
 
      });
 
-// describe('#next: 1 fixed, 2 variable steps within stage', function() {
-//        before(function() {
-//            stager = ngc.getStager();
-//            i = null, len = null, res = null, stagerStage = null;
-//
-//            stager.next('stage 1');
-//            stager.step('step 1.1', '1');
-//            stager.step('step 1.2', '0..2');
-//            stager.step('step 1.3', '2');
-//
-//            result = testPositions(stager, 100);
-//        });
-//
-//        it('should have removed default step from stage 1', function() {
-//            typeof(result['stage 1'] + '').should.eql('undefined');
-//        });
-//        it('should have called only the three steps', function() {
-//            var keys;
-//            keys = Object.keys(result).sort();
-//            keys.should.eql(['step 1.1', 'step 1.2', 'step 1.3']);
-//        });
-//
-//        it('should have called the three steps', function() {
-//            J.isArray(result['step 1.1']).should.eql(true);
-//            J.isArray(result['step 1.2']).should.eql(true);
-//            J.isArray(result['step 1.3']).should.eql(true);
-//        });
-//        it('should have called the three steps 100 times each', function() {
-//            result['step 1.1'].length.should.eql(100);
-//            result['step 1.2'].length.should.eql(100);
-//            result['step 1.3'].length.should.eql(100);
-//        });
-//
-//        it('should have called the three steps in right order', function() {
-//            var sum = 0;
-//            console.log(result['step 1.1']);
-//            console.log(result['step 1.2']);
-//            console.log(result['step 1.3']);
-//            result['step 1.1'].forEach(function(i) {
-//                if (i !== 0 && i !== 1) should.fail();
-//                sum = sum + i;
-//            });
-//            sum.should.be.within(20,80);
-//            sum = 0;
-//            result['step 1.2'].forEach(function(i) {
-//                if (i !== 0 && i !== 1) should.fail();
-//                sum = sum + i;
-//            });
-//            sum.should.be.within(20,80);
-//            sum = 0;
-//            result['step 1.3'].forEach(function(i) {
-//                if (i !== 2) should.fail();
-//                sum = sum + i;
-//            });
-//            sum.should.be.eql(200);
-//
-//        });
-//
-//    });
+ describe('#next: 1 fixed, 2 variable steps within stage', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+
+            stager.next('stage 1');
+            stager.step('step 1.1');
+            stager.step('step 1.2', '0..2');
+            stager.step('step 1.3');
+
+            result = testPositions(stager, 100);
+        });
+
+        it('should have removed default step from stage 1', function() {
+            typeof(result['stage 1'] + '').should.eql('undefined');
+        });
+        it('should have called only the three steps', function() {
+            var keys;
+            keys = Object.keys(result).sort();
+            keys.should.eql(['step 1.1', 'step 1.2', 'step 1.3']);
+        });
+
+        it('should have called the three steps', function() {
+            J.isArray(result['step 1.1']).should.eql(true);
+            J.isArray(result['step 1.2']).should.eql(true);
+            J.isArray(result['step 1.3']).should.eql(true);
+        });
+        it('should have called the three steps 100 times each', function() {
+            result['step 1.1'].length.should.eql(100);
+            result['step 1.2'].length.should.eql(100);
+            result['step 1.3'].length.should.eql(100);
+        });
+
+        it('should have called the three steps in right order', function() {
+            var sum = 0;
+            //console.log(result['step 1.1']);
+            //console.log(result['step 1.2']);
+            //console.log(result['step 1.3']);
+            result['step 1.1'].forEach(function(i) {
+                if (i !== 0 && i !== 1) should.fail();
+                sum = sum + i;
+            });
+            sum.should.be.eql(0);
+            //sum.should.be.within(20,80);
+            sum = 0;
+            result['step 1.2'].forEach(function(i) {
+                if (i !== 0 && i !== 1) should.fail();
+                sum = sum + i;
+            });
+            sum.should.be.eql(100);
+            //sum.should.be.within(20,80);
+            sum = 0;
+            result['step 1.3'].forEach(function(i) {
+                if (i !== 2) should.fail();
+                sum = sum + i;
+            });
+            sum.should.be.eql(200);
+
+        });
+
+    });
 });
 
 
