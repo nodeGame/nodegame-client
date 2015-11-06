@@ -358,7 +358,11 @@ MIT Licensed</p>
 
     <span class="kd">var</span> <span class="nx">Block</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Block</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">BLOCK_DEFAULT</span> <span class="o">=</span> <span class="s1">&#39;__default&#39;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">BLOCK_STAGE</span>   <span class="o">=</span> <span class="s1">&#39;__stage&#39;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">BLOCK_STEP</span>    <span class="o">=</span> <span class="s1">&#39;__step&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -825,7 +829,7 @@ is terminated.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">=</span> <span class="s2">&quot;__default&quot;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">=</span> <span class="nx">BLOCK_DEFAULT</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -843,7 +847,7 @@ is terminated.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">=</span> <span class="s2">&quot;__default&quot;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">=</span> <span class="nx">BLOCK_DEFAULT</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -946,7 +950,7 @@ is terminated.</p>
 </div>
 <p>Add first block.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">stageBlock</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;__default_block&#39;</span> <span class="p">});</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">stageBlock</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">BLOCK_DEFAULT</span> <span class="p">});</span>
         <span class="p">}</span>
     <span class="p">}</span></pre></div>
         </td>
@@ -1014,8 +1018,8 @@ is terminated.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">=</span> <span class="s2">&quot;__default&quot;</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">=</span> <span class="s2">&quot;__default&quot;</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">=</span> <span class="nx">BLOCK_DEFAULT</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">=</span> <span class="nx">BLOCK_DEFAULT</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">toSkip</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">stages</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">steps</span><span class="o">:</span> <span class="p">{}</span> <span class="p">};</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">unfinishedBlocks</span><span class="o">:</span> <span class="p">[]</span> <span class="p">};</span>
@@ -1053,7 +1057,7 @@ is terminated.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">stageBlock</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;__default_block&#39;</span> <span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stageBlock</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">BLOCK_DEFAULT</span> <span class="p">});</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -1167,7 +1171,7 @@ as <em>toSkip</em>.</p>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">outermostBlock</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
         <span class="nx">currentItem</span> <span class="o">=</span> <span class="nx">outermostBlock</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
         <span class="k">while</span> <span class="p">(</span><span class="o">!!</span><span class="nx">currentItem</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">currentItem</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;__stage&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">currentItem</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="nx">BLOCK_STAGE</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">stageId</span> <span class="o">=</span> <span class="nx">currentItem</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -3627,7 +3631,7 @@ must always be a function.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stepBlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">position</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">=</span> <span class="s2">&quot;__step&quot;</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">=</span> <span class="nx">BLOCK_STEP</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">beginBlock</span><span class="p">(</span><span class="nx">position</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -3664,11 +3668,11 @@ must always be a function.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stageBlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">!==</span> <span class="s2">&quot;__default&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">!==</span> <span class="nx">BLOCK_DEFAULT</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">endBlocks</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">=</span> <span class="s2">&quot;__default&quot;</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">=</span> <span class="s2">&quot;__stage&quot;</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">=</span> <span class="nx">BLOCK_DEFAULT</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">=</span> <span class="nx">BLOCK_STAGE</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">beginBlock</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -3706,10 +3710,10 @@ must always be a function.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">nextBlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">endBlock</span><span class="p">();</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">===</span> <span class="s2">&quot;__stage&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">===</span> <span class="nx">BLOCK_STAGE</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">stageBlock</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">===</span> <span class="s2">&quot;__step&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">===</span> <span class="nx">BLOCK_STEP</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">stepBlock</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
@@ -5219,13 +5223,13 @@ whether the stage name is unique, the steps exists, etc.</p>
 </div>
 <p>Begin stage block.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">!==</span> <span class="s2">&quot;__default&quot;</span><span class="p">)</span> <span class="nx">that</span><span class="p">.</span><span class="nx">endBlocks</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">!==</span> <span class="nx">BLOCK_DEFAULT</span><span class="p">)</span> <span class="nx">that</span><span class="p">.</span><span class="nx">endBlocks</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
 
         <span class="nx">that</span><span class="p">.</span><span class="nx">beginBlock</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="s2">&quot;__enclosing_&quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="p">});</span>
 
         <span class="nx">curBlock</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getCurrentBlock</span><span class="p">();</span>
         <span class="nx">curBlock</span><span class="p">.</span><span class="nx">add</span><span class="p">({</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;__stage&quot;</span><span class="p">,</span>
+            <span class="nx">type</span><span class="o">:</span> <span class="nx">BLOCK_STAGE</span><span class="p">,</span>
             <span class="nx">item</span><span class="o">:</span> <span class="nx">stage</span>
         <span class="p">});</span>
 

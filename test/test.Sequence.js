@@ -24,12 +24,15 @@ var stager = new Stager();
 //
 // return;
 
+// debugger
 // stager.stage('stage 1');
-// stager.step('step 1.1', '1');
-// stager.step('step 1.2', '0..2');
-// stager.step('step 1.3', '2');
 //
+// stager.step('step 1.1', '*');
+// stager.step('step 1.2', '0');
+// stager.step('step 1.3', '*');
 //
+// a = stager.getState();
+// debugger
 // result = testPositions(stager, 100);
 // debugger
 //
