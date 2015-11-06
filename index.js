@@ -29,12 +29,15 @@
         require('./lib/core/EventEmitter').EventEmitterManager;
     exports.EventEmitter = require('./lib/core/EventEmitter').EventEmitter;
 
+    // Stager
+    exports.Block = require('./lib/stager/Block').Block;
+    exports.Stager = require('./lib/stager/Stager').Stager;
+
     // Core
     exports.GameStage = require('./lib/core/GameStage').GameStage;
     exports.PlayerList = require('./lib/core/PlayerList').PlayerList;
     exports.Player = require('./lib/core/PlayerList').Player;
     exports.GameMsg = require('./lib/core/GameMsg').GameMsg;
-    exports.Stager = require('./lib/core/Stager').Stager;
     exports.GamePlot = require('./lib/core/GamePlot').GamePlot;
     exports.GameMsgGenerator =
         require('./lib/core/GameMsgGenerator').GameMsgGenerator;
