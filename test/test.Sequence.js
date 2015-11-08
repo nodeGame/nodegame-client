@@ -16,7 +16,7 @@ stager.next('stage 1', '0');
 stager.next('stage 2', '1');
 stager.next('stage 3', '2');
 debugger
-stager.getState();
+stager.getState();3
 
 
 describe('Moving through the sequence', function() {
@@ -221,7 +221,6 @@ describe('Moving through the sequence', function() {
 
         it('should have called the three steps in right order', function() {
             var sum = 0;
-            //console.log(result['step 1.1']);
             result['step 1.1'].forEach(function(i) {
                 if (i !== 0 && i !== 1) should.fail();
                 sum = sum + i;
@@ -243,17 +242,6 @@ describe('Moving through the sequence', function() {
         });
 
     });
-
-
-// stager.next('stage 1');
-// stager.step('step 1.1', '1');
-// stager.step('step 1.2', '0..2');
-// stager.step('step 1.3', '2');
-//
-//
-// stager.next('stage 1', '2');
-// stager.next('stage 2', '1');
-// stager.next('stage 3', '0');
 
      describe('#next: 3 fixed steps, added in wrong order', function() {
          before(function() {
@@ -289,29 +277,86 @@ describe('Moving through the sequence', function() {
 
          it('should have called the three steps in right order', function() {
              var sum = 0;
+
              result['step 1.1'].forEach(function(i) {
-                 if (i !== 0 && i !== 1) should.fail();
-                 sum = sum + i;
-             });
-             sum.should.be.eql(0);
-             //sum.should.be.within(20,80);
-             sum = 0;
-             result['step 1.2'].forEach(function(i) {
-                 if (i !== 0 && i !== 1) should.fail();
-                 sum = sum + i;
-             });
-             sum.should.be.eql(100);
-             //sum.should.be.within(20,80);
-             sum = 0;
-             result['step 1.3'].forEach(function(i) {
                  if (i !== 2) should.fail();
                  sum = sum + i;
              });
              sum.should.be.eql(200);
+             sum = 0;
+             result['step 1.2'].forEach(function(i) {
+                 if (i !== 0) should.fail();
+                 sum = sum + i;
+             });
+             sum.should.be.eql(0);
+             sum = 0;
+             result['step 1.3'].forEach(function(i) {
+                 if (i !== 1) should.fail();
+                 sum = sum + i;
+             });
+             sum.should.be.eql(100);
 
          });
 
      });
+
+    describe('#next: 1 fixed, 2 variable step, wrong order', function() {
+          before(function() {
+              stager = ngc.getStager();
+              i = null, len = null, res = null, stagerStage = null;
+
+              stager.next('stage 1');
+              stager.step('step 1.1', '*');
+              stager.step('step 1.2', '0..2');
+              stager.step('step 1.3', '0');
+
+              result = testPositions(stager, 100);
+          });
+
+          it('should have removed default step from stage 1', function() {
+              typeof(result['stage 1'] + '').should.eql('undefined');
+          });
+          it('should have called the three steps', function() {
+              J.isArray(result['step 1.1']).should.eql(true);
+              J.isArray(result['step 1.2']).should.eql(true);
+              J.isArray(result['step 1.3']).should.eql(true);
+          });
+          it('should have called only the three steps', function() {
+              var keys;
+              keys = Object.keys(result).sort();
+              keys.should.eql(['step 1.1', 'step 1.2', 'step 1.3']);
+          });
+          it('should have called the three steps 100 times each', function() {
+              result['step 1.1'].length.should.eql(100);
+              result['step 1.2'].length.should.eql(100);
+              result['step 1.3'].length.should.eql(100);
+          });
+
+          it('should have called the three steps in right order', function() {
+              var sum = 0;
+
+              console.log(result['step 1.1']);
+              result['step 1.1'].forEach(function(i) {
+                  if (i !== 2 && i !== 1) should.fail();
+                  sum = sum + i;
+              });
+              sum.should.be.within(120,180);
+              sum = 0;
+              result['step 1.2'].forEach(function(i) {
+                  if (i !== 2 && i !== 1) should.fail();
+                  sum = sum + i;
+              });
+              sum.should.be.within(120,180);
+              sum = 0;
+              result['step 1.3'].forEach(function(i) {
+                  if (i !== 0) should.fail();
+                  sum = sum + i;
+              });
+              sum.should.be.eql(0);
+
+          });
+
+      });
 
 });
 
