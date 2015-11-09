@@ -11,16 +11,29 @@ var J = ngc.JSUS;
 var result;
 var stager = new Stager();
 
-// debugger
-//             stager.next('stage 1');
+// // stage 1 does the error.
 //
-//             stager.stepBlock('*');
-//             stager.step('step 1', '1');
-//             stager.step('step 2', '2');
-//             stager.step('step 3', '0');
+//             stager.stageBlock('2');
 //
-//             stager.stepBlock('*');
-//             stager.step('step 4');
+//             stager.stage('stage 1');
+//             stager.step('step 1.1', '*');
+//
+//             stager.stepBlock('0');
+//             stager.step('step 1.2');
+//             stager.step('step 1.3');
+//
+//             stager.stepBlock('1');
+//             stager.step('step 1.4');
+//             stager.step('step 1.5');
+//
+//             stager.stageBlock('*');
+//             stager.stage('stage 2', '0..1');
+//
+//             stager.stage('stage 3', '2');
+//             stager.step('step 3.1', '*');
+//             stager.step('step 3.2', '*');
+//
+//             stager.stage('stage 4', '*');
 //
 //  debugger
 // s = stager.getState().sequence;
@@ -516,6 +529,110 @@ describe('Moving through the sequence', function() {
         });
 
     });
+
+
+//     describe('#next: stage and steps blocks', function() {
+//         before(function() {
+//             stager = ngc.getStager();
+//
+//             stager.stageBlock('2');
+//
+//             stager.stage('stage 1');
+//             stager.step('step 1.1', '*');
+//
+//             stager.stepBlock('0');
+//             stager.step('step 1.2');
+//             stager.step('step 1.3');
+//
+//             stager.stepBlock('1');
+//             stager.step('step 1.4');
+//             stager.step('step 1.5');
+//
+//             stager.stageBlock('*');
+//             stager.stage('stage 2', '0..1');
+//
+//             stager.stage('stage 3', '2');
+//             stager.step('step 3.1', '*');
+//             stager.step('step 3.2', '*');
+//
+//             stager.stage('stage 4', '*');
+//
+//             result = testPositions(stager, 100);
+//         });
+//
+//         it('should have called 5 default steps', function() {
+//             J.isArray(result['step 1.1']).should.eql(true);
+//             J.isArray(result['step 1.2']).should.eql(true);
+//             J.isArray(result['step 1.3']).should.eql(true);
+//             J.isArray(result['step 1.4']).should.eql(true);
+//             J.isArray(result['step 1.5']).should.eql(true);
+//             J.isArray(result['stage 2']).should.eql(true);
+//             J.isArray(result['step 3.1']).should.eql(true);
+//             J.isArray(result['step 3.2']).should.eql(true);
+//             J.isArray(result['stage 4']).should.eql(true);
+//
+//         });
+//         it('should have called only the 5 default steps', function() {
+//             var keys;
+//             keys = Object.keys(result).sort();
+//             keys.should.eql(['stage 2', 'stage 4',
+//                              'step 1.1', 'step 1.2', 'step 1.3',
+//                              'step 1.4', 'step 1.5',
+//                              'step 3.1', 'step 3.2']);
+//         });
+//         it('should have called the 5 default steps 100 times each',
+//         function() {
+//             result['step 1.1'].length.should.eql(100);
+//             result['step 1.2'].length.should.eql(100);
+//             result['step 1.3'].length.should.eql(100);
+//             result['step 1.4'].length.should.eql(100);
+//             result['step 1.5'].length.should.eql(100);
+//             result['stage 2'].length.should.eql(100);
+//             result['step 3.1'].length.should.eql(100);
+//             result['step 3.2'].length.should.eql(100);
+//             result['stage 4'].length.should.eql(100);
+//         });
+//
+//        it('should have called the three steps in right order', function() {
+//             var sum = 0;
+//
+//             result['stage 1'].forEach(function(i) {
+//                 if (i !== 4) should.fail();
+//                 sum = sum + i;
+//             });
+//             sum.should.be.eql(400);
+//             sum = 0;
+//             result['stage 2'].forEach(function(i) {
+//                 if (i !== 2 && i !== 1 && i !== 0) should.fail();
+//                 sum = sum + i;
+//             });
+//             // 50% in position 1, 25% in 0 and 25% in 2.
+//             sum.should.be.within(30,120);
+//             sum = 0;
+//             result['stage 3'].forEach(function(i) {
+//                 if (i !== 2 && i !== 3) should.fail();
+//                 sum = sum + i;
+//             });
+//             // 50% in position 3, 50% in 2.
+//             sum.should.be.within(220, 280);
+//             sum = 0;
+//             result['stage 4'].forEach(function(i) {
+//                 if (i !== 2 && i !== 1 && i !== 0) should.fail();
+//                 sum = sum + i;
+//             });
+//             // 50% in position 1, 25% in 0 and 25% in 2.
+//             sum.should.be.within(30,120);
+//             sum = 0;
+//             result['stage 5'].forEach(function(i) {
+//                 if (i !== 0 && i !== 3) should.fail();
+//                 sum = sum + i;
+//             });
+//             // 50% in position 0, 50% in 3.
+//             sum.should.be.within(120, 180);
+//
+//         });
+//
+//    });
 
 });
 

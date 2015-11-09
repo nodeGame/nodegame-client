@@ -1142,7 +1142,8 @@ as <em>toSkip</em>.</p>
 <p>Need to backup unfinished blocks before calling endAllBlocks().</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">backup</span><span class="p">();</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+<span class="kr">debugger</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -3544,7 +3545,7 @@ must always be a function.</p>
 
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="nx">block</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;STEPBL&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kr">debugger</span>
+
             <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
             <span class="k">do</span> <span class="p">{</span>
                 <span class="nx">currentBlock</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
