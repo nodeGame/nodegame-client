@@ -12,7 +12,7 @@ var result;
 var stager = new Stager();
 
  debugger
-//
+
 // stager.stageBlock('*');
 // stager.next('stage 1');
 //
@@ -24,361 +24,374 @@ var stager = new Stager();
 // stager.stageBlock('*');
 // stager.next('stage 5');
 //
-
-stager.next('stage 1', '0');
-stager.next('stage 2', '1');
-stager.next('stage 3', '2');
-
-
-
-s = stager.getState().sequence;
-
-stager.reset();
-
-debugger
-s = stager.getState().sequence;
-
-
-
-debugger
-return
+//
+// stager.next('stage 1', '0');
+// stager.next('stage 2', '1');
+// stager.next('stage 3', '2');
+//
+//
+//
+//
+//             stager.stageBlock('2');
+//             stager.next('stage 1');
+//
+//             stager.stageBlock('*');
+//             stager.next('stage 2', '0..1');
+//             stager.next('stage 3', '2');
+//             stager.next('stage 4', '*');
+//
+//             stager.stageBlock('*');
+//             stager.next('stage 5');
+//
+//  debugger
+// s = stager.getState().sequence;
+//
+// stager.reset();
+//
+// debugger
+// s = stager.getState().sequence;
+//
+//
+//
+// debugger
+// return
 
 describe('Moving through the sequence', function() {
 
-    describe('#next: 3 fixed positions. Mode (A).', function() {
-        before(function() {
-            stager = ngc.getStager();
-            result = null;
-
-            stager.next('stage 1', '0');
-            stager.next('stage 2', '1');
-            stager.next('stage 3', '2');
-
-            result = testPositions(stager, 100);
-        });
-
-        test3fixed();
-    });
-
-    describe('#next: 3 fixed positions. Mode (B).', function() {
-        before(function() {
-            stager = ngc.getStager();
-            result = null;
-
-            stager.next('stage 1');
-            stager.next('stage 2');
-            stager.next('stage 3');
-
-            result = testPositions(stager, 100);
-        });
-
-        test3fixed();
-    });
-
-    describe('#next: 3 fixed positions. Mode (C).', function() {
-        before(function() {
-            stager = ngc.getStager();
-            result = null;
-
-            stager.next('stage 1');
-            stager.next('stage 2');
-            stager.next('stage 3', '*');
-
-            result = testPositions(stager, 100);
-        });
-
-        test3fixed();
-    });
-
-    describe('#next: 3 fixed positions. Mode (D).', function() {
-        before(function() {
-            stager = ngc.getStager();
-            result = null;
-
-            stager.next('stage 1');
-            stager.next('stage 2', '1');
-            stager.next('stage 3', '*');
-
-            result = testPositions(stager, 100);
-        });
-
-        test3fixed();
-    });
-
-    describe('#next: 3 fixed positions. Mode (E).', function() {
-        before(function() {
-            stager = ngc.getStager();
-            result = null;
-
-            stager.next('stage 1');
-            stager.next('stage 2', '1');
-            stager.next('stage 3');
-
-            result = testPositions(stager, 100);
-        });
-
-        test3fixed();
-    });
-
-    describe('#next: two variable positions, 1 fixed. Mode(A).', function() {
-        before(function() {
-            stager = ngc.getStager();
-            result = null;
-
-            stager.next('stage 1', '0,2');
-            stager.next('stage 2', '1');
-            stager.next('stage 3', '0,2');
-
-            result = testPositions(stager, 100);
-        });
-
-        test2variable1fixed();
-
-    });
-
-    describe('#next: two variable positions, 1 fixed. Mode(B).', function() {
-        before(function() {
-            stager = ngc.getStager();
-            i = null, len = null, res = null, stagerStage = null;
-
-            stager.next('stage 1', '*');
-            stager.next('stage 2', '1');
-            stager.next('stage 3', '*');
-
-            result = testPositions(stager, 100);
-        });
-
-        test2variable1fixed(result);
-
-    });
-
-    describe('#next: variable steps within stage', function() {
-        before(function() {
-            stager = ngc.getStager();
-            i = null, len = null, res = null, stagerStage = null;
-
-            stager.next('stage 1');
-            stager.step('step 1.1', '*');
-            stager.step('step 1.2', '*');
-            stager.step('step 1.3', '*');
-
-            result = testPositions(stager, 100);
-        });
-
-        it('should have removed default step from stage 1', function() {
-            typeof(result['stage 1'] + '').should.eql('undefined');
-        });
-        it('should have called only the three steps', function() {
-            var keys;
-            keys = Object.keys(result).sort();
-            keys.should.eql(['step 1.1', 'step 1.2', 'step 1.3']);
-        });
-
-        it('should have called the three steps', function() {
-            J.isArray(result['step 1.1']).should.eql(true);
-            J.isArray(result['step 1.2']).should.eql(true);
-            J.isArray(result['step 1.3']).should.eql(true);
-        });
-        it('should have called the three steps 100 times each', function() {
-            result['step 1.1'].length.should.eql(100);
-            result['step 1.2'].length.should.eql(100);
-            result['step 1.3'].length.should.eql(100);
-        });
-
-        it('should have called the three steps in random order', function() {
-            var sum = 0;
-            result['step 1.1'].forEach(function(i) {
-                if (i !== 0 && i !== 1 && i !== 2) should.fail();
-                sum = sum + i;
-            });
-            sum.should.be.within(70,130);
-            sum = 0;
-            result['step 1.2'].forEach(function(i) {
-                if (i !== 0 && i !== 1 && i !== 2) should.fail();
-                sum = sum + i;
-            });
-            sum.should.be.within(70,130);
-            sum = 0;
-            result['step 1.3'].forEach(function(i) {
-                if (i !== 0 && i !== 1 && i !== 2) should.fail();
-                sum = sum + i;
-            });
-            sum.should.be.within(70,130);
-
-        });
-
-    });
-
-    describe('#next: 1 fixed, 2 variable steps within stage', function() {
-        before(function() {
-            stager = ngc.getStager();
-            i = null, len = null, res = null, stagerStage = null;
-
-            stager.next('stage 1');
-            stager.step('step 1.1', '*');
-            stager.step('step 1.2', '0..2');
-            stager.step('step 1.3', '2');
-
-            result = testPositions(stager, 100);
-        });
-
-        it('should have removed default step from stage 1', function() {
-            typeof(result['stage 1'] + '').should.eql('undefined');
-        });
-        it('should have called only the three steps', function() {
-            var keys;
-            keys = Object.keys(result).sort();
-            keys.should.eql(['step 1.1', 'step 1.2', 'step 1.3']);
-        });
-
-        it('should have called the three steps', function() {
-            J.isArray(result['step 1.1']).should.eql(true);
-            J.isArray(result['step 1.2']).should.eql(true);
-            J.isArray(result['step 1.3']).should.eql(true);
-        });
-        it('should have called the three steps 100 times each', function() {
-            result['step 1.1'].length.should.eql(100);
-            result['step 1.2'].length.should.eql(100);
-            result['step 1.3'].length.should.eql(100);
-        });
-
-        it('should have called the three steps in right order', function() {
-            var sum = 0;
-            result['step 1.1'].forEach(function(i) {
-                if (i !== 0 && i !== 1) should.fail();
-                sum = sum + i;
-            });
-            sum.should.be.within(20,80);
-            sum = 0;
-            result['step 1.2'].forEach(function(i) {
-                if (i !== 0 && i !== 1) should.fail();
-                sum = sum + i;
-            });
-            sum.should.be.within(20,80);
-            sum = 0;
-            result['step 1.3'].forEach(function(i) {
-                if (i !== 2) should.fail();
-                sum = sum + i;
-            });
-            sum.should.be.eql(200);
-
-        });
-
-    });
-
-    describe('#next: 3 fixed steps, added in wrong order', function() {
-        before(function() {
-            stager = ngc.getStager();
-            i = null, len = null, res = null, stagerStage = null;
-
-            stager.next('stage 1');
-            stager.step('step 1.1', '2');
-            stager.step('step 1.2', '0');
-            stager.step('step 1.3', '1');
-
-            result = testPositions(stager, 100);
-        });
-
-        it('should have removed default step from stage 1', function() {
-            typeof(result['stage 1'] + '').should.eql('undefined');
-        });
-        it('should have called the three steps', function() {
-            J.isArray(result['step 1.1']).should.eql(true);
-            J.isArray(result['step 1.2']).should.eql(true);
-            J.isArray(result['step 1.3']).should.eql(true);
-        });
-        it('should have called only the three steps', function() {
-            var keys;
-            keys = Object.keys(result).sort();
-            keys.should.eql(['step 1.1', 'step 1.2', 'step 1.3']);
-        });
-        it('should have called the three steps 100 times each', function() {
-            result['step 1.1'].length.should.eql(100);
-            result['step 1.2'].length.should.eql(100);
-            result['step 1.3'].length.should.eql(100);
-        });
-
-        it('should have called the three steps in right order', function() {
-            var sum = 0;
-
-            result['step 1.1'].forEach(function(i) {
-                if (i !== 2) should.fail();
-                sum = sum + i;
-            });
-            sum.should.be.eql(200);
-            sum = 0;
-            result['step 1.2'].forEach(function(i) {
-                if (i !== 0) should.fail();
-                sum = sum + i;
-            });
-            sum.should.be.eql(0);
-            sum = 0;
-            result['step 1.3'].forEach(function(i) {
-                if (i !== 1) should.fail();
-                sum = sum + i;
-            });
-            sum.should.be.eql(100);
-
-        });
-
-    });
-
-    describe('#next: 1 fixed, 2 variable steps, wrong order', function() {
-        before(function() {
-            stager = ngc.getStager();
-            i = null, len = null, res = null, stagerStage = null;
-
-            stager.next('stage 1');
-            stager.step('step 1.1', '*');
-            stager.step('step 1.2', '0..2');
-            stager.step('step 1.3', '0');
-
-            result = testPositions(stager, 100);
-        });
-
-        it('should have removed default step from stage 1', function() {
-            typeof(result['stage 1'] + '').should.eql('undefined');
-        });
-        it('should have called the three steps', function() {
-            J.isArray(result['step 1.1']).should.eql(true);
-            J.isArray(result['step 1.2']).should.eql(true);
-            J.isArray(result['step 1.3']).should.eql(true);
-        });
-        it('should have called only the three steps', function() {
-            var keys;
-            keys = Object.keys(result).sort();
-            keys.should.eql(['step 1.1', 'step 1.2', 'step 1.3']);
-        });
-        it('should have called the three steps 100 times each', function() {
-            result['step 1.1'].length.should.eql(100);
-            result['step 1.2'].length.should.eql(100);
-            result['step 1.3'].length.should.eql(100);
-        });
-
-        it('should have called the three steps in right order', function() {
-            var sum = 0;
-
-            result['step 1.1'].forEach(function(i) {
-                if (i !== 2 && i !== 1) should.fail();
-                sum = sum + i;
-            });
-            sum.should.be.within(120,180);
-            sum = 0;
-            result['step 1.2'].forEach(function(i) {
-                if (i !== 2 && i !== 1) should.fail();
-                sum = sum + i;
-            });
-            sum.should.be.within(120,180);
-            sum = 0;
-            result['step 1.3'].forEach(function(i) {
-                if (i !== 0) should.fail();
-                sum = sum + i;
-            });
-            sum.should.be.eql(0);
-
-        });
-
-    });
+//     describe('#next: 3 fixed positions. Mode (A).', function() {
+//         before(function() {
+//             stager = ngc.getStager();
+//             result = null;
+//
+//             stager.next('stage 1', '0');
+//             stager.next('stage 2', '1');
+//             stager.next('stage 3', '2');
+//
+//             result = testPositions(stager, 100);
+//         });
+//
+//         test3fixed();
+//     });
+//
+//     describe('#next: 3 fixed positions. Mode (B).', function() {
+//         before(function() {
+//             stager = ngc.getStager();
+//             result = null;
+//
+//             stager.next('stage 1');
+//             stager.next('stage 2');
+//             stager.next('stage 3');
+//
+//             result = testPositions(stager, 100);
+//         });
+//
+//         test3fixed();
+//     });
+//
+//     describe('#next: 3 fixed positions. Mode (C).', function() {
+//         before(function() {
+//             stager = ngc.getStager();
+//             result = null;
+//
+//             stager.next('stage 1');
+//             stager.next('stage 2');
+//             stager.next('stage 3', '*');
+//
+//             result = testPositions(stager, 100);
+//         });
+//
+//         test3fixed();
+//     });
+//
+//     describe('#next: 3 fixed positions. Mode (D).', function() {
+//         before(function() {
+//             stager = ngc.getStager();
+//             result = null;
+//
+//             stager.next('stage 1');
+//             stager.next('stage 2', '1');
+//             stager.next('stage 3', '*');
+//
+//             result = testPositions(stager, 100);
+//         });
+//
+//         test3fixed();
+//     });
+//
+//     describe('#next: 3 fixed positions. Mode (E).', function() {
+//         before(function() {
+//             stager = ngc.getStager();
+//             result = null;
+//
+//             stager.next('stage 1');
+//             stager.next('stage 2', '1');
+//             stager.next('stage 3');
+//
+//             result = testPositions(stager, 100);
+//         });
+//
+//         test3fixed();
+//     });
+//
+//     describe('#next: two variable positions, 1 fixed. Mode(A).', function() {
+//         before(function() {
+//             stager = ngc.getStager();
+//             result = null;
+//
+//             stager.next('stage 1', '0,2');
+//             stager.next('stage 2', '1');
+//             stager.next('stage 3', '0,2');
+//
+//             result = testPositions(stager, 100);
+//         });
+//
+//         test2variable1fixed();
+//
+//     });
+//
+//     describe('#next: two variable positions, 1 fixed. Mode(B).', function() {
+//         before(function() {
+//             stager = ngc.getStager();
+//             i = null, len = null, res = null, stagerStage = null;
+//
+//             stager.next('stage 1', '*');
+//             stager.next('stage 2', '1');
+//             stager.next('stage 3', '*');
+//
+//             result = testPositions(stager, 100);
+//         });
+//
+//         test2variable1fixed(result);
+//
+//     });
+//
+//     describe('#next: variable steps within stage', function() {
+//         before(function() {
+//             stager = ngc.getStager();
+//             i = null, len = null, res = null, stagerStage = null;
+//
+//             stager.next('stage 1');
+//             stager.step('step 1.1', '*');
+//             stager.step('step 1.2', '*');
+//             stager.step('step 1.3', '*');
+//
+//             result = testPositions(stager, 100);
+//         });
+//
+//         it('should have removed default step from stage 1', function() {
+//             typeof(result['stage 1'] + '').should.eql('undefined');
+//         });
+//         it('should have called only the three steps', function() {
+//             var keys;
+//             keys = Object.keys(result).sort();
+//             keys.should.eql(['step 1.1', 'step 1.2', 'step 1.3']);
+//         });
+//
+//         it('should have called the three steps', function() {
+//             J.isArray(result['step 1.1']).should.eql(true);
+//             J.isArray(result['step 1.2']).should.eql(true);
+//             J.isArray(result['step 1.3']).should.eql(true);
+//         });
+//         it('should have called the three steps 100 times each', function() {
+//             result['step 1.1'].length.should.eql(100);
+//             result['step 1.2'].length.should.eql(100);
+//             result['step 1.3'].length.should.eql(100);
+//         });
+//
+//         it('should have called the three steps in random order', function() {
+//             var sum = 0;
+//             result['step 1.1'].forEach(function(i) {
+//                 if (i !== 0 && i !== 1 && i !== 2) should.fail();
+//                 sum = sum + i;
+//             });
+//             sum.should.be.within(70,130);
+//             sum = 0;
+//             result['step 1.2'].forEach(function(i) {
+//                 if (i !== 0 && i !== 1 && i !== 2) should.fail();
+//                 sum = sum + i;
+//             });
+//             sum.should.be.within(70,130);
+//             sum = 0;
+//             result['step 1.3'].forEach(function(i) {
+//                 if (i !== 0 && i !== 1 && i !== 2) should.fail();
+//                 sum = sum + i;
+//             });
+//             sum.should.be.within(70,130);
+//
+//         });
+//
+//     });
+//
+//     describe('#next: 1 fixed, 2 variable steps within stage', function() {
+//         before(function() {
+//             stager = ngc.getStager();
+//             i = null, len = null, res = null, stagerStage = null;
+//
+//             stager.next('stage 1');
+//             stager.step('step 1.1', '*');
+//             stager.step('step 1.2', '0..2');
+//             stager.step('step 1.3', '2');
+//
+//             result = testPositions(stager, 100);
+//         });
+//
+//         it('should have removed default step from stage 1', function() {
+//             typeof(result['stage 1'] + '').should.eql('undefined');
+//         });
+//         it('should have called only the three steps', function() {
+//             var keys;
+//             keys = Object.keys(result).sort();
+//             keys.should.eql(['step 1.1', 'step 1.2', 'step 1.3']);
+//         });
+//
+//         it('should have called the three steps', function() {
+//             J.isArray(result['step 1.1']).should.eql(true);
+//             J.isArray(result['step 1.2']).should.eql(true);
+//             J.isArray(result['step 1.3']).should.eql(true);
+//         });
+//         it('should have called the three steps 100 times each', function() {
+//             result['step 1.1'].length.should.eql(100);
+//             result['step 1.2'].length.should.eql(100);
+//             result['step 1.3'].length.should.eql(100);
+//         });
+//
+//         it('should have called the three steps in right order', function() {
+//             var sum = 0;
+//             result['step 1.1'].forEach(function(i) {
+//                 if (i !== 0 && i !== 1) should.fail();
+//                 sum = sum + i;
+//             });
+//             sum.should.be.within(20,80);
+//             sum = 0;
+//             result['step 1.2'].forEach(function(i) {
+//                 if (i !== 0 && i !== 1) should.fail();
+//                 sum = sum + i;
+//             });
+//             sum.should.be.within(20,80);
+//             sum = 0;
+//             result['step 1.3'].forEach(function(i) {
+//                 if (i !== 2) should.fail();
+//                 sum = sum + i;
+//             });
+//             sum.should.be.eql(200);
+//
+//         });
+//
+//     });
+//
+//     describe('#next: 3 fixed steps, added in wrong order', function() {
+//         before(function() {
+//             stager = ngc.getStager();
+//             i = null, len = null, res = null, stagerStage = null;
+//
+//             stager.next('stage 1');
+//             stager.step('step 1.1', '2');
+//             stager.step('step 1.2', '0');
+//             stager.step('step 1.3', '1');
+//
+//             result = testPositions(stager, 100);
+//         });
+//
+//         it('should have removed default step from stage 1', function() {
+//             typeof(result['stage 1'] + '').should.eql('undefined');
+//         });
+//         it('should have called the three steps', function() {
+//             J.isArray(result['step 1.1']).should.eql(true);
+//             J.isArray(result['step 1.2']).should.eql(true);
+//             J.isArray(result['step 1.3']).should.eql(true);
+//         });
+//         it('should have called only the three steps', function() {
+//             var keys;
+//             keys = Object.keys(result).sort();
+//             keys.should.eql(['step 1.1', 'step 1.2', 'step 1.3']);
+//         });
+//         it('should have called the three steps 100 times each', function() {
+//             result['step 1.1'].length.should.eql(100);
+//             result['step 1.2'].length.should.eql(100);
+//             result['step 1.3'].length.should.eql(100);
+//         });
+//
+//         it('should have called the three steps in right order', function() {
+//             var sum = 0;
+//
+//             result['step 1.1'].forEach(function(i) {
+//                 if (i !== 2) should.fail();
+//                 sum = sum + i;
+//             });
+//             sum.should.be.eql(200);
+//             sum = 0;
+//             result['step 1.2'].forEach(function(i) {
+//                 if (i !== 0) should.fail();
+//                 sum = sum + i;
+//             });
+//             sum.should.be.eql(0);
+//             sum = 0;
+//             result['step 1.3'].forEach(function(i) {
+//                 if (i !== 1) should.fail();
+//                 sum = sum + i;
+//             });
+//             sum.should.be.eql(100);
+//
+//         });
+//
+//     });
+//
+//     describe('#next: 1 fixed, 2 variable steps, wrong order', function() {
+//         before(function() {
+//             stager = ngc.getStager();
+//             i = null, len = null, res = null, stagerStage = null;
+//
+//             stager.next('stage 1');
+//             stager.step('step 1.1', '*');
+//             stager.step('step 1.2', '0..2');
+//             stager.step('step 1.3', '0');
+//
+//             result = testPositions(stager, 100);
+//         });
+//
+//         it('should have removed default step from stage 1', function() {
+//             typeof(result['stage 1'] + '').should.eql('undefined');
+//         });
+//         it('should have called the three steps', function() {
+//             J.isArray(result['step 1.1']).should.eql(true);
+//             J.isArray(result['step 1.2']).should.eql(true);
+//             J.isArray(result['step 1.3']).should.eql(true);
+//         });
+//         it('should have called only the three steps', function() {
+//             var keys;
+//             keys = Object.keys(result).sort();
+//             keys.should.eql(['step 1.1', 'step 1.2', 'step 1.3']);
+//         });
+//         it('should have called the three steps 100 times each', function() {
+//             result['step 1.1'].length.should.eql(100);
+//             result['step 1.2'].length.should.eql(100);
+//             result['step 1.3'].length.should.eql(100);
+//         });
+//
+//         it('should have called the three steps in right order', function() {
+//             var sum = 0;
+//
+//             result['step 1.1'].forEach(function(i) {
+//                 if (i !== 2 && i !== 1) should.fail();
+//                 sum = sum + i;
+//             });
+//             sum.should.be.within(120,180);
+//             sum = 0;
+//             result['step 1.2'].forEach(function(i) {
+//                 if (i !== 2 && i !== 1) should.fail();
+//                 sum = sum + i;
+//             });
+//             sum.should.be.within(120,180);
+//             sum = 0;
+//             result['step 1.3'].forEach(function(i) {
+//                 if (i !== 0) should.fail();
+//                 sum = sum + i;
+//             });
+//             sum.should.be.eql(0);
+//
+//         });
+//
+//     });
 
 
     describe('#next: stage blocks', function() {
@@ -386,15 +399,16 @@ describe('Moving through the sequence', function() {
             stager = ngc.getStager();
             i = null, len = null, res = null, stagerStage = null;
 
-            stager.next('stage 1', '*');
+            stager.stageBlock('2');
+            stager.next('stage 1');
 
             stager.stageBlock('*');
             stager.next('stage 2', '0..1');
             stager.next('stage 3', '2');
             stager.next('stage 4', '*');
 
-            stager.stageBlock();
-            stager.next('stage 5', '*');
+            stager.stageBlock('*');
+            stager.next('stage 5');
 
             result = testPositions(stager, 100);
         });
@@ -413,6 +427,11 @@ describe('Moving through the sequence', function() {
                              'stage 4', 'stage 5']);
         });
         it('should have called the 5 default steps 100 times each', function() {
+
+             console.log(result['stage 3']);
+             console.log(result['stage 4']);
+             console.log(result['stage 5']);
+
             result['stage 1'].length.should.eql(100);
             result['stage 2'].length.should.eql(100);
             result['stage 3'].length.should.eql(100);
@@ -423,23 +442,39 @@ describe('Moving through the sequence', function() {
         it('should have called the three steps in right order', function() {
             var sum = 0;
 
-            result['step 1.1'].forEach(function(i) {
-                if (i !== 2 && i !== 1) should.fail();
+            result['stage 1'].forEach(function(i) {
+                if (i !== 4) should.fail();
                 sum = sum + i;
             });
-            sum.should.be.within(120,180);
+            sum.should.be.eql(400);
             sum = 0;
-            result['step 1.2'].forEach(function(i) {
-                if (i !== 2 && i !== 1) should.fail();
+            result['stage 2'].forEach(function(i) {
+                if (i !== 2 && i !== 1 && i !== 0) should.fail();
                 sum = sum + i;
             });
-            sum.should.be.within(120,180);
+            // 50% in position 1, 25% in 0 and 25% in 2.
+            sum.should.be.within(40,110);
             sum = 0;
-            result['step 1.3'].forEach(function(i) {
-                if (i !== 0) should.fail();
+            result['stage 3'].forEach(function(i) {
+                if (i !== 2 && i !== 3) should.fail();
                 sum = sum + i;
             });
-            sum.should.be.eql(0);
+            // 50% in position 3, 50% in 2.
+            sum.should.be.within(220, 280);
+            sum = 0;
+            result['stage 4'].forEach(function(i) {
+                if (i !== 2 && i !== 1 && i !== 0) should.fail();
+                sum = sum + i;
+            });
+            // 50% in position 1, 25% in 0 and 25% in 2.
+            sum.should.be.within(40,110);
+            sum = 0;
+            result['stage 5'].forEach(function(i) {
+                if (i !== 0 && i !== 3) should.fail();
+                sum = sum + i;
+            });
+            // 50% in position 0, 50% in 3.
+            sum.should.be.within(120, 180);
 
         });
 
@@ -531,7 +566,7 @@ function initGame(stager) {
 }
 
 function goThroughSteps(game, result) {
-    var id, counter;
+    var id, counter, tmp;
     result = result || {};
     counter = 0;
 
@@ -554,11 +589,12 @@ function hasNextStep(game) {
     return nextStep !== GamePlot.GAMEOVER && nextStep !== GamePlot.END_SEQ;
 }
 
-function testPositions(stager, len) {
+function testPositions(stager, len, debug) {
     var i, len, game, result;
     i = -1;
     result = {};
     for ( ; ++i < len ; ) {
+        if (debug) console.log(i);
         game = initGame(stager);
         goThroughSteps(game, result);
     }
