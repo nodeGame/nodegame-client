@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>stager_extends.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../../', thisFile = 'lib/stager/stager_extends.js', defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#stager-extend-stages--modify-sequence">Stager extend stages, modify sequence</a>
+      </div>
+      <div class="heading h4">
+        <a href="#stager.extendstep">Stager.extendStep</a>
+      </div>
+      <div class="heading h4">
+        <a href="#stager.extendstage">Stager.extendStage</a>
+      </div>
+      <div class="heading h4">
+        <a href="#stager.extendallsteps">Stager.extendAllSteps</a>
+      </div>
+      <div class="heading h4">
+        <a href="#stager.extendallstages">Stager.extendAllStages</a>
+      </div>
+      <div class="heading h4">
+        <a href="#stager.skip">Stager.skip</a>
+      </div>
+      <div class="heading h4">
+        <a href="#stager.unskip">Stager.unskip</a>
+      </div>
+      <div class="heading h4">
+        <a href="#stager.isskipped">Stager.isSkipped</a>
+      </div>
+      <div class="heading h4">
+        <a href="#setskipstagestep">setSkipStageStep</a>
+      </div>
+      <div class="heading h4">
+        <a href="#validateextendedstep">validateExtendedStep</a>
+      </div>
+      <div class="heading h4">
+        <a href="#validateextendedstage">validateExtendedStage</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager-extend-stages--modify-sequence">
+  <h1>
+    <a href="#stager-extend-stages--modify-sequence" class="pilcrow">&#182;</a>
+    Stager extend stages, modify sequence
+  </h1>
+</div>
+
+
+<p>Copyright(c) 2015 Stefano Balietti
+MIT Licensed</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">checkFinalized</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">checkFinalized</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">handleStepsArray</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">handleStepsArray</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.extendstep">
+  <h4>
+    <a href="#stager.extendstep" class="pilcrow">&#182;</a>
+    Stager.extendStep
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Extends an existing step</p>
+
+<p>Notice: properties <code>id</code> cannot be modified, and property <code>cb</code>
+must always be a function.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stepId</span>
+      <span class="dox_type">string</span>
+      <span>The id of the step to update</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">update</span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">function</span>
+      <span>The object containing the
+  properties to update, or an update function that takes a copy
+  of current step and returns the whole new updated step</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.addStep</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">validateExtendedStep
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">step</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStep: stepId must be a&#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39; string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">step</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.extendStep: stepId not found: &#39;</span> <span class="o">+</span>
+                            <span class="nx">stepId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">step</span> <span class="o">=</span> <span class="nx">update</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">step</span><span class="p">));</span>
+            <span class="nx">validateExtendedStep</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">step</span><span class="p">;</span>
+
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">update</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">validateExtendedStep</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">update</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+            <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStep: update must be object &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or function. Step id: &#39;</span> <span class="o">+</span> <span class="nx">stepId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.extendstage">
+  <h4>
+    <a href="#stager.extendstage" class="pilcrow">&#182;</a>
+    Stager.extendStage
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Extends an existing stage</p>
+
+<p>Notice: properties <code>id</code> and <code>cb</code> cannot be modified / added.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stageId</span>
+      <span class="dox_type">string</span>
+      <span>The id of the stage to update</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">update</span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">function</span>
+      <span>The object containing the
+  properties to update, or an update function that takes a copy
+  of current stage and returns the whole new updated stage</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.addStage</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">validateExtendedStage
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stageId</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: stageId must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;a string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">stage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: stageId not found: &#39;</span> <span class="o">+</span>
+                            <span class="nx">stageId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">stage</span> <span class="o">=</span> <span class="nx">update</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">stage</span><span class="p">));</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span> <span class="o">||</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span> <span class="o">||</span>
+                <span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: update function &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;must return an object with id and steps.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">validateExtendedStage</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">;</span>
+
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">update</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">validateExtendedStage</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">update</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+            <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: update must be object &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or function. Stage id: &#39;</span> <span class="o">+</span> <span class="nx">stageId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.extendallsteps">
+  <h4>
+    <a href="#stager.extendallsteps" class="pilcrow">&#182;</a>
+    Stager.extendAllSteps
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Extends all existing steps</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">update</span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">function</span>
+      <span>The object containing the
+  properties to update, or an update function that takes a copy
+  of current step and returns the whole new updated step</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.addStep</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.extendStep
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendAllSteps</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">step</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">step</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">extendStep</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.extendallstages">
+  <h4>
+    <a href="#stager.extendallstages" class="pilcrow">&#182;</a>
+    Stager.extendAllStages
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Extends all existing stages</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">update</span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">function</span>
+      <span>The object containing the
+  properties to update, or an update function that takes a copy
+  of current stage and returns the whole new updated stage</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.addStage</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.extendStage
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendAllStages</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">stage</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">stage</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">extendStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.skip">
+  <h4>
+    <a href="#stager.skip" class="pilcrow">&#182;</a>
+    Stager.skip
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Marks a stage or as step as <code>toSkip</code> and won't be added to sequence</p>
+
+<p>Must be called before invoking <code>Stager.finalize()</code>.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stageId</span>
+      <span class="dox_type">string</span>
+      <span>The id of the stage to skip</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stepId</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The id of the step within
+  the stage to skip</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.unskip</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.finalize
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">skip</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">checkFinalized</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;skip&#39;</span><span class="p">);</span>
+        <span class="nx">setSkipStageStep</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="s1">&#39;skip&#39;</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.unskip">
+  <h4>
+    <a href="#stager.unskip" class="pilcrow">&#182;</a>
+    Stager.unskip
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Unskips a stage or step</p>
+
+<p>Must be called before invoking <code>Stager.finalize()</code>.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stageId</span>
+      <span class="dox_type">string</span>
+      <span>The id of the stage</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stepId</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The id of the step within the stage</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.skip</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.finalize
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">unskip</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">checkFinalized</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;unskip&#39;</span><span class="p">);</span>
+        <span class="nx">setSkipStageStep</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="s1">&#39;unskip&#39;</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.isskipped">
+  <h4>
+    <a href="#stager.isskipped" class="pilcrow">&#182;</a>
+    Stager.isSkipped
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Returns TRUE if a stage or step is currently marked as <code>toSkip</code></p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stageId</span>
+      <span class="dox_type">string</span>
+      <span>The id of the stage</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stepId</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The id of the step within the stage</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if the stage or step is marked as <code>toSkip</code></span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.skip</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.unskip
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isSkipped</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">!!</span><span class="nx">setSkipStageStep</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span>
+                                  <span class="s1">&#39;isSkipped&#39;</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="setskipstagestep">
+  <h4>
+    <a href="#setskipstagestep" class="pilcrow">&#182;</a>
+    setSkipStageStep
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Sets/Gets the value for the flag <code>toSkip</code> for a stage or a step</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">that</span>
+      <span class="dox_type">Stager</span>
+      <span>Stager object</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stageId</span>
+      <span class="dox_type">string</span>
+      <span>The id of the stage</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stepId</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The id of the step within the stage</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">value</span>
+      <span class="dox_type">mixed</span>
+      <span>If defined, is assigned to the stage or step</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">method</span>
+      <span class="dox_type">string</span>
+      <span>The name of the method calling the validation</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span class="dox_type">null</span>
+      <span>The current value for the stage or step</span>
+    </div>
+    <div class="dox_tag_title">API</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">private
+</span>
+    </span>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">setSkipStageStep</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stageId</span> <span class="o">||</span> <span class="nx">stageId</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: stageId must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be a non-empty string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stepId</span> <span class="o">||</span> <span class="nx">stepId</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: stepId must &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;be a non-empty string or undefined.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">toSkip</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stageId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">stepId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">toSkip</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stageId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">stepId</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">value</span><span class="p">)</span> <span class="nx">that</span><span class="p">.</span><span class="nx">toSkip</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">toSkip</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">];</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="validateextendedstep">
+  <h4>
+    <a href="#validateextendedstep" class="pilcrow">&#182;</a>
+    validateExtendedStep
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Validates the modification to a step (already known as object)</p>
+
+<p>Each step inside the steps array is validated via <code>handleStepsArray</code>.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stepId</span>
+      <span class="dox_type">string</span>
+      <span>The original step id</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">update</span>
+      <span class="dox_type">object</span>
+      <span>The update/updated object</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">updateFunction</span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE if the update object is the
+   value returned by an update function</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">handleStepsArray
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">validateExtendedStep</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">update</span><span class="p">,</span> <span class="nx">updateFunction</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">updateFunction</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">update</span> <span class="o">||</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStep: update function &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;must return an object with id and cb: &#39;</span> <span class="o">+</span>
+                                    <span class="nx">stepId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">update</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.extendStep: update function &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;cannot alter the step id: &#39;</span> <span class="o">+</span> <span class="nx">stepId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStep: update function &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;must return an object with a valid &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;callback. Step id:&#39;</span> <span class="o">+</span> <span class="nx">stepId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+             <span class="k">if</span> <span class="p">(</span><span class="nx">update</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.extendStep: update.id cannot be set. &#39;</span> <span class="o">+</span>
+                               <span class="s1">&#39;Step id: &#39;</span> <span class="o">+</span> <span class="nx">stepId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStep: update.cb must be &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;function. Step id: &#39;</span> <span class="o">+</span> <span class="nx">stepId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="validateextendedstage">
+  <h4>
+    <a href="#validateextendedstage" class="pilcrow">&#182;</a>
+    validateExtendedStage
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Validates the modification to a stage (already known as object)</p>
+
+<p>Each step inside the steps array is validated via <code>handleStepsArray</code>.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">that</span>
+      <span class="dox_type">Stager</span>
+      <span>Stager object</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stageId</span>
+      <span class="dox_type">string</span>
+      <span>The original stage id</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">update</span>
+      <span class="dox_type">object</span>
+      <span>The update/updated object</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">updateFunction</span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE if the update object is the
+   value returned by an update function</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">handleStepsArray
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">validateExtendedStage</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">update</span><span class="p">,</span> <span class="nx">updateFunction</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">((</span><span class="nx">updateFunction</span> <span class="o">&amp;&amp;</span> <span class="nx">update</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">stageId</span><span class="p">)</span> <span class="o">||</span>
+            <span class="p">(</span><span class="o">!</span><span class="nx">updateFunction</span> <span class="o">&amp;&amp;</span> <span class="nx">update</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)))</span> <span class="p">{</span>
+
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: id cannot be altered: &#39;</span> <span class="o">+</span>
+                            <span class="nx">stageId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">update</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;cb&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: update.cb cannot be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;specified. Stage id: &#39;</span> <span class="o">+</span> <span class="nx">stageId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">update</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;steps&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">||</span>
+                <span class="nx">update</span><span class="p">.</span><span class="nx">steps</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">||</span> <span class="nx">update</span><span class="p">.</span><span class="nx">steps</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: found update.steps, but &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;it is not a non-empty array. Stage id: &#39;</span> <span class="o">+</span>
+                               <span class="nx">stageId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+            <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>Process every step in the array. Steps array is modified.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">handleStepsArray</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">,</span> <span class="s1">&#39;extendStage&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+
+<span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

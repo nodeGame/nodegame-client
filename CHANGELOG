@@ -51,6 +51,9 @@
  - Game message target `BYE` causes a client side disconnection.
  - `#node.get()` syntax changed. Fourth parameters is `options` and contains more options.
  - Removed `node.fs` object. Developers should use native NDDB methods to save to csv format.
+ - `#Stager.loop()` and `#Stager.doLoop()` must have a loop function, no default provided.
+
+>>>>>>> newstager
 
 ## 0.9.9
 

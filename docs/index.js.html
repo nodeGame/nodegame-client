@@ -126,13 +126,48 @@ for on line, multiplayer games in the browser.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
 </div>
+<p>Stager</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">Block</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/Block&#39;</span><span class="p">).</span><span class="nx">Block</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/Stager&#39;</span><span class="p">).</span><span class="nx">Stager</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>Stager modules</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<p>Must be required first.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_stages_steps.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_setters_getters.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_flexible&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_extends.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_blocks.js&#39;</span><span class="p">);</span>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_extract_info.js&#39;</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
 <p>Core</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameStage&#39;</span><span class="p">).</span><span class="nx">GameStage</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/PlayerList&#39;</span><span class="p">).</span><span class="nx">PlayerList</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">Player</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/PlayerList&#39;</span><span class="p">).</span><span class="nx">Player</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameMsg&#39;</span><span class="p">).</span><span class="nx">GameMsg</span><span class="p">;</span>
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Stager&#39;</span><span class="p">).</span><span class="nx">Stager</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">GamePlot</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GamePlot&#39;</span><span class="p">).</span><span class="nx">GamePlot</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsgGenerator</span> <span class="o">=</span>
         <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameMsgGenerator&#39;</span><span class="p">).</span><span class="nx">GameMsgGenerator</span><span class="p">;</span></pre></div>
@@ -141,7 +176,7 @@ for on line, multiplayer games in the browser.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
 </div>
 <p>Sockets</p>
         </td>
@@ -155,7 +190,7 @@ for on line, multiplayer games in the browser.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
 <p>Timer</p>
         </td>
@@ -165,7 +200,7 @@ for on line, multiplayer games in the browser.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>Game</p>
         </td>
@@ -177,7 +212,7 @@ for on line, multiplayer games in the browser.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>Extra (to be tested)</p>
         </td>
@@ -189,7 +224,7 @@ for on line, multiplayer games in the browser.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
 <p>Addons</p>
         </td>
@@ -199,7 +234,7 @@ for on line, multiplayer games in the browser.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <p>FS
 exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;</p>
@@ -210,7 +245,7 @@ exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>Load main nodegame-client class.</p>
         </td>
@@ -221,7 +256,7 @@ exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Load extensions to the prototype.</p>
         </td>
@@ -265,7 +300,7 @@ exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>TODO: find a good way to incorpare all the classes
 TODO: should they use the new operator?</p>
