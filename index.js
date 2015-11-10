@@ -33,8 +33,15 @@
     exports.Block = require('./lib/stager/Block').Block;
     exports.Stager = require('./lib/stager/Stager').Stager;
 
-    require('./lib/stager/stager_extract_info.js');
+    // Stager modules
 
+    // Must be required first.
+    require('./lib/stager/stager_stages_steps.js');
+    require('./lib/stager/stager_setters_getters.js');
+    require('./lib/stager/stager_flexible');
+    require('./lib/stager/stager_extends.js');
+    require('./lib/stager/stager_blocks.js');
+    require('./lib/stager/stager_extract_info.js');
 
     // Core
     exports.GameStage = require('./lib/core/GameStage').GameStage;

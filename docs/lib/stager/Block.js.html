@@ -25,6 +25,30 @@
         <a href="#global-scope">Global scope</a>
       </div>
       <div class="heading h2">
+        <a href="#block.blocktypes">Block.blockTypes</a>
+      </div>
+      <div class="heading h4">
+        <a href="#block_default">BLOCK_DEFAULT</a>
+      </div>
+      <div class="heading h4">
+        <a href="#block_stageblock">BLOCK_STAGEBLOCK</a>
+      </div>
+      <div class="heading h4">
+        <a href="#block_stage">BLOCK_STAGE</a>
+      </div>
+      <div class="heading h4">
+        <a href="#block_stepblock">BLOCK_STEPBLOCK</a>
+      </div>
+      <div class="heading h4">
+        <a href="#block_step">BLOCK_STEP</a>
+      </div>
+      <div class="heading h4">
+        <a href="#block_enclosing_steps">BLOCK_ENCLOSING_STEPS</a>
+      </div>
+      <div class="heading h4">
+        <a href="#block_enclosing_stages">BLOCK_ENCLOSING_STAGES</a>
+      </div>
+      <div class="heading h2">
         <a href="#block-constructor">Block constructor</a>
       </div>
       <div class="heading h3">
@@ -129,21 +153,151 @@ MIT Licensed</p>
         </td>
       </tr>
       <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="block.blocktypes">
+  <h2>
+    <a href="#block.blocktypes" class="pilcrow">&#182;</a>
+    Block.blockTypes
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>List of available block types</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">blockTypes</span> <span class="o">=</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="block_default">
+  <h4>
+    <a href="#block_default" class="pilcrow">&#182;</a>
+    BLOCK_DEFAULT
+  </h4>
+</div>
+
+
+<p>The first block automatically added to the stager.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_DEFAULT</span><span class="o">:</span>           <span class="s1">&#39;__default&#39;</span><span class="p">,</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="block_stageblock">
+  <h4>
+    <a href="#block_stageblock" class="pilcrow">&#182;</a>
+    BLOCK_STAGEBLOCK
+  </h4>
+</div>
+
+
+<p>A block that is a collection of stages.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_STAGEBLOCK</span><span class="o">:</span>        <span class="s1">&#39;__stageBlock_&#39;</span><span class="p">,</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="block_stage">
+  <h4>
+    <a href="#block_stage" class="pilcrow">&#182;</a>
+    BLOCK_STAGE
+  </h4>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_STAGE</span><span class="o">:</span>             <span class="s1">&#39;__stage&#39;</span><span class="p">,</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="block_stepblock">
+  <h4>
+    <a href="#block_stepblock" class="pilcrow">&#182;</a>
+    BLOCK_STEPBLOCK
+  </h4>
+</div>
+
+
+<p>A block that is a collection of steps</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_STEPBLOCK</span><span class="o">:</span>         <span class="s1">&#39;__stepBlock_&#39;</span><span class="p">,</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="block_step">
+  <h4>
+    <a href="#block_step" class="pilcrow">&#182;</a>
+    BLOCK_STEP
+  </h4>
+</div>
+
+
+<p>?</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_STEP</span><span class="o">:</span>              <span class="s1">&#39;__step&#39;</span><span class="p">,</span></pre></div>
+        </td>
+      </tr>
+      <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
-<p>Do not change. These are shared with Stager.js.</p>
+<p>BLOCK_ENCLOSING</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">BLOCK_DEFAULT</span>     <span class="o">=</span> <span class="s1">&#39;__default&#39;</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">BLOCK_STAGEBLOCK</span>  <span class="o">=</span> <span class="s1">&#39;__stageBlock_&#39;</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">BLOCK_STAGE</span>       <span class="o">=</span> <span class="s1">&#39;__stage&#39;</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">BLOCK_STEPBLOCK</span>   <span class="o">=</span> <span class="s1">&#39;__stepBlock_&#39;</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">BLOCK_STEP</span>        <span class="o">=</span> <span class="s1">&#39;__step&#39;</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_ENCLOSING</span><span class="o">:</span>         <span class="s1">&#39;__enclosing_&#39;</span><span class="p">,</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="block_enclosing_steps">
+  <h4>
+    <a href="#block_enclosing_steps" class="pilcrow">&#182;</a>
+    BLOCK_ENCLOSING_STEPS
+  </h4>
+</div>
 
-    <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING</span>          <span class="o">=</span> <span class="s1">&#39;__enclosing_&#39;</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING_STEPS</span>    <span class="o">=</span> <span class="s1">&#39;__enclosing_steps&#39;</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING_STAGES</span>   <span class="o">=</span> <span class="s1">&#39;__enclosing_stages&#39;</span><span class="p">;</span></pre></div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_ENCLOSING_STEPS</span><span class="o">:</span>   <span class="s1">&#39;__enclosing_steps&#39;</span><span class="p">,</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="block_enclosing_stages">
+  <h4>
+    <a href="#block_enclosing_stages" class="pilcrow">&#182;</a>
+    BLOCK_ENCLOSING_STAGES
+  </h4>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_ENCLOSING_STAGES</span><span class="o">:</span>  <span class="s1">&#39;__enclosing_stages&#39;</span><span class="p">,</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>Exporting block types.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Block</span><span class="p">.</span><span class="nx">blockTypes</span> <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">BLOCK_DEFAULT</span>     <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_DEFAULT</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">BLOCK_STAGEBLOCK</span>  <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_STAGEBLOCK</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">BLOCK_STAGE</span>       <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span> <span class="nx">BLOCK_STAGE</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">BLOCK_STEPBLOCK</span>   <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span> <span class="nx">BLOCK_STEPBLOCK</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">BLOCK_STEP</span>        <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_STEP</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING</span>          <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_ENCLOSING</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING_STEPS</span>    <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span> <span class="nx">BLOCK_ENCLOSING_STEPS</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING_STAGES</span>   <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_ENCLOSING_STAGES</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -491,7 +645,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Remove default step if it is BLOCK_STEP and further steps were added.</p>
         </td>
@@ -505,7 +659,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>If no positions is assigned before we don't need arraydiff</p>
         </td>
@@ -515,7 +669,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Creating array of available positions:
 from 0 to nItems accounting for already taken positions.
@@ -527,7 +681,7 @@ available = J.arrayDiff(J.seq(0,this.size()-1), this.takenPositions);</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>TODO: this could be done inside the while loop. However, as
 every iterations also other entries are updated, it requires
@@ -545,7 +699,7 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Assigning positions.</p>
         </td>
@@ -555,7 +709,7 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Select entry with least possibilities of where to go.</p>
         </td>
@@ -568,7 +722,7 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>No valid position specified.</p>
         </td>
@@ -582,7 +736,7 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Chose position randomly among possibilities.</p>
         </td>
@@ -594,7 +748,7 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Adjust possible positions in remaining entries.</p>
         </td>

@@ -58,6 +58,12 @@ var ng_client = [
 
     rootDir + "lib/stager/Block.js",
     rootDir + "lib/stager/Stager.js",
+    rootDir + "lib/stager/stager_extract_info.js",
+    rootDir + "lib/stager/stager_stages_steps.js",
+    rootDir + "lib/stager/stager_setters_getters.js",
+    rootDir + "lib/stager/stager_flexible.js",
+    rootDir + "lib/stager/stager_extends.js",
+    rootDir + "lib/stager/stager_blocks.js",
 
     // Sockets.
 
