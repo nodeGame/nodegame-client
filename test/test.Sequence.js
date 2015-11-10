@@ -11,8 +11,7 @@ var J = ngc.JSUS;
 var result;
 var stager = new Stager();
 
-// stage 1 does the error.
-//
+
 //             stager.stageBlock('1');
 //
 //             stager.stage('stage 1');
