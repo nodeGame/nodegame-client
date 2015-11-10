@@ -11,58 +11,6 @@ var J = ngc.JSUS;
 var result;
 var stager = new Stager();
 
-
-//  stager.stageBlock('First Block', '1');
-//
-//  stager.stage('stage 1');
-//  stager.step('step 1.1', '*');
-//
-//  stager.stepBlock('Game Block', '0');
-//  stager.step('step 1.2');
-//  stager.step('step 1.3');
-//
-//  stager.stepBlock('Final, Block', '1');
-//  stager.step('step 1.4');
-//  stager.step('step 1.5');
-//
-//  stager.stageBlock('Second Block', '*');
-//  stager.stage('stage 2', '0..1');
-//
-//  stager.stage('stage 3', '2');
-//  stager.step('step 3.1', '*');
-//  stager.step('step 3.2', '*');
-//
-//  stager.stage('stage 4', '*');
-
-
-
-//  stager.stageBlock('1');
-//
-//  stager.stage('stage 1');
-//  stager.step('step 1.1', '*');
-//
-//  stager.stepBlock('0');
-//  stager.step('step 1.2');
-//  stager.step('step 1.3');
-//
-//  stager.stepBlock('1');
-//  stager.step('step 1.4');
-//  stager.step('step 1.5');
-//
-//  stager.stageBlock('*');
-//  stager.stage('stage 2', '0..1');
-//
-//  stager.stage('stage 3', '2');
-//  stager.step('step 3.1', '*');
-//  stager.step('step 3.2', '*');
-//
-//  stager.stage('stage 4', '*');
-
-
-//             stager.next('stage 1', '0,2');
-//             stager.next('stage 2', '1');
-//             stager.next('stage 3', '0,2');
-//
 //
 //     debugger
 //    s = stager.getState().sequence;

@@ -33,6 +33,9 @@
     exports.Block = require('./lib/stager/Block').Block;
     exports.Stager = require('./lib/stager/Stager').Stager;
 
+    require('./lib/stager/stager_extract_info.js');
+
+
     // Core
     exports.GameStage = require('./lib/core/GameStage').GameStage;
     exports.PlayerList = require('./lib/core/PlayerList').PlayerList;
