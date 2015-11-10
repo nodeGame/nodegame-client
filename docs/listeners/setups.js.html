@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../doc-style.css" />
   <script src="../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../', thisFile = 'listeners/setups.js', defaultSidebar = true;
+    var relativeDir = "../", thisFile = "listeners/setups.js", defaultSidebar = true;
   </script>
   <script src="../doc-script.js"></script>
 </head>
@@ -83,7 +83,7 @@
   <div class="summary">
 <div class="pilwrap" id="setups">
   <h1>
-    <a href="#setups" class="pilcrow">&#182;</a>
+    <a href="#setups" name="setups" class="pilcrow">&#182;</a>
     setups
   </h1>
 </div>
@@ -106,7 +106,10 @@ MIT Licensed</p>
     <span class="nx">GamePlot</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GamePlot</span><span class="p">,</span>
     <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -114,7 +117,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="nodegameclient.adddefaultsetupfunctions">
   <h2>
-    <a href="#nodegameclient.adddefaultsetupfunctions" class="pilcrow">&#182;</a>
+    <a href="#nodegameclient.adddefaultsetupfunctions" name="nodegameclient.adddefaultsetupfunctions" class="pilcrow">&#182;</a>
     NodeGameClient.addDefaultSetupFunctions
   </h2>
 </div>
@@ -140,7 +143,8 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultSetupFunctions</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultSetupFunctions</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">setupsAdded</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.addDefaultSetups: setup functions already &#39;</span> <span class="o">+</span>
@@ -148,7 +152,10 @@ MIT Licensed</p>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node: registering setup functions.&#39;</span><span class="p">);</span></pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node: registering setup functions.&#39;</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -156,7 +163,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.nodegame">
   <h3>
-    <a href="#node.setup.nodegame" class="pilcrow">&#182;</a>
+    <a href="#node.setup.nodegame" name="node.setup.nodegame" class="pilcrow">&#182;</a>
     node.setup.nodegame
   </h3>
 </div>
@@ -179,7 +186,8 @@ the default values.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;nodegame&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;nodegame&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">setupOptions</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
@@ -189,7 +197,10 @@ the default values.</p>
             <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
-                    <span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span></pre></div>
+                    <span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -199,9 +210,12 @@ the default values.</p>
 </div>
 <p>Old Operas loop over the prototype property as well.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;register&#39;</span> <span class="o">&amp;&amp;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;register&#39;</span> <span class="o">&amp;&amp;</span>
                         <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;nodegame&#39;</span> <span class="o">&amp;&amp;</span>
-                        <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;prototype&#39;</span><span class="p">)</span> <span class="p">{</span></pre></div>
+                        <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;prototype&#39;</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -211,13 +225,17 @@ the default values.</p>
 </div>
 <p>Like this browsers do not complain in strict mode.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                        <span class="nx">setupOptions</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">?</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                        <span class="nx">setupOptions</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">?</span>
                             <span class="kc">undefined</span> <span class="o">:</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
                         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">setupOptions</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -225,7 +243,7 @@ the default values.</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.socket">
   <h3>
-    <a href="#node.setup.socket" class="pilcrow">&#182;</a>
+    <a href="#node.setup.socket" name="node.setup.socket" class="pilcrow">&#182;</a>
     node.setup.socket
   </h3>
 </div>
@@ -241,16 +259,20 @@ the default values.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.SocketFactory
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;socket&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;socket&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">setup</span><span class="p">(</span><span class="nx">conf</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -258,7 +280,7 @@ the default values.</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.host">
   <h3>
-    <a href="#node.setup.host" class="pilcrow">&#182;</a>
+    <a href="#node.setup.host" name="node.setup.host" class="pilcrow">&#182;</a>
     node.setup.host
   </h3>
 </div>
@@ -271,8 +293,11 @@ the window object in the browser enviroment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">tokens</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">tokens</span><span class="p">;</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -282,7 +307,8 @@ the window object in the browser enviroment.</p>
 </div>
 <p>URL</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">host</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">;</span>
@@ -291,7 +317,9 @@ the window object in the browser enviroment.</p>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">).</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span></pre></div>
+                <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">).</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -301,9 +329,13 @@ the window object in the browser enviroment.</p>
 </div>
 <p>url was not of the form '/channel'</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">host</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
-                <span class="p">}</span></pre></div>
+                <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -313,13 +345,17 @@ the window object in the browser enviroment.</p>
 </div>
 <p>Add a trailing slash if missing</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">host</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">host</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">host</span> <span class="o">=</span> <span class="nx">host</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
 
             <span class="k">return</span> <span class="nx">host</span><span class="p">;</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -327,7 +363,7 @@ the window object in the browser enviroment.</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.verbosity">
   <h3>
-    <a href="#node.setup.verbosity" class="pilcrow">&#182;</a>
+    <a href="#node.setup.verbosity" name="node.setup.verbosity" class="pilcrow">&#182;</a>
     node.setup.verbosity
   </h3>
 </div>
@@ -337,7 +373,8 @@ the window object in the browser enviroment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;verbosity&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;verbosity&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">level</span> <span class="o">&amp;&amp;</span>
                 <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">level</span><span class="p">))</span> <span class="p">{</span>
 
@@ -347,7 +384,10 @@ the window object in the browser enviroment.</p>
                 <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="nx">level</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">return</span> <span class="nx">level</span><span class="p">;</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -355,7 +395,7 @@ the window object in the browser enviroment.</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.nodename">
   <h3>
-    <a href="#node.setup.nodename" class="pilcrow">&#182;</a>
+    <a href="#node.setup.nodename" name="node.setup.nodename" class="pilcrow">&#182;</a>
     node.setup.nodename
   </h3>
 </div>
@@ -365,14 +405,18 @@ the window object in the browser enviroment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;nodename&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;nodename&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">newName</span> <span class="o">=</span> <span class="nx">newName</span> <span class="o">||</span> <span class="s1">&#39;ng&#39;</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.nodename must be of type string.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">=</span> <span class="nx">newName</span><span class="p">;</span>
             <span class="k">return</span> <span class="nx">newName</span><span class="p">;</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -380,7 +424,7 @@ the window object in the browser enviroment.</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.debug">
   <h3>
-    <a href="#node.setup.debug" class="pilcrow">&#182;</a>
+    <a href="#node.setup.debug" name="node.setup.debug" class="pilcrow">&#182;</a>
     node.setup.debug
   </h3>
 </div>
@@ -390,14 +434,18 @@ the window object in the browser enviroment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">enable</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">enable</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">enable</span> <span class="o">=</span> <span class="nx">enable</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;boolean&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">enable</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.debug must be of type boolean.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">enable</span><span class="p">;</span>
             <span class="k">return</span> <span class="nx">enable</span><span class="p">;</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -405,7 +453,7 @@ the window object in the browser enviroment.</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.env">
   <h3>
-    <a href="#node.setup.env" class="pilcrow">&#182;</a>
+    <a href="#node.setup.env" name="node.setup.env" class="pilcrow">&#182;</a>
     node.setup.env
   </h3>
 </div>
@@ -415,7 +463,8 @@ the window object in the browser enviroment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
@@ -426,7 +475,10 @@ the window object in the browser enviroment.</p>
             <span class="p">}</span>
 
             <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -434,7 +486,7 @@ the window object in the browser enviroment.</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.events">
   <h3>
-    <a href="#node.setup.events" class="pilcrow">&#182;</a>
+    <a href="#node.setup.events" name="node.setup.events" class="pilcrow">&#182;</a>
     node.setup.events
   </h3>
 </div>
@@ -446,12 +498,13 @@ the window object in the browser enviroment.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.EventEmitter
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">conf</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
@@ -462,7 +515,10 @@ the window object in the browser enviroment.</p>
             <span class="p">}</span>
 
             <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -470,7 +526,7 @@ the window object in the browser enviroment.</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.game_settings">
   <h3>
-    <a href="#node.setup.game_settings" class="pilcrow">&#182;</a>
+    <a href="#node.setup.game_settings" name="node.setup.game_settings" class="pilcrow">&#182;</a>
     node.setup.game_settings
   </h3>
 </div>
@@ -480,13 +536,17 @@ the window object in the browser enviroment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;settings&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;settings&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">settings</span><span class="p">,</span> <span class="nx">settings</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">settings</span><span class="p">;</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -494,7 +554,7 @@ the window object in the browser enviroment.</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.metadata">
   <h3>
-    <a href="#node.setup.metadata" class="pilcrow">&#182;</a>
+    <a href="#node.setup.metadata" name="node.setup.metadata" class="pilcrow">&#182;</a>
     node.setup.metadata
   </h3>
 </div>
@@ -504,13 +564,17 @@ the window object in the browser enviroment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">metadata</span><span class="p">,</span> <span class="nx">metadata</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">metadata</span><span class="p">;</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -518,7 +582,7 @@ the window object in the browser enviroment.</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.player">
   <h3>
-    <a href="#node.setup.player" class="pilcrow">&#182;</a>
+    <a href="#node.setup.player" name="node.setup.player" class="pilcrow">&#182;</a>
     node.setup.player
   </h3>
 </div>
@@ -534,15 +598,19 @@ the window object in the browser enviroment.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.createPlayer
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -550,7 +618,7 @@ the window object in the browser enviroment.</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.timer">
   <h3>
-    <a href="#node.setup.timer" class="pilcrow">&#182;</a>
+    <a href="#node.setup.timer" name="node.setup.timer" class="pilcrow">&#182;</a>
     node.setup.timer
   </h3>
 </div>
@@ -566,12 +634,13 @@ the window object in the browser enviroment.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.GameTimer
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;timer&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;timer&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">timer</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">name</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
             <span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">timers</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
@@ -595,7 +664,10 @@ the window object in the browser enviroment.</p>
                 <span class="k">break</span><span class="p">;</span>
             <span class="k">case</span> <span class="s1">&#39;resume&#39;</span><span class="o">:</span>
                 <span class="nx">timer</span><span class="p">.</span><span class="nx">resume</span><span class="p">();</span>
-            <span class="p">}</span></pre></div>
+            <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -605,11 +677,15 @@ the window object in the browser enviroment.</p>
 </div>
 <p>Last configured timer options.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">return</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">return</span> <span class="p">{</span>
                 <span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
                 <span class="nx">data</span><span class="o">:</span> <span class="nx">data</span>
             <span class="p">};</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -617,7 +693,7 @@ the window object in the browser enviroment.</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.plot">
   <h3>
-    <a href="#node.setup.plot" class="pilcrow">&#182;</a>
+    <a href="#node.setup.plot" name="node.setup.plot" class="pilcrow">&#182;</a>
     node.setup.plot
   </h3>
 </div>
@@ -651,12 +727,13 @@ Updates are not possible for the moment.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.setState
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;plot&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stagerState</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;plot&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stagerState</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;node.setup.plot: node.game not found.&quot;</span><span class="p">);</span>
             <span class="p">}</span>
@@ -676,7 +753,10 @@ Updates are not possible for the moment.</p>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">;</span>
         <span class="p">});</span>
 
-        <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -684,7 +764,7 @@ Updates are not possible for the moment.</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.plist">
   <h3>
-    <a href="#node.setup.plist" class="pilcrow">&#182;</a>
+    <a href="#node.setup.plist" name="node.setup.plist" class="pilcrow">&#182;</a>
     node.setup.plist
   </h3>
 </div>
@@ -708,9 +788,13 @@ Updates are not possible for the moment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;plist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;plist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">updatePlayerList</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;pl&#39;</span><span class="p">,</span> <span class="nx">list</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">);</span>
-            <span class="p">});</span></pre></div>
+            <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -718,7 +802,7 @@ Updates are not possible for the moment.</p>
   <div class="summary">
 <div class="pilwrap" id="this.setup.mlist">
   <h3>
-    <a href="#this.setup.mlist" class="pilcrow">&#182;</a>
+    <a href="#this.setup.mlist" name="this.setup.mlist" class="pilcrow">&#182;</a>
     this.setup.mlist
   </h3>
 </div>
@@ -742,9 +826,13 @@ Updates are not possible for the moment.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;mlist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;mlist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">updatePlayerList</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;ml&#39;</span><span class="p">,</span> <span class="nx">list</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">);</span>
-            <span class="p">});</span></pre></div>
+            <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -754,8 +842,11 @@ Updates are not possible for the moment.</p>
 </div>
 <p>Utility for setup.plist and setup.mlist:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="kd">function</span> <span class="nx">updatePlayerList</span><span class="p">(</span><span class="nx">dstListName</span><span class="p">,</span> <span class="nx">srcList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">dstList</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="kd">function</span> <span class="nx">updatePlayerList</span><span class="p">(</span><span class="nx">dstListName</span><span class="p">,</span> <span class="nx">srcList</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">dstList</span><span class="p">;</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -765,7 +856,8 @@ Updates are not possible for the moment.</p>
 </div>
 <p>Initial setup call. Nothing to do.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">srcList</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">updateRule</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">srcList</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">updateRule</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 
                 <span class="nx">dstList</span> <span class="o">=</span> <span class="nx">dstListName</span> <span class="o">===</span> <span class="s1">&#39;pl&#39;</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">;</span>
                 <span class="nx">updateRule</span> <span class="o">=</span> <span class="nx">updateRule</span> <span class="o">||</span> <span class="s1">&#39;replace&#39;</span><span class="p">;</span>
@@ -776,7 +868,10 @@ Updates are not possible for the moment.</p>
                 <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;setup.&#39;</span> <span class="o">+</span> <span class="nx">dstListName</span> <span class="o">+</span> <span class="s1">&#39;ist: invalid &#39;</span> <span class="o">+</span>
                                     <span class="s1">&#39;updateRule: &#39;</span> <span class="o">+</span> <span class="nx">updateRule</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
-                <span class="p">}</span></pre></div>
+                <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -787,11 +882,15 @@ Updates are not possible for the moment.</p>
 <p>Import clients (if any).
 Automatic cast from Object to Player.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">srcList</span><span class="p">)</span> <span class="nx">dstList</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">srcList</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">srcList</span><span class="p">)</span> <span class="nx">dstList</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">srcList</span><span class="p">);</span>
 
                 <span class="k">return</span> <span class="p">{</span> <span class="nx">updateRule</span><span class="o">:</span> <span class="nx">updateRule</span><span class="p">,</span> <span class="nx">list</span><span class="o">:</span> <span class="nx">srcList</span> <span class="p">};</span>
             <span class="p">}</span>
-        <span class="p">})(</span><span class="k">this</span><span class="p">);</span></pre></div>
+        <span class="p">})(</span><span class="k">this</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -799,7 +898,7 @@ Automatic cast from Object to Player.</p>
   <div class="summary">
 <div class="pilwrap" id="this.setup.lang">
   <h3>
-    <a href="#this.setup.lang" class="pilcrow">&#182;</a>
+    <a href="#this.setup.lang" name="this.setup.lang" class="pilcrow">&#182;</a>
     this.setup.lang
   </h3>
 </div>
@@ -817,7 +916,8 @@ Automatic cast from Object to Player.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;lang&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">language</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;lang&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">language</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">language</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">language</span><span class="p">);</span>
         <span class="p">});</span>

@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/modules/getJSON.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/modules/getJSON.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -35,7 +35,7 @@
   <div class="summary">
 <div class="pilwrap" id="getjson">
   <h1>
-    <a href="#getjson" class="pilcrow">&#182;</a>
+    <a href="#getjson" name="getjson" class="pilcrow">&#182;</a>
     GetJSON
   </h1>
 </div>
@@ -52,7 +52,10 @@ MIT Licensed</p>
 
     <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -60,7 +63,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="nodegameclient.getjson">
   <h3>
-    <a href="#nodegameclient.getjson" class="pilcrow">&#182;</a>
+    <a href="#nodegameclient.getjson" name="nodegameclient.getjson" class="pilcrow">&#182;</a>
     NodeGameClient.getJSON
   </h3>
 </div>
@@ -97,12 +100,16 @@ This field is deleted again after the internal callbacks are done.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getJSON</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uris</span><span class="p">,</span> <span class="nx">dataCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getJSON</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uris</span><span class="p">,</span> <span class="nx">dataCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">loadedCount</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">currentUri</span><span class="p">,</span> <span class="nx">uriIdx</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">tempCb</span><span class="p">,</span> <span class="nx">cbIdx</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">scriptTag</span><span class="p">,</span> <span class="nx">scriptTagName</span><span class="p">;</span></pre></div>
+        <span class="kd">var</span> <span class="nx">scriptTag</span><span class="p">,</span> <span class="nx">scriptTagName</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -112,7 +119,8 @@ This field is deleted again after the internal callbacks are done.</p>
 </div>
 <p>Check input:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">uris</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">uris</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">uris</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">uris</span> <span class="p">];</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">uris</span> <span class="o">||</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">uris</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
@@ -126,7 +134,10 @@ This field is deleted again after the internal callbacks are done.</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">doneCb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">doneCb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;NGC.getJSON: doneCb must be undefined or &#39;</span> <span class="o">+</span>
                             <span class="s1">&#39;function&#39;</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -136,12 +147,16 @@ This field is deleted again after the internal callbacks are done.</p>
 </div>
 <p>If no URIs are given, we're done:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">uris</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">uris</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">doneCb</span><span class="p">)</span> <span class="nx">doneCb</span><span class="p">();</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div>
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -151,7 +166,11 @@ This field is deleted again after the internal callbacks are done.</p>
 </div>
 <p>Keep count of loaded data:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">loadedCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">loadedCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -161,7 +180,8 @@ This field is deleted again after the internal callbacks are done.</p>
 </div>
 <p>Create a temporary JSONP callback, store it with the node instance:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">tempCallbacks</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">tempCallbacks</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">tempCallbacks</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">counter</span><span class="o">:</span> <span class="mi">0</span> <span class="p">};</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
@@ -170,7 +190,10 @@ This field is deleted again after the internal callbacks are done.</p>
         <span class="nx">cbIdx</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">tempCallbacks</span><span class="p">.</span><span class="nx">counter</span><span class="p">;</span>
 
         <span class="nx">tempCb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">dataCb</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span></pre></div>
+            <span class="nx">dataCb</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -180,7 +203,8 @@ This field is deleted again after the internal callbacks are done.</p>
 </div>
 <p>Clean up:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">delete</span> <span class="nx">that</span><span class="p">.</span><span class="nx">tempCallbacks</span><span class="p">[</span><span class="nx">cbIdx</span><span class="p">];</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">delete</span> <span class="nx">that</span><span class="p">.</span><span class="nx">tempCallbacks</span><span class="p">[</span><span class="nx">cbIdx</span><span class="p">];</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">tempCallbacks</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">delete</span> <span class="nx">that</span><span class="p">.</span><span class="nx">tempCallbacks</span><span class="p">;</span>
             <span class="p">}</span>
@@ -188,7 +212,10 @@ This field is deleted again after the internal callbacks are done.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">tempCallbacks</span><span class="p">[</span><span class="nx">cbIdx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">tempCb</span><span class="p">;</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">uriIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">uriIdx</span> <span class="o">&lt;</span> <span class="nx">uris</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">uriIdx</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">currentUri</span> <span class="o">=</span> <span class="nx">uris</span><span class="p">[</span><span class="nx">uriIdx</span><span class="p">];</span></pre></div>
+            <span class="nx">currentUri</span> <span class="o">=</span> <span class="nx">uris</span><span class="p">[</span><span class="nx">uriIdx</span><span class="p">];</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -198,13 +225,17 @@ This field is deleted again after the internal callbacks are done.</p>
 </div>
 <p>Create a temporary script tag for the current URI:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">scriptTag</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">scriptTag</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
             <span class="nx">scriptTagName</span> <span class="o">=</span> <span class="s1">&#39;tmp_script_&#39;</span> <span class="o">+</span> <span class="nx">cbIdx</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">uriIdx</span><span class="p">;</span>
             <span class="nx">scriptTag</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">scriptTagName</span><span class="p">;</span>
             <span class="nx">scriptTag</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">scriptTagName</span><span class="p">;</span>
             <span class="nx">scriptTag</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">currentUri</span> <span class="o">+</span>
                 <span class="s1">&#39;?callback=node.tempCallbacks[&#39;</span> <span class="o">+</span> <span class="nx">cbIdx</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span><span class="p">;</span>
-            <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">scriptTag</span><span class="p">);</span></pre></div>
+            <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">scriptTag</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -214,8 +245,11 @@ This field is deleted again after the internal callbacks are done.</p>
 </div>
 <p>Register the onload handler:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">scriptTag</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">thisScriptTag</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">scriptTag</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">thisScriptTag</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -225,7 +259,11 @@ This field is deleted again after the internal callbacks are done.</p>
 </div>
 <p>Remove the script tag:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">thisScriptTag</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">thisScriptTag</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -235,8 +273,11 @@ This field is deleted again after the internal callbacks are done.</p>
 </div>
 <p>Increment loaded URIs counter:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                    <span class="nx">loadedCount</span><span class="o">++</span><span class="p">;</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">loadedCount</span> <span class="o">&gt;=</span> <span class="nx">uris</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="nx">loadedCount</span><span class="o">++</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">loadedCount</span> <span class="o">&gt;=</span> <span class="nx">uris</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -246,7 +287,8 @@ This field is deleted again after the internal callbacks are done.</p>
 </div>
 <p>All requested URIs have been loaded at this point.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                        <span class="k">if</span> <span class="p">(</span><span class="nx">doneCb</span><span class="p">)</span> <span class="nx">doneCb</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">doneCb</span><span class="p">)</span> <span class="nx">doneCb</span><span class="p">();</span>
                     <span class="p">}</span>
                 <span class="p">};</span>
             <span class="p">})(</span><span class="nx">currentUri</span><span class="p">,</span> <span class="nx">scriptTag</span><span class="p">);</span>

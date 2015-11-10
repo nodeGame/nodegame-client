@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/core/Session.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/core/Session.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -22,28 +22,28 @@
         <a href="#gamesession">GameSession</a>
       </div>
       <div class="heading h2">
-        <a href="#global-scope">Global scope</a>
+        <a href="#global%20scope">Global scope</a>
       </div>
       <div class="heading h2">
-        <a href="#gamesession-constructor">GameSession constructor</a>
+        <a href="#gamesession%20constructor">GameSession constructor</a>
       </div>
       <div class="heading h3">
         <a href="#gamesession.node">GameSession.node</a>
       </div>
       <div class="heading h2">
-        <a href="#sessionmanager-constructor">SessionManager constructor</a>
+        <a href="#sessionmanager%20constructor">SessionManager constructor</a>
       </div>
       <div class="heading h3">
         <a href="#sessionmanager.session">SessionManager.session</a>
       </div>
       <div class="heading h2">
-        <a href="#sessionmanager-methods">SessionManager methods</a>
+        <a href="#sessionmanager%20methods">SessionManager methods</a>
       </div>
       <div class="heading h3">
-        <a href="#sessionmanager.getvariable--static-">SessionManager.getVariable (static)</a>
+        <a href="#sessionmanager.getvariable%20(static)">SessionManager.getVariable (static)</a>
       </div>
       <div class="heading h3">
-        <a href="#sessionmanager.setvariable--static-">SessionManager.setVariable (static)</a>
+        <a href="#sessionmanager.setvariable%20(static)">SessionManager.setVariable (static)</a>
       </div>
       <div class="heading h3">
         <a href="#sessionmanager.register">SessionManager.register</a>
@@ -77,7 +77,7 @@
   <div class="summary">
 <div class="pilwrap" id="gamesession">
   <h1>
-    <a href="#gamesession" class="pilcrow">&#182;</a>
+    <a href="#gamesession" name="gamesession" class="pilcrow">&#182;</a>
     GameSession
   </h1>
 </div>
@@ -92,20 +92,28 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="global-scope">
+<div class="pilwrap" id="global%20scope">
   <h2>
-    <a href="#global-scope" class="pilcrow">&#182;</a>
+    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
     Global scope
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -115,19 +123,23 @@ MIT Licensed</p>
 </div>
 <p>Exposing constructor.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">GameSession</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">GameSession</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">GameSession</span><span class="p">.</span><span class="nx">SessionManager</span> <span class="o">=</span> <span class="nx">SessionManager</span><span class="p">;</span>
 
     <span class="nx">GameSession</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SessionManager</span><span class="p">();</span>
-    <span class="nx">GameSession</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">GameSession</span><span class="p">;</span></pre></div>
+    <span class="nx">GameSession</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">GameSession</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="gamesession-constructor">
+<div class="pilwrap" id="gamesession%20constructor">
   <h2>
-    <a href="#gamesession-constructor" class="pilcrow">&#182;</a>
+    <a href="#gamesession%20constructor" name="gamesession%20constructor" class="pilcrow">&#182;</a>
     GameSession constructor
   </h2>
 </div>
@@ -145,8 +157,12 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">GameSession</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">GameSession</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -154,7 +170,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamesession.node">
   <h3>
-    <a href="#gamesession.node" class="pilcrow">&#182;</a>
+    <a href="#gamesession.node" name="gamesession.node" class="pilcrow">&#182;</a>
     GameSession.node
   </h3>
 </div>
@@ -164,7 +180,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -174,7 +194,8 @@ MIT Licensed</p>
 </div>
 <p>Register default variables in the session.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="p">{</span>
             <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">p</span><span class="p">);</span>
             <span class="p">},</span>
@@ -205,7 +226,9 @@ MIT Licensed</p>
         <span class="p">});</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="p">{</span>
-            <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+            <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -215,14 +238,19 @@ MIT Licensed</p>
 </div>
 <p>GameSession.restoreStage</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="p">},</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="p">},</span>
             <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">});</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;node.env&#39;</span><span class="p">);</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">}</span>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -233,34 +261,34 @@ MIT Licensed</p>
 <p>GameSession.prototype.restoreStage = function(stage) {</p>
 
 
-<div class="highlight"><pre><code>   <span class="n">try</span> <span class="p">{</span>
-       <span class="sr">//</span> <span class="n">GOTO</span> <span class="n">STATE</span>
-       <span class="n">node</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">execStage</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">getStep</span><span class="p">(</span><span class="n">stage</span><span class="p">));</span>
+<div class="highlight"><pre><code>   <span class="k">try</span> <span class="p">{</span>
+       <span class="c1">// GOTO STATE</span>
+       <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">execStage</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">stage</span><span class="p">));</span>
 
-       <span class="n">var</span> <span class="n">discard</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;LOG&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;STATECHANGE&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;WINDOW_LOADED&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;BEFORE_LOADING&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;LOADED&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;in.say.STATE&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;UPDATED_PLIST&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;NODEGAME_READY&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;out.say.STATE&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;out.set.STATE&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;in.say.PLIST&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;STAGEDONE&#39;</span><span class="p">,</span> <span class="sr">//</span> <span class="n">maybe</span> <span class="ow">not</span> <span class="n">here</span>
-                      <span class="s">&#39;out.say.HI&#39;</span>
+       <span class="kd">var</span> <span class="nx">discard</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LOG&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;STATECHANGE&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;WINDOW_LOADED&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;BEFORE_LOADING&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;LOADED&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;in.say.STATE&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;UPDATED_PLIST&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;NODEGAME_READY&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;out.say.STATE&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;out.set.STATE&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;in.say.PLIST&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;STAGEDONE&#39;</span><span class="p">,</span> <span class="c1">// maybe not here</span>
+                      <span class="s1">&#39;out.say.HI&#39;</span>
                      <span class="p">];</span>
 
-       <span class="sr">//</span> <span class="n">RE</span><span class="o">-</span><span class="n">EMIT</span> <span class="n">EVENTS</span>
-       <span class="n">node</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">remit</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">getStateLevel</span><span class="p">(),</span> <span class="n">discard</span><span class="p">);</span>
-       <span class="n">node</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;game stage restored&#39;</span><span class="p">);</span>
-       <span class="k">return</span> <span class="n">true</span><span class="p">;</span>
+       <span class="c1">// RE-EMIT EVENTS</span>
+       <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">remit</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">(),</span> <span class="nx">discard</span><span class="p">);</span>
+       <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;game stage restored&#39;</span><span class="p">);</span>
+       <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
    <span class="p">}</span>
-   <span class="n">catch</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
-       <span class="n">node</span><span class="o">.</span><span class="n">err</span><span class="p">(</span><span class="s">&#39;could not restore game stage. &#39;</span> <span class="o">+</span>
-                <span class="s">&#39;An error has occurred: &#39;</span> <span class="o">+</span> <span class="n">e</span><span class="p">);</span>
-       <span class="k">return</span> <span class="n">false</span><span class="p">;</span>
+   <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+       <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;could not restore game stage. &#39;</span> <span class="o">+</span>
+                <span class="s1">&#39;An error has occurred: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">);</span>
+       <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
    <span class="p">}</span>
 </code></pre></div>
 
@@ -268,15 +296,18 @@ MIT Licensed</p>
 
 <p>};</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="sessionmanager-constructor">
+<div class="pilwrap" id="sessionmanager%20constructor">
   <h2>
-    <a href="#sessionmanager-constructor" class="pilcrow">&#182;</a>
+    <a href="#sessionmanager%20constructor" name="sessionmanager%20constructor" class="pilcrow">&#182;</a>
     SessionManager constructor
   </h2>
 </div>
@@ -286,7 +317,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">SessionManager</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">SessionManager</span><span class="p">()</span> <span class="p">{</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -294,7 +329,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="sessionmanager.session">
   <h3>
-    <a href="#sessionmanager.session" class="pilcrow">&#182;</a>
+    <a href="#sessionmanager.session" name="sessionmanager.session" class="pilcrow">&#182;</a>
     SessionManager.session
   </h3>
 </div>
@@ -304,29 +339,36 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="p">{};</span>
-    <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="sessionmanager-methods">
+<div class="pilwrap" id="sessionmanager%20methods">
   <h2>
-    <a href="#sessionmanager-methods" class="pilcrow">&#182;</a>
+    <a href="#sessionmanager%20methods" name="sessionmanager%20methods" class="pilcrow">&#182;</a>
     SessionManager methods
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="sessionmanager.getvariable--static-">
+<div class="pilwrap" id="sessionmanager.getvariable%20(static)">
   <h3>
-    <a href="#sessionmanager.getvariable--static-" class="pilcrow">&#182;</a>
+    <a href="#sessionmanager.getvariable%20(static)" name="sessionmanager.getvariable%20(static)" class="pilcrow">&#182;</a>
     SessionManager.getVariable (static)
   </h3>
 </div>
@@ -350,17 +392,21 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">getVariable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">getVariable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="sessionmanager.setvariable--static-">
+<div class="pilwrap" id="sessionmanager.setvariable%20(static)">
   <h3>
-    <a href="#sessionmanager.setvariable--static-" class="pilcrow">&#182;</a>
+    <a href="#sessionmanager.setvariable%20(static)" name="sessionmanager.setvariable%20(static)" class="pilcrow">&#182;</a>
     SessionManager.setVariable (static)
   </h3>
 </div>
@@ -383,9 +429,13 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">setVariable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">setVariable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">J</span><span class="p">.</span><span class="nx">setNestedValue</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -393,7 +443,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="sessionmanager.register">
   <h3>
-    <a href="#sessionmanager.register" class="pilcrow">&#182;</a>
+    <a href="#sessionmanager.register" name="sessionmanager.register" class="pilcrow">&#182;</a>
     SessionManager.register
   </h3>
 </div>
@@ -434,7 +484,8 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">register</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">register</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;SessionManager.register: path must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;string.&#39;</span><span class="p">);</span>
@@ -458,7 +509,10 @@ MIT Licensed</p>
         <span class="p">};</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">[</span><span class="nx">path</span><span class="p">];</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -466,7 +520,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="sessionmanager.unregister">
   <h3>
-    <a href="#sessionmanager.unregister" class="pilcrow">&#182;</a>
+    <a href="#sessionmanager.unregister" name="sessionmanager.unregister" class="pilcrow">&#182;</a>
     SessionManager.unregister
   </h3>
 </div>
@@ -485,12 +539,13 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">SessionManager.register
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">unregister</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">unregister</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;SessionManager.unregister: path must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;string.&#39;</span><span class="p">);</span>
@@ -503,7 +558,10 @@ MIT Licensed</p>
 
         <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">[</span><span class="nx">path</span><span class="p">];</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -511,7 +569,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="sessionmanager.clear">
   <h3>
-    <a href="#sessionmanager.clear" class="pilcrow">&#182;</a>
+    <a href="#sessionmanager.clear" name="sessionmanager.clear" class="pilcrow">&#182;</a>
     SessionManager.clear
   </h3>
 </div>
@@ -523,14 +581,18 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">SessionManager.unregister
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="p">{};</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -538,7 +600,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="sessionmanager.get">
   <h3>
-    <a href="#sessionmanager.get" class="pilcrow">&#182;</a>
+    <a href="#sessionmanager.get" name="sessionmanager.get" class="pilcrow">&#182;</a>
     SessionManager.get
   </h3>
 </div>
@@ -558,13 +620,16 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">SessionManager.register
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">session</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">session</span> <span class="o">=</span> <span class="p">{};</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -574,9 +639,12 @@ MIT Licensed</p>
 </div>
 <p>Returns one variable.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">[</span><span class="nx">path</span><span class="p">]</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">[</span><span class="nx">path</span><span class="p">].</span><span class="nx">get</span><span class="p">()</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">;</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -586,7 +654,8 @@ MIT Licensed</p>
 </div>
 <p>Returns all registered variables.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">path</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">path</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">session</span><span class="p">[</span><span class="nx">path</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">[</span><span class="nx">path</span><span class="p">].</span><span class="nx">get</span><span class="p">();</span>
@@ -598,7 +667,10 @@ MIT Licensed</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;SessionManager.get: path must be string or &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -606,7 +678,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="sessionmanager.isregistered">
   <h3>
-    <a href="#sessionmanager.isregistered" class="pilcrow">&#182;</a>
+    <a href="#sessionmanager.isregistered" name="sessionmanager.isregistered" class="pilcrow">&#182;</a>
     SessionManager.isRegistered
   </h3>
 </div>
@@ -634,18 +706,22 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">SessionManager.unregister
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isRegistered</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isRegistered</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;SessionManager.isRegistered: path must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">path</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -653,7 +729,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="sessionmanager.serialize">
   <h3>
-    <a href="#sessionmanager.serialize" class="pilcrow">&#182;</a>
+    <a href="#sessionmanager.serialize" name="sessionmanager.serialize" class="pilcrow">&#182;</a>
     SessionManager.serialize
   </h3>
 </div>
@@ -674,12 +750,13 @@ current value of each of the registered session variables.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">SessionManager.restore
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">serialize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">serialize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">session</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">path</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">path</span><span class="p">))</span> <span class="p">{</span>
@@ -691,7 +768,10 @@ current value of each of the registered session variables.</p>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">session</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -699,7 +779,7 @@ current value of each of the registered session variables.</p>
   <div class="summary">
 <div class="pilwrap" id="sessionmanager.restore">
   <h3>
-    <a href="#sessionmanager.restore" class="pilcrow">&#182;</a>
+    <a href="#sessionmanager.restore" name="sessionmanager.restore" class="pilcrow">&#182;</a>
     SessionManager.restore
   </h3>
 </div>
@@ -723,7 +803,8 @@ current value of each of the registered session variables.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restore</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">session</span><span class="p">,</span> <span class="nx">register</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">SessionManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restore</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">session</span><span class="p">,</span> <span class="nx">register</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">session</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;SessionManager.restore: session must be &#39;</span> <span class="o">+</span>
@@ -736,7 +817,10 @@ current value of each of the registered session variables.</p>
                 <span class="nx">session</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">set</span><span class="p">(</span><span class="nx">session</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">value</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -748,7 +832,9 @@ current value of each of the registered session variables.</p>
        //node.store(node.socket.id, this.get());
    };</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+<span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>

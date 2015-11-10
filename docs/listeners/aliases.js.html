@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../doc-style.css" />
   <script src="../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../', thisFile = 'listeners/aliases.js', defaultSidebar = true;
+    var relativeDir = "../", thisFile = "listeners/aliases.js", defaultSidebar = true;
   </script>
   <script src="../doc-script.js"></script>
 </head>
@@ -71,7 +71,7 @@
   <div class="summary">
 <div class="pilwrap" id="aliases">
   <h1>
-    <a href="#aliases" class="pilcrow">&#182;</a>
+    <a href="#aliases" name="aliases" class="pilcrow">&#182;</a>
     aliases
   </h1>
 </div>
@@ -88,7 +88,10 @@ MIT Licensed</p>
 
     <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -96,7 +99,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="nodegameclient.adddefaultaliases">
   <h2>
-    <a href="#nodegameclient.adddefaultaliases" class="pilcrow">&#182;</a>
+    <a href="#nodegameclient.adddefaultaliases" name="nodegameclient.adddefaultaliases" class="pilcrow">&#182;</a>
     NodeGameClient.addDefaultAliases
   </h2>
 </div>
@@ -120,7 +123,8 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultAliases</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultAliases</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">aliasesAdded</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.addDefaultAliases: aliases already &#39;</span> <span class="o">+</span>
@@ -129,174 +133,217 @@ MIT Licensed</p>
         <span class="p">}</span>
         <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node: adding default aliases.&#39;</span><span class="p">);</span></pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node: adding default aliases.&#39;</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="node.on.txt">
   <h3>
-    <a href="#node.on.txt" class="pilcrow">&#182;</a>
+    <a href="#node.on.txt" name="node.on.txt" class="pilcrow">&#182;</a>
     node.on.txt
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.TXT&#39;</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.TXT&#39;</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="node.on.data">
   <h3>
-    <a href="#node.on.data" class="pilcrow">&#182;</a>
+    <a href="#node.on.data" name="node.on.data" class="pilcrow">&#182;</a>
     node.on.data
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.DATA&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.DATA&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">};</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="node.on.stage">
   <h3>
-    <a href="#node.on.stage" class="pilcrow">&#182;</a>
+    <a href="#node.on.stage" name="node.on.stage" class="pilcrow">&#182;</a>
     node.on.stage
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STAGE&#39;</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="s1">&#39;in.set.STAGE&#39;</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="node.on.plist">
   <h3>
-    <a href="#node.on.plist" class="pilcrow">&#182;</a>
+    <a href="#node.on.plist" name="node.on.plist" class="pilcrow">&#182;</a>
     node.on.plist
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;plist&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.set.PLIST&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PLIST&#39;</span><span class="p">]);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;plist&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;in.set.PLIST&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PLIST&#39;</span><span class="p">]);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="node.on.pconnect">
   <h3>
-    <a href="#node.on.pconnect" class="pilcrow">&#182;</a>
+    <a href="#node.on.pconnect" name="node.on.pconnect" class="pilcrow">&#182;</a>
     node.on.pconnect
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;pconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;pconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
             <span class="p">};</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="node.on.pdisconnect">
   <h3>
-    <a href="#node.on.pdisconnect" class="pilcrow">&#182;</a>
+    <a href="#node.on.pdisconnect" name="node.on.pdisconnect" class="pilcrow">&#182;</a>
     node.on.pdisconnect
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;pdisconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PDISCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;pdisconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PDISCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
             <span class="p">};</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="node.on.preconnect">
   <h3>
-    <a href="#node.on.preconnect" class="pilcrow">&#182;</a>
+    <a href="#node.on.preconnect" name="node.on.preconnect" class="pilcrow">&#182;</a>
     node.on.preconnect
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;preconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PRECONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;preconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.PRECONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
             <span class="p">};</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="node.on.mconnect">
   <h3>
-    <a href="#node.on.mconnect" class="pilcrow">&#182;</a>
+    <a href="#node.on.mconnect" name="node.on.mconnect" class="pilcrow">&#182;</a>
     node.on.mconnect
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;mconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.MCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;mconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.MCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
             <span class="p">};</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="node.on.mreconnect">
   <h3>
-    <a href="#node.on.mreconnect" class="pilcrow">&#182;</a>
+    <a href="#node.on.mreconnect" name="node.on.mreconnect" class="pilcrow">&#182;</a>
     node.on.mreconnect
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;mreconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.MRECONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;mreconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.MRECONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
             <span class="p">};</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="node.on.mdisconnect">
   <h3>
-    <a href="#node.on.mdisconnect" class="pilcrow">&#182;</a>
+    <a href="#node.on.mdisconnect" name="node.on.mdisconnect" class="pilcrow">&#182;</a>
     node.on.mdisconnect
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;mdisconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.MDISCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;mdisconnect&#39;</span><span class="p">,</span> <span class="s1">&#39;in.say.MDISCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
             <span class="p">};</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="node.on.stepdone">
   <h3>
-    <a href="#node.on.stepdone" class="pilcrow">&#182;</a>
+    <a href="#node.on.stepdone" name="node.on.stepdone" class="pilcrow">&#182;</a>
     node.on.stepdone
   </h3>
 </div>
@@ -304,20 +351,24 @@ MIT Licensed</p>
 
 <p>Uses the step rule to determine when a step is DONE.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;stepdone&#39;</span><span class="p">,</span> <span class="s1">&#39;UPDATED_PLIST&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;stepdone&#39;</span><span class="p">,</span> <span class="s1">&#39;UPDATED_PLIST&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">shouldStep</span><span class="p">())</span> <span class="p">{</span>
                     <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">};</span>
-        <span class="p">});</span></pre></div>
+        <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="node.on.lang">
   <h3>
-    <a href="#node.on.lang" class="pilcrow">&#182;</a>
+    <a href="#node.on.lang" name="node.on.lang" class="pilcrow">&#182;</a>
     node.on.lang
   </h3>
 </div>
@@ -325,7 +376,8 @@ MIT Licensed</p>
 
 <p>Gets language information.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;lang&#39;</span><span class="p">,</span><span class="s1">&#39;in.say.LANG&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;lang&#39;</span><span class="p">,</span><span class="s1">&#39;in.say.LANG&#39;</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node: aliases added.&#39;</span><span class="p">);</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>

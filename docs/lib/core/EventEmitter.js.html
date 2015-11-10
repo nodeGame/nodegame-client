@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/core/EventEmitter.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/core/EventEmitter.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -22,13 +22,13 @@
         <a href="#eventemitter">EventEmitter</a>
       </div>
       <div class="heading h2">
-        <a href="#global-scope">Global scope</a>
+        <a href="#global%20scope">Global scope</a>
       </div>
       <div class="heading h2">
-        <a href="#eventemitter-constructor">EventEmitter constructor</a>
+        <a href="#eventemitter%20constructor">EventEmitter constructor</a>
       </div>
       <div class="heading h2">
-        <a href="#public-properties">Public properties</a>
+        <a href="#public%20properties">Public properties</a>
       </div>
       <div class="heading h3">
         <a href="#eventemitter.listeners">EventEmitter.listeners</a>
@@ -43,7 +43,7 @@
         <a href="#eventemitter.history">EventEmitter.history</a>
       </div>
       <div class="heading h2">
-        <a href="#eventemitter-methods">EventEmitter methods</a>
+        <a href="#eventemitter%20methods">EventEmitter methods</a>
       </div>
       <div class="heading h3">
         <a href="#eventemitter.on">EventEmitter.on</a>
@@ -58,7 +58,7 @@
         <a href="#eventemitter.emitasync">EventEmitter.emitAsync</a>
       </div>
       <div class="heading h3">
-        <a href="#eventemitter.off----remove">EventEmitter.off || remove</a>
+        <a href="#eventemitter.off%20%7C%7C%20remove">EventEmitter.off || remove</a>
       </div>
       <div class="heading h3">
         <a href="#eventemitter.clear">EventEmitter.clear</a>
@@ -73,10 +73,10 @@
         <a href="#eventemitter.setrecordchanges">EventEmitter.setRecordChanges</a>
       </div>
       <div class="heading h2">
-        <a href="#eventemittermanager-constructor">EventEmitterManager constructor</a>
+        <a href="#eventemittermanager%20constructor">EventEmitterManager constructor</a>
       </div>
       <div class="heading h2">
-        <a href="#eventemittermanager-methods">EventEmitterManager methods</a>
+        <a href="#eventemittermanager%20methods">EventEmitterManager methods</a>
       </div>
       <div class="heading h3">
         <a href="#eventemittermanager.createeegroup">EventEmitterManager.createEEGroup</a>
@@ -112,7 +112,7 @@
         <a href="#eventemittermanager.setrecordchanges">EventEmitterManager.setRecordChanges</a>
       </div>
       <div class="heading h2">
-        <a href="#eventhistory-constructor">EventHistory constructor</a>
+        <a href="#eventhistory%20constructor">EventHistory constructor</a>
       </div>
       <div class="heading h3">
         <a href="#eventhistory.history">EventHistory.history</a>
@@ -131,7 +131,7 @@
   <div class="summary">
 <div class="pilwrap" id="eventemitter">
   <h1>
-    <a href="#eventemitter" class="pilcrow">&#182;</a>
+    <a href="#eventemitter" name="eventemitter" class="pilcrow">&#182;</a>
     EventEmitter
   </h1>
 </div>
@@ -148,33 +148,40 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="global-scope">
+<div class="pilwrap" id="global%20scope">
   <h2>
-    <a href="#global-scope" class="pilcrow">&#182;</a>
+    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
     Global scope
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
     <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">,</span>
     <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">;</span>
 
     <span class="nx">exports</span><span class="p">.</span><span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">EventEmitter</span><span class="p">;</span>
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">EventEmitterManager</span> <span class="o">=</span> <span class="nx">EventEmitterManager</span><span class="p">;</span></pre></div>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">EventEmitterManager</span> <span class="o">=</span> <span class="nx">EventEmitterManager</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="eventemitter-constructor">
+<div class="pilwrap" id="eventemitter%20constructor">
   <h2>
-    <a href="#eventemitter-constructor" class="pilcrow">&#182;</a>
+    <a href="#eventemitter%20constructor" name="eventemitter%20constructor" class="pilcrow">&#182;</a>
     EventEmitter constructor
   </h2>
 </div>
@@ -184,26 +191,35 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">EventEmitter</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">EventEmitter</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter constructor: &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;name must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span></pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="public-properties">
+<div class="pilwrap" id="public%20properties">
   <h2>
-    <a href="#public-properties" class="pilcrow">&#182;</a>
+    <a href="#public%20properties" name="public%20properties" class="pilcrow">&#182;</a>
     Public properties
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -211,7 +227,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="eventemitter.listeners">
   <h3>
-    <a href="#eventemitter.listeners" class="pilcrow">&#182;</a>
+    <a href="#eventemitter.listeners" name="eventemitter.listeners" class="pilcrow">&#182;</a>
     EventEmitter.listeners
   </h3>
 </div>
@@ -221,7 +237,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -229,7 +249,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="eventemitter.recordchanges">
   <h2>
-    <a href="#eventemitter.recordchanges" class="pilcrow">&#182;</a>
+    <a href="#eventemitter.recordchanges" name="eventemitter.recordchanges" class="pilcrow">&#182;</a>
     EventEmitter.recordChanges
   </h2>
 </div>
@@ -241,12 +261,16 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">EventEmitter.changes
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">recordChanges</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">recordChanges</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -254,7 +278,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="eventemitter.changes">
   <h2>
-    <a href="#eventemitter.changes" class="pilcrow">&#182;</a>
+    <a href="#eventemitter.changes" name="eventemitter.changes" class="pilcrow">&#182;</a>
     EventEmitter.changes
   </h2>
 </div>
@@ -266,15 +290,19 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">EventEmitter.recordChanges
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">changes</span> <span class="o">=</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">changes</span> <span class="o">=</span> <span class="p">{</span>
             <span class="nx">added</span><span class="o">:</span> <span class="p">[],</span>
             <span class="nx">removed</span><span class="o">:</span> <span class="p">[]</span>
-        <span class="p">};</span></pre></div>
+        <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -282,7 +310,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="eventemitter.history">
   <h3>
-    <a href="#eventemitter.history" class="pilcrow">&#182;</a>
+    <a href="#eventemitter.history" name="eventemitter.history" class="pilcrow">&#182;</a>
     EventEmitter.history
   </h3>
 </div>
@@ -291,37 +319,54 @@ MIT Licensed</p>
   <div class="body"><p>Database of emitted events</p>
   </div>
   <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">NDDB</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">EventEmitter.EventHistory</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">EventEmitter.store
-  </span>
+    <div class="dox_tag_title">experimental
+</div>
+
+
+<div class="highlight"><pre><code><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_detail&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="err">/div&gt;</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_title&quot;</span><span class="o">&gt;</span><span class="nx">See</span><span class="o">&lt;</span><span class="err">/div&gt;</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_detail&quot;</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="nx">span</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_type&quot;</span><span class="o">&gt;</span><span class="nx">NDDB</span><span class="o">&lt;</span><span class="err">/span&gt;</span>
+<span class="o">&lt;</span><span class="err">/div&gt;</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_title&quot;</span><span class="o">&gt;</span><span class="nx">See</span><span class="o">&lt;</span><span class="err">/div&gt;</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_detail&quot;</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="nx">span</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_type&quot;</span><span class="o">&gt;</span><span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">EventHistory</span><span class="o">&lt;</span><span class="err">/span&gt;</span>
+<span class="o">&lt;</span><span class="err">/div&gt;</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_title&quot;</span><span class="o">&gt;</span><span class="nx">See</span><span class="o">&lt;</span><span class="err">/div&gt;</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_detail&quot;</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="nx">span</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_type&quot;</span><span class="o">&gt;</span><span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">store</span>
+</code></pre></div>
+
+
+
+<p></span>
     </div>
   </div>
-</div>
+</div></p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventHistory</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">);</span>
-    <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventHistory</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">);</span>
+    <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="eventemitter-methods">
+<div class="pilwrap" id="eventemitter%20methods">
   <h2>
-    <a href="#eventemitter-methods" class="pilcrow">&#182;</a>
+    <a href="#eventemitter%20methods" name="eventemitter%20methods" class="pilcrow">&#182;</a>
     EventEmitter methods
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -329,7 +374,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="eventemitter.on">
   <h3>
-    <a href="#eventemitter.on" class="pilcrow">&#182;</a>
+    <a href="#eventemitter.on" name="eventemitter.on" class="pilcrow">&#182;</a>
     EventEmitter.on
   </h3>
 </div>
@@ -352,7 +397,8 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.on: type must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
@@ -360,7 +406,9 @@ MIT Licensed</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.on: listener must be function.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span></pre></div>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -371,9 +419,12 @@ MIT Licensed</p>
 <p>Optimize the case of one listener.
 Don't need the extra array object.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">listener</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">listener</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -383,9 +434,12 @@ Don't need the extra array object.</p>
 </div>
 <p>If we've already got an array, just append.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">listener</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">listener</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span></pre></div>
+        <span class="k">else</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -395,8 +449,12 @@ Don't need the extra array object.</p>
 </div>
 <p>Adding the second element, need to change to array.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">],</span> <span class="nx">listener</span><span class="p">];</span>
-        <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">],</span> <span class="nx">listener</span><span class="p">];</span>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -406,12 +464,16 @@ Don't need the extra array object.</p>
 </div>
 <p>Storing changes if necessary.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">recordChanges</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">recordChanges</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">changes</span><span class="p">.</span><span class="nx">added</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="nx">type</span><span class="o">:</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="nx">listener</span><span class="p">});</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;.on: added: &#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -419,7 +481,7 @@ Don't need the extra array object.</p>
   <div class="summary">
 <div class="pilwrap" id="eventemitter.once">
   <h3>
-    <a href="#eventemitter.once" class="pilcrow">&#182;</a>
+    <a href="#eventemitter.once" name="eventemitter.once" class="pilcrow">&#182;</a>
     EventEmitter.once
   </h3>
 </div>
@@ -446,19 +508,23 @@ Don't need the extra array object.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">EventEmitter.off
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="kd">function</span> <span class="nx">g</span><span class="p">()</span> <span class="p">{</span>
             <span class="nx">that</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
             <span class="nx">listener</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -466,7 +532,7 @@ Don't need the extra array object.</p>
   <div class="summary">
 <div class="pilwrap" id="eventemitter.emit">
   <h3>
-    <a href="#eventemitter.emit" class="pilcrow">&#182;</a>
+    <a href="#eventemitter.emit" name="eventemitter.emit" class="pilcrow">&#182;</a>
     EventEmitter.emit
   </h3>
 </div>
@@ -492,7 +558,8 @@ element or <em>undefined</em> is returned.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">handler</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">listeners</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">tmpRes</span><span class="p">;</span>
 
@@ -501,7 +568,10 @@ element or <em>undefined</em> is returned.</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">handler</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
-        <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span></pre></div>
+        <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -511,13 +581,16 @@ element or <em>undefined</em> is returned.</p>
 </div>
 <p>Useful for debugging.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">dumpEvents</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">dumpEvents</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;F: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">handler</span><span class="p">)</span> <span class="p">{</span>
 
-            <span class="k">switch</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span></pre></div>
+            <span class="k">switch</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -527,7 +600,8 @@ element or <em>undefined</em> is returned.</p>
 </div>
 <p>fast cases</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
                 <span class="nx">res</span> <span class="o">=</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">ctx</span><span class="p">);</span>
                 <span class="k">break</span><span class="p">;</span>
             <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
@@ -557,7 +631,9 @@ element or <em>undefined</em> is returned.</p>
                 <span class="nx">args</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
             <span class="p">}</span>
             <span class="nx">listeners</span> <span class="o">=</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
-            <span class="nx">len</span> <span class="o">=</span> <span class="nx">listeners</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span></pre></div>
+            <span class="nx">len</span> <span class="o">=</span> <span class="nx">listeners</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -568,12 +644,15 @@ element or <em>undefined</em> is returned.</p>
 <p>If more than one event listener is registered,
 we will return an array.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">res</span> <span class="o">=</span> <span class="p">[];</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">res</span> <span class="o">=</span> <span class="p">[];</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">tmpRes</span><span class="p">)</span>
                 <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
-            <span class="p">}</span></pre></div>
+            <span class="p">}</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -583,9 +662,13 @@ we will return an array.</p>
 </div>
 <p>If less than 2 listeners returned a value, compact the result.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">res</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="nx">res</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">res</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="nx">res</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -595,7 +678,8 @@ we will return an array.</p>
 </div>
 <p>Log the event into node.history object, if present.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span> <span class="o">&amp;&amp;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span> <span class="o">&amp;&amp;</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span>
@@ -605,7 +689,10 @@ we will return an array.</p>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -613,7 +700,7 @@ we will return an array.</p>
   <div class="summary">
 <div class="pilwrap" id="eventemitter.emitasync">
   <h3>
-    <a href="#eventemitter.emitasync" class="pilcrow">&#182;</a>
+    <a href="#eventemitter.emitasync" name="eventemitter.emitasync" class="pilcrow">&#182;</a>
     EventEmitter.emitAsync
   </h3>
 </div>
@@ -627,18 +714,22 @@ we will return an array.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">EventEmitter.emit
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emitAsync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emitAsync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">arg3</span><span class="p">;</span>
         <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">len</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 
-        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div>
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -650,7 +741,8 @@ we will return an array.</p>
 Therefore, we recreate an args array here. We have a different
 timeout in a different branch for optimization.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
             <span class="nx">arg1</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
@@ -671,15 +763,18 @@ timeout in a different branch for optimization.</p>
             <span class="p">}</span>
             <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">that</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span> <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="eventemitter.off----remove">
+<div class="pilwrap" id="eventemitter.off%20%7C%7C%20remove">
   <h3>
-    <a href="#eventemitter.off----remove" class="pilcrow">&#182;</a>
+    <a href="#eventemitter.off%20%7C%7C%20remove" name="eventemitter.off%20%7C%7C%20remove" class="pilcrow">&#182;</a>
     EventEmitter.off || remove
   </h3>
 </div>
@@ -709,7 +804,8 @@ timeout in a different branch for optimization.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">off</span> <span class="o">=</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">off</span> <span class="o">=</span>
     <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">listeners</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">found</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">removed</span><span class="p">;</span>
@@ -742,7 +838,9 @@ timeout in a different branch for optimization.</p>
                 <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
             <span class="p">}</span>
 
-            <span class="k">else</span> <span class="p">{</span></pre></div>
+            <span class="k">else</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -754,12 +852,16 @@ timeout in a different branch for optimization.</p>
 this.events[type] can be array or function,
 and listener can be function or string.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
 
                     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">listener</span> <span class="o">==</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">])</span> <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="p">}</span>
-                    <span class="k">else</span> <span class="p">{</span></pre></div>
+                    <span class="k">else</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -769,7 +871,8 @@ and listener can be function or string.</p>
 </div>
 <p>String.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                        <span class="nx">name</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">funcName</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                        <span class="nx">name</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">funcName</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]);</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">listener</span><span class="p">)</span> <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="p">}</span>
 
@@ -777,7 +880,9 @@ and listener can be function or string.</p>
                         <span class="nx">removed</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]);</span>
                         <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
                     <span class="p">}</span>
-                <span class="p">}</span></pre></div>
+                <span class="p">}</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -787,14 +892,17 @@ and listener can be function or string.</p>
 </div>
 <p>this.events[type] is an array.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">else</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">else</span> <span class="p">{</span>
                     <span class="nx">listeners</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
                     <span class="nx">len</span> <span class="o">=</span> <span class="nx">listeners</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
                     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="nx">listener</span><span class="p">)</span> <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                         <span class="p">}</span>
-                        <span class="k">else</span> <span class="p">{</span></pre></div>
+                        <span class="k">else</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -804,7 +912,8 @@ and listener can be function or string.</p>
 </div>
 <p>String.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                            <span class="nx">name</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">funcName</span><span class="p">(</span><span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                            <span class="nx">name</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">funcName</span><span class="p">(</span><span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">listener</span><span class="p">)</span> <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                         <span class="p">}</span>
 
@@ -814,7 +923,9 @@ and listener can be function or string.</p>
                                 <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
                             <span class="p">}</span>
                             <span class="k">else</span> <span class="p">{</span>
-                                <span class="nx">listeners</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span></pre></div>
+                                <span class="nx">listeners</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -825,7 +936,8 @@ and listener can be function or string.</p>
 <p>Update indexes,
 because array size has changed.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                                <span class="nx">len</span><span class="o">--</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                                <span class="nx">len</span><span class="o">--</span><span class="p">;</span>
                                 <span class="nx">i</span><span class="o">--</span><span class="p">;</span>
                             <span class="p">}</span>
                         <span class="p">}</span>
@@ -834,7 +946,9 @@ because array size has changed.</p>
             <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">found</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">found</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -844,7 +958,8 @@ because array size has changed.</p>
 </div>
 <p>Storing changes if necessary.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">recordChanges</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">recordChanges</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">removed</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
                 <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">changes</span><span class="p">.</span><span class="nx">removed</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
@@ -861,7 +976,10 @@ because array size has changed.</p>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">removed</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -869,7 +987,7 @@ because array size has changed.</p>
   <div class="summary">
 <div class="pilwrap" id="eventemitter.clear">
   <h3>
-    <a href="#eventemitter.clear" class="pilcrow">&#182;</a>
+    <a href="#eventemitter.clear" name="eventemitter.clear" class="pilcrow">&#182;</a>
     EventEmitter.clear
   </h3>
 </div>
@@ -879,9 +997,13 @@ because array size has changed.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="p">{};</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -889,7 +1011,7 @@ because array size has changed.</p>
   <div class="summary">
 <div class="pilwrap" id="eventemitter.printall">
   <h3>
-    <a href="#eventemitter.printall" class="pilcrow">&#182;</a>
+    <a href="#eventemitter.printall" name="eventemitter.printall" class="pilcrow">&#182;</a>
     EventEmitter.printAll
   </h3>
 </div>
@@ -907,7 +1029,8 @@ because array size has changed.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">printAll</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">printAll</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">totalLen</span><span class="p">,</span> <span class="nx">str</span><span class="p">;</span>
         <span class="nx">totalLen</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">)</span> <span class="p">{</span>
@@ -921,7 +1044,10 @@ because array size has changed.</p>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;] &#39;</span> <span class="o">+</span> <span class="nx">totalLen</span> <span class="o">+</span> <span class="s1">&#39; listener/s.&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">str</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">totalLen</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -929,7 +1055,7 @@ because array size has changed.</p>
   <div class="summary">
 <div class="pilwrap" id="eventemitter.getchanges">
   <h3>
-    <a href="#eventemitter.getchanges" class="pilcrow">&#182;</a>
+    <a href="#eventemitter.getchanges" name="eventemitter.getchanges" class="pilcrow">&#182;</a>
     EventEmitter.getChanges
   </h3>
 </div>
@@ -955,7 +1081,8 @@ because array size has changed.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getChanges</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getChanges</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">changes</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">changes</span><span class="p">.</span><span class="nx">added</span><span class="p">.</span><span class="nx">length</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">changes</span><span class="p">.</span><span class="nx">removed</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">changes</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">changes</span><span class="p">;</span>
@@ -967,7 +1094,10 @@ because array size has changed.</p>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">changes</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -975,7 +1105,7 @@ because array size has changed.</p>
   <div class="summary">
 <div class="pilwrap" id="eventemitter.setrecordchanges">
   <h3>
-    <a href="#eventemitter.setrecordchanges" class="pilcrow">&#182;</a>
+    <a href="#eventemitter.setrecordchanges" name="eventemitter.setrecordchanges" class="pilcrow">&#182;</a>
     EventEmitter.setRecordChanges
   </h3>
 </div>
@@ -1001,27 +1131,32 @@ because array size has changed.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">EventEmitter.recordChanges
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRecordChanges</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">record</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRecordChanges</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">record</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;boolean&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">record</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">recordChanges</span> <span class="o">=</span> <span class="nx">record</span><span class="p">;</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">record</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.setRecordChanged: record must &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;be boolean or undefined&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">recordChanges</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="eventemittermanager-constructor">
+<div class="pilwrap" id="eventemittermanager%20constructor">
   <h2>
-    <a href="#eventemittermanager-constructor" class="pilcrow">&#182;</a>
+    <a href="#eventemittermanager%20constructor" name="eventemittermanager%20constructor" class="pilcrow">&#182;</a>
     EventEmitterManager constructor
   </h2>
 </div>
@@ -1039,7 +1174,8 @@ because array size has changed.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">EventEmitterManager</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">EventEmitterManager</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
 
@@ -1048,7 +1184,10 @@ because array size has changed.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">createEE</span><span class="p">(</span><span class="s1">&#39;ng&#39;</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">createEE</span><span class="p">(</span><span class="s1">&#39;game&#39;</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">createEE</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">createEE</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">);</span></pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">createEE</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1060,20 +1199,27 @@ because array size has changed.</p>
 this.createEEGroup('game', 'step', 'stage', 'game');
 this.createEEGroup('stage', 'stage', 'game');</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="eventemittermanager-methods">
+<div class="pilwrap" id="eventemittermanager%20methods">
   <h2>
-    <a href="#eventemittermanager-methods" class="pilcrow">&#182;</a>
+    <a href="#eventemittermanager%20methods" name="eventemittermanager%20methods" class="pilcrow">&#182;</a>
     EventEmitterManager methods
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1081,7 +1227,7 @@ this.createEEGroup('stage', 'stage', 'game');</p>
   <div class="summary">
 <div class="pilwrap" id="eventemittermanager.createeegroup">
   <h3>
-    <a href="#eventemittermanager.createeegroup" class="pilcrow">&#182;</a>
+    <a href="#eventemittermanager.createeegroup" name="eventemittermanager.createeegroup" class="pilcrow">&#182;</a>
     EventEmitterManager.createEEGroup
   </h3>
 </div>
@@ -1113,12 +1259,13 @@ applied to every element of the group</p>
       <span class="dox_type">EventEmitterManager.createEE
 
 TODO: check if this code is still valid.
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">createEEGroup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">groupName</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">createEEGroup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">groupName</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">args</span><span class="p">;</span>
         <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
 
@@ -1129,7 +1276,10 @@ TODO: check if this code is still valid.
         <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;EventEmitterManager.createEEGroup: &#39;</span> <span class="o">+</span>
                             <span class="s1">&#39;EEGroup needs at least one member.&#39;</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1139,7 +1289,8 @@ TODO: check if this code is still valid.
 </div>
 <p>Checking if each ee exist.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitterManager.createEEGroup: &#39;</span> <span class="o">+</span>
                                     <span class="s1">&#39;EventEmitter name must be string.&#39;</span><span class="p">);</span>
@@ -1149,7 +1300,10 @@ TODO: check if this code is still valid.
                                 <span class="s1">&#39;non-existing EventEmitter in group &#39;</span> <span class="o">+</span>
                                 <span class="nx">groupName</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
             <span class="p">}</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1159,12 +1313,15 @@ TODO: check if this code is still valid.
 </div>
 <p>Copying the args obj into an array.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">args</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
         <span class="p">}</span>
 
-        <span class="k">switch</span> <span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <span class="k">switch</span> <span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1174,7 +1331,8 @@ TODO: check if this code is still valid.
 </div>
 <p>Fast cases.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
             <span class="k">this</span><span class="p">[</span><span class="nx">groupName</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]];</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="mi">3</span><span class="o">:</span>
@@ -1225,7 +1383,9 @@ TODO: check if this code is still valid.
                 <span class="p">}</span>
             <span class="p">};</span>
             <span class="k">break</span><span class="p">;</span>
-        <span class="k">default</span><span class="o">:</span></pre></div>
+        <span class="k">default</span><span class="o">:</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1235,7 +1395,8 @@ TODO: check if this code is still valid.
 </div>
 <p>Slower.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">len</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">len</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">len</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">len</span><span class="p">;</span>
             <span class="k">this</span><span class="p">[</span><span class="nx">groupName</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="nx">emit</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
@@ -1263,7 +1424,10 @@ TODO: check if this code is still valid.
             <span class="p">};</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">[</span><span class="nx">groupName</span><span class="p">];</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1271,7 +1435,7 @@ TODO: check if this code is still valid.
   <div class="summary">
 <div class="pilwrap" id="eventemittermanager.createee">
   <h3>
-    <a href="#eventemittermanager.createee" class="pilcrow">&#182;</a>
+    <a href="#eventemittermanager.createee" name="eventemittermanager.createee" class="pilcrow">&#182;</a>
     EventEmitterManager.createEE
   </h3>
 </div>
@@ -1297,16 +1461,20 @@ TODO: check if this code is still valid.
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">EventEmitter constructor
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">createEE</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">createEE</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventEmitter</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">);</span>
         <span class="k">this</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1314,7 +1482,7 @@ TODO: check if this code is still valid.
   <div class="summary">
 <div class="pilwrap" id="eventemittermanager.destroyee">
   <h3>
-    <a href="#eventemittermanager.destroyee" class="pilcrow">&#182;</a>
+    <a href="#eventemittermanager.destroyee" name="eventemittermanager.destroyee" class="pilcrow">&#182;</a>
     EventEmitterManager.destroyEE
   </h3>
 </div>
@@ -1340,12 +1508,13 @@ TODO: check if this code is still valid.
       <span class="dox_type">EventEmitterManager.createEE
 
 TODO: the event emitter should be removed by the group
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">destroyEE</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">destroyEE</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">ee</span><span class="p">;</span>
         <span class="nx">ee</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
@@ -1356,7 +1525,10 @@ TODO: the event emitter should be removed by the group
         <span class="k">delete</span> <span class="k">this</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
         <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1364,7 +1536,7 @@ TODO: the event emitter should be removed by the group
   <div class="summary">
 <div class="pilwrap" id="eventemittermanager.clear">
   <h3>
-    <a href="#eventemittermanager.clear" class="pilcrow">&#182;</a>
+    <a href="#eventemittermanager.clear" name="eventemittermanager.clear" class="pilcrow">&#182;</a>
     EventEmitterManager.clear
   </h3>
 </div>
@@ -1374,14 +1546,18 @@ TODO: the event emitter should be removed by the group
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">clear</span><span class="p">();</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1389,7 +1565,7 @@ TODO: the event emitter should be removed by the group
   <div class="summary">
 <div class="pilwrap" id="eventemittermanager.emit">
   <h3>
-    <a href="#eventemittermanager.emit" class="pilcrow">&#182;</a>
+    <a href="#eventemittermanager.emit" name="eventemittermanager.emit" class="pilcrow">&#182;</a>
     EventEmitterManager.emit
   </h3>
 </div>
@@ -1415,12 +1591,13 @@ TODO: the event emitter should be removed by the group
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">EventEmitterManager.emit
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">tmpRes</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">ees</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
@@ -1429,7 +1606,10 @@ TODO: the event emitter should be removed by the group
         <span class="p">}</span>
         <span class="nx">res</span> <span class="o">=</span> <span class="p">[];</span>
 
-        <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span></pre></div>
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1439,7 +1619,11 @@ TODO: the event emitter should be removed by the group
 </div>
 <p>The scope might <code>node</code> if this method is invoked from <code>node.emit</code>.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">ees</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">ees</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1449,7 +1633,8 @@ TODO: the event emitter should be removed by the group
 </div>
 <p>The arguments object must not be passed or leaked anywhere.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
             <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">);</span>
@@ -1494,7 +1679,10 @@ TODO: the event emitter should be removed by the group
             <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
             <span class="nx">tmpRes</span> <span class="o">=</span> <span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">tmpRes</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tmpRes</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1505,8 +1693,12 @@ TODO: the event emitter should be removed by the group
 <p>If there are less than 2 elements, unpack the array.
 res[0] is either undefined or some value.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">?</span> <span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="nx">res</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">?</span> <span class="nx">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="nx">res</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1514,7 +1706,7 @@ res[0] is either undefined or some value.</p>
   <div class="summary">
 <div class="pilwrap" id="eventemittermanager.emitasync">
   <h3>
-    <a href="#eventemittermanager.emitasync" class="pilcrow">&#182;</a>
+    <a href="#eventemittermanager.emitasync" name="eventemittermanager.emitasync" class="pilcrow">&#182;</a>
     EventEmitterManager.emitAsync
   </h3>
 </div>
@@ -1534,12 +1726,13 @@ res[0] is either undefined or some value.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">EventEmitterManager.emit
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emitAsync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emitAsync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">ees</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
@@ -1547,7 +1740,10 @@ res[0] is either undefined or some value.</p>
                 <span class="s1">&#39;EventEmitterManager.emit: eventName must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span></pre></div>
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1557,7 +1753,11 @@ res[0] is either undefined or some value.</p>
 </div>
 <p>The scope might <code>node</code> if this method is invoked from <code>node.emit</code>.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">ees</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">ees</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1567,7 +1767,8 @@ res[0] is either undefined or some value.</p>
 </div>
 <p>The arguments object must not be passed or leaked anywhere.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
             <span class="nx">ees</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="nx">eventName</span><span class="p">);</span>
@@ -1597,7 +1798,10 @@ res[0] is either undefined or some value.</p>
             <span class="nx">ees</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ees</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
             <span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ees</span><span class="p">.</span><span class="nx">step</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1605,7 +1809,7 @@ res[0] is either undefined or some value.</p>
   <div class="summary">
 <div class="pilwrap" id="eventemittermanager.remove">
   <h3>
-    <a href="#eventemittermanager.remove" class="pilcrow">&#182;</a>
+    <a href="#eventemittermanager.remove" name="eventemittermanager.remove" class="pilcrow">&#182;</a>
     EventEmitterManager.remove
   </h3>
 </div>
@@ -1634,7 +1838,8 @@ res[0] is either undefined or some value.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">tmpRes</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitterManager.remove: &#39;</span> <span class="o">+</span>
@@ -1654,7 +1859,10 @@ res[0] is either undefined or some value.</p>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1662,7 +1870,7 @@ res[0] is either undefined or some value.</p>
   <div class="summary">
 <div class="pilwrap" id="eventemittermanager.remove">
   <h3>
-    <a href="#eventemittermanager.remove" class="pilcrow">&#182;</a>
+    <a href="#eventemittermanager.remove" name="eventemittermanager.remove" class="pilcrow">&#182;</a>
     EventEmitterManager.remove
   </h3>
 </div>
@@ -1680,7 +1888,8 @@ res[0] is either undefined or some value.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">printAll</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventEmitterName</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">printAll</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventEmitterName</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">total</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">eventEmitterName</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">eventEmitterName</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitterManager.printAll: &#39;</span> <span class="o">+</span>
@@ -1703,7 +1912,10 @@ res[0] is either undefined or some value.</p>
             <span class="p">}</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Total number of registered listeners: &#39;</span> <span class="o">+</span> <span class="nx">total</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1711,7 +1923,7 @@ res[0] is either undefined or some value.</p>
   <div class="summary">
 <div class="pilwrap" id="eventemittermanager.getall">
   <h3>
-    <a href="#eventemittermanager.getall" class="pilcrow">&#182;</a>
+    <a href="#eventemittermanager.getall" name="eventemittermanager.getall" class="pilcrow">&#182;</a>
     EventEmitterManager.getAll
   </h3>
 </div>
@@ -1729,7 +1941,8 @@ res[0] is either undefined or some value.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getAll</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventEmitterName</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getAll</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventEmitterName</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">events</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">eventEmitterName</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">eventEmitterName</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitterManager.printAll: &#39;</span> <span class="o">+</span>
@@ -1752,7 +1965,10 @@ res[0] is either undefined or some value.</p>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">events</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1760,7 +1976,7 @@ res[0] is either undefined or some value.</p>
   <div class="summary">
 <div class="pilwrap" id="eventemittermanager.getchanges">
   <h3>
-    <a href="#eventemittermanager.getchanges" class="pilcrow">&#182;</a>
+    <a href="#eventemittermanager.getchanges" name="eventemittermanager.getchanges" class="pilcrow">&#182;</a>
     EventEmitterManager.getChanges
   </h3>
 </div>
@@ -1788,12 +2004,13 @@ res[0] is either undefined or some value.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">EventEmitter.getChanges
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getChanges</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getChanges</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">changes</span><span class="p">,</span> <span class="nx">tmp</span><span class="p">;</span>
         <span class="nx">changes</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="nx">tmp</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">getChanges</span><span class="p">(</span><span class="nx">clear</span><span class="p">);</span>
@@ -1805,7 +2022,10 @@ res[0] is either undefined or some value.</p>
         <span class="nx">tmp</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">getChanges</span><span class="p">(</span><span class="nx">clear</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">tmp</span><span class="p">)</span> <span class="nx">changes</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="nx">tmp</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">changes</span><span class="p">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="nx">changes</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1813,7 +2033,7 @@ res[0] is either undefined or some value.</p>
   <div class="summary">
 <div class="pilwrap" id="eventemittermanager.setrecordchanges">
   <h3>
-    <a href="#eventemittermanager.setrecordchanges" class="pilcrow">&#182;</a>
+    <a href="#eventemittermanager.setrecordchanges" name="eventemittermanager.setrecordchanges" class="pilcrow">&#182;</a>
     EventEmitterManager.setRecordChanges
   </h3>
 </div>
@@ -1839,12 +2059,13 @@ res[0] is either undefined or some value.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">EventEmitter.recordChanges
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRecordChanges</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">record</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRecordChanges</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">record</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">out</span><span class="p">;</span>
         <span class="nx">out</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="nx">out</span><span class="p">.</span><span class="nx">ng</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">setRecordChanges</span><span class="p">(</span><span class="nx">record</span><span class="p">);</span>
@@ -1852,15 +2073,18 @@ res[0] is either undefined or some value.</p>
         <span class="nx">out</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">setRecordChanges</span><span class="p">(</span><span class="nx">record</span><span class="p">);</span>
         <span class="nx">out</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">setRecordChanges</span><span class="p">(</span><span class="nx">record</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="eventhistory-constructor">
+<div class="pilwrap" id="eventhistory%20constructor">
   <h2>
-    <a href="#eventhistory-constructor" class="pilcrow">&#182;</a>
+    <a href="#eventhistory%20constructor" name="eventhistory%20constructor" class="pilcrow">&#182;</a>
     EventHistory constructor
   </h2>
 </div>
@@ -1870,9 +2094,13 @@ res[0] is either undefined or some value.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">EventHistory</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">EventHistory</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span></pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1880,7 +2108,7 @@ res[0] is either undefined or some value.</p>
   <div class="summary">
 <div class="pilwrap" id="eventhistory.history">
   <h3>
-    <a href="#eventhistory.history" class="pilcrow">&#182;</a>
+    <a href="#eventhistory.history" name="eventhistory.history" class="pilcrow">&#182;</a>
     EventHistory.history
   </h3>
 </div>
@@ -1897,12 +2125,13 @@ res[0] is either undefined or some value.</p>
     <div class="dox_tag_detail">
       <span class="dox_type">EventEmitter.store
 
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
@@ -1944,7 +2173,10 @@ res[0] is either undefined or some value.</p>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">db</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">;</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1955,7 +2187,8 @@ res[0] is either undefined or some value.</p>
 <p>cleaning up the events to remit
 TODO NDDB commands have changed, update</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">discard</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">discard</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="nx">discard</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
         <span class="p">}</span>
 
@@ -1969,7 +2202,9 @@ TODO NDDB commands have changed, update</p>
         <span class="p">}</span>
 
         <span class="nx">remit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;re-emitting &#39;</span> <span class="o">+</span> <span class="nx">db</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; events&#39;</span><span class="p">);</span></pre></div>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;re-emitting &#39;</span> <span class="o">+</span> <span class="nx">db</span><span class="p">.</span><span class="nx">count</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; events&#39;</span><span class="p">);</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1980,7 +2215,8 @@ TODO NDDB commands have changed, update</p>
 <p>We have events that were fired at the stage when
 disconnection happened. Let's fire them again</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">db</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">db</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">event</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">p1</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">p2</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">p3</span><span class="p">);</span>
             <span class="p">});</span>
         <span class="p">};</span>
@@ -1995,20 +2231,25 @@ disconnection happened. Let's fire them again</p>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="closure">
   <h2>
-    <a href="#closure" class="pilcrow">&#182;</a>
+    <a href="#closure" name="closure" class="pilcrow">&#182;</a>
     Closure
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+<span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
   <span class="p">,</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>

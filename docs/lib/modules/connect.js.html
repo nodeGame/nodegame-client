@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/modules/connect.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/modules/connect.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -35,7 +35,7 @@
   <div class="summary">
 <div class="pilwrap" id="connect">
   <h1>
-    <a href="#connect" class="pilcrow">&#182;</a>
+    <a href="#connect" name="connect" class="pilcrow">&#182;</a>
     Connect
   </h1>
 </div>
@@ -52,7 +52,10 @@ MIT Licensed</p>
 
     <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -60,7 +63,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="node.connect">
   <h3>
-    <a href="#node.connect" class="pilcrow">&#182;</a>
+    <a href="#node.connect" name="node.connect" class="pilcrow">&#182;</a>
     node.connect
   </h3>
 </div>
@@ -88,10 +91,23 @@ parameter might be optional.</p>
       <span>Optional. A configuration object for
   the socket connect method.</span>
     </div>
+    <div class="dox_tag_title">emit</div>
+    <div class="dox_tag_detail">
+      <span>SOCKET_CONNECT</span>
+    </div>
+    <div class="dox_tag_title">emit</div>
+    <div class="dox_tag_detail">
+      <span>PLAYER_CREATED</span>
+    </div>
+    <div class="dox_tag_title">emit</div>
+    <div class="dox_tag_detail">
+      <span>NODEGAME_READY</span>
+    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">channel</span><span class="p">,</span> <span class="nx">socketOptions</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">channel</span><span class="p">,</span> <span class="nx">socketOptions</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">channel</span> <span class="o">&amp;&amp;</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;http://&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span> <span class="o">&amp;&amp;</span>
                 <span class="nb">window</span><span class="p">.</span><span class="nx">location</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>

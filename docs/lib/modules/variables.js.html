@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/modules/variables.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/modules/variables.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -97,7 +97,7 @@
         <a href="#target.bye">target.BYE</a>
       </div>
       <div class="heading h4">
-        <a href="#not-used-targets--for-future-development-">not used targets (for future development)</a>
+        <a href="#not%20used%20targets%20(for%20future%20development)">not used targets (for future development)</a>
       </div>
       <div class="heading h3">
         <a href="#node.constants.gamecommands">node.constants.gamecommands</a>
@@ -137,7 +137,7 @@
   <div class="summary">
 <div class="pilwrap" id="variables">
   <h1>
-    <a href="#variables" class="pilcrow">&#182;</a>
+    <a href="#variables" name="variables" class="pilcrow">&#182;</a>
     Variables
   </h1>
 </div>
@@ -152,20 +152,28 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="constants">
   <h2>
-    <a href="#constants" class="pilcrow">&#182;</a>
+    <a href="#constants" name="constants" class="pilcrow">&#182;</a>
     Constants
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">k</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="kd">var</span> <span class="nx">k</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -173,7 +181,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="node.constants.verbosity_levels">
   <h3>
-    <a href="#node.constants.verbosity_levels" class="pilcrow">&#182;</a>
+    <a href="#node.constants.verbosity_levels" name="node.constants.verbosity_levels" class="pilcrow">&#182;</a>
     node.constants.verbosity_levels
   </h3>
 </div>
@@ -183,7 +191,8 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">verbosity_levels</span> <span class="o">=</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">verbosity_levels</span> <span class="o">=</span> <span class="p">{</span>
         <span class="nx">ALWAYS</span><span class="o">:</span> <span class="o">-</span><span class="nb">Number</span><span class="p">.</span><span class="nx">MAX_VALUE</span><span class="p">,</span>
         <span class="nx">error</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
         <span class="nx">warn</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -191,7 +200,10 @@ MIT Licensed</p>
         <span class="nx">silly</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
         <span class="nx">debug</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
         <span class="nx">NEVER</span><span class="o">:</span> <span class="nb">Number</span><span class="p">.</span><span class="nx">MAX_VALUE</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -199,7 +211,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="node.constants.actions">
   <h3>
-    <a href="#node.constants.actions" class="pilcrow">&#182;</a>
+    <a href="#node.constants.actions" name="node.constants.actions" class="pilcrow">&#182;</a>
     node.constants.actions
   </h3>
 </div>
@@ -221,11 +233,15 @@ message. It specify the nature of requests
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">action</span> <span class="o">=</span> <span class="p">{};</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">action</span> <span class="o">=</span> <span class="p">{};</span>
 
     <span class="nx">k</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SET</span> <span class="o">=</span> <span class="s1">&#39;set&#39;</span><span class="p">;</span>
     <span class="nx">k</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span> <span class="o">=</span> <span class="s1">&#39;get&#39;</span><span class="p">;</span>
-    <span class="nx">k</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">=</span> <span class="s1">&#39;say&#39;</span><span class="p">;</span></pre></div>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">SAY</span> <span class="o">=</span> <span class="s1">&#39;say&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -233,7 +249,7 @@ message. It specify the nature of requests
   <div class="summary">
 <div class="pilwrap" id="node.constants.target">
   <h3>
-    <a href="#node.constants.target" class="pilcrow">&#182;</a>
+    <a href="#node.constants.target" name="node.constants.target" class="pilcrow">&#182;</a>
     node.constants.target
   </h3>
 </div>
@@ -249,14 +265,18 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.data">
   <h4>
-    <a href="#target.data" class="pilcrow">&#182;</a>
+    <a href="#target.data" name="target.data" class="pilcrow">&#182;</a>
     target.DATA
   </h4>
 </div>
@@ -264,14 +284,18 @@ information carried in the message.</p>
 
 <p>Generic identifier for any type of data</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span> <span class="o">=</span> <span class="s1">&#39;DATA&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span> <span class="o">=</span> <span class="s1">&#39;DATA&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.hi">
   <h4>
-    <a href="#target.hi" class="pilcrow">&#182;</a>
+    <a href="#target.hi" name="target.hi" class="pilcrow">&#182;</a>
     target.HI
   </h4>
 </div>
@@ -279,14 +303,18 @@ information carried in the message.</p>
 
 <p>A client is connecting for the first time</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">HI</span> <span class="o">=</span> <span class="s1">&#39;HI&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">HI</span> <span class="o">=</span> <span class="s1">&#39;HI&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.pconnect">
   <h4>
-    <a href="#target.pconnect" class="pilcrow">&#182;</a>
+    <a href="#target.pconnect" name="target.pconnect" class="pilcrow">&#182;</a>
     target.PCONNECT
   </h4>
 </div>
@@ -294,14 +322,18 @@ information carried in the message.</p>
 
 <p>A new client just connected to the player endpoint</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PCONNECT</span> <span class="o">=</span> <span class="s1">&#39;PCONNECT&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PCONNECT</span> <span class="o">=</span> <span class="s1">&#39;PCONNECT&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.pdisconnect">
   <h4>
-    <a href="#target.pdisconnect" class="pilcrow">&#182;</a>
+    <a href="#target.pdisconnect" name="target.pdisconnect" class="pilcrow">&#182;</a>
     target.PDISCONNECT
   </h4>
 </div>
@@ -309,14 +341,18 @@ information carried in the message.</p>
 
 <p>A client that just disconnected from the player endpoint</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PDISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;PDISCONNECT&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PDISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;PDISCONNECT&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.preconnect">
   <h4>
-    <a href="#target.preconnect" class="pilcrow">&#182;</a>
+    <a href="#target.preconnect" name="target.preconnect" class="pilcrow">&#182;</a>
     target.PRECONNECT
   </h4>
 </div>
@@ -324,14 +360,18 @@ information carried in the message.</p>
 
 <p>A previously disconnected client just re-connected to the player endpoint</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PRECONNECT</span> <span class="o">=</span> <span class="s1">&#39;PRECONNECT&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PRECONNECT</span> <span class="o">=</span> <span class="s1">&#39;PRECONNECT&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.mconnect">
   <h4>
-    <a href="#target.mconnect" class="pilcrow">&#182;</a>
+    <a href="#target.mconnect" name="target.mconnect" class="pilcrow">&#182;</a>
     target.MCONNECT
   </h4>
 </div>
@@ -339,14 +379,18 @@ information carried in the message.</p>
 
 <p>A client that just connected to the admin (monitor) endpoint</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MCONNECT</span> <span class="o">=</span> <span class="s1">&#39;MCONNECT&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MCONNECT</span> <span class="o">=</span> <span class="s1">&#39;MCONNECT&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.mdisconnect">
   <h4>
-    <a href="#target.mdisconnect" class="pilcrow">&#182;</a>
+    <a href="#target.mdisconnect" name="target.mdisconnect" class="pilcrow">&#182;</a>
     target.MDISCONNECT
   </h4>
 </div>
@@ -354,14 +398,18 @@ information carried in the message.</p>
 
 <p>A client just disconnected from the admin (monitor) endpoint</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MDISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;MDISCONNECT&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MDISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;MDISCONNECT&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.mreconnect">
   <h4>
-    <a href="#target.mreconnect" class="pilcrow">&#182;</a>
+    <a href="#target.mreconnect" name="target.mreconnect" class="pilcrow">&#182;</a>
     target.MRECONNECT
   </h4>
 </div>
@@ -369,14 +417,18 @@ information carried in the message.</p>
 
 <p>A previously disconnected client just re-connected to the admin endpoint</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MRECONNECT</span> <span class="o">=</span> <span class="s1">&#39;MRECONNECT&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MRECONNECT</span> <span class="o">=</span> <span class="s1">&#39;MRECONNECT&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.plist">
   <h4>
-    <a href="#target.plist" class="pilcrow">&#182;</a>
+    <a href="#target.plist" name="target.plist" class="pilcrow">&#182;</a>
     target.PLIST
   </h4>
 </div>
@@ -384,14 +436,18 @@ information carried in the message.</p>
 
 <p>The list of clients connected to the player endpoint was updated</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PLIST</span> <span class="o">=</span> <span class="s1">&#39;PLIST&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PLIST</span> <span class="o">=</span> <span class="s1">&#39;PLIST&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.mlist">
   <h4>
-    <a href="#target.mlist" class="pilcrow">&#182;</a>
+    <a href="#target.mlist" name="target.mlist" class="pilcrow">&#182;</a>
     target.MLIST
   </h4>
 </div>
@@ -399,14 +455,18 @@ information carried in the message.</p>
 
 <p>The list of clients connected to the admin (monitor) endpoint was updated</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MLIST</span> <span class="o">=</span> <span class="s1">&#39;MLIST&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">MLIST</span> <span class="o">=</span> <span class="s1">&#39;MLIST&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.player_update">
   <h4>
-    <a href="#target.player_update" class="pilcrow">&#182;</a>
+    <a href="#target.player_update" name="target.player_update" class="pilcrow">&#182;</a>
     target.PLAYER_UPDATE
   </h4>
 </div>
@@ -414,14 +474,18 @@ information carried in the message.</p>
 
 <p>A client updates his Player object</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PLAYER_UPDATE</span> <span class="o">=</span> <span class="s1">&#39;PLAYER_UPDATE&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">PLAYER_UPDATE</span> <span class="o">=</span> <span class="s1">&#39;PLAYER_UPDATE&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.stage">
   <h4>
-    <a href="#target.stage" class="pilcrow">&#182;</a>
+    <a href="#target.stage" name="target.stage" class="pilcrow">&#182;</a>
     target.STAGE
   </h4>
 </div>
@@ -429,14 +493,18 @@ information carried in the message.</p>
 
 <p>A client notifies his own stage</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE</span> <span class="o">=</span> <span class="s1">&#39;STAGE&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE</span> <span class="o">=</span> <span class="s1">&#39;STAGE&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.stage_level">
   <h4>
-    <a href="#target.stage_level" class="pilcrow">&#182;</a>
+    <a href="#target.stage_level" name="target.stage_level" class="pilcrow">&#182;</a>
     target.STAGE_LEVEL
   </h4>
 </div>
@@ -444,14 +512,18 @@ information carried in the message.</p>
 
 <p>A client notifies his own stage level</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE_LEVEL</span> <span class="o">=</span> <span class="s1">&#39;STAGE_LEVEL&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE_LEVEL</span> <span class="o">=</span> <span class="s1">&#39;STAGE_LEVEL&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.redirect">
   <h4>
-    <a href="#target.redirect" class="pilcrow">&#182;</a>
+    <a href="#target.redirect" name="target.redirect" class="pilcrow">&#182;</a>
     target.REDIRECT
   </h4>
 </div>
@@ -459,14 +531,18 @@ information carried in the message.</p>
 
 <p>Redirects a client to a new uri</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">REDIRECT</span> <span class="o">=</span> <span class="s1">&#39;REDIRECT&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">REDIRECT</span> <span class="o">=</span> <span class="s1">&#39;REDIRECT&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.lang">
   <h4>
-    <a href="#target.lang" class="pilcrow">&#182;</a>
+    <a href="#target.lang" name="target.lang" class="pilcrow">&#182;</a>
     target.LANG
   </h4>
 </div>
@@ -474,14 +550,18 @@ information carried in the message.</p>
 
 <p>Requests language information</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LANG</span> <span class="o">=</span> <span class="s1">&#39;LANG&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LANG</span> <span class="o">=</span> <span class="s1">&#39;LANG&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.setup">
   <h4>
-    <a href="#target.setup" class="pilcrow">&#182;</a>
+    <a href="#target.setup" name="target.setup" class="pilcrow">&#182;</a>
     target.SETUP
   </h4>
 </div>
@@ -489,14 +569,18 @@ information carried in the message.</p>
 
 <p>Asks a client update its configuration</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">SETUP</span> <span class="o">=</span> <span class="s1">&#39;SETUP&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">SETUP</span> <span class="o">=</span> <span class="s1">&#39;SETUP&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.gamecommand">
   <h4>
-    <a href="#target.gamecommand" class="pilcrow">&#182;</a>
+    <a href="#target.gamecommand" name="target.gamecommand" class="pilcrow">&#182;</a>
     target.GAMECOMMAND
   </h4>
 </div>
@@ -504,14 +588,18 @@ information carried in the message.</p>
 
 <p>Ask a client to start/pause/stop/resume the game</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">GAMECOMMAND</span> <span class="o">=</span> <span class="s1">&#39;GAMECOMMAND&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">GAMECOMMAND</span> <span class="o">=</span> <span class="s1">&#39;GAMECOMMAND&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.servercommand">
   <h4>
-    <a href="#target.servercommand" class="pilcrow">&#182;</a>
+    <a href="#target.servercommand" name="target.servercommand" class="pilcrow">&#182;</a>
     target.SERVERCOMMAND
   </h4>
 </div>
@@ -519,14 +607,18 @@ information carried in the message.</p>
 
 <p>Ask a server to execute a command</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">SERVERCOMMAND</span> <span class="o">=</span> <span class="s1">&#39;SERVERCOMMAND&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">SERVERCOMMAND</span> <span class="o">=</span> <span class="s1">&#39;SERVERCOMMAND&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.alert">
   <h4>
-    <a href="#target.alert" class="pilcrow">&#182;</a>
+    <a href="#target.alert" name="target.alert" class="pilcrow">&#182;</a>
     target.ALERT
   </h4>
 </div>
@@ -534,14 +626,18 @@ information carried in the message.</p>
 
 <p>Displays an alert message in the receiving client (if in the browser)</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ALERT</span> <span class="o">=</span> <span class="s1">&#39;ALERT&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ALERT</span> <span class="o">=</span> <span class="s1">&#39;ALERT&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.log">
   <h4>
-    <a href="#target.log" class="pilcrow">&#182;</a>
+    <a href="#target.log" name="target.log" class="pilcrow">&#182;</a>
     target.LOG
   </h4>
 </div>
@@ -550,14 +646,18 @@ information carried in the message.</p>
 <p>A generic log message used to send info to the server
 @see node.constants.remoteVerbosity</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LOG</span> <span class="o">=</span> <span class="s1">&#39;LOG&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LOG</span> <span class="o">=</span> <span class="s1">&#39;LOG&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="target.bye">
   <h4>
-    <a href="#target.bye" class="pilcrow">&#182;</a>
+    <a href="#target.bye" name="target.bye" class="pilcrow">&#182;</a>
     target.BYE
   </h4>
 </div>
@@ -565,40 +665,52 @@ information carried in the message.</p>
 
 <p>Force disconnection upon reception.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">BYE</span>  <span class="o">=</span> <span class="s1">&#39;BYE&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">BYE</span>  <span class="o">=</span> <span class="s1">&#39;BYE&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="not-used-targets--for-future-development-">
+<div class="pilwrap" id="not%20used%20targets%20(for%20future%20development)">
   <h4>
-    <a href="#not-used-targets--for-future-development-" class="pilcrow">&#182;</a>
+    <a href="#not%20used%20targets%20(for%20future%20development)" name="not%20used%20targets%20(for%20future%20development)" class="pilcrow">&#182;</a>
     not used targets (for future development)
   </h4>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">JOIN</span> <span class="o">=</span> <span class="s1">&#39;JOIN&#39;</span><span class="p">;</span>   <span class="c1">// Asks a client to join another channel</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">JOIN</span> <span class="o">=</span> <span class="s1">&#39;JOIN&#39;</span><span class="p">;</span>   <span class="c1">// Asks a client to join another channel</span>
 
     <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">TXT</span>  <span class="o">=</span> <span class="s1">&#39;TXT&#39;</span><span class="p">;</span>    <span class="c1">// Text msg</span>
 
     <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ACK</span>  <span class="o">=</span> <span class="s1">&#39;ACK&#39;</span><span class="p">;</span>    <span class="c1">// A reliable msg was received correctly</span>
 
     <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">WARN</span> <span class="o">=</span> <span class="s1">&#39;WARN&#39;</span><span class="p">;</span>   <span class="c1">// To do.</span>
-    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ERR</span>  <span class="o">=</span> <span class="s1">&#39;ERR&#39;</span><span class="p">;</span>    <span class="c1">// To do.</span></pre></div>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ERR</span>  <span class="o">=</span> <span class="s1">&#39;ERR&#39;</span><span class="p">;</span>    <span class="c1">// To do.</span>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="node.constants.gamecommands">
   <h3>
-    <a href="#node.constants.gamecommands" class="pilcrow">&#182;</a>
+    <a href="#node.constants.gamecommands" name="node.constants.gamecommands" class="pilcrow">&#182;</a>
     node.constants.gamecommands
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">gamecommands</span> <span class="o">=</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">gamecommands</span> <span class="o">=</span> <span class="p">{</span>
         <span class="nx">start</span><span class="o">:</span> <span class="s1">&#39;start&#39;</span><span class="p">,</span>
         <span class="nx">pause</span><span class="o">:</span> <span class="s1">&#39;pause&#39;</span><span class="p">,</span>
         <span class="nx">resume</span><span class="o">:</span> <span class="s1">&#39;resume&#39;</span><span class="p">,</span>
@@ -608,7 +720,10 @@ information carried in the message.</p>
         <span class="nx">goto_step</span><span class="o">:</span> <span class="s1">&#39;goto_step&#39;</span><span class="p">,</span>
         <span class="nx">clear_buffer</span><span class="o">:</span> <span class="s1">&#39;clear_buffer&#39;</span><span class="p">,</span>
         <span class="nx">erase_buffer</span><span class="o">:</span> <span class="s1">&#39;erase_buffer&#39;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -616,7 +731,7 @@ information carried in the message.</p>
   <div class="summary">
 <div class="pilwrap" id="direction">
   <h3>
-    <a href="#direction" class="pilcrow">&#182;</a>
+    <a href="#direction" name="direction" class="pilcrow">&#182;</a>
     Direction
   </h3>
 </div>
@@ -631,8 +746,12 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">IN</span>  <span class="o">=</span> <span class="s1">&#39;in.&#39;</span><span class="p">;</span>
-    <span class="nx">k</span><span class="p">.</span><span class="nx">OUT</span> <span class="o">=</span> <span class="s1">&#39;out.&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">IN</span>  <span class="o">=</span> <span class="s1">&#39;in.&#39;</span><span class="p">;</span>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">OUT</span> <span class="o">=</span> <span class="s1">&#39;out.&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -640,7 +759,7 @@ information carried in the message.</p>
   <div class="summary">
 <div class="pilwrap" id="node.constants.statelevels">
   <h3>
-    <a href="#node.constants.statelevels" class="pilcrow">&#182;</a>
+    <a href="#node.constants.statelevels" name="node.constants.statelevels" class="pilcrow">&#182;</a>
     node.constants.stateLevels
   </h3>
 </div>
@@ -650,7 +769,8 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">stateLevels</span> <span class="o">=</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">stateLevels</span> <span class="o">=</span> <span class="p">{</span>
         <span class="nx">UNINITIALIZED</span><span class="o">:</span>  <span class="mi">0</span><span class="p">,</span>  <span class="c1">// creating the game object</span>
         <span class="nx">STARTING</span><span class="o">:</span>       <span class="mi">1</span><span class="p">,</span>  <span class="c1">// constructor executed</span>
         <span class="nx">INITIALIZING</span><span class="o">:</span>   <span class="mi">2</span><span class="p">,</span>  <span class="c1">// calling game&#39;s init</span>
@@ -661,7 +781,10 @@ information carried in the message.</p>
         <span class="nx">FINISHING</span><span class="o">:</span>     <span class="mi">70</span><span class="p">,</span>  <span class="c1">// calling game&#39;s gameover</span>
         <span class="nx">GAMEOVER</span><span class="o">:</span>     <span class="mi">100</span><span class="p">,</span>  <span class="c1">// game complete</span>
         <span class="nx">RUNTIME_ERROR</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -669,7 +792,7 @@ information carried in the message.</p>
   <div class="summary">
 <div class="pilwrap" id="node.constants.stagelevels">
   <h3>
-    <a href="#node.constants.stagelevels" class="pilcrow">&#182;</a>
+    <a href="#node.constants.stagelevels" name="node.constants.stagelevels" class="pilcrow">&#182;</a>
     node.constants.stageLevels
   </h3>
 </div>
@@ -679,7 +802,8 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">stageLevels</span> <span class="o">=</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">stageLevels</span> <span class="o">=</span> <span class="p">{</span>
 
         <span class="nx">UNINITIALIZED</span><span class="o">:</span>       <span class="mi">0</span><span class="p">,</span>  <span class="c1">// Constructor called.</span>
 
@@ -707,7 +831,9 @@ information carried in the message.</p>
 
         <span class="nx">RESUMED</span><span class="o">:</span>             <span class="mi">70</span><span class="p">,</span> <span class="c1">// TODO: to be removed?</span>
 
-        <span class="nx">DONE_CALLED</span><span class="o">:</span>         <span class="mi">80</span><span class="p">,</span> <span class="c1">// Done is called,</span></pre></div>
+        <span class="nx">DONE_CALLED</span><span class="o">:</span>         <span class="mi">80</span><span class="p">,</span> <span class="c1">// Done is called,</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -717,7 +843,11 @@ information carried in the message.</p>
 </div>
 <p>will be asynchronously evaluated.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">GETTING_DONE</span><span class="o">:</span>        <span class="mi">90</span><span class="p">,</span> <span class="c1">// Done is being called,</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+        <span class="nx">GETTING_DONE</span><span class="o">:</span>        <span class="mi">90</span><span class="p">,</span> <span class="c1">// Done is being called,</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -727,8 +857,13 @@ information carried in the message.</p>
 </div>
 <p>and the step rule evaluated.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">DONE</span><span class="o">:</span>                <span class="mi">100</span> <span class="c1">// Player completed the stage</span>
-    <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+        <span class="nx">DONE</span><span class="o">:</span>                <span class="mi">100</span> <span class="c1">// Player completed the stage</span>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -736,7 +871,7 @@ information carried in the message.</p>
   <div class="summary">
 <div class="pilwrap" id="node.constants.windowlevels">
   <h3>
-    <a href="#node.constants.windowlevels" class="pilcrow">&#182;</a>
+    <a href="#node.constants.windowlevels" name="node.constants.windowlevels" class="pilcrow">&#182;</a>
     node.constants.windowLevels
   </h3>
 </div>
@@ -752,18 +887,22 @@ information carried in the message.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.state
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">windowLevels</span> <span class="o">=</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">windowLevels</span> <span class="o">=</span> <span class="p">{</span>
         <span class="nx">UNINITIALIZED</span><span class="o">:</span>  <span class="mi">0</span><span class="p">,</span> <span class="c1">// GameWindow constructor called</span>
         <span class="nx">INITIALIZING</span><span class="o">:</span>   <span class="mi">1</span><span class="p">,</span> <span class="c1">// Executing init.</span>
         <span class="nx">INITIALIZED</span><span class="o">:</span>    <span class="mi">5</span><span class="p">,</span> <span class="c1">// Init executed.</span>
         <span class="nx">LOADING</span><span class="o">:</span>       <span class="mi">30</span><span class="p">,</span> <span class="c1">// Loading a new Frame.</span>
         <span class="nx">LOADED</span><span class="o">:</span>        <span class="mi">40</span>  <span class="c1">// Frame Loaded.</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -771,7 +910,7 @@ information carried in the message.</p>
   <div class="summary">
 <div class="pilwrap" id="node.constants.screenstate">
   <h3>
-    <a href="#node.constants.screenstate" class="pilcrow">&#182;</a>
+    <a href="#node.constants.screenstate" name="node.constants.screenstate" class="pilcrow">&#182;</a>
     node.constants.screenState
   </h3>
 </div>
@@ -787,17 +926,21 @@ information carried in the message.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.lockFrame
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">screenLevels</span> <span class="o">=</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">screenLevels</span> <span class="o">=</span> <span class="p">{</span>
         <span class="nx">ACTIVE</span><span class="o">:</span>        <span class="mi">1</span><span class="p">,</span>  <span class="c1">// User can interact with screen (if LOADED)</span>
         <span class="nx">UNLOCKING</span><span class="o">:</span>     <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="c1">// The screen is about to be unlocked.</span>
         <span class="nx">LOCKING</span><span class="o">:</span>       <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="c1">// The screen is about to be locked.</span>
         <span class="nx">LOCKED</span><span class="o">:</span>        <span class="o">-</span><span class="mi">3</span>  <span class="c1">// The screen is locked.</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -805,7 +948,7 @@ information carried in the message.</p>
   <div class="summary">
 <div class="pilwrap" id="node.constants.undefined_player">
   <h3>
-    <a href="#node.constants.undefined_player" class="pilcrow">&#182;</a>
+    <a href="#node.constants.undefined_player" name="node.constants.undefined_player" class="pilcrow">&#182;</a>
     node.constants.UNDEFINED_PLAYER
   </h3>
 </div>
@@ -815,7 +958,11 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">UNDEFINED_PLAYER</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">UNDEFINED_PLAYER</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -823,7 +970,7 @@ information carried in the message.</p>
   <div class="summary">
 <div class="pilwrap" id="node.constants.unauth_player">
   <h3>
-    <a href="#node.constants.unauth_player" class="pilcrow">&#182;</a>
+    <a href="#node.constants.unauth_player" name="node.constants.unauth_player" class="pilcrow">&#182;</a>
     node.constants.UNAUTH_PLAYER
   </h3>
 </div>
@@ -835,7 +982,12 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">UNAUTH_PLAYER</span> <span class="o">=</span> <span class="s1">&#39;unautorized_player&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">UNAUTH_PLAYER</span> <span class="o">=</span> <span class="s1">&#39;unautorized_player&#39;</span><span class="p">;</span>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -843,7 +995,7 @@ information carried in the message.</p>
   <div class="summary">
 <div class="pilwrap" id="node.constants.verbosity_levels">
   <h3>
-    <a href="#node.constants.verbosity_levels" class="pilcrow">&#182;</a>
+    <a href="#node.constants.verbosity_levels" name="node.constants.verbosity_levels" class="pilcrow">&#182;</a>
     node.constants.verbosity_levels
   </h3>
 </div>
@@ -861,7 +1013,8 @@ information carried in the message.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">k</span><span class="p">.</span><span class="nx">publishLevels</span> <span class="o">=</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">publishLevels</span> <span class="o">=</span> <span class="p">{</span>
         <span class="nx">ALL</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
         <span class="nx">MOST</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
         <span class="nx">REGULAR</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>

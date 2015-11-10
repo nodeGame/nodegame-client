@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/modules/matching.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/modules/matching.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -89,7 +89,9 @@
                 <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">sub</span><span class="p">[</span><span class="nx">subI</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                     <span class="kd">var</span> <span class="nx">other</span> <span class="o">=</span> <span class="nx">sub</span><span class="p">[</span><span class="nx">subI</span><span class="p">][</span><span class="nx">j</span><span class="p">];</span>
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">entries</span><span class="p">[</span><span class="nx">other</span><span class="p">])</span> <span class="nx">entries</span><span class="p">[</span><span class="nx">other</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">other</span><span class="p">)</span> <span class="p">{</span></pre></div>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -99,7 +101,8 @@
 </div>
 <p>next.push(arr[i])</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                        <span class="nx">entries</span><span class="p">[</span><span class="nx">other</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">next</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                        <span class="nx">entries</span><span class="p">[</span><span class="nx">other</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">next</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -142,7 +145,9 @@
                 <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">sub</span><span class="p">[</span><span class="nx">subI</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                     <span class="kd">var</span> <span class="nx">other</span> <span class="o">=</span> <span class="nx">sub</span><span class="p">[</span><span class="nx">subI</span><span class="p">][</span><span class="nx">j</span><span class="p">];</span>
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">entries</span><span class="p">[</span><span class="nx">other</span><span class="p">])</span> <span class="nx">entries</span><span class="p">[</span><span class="nx">other</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">other</span><span class="p">)</span> <span class="p">{</span></pre></div>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -152,7 +157,8 @@
 </div>
 <p>next.push(arr[i])</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                        <span class="nx">entries</span><span class="p">[</span><span class="nx">other</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">next</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                        <span class="nx">entries</span><span class="p">[</span><span class="nx">other</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">next</span><span class="p">);</span>
                         <span class="nx">index</span><span class="p">[</span><span class="nx">next</span><span class="p">].</span><span class="nx">push</span><span class="p">([</span><span class="nx">other</span><span class="p">,</span> <span class="p">(</span><span class="nx">entries</span><span class="p">[</span><span class="nx">other</span><span class="p">].</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)]);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
@@ -174,7 +180,10 @@
     <span class="nx">index</span> <span class="o">=</span> <span class="nx">outComb</span><span class="p">.</span><span class="nx">index</span><span class="p">;</span>
     <span class="nx">entries</span> <span class="o">=</span> <span class="nx">outComb</span><span class="p">.</span><span class="nx">entries</span><span class="p">;</span>
     <span class="nx">out</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="nx">len</span> <span class="o">=</span> <span class="nx">pool</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span></pre></div>
+    <span class="nx">len</span> <span class="o">=</span> <span class="nx">pool</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -184,7 +193,9 @@
 </div>
 <p>console.log(index);</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">thisComb</span><span class="p">,</span> <span class="nx">thisIndex</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="kd">var</span> <span class="nx">thisComb</span><span class="p">,</span> <span class="nx">thisIndex</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">finished</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">leftOver</span><span class="p">,</span> <span class="nx">matched</span><span class="p">;</span>
 
@@ -216,7 +227,9 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">I</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">)</span> <span class="kr">debugger</span>
 
                 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">I</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">thisComb</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span></pre></div>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">thisComb</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -226,7 +239,8 @@
 </div>
 <p>mark element as matched</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">m</span> <span class="o">&lt;</span> <span class="nx">thisComb</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">m</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">m</span> <span class="o">&lt;</span> <span class="nx">thisComb</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">m</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">matched</span><span class="p">[</span><span class="nx">thisComb</span><span class="p">[</span><span class="nx">m</span><span class="p">]])</span> <span class="p">{</span>
                         <span class="nx">thisComb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                         <span class="k">break</span><span class="p">;</span>
@@ -243,7 +257,10 @@
 
             <span class="nx">outRow</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">thisComb</span><span class="p">);</span>
 
-            <span class="nx">leftOver</span><span class="o">-=</span> <span class="nx">k</span><span class="p">;</span></pre></div>
+            <span class="nx">leftOver</span><span class="o">-=</span> <span class="nx">k</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -253,9 +270,13 @@
 </div>
 <p>mark element as matched</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">m</span> <span class="o">&lt;</span> <span class="nx">thisComb</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">m</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">m</span> <span class="o">&lt;</span> <span class="nx">thisComb</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">m</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">matched</span><span class="p">[</span><span class="nx">thisComb</span><span class="p">[</span><span class="nx">m</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="p">}</span></pre></div>
+            <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -265,9 +286,12 @@
 </div>
 <p>delete matched combinations</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">thisIndex</span> <span class="o">=</span> <span class="nx">index</span><span class="p">[</span><span class="nx">thisComb</span><span class="p">]</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">thisIndex</span> <span class="o">=</span> <span class="nx">index</span><span class="p">[</span><span class="nx">thisComb</span><span class="p">]</span>
             <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">z</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">z</span> <span class="o">&lt;</span> <span class="nx">thisIndex</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="k">delete</span> <span class="nx">entries</span><span class="p">[</span><span class="nx">thisIndex</span><span class="p">[</span><span class="nx">z</span><span class="p">][</span><span class="mi">0</span><span class="p">]][</span><span class="nx">thisIndex</span><span class="p">[</span><span class="nx">z</span><span class="p">][</span><span class="mi">1</span><span class="p">]];</span></pre></div>
+                <span class="k">delete</span> <span class="nx">entries</span><span class="p">[</span><span class="nx">thisIndex</span><span class="p">[</span><span class="nx">z</span><span class="p">][</span><span class="mi">0</span><span class="p">]][</span><span class="nx">thisIndex</span><span class="p">[</span><span class="nx">z</span><span class="p">][</span><span class="mi">1</span><span class="p">]];</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -277,7 +301,8 @@
 </div>
 <p>no need to clean the index...</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="p">}</span>
         <span class="p">}</span>
 
 
@@ -332,7 +357,9 @@
 
     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">N</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">thisSeq</span> <span class="o">=</span> <span class="nx">self</span> <span class="o">?</span> <span class="nx">seq</span> <span class="o">:</span> <span class="nx">seq</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">).</span><span class="nx">concat</span><span class="p">(</span><span class="nx">seq</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nx">i</span><span class="p">));</span>
-        <span class="k">do</span> <span class="p">{</span></pre></div>
+        <span class="k">do</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -342,7 +369,8 @@
 </div>
 <p>start excluded, limit included.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">idx</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">randomInt</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span><span class="nx">limit</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">idx</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">randomInt</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span><span class="nx">limit</span><span class="p">);</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">extracted</span><span class="p">);</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">idx</span><span class="p">)</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
@@ -405,7 +433,10 @@
     <span class="k">return</span> <span class="nx">match</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="kd">var</span> <span class="nx">pool</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">);</span></pre></div>
+<span class="kd">var</span> <span class="nx">pool</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -415,7 +446,9 @@
 </div>
 <p>var match = perfectStranger(pool, 9);</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">square</span> <span class="o">=</span> <span class="nx">latinSquare</span><span class="p">(</span><span class="nx">pool</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+<span class="kd">var</span> <span class="nx">square</span> <span class="o">=</span> <span class="nx">latinSquare</span><span class="p">(</span><span class="nx">pool</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">square</span><span class="p">);</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">);</span>
 </pre></div>

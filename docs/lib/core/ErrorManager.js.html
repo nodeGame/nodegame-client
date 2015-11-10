@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/core/ErrorManager.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/core/ErrorManager.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -22,16 +22,16 @@
         <a href="#errormanager">ErrorManager</a>
       </div>
       <div class="heading h2">
-        <a href="#global-scope">Global scope</a>
+        <a href="#global%20scope">Global scope</a>
       </div>
       <div class="heading h2">
-        <a href="#errormanager-constructor">ErrorManager constructor</a>
+        <a href="#errormanager%20constructor">ErrorManager constructor</a>
       </div>
       <div class="heading h3">
         <a href="#errormanager.lasterror">ErrorManager.lastError</a>
       </div>
       <div class="heading h2">
-        <a href="#errormanager-methods">ErrorManager methods</a>
+        <a href="#errormanager%20methods">ErrorManager methods</a>
       </div>
       <div class="heading h3">
         <a href="#errormanager.init">ErrorManager.init</a>
@@ -50,7 +50,7 @@
   <div class="summary">
 <div class="pilwrap" id="errormanager">
   <h1>
-    <a href="#errormanager" class="pilcrow">&#182;</a>
+    <a href="#errormanager" name="errormanager" class="pilcrow">&#182;</a>
     ErrorManager
   </h1>
 </div>
@@ -65,30 +65,37 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="global-scope">
+<div class="pilwrap" id="global%20scope">
   <h2>
-    <a href="#global-scope" class="pilcrow">&#182;</a>
+    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
     Global scope
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
-    <span class="nx">parent</span><span class="p">.</span><span class="nx">ErrorManager</span> <span class="o">=</span> <span class="nx">ErrorManager</span><span class="p">;</span></pre></div>
+    <span class="nx">parent</span><span class="p">.</span><span class="nx">ErrorManager</span> <span class="o">=</span> <span class="nx">ErrorManager</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="errormanager-constructor">
+<div class="pilwrap" id="errormanager%20constructor">
   <h2>
-    <a href="#errormanager-constructor" class="pilcrow">&#182;</a>
+    <a href="#errormanager%20constructor" name="errormanager%20constructor" class="pilcrow">&#182;</a>
     ErrorManager constructor
   </h2>
 </div>
@@ -106,7 +113,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">ErrorManager</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">ErrorManager</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -114,7 +125,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="errormanager.lasterror">
   <h3>
-    <a href="#errormanager.lasterror" class="pilcrow">&#182;</a>
+    <a href="#errormanager.lasterror" name="errormanager.lasterror" class="pilcrow">&#182;</a>
     ErrorManager.lastError
   </h3>
 </div>
@@ -124,23 +135,30 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">lastError</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">lastError</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="errormanager-methods">
+<div class="pilwrap" id="errormanager%20methods">
   <h2>
-    <a href="#errormanager-methods" class="pilcrow">&#182;</a>
+    <a href="#errormanager%20methods" name="errormanager%20methods" class="pilcrow">&#182;</a>
     ErrorManager methods
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -148,7 +166,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="errormanager.init">
   <h3>
-    <a href="#errormanager.init" class="pilcrow">&#182;</a>
+    <a href="#errormanager.init" name="errormanager.init" class="pilcrow">&#182;</a>
     ErrorManager.init
   </h3>
 </div>
@@ -169,7 +187,8 @@ In node.js, the ServerNode Error Manager is active.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">ErrorManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">ErrorManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
         <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isNodeJS</span><span class="p">())</span> <span class="p">{</span>
@@ -179,7 +198,9 @@ In node.js, the ServerNode Error Manager is active.</p>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
                 <span class="k">return</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">debug</span><span class="p">;</span>
             <span class="p">};</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -189,11 +210,11 @@ In node.js, the ServerNode Error Manager is active.</p>
 </div>
 
 <div class="highlight"><pre><code>    <span class="k">else</span> <span class="p">{</span>
-        <span class="n">process</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;uncaughtException&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">that</span><span class="o">.</span><span class="n">lastError</span> <span class="o">=</span> <span class="n">err</span><span class="p">;</span>
-            <span class="n">node</span><span class="o">.</span><span class="n">err</span><span class="p">(</span><span class="s">&#39;Caught exception: &#39;</span> <span class="o">+</span> <span class="n">err</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">debug</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">throw</span> <span class="n">err</span><span class="p">;</span>
+        <span class="nx">process</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;uncaughtException&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">lastError</span> <span class="o">=</span> <span class="nx">err</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Caught exception: &#39;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">});</span>
     <span class="p">}</span>
@@ -201,20 +222,26 @@ In node.js, the ServerNode Error Manager is active.</p>
 
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="p">};</span>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="closure">
   <h2>
-    <a href="#closure" class="pilcrow">&#182;</a>
+    <a href="#closure" name="closure" class="pilcrow">&#182;</a>
     Closure
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
