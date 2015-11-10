@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/stager/stager_extends.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/stager/stager_extends.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -19,7 +19,7 @@
     <div id="tree"></div>
     <div id="headings">
       <div class="heading h1">
-        <a href="#stager-extend-stages--modify-sequence">Stager extend stages, modify sequence</a>
+        <a href="#stager%20extend%20stages%2C%20modify%20sequence">Stager extend stages, modify sequence</a>
       </div>
       <div class="heading h4">
         <a href="#stager.extendstep">Stager.extendStep</a>
@@ -60,9 +60,9 @@
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="stager-extend-stages--modify-sequence">
+<div class="pilwrap" id="stager%20extend%20stages%2C%20modify%20sequence">
   <h1>
-    <a href="#stager-extend-stages--modify-sequence" class="pilcrow">&#182;</a>
+    <a href="#stager%20extend%20stages%2C%20modify%20sequence" name="stager%20extend%20stages%2C%20modify%20sequence" class="pilcrow">&#182;</a>
     Stager extend stages, modify sequence
   </h1>
 </div>
@@ -81,7 +81,10 @@ MIT Licensed</p>
     <span class="kd">var</span> <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">checkFinalized</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">checkFinalized</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">handleStepsArray</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">handleStepsArray</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">handleStepsArray</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">handleStepsArray</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -89,7 +92,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="stager.extendstep">
   <h4>
-    <a href="#stager.extendstep" class="pilcrow">&#182;</a>
+    <a href="#stager.extendstep" name="stager.extendstep" class="pilcrow">&#182;</a>
     Stager.extendStep
   </h4>
 </div>
@@ -122,12 +125,13 @@ must always be a function.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">validateExtendedStep
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">step</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStep: stepId must be a&#39;</span> <span class="o">+</span>
@@ -152,7 +156,10 @@ must always be a function.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStep: update must be object &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;or function. Step id: &#39;</span> <span class="o">+</span> <span class="nx">stepId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -160,7 +167,7 @@ must always be a function.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.extendstage">
   <h4>
-    <a href="#stager.extendstage" class="pilcrow">&#182;</a>
+    <a href="#stager.extendstage" name="stager.extendstage" class="pilcrow">&#182;</a>
     Stager.extendStage
   </h4>
 </div>
@@ -192,12 +199,13 @@ must always be a function.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">validateExtendedStage
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stageId</span><span class="p">)</span> <span class="p">{</span>
@@ -230,7 +238,10 @@ must always be a function.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: update must be object &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;or function. Stage id: &#39;</span> <span class="o">+</span> <span class="nx">stageId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -238,7 +249,7 @@ must always be a function.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.extendallsteps">
   <h4>
-    <a href="#stager.extendallsteps" class="pilcrow">&#182;</a>
+    <a href="#stager.extendallsteps" name="stager.extendallsteps" class="pilcrow">&#182;</a>
     Stager.extendAllSteps
   </h4>
 </div>
@@ -263,19 +274,23 @@ must always be a function.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.extendStep
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendAllSteps</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendAllSteps</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">step</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">step</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">extendStep</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -283,7 +298,7 @@ must always be a function.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.extendallstages">
   <h4>
-    <a href="#stager.extendallstages" class="pilcrow">&#182;</a>
+    <a href="#stager.extendallstages" name="stager.extendallstages" class="pilcrow">&#182;</a>
     Stager.extendAllStages
   </h4>
 </div>
@@ -308,19 +323,23 @@ must always be a function.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.extendStage
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendAllStages</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extendAllStages</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">stage</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">stage</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">extendStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -328,7 +347,7 @@ must always be a function.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.skip">
   <h4>
-    <a href="#stager.skip" class="pilcrow">&#182;</a>
+    <a href="#stager.skip" name="stager.skip" class="pilcrow">&#182;</a>
     Stager.skip
   </h4>
 </div>
@@ -358,15 +377,19 @@ must always be a function.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.finalize
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">skip</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">skip</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">checkFinalized</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;skip&#39;</span><span class="p">);</span>
         <span class="nx">setSkipStageStep</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="s1">&#39;skip&#39;</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -374,7 +397,7 @@ must always be a function.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.unskip">
   <h4>
-    <a href="#stager.unskip" class="pilcrow">&#182;</a>
+    <a href="#stager.unskip" name="stager.unskip" class="pilcrow">&#182;</a>
     Stager.unskip
   </h4>
 </div>
@@ -403,15 +426,19 @@ must always be a function.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.finalize
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">unskip</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">unskip</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">checkFinalized</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;unskip&#39;</span><span class="p">);</span>
         <span class="nx">setSkipStageStep</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="s1">&#39;unskip&#39;</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -419,7 +446,7 @@ must always be a function.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.isskipped">
   <h4>
-    <a href="#stager.isskipped" class="pilcrow">&#182;</a>
+    <a href="#stager.isskipped" name="stager.isskipped" class="pilcrow">&#182;</a>
     Stager.isSkipped
   </h4>
 </div>
@@ -452,15 +479,19 @@ must always be a function.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.unskip
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isSkipped</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isSkipped</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="o">!!</span><span class="nx">setSkipStageStep</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span>
                                   <span class="s1">&#39;isSkipped&#39;</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -468,7 +499,7 @@ must always be a function.</p>
   <div class="summary">
 <div class="pilwrap" id="setskipstagestep">
   <h4>
-    <a href="#setskipstagestep" class="pilcrow">&#182;</a>
+    <a href="#setskipstagestep" name="setskipstagestep" class="pilcrow">&#182;</a>
     setSkipStageStep
   </h4>
 </div>
@@ -514,11 +545,12 @@ must always be a function.</p>
     <div class="dox_tag_detail">
       <span class="dox_type">private
 </span>
-    </span>
+    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">setSkipStageStep</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">setSkipStageStep</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stageId</span> <span class="o">||</span> <span class="nx">stageId</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: stageId must &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;be a non-empty string.&#39;</span><span class="p">);</span>
@@ -535,7 +567,11 @@ must always be a function.</p>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">value</span><span class="p">)</span> <span class="nx">that</span><span class="p">.</span><span class="nx">toSkip</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">toSkip</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">];</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">}</span>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -543,7 +579,7 @@ must always be a function.</p>
   <div class="summary">
 <div class="pilwrap" id="validateextendedstep">
   <h4>
-    <a href="#validateextendedstep" class="pilcrow">&#182;</a>
+    <a href="#validateextendedstep" name="validateextendedstep" class="pilcrow">&#182;</a>
     validateExtendedStep
   </h4>
 </div>
@@ -574,12 +610,13 @@ must always be a function.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">handleStepsArray
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">validateExtendedStep</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">update</span><span class="p">,</span> <span class="nx">updateFunction</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">validateExtendedStep</span><span class="p">(</span><span class="nx">stepId</span><span class="p">,</span> <span class="nx">update</span><span class="p">,</span> <span class="nx">updateFunction</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">updateFunction</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">update</span> <span class="o">||</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.extendStep: update function &#39;</span> <span class="o">+</span>
@@ -606,7 +643,10 @@ must always be a function.</p>
                                     <span class="s1">&#39;function. Step id: &#39;</span> <span class="o">+</span> <span class="nx">stepId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -614,7 +654,7 @@ must always be a function.</p>
   <div class="summary">
 <div class="pilwrap" id="validateextendedstage">
   <h4>
-    <a href="#validateextendedstage" class="pilcrow">&#182;</a>
+    <a href="#validateextendedstage" name="validateextendedstage" class="pilcrow">&#182;</a>
     validateExtendedStage
   </h4>
 </div>
@@ -650,12 +690,13 @@ must always be a function.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">handleStepsArray
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">validateExtendedStage</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">update</span><span class="p">,</span> <span class="nx">updateFunction</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">validateExtendedStage</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">update</span><span class="p">,</span> <span class="nx">updateFunction</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">((</span><span class="nx">updateFunction</span> <span class="o">&amp;&amp;</span> <span class="nx">update</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">stageId</span><span class="p">)</span> <span class="o">||</span>
             <span class="p">(</span><span class="o">!</span><span class="nx">updateFunction</span> <span class="o">&amp;&amp;</span> <span class="nx">update</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)))</span> <span class="p">{</span>
 
@@ -673,7 +714,10 @@ must always be a function.</p>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.extendStage: found update.steps, but &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;it is not a non-empty array. Stage id: &#39;</span> <span class="o">+</span>
                                <span class="nx">stageId</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
-            <span class="p">}</span></pre></div>
+            <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -683,7 +727,8 @@ must always be a function.</p>
 </div>
 <p>Process every step in the array. Steps array is modified.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">handleStepsArray</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">,</span> <span class="s1">&#39;extendStage&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">handleStepsArray</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">,</span> <span class="s1">&#39;extendStage&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
 

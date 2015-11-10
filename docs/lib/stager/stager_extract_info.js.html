@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/stager/stager_extract_info.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/stager/stager_extract_info.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -19,7 +19,7 @@
     <div id="tree"></div>
     <div id="headings">
       <div class="heading h1">
-        <a href="#stager-extract-info">Stager Extract Info</a>
+        <a href="#stager%20extract%20info">Stager Extract Info</a>
       </div>
       <div class="heading h4">
         <a href="#stager.getsequence">Stager.getSequence</a>
@@ -36,9 +36,9 @@
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="stager-extract-info">
+<div class="pilwrap" id="stager%20extract%20info">
   <h1>
-    <a href="#stager-extract-info" class="pilcrow">&#182;</a>
+    <a href="#stager%20extract%20info" name="stager%20extract%20info" class="pilcrow">&#182;</a>
     Stager Extract Info
   </h1>
 </div>
@@ -53,7 +53,10 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="kd">var</span> <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -61,7 +64,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="stager.getsequence">
   <h4>
-    <a href="#stager.getsequence" class="pilcrow">&#182;</a>
+    <a href="#stager.getsequence" name="stager.getsequence" class="pilcrow">&#182;</a>
     Stager.getSequence
   </h4>
 </div>
@@ -90,7 +93,8 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getSequence</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getSequence</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">result</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">seqIdx</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">seqObj</span><span class="p">;</span>
@@ -199,7 +203,10 @@ MIT Licensed</p>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -207,7 +214,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="stager.extractstage">
   <h4>
-    <a href="#stager.extractstage" class="pilcrow">&#182;</a>
+    <a href="#stager.extractstage" name="stager.extractstage" class="pilcrow">&#182;</a>
     Stager.extractStage
   </h4>
 </div>
@@ -245,12 +252,13 @@ stage.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.setState
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extractStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">,</span> <span class="nx">useSeq</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extractStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">,</span> <span class="nx">useSeq</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">result</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">stepIdx</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">stageId</span><span class="p">;</span>
@@ -265,7 +273,10 @@ stage.</p>
         <span class="p">}</span>
         <span class="k">else</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
 
-        <span class="nx">result</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">steps</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">stages</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">sequence</span><span class="o">:</span> <span class="p">[]</span> <span class="p">};</span></pre></div>
+        <span class="nx">result</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">steps</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">stages</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">sequence</span><span class="o">:</span> <span class="p">[]</span> <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -275,7 +286,8 @@ stage.</p>
 </div>
 <p>undefined (default) -> true</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">useSeq</span> <span class="o">=</span> <span class="p">(</span><span class="nx">useSeq</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">useSeq</span> <span class="o">=</span> <span class="p">(</span><span class="nx">useSeq</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">idIdx</span> <span class="k">in</span> <span class="nx">idArray</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">idArray</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idIdx</span><span class="p">))</span> <span class="p">{</span>
@@ -283,7 +295,10 @@ stage.</p>
 
                 <span class="nx">stageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stageObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stageObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -293,12 +308,16 @@ stage.</p>
 </div>
 <p>Add step objects:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">for</span> <span class="p">(</span><span class="nx">stepIdx</span> <span class="k">in</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">stepIdx</span> <span class="k">in</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">stepIdx</span><span class="p">))</span> <span class="p">{</span>
                         <span class="nx">stepId</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepIdx</span><span class="p">];</span>
                         <span class="nx">result</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">];</span>
                     <span class="p">}</span>
-                <span class="p">}</span></pre></div>
+                <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -308,8 +327,12 @@ stage.</p>
 </div>
 <p>Add stage object:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="nx">stageId</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
-                <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="nx">stageId</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+                <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -319,7 +342,11 @@ stage.</p>
 </div>
 <p>If given id is alias, also add alias:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">stageId</span> <span class="o">!==</span> <span class="nx">id</span><span class="p">)</span> <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">stageId</span> <span class="o">!==</span> <span class="nx">id</span><span class="p">)</span> <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -329,7 +356,8 @@ stage.</p>
 </div>
 <p>Add mini-sequence:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">useSeq</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">useSeq</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">result</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
                         <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span>
                         <span class="nx">id</span><span class="o">:</span> <span class="nx">stageId</span>

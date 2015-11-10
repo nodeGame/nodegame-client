@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/stager/stager_setters_getters.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/stager/stager_setters_getters.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -19,7 +19,7 @@
     <div id="tree"></div>
     <div id="headings">
       <div class="heading h1">
-        <a href="#stager-setter-and-getters">Stager Setter and Getters</a>
+        <a href="#stager%20setter%20and%20getters">Stager Setter and Getters</a>
       </div>
       <div class="heading h4">
         <a href="#stager.setstate">Stager.setState</a>
@@ -81,9 +81,9 @@
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="stager-setter-and-getters">
+<div class="pilwrap" id="stager%20setter%20and%20getters">
   <h1>
-    <a href="#stager-setter-and-getters" class="pilcrow">&#182;</a>
+    <a href="#stager%20setter%20and%20getters" name="stager%20setter%20and%20getters" class="pilcrow">&#182;</a>
     Stager Setter and Getters
   </h1>
 </div>
@@ -100,7 +100,10 @@ MIT Licensed</p>
 
     <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -108,7 +111,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="stager.setstate">
   <h4>
-    <a href="#stager.setstate" class="pilcrow">&#182;</a>
+    <a href="#stager.setstate" name="stager.setstate" class="pilcrow">&#182;</a>
     Stager.setState
   </h4>
 </div>
@@ -144,12 +147,13 @@ the state.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.getState
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">idx</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">stageObj</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">seqObj</span><span class="p">;</span>
@@ -163,7 +167,10 @@ the state.</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.setState: updateRule must be object &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -173,13 +180,17 @@ the state.</p>
 </div>
 <p>Clear previous state:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">===</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">===</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.setState: invalid updateRule: &#39;</span> <span class="o">+</span>
                             <span class="nx">updateRule</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -189,11 +200,15 @@ the state.</p>
 </div>
 <p>Add steps:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idx</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">idx</span><span class="p">]);</span>
             <span class="p">}</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -205,13 +220,16 @@ the state.</p>
 first, handle all non-aliases
 (key of <code>stages</code> entry is same as <code>id</code> field of its value)</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">stages</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">stages</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">stageObj</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">stages</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idx</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
                 <span class="nx">stageObj</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stageObj</span><span class="p">);</span>
             <span class="p">}</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -223,13 +241,17 @@ first, handle all non-aliases
 (key of <code>stages</code> entry is different from <code>id</code> field of
 its value)</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">stages</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">stages</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">stageObj</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">stages</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idx</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
                 <span class="nx">stageObj</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageObj</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
             <span class="p">}</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -239,11 +261,15 @@ its value)</p>
 </div>
 <p>Add sequence blocks:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;sequence&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;sequence&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">idx</span> <span class="o">&lt;</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">idx</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">seqObj</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
 
-                <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">seqObj</span><span class="p">;</span></pre></div>
+                <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">seqObj</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -256,7 +282,10 @@ case 'gameover':
 this.gameover();
 break;</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -271,7 +300,10 @@ throw new Error('Stager.setState: invalid' +
 }
 break;</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -285,7 +317,10 @@ throw new Error('Stager.setState: invalid' +
 + 'sequence.');                    //}
 break;</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -300,7 +335,10 @@ throw new Error('Stager.setState: invalid' +
 }
 break;</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -313,7 +351,10 @@ if (!this.doLoop(seqObj.id, seqObj.cb)) {
 throw new Error('Stager.setState: invalid' +
 + 'sequence.');                    //}</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -324,7 +365,10 @@ throw new Error('Stager.setState: invalid' +
 <p>}
 break;</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -337,7 +381,10 @@ break;</p>
 throw new Error('Stager.setState: invalid' +
 + 'sequence.');                    //}</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -347,8 +394,12 @@ throw new Error('Stager.setState: invalid' +
 </div>
 <p>}</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="p">}</span>
-        <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -358,9 +409,13 @@ throw new Error('Stager.setState: invalid' +
 </div>
 <p>Set general next-decider:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;generalNextFunction&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;generalNextFunction&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">registerGeneralNext</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">generalNextFunction</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -370,11 +425,15 @@ throw new Error('Stager.setState: invalid' +
 </div>
 <p>Set specific next-deciders:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">nextFunctions</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">nextFunctions</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">nextFunctions</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idx</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">registerNext</span><span class="p">(</span><span class="nx">idx</span><span class="p">,</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">nextFunctions</span><span class="p">[</span><span class="nx">idx</span><span class="p">]);</span>
             <span class="p">}</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -384,9 +443,13 @@ throw new Error('Stager.setState: invalid' +
 </div>
 <p>Set default step-rule:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultStepRule&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultStepRule&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setDefaultStepRule</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultStepRule</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -396,9 +459,13 @@ throw new Error('Stager.setState: invalid' +
 </div>
 <p>Set default globals:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultGlobals&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultGlobals&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setDefaultGlobals</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultGlobals</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -408,9 +475,13 @@ throw new Error('Stager.setState: invalid' +
 </div>
 <p>Set default properties:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultProperties&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultProperties&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setDefaultProperties</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultProperties</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -420,9 +491,13 @@ throw new Error('Stager.setState: invalid' +
 </div>
 <p>Set onInit:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;onInit&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;onInit&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setOnInit</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">onInit</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -432,9 +507,13 @@ throw new Error('Stager.setState: invalid' +
 </div>
 <p>Set onGameover:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;onGameover&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;onGameover&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setOnGameover</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">onGameover</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -444,9 +523,13 @@ throw new Error('Stager.setState: invalid' +
 </div>
 <p>Set toSkip.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;toSkip&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;toSkip&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">toSkip</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">toSkip</span><span class="p">;</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -456,9 +539,13 @@ throw new Error('Stager.setState: invalid' +
 </div>
 <p>Set defaultCallback</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultCallback&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultCallback&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setDefaultCallback</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">defaultCallback</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -468,9 +555,13 @@ throw new Error('Stager.setState: invalid' +
 </div>
 <p>Cache reset.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;cacheReset&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;cacheReset&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">cacheReset</span><span class="p">;</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -480,8 +571,12 @@ throw new Error('Stager.setState: invalid' +
 </div>
 <p>Mark finalized.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -489,7 +584,7 @@ throw new Error('Stager.setState: invalid' +
   <div class="summary">
 <div class="pilwrap" id="stager.getstate">
   <h4>
-    <a href="#stager.getstate" class="pilcrow">&#182;</a>
+    <a href="#stager.getstate" name="stager.getstate" class="pilcrow">&#182;</a>
     Stager.getState
   </h4>
 </div>
@@ -517,12 +612,13 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.finalize
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalize</span><span class="p">();</span>
 
         <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">({</span>
@@ -540,7 +636,10 @@ onGameover, blocks.</p>
             <span class="nx">toSkip</span><span class="o">:</span>              <span class="k">this</span><span class="p">.</span><span class="nx">toSkip</span><span class="p">,</span>
             <span class="nx">defaultCallback</span><span class="o">:</span>     <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span>
         <span class="p">});</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -548,7 +647,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.setdefaultsteprule">
   <h4>
-    <a href="#stager.setdefaultsteprule" class="pilcrow">&#182;</a>
+    <a href="#stager.setdefaultsteprule" name="stager.setdefaultsteprule" class="pilcrow">&#182;</a>
     Stager.setDefaultStepRule
   </h4>
 </div>
@@ -571,12 +670,13 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">stepRules
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setDefaultStepRule</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stepRule</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setDefaultStepRule</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stepRule</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stepRule</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stepRule</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.setDefaultStepRule: &#39;</span> <span class="o">+</span>
@@ -586,7 +686,9 @@ onGameover, blocks.</p>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">defaultStepRule</span> <span class="o">=</span> <span class="nx">stepRule</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span></pre></div>
+        <span class="k">else</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -596,9 +698,13 @@ onGameover, blocks.</p>
 </div>
 <p>Initial default.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">defaultStepRule</span> <span class="o">=</span> <span class="nx">stepRules</span><span class="p">.</span><span class="nx">SOLO</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">defaultStepRule</span> <span class="o">=</span> <span class="nx">stepRules</span><span class="p">.</span><span class="nx">SOLO</span><span class="p">;</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -606,7 +712,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.getdefaultsteprule">
   <h4>
-    <a href="#stager.getdefaultsteprule" class="pilcrow">&#182;</a>
+    <a href="#stager.getdefaultsteprule" name="stager.getdefaultsteprule" class="pilcrow">&#182;</a>
     Stager.getDefaultStepRule
   </h4>
 </div>
@@ -624,9 +730,13 @@ onGameover, blocks.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getDefaultStepRule</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getDefaultStepRule</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultStepRule</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -634,7 +744,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.setdefaultcallback">
   <h4>
-    <a href="#stager.setdefaultcallback" class="pilcrow">&#182;</a>
+    <a href="#stager.setdefaultcallback" name="stager.setdefaultcallback" class="pilcrow">&#182;</a>
     Stager.setDefaultCallback
   </h4>
 </div>
@@ -657,18 +767,22 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.getDefaultCallback
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setDefaultCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setDefaultCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.setDefaultCallback: &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;defaultCallback must be function or null.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -676,7 +790,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.getdefaultcallback">
   <h4>
-    <a href="#stager.getdefaultcallback" class="pilcrow">&#182;</a>
+    <a href="#stager.getdefaultcallback" name="stager.getdefaultcallback" class="pilcrow">&#182;</a>
     Stager.getDefaultCallback
   </h4>
 </div>
@@ -705,14 +819,18 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.setDefaultCallback
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getDefaultCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getDefaultCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span> <span class="o">||</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">defaultCallback</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -720,7 +838,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.setdefaultglobals">
   <h4>
-    <a href="#stager.setdefaultglobals" class="pilcrow">&#182;</a>
+    <a href="#stager.setdefaultglobals" name="stager.setdefaultglobals" class="pilcrow">&#182;</a>
     Stager.setDefaultGlobals
   </h4>
 </div>
@@ -741,7 +859,7 @@ onGameover, blocks.</p>
       <span class="dox_type">boolean</span>
       <span>Optional. If TRUE, parameter defaultGlobals
    will be mixed-in with current globals, otherwise it will replace
-     it. Default FALSE.</span>
+it. Default FALSE.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -750,19 +868,23 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GamePlot.getGlobal
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setDefaultGlobals</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">defaultGlobals</span><span class="p">,</span> <span class="nx">mixin</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setDefaultGlobals</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">defaultGlobals</span><span class="p">,</span> <span class="nx">mixin</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">defaultGlobals</span> <span class="o">||</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">defaultGlobals</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.setDefaultGlobals: &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;defaultGlobals must be object.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">mixin</span><span class="p">)</span> <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultGlobals</span><span class="p">,</span> <span class="nx">defaultGlobals</span><span class="p">);</span>
         <span class="k">else</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultGlobals</span> <span class="o">=</span> <span class="nx">defaultGlobals</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -770,7 +892,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.getdefaultglobals">
   <h4>
-    <a href="#stager.getdefaultglobals" class="pilcrow">&#182;</a>
+    <a href="#stager.getdefaultglobals" name="stager.getdefaultglobals" class="pilcrow">&#182;</a>
     Stager.getDefaultGlobals
   </h4>
 </div>
@@ -792,14 +914,18 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GamePlot.getGlobal
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getDefaultGlobals</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getDefaultGlobals</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultGlobals</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -807,7 +933,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.setdefaultproperty">
   <h4>
-    <a href="#stager.setdefaultproperty" class="pilcrow">&#182;</a>
+    <a href="#stager.setdefaultproperty" name="stager.setdefaultproperty" class="pilcrow">&#182;</a>
     Stager.setDefaultProperty
   </h4>
 </div>
@@ -838,18 +964,22 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GamePlot.getProperty
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setDefaultProperty</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setDefaultProperty</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.setDefaultProperty: name &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">defaultProperties</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -857,7 +987,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.setdefaultproperties">
   <h4>
-    <a href="#stager.setdefaultproperties" class="pilcrow">&#182;</a>
+    <a href="#stager.setdefaultproperties" name="stager.setdefaultproperties" class="pilcrow">&#182;</a>
     Stager.setDefaultProperties
   </h4>
 </div>
@@ -877,7 +1007,7 @@ onGameover, blocks.</p>
       <span class="dox_type">boolean</span>
       <span>Optional. If TRUE, parameter defaulProperties
    will be mixed-in with current globals, otherwise it will replace
-     it. Default FALSE.</span>
+it. Default FALSE.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -886,12 +1016,13 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GamePlot.getProperty
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setDefaultProperties</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">defaultProperties</span><span class="p">,</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setDefaultProperties</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">defaultProperties</span><span class="p">,</span>
                                                      <span class="nx">mixin</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">defaultProperties</span> <span class="o">||</span>
             <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">defaultProperties</span><span class="p">)</span> <span class="p">{</span>
@@ -900,7 +1031,10 @@ onGameover, blocks.</p>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">mixin</span><span class="p">)</span> <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultProperties</span><span class="p">,</span> <span class="nx">defaultProperties</span><span class="p">);</span>
         <span class="k">else</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultProperties</span> <span class="o">=</span> <span class="nx">defaultProperties</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -908,7 +1042,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.getdefaultproperties">
   <h4>
-    <a href="#stager.getdefaultproperties" class="pilcrow">&#182;</a>
+    <a href="#stager.getdefaultproperties" name="stager.getdefaultproperties" class="pilcrow">&#182;</a>
     Stager.getDefaultProperties
   </h4>
 </div>
@@ -930,14 +1064,18 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GamePlot.getProperty
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getDefaultProperties</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getDefaultProperties</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultProperties</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -945,7 +1083,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.setoninit">
   <h4>
-    <a href="#stager.setoninit" class="pilcrow">&#182;</a>
+    <a href="#stager.setoninit" name="stager.setoninit" class="pilcrow">&#182;</a>
     Stager.setOnInit
   </h4>
 </div>
@@ -965,18 +1103,22 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.onInit
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setOnInit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setOnInit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">func</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.setOnInit: func must be&#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39; function or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">onInit</span> <span class="o">=</span> <span class="nx">func</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -984,7 +1126,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.getoninit">
   <h4>
-    <a href="#stager.getoninit" class="pilcrow">&#182;</a>
+    <a href="#stager.getoninit" name="stager.getoninit" class="pilcrow">&#182;</a>
     Stager.getOnInit
   </h4>
 </div>
@@ -1004,14 +1146,18 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.onInit
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getOnInit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getOnInit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">onInit</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1019,7 +1165,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.setongameover">
   <h4>
-    <a href="#stager.setongameover" class="pilcrow">&#182;</a>
+    <a href="#stager.setongameover" name="stager.setongameover" class="pilcrow">&#182;</a>
     Stager.setOnGameover
   </h4>
 </div>
@@ -1039,18 +1185,22 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.onGameover
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setOnGameover</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setOnGameover</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">func</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.setOnGameover: func must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;function or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">onGameover</span> <span class="o">=</span> <span class="nx">func</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1058,7 +1208,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.setongameover">
   <h4>
-    <a href="#stager.setongameover" class="pilcrow">&#182;</a>
+    <a href="#stager.setongameover" name="stager.setongameover" class="pilcrow">&#182;</a>
     Stager.setOnGameOver
   </h4>
 </div>
@@ -1070,12 +1220,16 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.setOnGameover
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setOnGameOver</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setOnGameover</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setOnGameOver</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setOnGameover</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1083,7 +1237,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.getongameover">
   <h4>
-    <a href="#stager.getongameover" class="pilcrow">&#182;</a>
+    <a href="#stager.getongameover" name="stager.getongameover" class="pilcrow">&#182;</a>
     Stager.getOnGameover
   </h4>
 </div>
@@ -1103,14 +1257,18 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.onGameover
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getOnGameover</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getOnGameover</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">onGameover</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1118,7 +1276,7 @@ onGameover, blocks.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.getongameover">
   <h4>
-    <a href="#stager.getongameover" class="pilcrow">&#182;</a>
+    <a href="#stager.getongameover" name="stager.getongameover" class="pilcrow">&#182;</a>
     Stager.getOnGameOver
   </h4>
 </div>
@@ -1130,12 +1288,13 @@ onGameover, blocks.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager.getOnGameover
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getOnGameOver</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getOnGameover</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getOnGameOver</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getOnGameover</span><span class="p">;</span>
 
 <span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>

@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="doc-style.css" />
   <script src="doc-filelist.js"></script>
   <script>
-    var relativeDir = '', thisFile = 'index.browser.js', defaultSidebar = true;
+    var relativeDir = "", thisFile = "index.browser.js", defaultSidebar = true;
   </script>
   <script src="doc-script.js"></script>
 </head>
@@ -19,7 +19,7 @@
     <div id="tree"></div>
     <div id="headings">
       <div class="heading h1">
-        <a href="#nodegame--social-experiments-in-the-browser">nodeGame: Social Experiments in the Browser</a>
+        <a href="#nodegame%3A%20social%20experiments%20in%20the%20browser">nodeGame: Social Experiments in the Browser</a>
       </div>
     </div>
   </div>
@@ -30,9 +30,9 @@
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nodegame--social-experiments-in-the-browser">
+<div class="pilwrap" id="nodegame%3A%20social%20experiments%20in%20the%20browser">
   <h1>
-    <a href="#nodegame--social-experiments-in-the-browser" class="pilcrow">&#182;</a>
+    <a href="#nodegame%3A%20social%20experiments%20in%20the%20browser" name="nodegame%3A%20social%20experiments%20in%20the%20browser" class="pilcrow">&#182;</a>
     nodeGame: Social Experiments in the Browser
   </h1>
 </div>
@@ -50,7 +50,10 @@ for real-time multiplayer games in the browser.</p>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">.</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;nodegame-client: a global node variable is already &#39;</span> <span class="o">+</span>
                         <span class="s1">&#39;defined. Aborting...&#39;</span><span class="p">);</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -60,12 +63,16 @@ for real-time multiplayer games in the browser.</p>
 </div>
 <p>Defining an empty node object. Will be overwritten later on.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="p">{};</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="p">{};</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">JSUS</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">NDDB</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">NDDB</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">store</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">store</span> <span class="o">=</span> <span class="nx">store</span><span class="p">;</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">support</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">compatibility</span><span class="p">();</span></pre></div>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">support</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">compatibility</span><span class="p">();</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -75,7 +82,8 @@ for real-time multiplayer games in the browser.</p>
 </div>
 <p>Auto-Generated.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.9.10&#39;</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.9.10&#39;</span><span class="p">;</span>
 
 <span class="p">})(</span><span class="nb">window</span><span class="p">);</span>
 </pre></div>

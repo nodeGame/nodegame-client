@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/stager/stager_blocks.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/stager/stager_blocks.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -19,7 +19,7 @@
     <div id="tree"></div>
     <div id="headings">
       <div class="heading h1">
-        <a href="#stager-blocks-operations">Stager blocks operations</a>
+        <a href="#stager%20blocks%20operations">Stager blocks operations</a>
       </div>
       <div class="heading h4">
         <a href="#stager.stepblock">Stager.stepBlock</a>
@@ -48,9 +48,9 @@
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="stager-blocks-operations">
+<div class="pilwrap" id="stager%20blocks%20operations">
   <h1>
-    <a href="#stager-blocks-operations" class="pilcrow">&#182;</a>
+    <a href="#stager%20blocks%20operations" name="stager%20blocks%20operations" class="pilcrow">&#182;</a>
     Stager blocks operations
   </h1>
 </div>
@@ -81,7 +81,10 @@ MIT Licensed</p>
 
     <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING</span>          <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_ENCLOSING</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING_STEPS</span>    <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span> <span class="nx">BLOCK_ENCLOSING_STEPS</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING_STAGES</span>   <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_ENCLOSING_STAGES</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING_STAGES</span>   <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_ENCLOSING_STAGES</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -89,7 +92,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="stager.stepblock">
   <h4>
-    <a href="#stager.stepblock" class="pilcrow">&#182;</a>
+    <a href="#stager.stepblock" name="stager.stepblock" class="pilcrow">&#182;</a>
     Stager.stepBlock
   </h4>
 </div>
@@ -123,7 +126,8 @@ to lower level function <code>addBlock</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stepBlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stepBlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">positions</span><span class="p">,</span> <span class="nx">id</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
@@ -146,7 +150,10 @@ to lower level function <code>addBlock</code>.</p>
         <span class="nx">addBlock</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">BLOCK_STEPBLOCK</span><span class="p">,</span> <span class="nx">positions</span><span class="p">,</span> <span class="nx">BLOCK_STEP</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -154,7 +161,7 @@ to lower level function <code>addBlock</code>.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.stageblock">
   <h4>
-    <a href="#stager.stageblock" class="pilcrow">&#182;</a>
+    <a href="#stager.stageblock" name="stager.stageblock" class="pilcrow">&#182;</a>
     Stager.stageBlock
   </h4>
 </div>
@@ -188,12 +195,13 @@ to lower level function <code>addStageBlock</code>.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">addStageBlock
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stageBlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stageBlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">positions</span><span class="p">,</span> <span class="nx">id</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">positions</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
@@ -214,7 +222,10 @@ to lower level function <code>addStageBlock</code>.</p>
 
         <span class="nx">addStageBlock</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">BLOCK_STAGEBLOCK</span><span class="p">,</span> <span class="nx">positions</span><span class="p">,</span> <span class="nx">BLOCK_STAGE</span><span class="p">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -222,7 +233,7 @@ to lower level function <code>addStageBlock</code>.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.getcurrentblock">
   <h4>
-    <a href="#stager.getcurrentblock" class="pilcrow">&#182;</a>
+    <a href="#stager.getcurrentblock" name="stager.getcurrentblock" class="pilcrow">&#182;</a>
     Stager.getCurrentBlock
   </h4>
 </div>
@@ -249,12 +260,16 @@ to lower level function <code>addStageBlock</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentBlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrentBlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span><span class="mi">1</span><span class="p">];</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -262,7 +277,7 @@ to lower level function <code>addStageBlock</code>.</p>
   <div class="summary">
 <div class="pilwrap" id="stager.endblock">
   <h4>
-    <a href="#stager.endblock" class="pilcrow">&#182;</a>
+    <a href="#stager.endblock" name="stager.endblock" class="pilcrow">&#182;</a>
     Stager.endBlock
   </h4>
 </div>
@@ -283,13 +298,17 @@ to lower level function <code>addStageBlock</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">endBlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">endBlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">block</span><span class="p">,</span> <span class="nx">currentBlock</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">found</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
-        <span class="nx">block</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span></pre></div>
+        <span class="nx">block</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -299,7 +318,8 @@ to lower level function <code>addStageBlock</code>.</p>
 </div>
 <p>if (block.id &amp;&amp; block.id.indexOf(BLOCK_STEPBLOCK) !== -1) {</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">isType</span><span class="p">(</span><span class="nx">BLOCK_STEPBLOCK</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">isType</span><span class="p">(</span><span class="nx">BLOCK_STEPBLOCK</span><span class="p">))</span> <span class="p">{</span>
 
             <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
             <span class="k">do</span> <span class="p">{</span>
@@ -314,7 +334,9 @@ to lower level function <code>addStageBlock</code>.</p>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Ah, this should not happen.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
 
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -325,12 +347,15 @@ to lower level function <code>addStageBlock</code>.</p>
 <p>Normal stage / step block, add it to previous
 else if (block.id &amp;&amp; block.id.indexOf('AAA') === -1) {</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">block</span><span class="p">.</span><span class="nx">isType</span><span class="p">(</span><span class="nx">BLOCK_STAGEBLOCK</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">block</span><span class="p">.</span><span class="nx">isType</span><span class="p">(</span><span class="nx">BLOCK_STAGEBLOCK</span><span class="p">))</span> <span class="p">{</span>
 
             <span class="nx">currentBlock</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentBlock</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">currentBlock</span><span class="p">)</span> <span class="nx">currentBlock</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">block</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nx">positions</span><span class="p">);</span>
 
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -340,14 +365,18 @@ else if (block.id &amp;&amp; block.id.indexOf('AAA') === -1) {</p>
 </div>
 <p>Add stage block to default block.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">BLOCK_DEFAULT</span> <span class="o">&amp;&amp;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">BLOCK_DEFAULT</span> <span class="o">&amp;&amp;</span>
                  <span class="nx">block</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">BLOCK_ENCLOSING</span><span class="p">)</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">add</span><span class="p">(</span><span class="nx">block</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nx">positions</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">finalize</span><span class="p">)</span> <span class="nx">block</span><span class="p">.</span><span class="nx">finalize</span><span class="p">();</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -355,7 +384,7 @@ else if (block.id &amp;&amp; block.id.indexOf('AAA') === -1) {</p>
   <div class="summary">
 <div class="pilwrap" id="stager.endblocks">
   <h4>
-    <a href="#stager.endblocks" class="pilcrow">&#182;</a>
+    <a href="#stager.endblocks" name="stager.endblocks" class="pilcrow">&#182;</a>
     Stager.endBlocks
   </h4>
 </div>
@@ -378,13 +407,17 @@ else if (block.id &amp;&amp; block.id.indexOf('AAA') === -1) {</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">endBlocks</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">endBlocks</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">endBlock</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -392,7 +425,7 @@ else if (block.id &amp;&amp; block.id.indexOf('AAA') === -1) {</p>
   <div class="summary">
 <div class="pilwrap" id="stager.endallblocks">
   <h4>
-    <a href="#stager.endallblocks" class="pilcrow">&#182;</a>
+    <a href="#stager.endallblocks" name="stager.endallblocks" class="pilcrow">&#182;</a>
     Stager.endAllBlocks
   </h4>
 </div>
@@ -402,7 +435,8 @@ else if (block.id &amp;&amp; block.id.indexOf('AAA') === -1) {</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">endAllBlocks</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">endAllBlocks</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">endBlocks</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
     <span class="p">};</span>
 

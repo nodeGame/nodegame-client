@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/stager/Block.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/stager/Block.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -22,7 +22,7 @@
         <a href="#block">Block</a>
       </div>
       <div class="heading h2">
-        <a href="#global-scope">Global scope</a>
+        <a href="#global%20scope">Global scope</a>
       </div>
       <div class="heading h2">
         <a href="#block.blocktypes">Block.blockTypes</a>
@@ -49,7 +49,7 @@
         <a href="#block_enclosing_stages">BLOCK_ENCLOSING_STAGES</a>
       </div>
       <div class="heading h2">
-        <a href="#block-constructor">Block constructor</a>
+        <a href="#block%20constructor">Block constructor</a>
       </div>
       <div class="heading h3">
         <a href="#properties">Properties</a>
@@ -103,7 +103,7 @@
         <a href="#block.restore">Block.restore</a>
       </div>
       <div class="heading h2">
-        <a href="#helper-functions">Helper Functions</a>
+        <a href="#helper%20functions">Helper Functions</a>
       </div>
       <div class="heading h4">
         <a href="#sortfunction">sortFunction</a>
@@ -119,7 +119,7 @@
   <div class="summary">
 <div class="pilwrap" id="block">
   <h1>
-    <a href="#block" class="pilcrow">&#182;</a>
+    <a href="#block" name="block" class="pilcrow">&#182;</a>
     Block
   </h1>
 </div>
@@ -134,22 +134,29 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="global-scope">
+<div class="pilwrap" id="global%20scope">
   <h2>
-    <a href="#global-scope" class="pilcrow">&#182;</a>
+    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
     Global scope
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">Block</span> <span class="o">=</span> <span class="nx">Block</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Block</span> <span class="o">=</span> <span class="nx">Block</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -157,7 +164,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="block.blocktypes">
   <h2>
-    <a href="#block.blocktypes" class="pilcrow">&#182;</a>
+    <a href="#block.blocktypes" name="block.blocktypes" class="pilcrow">&#182;</a>
     Block.blockTypes
   </h2>
 </div>
@@ -167,14 +174,18 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">blockTypes</span> <span class="o">=</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">blockTypes</span> <span class="o">=</span> <span class="p">{</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="block_default">
   <h4>
-    <a href="#block_default" class="pilcrow">&#182;</a>
+    <a href="#block_default" name="block_default" class="pilcrow">&#182;</a>
     BLOCK_DEFAULT
   </h4>
 </div>
@@ -182,14 +193,18 @@ MIT Licensed</p>
 
 <p>The first block automatically added to the stager.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_DEFAULT</span><span class="o">:</span>           <span class="s1">&#39;__default&#39;</span><span class="p">,</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">BLOCK_DEFAULT</span><span class="o">:</span>           <span class="s1">&#39;__default&#39;</span><span class="p">,</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="block_stageblock">
   <h4>
-    <a href="#block_stageblock" class="pilcrow">&#182;</a>
+    <a href="#block_stageblock" name="block_stageblock" class="pilcrow">&#182;</a>
     BLOCK_STAGEBLOCK
   </h4>
 </div>
@@ -197,27 +212,35 @@ MIT Licensed</p>
 
 <p>A block that is a collection of stages.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_STAGEBLOCK</span><span class="o">:</span>        <span class="s1">&#39;__stageBlock_&#39;</span><span class="p">,</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">BLOCK_STAGEBLOCK</span><span class="o">:</span>        <span class="s1">&#39;__stageBlock_&#39;</span><span class="p">,</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="block_stage">
   <h4>
-    <a href="#block_stage" class="pilcrow">&#182;</a>
+    <a href="#block_stage" name="block_stage" class="pilcrow">&#182;</a>
     BLOCK_STAGE
   </h4>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_STAGE</span><span class="o">:</span>             <span class="s1">&#39;__stage&#39;</span><span class="p">,</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">BLOCK_STAGE</span><span class="o">:</span>             <span class="s1">&#39;__stage&#39;</span><span class="p">,</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="block_stepblock">
   <h4>
-    <a href="#block_stepblock" class="pilcrow">&#182;</a>
+    <a href="#block_stepblock" name="block_stepblock" class="pilcrow">&#182;</a>
     BLOCK_STEPBLOCK
   </h4>
 </div>
@@ -225,14 +248,18 @@ MIT Licensed</p>
 
 <p>A block that is a collection of steps</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_STEPBLOCK</span><span class="o">:</span>         <span class="s1">&#39;__stepBlock_&#39;</span><span class="p">,</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">BLOCK_STEPBLOCK</span><span class="o">:</span>         <span class="s1">&#39;__stepBlock_&#39;</span><span class="p">,</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="block_step">
   <h4>
-    <a href="#block_step" class="pilcrow">&#182;</a>
+    <a href="#block_step" name="block_step" class="pilcrow">&#182;</a>
     BLOCK_STEP
   </h4>
 </div>
@@ -240,7 +267,11 @@ MIT Licensed</p>
 
 <p>?</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_STEP</span><span class="o">:</span>              <span class="s1">&#39;__step&#39;</span><span class="p">,</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">BLOCK_STEP</span><span class="o">:</span>              <span class="s1">&#39;__step&#39;</span><span class="p">,</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -250,34 +281,46 @@ MIT Licensed</p>
 </div>
 <p>BLOCK_ENCLOSING</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_ENCLOSING</span><span class="o">:</span>         <span class="s1">&#39;__enclosing_&#39;</span><span class="p">,</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">BLOCK_ENCLOSING</span><span class="o">:</span>         <span class="s1">&#39;__enclosing_&#39;</span><span class="p">,</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="block_enclosing_steps">
   <h4>
-    <a href="#block_enclosing_steps" class="pilcrow">&#182;</a>
+    <a href="#block_enclosing_steps" name="block_enclosing_steps" class="pilcrow">&#182;</a>
     BLOCK_ENCLOSING_STEPS
   </h4>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_ENCLOSING_STEPS</span><span class="o">:</span>   <span class="s1">&#39;__enclosing_steps&#39;</span><span class="p">,</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">BLOCK_ENCLOSING_STEPS</span><span class="o">:</span>   <span class="s1">&#39;__enclosing_steps&#39;</span><span class="p">,</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="block_enclosing_stages">
   <h4>
-    <a href="#block_enclosing_stages" class="pilcrow">&#182;</a>
+    <a href="#block_enclosing_stages" name="block_enclosing_stages" class="pilcrow">&#182;</a>
     BLOCK_ENCLOSING_STAGES
   </h4>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">BLOCK_ENCLOSING_STAGES</span><span class="o">:</span>  <span class="s1">&#39;__enclosing_stages&#39;</span><span class="p">,</span>
-    <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">BLOCK_ENCLOSING_STAGES</span><span class="o">:</span>  <span class="s1">&#39;__enclosing_stages&#39;</span><span class="p">,</span>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -287,7 +330,8 @@ MIT Licensed</p>
 </div>
 <p>Exporting block types.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Block</span><span class="p">.</span><span class="nx">blockTypes</span> <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Block</span><span class="p">.</span><span class="nx">blockTypes</span> <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">BLOCK_DEFAULT</span>     <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_DEFAULT</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">BLOCK_STAGEBLOCK</span>  <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_STAGEBLOCK</span><span class="p">;</span>
@@ -297,15 +341,19 @@ MIT Licensed</p>
 
     <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING</span>          <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_ENCLOSING</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING_STEPS</span>    <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span> <span class="nx">BLOCK_ENCLOSING_STEPS</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING_STAGES</span>   <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_ENCLOSING_STAGES</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">BLOCK_ENCLOSING_STAGES</span>   <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_ENCLOSING_STAGES</span><span class="p">;</span>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="block-constructor">
+<div class="pilwrap" id="block%20constructor">
   <h2>
-    <a href="#block-constructor" class="pilcrow">&#182;</a>
+    <a href="#block%20constructor" name="block%20constructor" class="pilcrow">&#182;</a>
     Block constructor
   </h2>
 </div>
@@ -329,21 +377,28 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">Block</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">Block</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="properties">
   <h3>
-    <a href="#properties" class="pilcrow">&#182;</a>
+    <a href="#properties" name="properties" class="pilcrow">&#182;</a>
     Properties
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -351,7 +406,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="block.type">
   <h4>
-    <a href="#block.type" class="pilcrow">&#182;</a>
+    <a href="#block.type" name="block.type" class="pilcrow">&#182;</a>
     Block.type
   </h4>
 </div>
@@ -361,7 +416,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -369,7 +428,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="block.id">
   <h4>
-    <a href="#block.id" class="pilcrow">&#182;</a>
+    <a href="#block.id" name="block.id" class="pilcrow">&#182;</a>
     Block.id
   </h4>
 </div>
@@ -379,7 +438,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -387,7 +450,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="block.positions">
   <h4>
-    <a href="#block.positions" class="pilcrow">&#182;</a>
+    <a href="#block.positions" name="block.positions" class="pilcrow">&#182;</a>
     Block.positions
   </h4>
 </div>
@@ -397,8 +460,12 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">positions</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">positions</span> <span class="o">?</span>
-            <span class="nx">positions</span> <span class="o">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">positions</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">positions</span> <span class="o">?</span>
+            <span class="nx">positions</span> <span class="o">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -406,7 +473,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="block.takenpositions">
   <h4>
-    <a href="#block.takenpositions" class="pilcrow">&#182;</a>
+    <a href="#block.takenpositions" name="block.takenpositions" class="pilcrow">&#182;</a>
     Block.takenPositions
   </h4>
 </div>
@@ -416,7 +483,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span> <span class="o">=</span> <span class="p">[];</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -424,7 +495,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="block.items">
   <h4>
-    <a href="#block.items" class="pilcrow">&#182;</a>
+    <a href="#block.items" name="block.items" class="pilcrow">&#182;</a>
     Block.items
   </h4>
 </div>
@@ -434,7 +505,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="p">[];</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -442,7 +517,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="block.unfinishedentries">
   <h4>
-    <a href="#block.unfinishedentries" class="pilcrow">&#182;</a>
+    <a href="#block.unfinishedentries" name="block.unfinishedentries" class="pilcrow">&#182;</a>
     Block.unfinishedEntries
   </h4>
 </div>
@@ -452,7 +527,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span> <span class="o">=</span> <span class="p">[];</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -460,7 +539,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="block.index">
   <h4>
-    <a href="#block.index" class="pilcrow">&#182;</a>
+    <a href="#block.index" name="block.index" class="pilcrow">&#182;</a>
     Block.index
   </h4>
 </div>
@@ -472,12 +551,16 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Block.next
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -485,7 +568,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="block.finalized">
   <h4>
-    <a href="#block.finalized" class="pilcrow">&#182;</a>
+    <a href="#block.finalized" name="block.finalized" class="pilcrow">&#182;</a>
     Block.finalized
   </h4>
 </div>
@@ -495,7 +578,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -503,7 +590,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="block.resetcache">
   <h4>
-    <a href="#block.resetcache" class="pilcrow">&#182;</a>
+    <a href="#block.resetcache" name="block.resetcache" class="pilcrow">&#182;</a>
     Block.resetCache
   </h4>
 </div>
@@ -513,22 +600,29 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
-    <span class="p">}</span></pre></div>
+    <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="methods">
   <h3>
-    <a href="#methods" class="pilcrow">&#182;</a>
+    <a href="#methods" name="methods" class="pilcrow">&#182;</a>
     Methods
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -536,7 +630,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="block.add">
   <h4>
-    <a href="#block.add" class="pilcrow">&#182;</a>
+    <a href="#block.add" name="block.add" class="pilcrow">&#182;</a>
     Block.add
   </h4>
 </div>
@@ -562,7 +656,8 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">positions</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">positions</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Block.add: block already finalized, &#39;</span> <span class="o">+</span>
@@ -577,7 +672,10 @@ MIT Licensed</p>
             <span class="nx">item</span><span class="o">:</span> <span class="nx">item</span><span class="p">,</span>
             <span class="nx">positions</span><span class="o">:</span> <span class="nx">positions</span>
         <span class="p">});</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -585,7 +683,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="block.hasitem">
   <h4>
-    <a href="#block.hasitem" class="pilcrow">&#182;</a>
+    <a href="#block.hasitem" name="block.hasitem" class="pilcrow">&#182;</a>
     Block.hasItem
   </h4>
 </div>
@@ -609,9 +707,13 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasItem</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasItem</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="o">!!</span><span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">item</span><span class="p">];</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -619,7 +721,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="block.finalize">
   <h4>
-    <a href="#block.finalize" class="pilcrow">&#182;</a>
+    <a href="#block.finalize" name="block.finalize" class="pilcrow">&#182;</a>
     Block.finalize
   </h4>
 </div>
@@ -631,7 +733,8 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">finalize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">finalize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">entry</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">positions</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">chosenPosition</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">available</span><span class="p">;</span>
 
@@ -639,7 +742,10 @@ MIT Licensed</p>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="k">return</span><span class="p">;</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -649,11 +755,15 @@ MIT Licensed</p>
 </div>
 <p>Remove default step if it is BLOCK_STEP and further steps were added.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isType</span><span class="p">(</span><span class="nx">BLOCK_ENCLOSING_STEPS</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isType</span><span class="p">(</span><span class="nx">BLOCK_ENCLOSING_STEPS</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">item</span><span class="p">.</span><span class="nx">_defaultStep</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
             <span class="p">}</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -663,7 +773,10 @@ MIT Licensed</p>
 </div>
 <p>If no positions is assigned before we don't need arraydiff</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -675,7 +788,12 @@ MIT Licensed</p>
 from 0 to nItems accounting for already taken positions.
 available = J.arrayDiff(J.seq(0,this.size()-1), this.takenPositions);</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">available</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">available</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -688,12 +806,16 @@ every iterations also other entries are updated, it requires
 multiple calls to J.range.
 Parsing all of the position strings into arrays.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
             <span class="nx">positions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">=</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">available</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -703,7 +825,10 @@ Parsing all of the position strings into arrays.</p>
 </div>
 <p>Assigning positions.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">while</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">while</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -713,10 +838,14 @@ Parsing all of the position strings into arrays.</p>
 </div>
 <p>Select entry with least possibilities of where to go.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="nx">sortFunction</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="nx">sortFunction</span><span class="p">);</span>
             <span class="nx">entry</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
             <span class="nx">item</span> <span class="o">=</span> <span class="nx">entry</span><span class="p">.</span><span class="nx">item</span><span class="p">;</span>
-            <span class="nx">positions</span> <span class="o">=</span> <span class="nx">entry</span><span class="p">.</span><span class="nx">positions</span><span class="p">;</span></pre></div>
+            <span class="nx">positions</span> <span class="o">=</span> <span class="nx">entry</span><span class="p">.</span><span class="nx">positions</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -726,11 +855,15 @@ Parsing all of the position strings into arrays.</p>
 </div>
 <p>No valid position specified.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">positions</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">positions</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Block.finalize: No valid position for &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;entry &#39;</span> <span class="o">+</span> <span class="nx">item</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; in Block &#39;</span> <span class="o">+</span>
                                 <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
-            <span class="p">}</span></pre></div>
+            <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -740,9 +873,13 @@ Parsing all of the position strings into arrays.</p>
 </div>
 <p>Chose position randomly among possibilities.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">chosenPosition</span> <span class="o">=</span>  <span class="nx">positions</span><span class="p">[</span><span class="nx">J</span><span class="p">.</span><span class="nx">randomInt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">positions</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">chosenPosition</span> <span class="o">=</span>  <span class="nx">positions</span><span class="p">[</span><span class="nx">J</span><span class="p">.</span><span class="nx">randomInt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">positions</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">chosenPosition</span><span class="p">]</span> <span class="o">=</span> <span class="nx">item</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">chosenPosition</span><span class="p">);</span></pre></div>
+            <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">chosenPosition</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -752,14 +889,18 @@ Parsing all of the position strings into arrays.</p>
 </div>
 <p>Adjust possible positions in remaining entries.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
             <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">removeElement</span><span class="p">(</span><span class="nx">chosenPosition</span><span class="p">,</span>
                                 <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -767,7 +908,7 @@ Parsing all of the position strings into arrays.</p>
   <div class="summary">
 <div class="pilwrap" id="block.next">
   <h4>
-    <a href="#block.next" class="pilcrow">&#182;</a>
+    <a href="#block.next" name="block.next" class="pilcrow">&#182;</a>
     Block.next
   </h4>
 </div>
@@ -790,7 +931,8 @@ If the next item is another Block, next is called recursively.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">item</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">item</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">index</span><span class="p">];</span>
@@ -810,7 +952,10 @@ If the next item is another Block, next is called recursively.</p>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -818,7 +963,7 @@ If the next item is another Block, next is called recursively.</p>
   <div class="summary">
 <div class="pilwrap" id="block.backup">
   <h4>
-    <a href="#block.backup" class="pilcrow">&#182;</a>
+    <a href="#block.backup" name="block.backup" class="pilcrow">&#182;</a>
     Block.backup
   </h4>
 </div>
@@ -830,18 +975,22 @@ If the next item is another Block, next is called recursively.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Block.restore
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">backup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">backup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">classClone</span><span class="p">({</span>
             <span class="nx">takenPositions</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">,</span>
             <span class="nx">unfinishedEntries</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">,</span>
             <span class="nx">items</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span>
         <span class="p">},</span> <span class="mi">3</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -849,7 +998,7 @@ If the next item is another Block, next is called recursively.</p>
   <div class="summary">
 <div class="pilwrap" id="block.restore">
   <h4>
-    <a href="#block.restore" class="pilcrow">&#182;</a>
+    <a href="#block.restore" name="block.restore" class="pilcrow">&#182;</a>
     Block.restore
   </h4>
 </div>
@@ -870,12 +1019,13 @@ index to 0 and finalized to false.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Block.finalize
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restore</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restore</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
@@ -892,20 +1042,26 @@ index to 0 and finalized to false.</p>
 
     <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isType</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="nx">type</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="helper-functions">
+<div class="pilwrap" id="helper%20functions">
   <h2>
-    <a href="#helper-functions" class="pilcrow">&#182;</a>
+    <a href="#helper%20functions" name="helper%20functions" class="pilcrow">&#182;</a>
     Helper Functions
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -913,7 +1069,7 @@ index to 0 and finalized to false.</p>
   <div class="summary">
 <div class="pilwrap" id="sortfunction">
   <h4>
-    <a href="#sortfunction" class="pilcrow">&#182;</a>
+    <a href="#sortfunction" name="sortfunction" class="pilcrow">&#182;</a>
     sortFunction
   </h4>
 </div>
@@ -928,11 +1084,12 @@ index to 0 and finalized to false.</p>
     <div class="dox_tag_detail">
       <span class="dox_type">private
 </span>
-    </span>
+    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">sortFunction</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">sortFunction</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">left</span><span class="p">.</span><span class="nx">positions</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;=</span> <span class="nx">right</span><span class="p">.</span><span class="nx">positions</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
     <span class="p">}</span>

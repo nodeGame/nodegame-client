@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="doc-style.css" />
   <script src="doc-filelist.js"></script>
   <script>
-    var relativeDir = '', thisFile = 'index.js', defaultSidebar = true;
+    var relativeDir = "", thisFile = "index.js", defaultSidebar = true;
   </script>
   <script src="doc-script.js"></script>
 </head>
@@ -22,13 +22,13 @@
         <a href="#nodegame">nodeGame</a>
       </div>
       <div class="heading h2">
-        <a href="#loading-libraries">Loading libraries</a>
+        <a href="#loading%20libraries">Loading libraries</a>
       </div>
       <div class="heading h3">
         <a href="#dependencies">Dependencies</a>
       </div>
       <div class="heading h3">
-        <a href="#loading-event-listeners.">Loading Event listeners.</a>
+        <a href="#loading%20event%20listeners.">Loading Event listeners.</a>
       </div>
     </div>
   </div>
@@ -41,7 +41,7 @@
   <div class="summary">
 <div class="pilwrap" id="nodegame">
   <h1>
-    <a href="#nodegame" class="pilcrow">&#182;</a>
+    <a href="#nodegame" name="nodegame" class="pilcrow">&#182;</a>
     nodeGame
   </h1>
 </div>
@@ -57,35 +57,45 @@ for on line, multiplayer games in the browser.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">)</span> <span class="p">{</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="loading-libraries">
+<div class="pilwrap" id="loading%20libraries">
   <h2>
-    <a href="#loading-libraries" class="pilcrow">&#182;</a>
+    <a href="#loading%20libraries" name="loading%20libraries" class="pilcrow">&#182;</a>
     Loading libraries
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="dependencies">
   <h3>
-    <a href="#dependencies" class="pilcrow">&#182;</a>
+    <a href="#dependencies" name="dependencies" class="pilcrow">&#182;</a>
     Dependencies
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;JSUS&#39;</span><span class="p">).</span><span class="nx">JSUS</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;JSUS&#39;</span><span class="p">).</span><span class="nx">JSUS</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">support</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">compatibility</span><span class="p">();</span>
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;NDDB&#39;</span><span class="p">).</span><span class="nx">NDDB</span><span class="p">;</span></pre></div>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;NDDB&#39;</span><span class="p">).</span><span class="nx">NDDB</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -95,8 +105,12 @@ for on line, multiplayer games in the browser.</p>
 </div>
 <p>Costants</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">constants</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/variables&#39;</span><span class="p">).</span><span class="nx">constants</span><span class="p">;</span>
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/stepRules&#39;</span><span class="p">).</span><span class="nx">stepRules</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">constants</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/variables&#39;</span><span class="p">).</span><span class="nx">constants</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/stepRules&#39;</span><span class="p">).</span><span class="nx">stepRules</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -106,7 +120,11 @@ for on line, multiplayer games in the browser.</p>
 </div>
 <p>ErrorManager</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/ErrorManager&#39;</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/ErrorManager&#39;</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -116,9 +134,13 @@ for on line, multiplayer games in the browser.</p>
 </div>
 <p>Events</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">EventEmitterManager</span> <span class="o">=</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">EventEmitterManager</span> <span class="o">=</span>
         <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/EventEmitter&#39;</span><span class="p">).</span><span class="nx">EventEmitterManager</span><span class="p">;</span>
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/EventEmitter&#39;</span><span class="p">).</span><span class="nx">EventEmitter</span><span class="p">;</span></pre></div>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">EventEmitter</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/EventEmitter&#39;</span><span class="p">).</span><span class="nx">EventEmitter</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -128,8 +150,12 @@ for on line, multiplayer games in the browser.</p>
 </div>
 <p>Stager</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">Block</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/Block&#39;</span><span class="p">).</span><span class="nx">Block</span><span class="p">;</span>
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/Stager&#39;</span><span class="p">).</span><span class="nx">Stager</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Block</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/Block&#39;</span><span class="p">).</span><span class="nx">Block</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/Stager&#39;</span><span class="p">).</span><span class="nx">Stager</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -139,7 +165,10 @@ for on line, multiplayer games in the browser.</p>
 </div>
 <p>Stager modules</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -149,12 +178,16 @@ for on line, multiplayer games in the browser.</p>
 </div>
 <p>Must be required first.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_stages_steps.js&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_stages_steps.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_setters_getters.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_flexible&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_extends.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_blocks.js&#39;</span><span class="p">);</span>
-    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_extract_info.js&#39;</span><span class="p">);</span></pre></div>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/stager/stager_extract_info.js&#39;</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -164,13 +197,17 @@ for on line, multiplayer games in the browser.</p>
 </div>
 <p>Core</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameStage&#39;</span><span class="p">).</span><span class="nx">GameStage</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameStage&#39;</span><span class="p">).</span><span class="nx">GameStage</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/PlayerList&#39;</span><span class="p">).</span><span class="nx">PlayerList</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">Player</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/PlayerList&#39;</span><span class="p">).</span><span class="nx">Player</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameMsg&#39;</span><span class="p">).</span><span class="nx">GameMsg</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">GamePlot</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GamePlot&#39;</span><span class="p">).</span><span class="nx">GamePlot</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsgGenerator</span> <span class="o">=</span>
-        <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameMsgGenerator&#39;</span><span class="p">).</span><span class="nx">GameMsgGenerator</span><span class="p">;</span></pre></div>
+        <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameMsgGenerator&#39;</span><span class="p">).</span><span class="nx">GameMsgGenerator</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -180,11 +217,15 @@ for on line, multiplayer games in the browser.</p>
 </div>
 <p>Sockets</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">SocketFactory</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/SocketFactory&#39;</span><span class="p">).</span><span class="nx">SocketFactory</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">SocketFactory</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/SocketFactory&#39;</span><span class="p">).</span><span class="nx">SocketFactory</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">Socket</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Socket&#39;</span><span class="p">).</span><span class="nx">Socket</span><span class="p">;</span>
 
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/sockets/SocketIo.js&#39;</span><span class="p">);</span>
-    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/sockets/SocketDirect.js&#39;</span><span class="p">);</span></pre></div>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/sockets/SocketDirect.js&#39;</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -194,7 +235,11 @@ for on line, multiplayer games in the browser.</p>
 </div>
 <p>Timer</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">Timer</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Timer&#39;</span><span class="p">).</span><span class="nx">Timer</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Timer</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Timer&#39;</span><span class="p">).</span><span class="nx">Timer</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -204,9 +249,13 @@ for on line, multiplayer games in the browser.</p>
 </div>
 <p>Game</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameDB&#39;</span><span class="p">).</span><span class="nx">GameDB</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameDB&#39;</span><span class="p">).</span><span class="nx">GameDB</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">GameBit</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GameDB&#39;</span><span class="p">).</span><span class="nx">GameBit</span><span class="p">;</span>
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">Game</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Game&#39;</span><span class="p">).</span><span class="nx">Game</span><span class="p">;</span></pre></div>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Game</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Game&#39;</span><span class="p">).</span><span class="nx">Game</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -216,9 +265,13 @@ for on line, multiplayer games in the browser.</p>
 </div>
 <p>Extra (to be tested)</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">GroupManager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GroupManager&#39;</span><span class="p">).</span><span class="nx">GroupManager</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GroupManager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/GroupManager&#39;</span><span class="p">).</span><span class="nx">GroupManager</span><span class="p">;</span>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">RoleMapper</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/RoleMapper&#39;</span><span class="p">).</span><span class="nx">RoleMapper</span><span class="p">;</span>
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Session&#39;</span><span class="p">).</span><span class="nx">GameSession</span><span class="p">;</span></pre></div>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameSession</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/Session&#39;</span><span class="p">).</span><span class="nx">GameSession</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -228,7 +281,11 @@ for on line, multiplayer games in the browser.</p>
 </div>
 <p>Addons</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">TriggerManager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./addons/TriggerManager&#39;</span><span class="p">).</span><span class="nx">TriggerManager</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">TriggerManager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./addons/TriggerManager&#39;</span><span class="p">).</span><span class="nx">TriggerManager</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -239,7 +296,10 @@ for on line, multiplayer games in the browser.</p>
 <p>FS
 exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -249,8 +309,12 @@ exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;</p>
 </div>
 <p>Load main nodegame-client class.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameClient</span> <span class="o">=</span>
-        <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/NodeGameClient&#39;</span><span class="p">).</span><span class="nx">NodeGameClient</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameClient</span> <span class="o">=</span>
+        <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/core/NodeGameClient&#39;</span><span class="p">).</span><span class="nx">NodeGameClient</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -260,7 +324,9 @@ exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;</p>
 </div>
 <p>Load extensions to the prototype.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/log.js&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/log.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/setup.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/alias.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/events.js&#39;</span><span class="p">);</span>
@@ -271,20 +337,25 @@ exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;</p>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/extra.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/getJSON.js&#39;</span><span class="p">);</span>
 
-    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/variables.js&#39;</span><span class="p">);</span></pre></div>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./lib/modules/variables.js&#39;</span><span class="p">);</span>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="loading-event-listeners.">
+<div class="pilwrap" id="loading%20event%20listeners.">
   <h3>
-    <a href="#loading-event-listeners." class="pilcrow">&#182;</a>
+    <a href="#loading%20event%20listeners." name="loading%20event%20listeners." class="pilcrow">&#182;</a>
     Loading Event listeners.
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/incoming.js&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/incoming.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/internal.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/setups.js&#39;</span><span class="p">);</span>
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./listeners/aliases.js&#39;</span><span class="p">);</span>
@@ -294,7 +365,10 @@ exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;</p>
         <span class="kd">var</span> <span class="nx">node</span><span class="p">;</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">();</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">;</span></pre></div>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -305,19 +379,25 @@ exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;</p>
 <p>TODO: find a good way to incorpare all the classes
 TODO: should they use the new operator?</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Removed.
 node.fs = new exports.NodeGameFS(node);</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+        <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
     <span class="p">};</span>
 
     <span class="nx">exports</span><span class="p">.</span><span class="nx">getStager</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
