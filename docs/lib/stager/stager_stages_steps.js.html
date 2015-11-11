@@ -1575,26 +1575,6 @@ whether the stage name is unique, the steps exists, etc.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="p">{</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
-</div>
-
-<div class="highlight"><pre><code>                <span class="nx">that</span><span class="p">.</span><span class="nx">addStep</span><span class="p">({</span>
-                    <span class="nx">id</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span>
-                    <span class="c1">// Mock functions, will be replaced on `finalize()`.</span>
-                    <span class="nx">cb</span><span class="o">:</span> <span class="nx">makeDefaultCb</span><span class="p">()</span>
-                <span class="p">});</span>
-</code></pre></div>
-
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
                     <span class="nx">that</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">makeDefaultStep</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getDefaultCb</span><span class="p">()));</span>
                 <span class="p">}</span>
                 <span class="nx">that</span><span class="p">.</span><span class="nx">addStage</span><span class="p">({</span>
