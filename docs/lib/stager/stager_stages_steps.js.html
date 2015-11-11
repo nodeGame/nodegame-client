@@ -22,10 +22,10 @@
         <a href="#stager%20stages%20and%20steps">Stager stages and steps</a>
       </div>
       <div class="heading h4">
-        <a href="#stager.addstep">Stager.addStep</a>
+        <a href="#stager.addstep%20%7C%20createstep">Stager.addStep | createStep</a>
       </div>
       <div class="heading h4">
-        <a href="#stager.addstage">Stager.addStage</a>
+        <a href="#stager.addstage%20%7C%20createstage">Stager.addStage | createStage</a>
       </div>
       <div class="heading h4">
         <a href="#stager.clonestep">Stager.cloneStep</a>
@@ -149,10 +149,10 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="stager.addstep">
+<div class="pilwrap" id="stager.addstep%20%7C%20createstep">
   <h4>
-    <a href="#stager.addstep" name="stager.addstep" class="pilcrow">&#182;</a>
-    Stager.addStep
+    <a href="#stager.addstep%20%7C%20createstep" name="stager.addstep%20%7C%20createstep" class="pilcrow">&#182;</a>
+    Stager.addStep | createStep
   </h4>
 </div>
 
@@ -177,7 +177,7 @@ MIT Licensed</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">createStep</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">checkStepValidity</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;addStep&#39;</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
@@ -195,10 +195,10 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="stager.addstage">
+<div class="pilwrap" id="stager.addstage%20%7C%20createstage">
   <h4>
-    <a href="#stager.addstage" name="stager.addstage" class="pilcrow">&#182;</a>
-    Stager.addStage
+    <a href="#stager.addstage%20%7C%20createstage" name="stager.addstage%20%7C%20createstage" class="pilcrow">&#182;</a>
+    Stager.addStage | createStage
   </h4>
 </div>
 
@@ -240,7 +240,7 @@ container referencing</p></li>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">createStage</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">id</span><span class="p">;</span>
 
         <span class="nx">checkStageValidity</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;addStage&#39;</span><span class="p">);</span>
@@ -1496,6 +1496,13 @@ whether the stage name is unique, the steps exists, etc.</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">id</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
 
+            <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: stage is object, &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;but a stage with the same id already &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;exists: &#39;</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+            <span class="p">}</span>
+
+
 </pre></div>
         </td>
       </tr>
@@ -1511,19 +1518,7 @@ whether the stage name is unique, the steps exists, etc.</p>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="nx">that</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
                 <span class="nx">stage</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span> <span class="nx">id</span> <span class="p">]</span> <span class="p">};</span>
             <span class="p">}</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
-</div>
-<p>A new stage is created if not found (performs validation).</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="nx">that</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
@@ -1538,7 +1533,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>See whether the stage id contains an alias. Throws errors.</p>
         </td>
@@ -1553,7 +1548,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Alias must reference an existing stage (checked before).</p>
         </td>
@@ -1569,7 +1564,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Add the step if not existing and flag it as default.</p>
         </td>

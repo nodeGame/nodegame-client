@@ -1563,6 +1563,19 @@ describe('Stager', function() {
                    stager.cloneStage('foo', 3);
                }).should.throw();
            });
+        it('if stage method is called with object, but stage id is existing',
+           function() {
+               (function() {
+                   stager.createStage({
+                       id: 'myweirdstage',
+                       cb: function() {}
+                   });
+                   stager.stage({
+                       id: 'myweirdstage',
+                       steps: [ '1', '2', '3' ]
+                   });
+               }).should.throw();
+           });
     });
 
     describe('#extendStep: update function', function() {

@@ -12,24 +12,29 @@ var result;
 var stager = new Stager();
 
 
-// stager.next('stage 1');
-// stager.step('step 1.1', '*');
-// stager.step('step 1.2', '*');
-// stager.step('step 1.3', '*');
+// stager.createStage({
+//     id: 'stage 1',
+//     cb: function(){}
+// });
+//
+// debugger
+// stager.next({
+//     id: 'stage 1',
+//     steps: [ '1', '2', '3']
+// });
+//
+//      debugger
+//     s = stager.getState().sequence;
+//
+//     debugger
+//     stager.reset();
+//
+//     debugger
+//     s = stager.getState().sequence;
 //
 //
 //     debugger
-//    s = stager.getState().sequence;
-//
-//    debugger
-//    stager.reset();
-//
-//    debugger
-//    s = stager.getState().sequence;
-//
-//
-//    debugger
-//    return
+//     return
 
 describe('Moving through the sequence', function() {
 
