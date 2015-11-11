@@ -73,7 +73,7 @@
         <a href="#checkstepvalidity">checkStepValidity</a>
       </div>
       <div class="heading h4">
-        <a href="#checkstepparameter">checkStepParameter</a>
+        <a href="#handlestepparameter">handleStepParameter</a>
       </div>
       <div class="heading h4">
         <a href="#handlestageparameter">handleStageParameter</a>
@@ -473,13 +473,21 @@ function. A step will be created with same id and callback.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">positions</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">id</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">curBlock</span><span class="p">;</span>
+
+        <span class="nx">curBlock</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentBlock</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">curBlock</span><span class="p">.</span><span class="nx">isType</span><span class="p">(</span><span class="nx">BLOCK_ENCLOSING_STEPS</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+            <span class="o">!</span><span class="nx">curBlock</span><span class="p">.</span><span class="nx">isType</span><span class="p">(</span><span class="nx">BLOCK_STEPBLOCK</span><span class="p">))</span> <span class="p">{</span>
+
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.step: step cannot be added at this &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;point. Have you add at least one stage? &#39;</span><span class="p">,</span> <span class="nx">step</span><span class="p">);</span>
+        <span class="p">}</span>
 
         <span class="nx">checkFinalized</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">);</span>
-        <span class="nx">id</span> <span class="o">=</span> <span class="nx">checkStepParameter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">);</span>
+        <span class="nx">id</span> <span class="o">=</span> <span class="nx">handleStepParameter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">);</span>
         <span class="nx">positions</span> <span class="o">=</span> <span class="nx">checkPositionsParameter</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">);</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentBlock</span><span class="p">().</span><span class="nx">add</span><span class="p">({</span>
+        <span class="nx">curBlock</span><span class="p">.</span><span class="nx">add</span><span class="p">({</span>
             <span class="nx">type</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span><span class="p">,</span>
             <span class="nx">item</span><span class="o">:</span> <span class="nx">id</span>
         <span class="p">},</span> <span class="nx">positions</span><span class="p">);</span>
@@ -1367,10 +1375,10 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="checkstepparameter">
+<div class="pilwrap" id="handlestepparameter">
   <h4>
-    <a href="#checkstepparameter" name="checkstepparameter" class="pilcrow">&#182;</a>
-    checkStepParameter
+    <a href="#handlestepparameter" name="handlestepparameter" class="pilcrow">&#182;</a>
+    handleStepParameter
   </h4>
 </div>
 
@@ -1410,7 +1418,7 @@ whether the stage name is unique, the steps exists, etc.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">checkStepParameter</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">handleStepParameter</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">id</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">id</span> <span class="o">=</span> <span class="nx">step</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>

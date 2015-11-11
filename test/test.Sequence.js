@@ -11,30 +11,23 @@ var J = ngc.JSUS;
 var result;
 var stager = new Stager();
 
-
-// stager.createStage({
-//     id: 'stage 1',
-//     cb: function(){}
-// });
+//  debugger
+// stager.stage('v');
+//  stager.stepBlock('*')
+//  stager.step('a');
 //
-// debugger
-// stager.next({
-//     id: 'stage 1',
-//     steps: [ '1', '2', '3']
-// });
+//       debugger
+//      s = stager.getState().sequence;
 //
 //      debugger
-//     s = stager.getState().sequence;
+//      stager.reset();
 //
-//     debugger
-//     stager.reset();
-//
-//     debugger
-//     s = stager.getState().sequence;
+//      debugger
+//      s = stager.getState().sequence;
 //
 //
-//     debugger
-//     return
+//      debugger
+//      return
 
 describe('Moving through the sequence', function() {
 

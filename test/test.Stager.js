@@ -1276,6 +1276,12 @@ describe('Stager', function() {
             tmp = function() { console.log('ahah'); };
 
         });
+        it('if step method is called but no stage was added before',
+           function() {
+               (function() {
+                   stager.step('step1');
+               }).should.throw();
+           });
         it('if stage id is not a (non-empty) string', function() {
             (function() {
                 stager.addStage({ id: null, cb: tmp});
