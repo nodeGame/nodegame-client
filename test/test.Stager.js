@@ -1576,6 +1576,19 @@ describe('Stager', function() {
                    });
                }).should.throw();
            });
+         it('if step method is called with object, but step id is existing',
+           function() {
+               (function() {
+                   stager.createStep({
+                       id: 'myweirdstep',
+                       cb: function() {}
+                   });
+                   stager.step({
+                       id: 'myweirdstep',
+                       cb: function() {}
+                   });
+               }).should.throw();
+           });
     });
 
     describe('#extendStep: update function', function() {
