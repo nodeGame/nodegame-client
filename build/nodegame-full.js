@@ -13877,20 +13877,16 @@ if (!Array.prototype.indexOf) {
 );
 
 /**
- * # Block
+ * # Stager stages and steps
  * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
- *
- * Block structure to contain stages and steps of the game sequence.
  */
-(function(exports, parent) {
+(function(exports, node) {
 
-    "use strict";
+    var J = node.JSUS;
 
-    // ## Global scope
-    exports.Block = Block;
-
-    var J = parent.JSUS;
+    // Export Stager.
+    var Stager = exports.Stager = {};
 
     /**
      * ## Block.blockTypes
@@ -13948,8 +13944,276 @@ if (!Array.prototype.indexOf) {
         BLOCK_ENCLOSING_STAGES:  '__enclosing_stages',
     };
 
-    // Exporting block types.
-    Block.blockTypes = blockTypes;
+    // Add private functions to Stager.
+    Stager.blockTypes = blockTypes;
+    Stager.checkPositionsParameter = checkPositionsParameter;
+    Stager.addStageBlock = addStageBlock;
+    Stager.addBlock = addBlock;
+    Stager.checkFinalized = checkFinalized;
+    Stager.handleStepsArray = handleStepsArray;
+    Stager.makeDefaultCb = makeDefaultCb;
+    Stager.isDefaultCb = isDefaultCb;
+    Stager.isDefaultStep = isDefaultStep;
+    Stager.makeDefaultStep = makeDefaultStep;
+
+    var BLOCK_DEFAULT     = blockTypes.BLOCK_DEFAULT;
+    var BLOCK_STAGEBLOCK  = blockTypes.BLOCK_STAGEBLOCK;
+    var BLOCK_STAGE       = blockTypes. BLOCK_STAGE;
+    var BLOCK_STEPBLOCK   = blockTypes. BLOCK_STEPBLOCK;
+    var BLOCK_STEP        = blockTypes.BLOCK_STEP;
+
+    var BLOCK_ENCLOSING          = blockTypes.BLOCK_ENCLOSING;
+    var BLOCK_ENCLOSING_STEPS    = blockTypes. BLOCK_ENCLOSING_STEPS;
+    var BLOCK_ENCLOSING_STAGES   = blockTypes.BLOCK_ENCLOSING_STAGES;
+
+    /**
+     * #### handleStepsArray
+     *
+     * Validates the items of a steps array, creates new steps if necessary
+     *
+     * @param {Stager} that Stager object
+     * @param {string} stageId The original stage id
+     * @param {array} steps The array of steps to validate
+     * @param {string} method The name of the method invoking the method
+     */
+    function handleStepsArray(that, stageId, steps, method) {
+        var i, len;
+        i = -1, len = steps.length;
+        // Missing steps are added with default callback (if string),
+        // or as they are if object.
+        for ( ; ++i < len ; ) {
+            if ('object' === typeof steps[i]) {
+                // Throw error if step.id is not unique.
+                that.addStep(steps[i]);
+                // Substitute with its id.
+                steps[i] = steps[i].id;
+            }
+            else if ('string' === typeof steps[i]) {
+                if (!that.steps[steps[i]]) {
+                    // Create a step with a default cb (will be substituted).
+                    // Note: default callback and default step are two
+                    // different things.
+                    that.addStep({
+                        id: steps[i],
+                        cb: that.getDefaultCb()
+                        // Was defaultStep, but actually is not.
+                        // _defaultStep: true
+                    });
+                }
+            }
+            else {
+                throw new TypeError('Stager.' + method + ': stage ' +
+                                    stageId  + ': items of the steps array ' +
+                                    'must be string or object.');
+            }
+        }
+    }
+
+
+    /**
+     * #### addStageBlock
+     *
+     * Close last step and stage blocks and add a new stage block
+     *
+     * @param {Stager} that The stager instance
+     * @param {string} id Optional. The id of the stage block
+     * @param {string} type The type of the stage block
+     * @param {string|number} The allowed positions for the block
+     *
+     * @see addBlock
+     */
+    function addStageBlock(that, id, type, positions) {
+        // Begin stage block (closes two: steps and stage).
+        if (that.currentType !== BLOCK_DEFAULT) that.endBlocks(2);
+        that.currentType = BLOCK_DEFAULT;
+        addBlock(that, id, type, positions, BLOCK_STAGE);
+    }
+
+    /**
+     * #### addStageBlock
+     *
+     * Adds a new block of the specified type to the sequence
+     *
+     * @param {Stager} that The stager instance
+     * @param {string} id Optional. The id of the stage block
+     * @param {string} type The type of the stage block
+     * @param {string|number} The allowed positions for the block
+     * @param {string} cbType The type of the currentBlock
+     *    (BLOCK_STAGE or BLOCK_STEP)
+     */
+    function addBlock(that, id, type, positions, type2) {
+        var block, options;
+        options = {};
+
+        options.id = id || J.uniqueKey(that.blocksIds, type);
+        options.type = type;
+
+        that.currentBlockType = type2;
+
+        // Create the new block, and add it block arrays.
+        block = new node.Block(positions, options);
+        that.unfinishedBlocks.push(block);
+        that.blocks.push(block);
+
+        // Save block id into the blocks map.
+        that.blocksIds[options.id] = (that.blocks.length - 1);
+    }
+
+
+
+    /**
+     * #### checkFinalized
+     *
+     * Check whether the stager is already finalized, and throws an error if so
+     *
+     * @param {object} that Reference to Stager object
+     * @param {string} method The name of the method calling the validation
+     *
+     * @api private
+     */
+    function checkFinalized(that, method) {
+        if (that.finalized) {
+            throw new Error('Stager.' + method + ': stager has been ' +
+                            'already finalized.');
+        }
+    }
+
+    /**
+     * #### checkPositionsParameter
+     *
+     * Check validity of a positions parameter
+     *
+     * Called by: `stage`, `repeat`, `doLoop`, 'loop`.
+     *
+     * @param {string|number} stage The positions parameter to validate
+     * @param {string} method The name of the method calling the validation
+     *
+     * @api private
+     */
+    function checkPositionsParameter(positions, method) {
+        var err;
+        if ('undefined' === typeof positions) return;
+        if ('number' === typeof positions) {
+            if (isNaN(positions) ||
+                positions < 0 ||
+                !isFinite(positions)) {
+                err = true;
+            }
+            else {
+                positions += '';
+            }
+        }
+
+        if (err || 'string' !== typeof positions || positions.trim() === '') {
+            throw new TypeError('Stager.' + method + ': positions must ' +
+                                'be a non-empty string, a positive finite ' +
+                                'number, or undefined. Found: ' +
+                                positions + '.');
+        }
+        return positions;
+    }
+
+    /**
+     * #### makeDefaultCb
+     *
+     * Flags or create a callback function marked as `default`
+     *
+     * @param {function} cb Optional. The function to mark. If undefined,
+     *   an empty function is used
+     *
+     * @return {function} A function flagged as `default`
+     *
+     * @see isDefaultCb
+     */
+    function makeDefaultCb(cb) {
+        if ('undefined' === typeof cb) cb = function() {};
+        cb._defaultCb = true;
+        return cb;
+    }
+
+    /**
+     * #### isDefaultCb
+     *
+     * Returns TRUE if a callback was previously marked as `default`
+     *
+     * @param {function} cb The function to check
+     *
+     * @return {boolean} TRUE if function is default callback
+     *
+     * @see makeDefaultCb
+     */
+    function isDefaultCb(cb) {
+        return cb._defaultCb;
+    }
+
+    /**
+     * #### makeDefaultStep
+     *
+     * Flags or create a step object marked as `default`
+     *
+     * @param {object|string} step The step object to mark. If a string
+     *   is passed, a new step object with default cb is created.
+     *
+     * @return {function} A function flagged as `default`
+     *
+     * @see makeDefaultCb
+     * @see isDefaultStep
+     */
+    function makeDefaultStep(step, cb) {
+        if ('string' === typeof step) {
+            step = {
+                id: step,
+                cb: makeDefaultCb(cb)
+            };
+        }
+        step._defaultStep = true;
+        return step;
+    }
+
+    /**
+     * #### isDefaultStep
+     *
+     * Returns TRUE if a step object was previously marked as `default`
+     *
+     * @param {object} step The step object to check
+     *
+     * @return {boolean} TRUE if step object is default step
+     *
+     * @see makeDefaultStep
+     */
+    function isDefaultStep(step) {
+        return step._defaultStep;
+    }
+
+})(
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
+ * # Block
+ * Copyright(c) 2015 Stefano Balietti
+ * MIT Licensed
+ *
+ * Block structure to contain stages and steps of the game sequence.
+ */
+(function(exports, parent) {
+
+    "use strict";
+
+    // ## Global scope
+    exports.Block = Block;
+
+    var J = parent.JSUS;
+
+    // Mock stager object. Contains only shared variables at this point.
+    // The stager class will be added later.
+    var Stager = parent.Stager;
+
+    // Referencing shared entities.
+    var isDefaultStep = Stager.isDefaultStep;
+
+    var blockTypes = Stager.blockTypes;
 
     var BLOCK_DEFAULT     = blockTypes.BLOCK_DEFAULT;
     var BLOCK_STAGEBLOCK  = blockTypes.BLOCK_STAGEBLOCK;
@@ -14106,7 +14370,8 @@ if (!Array.prototype.indexOf) {
 
         // Remove default step if it is BLOCK_STEP and further steps were added.
         if (this.isType(BLOCK_ENCLOSING_STEPS) && this.size() > 1) {
-            if (this.unfinishedEntries[0].item._defaultStep) {
+debugger
+            if (isDefaultStep(this.unfinishedEntries[0].item)) {
                 this.unfinishedEntries.splice(0,1);
             }
         }
@@ -14273,12 +14538,22 @@ if (!Array.prototype.indexOf) {
     "use strict";
 
     // ## Global scope
+
+    var J = parent.JSUS;
+    var stepRules = parent.stepRules;
+    var Block = parent.Block;
+
+    // What is in the Stager obj at this point.
+    var tmpStager = parent.Stager
+    // Add it to the Stager class.
+    J.mixin(Stager, tmpStager);
+    // Export the Stager class.
     exports.Stager = Stager;
 
-    var Block = parent.Block;
-    var blockTypes = Block.blockTypes;
-    var stepRules = parent.stepRules;
-    var J = parent.JSUS;
+    // Referencing shared entities.
+    var blockTypes = Stager.blockTypes;
+    var makeDefaultCb = Stager.makeDefaultCb;
+    var isDefaultStep = Stager.isDefaultStep;
 
     // ## Static Methods
 
@@ -14294,6 +14569,9 @@ if (!Array.prototype.indexOf) {
         this.node.log(this.getCurrentStepObj().id);
         this.node.done();
     };
+
+    // Flag it as `default`.
+    Stager.makeDefaultCb(Stager.defaultCallback);
 
     /**
      * ## Stager Constructor
@@ -14649,14 +14927,8 @@ if (!Array.prototype.indexOf) {
 
                     // 2 - Step was a default step,
                     //     but other steps have been added.
-                    (!this.steps[stepId]._defaultStep ||
+                    (!isDefaultStep(this.steps[stepId]) ||
                      this.stages[stageId].steps.length === 1)) {
-
-                    // If it was a default step
-                    // get the current default function.
-                    if (this.steps[stepId]._defaultStep) {
-                        this.steps[stepId].cb = this.getDefaultCallback();
-                    }
 
                     // Ok, add the step to the sequence (must look up stage).
                     i = -1, len = this.sequence.length;
@@ -14729,17 +15001,22 @@ if (!Array.prototype.indexOf) {
  */
 (function(exports, node) {
 
-    var J = node.JSUS;
+    var J      = node.JSUS;
     var Stager = node.Stager;
-    var Block      = node.Block;
-    var blockTypes = Block.blockTypes;
+    var Block  = node.Block;
 
-    // Add private functions to Stager.
-    Stager.checkPositionsParameter = checkPositionsParameter;
-    Stager.addStageBlock = addStageBlock;
-    Stager.addBlock = addBlock;
-    Stager.checkFinalized = checkFinalized;
-    Stager.handleStepsArray = handleStepsArray;
+    // Get reference to shared entities in Stager.
+    var checkPositionsParameter = Stager.checkPositionsParameter;
+    var addStageBlock           = Stager.addStageBlock;
+    var addBlock                = Stager.addBlock;
+    var checkFinalized          = Stager.checkFinalized;
+    var handleStepsArray        = Stager.handleStepsArray;
+    var makeDefaultCb           = Stager.makeDefaultCb;
+    var isDefaultCb             = Stager.isDefaultCb;
+    var makeDefaultStep         = Stager.makeDefaultStep;
+    var isDefaultStep           = Stager.isDefaultStep;
+
+    var blockTypes = Stager.blockTypes;
 
     var BLOCK_DEFAULT     = blockTypes.BLOCK_DEFAULT;
     var BLOCK_STAGEBLOCK  = blockTypes.BLOCK_STAGEBLOCK;
@@ -15073,46 +15350,6 @@ if (!Array.prototype.indexOf) {
     // ## Private Methods
 
     /**
-     * #### handleStepsArray
-     *
-     * Validates the items of a steps array, creates new steps if necessary
-     *
-     * @param {Stager} that Stager object
-     * @param {string} stageId The original stage id
-     * @param {array} steps The array of steps to validate
-     * @param {string} method The name of the method invoking the method
-     */
-    function handleStepsArray(that, stageId, steps, method) {
-        var i, len;
-        i = -1, len = steps.length;
-        // Missing steps are added with default callback (if string),
-        // or as they are if object.
-        for ( ; ++i < len ; ) {
-            if ('object' === typeof steps[i]) {
-                // Throw error if step.id is not unique.
-                that.addStep(steps[i]);
-                // Substitute with its id.
-                steps[i] = steps[i].id;
-            }
-            else if ('string' === typeof steps[i]) {
-                if (!that.steps[steps[i]]) {
-                    that.addStep({
-                        id: steps[i],
-                        // cb: that.getDefaultCallback()
-                        // Mock function, will be subsituted
-                        cb: function() {}
-                    });
-                }
-            }
-            else {
-                throw new TypeError('Stager.' + method + ': stage ' +
-                                    stageId  + ': items of the steps array ' +
-                                    'must be string or object.');
-            }
-        }
-    }
-
-    /**
      * #### addLoop
      *
      * Handles adding a looped stage (doLoop or loop)
@@ -15202,55 +15439,6 @@ if (!Array.prototype.indexOf) {
     }
 
     /**
-     * #### addStageBlock
-     *
-     * Close last step and stage blocks and add a new stage block
-     *
-     * @param {Stager} that The stager instance
-     * @param {string} id Optional. The id of the stage block
-     * @param {string} type The type of the stage block
-     * @param {string|number} The allowed positions for the block
-     *
-     * @see addBlock
-     */
-    function addStageBlock(that, id, type, positions) {
-        // Begin stage block (closes two: steps and stage).
-        if (that.currentType !== BLOCK_DEFAULT) that.endBlocks(2);
-        that.currentType = BLOCK_DEFAULT;
-        addBlock(that, id, type, positions, BLOCK_STAGE);
-    }
-
-    /**
-     * #### addStageBlock
-     *
-     * Adds a new block of the specified type to the sequence
-     *
-     * @param {Stager} that The stager instance
-     * @param {string} id Optional. The id of the stage block
-     * @param {string} type The type of the stage block
-     * @param {string|number} The allowed positions for the block
-     * @param {string} cbType The type of the currentBlock
-     *    (BLOCK_STAGE or BLOCK_STEP)
-     */
-    function addBlock(that, id, type, positions, type2) {
-        var block, options;
-        options = {};
-
-        options.id = id || J.uniqueKey(that.blocksIds, type);
-        options.type = type;
-
-        that.currentBlockType = type2;
-
-        // Create the new block, and add it block arrays.
-        block = new Block(positions, options);
-        that.unfinishedBlocks.push(block);
-        that.blocks.push(block);
-
-        // Save block id into the blocks map.
-        that.blocksIds[options.id] = (that.blocks.length - 1);
-    }
-
-    /**
      * #### addStepsToCurrentBlock
      *
      * Adds steps to current block
@@ -15275,8 +15463,8 @@ if (!Array.prototype.indexOf) {
                     type: that.currentType,
                     item: stage.steps[i]
                 };
-                if (that.steps[stage.steps[i]]._defaultStep) {
-                    stepInBlock._defaultStep = true;
+                if (isDefaultStep(that.steps[stage.steps[i]])) {
+                    makeDefaultStep(stepInBlock);
                 }
                 curBlock.add(stepInBlock);
             }
@@ -15342,23 +15530,6 @@ if (!Array.prototype.indexOf) {
                             alias + '.');
         }
         return tokens;
-    }
-
-    /**
-     * #### checkFinalized
-     *
-     * Check whether the stager is already finalized, and throws an error if so
-     *
-     * @param {object} that Reference to Stager object
-     * @param {string} method The name of the method calling the validation
-     *
-     * @api private
-     */
-    function checkFinalized(that, method) {
-        if (that.finalized) {
-            throw new Error('Stager.' + method + ': stager has been ' +
-                            'already finalized.');
-        }
     }
 
     /**
@@ -15512,11 +15683,12 @@ if (!Array.prototype.indexOf) {
             else if (!that.stages[id]) {
                 // Add the step if not existing and flag it as default.
                 if (!that.steps[id]) {
-                    that.addStep({
-                        id: id,
-                        cb: that.getDefaultCallback(),
-                        _defaultStep: true
-                    });
+//                     that.addStep({
+//                         id: id,
+//                         // Mock functions, will be replaced on `finalize()`.
+//                         cb: makeDefaultCb()
+//                     });
+                    that.addStep(makeDefaultStep(id, that.getDefaultCb()));
                 }
                 that.addStage({
                     id: id,
@@ -15526,42 +15698,6 @@ if (!Array.prototype.indexOf) {
         }
 
         return alias || id;
-    }
-
-
-    /**
-     * #### checkPositionsParameter
-     *
-     * Check validity of a positions parameter
-     *
-     * Called by: `stage`, `repeat`, `doLoop`, 'loop`.
-     *
-     * @param {string|number} stage The positions parameter to validate
-     * @param {string} method The name of the method calling the validation
-     *
-     * @api private
-     */
-    function checkPositionsParameter(positions, method) {
-        var err;
-        if ('undefined' === typeof positions) return;
-        if ('number' === typeof positions) {
-            if (isNaN(positions) ||
-                positions < 0 ||
-                !isFinite(positions)) {
-                err = true;
-            }
-            else {
-                positions += '';
-            }
-        }
-
-        if (err || 'string' !== typeof positions || positions.trim() === '') {
-            throw new TypeError('Stager.' + method + ': positions must ' +
-                                'be a non-empty string, a positive finite ' +
-                                'number, or undefined. Found: ' +
-                                positions + '.');
-        }
-        return positions;
     }
 
 })(
@@ -15579,6 +15715,11 @@ if (!Array.prototype.indexOf) {
     var J = node.JSUS;
     var Stager = node.Stager;
     var stepRules = node.stepRules;
+
+    // Referencing shared entities.
+    var blockTypes = Stager.blockTypes;
+    var makeDefaultCb = Stager.makeDefaultCb;
+    var isDefaultStep = Stager.isDefaultStep;
 
     /**
      * #### Stager.setState
@@ -15660,48 +15801,7 @@ if (!Array.prototype.indexOf) {
         if (stateObj.hasOwnProperty('sequence')) {
             for (idx = 0; idx < stateObj.sequence.length; idx++) {
                 seqObj = stateObj.sequence[idx];
-
                 this.sequence[idx] = seqObj;
-
-                //switch (seqObj.type) {
-                //case 'gameover':
-                    //this.gameover();
-                    //break;
-
-                //case 'plain':
-                    //if (!this.next(seqObj.id)) {
-                        //throw new Error('Stager.setState: invalid' +
-                        //+ 'sequence.');
-                    //}
-                    //break;
-
-                //case 'repeat':
-                    //if (!this.repeat(seqObj.id, seqObj.num)) {
-                        //throw new Error('Stager.setState: invalid' +
-                        //+ 'sequence.');                    //}
-                    //break;
-
-                //case 'loop':
-                    //if (!this.loop(seqObj.id, seqObj.cb)) {
-                        //throw new Error('Stager.setState: invalid' +
-                        //+ 'sequence.');                    //}
-                    //}
-                    //break;
-
-                //case 'doLoop':
-                    //if (!this.doLoop(seqObj.id, seqObj.cb)) {
-                        //throw new Error('Stager.setState: invalid' +
-                        //+ 'sequence.');                    //}
-
-                    //}
-                    //break;
-
-                //default:
-                    //// Unknown type:
-                        //throw new Error('Stager.setState: invalid' +
-                        //+ 'sequence.');                    //}
-
-                //}
             }
         }
 
@@ -15840,21 +15940,38 @@ if (!Array.prototype.indexOf) {
      *
      * Sets the default callback
      *
+     * The callback immediately replaces the current callback
+     * in all the steps that have a default callback.
+     *
+     * Function will be modified and flagged as `default`.
+     *
      * @param {function|null} cb The default callback or null to unset it
      *
      * @see Stager.defaultCallback
      * @see Stager.getDefaultCallback
+     * @see makeDefaultCallback
      */
     Stager.prototype.setDefaultCallback = function(cb) {
-        if (cb !== null && 'function' !== typeof cb) {
+        var i, len;
+        if (cb === null) {
+            cb = Stager.defaultCallback;
+        }
+        else if ('function' !== typeof cb) {
             throw new TypeError('Stager.setDefaultCallback: ' +
                                 'defaultCallback must be function or null.');
         }
-        this.defaultCallback = cb;
+        this.defaultCallback = makeDefaultCb(cb);
+
+        i = -1, len = this.steps.length;
+        for ( ; ++i < len ; ) {
+            if (isDefaultCb(this.steps[i].cb)) {
+                this.steps[i].cb = this.defaultCallback;
+            }
+        }
     };
 
     /**
-     * #### Stager.getDefaultCallback
+     * #### Stager.getDefaultCallback | getDefaultCb
      *
      * Returns the default callback
      *
@@ -15867,7 +15984,8 @@ if (!Array.prototype.indexOf) {
      * @see Stager.defaultCallback
      * @see Stager.setDefaultCallback
      */
-    Stager.prototype.getDefaultCallback = function() {
+    Stager.prototype.getDefaultCb =
+        Stager.prototype.getDefaultCallback = function() {
         return this.defaultCallback || Stager.defaultCallback;
     };
 
@@ -16454,7 +16572,7 @@ if (!Array.prototype.indexOf) {
 
     var Stager     = node.Stager;
     var Block      = node.Block;
-    var blockTypes = Block.blockTypes;
+    var blockTypes = Stager.blockTypes;
 
     var checkPositionsParameter = Stager.checkPositionsParameter;
     var addStageBlock = Stager.addStageBlock;
