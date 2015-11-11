@@ -11,6 +11,12 @@ var J = ngc.JSUS;
 var result;
 var stager = new Stager();
 
+
+// stager.next('stage 1');
+// stager.step('step 1.1', '*');
+// stager.step('step 1.2', '*');
+// stager.step('step 1.3', '*');
+//
 //
 //     debugger
 //    s = stager.getState().sequence;

@@ -37,7 +37,7 @@
         <a href="#stager.setdefaultcallback">Stager.setDefaultCallback</a>
       </div>
       <div class="heading h4">
-        <a href="#stager.getdefaultcallback">Stager.getDefaultCallback</a>
+        <a href="#stager.getdefaultcallback%20%7C%20getdefaultcb">Stager.getDefaultCallback | getDefaultCb</a>
       </div>
       <div class="heading h4">
         <a href="#stager.setdefaultglobals">Stager.setDefaultGlobals</a>
@@ -101,6 +101,22 @@ MIT Licensed</p>
     <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">stepRules</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>Referencing shared entities.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">blockTypes</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">blockTypes</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">makeDefaultCb</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">makeDefaultCb</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">isDefaultStep</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">isDefaultStep</span><span class="p">;</span>
 
 
 </pre></div>
@@ -176,7 +192,7 @@ the state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
 </div>
 <p>Clear previous state:</p>
         </td>
@@ -196,7 +212,7 @@ the state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
 </div>
 <p>Add steps:</p>
         </td>
@@ -214,7 +230,7 @@ the state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
 <p>Add stages:
 first, handle all non-aliases
@@ -235,7 +251,7 @@ first, handle all non-aliases
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
 </div>
 <p>second, handle all aliases
 (key of <code>stages</code> entry is different from <code>id</code> field of
@@ -257,7 +273,7 @@ its value)</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
 </div>
 <p>Add sequence blocks:</p>
         </td>
@@ -265,136 +281,7 @@ its value)</p>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;sequence&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">idx</span> <span class="o">&lt;</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">idx</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">seqObj</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
-
                 <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">seqObj</span><span class="p">;</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
-</div>
-<p>switch (seqObj.type) {
-case 'gameover':
-this.gameover();
-break;</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
-</div>
-<p>case 'plain':
-if (!this.next(seqObj.id)) {
-throw new Error('Stager.setState: invalid' +
-+ 'sequence.');
-}
-break;</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
-</div>
-<p>case 'repeat':
-if (!this.repeat(seqObj.id, seqObj.num)) {
-throw new Error('Stager.setState: invalid' +
-+ 'sequence.');                    //}
-break;</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
-</div>
-<p>case 'loop':
-if (!this.loop(seqObj.id, seqObj.cb)) {
-throw new Error('Stager.setState: invalid' +
-+ 'sequence.');                    //}
-}
-break;</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
-</div>
-<p>case 'doLoop':
-if (!this.doLoop(seqObj.id, seqObj.cb)) {
-throw new Error('Stager.setState: invalid' +
-+ 'sequence.');                    //}</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
-</div>
-<p>}
-break;</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
-</div>
-<p>default:
-// Unknown type:
-throw new Error('Stager.setState: invalid' +
-+ 'sequence.');                    //}</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
-</div>
-<p>}</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -405,7 +292,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
 <p>Set general next-decider:</p>
         </td>
@@ -421,7 +308,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
 </div>
 <p>Set specific next-deciders:</p>
         </td>
@@ -439,7 +326,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
 </div>
 <p>Set default step-rule:</p>
         </td>
@@ -455,7 +342,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
 <p>Set default globals:</p>
         </td>
@@ -471,7 +358,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>Set default properties:</p>
         </td>
@@ -487,7 +374,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>Set onInit:</p>
         </td>
@@ -503,7 +390,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
 <p>Set onGameover:</p>
         </td>
@@ -519,7 +406,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <p>Set toSkip.</p>
         </td>
@@ -535,7 +422,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>Set defaultCallback</p>
         </td>
@@ -551,7 +438,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Cache reset.</p>
         </td>
@@ -567,7 +454,7 @@ throw new Error('Stager.setState: invalid' +
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>Mark finalized.</p>
         </td>
@@ -694,7 +581,7 @@ onGameover, blocks.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>Initial default.</p>
         </td>
@@ -751,6 +638,11 @@ onGameover, blocks.</p>
 
   </div>
   <div class="body"><p>Sets the default callback</p>
+
+<p>The callback immediately replaces the current callback
+in all the steps that have a default callback.</p>
+
+<p>Function will be modified and flagged as <code>default</code>.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -766,7 +658,11 @@ onGameover, blocks.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Stager.getDefaultCallback
+      <span class="dox_type">Stager.getDefaultCallback</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">makeDefaultCallback
 </span>
     </div>
   </div>
@@ -774,11 +670,22 @@ onGameover, blocks.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setDefaultCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">defaultCallback</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.setDefaultCallback: &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;defaultCallback must be function or null.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span> <span class="o">=</span> <span class="nx">makeDefaultCb</span><span class="p">(</span><span class="nx">cb</span><span class="p">);</span>
+
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isDefaultCb</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">cb</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">};</span>
 
 
@@ -788,10 +695,10 @@ onGameover, blocks.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="stager.getdefaultcallback">
+<div class="pilwrap" id="stager.getdefaultcallback%20%7C%20getdefaultcb">
   <h4>
-    <a href="#stager.getdefaultcallback" name="stager.getdefaultcallback" class="pilcrow">&#182;</a>
-    Stager.getDefaultCallback
+    <a href="#stager.getdefaultcallback%20%7C%20getdefaultcb" name="stager.getdefaultcallback%20%7C%20getdefaultcb" class="pilcrow">&#182;</a>
+    Stager.getDefaultCallback | getDefaultCb
   </h4>
 </div>
 
@@ -825,7 +732,8 @@ onGameover, blocks.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getDefaultCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getDefaultCb</span> <span class="o">=</span>
+        <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getDefaultCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span> <span class="o">||</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">defaultCallback</span><span class="p">;</span>
     <span class="p">};</span>
 

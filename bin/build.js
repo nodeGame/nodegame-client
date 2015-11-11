@@ -56,12 +56,13 @@ var ng_client = [
 
     // Stager.
 
+    rootDir + "lib/stager/stager_shared.js",
     rootDir + "lib/stager/Block.js",
     rootDir + "lib/stager/Stager.js",
 
     // Stager modules.
 
-    rootDir + "lib/stager/stager_stages_steps.js", // must go first.
+    rootDir + "lib/stager/stager_stages_steps.js",
     rootDir + "lib/stager/stager_setters_getters.js",
     rootDir + "lib/stager/stager_flexible.js",
     rootDir + "lib/stager/stager_extends.js",

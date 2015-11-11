@@ -615,7 +615,6 @@ describe('Stager', function() {
             tmp = function() {
                 if (Math.random() < 0.5) node.done();
             };
-
             stager.setDefaultCallback(tmp);
 
             stager

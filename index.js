@@ -30,6 +30,7 @@
     exports.EventEmitter = require('./lib/core/EventEmitter').EventEmitter;
 
     // Stager
+    exports.Stager = require('./lib/stager/stager_shared.js').Stager;
     exports.Block = require('./lib/stager/Block').Block;
     exports.Stager = require('./lib/stager/Stager').Stager;
 
