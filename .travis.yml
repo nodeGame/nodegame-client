@@ -12,12 +12,10 @@ before_install:
   - cd ..
 install:
 # Share node_modules with nodeGame.
-  - mkdir -p nodegame node_modules
-#  - ln -s ../node_modules nodegame/node_modules
-#  - ln -s .. node_modules/nodegame-client
+  - mkdir -p nodegame/node_modules
+  - ln -s ../.. nodegame/node_modules/nodegame-client
   - bin/install-nodegame-for-module.sh -g "nodegame-window nodegame-widgets JSUS NDDB shelf.js nodegame-server descil-mturk nodegame-requirements nodegame-monitor nodegame-db nodegame-mongodb"
   - npm install
-  - ln -s ../.. nodegame/node_modules/nodegame-client
 script:
 # nodegame-client tests here.
   - npm test
