@@ -3,7 +3,7 @@ language: node_js
 node_js:
   - "0.10"
   - "0.12"
-  - "4.0"
+  - "5.0"
 before_install:
 # Get installer script.
   - cd bin
@@ -12,9 +12,8 @@ before_install:
   - cd ..
 install:
 # Share node_modules with nodeGame.
-  - mkdir -p nodegame node_modules
-  - ln -s ../node_modules nodegame/node_modules
-  - ln -s .. node_modules/nodegame-client
+  - mkdir -p nodegame/node_modules
+  - ln -s ../.. nodegame/node_modules/nodegame-client
   - bin/install-nodegame-for-module.sh -g "nodegame-window nodegame-widgets JSUS NDDB shelf.js nodegame-server descil-mturk nodegame-requirements nodegame-monitor nodegame-db nodegame-mongodb"
   - npm install
 script:
