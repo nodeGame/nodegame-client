@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/modules/setup.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/modules/setup.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -22,13 +22,16 @@
         <a href="#setup">Setup</a>
       </div>
       <div class="heading h2">
-        <a href="#global-scope">Global scope</a>
+        <a href="#global%20scope">Global scope</a>
       </div>
       <div class="heading h3">
         <a href="#node.setup">node.setup</a>
       </div>
       <div class="heading h3">
         <a href="#node.registersetup">node.registerSetup</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.deregistersetup">node.deregisterSetup</a>
       </div>
       <div class="heading h3">
         <a href="#node.remotesetup">node.remoteSetup</a>
@@ -44,13 +47,13 @@
   <div class="summary">
 <div class="pilwrap" id="setup">
   <h1>
-    <a href="#setup" class="pilcrow">&#182;</a>
+    <a href="#setup" name="setup" class="pilcrow">&#182;</a>
     Setup
   </h1>
 </div>
 
 
-<p>Copyright(c) 2014 Stefano Balietti
+<p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p><code>nodeGame</code> configuration module</p>
@@ -59,28 +62,30 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="global-scope">
+<div class="pilwrap" id="global%20scope">
   <h2>
-    <a href="#global-scope" class="pilcrow">&#182;</a>
+    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
     Global scope
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
-    <span class="nx">Player</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Player</span><span class="p">,</span>
-    <span class="nx">Game</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Game</span><span class="p">,</span>
-    <span class="nx">GamePlot</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GamePlot</span><span class="p">,</span>
-    <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span><span class="p">,</span>
-    <span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameMsgGenerator</span><span class="p">,</span>
-    <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
 
-    <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -90,7 +95,11 @@ MIT Licensed</p>
 </div>
 <p>TODO: check this</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">frozen</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">frozen</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -98,7 +107,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup">
   <h3>
-    <a href="#node.setup" class="pilcrow">&#182;</a>
+    <a href="#node.setup" name="node.setup" class="pilcrow">&#182;</a>
     node.setup
   </h3>
 </div>
@@ -130,12 +139,13 @@ function.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.setup.register
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">func</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
@@ -153,9 +163,12 @@ function.</p>
 
         <span class="nx">func</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">property</span><span class="p">];</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.setup: no such property to configure: &#39;</span>
-                            <span class="o">+</span> <span class="nx">property</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.setup: no such property to configure: &#39;</span> <span class="o">+</span>
+                            <span class="nx">property</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -165,14 +178,18 @@ function.</p>
 </div>
 <p>Setup the property using rest of arguments:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">res</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">res</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">property</span> <span class="o">!==</span> <span class="s1">&#39;nodegame&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">res</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -180,7 +197,7 @@ function.</p>
   <div class="summary">
 <div class="pilwrap" id="node.registersetup">
   <h3>
-    <a href="#node.registersetup" class="pilcrow">&#182;</a>
+    <a href="#node.registersetup" name="node.registersetup" class="pilcrow">&#182;</a>
     node.registerSetup
   </h3>
 </div>
@@ -188,7 +205,8 @@ function.</p>
   </div>
   <div class="body"><p>Registers a configuration function</p>
 
-<p>An incoming event listener in.say.SETUP is added automatically.</p>
+<p>Setup functions can be invoked remotely with in.say.SETUP messages
+and the name property stated in <code>msg.text</code>.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -205,20 +223,75 @@ function.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.setup
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">registerSetup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">property</span><span class="p">,</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">registerSetup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">property</span><span class="p">,</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.registerSetup: property must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.registerSetup: func must be function.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">func</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;setup &#39;</span> <span class="o">+</span> <span class="nx">property</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="p">};</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.deregistersetup">
+  <h3>
+    <a href="#node.deregistersetup" name="node.deregistersetup" class="pilcrow">&#182;</a>
+    node.deregisterSetup
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Registers a configuration function</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">feature</span>
+      <span class="dox_type">string</span>
+      <span>The name of the setup feature to deregister</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.setup
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">deregisterSetup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">feature</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">feature</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.deregisterSetup: property must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">feature</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.deregisterSetup: feature &#39;</span> <span class="o">+</span> <span class="nx">feature</span> <span class="o">+</span> <span class="s1">&#39; not &#39;</span> <span class="o">+</span>
+                      <span class="s1">&#39;previously registered.&#39;</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">feature</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -226,7 +299,7 @@ function.</p>
   <div class="summary">
 <div class="pilwrap" id="node.remotesetup">
   <h3>
-    <a href="#node.remotesetup" class="pilcrow">&#182;</a>
+    <a href="#node.remotesetup" name="node.remotesetup" class="pilcrow">&#182;</a>
     node.remoteSetup
   </h3>
 </div>
@@ -239,7 +312,7 @@ function.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">property</span>
+      <span class="dox_tag_name">feature</span>
       <span class="dox_type">string</span>
       <span>The feature to configure</span>
     </div>
@@ -249,6 +322,10 @@ function.</p>
       <span class="dox_type">array</span>
       <span>The id of the remote client to configure</span>
     </div>
+    <div class="dox_tag_title">return{boolean}</div>
+    <div class="dox_tag_detail">
+      <span>TRUE, if configuration is successful</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.setup</span>
@@ -256,32 +333,45 @@ function.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">JSUS.stringifyAll
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remoteSetup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">property</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">payload</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remoteSetup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">feature</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">payload</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="s1">&#39;property&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.remoteSetup: property must be string.&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">feature</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.remoteSetup: feature must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">to</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">to</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.remoteSetup: to must be string or array.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.remoteSetup: to must be string or &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;array.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="nx">payload</span> <span class="o">=</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]];</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">===</span> <span class="mi">4</span><span class="p">)</span> <span class="nx">payload</span> <span class="o">=</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">3</span><span class="p">]];</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">payload</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">payload</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">payload</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">stringifyAll</span><span class="p">(</span><span class="nx">payload</span><span class="p">);</span>
 
-        <span class="nx">payload</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">stringifyAll</span><span class="p">(</span><span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">payload</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;an error occurred while stringifying payload for remote setup&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">payload</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.remoteSetup: an error occurred while &#39;</span> <span class="o">+</span>
+                         <span class="s1">&#39;stringifying payload.&#39;</span><span class="p">);</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
         <span class="p">}</span>
 
         <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
             <span class="nx">target</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">SETUP</span><span class="p">,</span>
             <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span><span class="p">,</span>
-            <span class="nx">text</span><span class="o">:</span> <span class="nx">property</span><span class="p">,</span>
+            <span class="nx">text</span><span class="o">:</span> <span class="nx">feature</span><span class="p">,</span>
             <span class="nx">data</span><span class="o">:</span> <span class="nx">payload</span>
         <span class="p">});</span>
 

@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/core/GameMsg.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/core/GameMsg.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -22,13 +22,13 @@
         <a href="#gamemsg">GameMsg</a>
       </div>
       <div class="heading h2">
-        <a href="#global-scope">Global scope</a>
+        <a href="#global%20scope">Global scope</a>
       </div>
       <div class="heading h3">
-        <a href="#gamemsg.clone--static-">GameMSg.clone (static)</a>
+        <a href="#gamemsg.clone%20(static)">GameMSg.clone (static)</a>
       </div>
       <div class="heading h2">
-        <a href="#gamemsg-constructor">GameMsg constructor</a>
+        <a href="#gamemsg%20constructor">GameMsg constructor</a>
       </div>
       <div class="heading h3">
         <a href="#gamemsg.id">GameMsg.id</a>
@@ -73,7 +73,7 @@
         <a href="#gamemsg.stringify">GameMsg.stringify</a>
       </div>
       <div class="heading h2">
-        <a href="#gamemsg-methods">GameMsg methods</a>
+        <a href="#gamemsg%20methods">GameMsg methods</a>
       </div>
       <div class="heading h3">
         <a href="#gamemsg.tostring">GameMsg.toString</a>
@@ -104,13 +104,13 @@
   <div class="summary">
 <div class="pilwrap" id="gamemsg">
   <h1>
-    <a href="#gamemsg" class="pilcrow">&#182;</a>
+    <a href="#gamemsg" name="gamemsg" class="pilcrow">&#182;</a>
     GameMsg
   </h1>
 </div>
 
   </div>
-  <div class="body"><p>Copyright(c) 2014 Stefano Balietti
+  <div class="body"><p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
 
 <p><code>nodeGame</code> exchangeable data format</p>
@@ -119,31 +119,38 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="global-scope">
+<div class="pilwrap" id="global%20scope">
   <h2>
-    <a href="#global-scope" class="pilcrow">&#182;</a>
+    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
     Global scope
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
     <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">GameMsg</span><span class="p">;</span></pre></div>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">GameMsg</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="gamemsg.clone--static-">
+<div class="pilwrap" id="gamemsg.clone%20(static)">
   <h3>
-    <a href="#gamemsg.clone--static-" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.clone%20(static)" name="gamemsg.clone%20(static)" class="pilcrow">&#182;</a>
     GameMSg.clone (static)
   </h3>
 </div>
@@ -167,17 +174,21 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">clone</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameMsg</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">clone</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameMsg</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">GameMsg</span><span class="p">(</span><span class="nx">gameMsg</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="gamemsg-constructor">
+<div class="pilwrap" id="gamemsg%20constructor">
   <h2>
-    <a href="#gamemsg-constructor" class="pilcrow">&#182;</a>
+    <a href="#gamemsg%20constructor" name="gamemsg%20constructor" class="pilcrow">&#182;</a>
     GameMsg constructor
   </h2>
 </div>
@@ -195,8 +206,12 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">GameMsg</span><span class="p">(</span><span class="nx">gm</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">gm</span> <span class="o">=</span> <span class="nx">gm</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">GameMsg</span><span class="p">(</span><span class="nx">gm</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">gm</span> <span class="o">=</span> <span class="nx">gm</span> <span class="o">||</span> <span class="p">{};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -204,7 +219,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.id">
   <h3>
-    <a href="#gamemsg.id" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.id" name="gamemsg.id" class="pilcrow">&#182;</a>
     GameMsg.id
   </h3>
 </div>
@@ -214,8 +229,12 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">id</span> <span class="o">?</span>
-            <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span><span class="o">*</span><span class="mi">1000000</span><span class="p">)</span> <span class="o">:</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">id</span> <span class="o">?</span>
+            <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span><span class="o">*</span><span class="mi">1000000</span><span class="p">)</span> <span class="o">:</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -223,7 +242,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.session">
   <h3>
-    <a href="#gamemsg.session" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.session" name="gamemsg.session" class="pilcrow">&#182;</a>
     GameMsg.session
   </h3>
 </div>
@@ -233,7 +252,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">session</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">session</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -241,7 +264,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.stage">
   <h3>
-    <a href="#gamemsg.stage" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.stage" name="gamemsg.stage" class="pilcrow">&#182;</a>
     GameMsg.stage
   </h3>
 </div>
@@ -253,12 +276,16 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameStage
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -266,7 +293,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.action">
   <h3>
-    <a href="#gamemsg.action" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.action" name="gamemsg.action" class="pilcrow">&#182;</a>
     GameMsg.action
   </h3>
 </div>
@@ -278,12 +305,16 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.constants.action
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">action</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">action</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -291,7 +322,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.target">
   <h3>
-    <a href="#gamemsg.target" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.target" name="gamemsg.target" class="pilcrow">&#182;</a>
     GameMsg.target
   </h3>
 </div>
@@ -303,12 +334,16 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.constants.target
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -316,7 +351,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.from">
   <h3>
-    <a href="#gamemsg.from" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.from" name="gamemsg.from" class="pilcrow">&#182;</a>
     GameMsg.from
   </h3>
 </div>
@@ -332,12 +367,16 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.player.id
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">from</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">from</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">from</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">from</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -345,7 +384,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.to">
   <h3>
-    <a href="#gamemsg.to" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.to" name="gamemsg.to" class="pilcrow">&#182;</a>
     GameMsg.to
   </h3>
 </div>
@@ -361,12 +400,16 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.player.id
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">to</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">to</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">to</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">to</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -374,7 +417,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.text">
   <h3>
-    <a href="#gamemsg.text" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.text" name="gamemsg.text" class="pilcrow">&#182;</a>
     GameMsg.text
   </h3>
 </div>
@@ -384,7 +427,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">text</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">text</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">text</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">text</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -392,7 +439,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.data">
   <h3>
-    <a href="#gamemsg.data" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.data" name="gamemsg.data" class="pilcrow">&#182;</a>
     GameMsg.data
   </h3>
 </div>
@@ -402,7 +449,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -410,7 +461,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.priority">
   <h3>
-    <a href="#gamemsg.priority" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.priority" name="gamemsg.priority" class="pilcrow">&#182;</a>
     GameMsg.priority
   </h3>
 </div>
@@ -420,7 +471,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">priority</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">priority</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">priority</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">priority</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -428,7 +483,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.reliable">
   <h3>
-    <a href="#gamemsg.reliable" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.reliable" name="gamemsg.reliable" class="pilcrow">&#182;</a>
     GameMsg.reliable
   </h3>
 </div>
@@ -440,7 +495,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">reliable</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">reliable</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">reliable</span> <span class="o">=</span> <span class="nx">gm</span><span class="p">.</span><span class="nx">reliable</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -448,7 +507,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.created">
   <h3>
-    <a href="#gamemsg.created" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.created" name="gamemsg.created" class="pilcrow">&#182;</a>
     GameMsg.created
   </h3>
 </div>
@@ -458,7 +517,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">created</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getDate</span><span class="p">();</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">created</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getDate</span><span class="p">();</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -466,7 +529,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.forward">
   <h3>
-    <a href="#gamemsg.forward" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.forward" name="gamemsg.forward" class="pilcrow">&#182;</a>
     GameMsg.forward
   </h3>
 </div>
@@ -478,8 +541,12 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">forward</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">forward</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -487,7 +554,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.stringify">
   <h3>
-    <a href="#gamemsg.stringify" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.stringify" name="gamemsg.stringify" class="pilcrow">&#182;</a>
     GameMsg.stringify
   </h3>
 </div>
@@ -505,27 +572,34 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameMsg.toString
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="gamemsg-methods">
+<div class="pilwrap" id="gamemsg%20methods">
   <h2>
-    <a href="#gamemsg-methods" class="pilcrow">&#182;</a>
+    <a href="#gamemsg%20methods" name="gamemsg%20methods" class="pilcrow">&#182;</a>
     GameMsg methods
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -533,7 +607,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.tostring">
   <h3>
-    <a href="#gamemsg.tostring" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.tostring" name="gamemsg.tostring" class="pilcrow">&#182;</a>
     GameMsg.toString
   </h3>
 </div>
@@ -551,12 +625,13 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameMsg.stringify
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">SPT</span><span class="p">,</span> <span class="nx">TAB</span><span class="p">,</span> <span class="nx">DLM</span><span class="p">,</span> <span class="nx">line</span><span class="p">,</span> <span class="nx">UNKNOWN</span><span class="p">,</span> <span class="nx">tmp</span><span class="p">;</span>
         <span class="nx">SPT</span> <span class="o">=</span> <span class="s2">&quot;,\t&quot;</span><span class="p">;</span>
         <span class="nx">TAB</span> <span class="o">=</span> <span class="s2">&quot;\t&quot;</span><span class="p">;</span>
@@ -620,7 +695,10 @@ MIT Licensed</p>
         <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">reliable</span> <span class="o">+</span> <span class="nx">SPT</span><span class="p">;</span>
         <span class="nx">line</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">priority</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">line</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -628,7 +706,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.tosms">
   <h3>
-    <a href="#gamemsg.tosms" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.tosms" name="gamemsg.tosms" class="pilcrow">&#182;</a>
     GameMSg.toSMS
   </h3>
 </div>
@@ -648,17 +726,16 @@ TODO: Create an hash method as for GameStage</span>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toSMS</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-
-        <span class="kd">var</span> <span class="nx">parseDate</span> <span class="o">=</span> <span class="sr">/\w+/</span><span class="p">;</span> <span class="c1">// Select the second word;</span>
-        <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">parseDate</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">created</span><span class="p">);</span>
-
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toSMS</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">from</span> <span class="o">+</span> <span class="s1">&#39;]-&gt;[&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">to</span> <span class="o">+</span> <span class="s1">&#39;]\t&#39;</span><span class="p">;</span>
         <span class="nx">line</span> <span class="o">+=</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span><span class="o">+</span> <span class="s1">&#39;\t&#39;</span><span class="p">;</span>
         <span class="nx">line</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">text</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">;</span>
-
         <span class="k">return</span> <span class="nx">line</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -666,7 +743,7 @@ TODO: Create an hash method as for GameStage</span>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.toinevent">
   <h3>
-    <a href="#gamemsg.toinevent" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.toinevent" name="gamemsg.toinevent" class="pilcrow">&#182;</a>
     GameMsg.toInEvent
   </h3>
 </div>
@@ -684,14 +761,18 @@ TODO: Create an hash method as for GameStage</span>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameMsg.toEvent
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toInEvent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toInEvent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="s1">&#39;in.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">toEvent</span><span class="p">();</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -699,7 +780,7 @@ TODO: Create an hash method as for GameStage</span>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.tooutevent">
   <h3>
-    <a href="#gamemsg.tooutevent" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.tooutevent" name="gamemsg.tooutevent" class="pilcrow">&#182;</a>
     GameMsg.toOutEvent
   </h3>
 </div>
@@ -717,14 +798,18 @@ TODO: Create an hash method as for GameStage</span>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameMsg.toEvent
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toOutEvent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toOutEvent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="s1">&#39;out.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">toEvent</span><span class="p">();</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -732,7 +817,7 @@ TODO: Create an hash method as for GameStage</span>
   <div class="summary">
 <div class="pilwrap" id="gamemsg.toevent">
   <h3>
-    <a href="#gamemsg.toevent" class="pilcrow">&#182;</a>
+    <a href="#gamemsg.toevent" name="gamemsg.toevent" class="pilcrow">&#182;</a>
     GameMsg.toEvent
   </h3>
 </div>
@@ -750,22 +835,27 @@ TODO: Create an hash method as for GameStage</span>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toEvent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toEvent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="closure">
   <h2>
-    <a href="#closure" class="pilcrow">&#182;</a>
+    <a href="#closure" name="closure" class="pilcrow">&#182;</a>
     Closure
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>

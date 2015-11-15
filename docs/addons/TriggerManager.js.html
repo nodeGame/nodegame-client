@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../doc-style.css" />
   <script src="../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../', thisFile = 'addons/TriggerManager.js', defaultSidebar = true;
+    var relativeDir = "../", thisFile = "addons/TriggerManager.js", defaultSidebar = true;
   </script>
   <script src="../doc-script.js"></script>
 </head>
@@ -22,16 +22,16 @@
         <a href="#triggermanager">TriggerManager</a>
       </div>
       <div class="heading h2">
-        <a href="#note-for-developers">Note for developers</a>
+        <a href="#note%20for%20developers">Note for developers</a>
       </div>
       <div class="heading h2">
-        <a href="#global-scope">Global scope</a>
+        <a href="#global%20scope">Global scope</a>
       </div>
       <div class="heading h2">
-        <a href="#triggermanager-constructor">TriggerManager constructor</a>
+        <a href="#triggermanager%20constructor">TriggerManager constructor</a>
       </div>
       <div class="heading h2">
-        <a href="#public-properties">Public properties</a>
+        <a href="#public%20properties">Public properties</a>
       </div>
       <div class="heading h3">
         <a href="#triggermanager.options">TriggerManager.options</a>
@@ -43,7 +43,7 @@
         <a href="#triggermanager.returnat">TriggerManager.returnAt</a>
       </div>
       <div class="heading h2">
-        <a href="#triggermanager-methods">TriggerManager methods</a>
+        <a href="#triggermanager%20methods">TriggerManager methods</a>
       </div>
       <div class="heading h3">
         <a href="#triggermanager.size">TriggerManager.size</a>
@@ -83,21 +83,21 @@
   <div class="summary">
 <div class="pilwrap" id="triggermanager">
   <h1>
-    <a href="#triggermanager" class="pilcrow">&#182;</a>
+    <a href="#triggermanager" name="triggermanager" class="pilcrow">&#182;</a>
     TriggerManager
   </h1>
 </div>
 
 
-<p>Copyright(c) 2014 Stefano Balietti
+<p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Manages a collection of trigger functions to be called sequentially</p>
 
 
-<div class="pilwrap" id="note-for-developers">
+<div class="pilwrap" id="note%20for%20developers">
   <h2>
-    <a href="#note-for-developers" class="pilcrow">&#182;</a>
+    <a href="#note%20for%20developers" name="note%20for%20developers" class="pilcrow">&#182;</a>
     Note for developers
   </h2>
 </div>
@@ -124,31 +124,39 @@ will be executed first.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="global-scope">
+<div class="pilwrap" id="global%20scope">
   <h2>
-    <a href="#global-scope" class="pilcrow">&#182;</a>
+    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
     Global scope
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">TriggerManager</span> <span class="o">=</span> <span class="nx">TriggerManager</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">TriggerManager</span> <span class="o">=</span> <span class="nx">TriggerManager</span><span class="p">;</span>
 
     <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">first</span> <span class="o">=</span> <span class="s1">&#39;first&#39;</span><span class="p">;</span>
-    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">last</span> <span class="o">=</span> <span class="s1">&#39;last&#39;</span><span class="p">;</span></pre></div>
+    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">last</span> <span class="o">=</span> <span class="s1">&#39;last&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="triggermanager-constructor">
+<div class="pilwrap" id="triggermanager%20constructor">
   <h2>
-    <a href="#triggermanager-constructor" class="pilcrow">&#182;</a>
+    <a href="#triggermanager%20constructor" name="triggermanager%20constructor" class="pilcrow">&#182;</a>
     TriggerManager constructor
   </h2>
 </div>
@@ -166,20 +174,26 @@ will be executed first.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">TriggerManager</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">TriggerManager</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="public-properties">
+<div class="pilwrap" id="public%20properties">
   <h2>
-    <a href="#public-properties" class="pilcrow">&#182;</a>
+    <a href="#public%20properties" name="public%20properties" class="pilcrow">&#182;</a>
     Public properties
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -187,7 +201,7 @@ will be executed first.</p>
   <div class="summary">
 <div class="pilwrap" id="triggermanager.options">
   <h3>
-    <a href="#triggermanager.options" class="pilcrow">&#182;</a>
+    <a href="#triggermanager.options" name="triggermanager.options" class="pilcrow">&#182;</a>
     TriggerManager.options
   </h3>
 </div>
@@ -197,7 +211,11 @@ will be executed first.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -205,7 +223,7 @@ will be executed first.</p>
   <div class="summary">
 <div class="pilwrap" id="triggermanager.triggers">
   <h3>
-    <a href="#triggermanager.triggers" class="pilcrow">&#182;</a>
+    <a href="#triggermanager.triggers" name="triggermanager.triggers" class="pilcrow">&#182;</a>
     TriggerManager.triggers
   </h3>
 </div>
@@ -215,7 +233,11 @@ will be executed first.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span> <span class="o">=</span> <span class="p">[];</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -223,7 +245,7 @@ will be executed first.</p>
   <div class="summary">
 <div class="pilwrap" id="triggermanager.returnat">
   <h3>
-    <a href="#triggermanager.returnat" class="pilcrow">&#182;</a>
+    <a href="#triggermanager.returnat" name="triggermanager.returnat" class="pilcrow">&#182;</a>
     TriggerManager.returnAt
   </h3>
 </div>
@@ -235,23 +257,31 @@ will be executed first.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">=</span> <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">first</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">=</span> <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">first</span><span class="p">;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="triggermanager-methods">
+<div class="pilwrap" id="triggermanager%20methods">
   <h2>
-    <a href="#triggermanager-methods" class="pilcrow">&#182;</a>
+    <a href="#triggermanager%20methods" name="triggermanager%20methods" class="pilcrow">&#182;</a>
     TriggerManager methods
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -259,7 +289,7 @@ will be executed first.</p>
   <div class="summary">
 <div class="pilwrap" id="triggermanager.size">
   <h3>
-    <a href="#triggermanager.size" class="pilcrow">&#182;</a>
+    <a href="#triggermanager.size" name="triggermanager.size" class="pilcrow">&#182;</a>
     TriggerManager.size
   </h3>
 </div>
@@ -269,9 +299,13 @@ will be executed first.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -279,7 +313,7 @@ will be executed first.</p>
   <div class="summary">
 <div class="pilwrap" id="triggermanager.init">
   <h3>
-    <a href="#triggermanager.init" class="pilcrow">&#182;</a>
+    <a href="#triggermanager.init" name="triggermanager.init" class="pilcrow">&#182;</a>
     TriggerManager.init
   </h3>
 </div>
@@ -307,7 +341,8 @@ in <code>this.options</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;TriggerManager.init: options must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
@@ -321,7 +356,11 @@ in <code>this.options</code>.</p>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">resetTriggers</span><span class="p">();</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -329,7 +368,7 @@ in <code>this.options</code>.</p>
   <div class="summary">
 <div class="pilwrap" id="triggermanager.setreturnat">
   <h3>
-    <a href="#triggermanager.setreturnat" class="pilcrow">&#182;</a>
+    <a href="#triggermanager.setreturnat" name="triggermanager.setreturnat" class="pilcrow">&#182;</a>
     TriggerManager.setReturnAt
   </h3>
 </div>
@@ -351,23 +390,28 @@ in <code>this.options</code>.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">TriggerManager.last
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setReturnAt</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">returnAt</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setReturnAt</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">returnAt</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span>  <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">first</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">last</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">returnAt</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;TriggerManager.setReturnAt: returnAt must &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">returnAt</span> <span class="o">!==</span> <span class="nx">f</span> <span class="o">&amp;&amp;</span> <span class="nx">returnAt</span> <span class="o">!==</span> <span class="nx">l</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;TriggerManager.setReturnAt: returnAt must be &#39;</span> <span class="o">+</span>
-                                <span class="nx">f</span> <span class="o">+</span> <span class="s1">&#39; or &#39;</span> <span class="o">+</span> <span class="nx">l</span> <span class="o">+</span> <span class="s1">&#39;. Given:&#39;</span> <span class="o">+</span> <span class="nx">returnAt</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;TriggerManager.setReturnAt: returnAt must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be &#39;</span> <span class="o">+</span> <span class="nx">f</span> <span class="o">+</span> <span class="s1">&#39; or &#39;</span> <span class="o">+</span> <span class="nx">l</span> <span class="o">+</span> <span class="s1">&#39;. Given: &#39;</span> <span class="o">+</span>
+                                <span class="nx">returnAt</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">=</span> <span class="nx">returnAt</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -375,7 +419,7 @@ in <code>this.options</code>.</p>
   <div class="summary">
 <div class="pilwrap" id="triggermanager.inittriggers">
   <h3>
-    <a href="#triggermanager.inittriggers" class="pilcrow">&#182;</a>
+    <a href="#triggermanager.inittriggers" name="triggermanager.inittriggers" class="pilcrow">&#182;</a>
     TriggerManager.initTriggers
   </h3>
 </div>
@@ -395,7 +439,8 @@ in <code>this.options</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">initTriggers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">triggers</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">initTriggers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">triggers</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">triggers</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">triggers</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">))</span> <span class="p">{</span>
@@ -404,7 +449,10 @@ in <code>this.options</code>.</p>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">triggers</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -412,7 +460,7 @@ in <code>this.options</code>.</p>
   <div class="summary">
 <div class="pilwrap" id="triggermanager.resettriggers">
   <h3>
-    <a href="#triggermanager.resettriggers" class="pilcrow">&#182;</a>
+    <a href="#triggermanager.resettriggers" name="triggermanager.resettriggers" class="pilcrow">&#182;</a>
     TriggerManager.resetTriggers
   </h3>
 </div>
@@ -425,12 +473,16 @@ contained in <code>TriggerManager.options.triggers</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">resetTriggers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">resetTriggers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">triggers</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">initTriggers</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">triggers</span><span class="p">);</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -438,7 +490,7 @@ contained in <code>TriggerManager.options.triggers</code>.</p>
   <div class="summary">
 <div class="pilwrap" id="triggermanager.clear">
   <h3>
-    <a href="#triggermanager.clear" class="pilcrow">&#182;</a>
+    <a href="#triggermanager.clear" name="triggermanager.clear" class="pilcrow">&#182;</a>
     TriggerManager.clear
   </h3>
 </div>
@@ -464,7 +516,8 @@ contained in <code>TriggerManager.options.triggers</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Do you really want to clear the current &#39;</span> <span class="o">+</span>
                       <span class="s1">&#39;TriggerManager obj? Please use clear(true)&#39;</span><span class="p">);</span>
@@ -472,7 +525,10 @@ contained in <code>TriggerManager.options.triggers</code>.</p>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">return</span> <span class="nx">clear</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -480,7 +536,7 @@ contained in <code>TriggerManager.options.triggers</code>.</p>
   <div class="summary">
 <div class="pilwrap" id="triggermanager.addtrigger">
   <h3>
-    <a href="#triggermanager.addtrigger" class="pilcrow">&#182;</a>
+    <a href="#triggermanager.addtrigger" name="triggermanager.addtrigger" class="pilcrow">&#182;</a>
     TriggerManager.addTrigger
   </h3>
 </div>
@@ -509,7 +565,8 @@ contained in <code>TriggerManager.options.triggers</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addTrigger</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">trigger</span><span class="p">,</span> <span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addTrigger</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">trigger</span><span class="p">,</span> <span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">trigger</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">trigger</span><span class="p">))</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
@@ -519,7 +576,10 @@ contained in <code>TriggerManager.options.triggers</code>.</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">pos</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">trigger</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -527,7 +587,7 @@ contained in <code>TriggerManager.options.triggers</code>.</p>
   <div class="summary">
 <div class="pilwrap" id="triggermanager.removetrigger">
   <h3>
-    <a href="#triggermanager.removetrigger" class="pilcrow">&#182;</a>
+    <a href="#triggermanager.removetrigger" name="triggermanager.removetrigger" class="pilcrow">&#182;</a>
     TriggerManager.removeTrigger
   </h3>
 </div>
@@ -551,7 +611,8 @@ contained in <code>TriggerManager.options.triggers</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeTrigger</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">trigger</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeTrigger</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">trigger</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">trigger</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
@@ -560,7 +621,10 @@ contained in <code>TriggerManager.options.triggers</code>.</p>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -568,7 +632,7 @@ contained in <code>TriggerManager.options.triggers</code>.</p>
   <div class="summary">
 <div class="pilwrap" id="triggermanager.pulltriggers">
   <h3>
-    <a href="#triggermanager.pulltriggers" class="pilcrow">&#182;</a>
+    <a href="#triggermanager.pulltriggers" name="triggermanager.pulltriggers" class="pilcrow">&#182;</a>
     TriggerManager.pullTriggers
   </h3>
 </div>
@@ -583,8 +647,8 @@ functions are fired first.</p>
 functions may not be called. In fact a value is returned:</p>
 
 <ul>
-<li>'first': after the first trigger returns a truthy value</li>
-<li>'last': after all triggers have been executed</li>
+<li>'first': after the first trigger returns a truthy value
+<ul><li>'last': after all triggers have been executed</li></ul></li>
 </ul>
 
 <p>If no trigger is registered the target object is returned unchanged</p>
@@ -605,7 +669,8 @@ functions may not be called. In fact a value is returned:</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pullTriggers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">TriggerManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pullTriggers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">out</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">())</span> <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
@@ -617,7 +682,9 @@ functions may not be called. In fact a value is returned:</p>
                     <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -627,8 +694,12 @@ functions may not be called. In fact a value is returned:</p>
 </div>
 <p>Safety return.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">out</span><span class="p">)</span> <span class="o">?</span> <span class="nx">out</span> <span class="o">:</span> <span class="nx">o</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">out</span><span class="p">)</span> <span class="o">?</span> <span class="nx">out</span> <span class="o">:</span> <span class="nx">o</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -653,7 +724,9 @@ TriggerManager.prototype.pullTriggers = function(o) {
 };
 -->
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+<span class="p">})(</span>
     <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
     <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>

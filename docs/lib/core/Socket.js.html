@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/core/Socket.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/core/Socket.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -22,13 +22,13 @@
         <a href="#socket">Socket</a>
       </div>
       <div class="heading h2">
-        <a href="#global-scope">Global scope</a>
+        <a href="#global%20scope">Global scope</a>
       </div>
       <div class="heading h2">
-        <a href="#socket-constructor">Socket constructor</a>
+        <a href="#socket%20constructor">Socket constructor</a>
       </div>
       <div class="heading h2">
-        <a href="#private-properties">Private properties</a>
+        <a href="#public%20properties">Public properties</a>
       </div>
       <div class="heading h3">
         <a href="#socket.buffer">Socket.buffer</a>
@@ -52,10 +52,16 @@
         <a href="#socket.url">Socket.url</a>
       </div>
       <div class="heading h3">
+        <a href="#socket.type">Socket.type</a>
+      </div>
+      <div class="heading h3">
+        <a href="#socket.type">Socket.type</a>
+      </div>
+      <div class="heading h3">
         <a href="#socket.node">Socket.node</a>
       </div>
       <div class="heading h2">
-        <a href="#socket-methods">Socket methods</a>
+        <a href="#socket%20methods">Socket methods</a>
       </div>
       <div class="heading h3">
         <a href="#socket.setup">Socket.setup</a>
@@ -65,6 +71,9 @@
       </div>
       <div class="heading h3">
         <a href="#socket.connect">Socket.connect</a>
+      </div>
+      <div class="heading h3">
+        <a href="#socket.reconnect">Socket.reconnect</a>
       </div>
       <div class="heading h3">
         <a href="#socket.disconnect">Socket.disconnect</a>
@@ -88,6 +97,9 @@
         <a href="#socket.onmessagefull">Socket.onMessageFull</a>
       </div>
       <div class="heading h3">
+        <a href="#socket.onmessage">Socket.onMessage</a>
+      </div>
+      <div class="heading h3">
         <a href="#socket.shouldclearbuffer">Socket.shouldClearBuffer</a>
       </div>
       <div class="heading h3">
@@ -101,9 +113,6 @@
       </div>
       <div class="heading h3">
         <a href="#socket.startsession">Socket.startSession</a>
-      </div>
-      <div class="heading h3">
-        <a href="#socket.registerserver">Socket.registerServer</a>
       </div>
       <div class="heading h3">
         <a href="#socket.isconnected">Socket.isConnected</a>
@@ -122,16 +131,18 @@
   <div class="summary">
 <div class="pilwrap" id="socket">
   <h1>
-    <a href="#socket" class="pilcrow">&#182;</a>
+    <a href="#socket" name="socket" class="pilcrow">&#182;</a>
     Socket
   </h1>
 </div>
 
 
-<p>Copyright(c) 2014 Stefano Balietti
+<p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
-  <div class="body"><p><code>nodeGame</code> component responsible for dispatching events and messages</p>
+  <div class="body"><p>Wrapper class for the actual socket to send messages</p>
+
+<p><a href='http://nodegame.org'>http://nodegame.org</a></p>
   </div>
 </div>
         </td>
@@ -139,32 +150,38 @@ MIT Licensed</p>
 
     <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
 
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">Socket</span> <span class="o">=</span> <span class="nx">Socket</span><span class="p">;</span></pre></div>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Socket</span> <span class="o">=</span> <span class="nx">Socket</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="global-scope">
+<div class="pilwrap" id="global%20scope">
   <h2>
-    <a href="#global-scope" class="pilcrow">&#182;</a>
+    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
     Global scope
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
     <span class="nx">SocketFactory</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">SocketFactory</span><span class="p">,</span>
     <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">action</span><span class="p">;</span></pre></div>
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="socket-constructor">
+<div class="pilwrap" id="socket%20constructor">
   <h2>
-    <a href="#socket-constructor" class="pilcrow">&#182;</a>
+    <a href="#socket%20constructor" name="socket%20constructor" class="pilcrow">&#182;</a>
     Socket constructor
   </h2>
 </div>
@@ -182,20 +199,27 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">Socket</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">Socket</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="private-properties">
+<div class="pilwrap" id="public%20properties">
   <h2>
-    <a href="#private-properties" class="pilcrow">&#182;</a>
-    Private properties
+    <a href="#public%20properties" name="public%20properties" class="pilcrow">&#182;</a>
+    Public properties
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -203,7 +227,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="socket.buffer">
   <h3>
-    <a href="#socket.buffer" class="pilcrow">&#182;</a>
+    <a href="#socket.buffer" name="socket.buffer" class="pilcrow">&#182;</a>
     Socket.buffer
   </h3>
 </div>
@@ -216,11 +240,15 @@ MIT Licensed</p>
     <div class="dox_tag_detail">
       <span class="dox_type">private
 </span>
-    </span>
+    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="p">[];</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -228,7 +256,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="socket.session">
   <h3>
-    <a href="#socket.session" class="pilcrow">&#182;</a>
+    <a href="#socket.session" name="socket.session" class="pilcrow">&#182;</a>
     Socket.session
   </h3>
 </div>
@@ -240,7 +268,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -248,7 +280,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="socket.useroptions">
   <h3>
-    <a href="#socket.useroptions" class="pilcrow">&#182;</a>
+    <a href="#socket.useroptions" name="socket.useroptions" class="pilcrow">&#182;</a>
     Socket.userOptions
   </h3>
 </div>
@@ -256,18 +288,27 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>Contains the options that will be passed to the <code>connect</code> method</p>
 
-<p>The property is set by <code>node.setup.socket</code></p>
+<p>The property is set by <code>node.setup.socket</code>.
+Passing options to the <code>connect</code> method will overwrite this property.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.setup
-  </span>
+      <span class="dox_type">node.setup</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Socket.connect
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -275,7 +316,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="socket.socket">
   <h3>
-    <a href="#socket.socket" class="pilcrow">&#182;</a>
+    <a href="#socket.socket" name="socket.socket" class="pilcrow">&#182;</a>
     Socket.socket
   </h3>
 </div>
@@ -285,7 +326,11 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -293,7 +338,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="socket.connected">
   <h3>
-    <a href="#socket.connected" class="pilcrow">&#182;</a>
+    <a href="#socket.connected" name="socket.connected" class="pilcrow">&#182;</a>
     Socket.connected
   </h3>
 </div>
@@ -317,12 +362,16 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Socket.onDisconnect
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -330,7 +379,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="socket.connecting">
   <h3>
-    <a href="#socket.connecting" class="pilcrow">&#182;</a>
+    <a href="#socket.connecting" name="socket.connecting" class="pilcrow">&#182;</a>
     Socket.connecting
   </h3>
 </div>
@@ -357,12 +406,16 @@ in one variable with socket states.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Socket.onDisconnect
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -370,7 +423,7 @@ in one variable with socket states.</p>
   <div class="summary">
 <div class="pilwrap" id="socket.url">
   <h3>
-    <a href="#socket.url" class="pilcrow">&#182;</a>
+    <a href="#socket.url" name="socket.url" class="pilcrow">&#182;</a>
     Socket.url
   </h3>
 </div>
@@ -383,33 +436,90 @@ in case of SocketDirect, it is not an real url.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socket.type">
+  <h3>
+    <a href="#socket.type" name="socket.type" class="pilcrow">&#182;</a>
+    Socket.type
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The type of socket used</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socket.type">
+  <h3>
+    <a href="#socket.type" name="socket.type" class="pilcrow">&#182;</a>
+    Socket.type
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>If TRUE, outgoing messages will be emitted upon sending</p>
+
+<p>This allows, for example, to modify all outgoing messages.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">emitOutMsg</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>Experimental Journal.
 TODO: check if we need it.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">journalOn</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">journalOn</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
 <p>Experimental</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">journal</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">({</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">journal</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">({</span>
             <span class="nx">update</span><span class="o">:</span> <span class="p">{</span>
                 <span class="nx">indexes</span><span class="o">:</span> <span class="kc">true</span>
             <span class="p">}</span>
         <span class="p">});</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">journal</span><span class="p">.</span><span class="nx">comparator</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareState</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">journal</span><span class="p">.</span><span class="nx">comparator</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">o1</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">o2</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
+        <span class="p">});</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">journal</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">journal</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb</span><span class="p">)</span> <span class="p">{</span>
@@ -422,17 +532,22 @@ TODO: check if we need it.</p>
                     <span class="k">return</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="nx">gb</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">});</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <p>End Experimental Code.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -440,7 +555,7 @@ TODO: check if we need it.</p>
   <div class="summary">
 <div class="pilwrap" id="socket.node">
   <h3>
-    <a href="#socket.node" class="pilcrow">&#182;</a>
+    <a href="#socket.node" name="socket.node" class="pilcrow">&#182;</a>
     Socket.node
   </h3>
 </div>
@@ -450,21 +565,28 @@ TODO: check if we need it.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+    <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="socket-methods">
+<div class="pilwrap" id="socket%20methods">
   <h2>
-    <a href="#socket-methods" class="pilcrow">&#182;</a>
+    <a href="#socket%20methods" name="socket%20methods" class="pilcrow">&#182;</a>
     Socket methods
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -472,7 +594,7 @@ TODO: check if we need it.</p>
   <div class="summary">
 <div class="pilwrap" id="socket.setup">
   <h3>
-    <a href="#socket.setup" class="pilcrow">&#182;</a>
+    <a href="#socket.setup" name="socket.setup" class="pilcrow">&#182;</a>
     Socket.setup
   </h3>
 </div>
@@ -490,21 +612,27 @@ TODO: check if we need it.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.setup.socket
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">type</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">?</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="o">:</span> <span class="p">{};</span>
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
-        <span class="k">delete</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">setSocketType</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setSocketType</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">emitOutMsg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">emitOutMsg</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">emitOutMsg</span><span class="p">;</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">emitOutMsg</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -512,7 +640,7 @@ TODO: check if we need it.</p>
   <div class="summary">
 <div class="pilwrap" id="socket.setsockettype">
   <h3>
-    <a href="#socket.setsockettype" class="pilcrow">&#182;</a>
+    <a href="#socket.setsockettype" name="socket.setsockettype" class="pilcrow">&#182;</a>
     Socket.setSocketType
   </h3>
 </div>
@@ -534,27 +662,42 @@ TODO: check if we need it.</p>
       <span class="dox_type">object</span>
       <span>Optional. Configuration options for the socket.</span>
     </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>The newly created socket object.</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">SocketFactory
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setSocketType</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
-</div>
-<p>returns null on error.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">SocketFactory</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setSocketType</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Socket.setSocketType: type must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Socket.setSocketType: options must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">SocketFactory</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Socket.setSocketType: type not found: &#39;</span> <span class="o">+</span>
+                            <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span><span class="p">;</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -562,7 +705,7 @@ TODO: check if we need it.</p>
   <div class="summary">
 <div class="pilwrap" id="socket.connect">
   <h3>
-    <a href="#socket.connect" class="pilcrow">&#182;</a>
+    <a href="#socket.connect" name="socket.connect" class="pilcrow">&#182;</a>
     Socket.connect
   </h3>
 </div>
@@ -587,24 +730,28 @@ TODO: check if we need it.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">humanReadableUri</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">uri</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">uri</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Socket.connect: uri must be string or &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Socket.connect: options must be object or &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">connected</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">())</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Socket.connect: socket is already connected. &#39;</span> <span class="o">+</span>
                             <span class="s1">&#39;Only one connection is allowed.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">connecting</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Socket.connecting: one connection attempt is &#39;</span> <span class="o">+</span>
                             <span class="s1">&#39;already in progress. Please try again later.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">uri</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">uri</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Socket.connect: uri must be string or &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Socket.connect: options must be &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="nx">humanReadableUri</span> <span class="o">=</span> <span class="nx">uri</span> <span class="o">||</span> <span class="s1">&#39;local server&#39;</span><span class="p">;</span>
@@ -616,9 +763,51 @@ TODO: check if we need it.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;SOCKET_CONNECTING&#39;</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">uri</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;connecting to &#39;</span> <span class="o">+</span> <span class="nx">humanReadableUri</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">options</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;connecting to &#39;</span> <span class="o">+</span> <span class="nx">humanReadableUri</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socket.reconnect">
+  <h3>
+    <a href="#socket.reconnect" name="socket.reconnect" class="pilcrow">&#182;</a>
+    Socket.reconnect
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Calls the connect method with previous parameters</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Socket.connect</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Socket.disconnect
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reconnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Socket.reconnect: cannot find previous uri.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">())</span> <span class="k">this</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -626,7 +815,7 @@ TODO: check if we need it.</p>
   <div class="summary">
 <div class="pilwrap" id="socket.disconnect">
   <h3>
-    <a href="#socket.disconnect" class="pilcrow">&#182;</a>
+    <a href="#socket.disconnect" name="socket.disconnect" class="pilcrow">&#182;</a>
     Socket.disconnect
   </h3>
 </div>
@@ -636,13 +825,18 @@ TODO: check if we need it.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">disconnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">connected</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">disconnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">connected</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Socket.disconnect: socket is not connected.&#39;</span><span class="p">);</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -650,7 +844,7 @@ TODO: check if we need it.</p>
   <div class="summary">
 <div class="pilwrap" id="socket.onconnect">
   <h3>
-    <a href="#socket.onconnect" class="pilcrow">&#182;</a>
+    <a href="#socket.onconnect" name="socket.onconnect" class="pilcrow">&#182;</a>
     Socket.onConnect
   </h3>
 </div>
@@ -659,24 +853,36 @@ TODO: check if we need it.</p>
   <div class="body"><p>Handler for connections to the server</p>
   </div>
   <div class="details">
+    <div class="dox_tag_title">emit</div>
+    <div class="dox_tag_detail">
+      <span>SOCKET_CONNECT</span>
+    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onConnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onConnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;SOCKET_CONNECT&#39;</span><span class="p">);</span></pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;SOCKET_CONNECT&#39;</span><span class="p">);</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>The testing framework expects this, do not remove.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;socket connected.&#39;</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;socket connected.&#39;</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -684,7 +890,7 @@ TODO: check if we need it.</p>
   <div class="summary">
 <div class="pilwrap" id="socket.ondisconnect">
   <h3>
-    <a href="#socket.ondisconnect" class="pilcrow">&#182;</a>
+    <a href="#socket.ondisconnect" name="socket.ondisconnect" class="pilcrow">&#182;</a>
     Socket.onDisconnect
   </h3>
 </div>
@@ -695,38 +901,80 @@ TODO: check if we need it.</p>
 <p>Clears the player and monitor lists.</p>
   </div>
   <div class="details">
+    <div class="dox_tag_title">emit</div>
+    <div class="dox_tag_detail">
+      <span>SOCKET_DISCONNECT</span>
+    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onDisconnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onDisconnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;SOCKET_DISCONNECT&#39;</span><span class="p">);</span></pre></div>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;SOCKET_DISCONNECT&#39;</span><span class="p">);</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Save the current stage of the game
 this.node.session.store();</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>On re-connection will receive a new ones.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">ml</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;socket closed.&#39;</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+</div>
+<p>Restore original message handler.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setMsgListener</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">onMessageHI</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+</div>
+<p>Delete session.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;socket closed.&#39;</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -734,7 +982,7 @@ this.node.session.store();</p>
   <div class="summary">
 <div class="pilwrap" id="socket.secureparse">
   <h3>
-    <a href="#socket.secureparse" class="pilcrow">&#182;</a>
+    <a href="#socket.secureparse" name="socket.secureparse" class="pilcrow">&#182;</a>
     Socket.secureParse
   </h3>
 </div>
@@ -762,7 +1010,8 @@ this.node.session.store();</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">secureParse</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">secureParse</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">gameMsg</span><span class="p">;</span>
         <span class="k">try</span> <span class="p">{</span>
             <span class="nx">gameMsg</span> <span class="o">=</span> <span class="nx">GameMsg</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">msg</span><span class="p">));</span>
@@ -772,7 +1021,10 @@ this.node.session.store();</p>
             <span class="k">return</span> <span class="nx">logSecureParseError</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;malformed msg received&#39;</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">gameMsg</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -780,7 +1032,7 @@ this.node.session.store();</p>
   <div class="summary">
 <div class="pilwrap" id="socket.validateincomingmsg">
   <h3>
-    <a href="#socket.validateincomingmsg" class="pilcrow">&#182;</a>
+    <a href="#socket.validateincomingmsg" name="socket.validateincomingmsg" class="pilcrow">&#182;</a>
     Socket.validateIncomingMsg
   </h3>
 </div>
@@ -808,13 +1060,17 @@ this.node.session.store();</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">validateIncomingMsg</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameMsg</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">validateIncomingMsg</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameMsg</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">&amp;&amp;</span> <span class="nx">gameMsg</span><span class="p">.</span><span class="nx">session</span> <span class="o">!==</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">logSecureParseError</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;mismatched session in &#39;</span> <span class="o">+</span>
                                             <span class="s1">&#39;incoming message.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">gameMsg</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -822,7 +1078,7 @@ this.node.session.store();</p>
   <div class="summary">
 <div class="pilwrap" id="socket.onmessage">
   <h3>
-    <a href="#socket.onmessage" class="pilcrow">&#182;</a>
+    <a href="#socket.onmessage" name="socket.onmessage" class="pilcrow">&#182;</a>
     Socket.onMessage
   </h3>
 </div>
@@ -858,55 +1114,18 @@ with the data received by the server.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.createPlayer
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onMessage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onMessageHI</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">validateIncomingMsg</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
-</div>
-<p>Parsing successful.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">===</span> <span class="s1">&#39;HI&#39;</span><span class="p">)</span> <span class="p">{</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
-</div>
-<p>TODO: do we need to more checkings, besides is HI?</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
-</div>
-<p>Replace itself: will change onMessage to onMessageFull.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">setMsgListener</span><span class="p">();</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_READY&#39;</span><span class="p">);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
-</div>
-<p>This will emit PLAYER_CREATED</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">startSession</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span></pre></div>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -914,10 +1133,69 @@ with the data received by the server.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
+<p>Parsing successful.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">target</span> <span class="o">===</span> <span class="s1">&#39;HI&#39;</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+</div>
+<p>TODO: do we need to more checkings, besides is HI?</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+</div>
+<p>Replace itself: will change onMessage to onMessageFull.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setMsgListener</span><span class="p">();</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+</div>
+<p>This will emit PLAYER_CREATED</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">startSession</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+</div>
 <p>Functions listening to these events can be executed before HI.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_READY&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -925,7 +1203,7 @@ with the data received by the server.</p>
   <div class="summary">
 <div class="pilwrap" id="socket.onmessagefull">
   <h3>
-    <a href="#socket.onmessagefull" class="pilcrow">&#182;</a>
+    <a href="#socket.onmessagefull" name="socket.onmessagefull" class="pilcrow">&#182;</a>
     Socket.onMessageFull
   </h3>
 </div>
@@ -954,31 +1232,72 @@ if the game is not ready, and the message priority is low.x</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Game.isReady
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onMessageFull</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onMessageFull</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">validateIncomingMsg</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></pre></div>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>Message with high priority are executed immediately.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">priority</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">priority</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">toInEvent</span><span class="p">(),</span> <span class="nx">msg</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;B: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socket.onmessage">
+  <h3>
+    <a href="#socket.onmessage" name="socket.onmessage" class="pilcrow">&#182;</a>
+    Socket.onMessage
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Handler for incoming messages from the server</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Socket.onMessageHI</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Socket.onMessageFull
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onMessage</span> <span class="o">=</span> <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">onMessageHI</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -986,7 +1305,7 @@ if the game is not ready, and the message priority is low.x</p>
   <div class="summary">
 <div class="pilwrap" id="socket.shouldclearbuffer">
   <h3>
-    <a href="#socket.shouldclearbuffer" class="pilcrow">&#182;</a>
+    <a href="#socket.shouldclearbuffer" name="socket.shouldclearbuffer" class="pilcrow">&#182;</a>
     Socket.shouldClearBuffer
   </h3>
 </div>
@@ -1010,19 +1329,23 @@ if the game is not ready, and the message priority is low.x</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Socket.clearBuffer
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setMsgListener</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msgHandler</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setMsgListener</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msgHandler</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">msgHandler</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msgHandler</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Socket.setMsgListener: msgHandler must be a &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;function or undefined&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">onMessage</span> <span class="o">=</span> <span class="nx">msgHandler</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">onMessageFull</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1030,7 +1353,7 @@ if the game is not ready, and the message priority is low.x</p>
   <div class="summary">
 <div class="pilwrap" id="socket.shouldclearbuffer">
   <h3>
-    <a href="#socket.shouldclearbuffer" class="pilcrow">&#182;</a>
+    <a href="#socket.shouldclearbuffer" name="socket.shouldclearbuffer" class="pilcrow">&#182;</a>
     Socket.shouldClearBuffer
   </h3>
 </div>
@@ -1050,14 +1373,18 @@ if the game is not ready, and the message priority is low.x</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Game.isReady
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">shouldClearBuffer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">shouldClearBuffer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">();</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1065,7 +1392,7 @@ if the game is not ready, and the message priority is low.x</p>
   <div class="summary">
 <div class="pilwrap" id="socket.clearbuffer">
   <h3>
-    <a href="#socket.clearbuffer" class="pilcrow">&#182;</a>
+    <a href="#socket.clearbuffer" name="socket.clearbuffer" class="pilcrow">&#182;</a>
     Socket.clearBuffer
   </h3>
 </div>
@@ -1089,12 +1416,13 @@ if the game is not ready, and the message priority is low.x</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Socket.shouldClearBuffer
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearBuffer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msgHandler</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearBuffer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msgHandler</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">nelem</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">funcCtx</span><span class="p">,</span> <span class="nx">func</span><span class="p">;</span>
 
@@ -1108,24 +1436,30 @@ if the game is not ready, and the message priority is low.x</p>
         <span class="p">}</span>
 
         <span class="nx">nelem</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nelem</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nelem</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Modify the buffer at every iteration, so that if an error
 occurs, already emitted messages are out of the way.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">funcCtx</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">toInEvent</span><span class="p">(),</span> <span class="nx">msg</span><span class="p">);</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;D: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1133,7 +1467,7 @@ occurs, already emitted messages are out of the way.</p>
   <div class="summary">
 <div class="pilwrap" id="socket.erasebuffer">
   <h3>
-    <a href="#socket.erasebuffer" class="pilcrow">&#182;</a>
+    <a href="#socket.erasebuffer" name="socket.erasebuffer" class="pilcrow">&#182;</a>
     Socket.eraseBuffer
   </h3>
 </div>
@@ -1147,14 +1481,18 @@ occurs, already emitted messages are out of the way.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Socket.clearBuffer
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">eraseBuffer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">eraseBuffer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1162,7 +1500,7 @@ occurs, already emitted messages are out of the way.</p>
   <div class="summary">
 <div class="pilwrap" id="socket.startsession">
   <h3>
-    <a href="#socket.startsession" class="pilcrow">&#182;</a>
+    <a href="#socket.startsession" name="socket.startsession" class="pilcrow">&#182;</a>
     Socket.startSession
   </h3>
 </div>
@@ -1171,7 +1509,9 @@ occurs, already emitted messages are out of the way.</p>
   <div class="body"><p>Initializes a nodeGame session</p>
 
 <p>Creates a the player and saves it in node.player, and
-stores the session ids in the session object</p>
+stores the session ids in the session object.</p>
+
+<p>If a game window reference is found, sets the <code>uriChannel</code> variable.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1192,106 +1532,25 @@ stores the session ids in the session object</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Socket.registerServer
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">startSession</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
-</div>
-<p>Extracts server info from the first msg.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">registerServer</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">cookie</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">cookie</span><span class="p">(</span><span class="s1">&#39;session&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="p">);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
-</div>
-<p>Do not store player cookie if client failed authorization.
-Note: if a client is trying to open multiple connections
-and this is not allowed by the authorization function
-it will have both the player cookie and the auth_failed cookie.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="s1">&#39;unauthorized_client&#39;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">cookie</span><span class="p">(</span><span class="s1">&#39;auth_failed&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">cookie</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Socket.startSession: cannot set cookies. Session &#39;</span> <span class="o">+</span>
-                           <span class="s1">&#39;support disabled&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="socket.registerserver">
-  <h3>
-    <a href="#socket.registerserver" class="pilcrow">&#182;</a>
-    Socket.registerServer
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Saves the server information based on anx incoming message</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">msg</span>
-      <span class="dox_type">GameMsg</span>
-      <span>A game message</span>
+      <span class="dox_type">Socket.registerServer</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">node.createPlayer
-  </span>
+      <span class="dox_type">GameWindow.setUriChannel
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">registerServer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
-</div>
-<p>Setting global info</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">servername</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
-</div>
-<p>Keep serverid = msg.from for now</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">serverid</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">startSession</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">setUriChannel</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1299,7 +1558,7 @@ it will have both the player cookie and the auth_failed cookie.</p>
   <div class="summary">
 <div class="pilwrap" id="socket.isconnected">
   <h3>
-    <a href="#socket.isconnected" class="pilcrow">&#182;</a>
+    <a href="#socket.isconnected" name="socket.isconnected" class="pilcrow">&#182;</a>
     Socket.isConnected
   </h3>
 </div>
@@ -1309,9 +1568,13 @@ it will have both the player cookie and the auth_failed cookie.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isConnected</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isConnected</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">();</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1319,7 +1582,7 @@ it will have both the player cookie and the auth_failed cookie.</p>
   <div class="summary">
 <div class="pilwrap" id="socket.send">
   <h3>
-    <a href="#socket.send" class="pilcrow">&#182;</a>
+    <a href="#socket.send" name="socket.send" class="pilcrow">&#182;</a>
     Socket.send
   </h3>
 </div>
@@ -1349,23 +1612,28 @@ it will have both the player cookie and the auth_failed cookie.</p>
 TODO: when trying to send a message and the socket is not connected
 the message is just discarded. Outgoing messages could be buffered
 and sent out whenever the connection is available again.
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">send</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">send</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">outEvent</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">())</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Socket.send: cannot send message. No open socket.&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">from</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">UNDEFINED_PLAYER</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">msg</span><span class="p">.</span><span class="nx">from</span> <span class="o">||</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">UNDEFINED_PLAYER</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Socket.send: cannot send message. &#39;</span> <span class="o">+</span>
                           <span class="s1">&#39;Player undefined.&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1373,21 +1641,21 @@ and sent out whenever the connection is available again.
 <div class="pilwrap">
   <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
-<p>TODO: add conf variable node.emitOutMsg</p>
+<p>Emit out event, if required.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">toOutEvent</span><span class="p">(),</span> <span class="nx">msg</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">emitOutMsg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">outEvent</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">toOutEvent</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">outEvent</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">outEvent</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">outEvent</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;S: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">journalOn</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">journal</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
-        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -1395,15 +1663,48 @@ and sent out whenever the connection is available again.
 <div class="pilwrap">
   <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
+<p>Experimental code.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">journalOn</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">journal</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+        <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+</div>
+<p>End experimental code.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+</div>
 <p>Helper methods.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">logSecureParseError</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="kd">function</span> <span class="nx">logSecureParseError</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">error</span><span class="p">;</span>
         <span class="nx">text</span> <span class="o">=</span> <span class="nx">text</span> <span class="o">||</span> <span class="s1">&#39;generic error while parsing a game message.&#39;</span><span class="p">;</span>
         <span class="nx">error</span> <span class="o">=</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">?</span> <span class="nx">text</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nx">e</span> <span class="o">:</span> <span class="nx">text</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Socket.secureParse: &#39;</span> <span class="o">+</span> <span class="nx">error</span><span class="p">);</span>
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">};</span>
+    <span class="p">}</span>
 
 <span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>

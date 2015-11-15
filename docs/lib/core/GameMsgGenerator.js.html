@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/core/GameMsgGenerator.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/core/GameMsgGenerator.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -22,13 +22,13 @@
         <a href="#gamemsggenerator">GameMsgGenerator</a>
       </div>
       <div class="heading h2">
-        <a href="#global-scope">Global scope</a>
+        <a href="#global%20scope">Global scope</a>
       </div>
       <div class="heading h2">
-        <a href="#gamemsggenerator-constructor">GameMsgGenerator constructor</a>
+        <a href="#gamemsggenerator%20constructor">GameMsgGenerator constructor</a>
       </div>
       <div class="heading h2">
-        <a href="#gamemsggenerator-methods">GameMsgGenerator methods</a>
+        <a href="#gamemsggenerator%20methods">GameMsgGenerator methods</a>
       </div>
       <div class="heading h3">
         <a href="#gamemsggenerator.create">GameMsgGenerator.create</a>
@@ -47,13 +47,13 @@
   <div class="summary">
 <div class="pilwrap" id="gamemsggenerator">
   <h1>
-    <a href="#gamemsggenerator" class="pilcrow">&#182;</a>
+    <a href="#gamemsggenerator" name="gamemsggenerator" class="pilcrow">&#182;</a>
     GameMsgGenerator
   </h1>
 </div>
 
   </div>
-  <div class="body"><p>Copyright(c) 2014 Stefano Balietti
+  <div class="body"><p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
 
 <p><code>nodeGame</code> component rensponsible creating messages</p>
@@ -72,39 +72,47 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.action
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="global-scope">
+<div class="pilwrap" id="global%20scope">
   <h2>
-    <a href="#global-scope" class="pilcrow">&#182;</a>
+    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
     Global scope
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">GameMsgGenerator</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameMsgGenerator</span> <span class="o">=</span> <span class="nx">GameMsgGenerator</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">GameMsg</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameMsg</span><span class="p">,</span>
     <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
-    <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span></pre></div>
+    <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="gamemsggenerator-constructor">
+<div class="pilwrap" id="gamemsggenerator%20constructor">
   <h2>
-    <a href="#gamemsggenerator-constructor" class="pilcrow">&#182;</a>
+    <a href="#gamemsggenerator%20constructor" name="gamemsggenerator%20constructor" class="pilcrow">&#182;</a>
     GameMsgGenerator constructor
   </h2>
 </div>
@@ -114,22 +122,29 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">GameMsgGenerator</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">GameMsgGenerator</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="gamemsggenerator-methods">
+<div class="pilwrap" id="gamemsggenerator%20methods">
   <h2>
-    <a href="#gamemsggenerator-methods" class="pilcrow">&#182;</a>
+    <a href="#gamemsggenerator%20methods" name="gamemsggenerator%20methods" class="pilcrow">&#182;</a>
     GameMsgGenerator methods
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -137,7 +152,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamemsggenerator.create">
   <h3>
-    <a href="#gamemsggenerator.create" class="pilcrow">&#182;</a>
+    <a href="#gamemsggenerator.create" name="gamemsggenerator.create" class="pilcrow">&#182;</a>
     GameMsgGenerator.create
   </h3>
 </div>
@@ -167,12 +182,13 @@ have priority 1, all the other targets have priority 0.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameMsg
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameMsgGenerator</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">gameStage</span><span class="p">,</span> <span class="nx">priority</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
 
@@ -181,7 +197,7 @@ have priority 1, all the other targets have priority 0.</p>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">?</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">()</span><span class="o">:</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="s1">&#39;0.0.0&#39;</span><span class="p">);</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">()</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="s1">&#39;0.0.0&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">priority</span><span class="p">)</span> <span class="p">{</span>
@@ -214,20 +230,24 @@ have priority 1, all the other targets have priority 0.</p>
             <span class="nx">reliable</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">reliable</span> <span class="o">||</span> <span class="mi">1</span>
         <span class="p">});</span>
 
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="closure">
   <h2>
-    <a href="#closure" class="pilcrow">&#182;</a>
+    <a href="#closure" name="closure" class="pilcrow">&#182;</a>
     Closure
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>

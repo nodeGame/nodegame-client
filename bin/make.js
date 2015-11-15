@@ -45,49 +45,49 @@ function copyDirTo(subDir, targetDir) {
 
     // INPUT DIR
     if (!subDir) {
-	console.log('You must specify a subdirectory of the nodegame-client ' +
+        console.log('You must specify a subdirectory of the nodegame-client ' +
                     'root folder, or use * to select all');
-	return;
+        return;
     }
 
     if (subDir === '.') {
-	inputDir = rootDir;
+        inputDir = rootDir;
     }
     else {
-	inputDir = rootDir + subDir;
+        inputDir = rootDir + subDir;
     }
 
     inputDir = path.resolve(inputDir);
 
     if (!J.existsSync(inputDir)) {
-	console.log(inputDir + ' does not exists');
-	return false;
+        console.log(inputDir + ' does not exists');
+        return false;
     }
 
     stats = fs.lstatSync(inputDir);
     if (!stats.isDirectory()) {
-	console.log(inputDir + ' is not a directory');
-	return false;
+        console.log(inputDir + ' is not a directory');
+        return false;
     }
     inputDir = inputDir + '/';
 
     // TARGET DIR
     if (!targetDir) {
-	console.log('You must specify a target directory');
-	return;
+        console.log('You must specify a target directory');
+        return;
     }
 
     targetDir = path.resolve(targetDir);
 
     if (!J.existsSync(targetDir)) {
-	console.log(targetDir + ' does not exists');
-	return false;
+        console.log(targetDir + ' does not exists');
+        return false;
     }
 
     stats = fs.lstatSync(targetDir);
     if (!stats.isDirectory()) {
-	console.log(targetDir + ' is not a directory');
-	return false;
+        console.log(targetDir + ' is not a directory');
+        return false;
     }
 
     targetDir = targetDir + '/';
@@ -106,25 +106,25 @@ program
     .command('clean')
     .description('Removes all files from build folder')
     .action(function(){
-	J.cleanDir(buildDir);
+        J.cleanDir(buildDir);
     });
 
 program
     .command('build-support [options]')
-    .description('Creates a separate builds of nodegame-client support libraries')
+    .description('Creates a separate build of nodegame-client support libs')
     .option('-l, --lib <items>', 'choose libraries to build', list)
     .option('-a, --all', 'all support libraries')
     .option('-C, --clean', 'clean build directory')
     .option('-A, --analyse', 'analyse build')
     .option('-o, --output <file>', 'output file (without .js)')
     .action(function(env, options){
-	build_support(options);
+        build_support(options);
     });
 
 program
     .command('build [options]')
     .description('Creates a nodegame-client custom build')
-    .option('-B, --bare', 'bare naked nodegame-client (no dependencies, no addons)')
+    .option('-B, --bare', 'bare nodegame-client (no dependencies, no addons)')
     .option('-J, --JSUS', 'with JSUS')
     .option('-N, --NDDB', 'with NDDB')
     .option('-W, --window', 'with nodegame-window')
@@ -136,42 +136,42 @@ program
     .option('-C, --clean', 'clean build directory')
     .option('-A, --analyse', 'analyse build')
     .option('-o, --output <file>', 'output file (without .js)')
-    .option('-y, --sync <path>', 'syncs the build directory with the specified path')
+    .option('-y, --sync <path>', 'syncs the build directory with given path')
     .action(function(env, options){
-	build(options);
+        build(options);
 
-	if (options.sync) {
-	    copyDirTo('build/', options.sync);
-	}
+        if (options.sync) {
+            copyDirTo('build/', options.sync);
+        }
     });
 
 program
     .command('multibuild [options]')
     .description('Creates pre-defined nodeGame builds')
-    .option('-y, --sync <path>', 'syncs the build directory with the specified path')
+    .option('-y, --sync <path>', 'syncs the build directory with given path')
     .action(function(env, options){
-	console.log('Multi-build for nodegame-client v.' + version);
+        console.log('Multi-build for nodegame-client v.' + version);
 
-	build({
-	    all: true,
-	    output: "nodegame-full",
-	});
-	build({
-	    bare: true,
-	    output: "nodegame-bare",
-	});
+        build({
+            all: true,
+            output: "nodegame-full",
+        });
+        build({
+            bare: true,
+            output: "nodegame-bare",
+        });
 
-	build({
-	    output: "nodegame",
-	});
+        build({
+            output: "nodegame",
+        });
 
-        //		build_support({
-        //			all: true,
-        //		});
+        //              build_support({
+        //                      all: true,
+        //              });
 
-	if (options.sync) {
-	    copyDirTo('build/', options.sync);
-	}
+        if (options.sync) {
+            copyDirTo('build/', options.sync);
+        }
     });
 
 program
@@ -180,7 +180,7 @@ program
                  'root tree with another target directory. If \'.\' is used ' +
                  'the whole tree will be synced.')
     .action(function(subdir, path) {
-	copyDirTo(subdir, path);
+        copyDirTo(subdir, path);
     });
 
 
@@ -188,28 +188,28 @@ program
     .command('doc')
     .description('Builds documentation files')
     .action(function(){
-	console.log('Building documentation for nodegame-client v.' + version);
-	// http://nodejs.org/api.html#_child_processes
-	try {
-	    var dockerDir = J.resolveModuleDir('docker', rootDir);
-	}
-	catch(e) {
-	    console.log('module Docker not found. Cannot build doc. ' +
-                        'Do \'npm install docker\' to install it.');
-	    return false;
-	}
+        console.log('Building documentation for nodegame-client v.' + version);
+        // http://nodejs.org/api.html#_child_processes
+        try {
+            var dockerDir = J.resolveModuleDir('docker', rootDir);
+        }
+        catch(e) {
+            console.log('module Docker not found. Cannot build doc.');
+            console.log('Do \'npm install docker\' to install it.');
+            return false;
+        }
 
-	var command = dockerDir + 'docker -i ' + rootDir +
+        var command = dockerDir + 'docker -i ' + rootDir +
             ' index.js index.browser.js closure.browser.js lib/ listeners/ ' +
-            'addons/ examples/ -o ' + rootDir + 'docs/';
+            'addons/ examples/ -o ' + rootDir + 'docs/ -u';
 
-	var child = exec(command, function(error, stdout, stderr) {
-	    util.print(stdout);
-	    util.print(stderr);
-	    if (error !== null) {
-		console.log('build error: ' + error);
-	    }
-	});
+        var child = exec(command, function(error, stdout, stderr) {
+            if (stdout) console.log(stdout);
+            if (stderr) console.log(stderr);
+            if (error !== null) {
+                console.log('build error: ' + error);
+            }
+        });
     });
 
 //Parsing options

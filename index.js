@@ -1,6 +1,6 @@
 /**
  * # nodeGame
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Social Experiments in the Browser
@@ -29,12 +29,26 @@
         require('./lib/core/EventEmitter').EventEmitterManager;
     exports.EventEmitter = require('./lib/core/EventEmitter').EventEmitter;
 
+    // Stager
+    exports.Stager = require('./lib/stager/stager_shared.js').Stager;
+    exports.Block = require('./lib/stager/Block').Block;
+    exports.Stager = require('./lib/stager/Stager').Stager;
+
+    // Stager modules
+
+    // Must be required first.
+    require('./lib/stager/stager_stages_steps.js');
+    require('./lib/stager/stager_setters_getters.js');
+    require('./lib/stager/stager_flexible');
+    require('./lib/stager/stager_extends.js');
+    require('./lib/stager/stager_blocks.js');
+    require('./lib/stager/stager_extract_info.js');
+
     // Core
     exports.GameStage = require('./lib/core/GameStage').GameStage;
     exports.PlayerList = require('./lib/core/PlayerList').PlayerList;
     exports.Player = require('./lib/core/PlayerList').Player;
     exports.GameMsg = require('./lib/core/GameMsg').GameMsg;
-    exports.Stager = require('./lib/core/Stager').Stager;
     exports.GamePlot = require('./lib/core/GamePlot').GamePlot;
     exports.GameMsgGenerator =
         require('./lib/core/GameMsgGenerator').GameMsgGenerator;
@@ -63,13 +77,13 @@
     exports.TriggerManager = require('./addons/TriggerManager').TriggerManager;
 
     // FS
-    exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;
+    // exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;
 
-    // Load main nodegame-client class
+    // Load main nodegame-client class.
     exports.NodeGameClient =
         require('./lib/core/NodeGameClient').NodeGameClient;
 
-    // Load extensions to the prototype
+    // Load extensions to the prototype.
 
     require('./lib/modules/log.js');
     require('./lib/modules/setup.js');
@@ -85,9 +99,11 @@
     require('./lib/modules/variables.js');
 
 
-    // ### Loading Event listeners
+    // ### Loading Event listeners.
     require('./listeners/incoming.js');
     require('./listeners/internal.js');
+    require('./listeners/setups.js');
+    require('./listeners/aliases.js');
 
 
     exports.getClient = function() {
@@ -100,13 +116,9 @@
         // TODO: should they use the new operator?
         node.Stager = exports.Stager;
         node.stepRules = exports.stepRules;
-        node.NodeGameRuntimeError = exports.NodeGameRuntimeError;
-        node.NodeGameStageCallbackError = exports.NodeGameStageCallbackError;
-        node.NodeGameMisconfiguredGameError =
-            exports.NodeGameMisconfiguredGameError;
-        node.NodeGameIllegalOperationError =
-            exports.NodeGameIllegalOperationError;
-        node.fs = new exports.NodeGameFS(node);
+
+        // Removed.
+        // node.fs = new exports.NodeGameFS(node);
 
         return node;
     };

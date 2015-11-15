@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>stager_extract_info.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../", thisFile = "lib/stager/stager_extract_info.js", defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#stager%20extract%20info">Stager Extract Info</a>
+      </div>
+      <div class="heading h4">
+        <a href="#stager.getsequence">Stager.getSequence</a>
+      </div>
+      <div class="heading h4">
+        <a href="#stager.extractstage">Stager.extractStage</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager%20extract%20info">
+  <h1>
+    <a href="#stager%20extract%20info" name="stager%20extract%20info" class="pilcrow">&#182;</a>
+    Stager Extract Info
+  </h1>
+</div>
+
+
+<p>Copyright(c) 2015 Stefano Balietti
+MIT Licensed</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.getsequence">
+  <h4>
+    <a href="#stager.getsequence" name="stager.getsequence" class="pilcrow">&#182;</a>
+    Stager.getSequence
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the sequence of stages</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">format</span>
+      <span class="dox_type">string</span>
+      <span>'hstages' for an array of human-readable
+  stage descriptions, 'hsteps' for an array of human-readable
+  step descriptions, 'o' for the internal JavaScript object</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">null</span>
+      <span>The stage sequence in requested
+  format. NULL on error.</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getSequence</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">result</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">seqIdx</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">seqObj</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">stepPrefix</span><span class="p">;</span>
+
+        <span class="k">switch</span> <span class="p">(</span><span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="s1">&#39;hstages&#39;</span><span class="o">:</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="nx">seqIdx</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">seqIdx</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">seqObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">seqIdx</span><span class="p">];</span>
+
+                    <span class="k">switch</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">case</span> <span class="s1">&#39;gameover&#39;</span><span class="o">:</span>
+                        <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;[game over]&#39;</span><span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+
+                    <span class="k">case</span> <span class="s1">&#39;plain&#39;</span><span class="o">:</span>
+                        <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+
+                    <span class="k">case</span> <span class="s1">&#39;repeat&#39;</span><span class="o">:</span>
+                        <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; [x&#39;</span> <span class="o">+</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">num</span> <span class="o">+</span>
+                            <span class="s1">&#39;]&#39;</span><span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+
+                    <span class="k">case</span> <span class="s1">&#39;loop&#39;</span><span class="o">:</span>
+                        <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; [loop]&#39;</span><span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+
+                    <span class="k">case</span> <span class="s1">&#39;doLoop&#39;</span><span class="o">:</span>
+                        <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; [doLoop]&#39;</span><span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+
+                    <span class="k">default</span><span class="o">:</span>
+                        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.getSequence: unknown&#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;sequence object type.&#39;</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">break</span><span class="p">;</span>
+
+        <span class="k">case</span> <span class="s1">&#39;hsteps&#39;</span><span class="o">:</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="nx">seqIdx</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">seqIdx</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">seqObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">seqIdx</span><span class="p">];</span>
+                    <span class="nx">stepPrefix</span> <span class="o">=</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">;</span>
+
+                    <span class="k">switch</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">case</span> <span class="s1">&#39;gameover&#39;</span><span class="o">:</span>
+                        <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;[game over]&#39;</span><span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+
+                    <span class="k">case</span> <span class="s1">&#39;plain&#39;</span><span class="o">:</span>
+                        <span class="nx">seqObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span>
+                            <span class="kd">function</span><span class="p">(</span><span class="nx">stepID</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">stepPrefix</span> <span class="o">+</span> <span class="nx">stepID</span><span class="p">);</span>
+                            <span class="p">}</span>
+                        <span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+
+                    <span class="k">case</span> <span class="s1">&#39;repeat&#39;</span><span class="o">:</span>
+                        <span class="nx">seqObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span>
+                            <span class="kd">function</span><span class="p">(</span><span class="nx">stepID</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">stepPrefix</span> <span class="o">+</span> <span class="nx">stepID</span> <span class="o">+</span>
+                                    <span class="s1">&#39; [x&#39;</span> <span class="o">+</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">num</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span><span class="p">);</span>
+                            <span class="p">}</span>
+                        <span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+
+                    <span class="k">case</span> <span class="s1">&#39;loop&#39;</span><span class="o">:</span>
+                        <span class="nx">seqObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span>
+                            <span class="kd">function</span><span class="p">(</span><span class="nx">stepID</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">stepPrefix</span> <span class="o">+</span>
+                                            <span class="nx">stepID</span> <span class="o">+</span> <span class="s1">&#39; [loop]&#39;</span><span class="p">);</span>
+                            <span class="p">}</span>
+                        <span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+
+                    <span class="k">case</span> <span class="s1">&#39;doLoop&#39;</span><span class="o">:</span>
+                        <span class="nx">seqObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span>
+                            <span class="kd">function</span><span class="p">(</span><span class="nx">stepID</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">stepPrefix</span> <span class="o">+</span>
+                                            <span class="nx">stepID</span> <span class="o">+</span> <span class="s1">&#39; [doLoop]&#39;</span><span class="p">);</span>
+                            <span class="p">}</span>
+                        <span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+
+                    <span class="k">default</span><span class="o">:</span>
+                        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.getSequence: unknown&#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;sequence object type.&#39;</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">break</span><span class="p">;</span>
+
+        <span class="k">case</span> <span class="s1">&#39;o&#39;</span><span class="o">:</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+
+        <span class="k">default</span><span class="o">:</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.getSequence: invalid format.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.extractstage">
+  <h4>
+    <a href="#stager.extractstage" name="stager.extractstage" class="pilcrow">&#182;</a>
+    Stager.extractStage
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a minimal state package containing one or more stages</p>
+
+<p>The returned package consists of a <code>setState</code>-compatible object
+with the <code>steps</code> and <code>stages</code> properties set to include the given
+stages.
+The <code>sequence</code> is optionally set to a single <code>next</code> block for the
+stage.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">ids</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">array</span>
+      <span>Valid stage name(s)</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">useSeq</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. Whether to generate a singleton
+  sequence.  TRUE by default.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">null</span>
+      <span>The state object on success, NULL on error</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.setState
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">extractStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">,</span> <span class="nx">useSeq</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">result</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">stepIdx</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">stageId</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">stageObj</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">idArray</span><span class="p">,</span> <span class="nx">idIdx</span><span class="p">,</span> <span class="nx">id</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">ids</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">idArray</span> <span class="o">=</span> <span class="nx">ids</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">ids</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">idArray</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">ids</span> <span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+
+        <span class="nx">result</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">steps</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">stages</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">sequence</span><span class="o">:</span> <span class="p">[]</span> <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>undefined (default) -> true</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">useSeq</span> <span class="o">=</span> <span class="p">(</span><span class="nx">useSeq</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">idIdx</span> <span class="k">in</span> <span class="nx">idArray</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">idArray</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idIdx</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">id</span> <span class="o">=</span> <span class="nx">idArray</span><span class="p">[</span><span class="nx">idIdx</span><span class="p">];</span>
+
+                <span class="nx">stageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stageObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>Add step objects:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">stepIdx</span> <span class="k">in</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">stepIdx</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">stepId</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepIdx</span><span class="p">];</span>
+                        <span class="nx">result</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">];</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>Add stage object:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="nx">stageId</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+                <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>If given id is alias, also add alias:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">stageId</span> <span class="o">!==</span> <span class="nx">id</span><span class="p">)</span> <span class="nx">result</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>Add mini-sequence:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">useSeq</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">result</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                        <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span>
+                        <span class="nx">id</span><span class="o">:</span> <span class="nx">stageId</span>
+                    <span class="p">});</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="p">};</span>
+
+<span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

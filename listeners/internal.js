@@ -1,6 +1,6 @@
 /**
  * # internal
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Listeners for internal messages.
@@ -8,6 +8,8 @@
  * Internal listeners are not directly associated to messages,
  * but they are usually responding to internal nodeGame events,
  * such as progressing in the loading chain, or finishing a game stage.
+ *
+ * http://nodegame.org
  */
 (function(exports, parent) {
 
@@ -15,23 +17,12 @@
 
     var NGC = parent.NodeGameClient;
 
-    var GameMsg = parent.GameMsg,
-    GameStage = parent.GameStage,
-    PlayerList = parent.PlayerList,
-    Player = parent.Player,
-    J = parent.JSUS,
+    var GameStage = parent.GameStage,
     constants = parent.constants;
 
-    var action = constants.action,
-        target = constants.target,
-        stageLevels = constants.stageLevels;
+    var stageLevels = constants.stageLevels,
+    gcommands = constants.gamecommands;
 
-    var say = action.SAY + '.',
-    set = action.SET + '.',
-    get = action.GET + '.',
-    OUT = constants.OUT;
-
-    var gcommands = constants.gamecommands;
     var CMD = 'NODEGAME_GAMECOMMAND_';
 
     /**
@@ -46,20 +37,27 @@
      */
     NGC.prototype.addDefaultInternalListeners = function(force) {
         var node = this;
-        if (this.internalAdded && !force) {
+        if (this.conf.internalAdded && !force) {
             this.err('Default internal listeners already added once. ' +
                      'Use the force flag to re-add.');
             return false;
         }
 
+        this.info('node: adding internal listeners.');
+
         function done() {
+            var res;
+            // No incoming messages should be emitted before
+            // evaluating the step rule and definitely setting
+            // the stageLevel to DONE, otherwise the stage of
+            // other clients could change in between.
+            node.game.setStageLevel(stageLevels.GETTING_DONE);
             node.game.willBeDone = false;
-            node.game.setStageLevel(stageLevels.DONE);
             node.emit('REALLY_DONE');
+            res = node.game.shouldStep(stageLevels.DONE);
+            node.game.setStageLevel(stageLevels.DONE);
             // Step forward, if allowed.
-            if (node.game.shouldStep()) {
-                node.game.step();
-            }
+            if (res) node.game.step();
         }
 
         /**
@@ -67,23 +65,18 @@
          *
          * Registers the stageLevel _DONE_ and eventually steps forward.
          *
-         * If a DONE handler is defined in the game-plot, it will execute it.
-         * In case it returns FALSE, the update process is stopped.
+         * If a DONE handler is defined in the game-plot, it executes it.
+         * In case the handler returns FALSE, the process is stopped.
          *
          * @emit REALLY_DONE
          */
         this.events.ng.on('DONE', function() {
             // Execute done handler before updating stage.
-            var ok, doneCb, stageLevel;
-            ok = true;
-            doneCb = node.game.plot.getProperty(node.game.getCurrentGameStage(),
-                                                'done');
-
-            if (doneCb) ok = doneCb.apply(node.game, arguments);
-            if (!ok) return;
+            var stageLevel;
 
             stageLevel = node.game.getStageLevel();
 
+            // TODO check >=.
             if (stageLevel >= stageLevels.PLAYING) {
                 done();
             }
@@ -104,18 +97,18 @@
             }
         });
 
-        /**
-         * ## WINDOW_LOADED
-         *
-         * @emit LOADED
-         */
-        this.events.ng.on('WINDOW_LOADED', function() {
-            var stageLevel;
-            stageLevel = node.game.getStageLevel();
-            if (stageLevel >= stageLevels.CALLBACK_EXECUTED) {
-                node.emit('LOADED');
-            }
-        });
+//         /**
+//          * ## WINDOW_LOADED
+//          *
+//          * @emit LOADED
+//          */
+//         this.events.ng.on('WINDOW_LOADED', function() {
+//             var stageLevel;
+//             stageLevel = node.game.getStageLevel();
+//             if (stageLevel === stageLevels.CALLBACK_EXECUTED) {
+//                 node.emit('LOADED');
+//             }
+//         });
 
         /**
          * ## LOADED
@@ -157,98 +150,99 @@
 
         /**
          * ## NODEGAME_GAMECOMMAND: start
-         *
          */
         this.events.ng.on(CMD + gcommands.start, function(options) {
             if (!node.game.isStartable()) {
-                node.err('Game cannot be started.');
+                node.err('"' + CMD + gcommands.start + '": game cannot ' +
+                         'be started now.');
                 return;
             }
-
             node.emit('BEFORE_GAMECOMMAND', gcommands.start, options);
             node.game.start(options);
         });
 
         /**
          * ## NODEGAME_GAMECMD: pause
-         *
          */
         this.events.ng.on(CMD + gcommands.pause, function(options) {
             if (!node.game.isPausable()) {
-                node.err('Game cannot be paused.');
+                node.err('"' + CMD + gcommands.pause + '": game cannot ' +
+                         'be paused now.');
                 return;
             }
-
             node.emit('BEFORE_GAMECOMMAND', gcommands.pause, options);
-            node.game.pause();
+            node.game.pause(options);
         });
 
         /**
          * ## NODEGAME_GAMECOMMAND: resume
-         *
          */
         this.events.ng.on(CMD + gcommands.resume, function(options) {
             if (!node.game.isResumable()) {
-                node.err('Game cannot be resumed.');
+                node.err('"' + CMD + gcommands.resume + '": game cannot ' +
+                         'be resumed now.');
                 return;
             }
-
             node.emit('BEFORE_GAMECOMMAND', gcommands.resume, options);
-            node.game.resume();
+            node.game.resume(options);
         });
 
         /**
          * ## NODEGAME_GAMECOMMAND: step
-         *
          */
         this.events.ng.on(CMD + gcommands.step, function(options) {
             if (!node.game.isSteppable()) {
-                node.err('Game cannot be stepped.');
+                node.err('"' + CMD + gcommands.step + '": game cannot ' +
+                         'be stepped now.');
                 return;
             }
-
             node.emit('BEFORE_GAMECOMMAND', gcommands.step, options);
             node.game.step();
         });
 
         /**
          * ## NODEGAME_GAMECOMMAND: stop
-         *
          */
         this.events.ng.on(CMD + gcommands.stop, function(options) {
             if (!node.game.isStoppable()) {
-                node.err('Game cannot be stopped.');
+                node.err('"' + CMD + gcommands.stop + '": game cannot ' +
+                         'be stopped now.');
                 return;
             }
-
             node.emit('BEFORE_GAMECOMMAND', gcommands.stop, options);
             node.game.stop();
         });
 
         /**
          * ## NODEGAME_GAMECOMMAND: goto_step
-         *
          */
-        this.events.ng.on(CMD + gcommands.goto_step, function(step) {
+        this.events.ng.on(CMD + gcommands.goto_step, function(options) {
+            var step;
             if (!node.game.isSteppable()) {
-                node.err('Game cannot be stepped.');
+                node.err('"' + CMD + gcommands.goto_step + '": game cannot ' +
+                         'be stepped now.');
                 return;
             }
-
-            node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step);
+            // Adjust parameters.
+            if (options.targetStep) step = options.targetStep;
+            else {
+                step = options;
+                options = undefined;
+            }
+            node.emit('BEFORE_GAMECOMMAND', gcommands.goto_step, step, options);
             if (step !== parent.GamePlot.GAMEOVER) {
                 step = new GameStage(step);
                 if (!node.game.plot.getStep(step)) {
-                    node.err('Non-existing game step.');
+                    node.err('"' + CMD + gcommands.goto_step + '": ' +
+                             'step not found: ' + step);
                     return;
                 }
             }
-            node.game.gotoStep(step);
+            node.game.gotoStep(step, options);
         });
 
         /**
          * ## NODEGAME_GAMECOMMAND: clear_buffer
-         *
          */
         this.events.ng.on(CMD + gcommands.clear_buffer, function() {
             node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
@@ -257,15 +251,14 @@
 
         /**
          * ## NODEGAME_GAMECOMMAND: erase_buffer
-         *
          */
         this.events.ng.on(CMD + gcommands.erase_buffer, function() {
             node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
             node.socket.eraseBuffer();
         });
 
-        this.internalAdded = true;
-        this.silly('internal listeners added');
+        this.conf.internalAdded = true;
+        this.silly('node: internal listeners added.');
         return true;
     };
 })(

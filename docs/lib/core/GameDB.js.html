@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/core/GameDB.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/core/GameDB.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -22,46 +22,10 @@
         <a href="#gamedb">GameDB</a>
       </div>
       <div class="heading h2">
-        <a href="#global-scope">Global scope</a>
+        <a href="#global%20scope.">Global scope.</a>
       </div>
       <div class="heading h2">
-        <a href="#gamedb-constructor">GameDB constructor</a>
-      </div>
-      <div class="heading h2">
-        <a href="#gamedb-methods">GameDB methods</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamedb.syncwithnode">GameDB.syncWithNode</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamedb.add">GameDB.add</a>
-      </div>
-      <div class="heading h2">
-        <a href="#gamebit">GameBit</a>
-      </div>
-      <div class="heading h2">
-        <a href="#gamebit-methods">GameBit methods</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamebit-constructor">GameBit constructor</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamebit.tostring">GameBit.toString</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamebit.equals--static-">GameBit.equals (static)</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamebit.compareplayer--static-">GameBit.comparePlayer (static)</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamebit.comparestate--static-">GameBit.compareState (static)</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamebit.comparekey--static-">GameBit.compareKey (static)</a>
-      </div>
-      <div class="heading h3">
-        <a href="#gamebit.comparevalue--static-">GameBit.compareValue (static)</a>
+        <a href="#gamedb%20constructor">GameDB constructor</a>
       </div>
     </div>
   </div>
@@ -74,60 +38,59 @@
   <div class="summary">
 <div class="pilwrap" id="gamedb">
   <h1>
-    <a href="#gamedb" class="pilcrow">&#182;</a>
+    <a href="#gamedb" name="gamedb" class="pilcrow">&#182;</a>
     GameDB
   </h1>
 </div>
 
 
-<p>Copyright(c) 2014 Stefano Balietti
+<p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Provides a simple, lightweight NO-SQL database for nodeGame</p>
 
 <p>Entries are stored as GameBit messages.</p>
 
-<p>It automatically creates three indexes.</p>
+<p>It automatically creates indexes.</p>
 
 <ol>
 <li>by player,</li>
-<li>by stage,</li>
-<li>by key.</li>
+<li>by stage</li>
 </ol>
-
-<p>Uses GameStage.compare to compare the stage property of each entry.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">GameBit</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
       <span class="dox_type">GameStage.compare
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="global-scope">
+<div class="pilwrap" id="global%20scope.">
   <h2>
-    <a href="#global-scope" class="pilcrow">&#182;</a>
-    Global scope
+    <a href="#global%20scope." name="global%20scope." class="pilcrow">&#182;</a>
+    Global scope.
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
-    <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">,</span>
-    <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">,</span>
+    <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -135,10 +98,14 @@ MIT Licensed</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
 </div>
-<p>Inheriting from NDDB</p>
+<p>Inheriting from NDDB.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
-    <span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">GameDB</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
+    <span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">GameDB</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -148,16 +115,19 @@ MIT Licensed</p>
 </div>
 <p>Expose constructors</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">GameDB</span><span class="p">;</span>
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameBit</span> <span class="o">=</span> <span class="nx">GameBit</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">GameDB</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="gamedb-constructor">
+<div class="pilwrap" id="gamedb%20constructor">
   <h2>
-    <a href="#gamedb-constructor" class="pilcrow">&#182;</a>
+    <a href="#gamedb%20constructor" name="gamedb%20constructor" class="pilcrow">&#182;</a>
     GameDB constructor
   </h2>
 </div>
@@ -180,16 +150,20 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">NDDB constructor
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">GameDB</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">GameDB</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
         <span class="nx">options</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;gamedb&#39;</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -199,531 +173,40 @@ MIT Licensed</p>
 </div>
 <p>Auto build indexes by default.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">.</span><span class="nx">indexes</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">.</span><span class="nx">indexes</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
         <span class="nx">NDDB</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">);</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">comparator</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareState</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">comparator</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">o1</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">o2</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
+        <span class="p">});</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">gb</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
             <span class="p">});</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">gb</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">return</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="nx">gb</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">});</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">gb</span><span class="p">.</span><span class="nx">key</span><span class="p">;</span>
-            <span class="p">});</span>
-        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;insert&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameDB.insert: player field &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;missing or invalid: &#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameDB.insert: stage field &#39;</span> <span class="o">+</span>
+                                          <span class="s1">&#39;missing or invalid: &#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">timestamp</span><span class="p">)</span> <span class="nx">o</span><span class="p">.</span><span class="nx">timestamp</span> <span class="o">=</span> <span class="nb">Date</span> <span class="o">?</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">});</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__shared</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="gamedb-methods">
-  <h2>
-    <a href="#gamedb-methods" class="pilcrow">&#182;</a>
-    GameDB methods
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamedb.syncwithnode">
-  <h3>
-    <a href="#gamedb.syncwithnode" class="pilcrow">&#182;</a>
-    GameDB.syncWithNode
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>If set, automatically adds property to newly inserted items</p>
-
-<p>Adds <code>node.player</code> and <code>node.game.getCurrentGameStage()</code></p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">node</span>
-      <span class="dox_type">NodeGameClient</span>
-      <span>A NodeGameClient instance</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">syncWithNode</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameDB.syncWithNode: invalid parameter received&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamedb.add">
-  <h3>
-    <a href="#gamedb.add" class="pilcrow">&#182;</a>
-    GameDB.add
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Creates a GameBit and adds it to the database</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">key</span>
-      <span class="dox_type">string</span>
-      <span>An alphanumeric id for the entry</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">value</span>
-      <span class="dox_type">mixed</span>
-      <span>Optional. The value to store</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">player</span>
-      <span class="dox_type">Player</span>
-      <span>Optional. The player associated to the entry</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">player</span>
-      <span class="dox_type">GameStage</span>
-      <span>Optional. The stage associated to the entry</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">boolean</span>
-      <span>TRUE, if insertion was successful</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">GameBit
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">player</span><span class="p">,</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">gb</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameDB.add: key must be string.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">player</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">stage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="nx">gb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameBit</span><span class="p">({</span>
-            <span class="nx">player</span><span class="o">:</span> <span class="nx">player</span><span class="p">,</span>
-            <span class="nx">key</span><span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
-            <span class="nx">value</span><span class="o">:</span> <span class="nx">value</span><span class="p">,</span>
-            <span class="nx">stage</span><span class="o">:</span> <span class="nx">stage</span>
-        <span class="p">});</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">gb</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nx">gb</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamebit">
-  <h2>
-    <a href="#gamebit" class="pilcrow">&#182;</a>
-    GameBit
-  </h2>
-</div>
-
-  </div>
-  <div class="body"><p>Container of relevant information for the game</p>
-
-<p>A GameBit unit always contains the following properties:</p>
-
-<ul>
-<li>stage GameStage</li>
-<li>player Player</li>
-<li>key</li>
-<li>value</li>
-<li>time</li>
-</ul>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="gamebit-methods">
-  <h2>
-    <a href="#gamebit-methods" class="pilcrow">&#182;</a>
-    GameBit methods
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamebit-constructor">
-  <h3>
-    <a href="#gamebit-constructor" class="pilcrow">&#182;</a>
-    GameBit constructor
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Creates a new instance of GameBit</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">GameBit</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">player</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">key</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">key</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">time</span> <span class="o">=</span> <span class="p">(</span><span class="nb">Date</span><span class="p">)</span> <span class="o">?</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamebit.tostring">
-  <h3>
-    <a href="#gamebit.tostring" class="pilcrow">&#182;</a>
-    GameBit.toString
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Returns a string representation of the instance of GameBit</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">string</span>
-      <span>string representation of the instance of GameBit</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameBit</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">+</span>
-            <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamebit.equals--static-">
-  <h3>
-    <a href="#gamebit.equals--static-" class="pilcrow">&#182;</a>
-    GameBit.equals (static)
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Compares two GameBit objects</p>
-
-<p>Returns TRUE if the attributes of <code>player</code>, <code>stage</code>, and <code>key</code>
-are identical.</p>
-
-<p>If the strict parameter is set, also the <code>value</code> property
-is used for comparison</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">gb1</span>
-      <span class="dox_type">GameBit</span>
-      <span>The first game-bit to compare</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">gb2</span>
-      <span class="dox_type">GameBit</span>
-      <span>The second game-bit to compare</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">strict</span>
-      <span class="dox_type">boolean</span>
-      <span>Optional. If TRUE, compares also the
- <code>value</code> property</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">boolean</span>
-      <span>TRUE, if the two objects are equals</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">GameBit.comparePlayer</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">GameBit.compareState</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">GameBit.compareKey</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">GameBit.compareValue
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameBit</span><span class="p">.</span><span class="nx">equals</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb1</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">,</span> <span class="nx">strict</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gb1</span> <span class="o">||</span> <span class="o">!</span><span class="nx">gb2</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="nx">strict</span> <span class="o">=</span> <span class="nx">strict</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">GameBit</span><span class="p">.</span><span class="nx">comparePlayer</span><span class="p">(</span><span class="nx">gb1</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareState</span><span class="p">(</span><span class="nx">gb1</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareKey</span><span class="p">(</span><span class="nx">gb1</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">strict</span> <span class="o">&amp;&amp;</span>
-            <span class="nx">gb1</span><span class="p">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareValue</span><span class="p">(</span><span class="nx">gb1</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamebit.compareplayer--static-">
-  <h3>
-    <a href="#gamebit.compareplayer--static-" class="pilcrow">&#182;</a>
-    GameBit.comparePlayer (static)
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Sort two game-bits by player numerical id</p>
-
-<p>Returns a numerical id that can assume the following values</p>
-
-<ul>
-<li><code>-1</code>: the player id of the second game-bit is larger</li>
-<li><code>1</code>: the player id of the first game-bit is larger</li>
-<li><code>0</code>: the two gamebits belong to the same player</li>
-</ul>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">gb1</span>
-      <span class="dox_type">GameBit</span>
-      <span>The first game-bit to compare</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">gb2</span>
-      <span class="dox_type">GameBit</span>
-      <span>The second game-bit to compare</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">number</span>
-      <span>The result of the comparison</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameBit</span><span class="p">.</span><span class="nx">comparePlayer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb1</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gb1</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">gb2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gb1</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gb2</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">gb1</span><span class="p">.</span><span class="nx">player</span> <span class="o">===</span> <span class="nx">gb2</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">gb1</span><span class="p">.</span><span class="nx">player</span> <span class="o">&gt;</span> <span class="nx">gb2</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamebit.comparestate--static-">
-  <h3>
-    <a href="#gamebit.comparestate--static-" class="pilcrow">&#182;</a>
-    GameBit.compareState (static)
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Sort two game-bits by their stage property</p>
-
-<p>GameStage.compare is used for comparison</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">gb1</span>
-      <span class="dox_type">GameBit</span>
-      <span>The first game-bit to compare</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">gb2</span>
-      <span class="dox_type">GameBit</span>
-      <span>The second game-bit to compare</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">number</span>
-      <span>The result of the comparison
-
-@see GameStage.compare</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb1</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">gb1</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamebit.comparekey--static-">
-  <h3>
-    <a href="#gamebit.comparekey--static-" class="pilcrow">&#182;</a>
-    GameBit.compareKey (static)
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Sort two game-bits by their key property</p>
-
-<p>Returns a numerical id that can assume the following values</p>
-
-<ul>
-<li><code>-1</code>: the key of the first game-bit comes first alphabetically</li>
-<li><code>1</code>: the key of the second game-bit comes first alphabetically</li>
-<li><code>0</code>: the two gamebits have the same key</li>
-</ul>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">gb1</span>
-      <span class="dox_type">GameBit</span>
-      <span>The first game-bit to compare</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">gb2</span>
-      <span class="dox_type">GameBit</span>
-      <span>The second game-bit to compare</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">number</span>
-      <span>The result of the comparison</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareKey</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb1</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gb1</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">gb2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gb1</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gb2</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">gb1</span><span class="p">.</span><span class="nx">key</span> <span class="o">===</span> <span class="nx">gb2</span><span class="p">.</span><span class="nx">key</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">gb1</span><span class="p">.</span><span class="nx">key</span> <span class="o">&lt;</span> <span class="nx">gb2</span><span class="p">.</span><span class="nx">key</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamebit.comparevalue--static-">
-  <h3>
-    <a href="#gamebit.comparevalue--static-" class="pilcrow">&#182;</a>
-    GameBit.compareValue (static)
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Sorts two game-bits by their value property</p>
-
-<p>Uses JSUS.equals for equality. If they differs,
-further comparison is performed, but results will be inaccurate
-for objects.</p>
-
-<p>Returns a numerical id that can assume the following values</p>
-
-<ul>
-<li><code>-1</code>: the value of the first game-bit comes first alphabetically or
-numerically</li>
-<li><code>1</code>: the value of the second game-bit comes first alphabetically or
-numerically</li>
-<li><code>0</code>: the two gamebits have identical value properties</li>
-</ul>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">gb1</span>
-      <span class="dox_type">GameBit</span>
-      <span>The first game-bit to compare</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">gb2</span>
-      <span class="dox_type">GameBit</span>
-      <span>The second game-bit to compare</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">number</span>
-      <span>The result of the comparison</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">JSUS.equals
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameBit</span><span class="p">.</span><span class="nx">compareValue</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gb1</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gb1</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">gb2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gb1</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gb2</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="nx">gb1</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span> <span class="nx">gb2</span><span class="p">.</span><span class="nx">value</span><span class="p">))</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">gb1</span><span class="p">.</span><span class="nx">value</span> <span class="o">&gt;</span> <span class="nx">gb2</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-    <span class="p">};</span>
+    <span class="p">}</span>
 
 <span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>

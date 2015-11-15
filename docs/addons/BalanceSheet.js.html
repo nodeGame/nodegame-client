@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../doc-style.css" />
   <script src="../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../', thisFile = 'addons/BalanceSheet.js', defaultSidebar = true;
+    var relativeDir = "../", thisFile = "addons/BalanceSheet.js", defaultSidebar = true;
   </script>
   <script src="../doc-script.js"></script>
 </head>
@@ -22,19 +22,19 @@
         <a href="#balancesheet">BalanceSheet</a>
       </div>
       <div class="heading h2">
-        <a href="#global-scope">Global scope</a>
+        <a href="#global%20scope">Global scope</a>
       </div>
       <div class="heading h2">
-        <a href="#balancesheet-constructor">BalanceSheet constructor</a>
+        <a href="#balancesheet%20constructor">BalanceSheet constructor</a>
       </div>
       <div class="heading h2">
-        <a href="#public-properties">Public properties</a>
+        <a href="#public%20properties">Public properties</a>
       </div>
       <div class="heading h3">
         <a href="#balancesheet.options">BalanceSheet.options</a>
       </div>
       <div class="heading h2">
-        <a href="#balancesheet-methods">BalanceSheet methods</a>
+        <a href="#balancesheet%20methods">BalanceSheet methods</a>
       </div>
       <div class="heading h3">
         <a href="#balancesheet.init">BalanceSheet.init</a>
@@ -65,7 +65,7 @@
   <div class="summary">
 <div class="pilwrap" id="balancesheet">
   <h1>
-    <a href="#balancesheet" class="pilcrow">&#182;</a>
+    <a href="#balancesheet" name="balancesheet" class="pilcrow">&#182;</a>
     BalanceSheet
   </h1>
 </div>
@@ -78,20 +78,26 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">){</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">){</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="global-scope">
+<div class="pilwrap" id="global%20scope">
   <h2>
-    <a href="#global-scope" class="pilcrow">&#182;</a>
+    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
     Global scope
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">BalanceSheet</span> <span class="o">=</span> <span class="nx">BalanceSheet</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">BalanceSheet</span> <span class="o">=</span> <span class="nx">BalanceSheet</span><span class="p">;</span>
 
 
 <span class="kd">var</span> <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">,</span>
@@ -99,7 +105,10 @@ MIT Licensed</p>
   <span class="nx">GameDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameDB</span><span class="p">,</span>
   <span class="nx">GameBit</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameBit</span><span class="p">;</span>
 
-  <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">;</span></pre></div>
+  <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -111,7 +120,9 @@ MIT Licensed</p>
 BalanceSheet.prototype = JSUS.clone(NDDB.prototype);
 BalanceSheet.prototype.constructor = BalanceSheet;</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+<span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
 
 <span class="kd">var</span> <span class="nx">isValidSheet</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sheet</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sheet</span><span class="p">)</span> <span class="p">{</span>
@@ -124,15 +135,18 @@ BalanceSheet.prototype.constructor = BalanceSheet;</p>
     <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-<span class="p">}</span></pre></div>
+<span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="balancesheet-constructor">
+<div class="pilwrap" id="balancesheet%20constructor">
   <h2>
-    <a href="#balancesheet-constructor" class="pilcrow">&#182;</a>
+    <a href="#balancesheet%20constructor" name="balancesheet%20constructor" class="pilcrow">&#182;</a>
     BalanceSheet constructor
   </h2>
 </div>
@@ -142,24 +156,34 @@ BalanceSheet.prototype.constructor = BalanceSheet;</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">BalanceSheet</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">function</span> <span class="nx">BalanceSheet</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="public-properties">
+<div class="pilwrap" id="public%20properties">
   <h2>
-    <a href="#public-properties" class="pilcrow">&#182;</a>
+    <a href="#public%20properties" name="public%20properties" class="pilcrow">&#182;</a>
     Public properties
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">sheets</span> <span class="o">=</span> <span class="p">{};</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">sheets</span> <span class="o">=</span> <span class="p">{};</span>
 
   <span class="k">this</span><span class="p">.</span><span class="nx">sheet</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
-  <span class="nx">log</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">log</span> <span class="o">||</span> <span class="nx">log</span><span class="p">;</span></pre></div>
+  <span class="nx">log</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">log</span> <span class="o">||</span> <span class="nx">log</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -167,7 +191,7 @@ BalanceSheet.prototype.constructor = BalanceSheet;</p>
   <div class="summary">
 <div class="pilwrap" id="balancesheet.options">
   <h3>
-    <a href="#balancesheet.options" class="pilcrow">&#182;</a>
+    <a href="#balancesheet.options" name="balancesheet.options" class="pilcrow">&#182;</a>
     BalanceSheet.options
   </h3>
 </div>
@@ -177,20 +201,27 @@ BalanceSheet.prototype.constructor = BalanceSheet;</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="balancesheet-methods">
+<div class="pilwrap" id="balancesheet%20methods">
   <h2>
-    <a href="#balancesheet-methods" class="pilcrow">&#182;</a>
+    <a href="#balancesheet%20methods" name="balancesheet%20methods" class="pilcrow">&#182;</a>
     BalanceSheet methods
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -198,7 +229,7 @@ BalanceSheet.prototype.constructor = BalanceSheet;</p>
   <div class="summary">
 <div class="pilwrap" id="balancesheet.init">
   <h3>
-    <a href="#balancesheet.init" class="pilcrow">&#182;</a>
+    <a href="#balancesheet.init" name="balancesheet.init" class="pilcrow">&#182;</a>
     BalanceSheet.init
   </h3>
 </div>
@@ -228,13 +259,17 @@ recycles the settings in <code>this.options</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
   <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">===</span> <span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">first</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">===</span> <span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">last</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">returnAt</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">resetTriggers</span><span class="p">();</span>
-<span class="p">};</span></pre></div>
+<span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -242,7 +277,7 @@ recycles the settings in <code>this.options</code>.</p>
   <div class="summary">
 <div class="pilwrap" id="balancesheet.addsheet">
   <h3>
-    <a href="#balancesheet.addsheet" class="pilcrow">&#182;</a>
+    <a href="#balancesheet.addsheet" name="balancesheet.addsheet" class="pilcrow">&#182;</a>
     BalanceSheet.addSheet
   </h3>
 </div>
@@ -290,7 +325,10 @@ pl = pl || new PlayerList();</p>
 return true;
 };</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -307,7 +345,9 @@ this.sheets[sheet].each(function(p){
 });
 };</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateBalance</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">amount</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+<span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateBalance</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">amount</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span> <span class="o">||</span> <span class="o">!</span><span class="nx">amount</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">sheet</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;No balance sheet selected&#39;</span><span class="p">);</span>
@@ -326,7 +366,10 @@ this.sheets[sheet].each(function(p){
   <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">sheets</span><span class="p">[</span><span class="nx">sheet</span><span class="p">].</span><span class="nx">keep</span><span class="p">([</span><span class="s1">&#39;__balance&#39;</span><span class="p">]);</span>
 
 
-<span class="p">};</span></pre></div>
+<span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -334,7 +377,7 @@ this.sheets[sheet].each(function(p){
   <div class="summary">
 <div class="pilwrap" id="balancesheet.clear">
   <h3>
-    <a href="#balancesheet.clear" class="pilcrow">&#182;</a>
+    <a href="#balancesheet.clear" name="balancesheet.clear" class="pilcrow">&#182;</a>
     BalanceSheet.clear
   </h3>
 </div>
@@ -360,27 +403,34 @@ this.sheets[sheet].each(function(p){
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">BalanceSheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Do you really want to clear the current BalanceSheet obj? Please use clear(true)&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="nx">triggersArray</span> <span class="o">=</span> <span class="p">[];</span>
   <span class="k">return</span> <span class="nx">clear</span><span class="p">;</span>
-<span class="p">};</span></pre></div>
+<span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="sheet">
   <h1>
-    <a href="#sheet" class="pilcrow">&#182;</a>
+    <a href="#sheet" name="sheet" class="pilcrow">&#182;</a>
     Sheet
   </h1>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -390,7 +440,8 @@ this.sheets[sheet].each(function(p){
 </div>
 <p>Inheriting from NDDB</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Sheet</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Sheet</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
 <span class="nx">Sheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Sheet</span><span class="p">;</span>
 
 <span class="kd">function</span> <span class="nx">Sheet</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
@@ -400,7 +451,10 @@ this.sheets[sheet].each(function(p){
 
   <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">pl</span><span class="p">;</span>
-<span class="p">}</span></pre></div>
+<span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -408,7 +462,7 @@ this.sheets[sheet].each(function(p){
   <div class="summary">
 <div class="pilwrap" id="gamedb.add">
   <h3>
-    <a href="#gamedb.add" class="pilcrow">&#182;</a>
+    <a href="#gamedb.add" name="gamedb.add" class="pilcrow">&#182;</a>
     GameDB.add
   </h3>
 </div>
@@ -447,12 +501,13 @@ this.sheets[sheet].each(function(p){
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameBit
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">Sheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Sheet</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">player</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">key</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
 
   <span class="nx">state</span> <span class="o">=</span> <span class="nx">state</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
@@ -473,20 +528,27 @@ this.sheets[sheet].each(function(p){
   <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
 
   <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
-<span class="p">};</span></pre></div>
+<span class="p">};</span>
+
+
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="closure">
   <h2>
-    <a href="#closure" class="pilcrow">&#182;</a>
+    <a href="#closure" name="closure" class="pilcrow">&#182;</a>
     Closure
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">})(</span>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="p">})(</span>
   <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
   <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>

@@ -20,4 +20,7 @@
     if ('undefined' !== typeof store) node.store = store;
     node.support = JSUS.compatibility();
 
+    // Auto-Generated.
+    node.version = '0.9.10';
+
 })(window);
