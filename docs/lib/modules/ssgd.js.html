@@ -213,7 +213,7 @@ of the type "get.<label>", and return the value requested. For example,</p>
 <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;myLabel, function(reply) {});</span>
 
 <span class="s1">// Receiver.</span>
-<span class="s1">node.on(&#39;</span><span class="nx">get</span><span class="p">.</span><span class="nx">myLabel</span><span class="s1">&#39;, function() { return &#39;</span><span class="nx">OK</span><span class="err">&#39;</span><span class="p">;</span> <span class="p">});</span>
+<span class="s1">node.on(&#39;</span><span class="nx">get</span><span class="p">.</span><span class="nx">myLabel</span><span class="s1">&#39;, function(msg) { return &#39;</span><span class="nx">OK</span><span class="err">&#39;</span><span class="p">;</span> <span class="p">});</span>
 </code></pre></div>
 
 
