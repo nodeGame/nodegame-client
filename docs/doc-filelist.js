@@ -1,1 +1,1 @@
-var tree={"files":["index.browser.js","index.js"],"dirs":{"lib":{"dirs":{"stager":{"files":["Block.js","Stager.js","stager_blocks.js","stager_setters_getters.js","stager_shared.js","stager_stages_steps.js"]},"modules":{"files":["ssgd.js"]}}}}};
+var tree={"files":["index.browser.js"]};
