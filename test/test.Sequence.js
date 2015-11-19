@@ -12,27 +12,28 @@ var result;
 var stager = new Stager();
 
 
-//  stager = ngc.getStager();
+//   stager = ngc.getStager();
 //
-// stager.next('stage 1');
+//
+// stager.next('stage 2',0);
 // stager.step('step 1.1');
 // stager.step('step 1.2');
-// stager.step('step 1.3');
+// stager.stage('stage 0',2);
+// stager.stage('stage 1', '1');
 //
+//
+//           debugger
+//          s = stager.getState().sequence;
+//
+//          debugger
+//          stager.reset();
+//
+//          debugger
+//          s = stager.getState().sequence;
 //
 //
 //          debugger
-//         s = stager.getState().sequence;
-//
-//         debugger
-//         stager.reset();
-//
-//         debugger
-//         s = stager.getState().sequence;
-//
-//
-//         debugger
-//         return
+//          return
 
 describe('Moving through the sequence', function() {
 
