@@ -493,8 +493,22 @@ The stager class will be added later.</p>
                             <span class="s1">&#39;cannot add further items.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">positions</span> <span class="o">||</span> <span class="nx">positions</span> <span class="o">===</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">positions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>We cannot set the position as a number here,
+because it might change with future modifications of
+the block. Only on block.finalize the position is fixed.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">positions</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">positions</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
@@ -580,7 +594,7 @@ The stager class will be added later.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Remove default step if it is BLOCK_STEP and further steps were added.</p>
         </td>
@@ -591,6 +605,7 @@ The stager class will be added later.</p>
             <span class="p">}</span>
         <span class="p">}</span>
 
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
 </pre></div>
         </td>
@@ -598,7 +613,25 @@ The stager class will be added later.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<p>Update the positions of other steps as needed.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">===</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>If no positions is assigned before we don't need arraydiff</p>
         </td>
@@ -611,7 +644,7 @@ The stager class will be added later.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>Creating array of available positions:
 from 0 to nItems accounting for already taken positions.
@@ -621,14 +654,13 @@ available = J.arrayDiff(J.seq(0,this.size()-1), this.takenPositions);</p>
         <span class="nx">available</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
 
 
-
 </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>TODO: this could be done inside the while loop. However, as
 every iterations also other entries are updated, it requires
@@ -650,7 +682,7 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Assigning positions.</p>
         </td>
@@ -663,7 +695,7 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Select entry with least possibilities of where to go.</p>
         </td>
@@ -680,7 +712,7 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>No valid position specified.</p>
         </td>
@@ -698,7 +730,7 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Chose position randomly among possibilities.</p>
         </td>
@@ -714,7 +746,7 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Adjust possible positions in remaining entries.</p>
         </td>

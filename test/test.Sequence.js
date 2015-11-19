@@ -12,43 +12,27 @@ var result;
 var stager = new Stager();
 
 
-// stager = ngc.getStager();
+//  stager = ngc.getStager();
 //
-// stager.stageBlock('--->First Block', '>0');
-//
-// stager.stage('stage 1');
-// stager.step('step 1.1', '*');
-//
-// stager.stepBlock('Step Block 1', '0');
+// stager.next('stage 1');
+// stager.step('step 1.1');
 // stager.step('step 1.2');
 // stager.step('step 1.3');
 //
-// stager.stepBlock('Step Block 2', '1');
-// stager.step('step 1.4');
-// stager.step('step 1.5');
 //
-// stager.stageBlock('--->Second Block', '*');
-// stager.stage('stage 2', '0..1');
 //
-// stager.stage('stage 3', '2');
-// stager.step('step 3.1', '*');
-// stager.step('step 3.2', '*');
+//          debugger
+//         s = stager.getState().sequence;
 //
-// stager.stage('stage 4', '*');
+//         debugger
+//         stager.reset();
+//
+//         debugger
+//         s = stager.getState().sequence;
 //
 //
 //         debugger
-//        s = stager.getState().sequence;
-//
-//        debugger
-//        stager.reset();
-//
-//        debugger
-//        s = stager.getState().sequence;
-//
-//
-//        debugger
-//        return
+//         return
 
 describe('Moving through the sequence', function() {
 
@@ -156,6 +140,63 @@ describe('Moving through the sequence', function() {
         });
 
         test2variable1fixed(result);
+
+    });
+
+    describe('#next: steps in "linear" order', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+
+            stager.next('stage 1');
+            stager.step('step 1.1');
+            stager.step('step 1.2');
+            stager.step('step 1.3');
+
+            result = testPositions(stager, 100);
+        });
+
+        it('should have removed default step from stage 1', function() {
+            typeof(result['stage 1'] + '').should.eql('undefined');
+        });
+        it('should have called only the three steps', function() {
+            var keys;
+            keys = Object.keys(result).sort();
+            keys.should.eql(['step 1.1', 'step 1.2', 'step 1.3']);
+        });
+
+        it('should have called the three steps', function() {
+            J.isArray(result['step 1.1']).should.eql(true);
+            J.isArray(result['step 1.2']).should.eql(true);
+            J.isArray(result['step 1.3']).should.eql(true);
+        });
+        it('should have called the three steps 100 times each', function() {
+            result['step 1.1'].length.should.eql(100);
+            result['step 1.2'].length.should.eql(100);
+            result['step 1.3'].length.should.eql(100);
+        });
+
+        it('should have called the three steps in right order', function() {
+            var sum = 0;
+            result['step 1.1'].forEach(function(i) {
+                if (i !== 0) should.fail();
+                sum = sum + i;
+            });
+            sum.should.be.eql(0);
+            sum = 0;
+            result['step 1.2'].forEach(function(i) {
+                if (i !== 1) should.fail();
+                sum = sum + i;
+            });
+            sum.should.be.eql(100);
+            sum = 0;
+            result['step 1.3'].forEach(function(i) {
+                if (i !== 2) should.fail();
+                sum = sum + i;
+            });
+            sum.should.be.eql(200);
+
+        });
 
     });
 
