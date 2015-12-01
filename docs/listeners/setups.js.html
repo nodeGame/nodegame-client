@@ -58,6 +58,9 @@
         <a href="#node.setup.player">node.setup.player</a>
       </div>
       <div class="heading h3">
+        <a href="#node.setup.lang">node.setup.lang</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.setup.timer">node.setup.timer</a>
       </div>
       <div class="heading h3">
@@ -68,9 +71,6 @@
       </div>
       <div class="heading h3">
         <a href="#this.setup.mlist">this.setup.mlist</a>
-      </div>
-      <div class="heading h3">
-        <a href="#this.setup.lang">this.setup.lang</a>
       </div>
     </div>
   </div>
@@ -597,6 +597,10 @@ the window object in the browser enviroment.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
+      <span class="dox_type">node.player</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
       <span class="dox_type">node.createPlayer
 </span>
     </div>
@@ -607,6 +611,49 @@ the window object in the browser enviroment.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
+        <span class="p">});</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.setup.lang">
+  <h3>
+    <a href="#node.setup.lang" name="node.setup.lang" class="pilcrow">&#182;</a>
+    node.setup.lang
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Setups the language of the client</p>
+
+<p>The <code>lang</code> parameter can either be an array containing
+input parameters for the method <code>setLanguage</code>, or an object,
+and in that case, it is only the first parameter (the language
+object).</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.player</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.setLanguage
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;lang&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">lang</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">lang</span><span class="p">))</span> <span class="nx">node</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">lang</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">lang</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="k">else</span> <span class="nx">node</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">lang</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">lang</span><span class="p">;</span>
         <span class="p">});</span>
 
 
@@ -673,7 +720,7 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Last configured timer options.</p>
         </td>
@@ -838,7 +885,7 @@ Updates are not possible for the moment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Utility for setup.plist and setup.mlist:</p>
         </td>
@@ -852,7 +899,7 @@ Updates are not possible for the moment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Initial setup call. Nothing to do.</p>
         </td>
@@ -877,7 +924,7 @@ Updates are not possible for the moment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Import clients (if any).
 Automatic cast from Object to Player.</p>
@@ -888,39 +935,6 @@ Automatic cast from Object to Player.</p>
                 <span class="k">return</span> <span class="p">{</span> <span class="nx">updateRule</span><span class="o">:</span> <span class="nx">updateRule</span><span class="p">,</span> <span class="nx">list</span><span class="o">:</span> <span class="nx">srcList</span> <span class="p">};</span>
             <span class="p">}</span>
         <span class="p">})(</span><span class="k">this</span><span class="p">);</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="this.setup.lang">
-  <h3>
-    <a href="#this.setup.lang" name="this.setup.lang" class="pilcrow">&#182;</a>
-    this.setup.lang
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Sets the default language</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">language</span>
-      <span class="dox_type">object</span>
-      <span>The language object to set as default.</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;lang&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">language</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">language</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">language</span><span class="p">);</span>
-        <span class="p">});</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">setupsAdded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node: setup functions added.&#39;</span><span class="p">);</span>

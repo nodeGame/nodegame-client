@@ -239,11 +239,32 @@
          * Creates the `node.player` object
          *
          * @see node.Player
+         * @see node.player
          * @see node.createPlayer
          */
         this.registerSetup('player', function(player) {
             if (!player) return null;
             return this.createPlayer(player);
+        });
+
+        /**
+         * ### node.setup.lang
+         *
+         * Setups the language of the client
+         *
+         * The `lang` parameter can either be an array containing
+         * input parameters for the method `setLanguage`, or an object,
+         * and in that case, it is only the first parameter (the language
+         * object).
+         *
+         * @see node.player
+         * @see node.setLanguage
+         */
+        this.registerSetup('lang', function(lang) {
+            if (!lang) return null;
+            if (J.isArray(lang)) node.setLanguage(lang[0], lang[1]);
+            else node.setLanguage(lang);
+            return node.player.lang;
         });
 
         /**
@@ -377,18 +398,6 @@
                 return { updateRule: updateRule, list: srcList };
             }
         })(this);
-
-        /**
-         * ### this.setup.lang
-         *
-         * Sets the default language
-         *
-         * @param {object} language The language object to set as default.
-         */
-        this.registerSetup('lang', function(language) {
-            if (!language) return null;
-            return this.setLanguage(language);
-        });
 
         this.conf.setupsAdded = true;
         this.silly('node: setup functions added.');
