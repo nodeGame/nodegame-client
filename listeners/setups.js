@@ -327,23 +327,11 @@
          * @see Stager.setState
          */
         this.registerSetup('plot', function(stagerState, updateRule) {
-            if (!this.game) {
-                throw new Error("node.setup.plot: node.game not found.");
-            }
-
             stagerState = stagerState || {};
-
-            if (!this.game.plot) {
-                this.game.plot = new GamePlot();
-            }
-
-            if (!this.game.plot.stager) {
-                this.game.plot.stager = new Stager();
-            }
 
             this.game.plot.stager.setState(stagerState, updateRule);
 
-            return this.game.plot;
+            return this.game.plot.stager;
         });
 
         (function(node) {

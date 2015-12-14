@@ -192,6 +192,11 @@ MIT Licensed</p>
       <span class="dox_type">Stager</span>
       <span>Optional. The Stager object.</span>
     </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">node</span>
+      <span class="dox_type">NodeGameClient</span>
+      <span>Optional. Reference to current node object</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Stager
@@ -201,7 +206,7 @@ MIT Licensed</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">GamePlot</span><span class="p">(</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">GamePlot</span><span class="p">(</span><span class="nx">stager</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">stager</span><span class="p">);</span>
 
 
@@ -224,7 +229,7 @@ MIT Licensed</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">log</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">log</span> <span class="o">:</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
     <span class="p">}</span>
 
 
@@ -687,7 +692,7 @@ steps = stageObj.steps;</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="k">if</span> <span class="p">((</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;doLoop&#39;</span> <span class="o">||</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;loop&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
-                <span class="nx">seqObj</span><span class="p">.</span><span class="nx">cb</span><span class="p">())</span> <span class="p">{</span>
+                <span class="nx">seqObj</span><span class="p">.</span><span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">())</span> <span class="p">{</span>
 
                 <span class="k">return</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">({</span>
                     <span class="nx">stage</span><span class="o">:</span> <span class="nx">stageNo</span><span class="p">,</span>

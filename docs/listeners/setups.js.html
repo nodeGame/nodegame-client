@@ -781,23 +781,11 @@ Updates are not possible for the moment.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;plot&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stagerState</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;node.setup.plot: node.game not found.&quot;</span><span class="p">);</span>
-            <span class="p">}</span>
-
             <span class="nx">stagerState</span> <span class="o">=</span> <span class="nx">stagerState</span> <span class="o">||</span> <span class="p">{};</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GamePlot</span><span class="p">();</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Stager</span><span class="p">();</span>
-            <span class="p">}</span>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">stagerState</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">);</span>
 
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">;</span>
         <span class="p">});</span>
 
         <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
