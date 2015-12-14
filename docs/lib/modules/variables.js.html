@@ -778,6 +778,8 @@ information carried in the message.</p>
         <span class="nx">STAGE_INIT</span><span class="o">:</span>    <span class="mi">10</span><span class="p">,</span>  <span class="c1">// calling stage&#39;s init</span>
         <span class="nx">STEP_INIT</span><span class="o">:</span>     <span class="mi">20</span><span class="p">,</span>  <span class="c1">// calling step&#39;s init</span>
         <span class="nx">PLAYING_STEP</span><span class="o">:</span>  <span class="mi">30</span><span class="p">,</span>  <span class="c1">// executing step</span>
+        <span class="nx">STAGE_EXIT</span><span class="o">:</span>    <span class="mi">50</span><span class="p">,</span>  <span class="c1">// calling stage&#39;s cleanup</span>
+        <span class="nx">STEP_EXIT</span><span class="o">:</span>     <span class="mi">60</span><span class="p">,</span>  <span class="c1">// calling step&#39;s clenaup</span>
         <span class="nx">FINISHING</span><span class="o">:</span>     <span class="mi">70</span><span class="p">,</span>  <span class="c1">// calling game&#39;s gameover</span>
         <span class="nx">GAMEOVER</span><span class="o">:</span>     <span class="mi">100</span><span class="p">,</span>  <span class="c1">// game complete</span>
         <span class="nx">RUNTIME_ERROR</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span>
@@ -859,7 +861,9 @@ information carried in the message.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
-        <span class="nx">DONE</span><span class="o">:</span>                <span class="mi">100</span> <span class="c1">// Player completed the stage</span>
+        <span class="nx">DONE</span><span class="o">:</span>               <span class="mi">100</span><span class="p">,</span> <span class="c1">// Player completed the stage</span>
+
+        <span class="nx">EXIT</span><span class="o">:</span>               <span class="mi">110</span><span class="p">,</span> <span class="c1">// Cleanup function being called (if found)</span>
     <span class="p">};</span>
 
 

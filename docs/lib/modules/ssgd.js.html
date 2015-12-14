@@ -481,7 +481,7 @@ will be removed immediately after its execution.</p>
  if so returns with a warning.
 <ul><li>Checks it there a <code>done</code> hanlder in the step, and if so
 executes. If the return value is falsy procedure stops.</li>
-<li>Marks the step as <code>willBeDone</code> and no further callas to
+<li>Marks the step as <code>willBeDone</code> and no further calls to
 <code>node.done</code> are allowed in the same step.</li>
 <li>Creates and send a SET message to server containing the time
 passed from the beginning of the step, if <code>done</code> was a timeup

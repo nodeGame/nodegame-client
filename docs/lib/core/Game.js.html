@@ -1504,7 +1504,7 @@ TODO: remove some unused comments in the code.
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">gotoStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">curStep</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">curStageObj</span><span class="p">,</span> <span class="nx">nextStepObj</span><span class="p">,</span> <span class="nx">nextStageObj</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">curStepObj</span><span class="p">,</span> <span class="nx">curStageObj</span><span class="p">,</span> <span class="nx">nextStepObj</span><span class="p">,</span> <span class="nx">nextStageObj</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">ev</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">handler</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">minThreshold</span><span class="p">,</span> <span class="nx">maxThreshold</span><span class="p">,</span> <span class="nx">exactThreshold</span><span class="p">;</span>
@@ -1632,6 +1632,9 @@ TODO: remove some unused comments in the code.
 
             <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;STEPPING&#39;</span><span class="p">);</span>
 
+            <span class="nx">curStageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">curStep</span><span class="p">);</span>
+            <span class="nx">curStepObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">curStep</span><span class="p">);</span>
+
 
 </pre></div>
         </td>
@@ -1640,6 +1643,26 @@ TODO: remove some unused comments in the code.
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+</div>
+<p>Calling exit function of the step.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">curStepObj</span> <span class="o">&amp;&amp;</span> <span class="nx">curStepObj</span><span class="p">.</span><span class="nx">exit</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STEP_EXIT</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">EXIT</span><span class="p">);</span>
+
+                <span class="nx">nextStageObj</span><span class="p">.</span><span class="nx">exit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+            <span class="p">}</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>Check for stage/step existence:</p>
         </td>
@@ -1656,7 +1679,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>Check options.
 TODO: this does not lock screen / stop timer.</p>
@@ -1665,14 +1688,13 @@ TODO: this does not lock screen / stop timer.</p>
             <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">willBeDone</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">willBeDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
 
-
 </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>stageLevel needs to be changed (silent), otherwise it stays DONE
 for a short time in the new game stage:</p>
@@ -1688,15 +1710,31 @@ for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
 </div>
-<p>If we enter a new stage we need to update a few things:
-if (this.plot.stepsToNextStage(curStep) === 1) {
-if (curStep.stage !== nextStep.stage) {</p>
+<p>If we enter a new stage we need to update a few things.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">curStageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">curStep</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">curStageObj</span> <span class="o">||</span> <span class="nx">nextStageObj</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">curStageObj</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+</div>
+<p>Calling exit function.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">curStageObj</span> <span class="o">&amp;&amp;</span> <span class="nx">curStageObj</span><span class="p">.</span><span class="nx">exit</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STAGE_EXIT</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">EXIT</span><span class="p">);</span>
+
+                    <span class="nx">curStageObj</span><span class="p">.</span><span class="nx">exit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+                <span class="p">}</span>
 
                 <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STAGE_INIT</span><span class="p">);</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
@@ -1708,7 +1746,7 @@ if (curStep.stage !== nextStep.stage) {</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
 </div>
 <p>Store time:</p>
         </td>
@@ -1722,7 +1760,7 @@ if (curStep.stage !== nextStep.stage) {</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>clear the previous stage listeners</p>
         </td>
@@ -1736,7 +1774,7 @@ if (curStep.stage !== nextStep.stage) {</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>Execute the init function of the stage, if any:</p>
         </td>
@@ -1752,7 +1790,7 @@ if (curStep.stage !== nextStep.stage) {</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
 <p>Load the listeners for the stage, if any:</p>
         </td>
@@ -1771,7 +1809,7 @@ if (curStep.stage !== nextStep.stage) {</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>Execute the init function of the step, if any:</p>
         </td>
@@ -1792,7 +1830,7 @@ if (curStep.stage !== nextStep.stage) {</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
 <p>Updating the globals object.</p>
         </td>
@@ -1806,7 +1844,7 @@ if (curStep.stage !== nextStep.stage) {</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
+  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
 </div>
 <p>Add min/max/exactPlayers listeners for the step.
 The fields must be of the form
@@ -1872,7 +1910,7 @@ The fields must be of the form
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
 <p>Register event handler:</p>
         </td>
@@ -1886,7 +1924,7 @@ The fields must be of the form
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
 </div>
 <p>Players should count themselves too.</p>
         </td>
@@ -1935,7 +1973,7 @@ The fields must be of the form
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
 <p>PRECONNECT doesn't change the PlayerList so we don't have to
 handle it here.</p>
@@ -1949,7 +1987,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
 </div>
 <p>Check conditions explicitly:</p>
         </td>
@@ -1963,7 +2001,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
+  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
 </div>
 <p>Set bounds-checking function:</p>
         </td>
@@ -1977,7 +2015,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
 </div>
 <p>Players should count themselves too.</p>
         </td>
@@ -2009,7 +2047,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
 </div>
 <p>Set bounds-checking function:</p>
         </td>
@@ -2024,7 +2062,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
 <p>Load the listeners for the step, if any:</p>
         </td>
@@ -2042,7 +2080,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
+  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
 <p>Emit buffered messages:</p>
         </td>
@@ -2173,7 +2211,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
+  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
 </div>
 <p>Execute custom callback. Can throw errors.</p>
         </td>
@@ -2187,7 +2225,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
+  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
 </div>
 <p>A non fatal error occurred.</p>
         </td>
@@ -2205,7 +2243,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
+  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
 </div>
 <p>Internal listeners will check whether we need to emit PLAYING.</p>
         </td>
@@ -2441,7 +2479,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
+  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.
 The stage level, must also be sent in the published update,
@@ -2570,7 +2608,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
+  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.</p>
         </td>
@@ -2696,7 +2734,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
+  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.</p>
         </td>
@@ -2842,7 +2880,7 @@ value of the update to decide whether is to be published or not.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
+  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
 </div>
 <p>Two cases are handled outside of the switch: NO msg
 and LOADED stage with syncOnLoaded option.</p>
@@ -2863,7 +2901,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
+  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
 </div>
 <p>Else will be evaluated below.</p>
         </td>
@@ -2877,7 +2915,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
+  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
 </div>
 <p>Check all the other cases.</p>
         </td>
@@ -2904,7 +2942,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
+  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
 </div>
 <p>Unknown values of publishLevels are treated as ALL.</p>
         </td>
@@ -2961,6 +2999,8 @@ stage levels: PLAYING and GETTING_DONE.</p>
         <span class="k">case</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STAGE_INIT</span><span class="o">:</span>
         <span class="k">case</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STEP_INIT</span><span class="o">:</span>
         <span class="k">case</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">FINISHING</span><span class="o">:</span>
+        <span class="k">case</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STAGE_EXIT</span><span class="o">:</span>
+        <span class="k">case</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STEP_EXIT</span><span class="o">:</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
 
         <span class="k">case</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">PLAYING_STEP</span><span class="o">:</span>
@@ -3233,7 +3273,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
+  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
 </div>
 <p>Should emit PLAYING only after LOADED.</p>
         </td>

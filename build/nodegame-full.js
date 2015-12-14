@@ -10070,6 +10070,8 @@ if (!Array.prototype.indexOf) {
         STAGE_INIT:    10,  // calling stage's init
         STEP_INIT:     20,  // calling step's init
         PLAYING_STEP:  30,  // executing step
+        STAGE_EXIT:    50,  // calling stage's cleanup
+        STEP_EXIT:     60,  // calling step's clenaup
         FINISHING:     70,  // calling game's gameover
         GAMEOVER:     100,  // game complete
         RUNTIME_ERROR: -1
@@ -10114,7 +10116,9 @@ if (!Array.prototype.indexOf) {
         GETTING_DONE:        90, // Done is being called,
                                  // and the step rule evaluated.
 
-        DONE:                100 // Player completed the stage
+        DONE:               100, // Player completed the stage
+
+        EXIT:               110, // Cleanup function being called (if found)
     };
 
     /**
@@ -18447,7 +18451,7 @@ if (!Array.prototype.indexOf) {
      */
     Game.prototype.gotoStep = function(nextStep, options) {
         var curStep;
-        var curStageObj, nextStepObj, nextStageObj;
+        var curStepObj, curStageObj, nextStepObj, nextStageObj;
         var ev, node;
         var property, handler;
         var minThreshold, maxThreshold, exactThreshold;
@@ -18509,6 +18513,18 @@ if (!Array.prototype.indexOf) {
 
             node.emit('STEPPING');
 
+            curStageObj = this.plot.getStage(curStep);
+            curStepObj = this.plot.getStep(curStep);
+
+            // Calling exit function of the step.
+            if (curStepObj && curStepObj.exit) {
+                this.setStateLevel(constants.stateLevels.STEP_EXIT);
+                this.setStageLevel(constants.stageLevels.EXIT);
+
+                nextStageObj.exit.call(this);
+            }
+
+
             // Check for stage/step existence:
             nextStageObj = this.plot.getStage(nextStep);
             if (!nextStageObj) return false;
@@ -18519,17 +18535,21 @@ if (!Array.prototype.indexOf) {
             // TODO: this does not lock screen / stop timer.
             if (options.willBeDone) this.willBeDone = true;
 
-
             // stageLevel needs to be changed (silent), otherwise it stays DONE
             // for a short time in the new game stage:
             this.setStageLevel(constants.stageLevels.UNINITIALIZED, 'S');
             this.setCurrentGameStage(nextStep);
 
-            // If we enter a new stage we need to update a few things:
-            //if (this.plot.stepsToNextStage(curStep) === 1) {
-            //if (curStep.stage !== nextStep.stage) {
-            curStageObj = this.plot.getStage(curStep);
+            // If we enter a new stage we need to update a few things.
             if (!curStageObj || nextStageObj.id !== curStageObj.id) {
+
+                // Calling exit function.
+                if (curStageObj && curStageObj.exit) {
+                    this.setStateLevel(constants.stateLevels.STAGE_EXIT);
+                    this.setStageLevel(constants.stageLevels.EXIT);
+
+                    curStageObj.exit.call(this);
+                }
 
                 this.setStateLevel(constants.stateLevels.STAGE_INIT);
                 this.setStageLevel(constants.stageLevels.INITIALIZING);
@@ -19127,6 +19147,8 @@ if (!Array.prototype.indexOf) {
         case constants.stateLevels.STAGE_INIT:
         case constants.stateLevels.STEP_INIT:
         case constants.stateLevels.FINISHING:
+        case constants.stateLevels.STAGE_EXIT:
+        case constants.stateLevels.STEP_EXIT:
             return false;
 
         case constants.stateLevels.PLAYING_STEP:
@@ -23255,7 +23277,7 @@ if (!Array.prototype.indexOf) {
      *      if so returns with a warning.
      *  - Checks it there a `done` hanlder in the step, and if so
      *      executes. If the return value is falsy procedure stops.
-     *  - Marks the step as `willBeDone` and no further callas to
+     *  - Marks the step as `willBeDone` and no further calls to
      *      `node.done` are allowed in the same step.
      *  - Creates and send a SET message to server containing the time
      *      passed from the beginning of the step, if `done` was a timeup
