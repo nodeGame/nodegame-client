@@ -32,12 +32,6 @@ stager
     .repeat('5', 5)
     .finalize();
 
-// plot = new GamePlot(stager);
-// debugger
-// a  = plot.next('3.1.1');
-// console.log(a);
-// return
-
 module.exports = node;
 module.parent.exports = node;
 
@@ -46,7 +40,7 @@ describe('GamePlot', function() {
 
     describe('#constructor', function() {
         before(function(){
-            plot = new GamePlot(stager);
+            plot = new GamePlot(node, stager);
         });
         it('should create a stager object', function() {
             (typeof plot.stager).should.eql('object');
