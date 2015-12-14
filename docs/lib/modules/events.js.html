@@ -56,8 +56,8 @@ MIT Licensed</p>
 
     <span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">STAGE</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">STATE</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">STAGE_INIT</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">STATE_STAGE_INIT</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STAGE_INIT</span><span class="p">;</span>
 
 
 </pre></div>
@@ -160,8 +160,8 @@ new step.</p></li>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="nx">gameStage</span><span class="p">.</span><span class="nx">step</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">round</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">()</span> <span class="o">===</span> <span class="nx">STAGE</span> <span class="o">&amp;&amp;</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">()</span> <span class="o">===</span> <span class="nx">STATE</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">()</span> <span class="o">===</span> <span class="nx">STAGE_INIT</span> <span class="o">&amp;&amp;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStateLevel</span><span class="p">()</span> <span class="o">===</span> <span class="nx">STATE_STAGE_INIT</span><span class="p">)</span> <span class="p">{</span>
 
                 <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
             <span class="p">}</span>

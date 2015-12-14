@@ -18530,8 +18530,9 @@ if (!Array.prototype.indexOf) {
             //if (curStep.stage !== nextStep.stage) {
             curStageObj = this.plot.getStage(curStep);
             if (!curStageObj || nextStageObj.id !== curStageObj.id) {
-                //nextStageObj = this.plot.getStage(nextStep);
-                //if (!nextStageObj) return false;
+
+                this.setStateLevel(constants.stateLevels.STAGE_INIT);
+                this.setStageLevel(constants.stageLevels.INITIALIZING);
 
                 // Store time:
                 this.node.timer.setTimestamp('stage', (new Date()).getTime());
@@ -18541,8 +18542,6 @@ if (!Array.prototype.indexOf) {
 
                 // Execute the init function of the stage, if any:
                 if (nextStageObj.hasOwnProperty('init')) {
-                    this.setStateLevel(constants.stateLevels.STAGE_INIT);
-                    this.setStageLevel(constants.stageLevels.INITIALIZING);
                     nextStageObj.init.call(node.game);
                 }
 
@@ -22938,8 +22937,8 @@ if (!Array.prototype.indexOf) {
 
     var GameStage = parent.GameStage;
 
-    var STAGE = parent.constants.stageLevels.UNINITIALIZED;
-    var STATE = parent.constants.stageLevels.INITIALIZED;
+    var STAGE_INIT = parent.constants.stageLevels.INITIALIZING;
+    var STATE_STAGE_INIT = parent.constants.stateLevels.STAGE_INIT;
 
     /**
      * ### NodeGameClient.getCurrentEventEmitter
@@ -22983,8 +22982,8 @@ if (!Array.prototype.indexOf) {
 
         // Stage listeners.
         if (gameStage.step === 1 && gameStage.round === 1) {
-            if (this.game.getStageLevel() === STAGE &&
-                this.game.getStateLevel() === STATE) {
+            if (this.game.getStageLevel() === STAGE_INIT &&
+                this.game.getStateLevel() === STATE_STAGE_INIT) {
 
                 return this.events.ee.stage;
             }
