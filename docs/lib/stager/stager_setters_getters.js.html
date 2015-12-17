@@ -172,7 +172,7 @@ the state.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">idx</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">stageObj</span><span class="p">,</span> <span class="nx">seqObj</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">stageObj</span><span class="p">,</span> <span class="nx">seqObj</span><span class="p">,</span> <span class="nx">blockObj</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stateObj</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.setState: stateObj must be object.&#39;</span><span class="p">);</span>
@@ -447,20 +447,6 @@ its value)</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">cacheReset</span><span class="p">;</span>
         <span class="p">}</span>
 
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
-</div>
-<p>TODO: Check!
-Add blocks:</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="kd">var</span> <span class="nx">blockObj</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;blocks&#39;</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">idx</span> <span class="o">&lt;</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">idx</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">blockObj</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
@@ -476,7 +462,7 @@ Add blocks:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>TODO: See if this is enough to reset the state of the block.
 this.blocks[idx].index = 0;
@@ -492,7 +478,7 @@ this.finalized = false;</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>Mark finalized.</p>
         </td>
@@ -620,7 +606,7 @@ onGameover, blocks.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>Initial default.</p>
         </td>
