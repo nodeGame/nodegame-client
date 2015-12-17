@@ -1269,6 +1269,98 @@ describe('Stager', function() {
 
     });
 
+    describe('#getState, #setState', function() {
+        before(function() {
+            stager = ngc.getStager();
+
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() {
+                i = (i || 0) + 1;
+            };
+            done = function(increment) {
+                len = (len || 0) + increment;
+            };
+            stager.addStep({
+                id: 'step 1',
+                cb: tmp,
+                done: done,
+                c: 3,
+                d: 4,
+                e: 5
+            });
+
+            stager.next('stage 1');
+
+            stager.extendStep('step 1', function(o) {
+                o._cb = o.cb;
+                o.cb = function() {
+                    this._cb();
+                    i++;
+                };
+                o._done = o.done;
+                o.done = function(increment) {
+                    this._done((increment-1));
+                    len = len + increment;
+                };
+                o.c = 'a';
+                o.e = undefined;
+                return o;
+            });
+
+            stager.extendStep('stage 1', function(o) {
+                o.__cb = o.cb;
+                o.cb = function() {
+                    if ('undefined' !== typeof this.__cb) i++;
+                    i++;
+                };
+                o.foo = 'foo1';
+                return o;
+            });
+
+            stagerState = stager.getState();
+
+        });
+        it('should export all variables of the stager state', function() {
+            var props, i, len;
+
+            props = [
+                'steps',
+                'stages',
+                'sequence',
+                'generalNextFunction',
+                'nextFunctions',
+                'defaultStepRule',
+                'defaultGlobals',
+                'defaultProperties',
+                'onInit',
+                'onGameover',
+                'toSkip',
+                'defaultCallback',
+                'blocks',
+                'cacheReset'
+            ];
+
+            i = -1, len = props.length;
+            for ( ; ++i < len ; ) {
+                ('undefined' !== typeof stagerState[props[i]]).should.be.true;
+            }
+
+        });
+        it('should recreate a second identical stager', function() {
+            var stager2, state2;
+
+            stager2 = ngc.getStager();
+
+            stager2.setState(stagerState);
+
+            state2 = stager2.getState();
+
+            state2.should.eql(stagerState);
+
+            stager2.should.eql(stager);
+        });
+    });
+
     describe('should fail', function() {
         beforeEach(function() {
             stager = ngc.getStager();

@@ -424,7 +424,7 @@ its value)</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
-<p>Set defaultCallback</p>
+<p>Set defaultCallback.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultCallback&#39;</span><span class="p">))</span> <span class="p">{</span>
@@ -464,6 +464,12 @@ its value)</p>
                 <span class="nx">blockObj</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">blockObj</span><span class="p">;</span>
             <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;currentType&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">currentType</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;currentBlockType&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">currentBlockType</span><span class="p">;</span>
         <span class="p">}</span>
 
 
@@ -541,7 +547,9 @@ onGameover, blocks.</p>
             <span class="nx">toSkip</span><span class="o">:</span>              <span class="k">this</span><span class="p">.</span><span class="nx">toSkip</span><span class="p">,</span>
             <span class="nx">defaultCallback</span><span class="o">:</span>     <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span><span class="p">,</span>
             <span class="nx">cacheReset</span><span class="o">:</span>          <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span><span class="p">,</span>
-            <span class="nx">blocks</span><span class="o">:</span>              <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span>
+            <span class="nx">blocks</span><span class="o">:</span>              <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">,</span>
+            <span class="nx">currentType</span><span class="o">:</span>         <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span><span class="p">,</span>
+            <span class="nx">currentBlockType</span><span class="o">:</span>    <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span>
         <span class="p">});</span>
     <span class="p">};</span>
 
