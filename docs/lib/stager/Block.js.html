@@ -82,7 +82,10 @@
         <a href="#block.size">Block.size</a>
       </div>
       <div class="heading h2">
-        <a href="#block.istype">Block.isType</a>
+        <a href="#block.istype%20%7C%20isoftype">Block.isType | isOfType</a>
+      </div>
+      <div class="heading h2">
+        <a href="#block.clone">Block.clone</a>
       </div>
       <div class="heading h2">
         <a href="#helper%20functions">Helper Functions</a>
@@ -941,10 +944,10 @@ index to 0 and finalized to false.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="block.istype">
+<div class="pilwrap" id="block.istype%20%7C%20isoftype">
   <h2>
-    <a href="#block.istype" name="block.istype" class="pilcrow">&#182;</a>
-    Block.isType
+    <a href="#block.istype%20%7C%20isoftype" name="block.istype%20%7C%20isoftype" class="pilcrow">&#182;</a>
+    Block.isType | isOfType
   </h2>
 </div>
 
@@ -970,6 +973,49 @@ index to 0 and finalized to false.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isType</span> <span class="o">=</span> <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isOfType</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="nx">type</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="block.clone">
+  <h2>
+    <a href="#block.clone" name="block.clone" class="pilcrow">&#182;</a>
+    Block.clone
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a copy of the block</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">Block</span>
+      <span>A new instance of block with the same settings and items</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clone</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">block</span><span class="p">;</span>
+        <span class="nx">block</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Block</span><span class="p">();</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">positions</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">positions</span><span class="p">);</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">takenPositions</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">);</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">);</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">unfinishedEntries</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">);</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">index</span><span class="p">;</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">;</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">resetCache</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">block</span><span class="p">;</span>
     <span class="p">};</span>
 
 

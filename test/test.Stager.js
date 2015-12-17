@@ -1346,6 +1346,7 @@ describe('Stager', function() {
             }
 
         });
+
         it('should recreate a second identical stager', function() {
             var stager2, state2;
 

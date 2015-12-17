@@ -728,7 +728,7 @@ is terminated.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">blocksIds</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">blocksIds</span> <span class="o">=</span> <span class="p">{};</span>
 
 
 </pre></div>
@@ -1020,12 +1020,13 @@ is terminated.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">onInit</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">onGameover</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">blocksIds</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_DEFAULT</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_DEFAULT</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">toSkip</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">stages</span><span class="o">:</span> <span class="p">{},</span> <span class="nx">steps</span><span class="o">:</span> <span class="p">{}</span> <span class="p">};</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">defaultCallback</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">unfinishedBlocks</span><span class="o">:</span> <span class="p">[]</span> <span class="p">};</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span>
@@ -1368,7 +1369,8 @@ different sequence from the Block hierarchy.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
-<p>Create index of blocks by id.</p>
+<p>Create index of blocks by id.
+TODO: use this.blocksIds.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="nx">blocks</span> <span class="o">=</span> <span class="p">{};</span>
