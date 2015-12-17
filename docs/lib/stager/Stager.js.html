@@ -1341,8 +1341,7 @@ different sequence from the Block hierarchy.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reset</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">blockIndex</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">lenCache</span><span class="p">,</span> <span class="nx">lenBlocks</span><span class="p">,</span> <span class="nx">blocks</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">blockIdx</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
 
@@ -1358,8 +1357,8 @@ different sequence from the Block hierarchy.</p>
 <p>Restore unfinishedBlocks, if any.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">lenCache</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">lenCache</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -1369,31 +1368,13 @@ different sequence from the Block hierarchy.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
-<p>Create index of blocks by id.
-TODO: use this.blocksIds.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">blocks</span> <span class="o">=</span> <span class="p">{};</span>
-            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenBlocks</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lenBlocks</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="nx">blocks</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-            <span class="p">}</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
-</div>
 <p>Copy by reference cached blocks.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lenCache</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span>
-                    <span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">blocks</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">[</span><span class="nx">i</span><span class="p">]]);</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">blockIdx</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocksIds</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">[</span><span class="nx">i</span><span class="p">]];</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">blockIdx</span><span class="p">]);</span>
             <span class="p">}</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">unfinishedBlocks</span><span class="o">:</span> <span class="p">[]};</span>
         <span class="p">}</span>
@@ -1404,7 +1385,7 @@ TODO: use this.blocksIds.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>End restore unfinishedBlocks.</p>
         </td>
@@ -1417,14 +1398,15 @@ TODO: use this.blocksIds.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>Call restore on individual blocks.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">blockIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">blockIndex</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">blockIndex</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">blockIndex</span><span class="p">].</span><span class="nx">restore</span><span class="p">();</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">blockIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">blockIdx</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">blockIdx</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">blockIdx</span><span class="p">].</span><span class="nx">restore</span><span class="p">();</span>
         <span class="p">}</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">};</span>
