@@ -447,14 +447,6 @@ its value)</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">cacheReset</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;blocks&#39;</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">idx</span> <span class="o">&lt;</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">idx</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">blockObj</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">blockObj</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
-
 
 </pre></div>
         </td>
@@ -464,12 +456,15 @@ its value)</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
-<p>TODO: See if this is enough to reset the state of the block.
-this.blocks[idx].index = 0;
-this.blocks[idx].takenPositions = [];
-this.finalized = false;</p>
+<p>Blocks.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;blocks&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">idx</span> <span class="o">&lt;</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">idx</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">blockObj</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">blockObj</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
 
 </pre></div>
