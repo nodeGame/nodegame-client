@@ -184,9 +184,8 @@
          *
          * Adds an entry to the memory object
          *
-         * Creates a message using the fields `text`, `data`, `stage`
-         * and `from` of the incoming set.DATA message. If `data` is
-         * not defined it is set to TRUE.
+         * Uses the fields `text`, `data`, `stage` and `from`
+         * of the incoming set.DATA message.
          */
         node.events.ng.on( IN + set + 'DATA', function(msg) {
             var o = msg.data;

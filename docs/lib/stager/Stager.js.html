@@ -1130,7 +1130,7 @@ as <em>toSkip</em>.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
-<p>Nothing to do, finalize called to early.</p>
+<p>Nothing to do, finalize called too early.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
@@ -1261,6 +1261,8 @@ not marked as <code>toSkip</code>, or it is a gameover stage.</p>
 <p>Do not add step to the sequence if:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">])</span> <span class="kr">debugger</span><span class="p">;</span>
 
 
 </pre></div>
