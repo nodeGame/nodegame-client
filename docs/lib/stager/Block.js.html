@@ -46,7 +46,7 @@
         <a href="#block.items">Block.items</a>
       </div>
       <div class="heading h4">
-        <a href="#block.unfinishedentries">Block.unfinishedEntries</a>
+        <a href="#block.unfinisheditems">Block.unfinishedItems</a>
       </div>
       <div class="heading h4">
         <a href="#block.index">Block.index</a>
@@ -353,10 +353,10 @@ The stager class will be added later.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="block.unfinishedentries">
+<div class="pilwrap" id="block.unfinisheditems">
   <h4>
-    <a href="#block.unfinishedentries" name="block.unfinishedentries" class="pilcrow">&#182;</a>
-    Block.unfinishedEntries
+    <a href="#block.unfinisheditems" name="block.unfinisheditems" class="pilcrow">&#182;</a>
+    Block.unfinishedItems
   </h4>
 </div>
 
@@ -366,7 +366,7 @@ The stager class will be added later.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span> <span class="o">=</span> <span class="p">[];</span>
 
 
 </pre></div>
@@ -520,7 +520,7 @@ the block. Only on block.finalize the position is fixed.</p>
             <span class="nx">positions</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
             <span class="nx">item</span><span class="o">:</span> <span class="nx">item</span><span class="p">,</span>
             <span class="nx">positions</span><span class="o">:</span> <span class="nx">positions</span>
         <span class="p">});</span>
@@ -591,7 +591,7 @@ the block. Only on block.finalize the position is fixed.</p>
         <span class="kd">var</span> <span class="nx">available</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
@@ -609,12 +609,12 @@ the block. Only on block.finalize the position is fixed.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isType</span><span class="p">(</span><span class="nx">BLOCK_ENCLOSING_STEPS</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">isDefaultStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">item</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isDefaultStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">item</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
 </pre></div>
         </td>
@@ -628,8 +628,8 @@ the block. Only on block.finalize the position is fixed.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">===</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">===</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -663,10 +663,10 @@ multiple calls to J.range.
 Parsing all of the position strings into arrays.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="nx">positions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">=</span>
+            <span class="nx">positions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">=</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">available</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -682,7 +682,7 @@ Parsing all of the position strings into arrays.</p>
 <p>Assigning positions.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">while</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -695,8 +695,8 @@ Parsing all of the position strings into arrays.</p>
 <p>Select entry with least possibilities of where to go.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="nx">sortFunction</span><span class="p">);</span>
-            <span class="nx">entry</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="nx">sortFunction</span><span class="p">);</span>
+            <span class="nx">entry</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
             <span class="nx">item</span> <span class="o">=</span> <span class="nx">entry</span><span class="p">.</span><span class="nx">item</span><span class="p">;</span>
             <span class="nx">positions</span> <span class="o">=</span> <span class="nx">entry</span><span class="p">.</span><span class="nx">positions</span><span class="p">;</span>
 
@@ -746,10 +746,10 @@ Parsing all of the position strings into arrays.</p>
 <p>Adjust possible positions in remaining entries.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
             <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">removeElement</span><span class="p">(</span><span class="nx">chosenPosition</span><span class="p">,</span>
-                                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span><span class="p">);</span>
+                                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
@@ -840,7 +840,7 @@ If the next item is another Block, next is called recursively.</p>
     <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">backup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">classClone</span><span class="p">({</span>
             <span class="nx">takenPositions</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">,</span>
-            <span class="nx">unfinishedEntries</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">,</span>
+            <span class="nx">unfinishedItems</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">,</span>
             <span class="nx">items</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span>
         <span class="p">},</span> <span class="mi">3</span><span class="p">);</span>
     <span class="p">};</span>
@@ -891,7 +891,7 @@ index to 0 and finalized to false.</p>
   <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>this.takenPositions = [];
-this.unfinishedEntries = this.items;
+this.unfinishedItems = this.items;
 this.items = [];
 this.resetCache = null;
 return;
@@ -899,7 +899,7 @@ old.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">items</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
@@ -934,7 +934,7 @@ old.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1011,7 +1011,7 @@ old.</p>
         <span class="nx">block</span><span class="p">.</span><span class="nx">positions</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">positions</span><span class="p">);</span>
         <span class="nx">block</span><span class="p">.</span><span class="nx">takenPositions</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">);</span>
         <span class="nx">block</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">);</span>
-        <span class="nx">block</span><span class="p">.</span><span class="nx">unfinishedEntries</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">);</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">unfinishedItems</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">);</span>
         <span class="nx">block</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">index</span><span class="p">;</span>
         <span class="nx">block</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">;</span>
         <span class="nx">block</span><span class="p">.</span><span class="nx">resetCache</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">);</span>
