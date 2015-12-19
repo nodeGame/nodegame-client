@@ -488,7 +488,7 @@ function. A step will be created with same id and callback.</p>
         <span class="nx">id</span> <span class="o">=</span> <span class="nx">handleStepParameter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">);</span>
         <span class="nx">positions</span> <span class="o">=</span> <span class="nx">checkPositionsParameter</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">);</span>
 
-        <span class="nx">addStepToBlock</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">curBlock</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">positions</span><span class="p">);</span>
+        <span class="nx">addStepToBlock</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">curBlock</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span><span class="p">,</span> <span class="nx">positions</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">currentType</span><span class="p">].</span><span class="nx">steps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
 
@@ -1088,7 +1088,7 @@ already added to current block, and if not, it adds it.</p>
         <span class="nx">curBlock</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getCurrentBlock</span><span class="p">();</span>
         <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="nx">addStepToBlock</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">curBlock</span><span class="p">,</span> <span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="nx">addStepToBlock</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">curBlock</span><span class="p">,</span> <span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">that</span><span class="p">.</span><span class="nx">currentType</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
 

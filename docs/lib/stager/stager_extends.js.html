@@ -698,7 +698,7 @@ must always be a function.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">validateExtendedStage</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">update</span><span class="p">,</span> <span class="nx">updateFunction</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>            
+        <span class="kd">var</span> <span class="nx">block</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">((</span><span class="nx">updateFunction</span> <span class="o">&amp;&amp;</span> <span class="nx">update</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">stageId</span><span class="p">)</span> <span class="o">||</span>
             <span class="p">(</span><span class="o">!</span><span class="nx">updateFunction</span> <span class="o">&amp;&amp;</span> <span class="nx">update</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)))</span> <span class="p">{</span>
 
@@ -727,6 +727,20 @@ must always be a function.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
+<p>No changes to the steps array, just exit.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageId</span><span class="p">].</span><span class="nx">steps</span><span class="p">,</span> <span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+</div>
 <p>Process every step in the array. Steps array is modified.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
@@ -739,14 +753,14 @@ must always be a function.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
-<p>Add steps to block (if necessary).</p>
+<p>We need to get the enclosing steps block,
+following the stage block.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                
+            <span class="nx">block</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">findBlockWithItem</span><span class="p">(</span><span class="nx">stageId</span><span class="p">);</span>
+
 
 </pre></div>
         </td>
@@ -754,11 +768,75 @@ must always be a function.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
-<p>addStepToBlock(</p>
+<p>Stage is not in any block, just exit.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">block</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+</div>
+<p>We need to update the block in which the stage was.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">block</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">block</span> <span class="o">=</span> <span class="nx">block</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">item</span><span class="p">;</span>
+            <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>The stage block was not ended yet,
+so the the step block is the last of the sequence.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">block</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">that</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+            <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>Remove all previous steps before adding the updated steps.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">block</span><span class="p">.</span><span class="nx">removeAllItems</span><span class="p">();</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>Add steps to block (if necessary).</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">addStepToBlock</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">block</span><span class="p">,</span> <span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">stageId</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>

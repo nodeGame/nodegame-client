@@ -737,6 +737,11 @@ different things.</p>
       <span>The id of the step</span>
     </div>
     <div class="dox_tag_detail">
+      <span class="dox_tag_name">stageId</span>
+      <span class="dox_type">string</span>
+      <span>The id of the stage the step belongs to</span>
+    </div>
+    <div class="dox_tag_detail">
       <span class="dox_tag_name">positions</span>
       <span class="dox_type">string</span>
       <span class="dox_type">number</span>
@@ -753,7 +758,7 @@ different things.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">addStepToBlock</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">block</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="nx">positions</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">addStepToBlock</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">block</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">positions</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">stepInBlock</span><span class="p">;</span>
 
 </pre></div>
@@ -770,7 +775,7 @@ different things.</p>
         <span class="k">if</span> <span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">hasItem</span><span class="p">(</span><span class="nx">stepId</span><span class="p">))</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
 
         <span class="nx">stepInBlock</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="nx">that</span><span class="p">.</span><span class="nx">currentType</span><span class="p">,</span>
+            <span class="nx">type</span><span class="o">:</span> <span class="nx">stageId</span><span class="p">,</span>
             <span class="nx">item</span><span class="o">:</span> <span class="nx">stepId</span><span class="p">,</span>
             <span class="nx">id</span><span class="o">:</span> <span class="nx">stepId</span>
         <span class="p">};</span>
