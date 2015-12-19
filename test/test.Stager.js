@@ -470,6 +470,21 @@ describe('Stager', function() {
                stager2.should.be.eql(stager);
            });
 
+        it('should return stager to be identical to before ' +
+           'being finalized. +gameover',
+           function() {
+               var stager2;
+               stager = ngc.getStager();
+               stager.next('1').next('2').gameover();
+               stager2 = ngc.getStager();
+               stager2.next('1').next('2').gameover();
+               stager2.should.be.eql(stager);
+
+               stager2.finalize();
+               stager2.reset();
+               stager2.should.be.eql(stager);
+           });
+
    });
 
     describe('#finalize, #reset', function() {
