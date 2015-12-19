@@ -1151,20 +1151,6 @@ as <em>toSkip</em>.</p>
         <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">id</span><span class="p">);</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
-</div>
-<p>Need to backup unfinished blocks before calling endAllBlocks().
-MOVED DOWN.
-this.unfinishedBlocks[i].backup();</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
         <span class="p">}</span>
 
 
@@ -1174,9 +1160,9 @@ this.unfinishedBlocks[i].backup();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
-<p>Fixes the position of unfixed elements inside each block.</p>
+<p>Need to backup all blocks before calling endAllBlocks().</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">for</span> <span class="p">(</span><span class="nx">blockIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">blockIndex</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">blockIndex</span><span class="p">)</span> <span class="p">{</span>
@@ -1190,7 +1176,7 @@ this.unfinishedBlocks[i].backup();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>Closes unclosed blocks.</p>
         </td>
@@ -1204,7 +1190,7 @@ this.unfinishedBlocks[i].backup();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>Fixes the position of unfixed elements inside each block.</p>
         </td>
@@ -1220,7 +1206,7 @@ this.unfinishedBlocks[i].backup();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Take outermost block and start building sequence.</p>
         </td>
@@ -1237,7 +1223,7 @@ this.unfinishedBlocks[i].backup();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>Add it to sequence if it was
 not marked as <code>toSkip</code>, or it is a gameover stage.</p>
@@ -1259,7 +1245,7 @@ not marked as <code>toSkip</code>, or it is a gameover stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>It is a step, currentItem.type = stage id (TODO: change).</p>
         </td>
@@ -1274,7 +1260,7 @@ not marked as <code>toSkip</code>, or it is a gameover stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>1 - Step was marked as <code>toSkip</code>.</p>
         </td>
@@ -1288,7 +1274,7 @@ not marked as <code>toSkip</code>, or it is a gameover stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>2 - Step was a default step,
     but other steps have been added.</p>
@@ -1304,7 +1290,7 @@ not marked as <code>toSkip</code>, or it is a gameover stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Ok, add the step to the sequence (must look up stage).</p>
         </td>
@@ -1369,7 +1355,7 @@ different sequence from the Block hierarchy.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>Restore unfinishedBlocks, if any.</p>
         </td>
@@ -1383,7 +1369,7 @@ different sequence from the Block hierarchy.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 <p>Copy by reference cached blocks.</p>
         </td>
@@ -1402,7 +1388,7 @@ different sequence from the Block hierarchy.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>End restore unfinishedBlocks.</p>
         </td>
@@ -1415,7 +1401,7 @@ different sequence from the Block hierarchy.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>Call restore on individual blocks.</p>
         </td>
