@@ -20,6 +20,26 @@ var stepRule, globals, properties, init, gameover, done;
 
 var stager = new Stager();
 
+// Does not add steps correctly (step ids missing).
+// stager.next('1');
+
+// stager.next({id: '2', steps: ['qwe', 'rty' ]});
+//
+
+//
+// stager.reset();
+//
+// stager.next('1')
+//     .next('2')
+//     .step('qwe')
+//     .step('rty');
+//
+
+// var a = stager.findBlockWithItem('1');
+// var b = stager.findBlockWithItem('qwe');
+// stager.extendStage('1', { steps: [ 'aaa', 'bbb' ] });
+
+
 describe('Stager', function() {
 
     describe('constructor', function() {

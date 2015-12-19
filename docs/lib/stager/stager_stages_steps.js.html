@@ -129,6 +129,7 @@ MIT Licensed</p>
     <span class="kd">var</span> <span class="nx">isDefaultCb</span>             <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">isDefaultCb</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">makeDefaultStep</span>         <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">makeDefaultStep</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">isDefaultStep</span>           <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">isDefaultStep</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">addStepToBlock</span>          <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">addStepToBlock</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">blockTypes</span>              <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">blockTypes</span><span class="p">;</span>
 
@@ -487,10 +488,7 @@ function. A step will be created with same id and callback.</p>
         <span class="nx">id</span> <span class="o">=</span> <span class="nx">handleStepParameter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">);</span>
         <span class="nx">positions</span> <span class="o">=</span> <span class="nx">checkPositionsParameter</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">);</span>
 
-        <span class="nx">curBlock</span><span class="p">.</span><span class="nx">add</span><span class="p">({</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span><span class="p">,</span>
-            <span class="nx">item</span><span class="o">:</span> <span class="nx">id</span>
-        <span class="p">},</span> <span class="nx">positions</span><span class="p">);</span>
+        <span class="nx">addStepToBlock</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">curBlock</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">positions</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">currentType</span><span class="p">].</span><span class="nx">steps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
 
@@ -572,7 +570,7 @@ unique in the sequence.</p>
 <p>Must be done after addStageToCurrentBlock is called.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">addStepsToCurrentBlock</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageName</span><span class="p">]);</span>
+            <span class="nx">addStepsToCurrentBlock</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageName</span><span class="p">].</span><span class="nx">steps</span><span class="p">);</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="p">};</span>
 
@@ -662,7 +660,7 @@ unique in the sequence.</p>
 <p>Must be done after addStageToCurrentBlock is called.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">addStepsToCurrentBlock</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageName</span><span class="p">]);</span>
+            <span class="nx">addStepsToCurrentBlock</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageName</span><span class="p">].</span><span class="nx">steps</span><span class="p">);</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="p">};</span>
 
@@ -947,7 +945,7 @@ never executed.</p>
 <p>Must be done after addStageToCurrentBlock is called.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">addStepsToCurrentBlock</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageName</span><span class="p">]);</span>
+        <span class="nx">addStepsToCurrentBlock</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stageName</span><span class="p">].</span><span class="nx">steps</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
     <span class="p">}</span>
 
@@ -1031,7 +1029,8 @@ rndName = '_' + J.randomInt(10000);</p>
         <span class="nx">curBlock</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getCurrentBlock</span><span class="p">();</span>
         <span class="nx">curBlock</span><span class="p">.</span><span class="nx">add</span><span class="p">({</span>
             <span class="nx">type</span><span class="o">:</span> <span class="nx">BLOCK_STAGE</span><span class="p">,</span>
-            <span class="nx">item</span><span class="o">:</span> <span class="nx">stage</span>
+            <span class="nx">item</span><span class="o">:</span> <span class="nx">stage</span><span class="p">,</span>
+            <span class="nx">id</span><span class="o">:</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span>
         <span class="p">});</span>
 
         <span class="nx">that</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
@@ -1071,43 +1070,25 @@ already added to current block, and if not, it adds it.</p>
       <span>Reference to Stager object</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">stage</span>
-      <span class="dox_type">object</span>
-      <span>The stage object</span>
+      <span class="dox_tag_name">steps</span>
+      <span class="dox_type">array</span>
+      <span>Array containing the id of the steps</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">addStepToBlock
+</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">addStepsToCurrentBlock</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">curBlock</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">stepInBlock</span><span class="p">;</span>
+    <span class="kd">function</span> <span class="nx">addStepsToCurrentBlock</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">curBlock</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="nx">curBlock</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getCurrentBlock</span><span class="p">();</span>
-
-        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
-</div>
-<p>Add step, if not already added.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">curBlock</span><span class="p">.</span><span class="nx">hasItem</span><span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
-                <span class="nx">stepInBlock</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="nx">type</span><span class="o">:</span> <span class="nx">that</span><span class="p">.</span><span class="nx">currentType</span><span class="p">,</span>
-                    <span class="nx">item</span><span class="o">:</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
-                <span class="p">};</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">isDefaultStep</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]]))</span> <span class="p">{</span>
-                    <span class="nx">makeDefaultStep</span><span class="p">(</span><span class="nx">stepInBlock</span><span class="p">);</span>
-                <span class="p">}</span>
-                <span class="nx">curBlock</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">stepInBlock</span><span class="p">);</span>
-            <span class="p">}</span>
+            <span class="nx">addStepToBlock</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">curBlock</span><span class="p">,</span> <span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
@@ -1316,7 +1297,7 @@ whether the name is unique, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>checkStageValidity</p>
@@ -1459,7 +1440,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>A new step is created if not found (performs validation).</p>
         </td>
@@ -1539,7 +1520,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>It's a step.</p>
         </td>
@@ -1563,7 +1544,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>See whether the stage id contains an alias. Throws errors.</p>
         </td>
@@ -1578,7 +1559,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Alias must reference an existing stage (checked before).</p>
         </td>
@@ -1594,7 +1575,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Add the step if not existing and flag it as default.</p>
         </td>

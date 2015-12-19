@@ -39,6 +39,9 @@
       <div class="heading h4">
         <a href="#stager.endallblocks">Stager.endAllBlocks</a>
       </div>
+      <div class="heading h2">
+        <a href="#stager.findblockwithitem">Stager.findBlockWithItem</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -453,6 +456,51 @@ to lower level function <code>addStageBlock</code>.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">endAllBlocks</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">endBlocks</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stager.findblockwithitem">
+  <h2>
+    <a href="#stager.findblockwithitem" name="stager.findblockwithitem" class="pilcrow">&#182;</a>
+    Stager.findBlockWithItem
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the block where the item (step|stage) with specified id is found</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">itemId</span>
+      <span class="dox_type">string</span>
+      <span>The id of the item</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">boolean</span>
+      <span>The block containing the requested item,
+   or FALSE if none is found</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">findBlockWithItem</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">itemId</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">hasItem</span><span class="p">(</span><span class="nx">itemId</span><span class="p">))</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">};</span>
 
 <span class="p">})(</span>

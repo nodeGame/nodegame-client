@@ -80,8 +80,9 @@ MIT Licensed</p>
     <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Stager</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">checkFinalized</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">checkFinalized</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">checkFinalized</span>   <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">checkFinalized</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">handleStepsArray</span> <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">handleStepsArray</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">addStepToBlock</span>   <span class="o">=</span> <span class="nx">Stager</span><span class="p">.</span><span class="nx">addStepToBlock</span><span class="p">;</span>
 
 
 </pre></div>
@@ -697,6 +698,7 @@ must always be a function.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">validateExtendedStage</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">update</span><span class="p">,</span> <span class="nx">updateFunction</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>            
         <span class="k">if</span> <span class="p">((</span><span class="nx">updateFunction</span> <span class="o">&amp;&amp;</span> <span class="nx">update</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">stageId</span><span class="p">)</span> <span class="o">||</span>
             <span class="p">(</span><span class="o">!</span><span class="nx">updateFunction</span> <span class="o">&amp;&amp;</span> <span class="nx">update</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)))</span> <span class="p">{</span>
 
@@ -742,7 +744,22 @@ must always be a function.</p>
 <p>Add steps to block (if necessary).</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">update</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                
 
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>addStepToBlock(</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
