@@ -1007,7 +1007,20 @@ never executed.</p>
         <span class="kd">var</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">curBlock</span><span class="p">,</span> <span class="nx">rndName</span><span class="p">;</span>
         <span class="nx">name</span> <span class="o">=</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
 
-        <span class="nx">rndName</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">J</span><span class="p">.</span><span class="nx">randomInt</span><span class="p">(</span><span class="mi">10000</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>was:
+rndName = '_' + J.randomInt(10000);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">rndName</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">((</span><span class="nx">that</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">);</span>
 
         <span class="nx">addStageBlock</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span>
                       <span class="nx">BLOCK_ENCLOSING</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="nx">rndName</span><span class="p">,</span>
@@ -1080,10 +1093,9 @@ already added to current block, and if not, it adds it.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
-<p>Add step, if not already added.
-TODO: This If might be always true.</p>
+<p>Add step, if not already added.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">curBlock</span><span class="p">.</span><span class="nx">hasItem</span><span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
@@ -1304,7 +1316,7 @@ whether the name is unique, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>checkStageValidity</p>
@@ -1447,7 +1459,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>A new step is created if not found (performs validation).</p>
         </td>
@@ -1527,7 +1539,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>It's a step.</p>
         </td>
@@ -1551,7 +1563,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>See whether the stage id contains an alias. Throws errors.</p>
         </td>
@@ -1566,7 +1578,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Alias must reference an existing stage (checked before).</p>
         </td>
@@ -1582,7 +1594,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Add the step if not existing and flag it as default.</p>
         </td>

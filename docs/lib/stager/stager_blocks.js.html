@@ -316,11 +316,24 @@ to lower level function <code>addStageBlock</code>.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
-<p>if (block.id &amp;&amp; block.id.indexOf(BLOCK_STEPBLOCK) !== -1) {</p>
+<p>Step block.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">isType</span><span class="p">(</span><span class="nx">BLOCK_STEPBLOCK</span><span class="p">))</span> <span class="p">{</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>We find the first enclosing block for the step block
+(in between there could several steps).</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
             <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
             <span class="k">do</span> <span class="p">{</span>
                 <span class="nx">currentBlock</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
@@ -329,9 +342,12 @@ to lower level function <code>addStageBlock</code>.</p>
             <span class="p">}</span>
             <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="nx">found</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">found</span><span class="p">)</span> <span class="nx">currentBlock</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">block</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nx">positions</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">found</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">currentBlock</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">block</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nx">positions</span><span class="p">);</span>
+            <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Ah, this should not happen.&#39;</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.endBlock: could not find enclosing &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;block for stepBlock &#39;</span> <span class="o">+</span> <span class="nx">block</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
             <span class="p">}</span>
 
         <span class="p">}</span>
@@ -342,10 +358,9 @@ to lower level function <code>addStageBlock</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
 </div>
-<p>Normal stage / step block, add it to previous
-else if (block.id &amp;&amp; block.id.indexOf('AAA') === -1) {</p>
+<p>Normal stage / step block, add it to previous</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">block</span><span class="p">.</span><span class="nx">isType</span><span class="p">(</span><span class="nx">BLOCK_STAGEBLOCK</span><span class="p">))</span> <span class="p">{</span>
@@ -361,7 +376,7 @@ else if (block.id &amp;&amp; block.id.indexOf('AAA') === -1) {</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
 <p>Add stage block to default block.</p>
         </td>
@@ -390,19 +405,19 @@ else if (block.id &amp;&amp; block.id.indexOf('AAA') === -1) {</p>
 </div>
 
   </div>
-  <div class="body"><p>Ends multiple Blocks</p>
+  <div class="body"><p>Ends multiple unfinished Blocks</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">Number</span>
-      <span>n Number of Blocks to be ended.</span>
+      <span>n Number of unfinished Blocks to be ended.</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">options</span>
       <span class="dox_type">object</span>
       <span>Optional If options.finalize is set, the
-     block gets finalized.</span>
+   block gets finalized.</span>
     </div>
   </div>
 </div>
