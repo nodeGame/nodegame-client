@@ -1026,7 +1026,8 @@ If the next item is another Block, next is called recursively.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">classClone</span><span class="p">({</span>
             <span class="nx">takenPositions</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">,</span>
             <span class="nx">unfinishedItems</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">,</span>
-            <span class="nx">items</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span>
+            <span class="nx">items</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">,</span>
+            <span class="nx">itemsIds</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">itemsIds</span>
         <span class="p">},</span> <span class="mi">3</span><span class="p">);</span>
     <span class="p">};</span>
 
@@ -1066,27 +1067,11 @@ index to 0 and finalized to false.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
-</div>
-<p>this.takenPositions = [];
-this.unfinishedItems = this.items;
-this.items = [];
-this.resetCache = null;
-return;
-old.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">items</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">itemsIds</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">itemsIds</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 

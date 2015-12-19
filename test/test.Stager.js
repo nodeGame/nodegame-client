@@ -451,6 +451,27 @@ describe('Stager', function() {
         });
     });
 
+   describe('#reset', function() {
+        before(function() {
+            stager = ngc.getStager();
+            tmp = null, i = null, len = null, res = null, stagerStage = null;
+            stager.next('1').next('2');
+        });
+        it('should return stager to be identical to before ' +
+           'being finalized',
+           function() {
+               var stager2;
+               stager2 = ngc.getStager();
+               stager2.next('1').next('2');
+               stager2.should.be.eql(stager);
+
+               stager2.finalize();
+               stager2.reset();
+               stager2.should.be.eql(stager);
+           });
+
+   });
+
     describe('#finalize, #reset', function() {
         before(function() {
             stager = ngc.getStager();
