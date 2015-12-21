@@ -20,6 +20,28 @@ var stepRule, globals, properties, init, gameover, done;
 
 var stager = new Stager();
 
+// stager = ngc.getStager();
+// done =  null, i = null, len = null, stagerStage = null;
+// res = [ 'qwe', 'rty' ];
+// tmp = function() {
+//     i = (i || 0) + 1;
+// };
+// stager.addStage({
+//     id: 'stage 1',
+//     cb: tmp,
+//     c: 3,
+//     d: 4,
+//     e: 5
+// });
+//
+// stager.next('stage 1');
+//
+// stager.extendStage('stage 1', {
+//     steps: res
+// });
+//
+// return;
+
 describe('Stager', function() {
 
     describe('constructor', function() {
@@ -1163,6 +1185,58 @@ describe('Stager', function() {
 
     });
 
+    describe('#extendStage: object modifying steps array', function() {
+        before(function() {
+            stager = ngc.getStager();
+            done =  null, i = null, len = null, stagerStage = null;
+            res = [ 'qwe', 'rty' ];
+            tmp = function() {
+                i = (i || 0) + 1;
+            };
+            stager.addStage({
+                id: 'stage 1',
+                cb: tmp,
+                c: 3,
+                d: 4,
+                e: 5
+            });
+
+            stager.next('stage 1');
+
+            stager.extendStage('stage 1', {
+                steps: res
+            });
+
+        });
+        testExtendStepsArray();
+    });
+
+    describe('#extendStage: update function modifying steps array', function() {
+        before(function() {
+            stager = ngc.getStager();
+            done =  null, i = null, len = null, stagerStage = null;
+            res = [ 'qwe', 'rty' ];
+            tmp = function() {
+                i = (i || 0) + 1;
+            };
+            stager.addStage({
+                id: 'stage 1',
+                cb: tmp,
+                c: 3,
+                d: 4,
+                e: 5
+            });
+
+            stager.next('stage 1');
+
+            stager.extendStage('stage 1', function(o) {
+                o.steps = res;
+                return o;
+            });
+
+        });
+        testExtendStepsArray();
+    });
 
     describe('#extendAllStages: update function', function() {
         before(function() {
@@ -1802,6 +1876,28 @@ describe('Stager', function() {
     });
 });
 
+
+// Helper function!
+///////////////////
+
+function testExtendStepsArray() {
+
+    it('should have changed the steps array in the stage', function() {
+        stager.stages['stage 1'].steps.should.eql(res);
+    });
+    it('should have changed the steps in the block', function() {
+        var block;
+        block = stager.blocks[stager.blocks.length -1];
+        block.unfinishedItems[0].item.id.should.eql(res[0]);
+        block.unfinishedItems[1].item.id.should.eql(res[1]);
+    });
+    it('should have assigned changed steps to "stage 1"', function() {
+        var block;
+        block = stager.blocks[stager.blocks.length -1];
+        block.unfinishedItems[0].item.type.should.eql('stage 1');
+        block.unfinishedItems[1].item.type.should.eql('stage 1');
+    });
+}
 
 return;
 
