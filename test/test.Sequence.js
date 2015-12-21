@@ -8,32 +8,8 @@ var GamePlot = ngc.GamePlot;
 var Stager = ngc.Stager;
 var J = ngc.JSUS;
 
-var result;
+var result, tmp;
 var stager = new Stager();
-
-
-//   stager = ngc.getStager();
-//
-//
-// stager.next('stage 2',0);
-// stager.step('step 1.1');
-// stager.step('step 1.2');
-// stager.stage('stage 0',2);
-// stager.stage('stage 1', '1');
-//
-//
-//           debugger
-//          s = stager.getState().sequence;
-//
-//          debugger
-//          stager.reset();
-//
-//          debugger
-//          s = stager.getState().sequence;
-//
-//
-//          debugger
-//          return
 
 describe('Moving through the sequence', function() {
 
@@ -641,6 +617,93 @@ describe('Moving through the sequence', function() {
 
     });
 
+    describe('init and exit functions on stages (3 stages)', function() {
+        before(function() {
+            stager = ngc.getStager();
+            result = {};
+
+            stager.next('stage 1');
+            stager.next('stage 2');
+            stager.next('stage 3');
+
+            stager.extendStage('stage 1', {
+                init: function() {
+                    result.order = [];
+                    result.order.push('init');
+                    result.tot = 1;
+
+                },
+                exit: function() {
+                    result.tot += 1;
+                    result.order.push('exit');
+                }
+            });
+
+            testPositions(stager, 1);
+        });
+        checkExitInitStages();
+    });
+
+    describe('init and exit functions on stages (1 stage)', function() {
+        before(function() {
+            stager = ngc.getStager();
+            result = {};
+
+            stager.next('stage 1');
+
+            stager.extendStage('stage 1', {
+                init: function() {
+                    result.order = [];
+                    result.order.push('init');
+                    result.tot = 1;
+
+                },
+                exit: function() {
+                    result.tot += 1;
+                    result.order.push('exit');
+                }
+            });
+
+            testPositions(stager, 1);
+        });
+        checkExitInitStages();
+    });
+
+    describe('init and exit functions on steps (1 stage)', function() {
+        before(function() {
+            stager = ngc.getStager();
+            result = {};
+
+            stager.next({
+                id: 'stage 2',
+                steps: [ 'qwe', 'rty', 'uio' ]
+            });
+
+            setupStagerForExitInitStepsTest();
+            testPositions(stager, 1);
+        });
+        checkExitInitSteps();
+    });
+
+
+    describe('init and exit functions on steps (3 stages)', function() {
+        before(function() {
+            stager = ngc.getStager();
+            result = {};
+
+            stager.next('stage 1');
+            stager.next({
+                id: 'stage 2',
+                steps: [ 'qwe', 'rty', 'uio' ]
+            });
+            stager.next('stage 3');
+
+            setupStagerForExitInitStepsTest();
+            testPositions(stager, 1);
+        });
+        checkExitInitSteps();
+    });
+
 });
 
 
@@ -849,6 +912,10 @@ function goThroughSteps(game, result) {
         result[id].push(counter);
         counter ++;
     }
+    // We are in END_SEQ or GAMEOVER.
+    // One more step to finish.
+    game.step();
+
     return result;
 }
 
@@ -869,4 +936,70 @@ function testPositions(stager, len, debug) {
         goThroughSteps(game, result);
     }
     return result;
+}
+
+
+function checkExitInitStages() {
+    it('should have called init and exit functions', function() {
+        result.tot.should.eql(2);
+    });
+
+    it('should have called init before exit', function() {
+        result.order[0].should.eql('init');
+        result.order[1].should.eql('exit');
+    });
+}
+
+function checkExitInitSteps() {
+    it('should have called init and exit functions', function() {
+        result.tot.should.eql(6);
+    });
+
+    it('should have called init before exit', function() {
+        result.qwe[0].should.eql('init');
+        result.qwe[1].should.eql('exit');
+        result.rty[0].should.eql('init');
+        result.rty[1].should.eql('exit');
+        result.uio[0].should.eql('init');
+        result.uio[1].should.eql('exit');
+    });
+}
+
+function setupStagerForExitInitStepsTest() {
+
+    stager.extendStep('qwe', {
+        init: function() {
+            result.tot = 1;
+            result.qwe = [];
+            result.qwe.push('init');
+        },
+        exit: function() {
+            result.tot += 1;
+            result.qwe.push('exit');
+        }
+    });
+
+    stager.extendStep('rty', {
+        init: function() {
+            result.tot += 1;
+            result.rty = [];
+            result.rty.push('init');
+        },
+        exit: function() {
+            result.tot += 1;
+            result.rty.push('exit');
+        }
+    });
+
+    stager.extendStep('uio', {
+        init: function() {
+            result.tot += 1;
+            result.uio = [];
+            result.uio.push('init');
+        },
+        exit: function() {
+            result.tot += 1;
+            result.uio.push('exit');
+        }
+    });
 }
