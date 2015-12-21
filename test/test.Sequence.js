@@ -812,73 +812,70 @@ function testStageAndStepBlocks() {
     it('should have called the three steps in right order', function() {
         var sum = 0;
 
-        //             result['step 1.2'].forEach(function(i) {
-        //                 if (i !== 4) should.fail();
-        //                 sum = sum + i;
-        //             });
-        //             sum.should.be.eql(400);
-        //             sum = 0;
-        //             result['step 1.3'].forEach(function(i) {
-        //                 if (i !== 5) should.fail();
-        //                 sum = sum + i;
-        //             });
-        //             sum.should.be.eql(500);
-        //             sum = 0;
-        //
-        //             result['step 1.4'].forEach(function(i) {
-        //                 if (i !== 6) should.fail();
-        //                 sum = sum + i;
-        //             });
-        //             sum.should.be.eql(600);
-        //             sum = 0;
-        //             result['step 1.5'].forEach(function(i) {
-        //                 if (i !== 7) should.fail();
-        //                 sum = sum + i;
-        //             });
-        //             sum.should.be.eql(700);
-        //             sum = 0;
-        //
-        //
-        //             result['step 1.1'].forEach(function(i) {
-        //                 if (i !== 8) should.fail();
-        //                 sum = sum + i;
-        //             });
-        //             sum.should.be.eql(800);
-        //             sum = 0;
-        //
-        //             result['stage 2'].forEach(function(i) {
-        //                 if (i !== 1 && i !== 0) should.fail();
-        //                 sum = sum + i;
-        //             });
-        //             // 50% in position 0, 50$ in position 1.
-        //             sum.should.be.within(20,80);
-        //             sum = 0;
-        //
-        //             console.log(result['step 3.1']);
-        //             console.log(result['step 3.2']);
-        //
-        //             result['step 3.1'].forEach(function(i) {
-        //                 if (i !== 2 && i !== 3) should.fail();
-        //                 sum = sum + i;
-        //             });
-        //             // 50% in position 3, 50% in 2.
-        //             sum.should.be.within(220, 280);
-        //             sum = 0;
-        //             result['step 3.2'].forEach(function(i) {
-        //                 if (i !== 2 && i !== 3) should.fail();
-        //                 sum = sum + i;
-        //             });
-        //             // 50% in position 3, 50% in 2.
-        //             sum.should.be.within(220, 280);
-        //             sum = 0;
-        //
-        //             result['stage 4'].forEach(function(i) {
-        //                 if (i !== 0 && i !== 1) should.fail();
-        //                 sum = sum + i;
-        //             });
-        //             // 50% in position 0, 50$ in position 1.
-        //             sum.should.be.within(20,80);
-        //             sum = 0;
+        result['step 1.2'].forEach(function(i) {
+            if (i !== 4) should.fail();
+            sum = sum + i;
+        });
+        sum.should.be.eql(400);
+        sum = 0;
+        result['step 1.3'].forEach(function(i) {
+            if (i !== 5) should.fail();
+            sum = sum + i;
+        });
+        sum.should.be.eql(500);
+        sum = 0;
+
+        result['step 1.4'].forEach(function(i) {
+            if (i !== 6) should.fail();
+            sum = sum + i;
+        });
+        sum.should.be.eql(600);
+        sum = 0;
+        result['step 1.5'].forEach(function(i) {
+            if (i !== 7) should.fail();
+            sum = sum + i;
+        });
+        sum.should.be.eql(700);
+        sum = 0;
+
+
+        result['step 1.1'].forEach(function(i) {
+            if (i !== 8) should.fail();
+            sum = sum + i;
+        });
+        sum.should.be.eql(800);
+        sum = 0;
+
+        result['stage 2'].forEach(function(i) {
+            if (i !== 1 && i !== 0) should.fail();
+            sum = sum + i;
+        });
+        // 50% in position 0, 50% in position 1.
+        sum.should.be.within(20,80);
+        sum = 0;
+
+        result['step 3.1'].forEach(function(i) {
+            if (i !== 2 && i !== 3) should.fail();
+            sum = sum + i;
+        });
+        // 50% in position 3, 50% in 2.
+        sum.should.be.within(220, 280);
+        sum = 0;
+        result['step 3.2'].forEach(function(i) {
+            if (i !== 2 && i !== 3) should.fail();
+            sum = sum + i;
+        });
+        // 50% in position 3, 50% in 2.
+        sum.should.be.within(220, 280);
+        sum = 0;
+
+        result['stage 4'].forEach(function(i) {
+            if (i !== 0 && i !== 1) should.fail();
+            sum = sum + i;
+        });
+        // 50% in position 0, 50% in position 1.
+        sum.should.be.within(20,80);
+        sum = 0;
 
     });
 }
