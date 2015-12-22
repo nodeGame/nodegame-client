@@ -155,6 +155,43 @@ describe('EventEmitterManager', function() {
         });
     });
 
+    describe('#emitAsync', function() {
+        it('should emit events asynchronously on all event emitters',
+           function(done) {
+               var a, b, complete;
+               b = [];
+               complete = function(who) {
+                   b.push(who);
+                   if (b.length === 4) {
+                       b.should.eql(['ng', 'game', 'stage', 'step']);
+                       done();
+                   }
+               };
+               eem.stage.on('D', function(value) {
+                   a.should.be.eql(1);
+                   value.should.be.true;
+                   complete('stage');
+               });
+               eem.step.on('D', function(value) {
+                   a.should.be.eql(1);
+                   value.should.be.true;
+                   complete('step');
+               });
+               eem.game.on('D', function(value) {
+                   a.should.be.eql(1);
+                   value.should.be.true;
+                   complete('game');
+               });
+               eem.ng.on('D', function(value) {
+                   a.should.be.eql(1);
+                   value.should.be.true;
+                   complete('ng');
+               });
+               eem.emitAsync('D', true);
+               a = 1;
+           });
+    });
+
 });
 
 
