@@ -520,8 +520,14 @@ Don't need the extra array object.</p>
     <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="kd">function</span> <span class="nx">g</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">args</span><span class="p">;</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="p">}</span>
             <span class="nx">that</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
-            <span class="nx">listener</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+            <span class="nx">listener</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
     <span class="p">};</span>
@@ -1094,8 +1100,9 @@ because array size has changed.</p>
         <span class="nx">totalLen</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">totalLen</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+                <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
                 <span class="nx">str</span> <span class="o">+=</span> <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">len</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
+                <span class="nx">totalLen</span> <span class="o">+=</span> <span class="nx">len</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;] &#39;</span> <span class="o">+</span> <span class="nx">totalLen</span> <span class="o">+</span> <span class="s1">&#39; listener/s.&#39;</span><span class="p">);</span>
