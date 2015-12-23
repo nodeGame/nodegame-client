@@ -560,6 +560,143 @@ describe('Registering events', function() {
            });
     });
 
+   describe('registering events in callback of single step', function() {
+        before(function() {
+            node = ngc.getClient();
+            stager = ngc.getStager();
+            stager.next('1');
+            stager.next('2');
+            stager.step({
+                id: '2.1',
+                cb: function() {
+                    node.on('A', function() {
+                        tmp.events.push('stage-init-A');
+                    });
+                    node.on('B', function() {
+                        tmp.events.push('stage-init-B');
+                    });
+                }
+            });
+            stager.next('3');
+
+        });
+
+        it('should not add the event listeners when the game is initialized',
+           function() {
+               game = initGame(node, stager);
+               node.events.ng.size().should.eql(tmp.defaultEvents);
+               node.events.game.size().should.eql(0);
+               node.events.stage.size().should.eql(0);
+               node.events.step.size().should.eql(0);
+           });
+
+        it('should not add the event listeners when stage 1 is run',
+           function() {
+               game.step();
+               node.events.ng.size().should.eql(tmp.defaultEvents);
+               node.events.game.size().should.eql(0);
+               node.events.stage.size().should.eql(0);
+               node.events.step.size().should.eql(0);
+           });
+
+        it('should add the event listeners when the step 2.1 is run',
+           function() {
+               game.step();
+               node.events.ng.size().should.eql(tmp.defaultEvents);
+               node.events.game.size().should.eql(0);
+               node.events.stage.size().should.eql(0);
+               node.events.step.size().should.eql(2);
+           });
+
+        it('should remove  the event listeners when stage 3 is run',
+           function() {
+               game.step();
+               node.events.ng.size().should.eql(tmp.defaultEvents);
+               node.events.game.size().should.eql(0);
+               node.events.stage.size().should.eql(0);
+               node.events.step.size().should.eql(0);
+           });
+    });
+
+    describe('registering events in callback function of step 2.2', function() {
+        before(function() {
+            node = ngc.getClient();
+            stager = ngc.getStager();
+            stager.next('1');
+            stager.next('2');
+            stager.step('1.1');
+            stager.step({
+                id: '2.2',
+                cb: function() {
+                    node.on('A', function() {
+                        tmp.events.push('stage-init-A');
+                    });
+                    node.on('B', function() {
+                        tmp.events.push('stage-init-B');
+                    });
+                }
+            });
+            stager.step('2.3');
+            stager.next('3');
+
+        });
+
+        it('should not add the event listeners when the game is initialized',
+           function() {
+               game = initGame(node, stager);
+               node.events.ng.size().should.eql(tmp.defaultEvents);
+               node.events.game.size().should.eql(0);
+               node.events.stage.size().should.eql(0);
+               node.events.step.size().should.eql(0);
+           });
+
+        it('should not add the event listeners when stage 1 is run',
+           function() {
+               game.step();
+               node.events.ng.size().should.eql(tmp.defaultEvents);
+               node.events.game.size().should.eql(0);
+               node.events.stage.size().should.eql(0);
+               node.events.step.size().should.eql(0);
+           });
+
+        it('should not add the event listeners when the stage 2.1 is run',
+           function() {
+               game.step();
+               node.events.ng.size().should.eql(tmp.defaultEvents);
+               node.events.game.size().should.eql(0);
+               node.events.stage.size().should.eql(0);
+               node.events.step.size().should.eql(0);
+           });
+
+        it('should add the event listeners when the stage 2.2 is run',
+           function() {
+               game.step();
+               node.events.ng.size().should.eql(tmp.defaultEvents);
+               node.events.game.size().should.eql(0);
+               node.events.stage.size().should.eql(0);
+               node.events.step.size().should.eql(2);
+           });
+
+        it('should remove the event listeners when the stage 2.3 is run',
+           function() {
+               game.step();
+               node.events.ng.size().should.eql(tmp.defaultEvents);
+               node.events.game.size().should.eql(0);
+               node.events.stage.size().should.eql(0);
+               node.events.step.size().should.eql(0);
+           });
+
+
+        it('should not add the event listeners when stage 3 is run',
+           function() {
+               game.step();
+               node.events.ng.size().should.eql(tmp.defaultEvents);
+               node.events.game.size().should.eql(0);
+               node.events.stage.size().should.eql(0);
+               node.events.step.size().should.eql(0);
+           });
+    });
+
 });
 
 
