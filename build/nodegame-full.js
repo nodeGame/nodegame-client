@@ -9873,7 +9873,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '0.9.10';
+    node.version = '1.0.0';
 
 })(window);
 
@@ -13964,11 +13964,12 @@ if (!Array.prototype.indexOf) {
 
         options.id = id || J.uniqueKey(that.blocksIds, type);
         options.type = type;
+        options.positions = positions;
 
         that.currentBlockType = type2;
 
         // Create the new block, and add it block arrays.
-        block = new node.Block(positions, options);
+        block = new node.Block(options);
         that.unfinishedBlocks.push(block);
         that.blocks.push(block);
 
@@ -14144,7 +14145,23 @@ if (!Array.prototype.indexOf) {
  * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
- * Block structure to contain stages and steps of the game sequence.
+ * Blocks contain items that can be sorted in the sequence.
+ *
+ * Blocks can also contains other block as items, and in this case all
+ * items are sorted recursevely.
+ *
+ * Each item must contain a id (unique within the block), and a type parameter.
+ * Optionally, a `positions` parameter, controlling the positions that the item
+ * can take in the sequence, can be be passed along.
+ *
+ * Items is encapsulated in objects of the type:
+ *
+ * { item: item, positions: positions }
+ *
+ * and added to the unfinishedItems array.
+ *
+ * When the finalized method is called, items are sorted according to the
+ * `positions` parameter and moved into the items array.
  */
 (function(exports, parent) {
 
@@ -14180,12 +14197,24 @@ if (!Array.prototype.indexOf) {
      *
      * Creates a new instance of Block
      *
-     * @param {string} positions Optional. Positions within the
-     *      enclosing Block that this block can occupy
-     * @param {object} options Optional. Configuration object
+     * @param {object} options Configuration object
      */
-    function Block(positions, options) {
-        options = options || {};
+    function Block(options) {
+
+        if ('object' !== typeof options) {
+            throw new TypeError('Block constructor: options must be object: ' +
+                                options);
+        }
+
+        if ('string' !== typeof options.type || options.type.trim() === '') {
+            throw new TypeError('Block constructor: options.type must ' +
+                                'be a non-empty string: ' + options.type);
+        }
+
+        if ('string' !== typeof options.id || options.id.trim() === '') {
+            throw new TypeError('Block constructor: options.id must ' +
+                                'be a non-empty string: ' + options.id);
+        }
 
         // ### Properties
 
@@ -14208,8 +14237,8 @@ if (!Array.prototype.indexOf) {
          *
          * Positions in the enclosing Block that this block can occupy
          */
-        this.positions = 'undefined' !== typeof positions ?
-            positions : 'linear';
+        this.positions = 'undefined' !== typeof options.positions ?
+            options.positions : 'linear';
 
         /**
          * #### Block.takenPositions
@@ -14289,9 +14318,17 @@ if (!Array.prototype.indexOf) {
                                 'must be string: ' + item.id || 'undefined.');
         }
         if ('string' !== typeof item.type) {
-            throw new TypeError('Block.add: block ' + this.id + ': item type ' +
-                                'must be string: ' + item.type || 'undefined.');
+            throw new TypeError('Block.add: block ' + this.id +
+                                ': item type must be string: ' +
+                                item.type || 'undefined.');
         }
+
+        if (this.itemsIds[item.id]) {
+            throw new TypeError('Block.add: block ' + this.id +
+                                ': item was already added to block: ' +
+                                item.id + '.');
+        }
+
 
         // We cannot set the position as a number here,
         // because it might change with future modifications of
@@ -14569,9 +14606,10 @@ if (!Array.prototype.indexOf) {
      */
     Block.prototype.clone = function() {
         var block;
-        block = new Block();
-        block.type = this.type;
-        block.id = this.id;
+        block = new Block({
+            type: this.type,
+            id: this.id
+        });
         block.positions = J.clone(this.positions);
         block.takenPositions = J.clone(this.takenPositions);
         block.items = J.clone(this.items);
@@ -15705,6 +15743,8 @@ if (!Array.prototype.indexOf) {
                                 'but a step with the same id already ' +
                                 'exists: ', id);
             }
+            // Add default callback, if missing.
+            if (!step.cb) step.cb = that.getDefaultCallback();
         }
         else if ('string' === typeof step) {
             id = step;
@@ -16775,7 +16815,6 @@ if (!Array.prototype.indexOf) {
             }
         }
     }
-
 
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -18822,13 +18861,6 @@ if (!Array.prototype.indexOf) {
                 if (nextStageObj.hasOwnProperty('init')) {
                     nextStageObj.init.call(node.game);
                 }
-
-                // Load the listeners for the stage, if any:
-                for (ev in nextStageObj.on) {
-                    if (nextStageObj.on.hasOwnProperty(ev)) {
-                        node.events.ee.stage.on(ev, nextStageObj.on[ev]);
-                    }
-                }
             }
             else {
                 // TODO: avoid duplication.
@@ -18979,13 +19011,6 @@ if (!Array.prototype.indexOf) {
             else {
                 // Set bounds-checking function:
                 this.checkPlistSize = function() { return true; };
-            }
-
-            // Load the listeners for the step, if any:
-            for (ev in nextStepObj.on) {
-                if (nextStepObj.on.hasOwnProperty(ev)) {
-                    node.events.ee.step.on(ev, nextStepObj.on[ev]);
-                }
             }
 
             // Emit buffered messages:
