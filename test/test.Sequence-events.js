@@ -8,14 +8,35 @@ var GamePlot = ngc.GamePlot;
 var Stager = ngc.Stager;
 var J = ngc.JSUS;
 
-var result, tmp, node, stager;
+var result, tmp, node, stager, game;
 
 node = ngc.getClient();
 stager = ngc.getStager();
 tmp = {};
 tmp.events = [];
 
+// node = ngc.getClient();
+// stager = ngc.getStager();
+// stager.next('1');
+// stager.next({
+//     id: '2',
+//     exit: function() {
+//         node.on('A', function() {
+//             tmp.events.push('stage-init-A');
+//         });
+//         node.on('B', function() {
+//             tmp.events.push('stage-init-B');
+//         });
+//     }
+// });
+// stager.next('3');
+//
+// game = initGame(node, stager);
+// game.step();
 
+// game.step();
+// game.step();
+// return;
 
 describe('Registering events', function() {
 
@@ -104,6 +125,72 @@ describe('Registering events', function() {
                 node.events.ng.size().should.eql(tmp.defaultEvents);
                 node.events.game.size().should.eql(0);
                 node.events.stage.size().should.eql(2);
+                node.events.step.size().should.eql(0);
+            });
+
+         it('should remove the event listeners when the stage 3 is run',
+            function() {
+                game.step();
+                node.events.ng.size().should.eql(tmp.defaultEvents);
+                node.events.game.size().should.eql(0);
+                node.events.stage.size().should.eql(0);
+                node.events.step.size().should.eql(0);
+            });
+     });
+
+   describe('registering events in the exit function of stage 2', function() {
+         before(function() {
+             node = ngc.getClient();
+             stager = ngc.getStager();
+             stager.next('1');
+             stager.next({
+                 id: '2',
+                 exit: function() {
+                     node.on('A', function() {
+                         tmp.events.push('stage-init-A');
+                     });
+                     node.on('B', function() {
+                         tmp.events.push('stage-init-B');
+                     });
+                 }
+             });
+             stager.next('3');
+
+         });
+
+         it('should not add the event listeners when the game is initialized',
+            function() {
+                game = initGame(node, stager);
+                node.events.ng.size().should.eql(tmp.defaultEvents);
+                node.events.game.size().should.eql(0);
+                node.events.stage.size().should.eql(0);
+                node.events.step.size().should.eql(0);
+            });
+
+         it('should not add the event listeners when stage 1 is run',
+            function() {
+                game.step();
+                node.events.ng.size().should.eql(tmp.defaultEvents);
+                node.events.game.size().should.eql(0);
+                node.events.stage.size().should.eql(0);
+                node.events.step.size().should.eql(0);
+            });
+
+         it('should not add the event listeners when the stage 2 is run',
+            function() {
+                game.step();
+                node.events.ng.size().should.eql(tmp.defaultEvents);
+                node.events.game.size().should.eql(0);
+                node.events.stage.size().should.eql(0);
+                node.events.step.size().should.eql(0);
+            });
+
+         it('should not add the event listeners when the stage 3 is run',
+            function() {
+                game.step();
+                node.events.ng.size().should.eql(tmp.defaultEvents);
+                node.events.game.size().should.eql(0);
+                node.events.stage.size().should.eql(0);
                 node.events.step.size().should.eql(0);
             });
      });
