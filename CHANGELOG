@@ -53,6 +53,8 @@
  - Removed `node.fs` object. Developers should use native NDDB methods to save to csv format.
  - `#Stager.loop()` and `#Stager.doLoop()` must have a loop function, no default provided.
  - `#node.setLanguage() takes a second parameter to automatically set W.setUriPrefix to node.lang.path.
+ - Removed property .on from stages and steps.
+ - Added property .exit in stages and steps. It is a callback that is executed before entering the next stage/step.
 
 
 ## 0.9.9
