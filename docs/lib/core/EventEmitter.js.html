@@ -100,7 +100,7 @@
         <a href="#eventemittermanager.remove">EventEmitterManager.remove</a>
       </div>
       <div class="heading h3">
-        <a href="#eventemittermanager.remove">EventEmitterManager.remove</a>
+        <a href="#eventemittermanager.printall">EventEmitterManager.printAll</a>
       </div>
       <div class="heading h3">
         <a href="#eventemittermanager.getall">EventEmitterManager.getAll</a>
@@ -110,6 +110,9 @@
       </div>
       <div class="heading h3">
         <a href="#eventemittermanager.setrecordchanges">EventEmitterManager.setRecordChanges</a>
+      </div>
+      <div class="heading h3">
+        <a href="#eventemittermanager.size">EventEmitterManager.size</a>
       </div>
       <div class="heading h2">
         <a href="#eventhistory%20constructor">EventHistory constructor</a>
@@ -1701,15 +1704,15 @@ res[0] is either undefined or some value.</p>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
-      <span class="dox_type">boolean</span>
-      <span>TRUE if the listener was found and removed</span>
+      <span class="dox_type">object</span>
+      <span>Object containing removed listeners by event emitter</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">tmpRes</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">res</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitterManager.remove: &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;eventName must be string.&#39;</span><span class="p">);</span>
@@ -1720,16 +1723,11 @@ res[0] is either undefined or some value.</p>
                                 <span class="s1">&#39;): listener must be function, string, or &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="nx">tmpRes</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
-        <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">||</span> <span class="o">!!</span><span class="nx">tmpRes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="nx">tmpRes</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
-        <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">||</span> <span class="o">!!</span><span class="nx">tmpRes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="nx">tmpRes</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
-        <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">||</span> <span class="o">!!</span><span class="nx">tmpRes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="nx">tmpRes</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
-        <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">||</span> <span class="o">!!</span><span class="nx">tmpRes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-
+        <span class="nx">res</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">ng</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">game</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">listener</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
     <span class="p">};</span>
 
@@ -1740,10 +1738,10 @@ res[0] is either undefined or some value.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="eventemittermanager.remove">
+<div class="pilwrap" id="eventemittermanager.printall">
   <h3>
-    <a href="#eventemittermanager.remove" name="eventemittermanager.remove" class="pilcrow">&#182;</a>
-    EventEmitterManager.remove
+    <a href="#eventemittermanager.printall" name="eventemittermanager.printall" class="pilcrow">&#182;</a>
+    EventEmitterManager.printAll
   </h3>
 </div>
 
@@ -1762,7 +1760,7 @@ res[0] is either undefined or some value.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">printAll</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eventEmitterName</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">total</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">total</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">eventEmitterName</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">eventEmitterName</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitterManager.printAll: &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;eventEmitterName must be string or &#39;</span> <span class="o">+</span>
@@ -1773,7 +1771,7 @@ res[0] is either undefined or some value.</p>
                                 <span class="s1">&#39;emitter not found: &#39;</span> <span class="o">+</span> <span class="nx">eventEmitterName</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">eventEmitterName</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">eventEmitterName</span><span class="p">].</span><span class="nx">printAll</span><span class="p">();</span>
+            <span class="nx">total</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ee</span><span class="p">[</span><span class="nx">eventEmitterName</span><span class="p">].</span><span class="nx">printAll</span><span class="p">();</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -1784,6 +1782,7 @@ res[0] is either undefined or some value.</p>
 
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Total number of registered listeners: &#39;</span> <span class="o">+</span> <span class="nx">total</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">total</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1954,6 +1953,56 @@ res[0] is either undefined or some value.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="eventemittermanager.size">
+  <h3>
+    <a href="#eventemittermanager.size" name="eventemittermanager.size" class="pilcrow">&#182;</a>
+    EventEmitterManager.size
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the number of registered events / event listeners</p>
+
+<p>Calls the <code>size</code> method of each event emitter.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">Optional.</span>
+      <span class="dox_type">mixed</span>
+      <span>Modifier controlling the return value</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">number</span>
+      <span>Total number of registered events / event listeners</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitter.size
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">EventEmitterManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">count</span><span class="p">;</span>
+        <span class="nx">count</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">mod</span><span class="p">);</span>
+        <span class="nx">count</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">mod</span><span class="p">);</span>
+        <span class="nx">count</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">mod</span><span class="p">);</span>
+        <span class="nx">count</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">mod</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">count</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="eventhistory%20constructor">
   <h2>
     <a href="#eventhistory%20constructor" name="eventhistory%20constructor" class="pilcrow">&#182;</a>
@@ -2054,7 +2103,7 @@ res[0] is either undefined or some value.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>cleaning up the events to remit
 TODO NDDB commands have changed, update</p>
@@ -2082,7 +2131,7 @@ TODO NDDB commands have changed, update</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>We have events that were fired at the stage when
 disconnection happened. Let's fire them again</p>

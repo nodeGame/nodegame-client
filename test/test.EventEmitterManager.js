@@ -59,19 +59,19 @@ describe('EventEmitterManager', function() {
                 result.A.push('game');
                 return 1 + (a || 0) + (b || 0);
             };
-            eem.ng.on('A', tmp.funcAgame);
+            eem.game.on('A', tmp.funcAgame);
 
             tmp.funcAstage =  function(a,b,c,d) {
                 result.A.push('stage');
                 return 1 + (a || 0) + (b || 0) + (c || 0);
             };
-            eem.ng.on('A', tmp.funcAstage);
+            eem.stage.on('A', tmp.funcAstage);
 
             tmp.funcAstep =  function(a,b,c,d) {
                 result.A.push('step');
                 return 1 + (a || 0) + (b || 0) + (c || 0) + (d || 0);
             };
-            eem.ng.on('A', tmp.funcAstep);
+            eem.step.on('A', tmp.funcAstep);
 
             result.emit = eem.emit('A');
         });
@@ -167,31 +167,129 @@ describe('EventEmitterManager', function() {
                        done();
                    }
                };
-               eem.stage.on('D', function(value) {
+
+               tmp.Dstage = function(value) {
                    a.should.be.eql(1);
                    value.should.be.true;
                    complete('stage');
-               });
-               eem.step.on('D', function(value) {
+               };
+               eem.stage.on('D', tmp.Dstage);
+
+               tmp.Dstep = function(value) {
                    a.should.be.eql(1);
                    value.should.be.true;
                    complete('step');
-               });
-               eem.game.on('D', function(value) {
+               };
+               eem.step.on('D', tmp.Dstep);
+
+               tmp.Dgame = function(value) {
                    a.should.be.eql(1);
                    value.should.be.true;
                    complete('game');
-               });
-               eem.ng.on('D', function(value) {
+               };
+               eem.game.on('D', tmp.Dgame);
+
+               tmp.Dng = function(value) {
                    a.should.be.eql(1);
                    value.should.be.true;
                    complete('ng');
-               });
+               };
+               eem.ng.on('D', tmp.Dng);
+
                eem.emitAsync('D', true);
                a = 1;
            });
     });
 
+    describe('#getChanges', function() {
+        it('should return the changes', function() {
+            var c = eem.getChanges();
+            J.isArray(c.ng.added).should.be.true;
+            J.isArray(c.ng.removed).should.be.true;
+            J.isArray(c.game.added).should.be.true;
+            J.isArray(c.game.removed).should.be.true;
+            J.isArray(c.stage.added).should.be.true;
+            J.isArray(c.stage.removed).should.be.true;
+            J.isArray(c.step.added).should.be.true;
+            J.isArray(c.step.removed).should.be.true;
+
+            c.ng.added.length.should.eql(2);
+            c.ng.removed.length.should.eql(0);
+            c.game.added.length.should.eql(2);
+            c.game.removed.length.should.eql(0);
+            c.stage.added.length.should.eql(2);
+            c.stage.removed.length.should.eql(0);
+            c.step.added.length.should.eql(2);
+            c.step.removed.length.should.eql(0);
+
+            c.ng.added[0].should.eql({type: 'A', listener: tmp.funcAng});
+            c.ng.added[1].should.eql({type: 'D', listener: tmp.Dng});
+            c.game.added[0].should.eql({type: 'A', listener: tmp.funcAgame});
+            c.game.added[1].should.eql({type: 'D', listener: tmp.Dgame});
+            c.stage.added[0].should.eql({type: 'A', listener: tmp.funcAstage});
+            c.stage.added[1].should.eql({type: 'D', listener: tmp.Dstage});
+            c.step.added[0].should.eql({type: 'A', listener: tmp.funcAstep});
+            c.step.added[1].should.eql({type: 'D', listener: tmp.Dstep});
+
+        });
+    });
+
+    describe('#size', function() {
+        it('should return the total number of registered events', function() {
+            eem.size().should.eql(8);
+        });
+        it('should return the total number of registered event listeners',
+           function() {
+               eem.size(true).should.eql(8);
+        });
+        it('should return the total number of listeners for event D',
+           function() {
+               eem.size('D').should.eql(4);
+        });
+    });
+
+
+    describe('#remove', function() {
+        before(function() {
+            eem.ng.on('D', function() { console.log('D'); });
+        });
+        it('should remove all listeners for event A', function() {
+            eem.remove('A');
+            ('undefined' === typeof eem.ng.events.A).should.be.true;
+            ('undefined' === typeof eem.game.events.A).should.be.true;
+            ('undefined' === typeof eem.stage.events.A).should.be.true;
+            ('undefined' === typeof eem.step.events.A).should.be.true;
+        });
+        it('should removed one listener for event D - function', function() {
+            tmp.removedD = eem.remove('D', tmp.Dng);
+            eem.ng.events.D.length.should.eql(1);
+            eem.ng.events.D[0].should.not.eql(tmp.func4);
+            eem.game.events.D.length.should.eql(1);
+            eem.stage.events.D.length.should.eql(1);
+            eem.step.events.D.length.should.eql(1);
+        });
+        it('should return removed listener for event D - function', function() {
+            tmp.removedD.ng[0].should.eql(tmp.Dng);
+        });
+
+    });
+
+    describe('#printAll', function() {
+        it('should return the number of all events registered', function() {
+            eem.printAll().should.be.eql(4);
+        });
+    });
+
+    describe('#getAll', function() {
+        it('should return an object with of all events registered', function() {
+            var o = eem.getAll();
+            o.should.be.Object();
+            o.ng.D.should.be.Object();
+            o.game.should.eql({ D: tmp.Dgame});
+            o.stage.should.eql({ D: tmp.Dstage});
+            o.step.should.eql({ D: tmp.Dstep});
+        });
+    });
 });
 
 
