@@ -1423,6 +1423,19 @@ whether the stage name is unique, the steps exists, etc.</p>
                                 <span class="s1">&#39;but a step with the same id already &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;exists: &#39;</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
             <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+</div>
+<p>Add default callback, if missing.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">step</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">step</span><span class="p">.</span><span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getDefaultCallback</span><span class="p">();</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">id</span> <span class="o">=</span> <span class="nx">step</span><span class="p">;</span>
@@ -1443,7 +1456,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>A new step is created if not found (performs validation).</p>
         </td>
@@ -1522,7 +1535,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Check only if it is already existing
 (type checking is done later).</p>
@@ -1541,7 +1554,7 @@ whether the stage name is unique, the steps exists, etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>If both cb and steps are missing, adds steps array,
 and create new step, if necessary.</p>
@@ -1560,7 +1573,7 @@ and create new step, if necessary.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>If a cb property is present create a new step with that cb.
 If a step with same id is already existing, raise an error.</p>
@@ -1587,7 +1600,7 @@ If a step with same id is already existing, raise an error.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>See whether the stage id contains an alias. Throws errors.</p>
         </td>
@@ -1602,7 +1615,7 @@ If a step with same id is already existing, raise an error.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Alias must reference an existing stage (checked before).</p>
         </td>
@@ -1618,7 +1631,7 @@ If a step with same id is already existing, raise an error.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Add the step if not existing and flag it as default.</p>
         </td>
