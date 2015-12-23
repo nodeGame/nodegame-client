@@ -501,7 +501,6 @@ describe('Registering events', function() {
            });
     });
 
-
    describe('registering events in exit function of single step', function() {
         before(function() {
             node = ngc.getClient();
