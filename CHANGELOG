@@ -1,6 +1,6 @@
 # nodegame-client change log
 
-## 0.9.10
+## 1.0.0
 
  - Enhanced stager, builds blocks and randomize blocks, stages, and steps.
  - Optimized EventEmitter.
