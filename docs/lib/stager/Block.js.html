@@ -211,15 +211,9 @@ The stager class will be added later.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">positions</span>
-      <span class="dox_type">string</span>
-      <span>Optional. Positions within the
-     enclosing Block that this block can occupy</span>
-    </div>
-    <div class="dox_tag_detail">
       <span class="dox_tag_name">options</span>
       <span class="dox_type">object</span>
-      <span>Optional. Configuration object</span>
+      <span>Configuration object</span>
     </div>
   </div>
 </div>
@@ -232,14 +226,14 @@ The stager class will be added later.</p>
                                 <span class="nx">options</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span> <span class="o">||</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Block constructor: options.type must &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;be string: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+                                <span class="s1">&#39;be a non-empty string: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Block constructor: options.id must &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;be string: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+                                <span class="s1">&#39;be a non-empty string: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
         <span class="p">}</span>
 
 
@@ -552,8 +546,9 @@ The stager class will be added later.</p>
                                 <span class="s1">&#39;must be string: &#39;</span> <span class="o">+</span> <span class="nx">item</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">item</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Block.add: block &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;: item type &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;must be string: &#39;</span> <span class="o">+</span> <span class="nx">item</span><span class="p">.</span><span class="nx">type</span> <span class="o">||</span> <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Block.add: block &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span>
+                                <span class="s1">&#39;: item type must be string: &#39;</span> <span class="o">+</span>
+                                <span class="nx">item</span><span class="p">.</span><span class="nx">type</span> <span class="o">||</span> <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
 
