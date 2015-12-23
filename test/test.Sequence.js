@@ -935,6 +935,7 @@ function testPositions(stager, len, debug) {
     return result;
 }
 
+// Other test functions.
 
 function checkExitInitStages() {
     it('should have called init and exit functions', function() {

@@ -78,12 +78,6 @@ describe('Stager', function() {
             (function() {
                 stager.next({
                     id: 'a',
-                    steps: null
-                });
-            }).should.throw();
-            (function() {
-                stager.next({
-                    id: 'a',
                     steps: 'ah'
                 });
             }).should.throw();
