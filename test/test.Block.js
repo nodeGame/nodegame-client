@@ -53,8 +53,49 @@ describe('#Block', function() {
     });
 
     describe('#add', function() {
-        it('should have removed default step from stage 1', function() {
-            // typeof(result['stage 1'] + '').should.eql('undefined');
+        before(function() {
+            block = new Block({
+                id: 'myblock',
+                type: 'mytype'
+            });
+        });
+        it('should add item to the block with default position', function() {
+            var item = {id: 'foo', type: 'bar'};
+            block.add(item);
+            block.unfinishedItems[0].should.eql({
+                positions: 'linear',
+                item: item
+            });
+        });
+        it('should add item to the block with specific position', function() {
+            var item = {id: 'foo1', type: 'bar1'};
+            block.add(item, '1');
+            block.unfinishedItems[1].should.eql({
+                positions: '1',
+                item: item
+            });
+        });
+        it('should fail if parameters are not correct', function() {
+            (function() {
+                block.add({
+                    id: null,
+                    type: 'aa'
+                });
+            }).should.throw();
+            (function() {
+                block.add({
+                    id: 'aa',
+                    type: 1
+                });
+            }).should.throw();
+        });
+        it('should fail if an item with same id was already added', function() {
+            (function() {
+                block.add({
+                    id: 'foo',
+                    type: 'aa'
+                });
+            }).should.throw();
         });
     });
 });
