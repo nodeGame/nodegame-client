@@ -68,6 +68,15 @@ describe('Stager', function() {
                 });
             }).should.throw();
         });
+        it('if stage cb is defined, but step with same id exists', function() {
+            (function() {
+                stager.addStep({ id: 'a', cb: function() {}});
+                stager.next({
+                    id: 'a',
+                    cb: function() {}
+                });
+            }).should.throw();
+        });
         it('if stage steps is not a non-empty array', function() {
             (function() {
                 stager.next({

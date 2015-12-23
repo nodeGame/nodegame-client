@@ -54,6 +54,9 @@ describe('Registering events', function() {
          it('should add event listeners to the ng event emitter', function() {
             node.events.game.size().should.eql(2);
          });
+         it('should add event listeners to the ng event emitter', function() {
+            node.events.game.size().should.eql(2);
+         });
      });
 
 
@@ -73,6 +76,7 @@ describe('Registering events', function() {
                      });
                  }
              });
+             stager.next('3');
 
          });
 
@@ -98,8 +102,8 @@ describe('Registering events', function() {
             function() {
                 game.step();
                 node.events.ng.size().should.eql(tmp.defaultEvents);
-                node.events.game.size().should.eql(2);
-                node.events.stage.size().should.eql(0);
+                node.events.game.size().should.eql(0);
+                node.events.stage.size().should.eql(2);
                 node.events.step.size().should.eql(0);
             });
      });

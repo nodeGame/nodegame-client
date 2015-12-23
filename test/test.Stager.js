@@ -326,9 +326,9 @@ describe('Stager', function() {
         it('should create 2 new blocks', function() {
             stager.blocks.length.should.eql(3);
         });
-        it('should keep extra properties of the step', function() {
-            stager.steps['stage 1'].a.should.eql(1);
-            stager.steps['stage 1'].b.should.eql(2);
+        it('should add extra properties to the stage', function() {
+            stager.stages['stage 1'].a.should.eql(1);
+            stager.stages['stage 1'].b.should.eql(2);
         });
         it('should have empty sequence', function() {
             stager.sequence.length.should.eql(0);

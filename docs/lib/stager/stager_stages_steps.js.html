@@ -1543,15 +1543,16 @@ whether the stage name is unique, the steps exists, etc.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
-<p>If both cb and steps are missing, adds the default cb
-or link to an existing step with the same name.</p>
+<p>If both cb and steps are missing, adds steps array,
+and create new step, if necessary.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">id</span> <span class="p">];</span>
-                <span class="k">else</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getDefaultCb</span><span class="p">();</span>
+                <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">id</span> <span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="nx">that</span><span class="p">.</span><span class="nx">addStep</span><span class="p">({</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">cb</span><span class="o">:</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getDefaultCb</span><span class="p">()</span> <span class="p">});</span>
+                <span class="p">}</span>
             <span class="p">}</span>
-
 
 </pre></div>
         </td>
@@ -1561,12 +1562,19 @@ or link to an existing step with the same name.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
-<p>It's a step.</p>
+<p>If a cb property is present create a new step with that cb.
+If a step with same id is already existing, raise an error.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="nx">that</span><span class="p">.</span><span class="nx">addStep</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
-                <span class="nx">stage</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">steps</span><span class="o">:</span> <span class="p">[</span> <span class="nx">id</span> <span class="p">]</span> <span class="p">};</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: stage has &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;cb property, but a step with the same &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;id is already defined: &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">addStep</span><span class="p">({</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">cb</span><span class="o">:</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span> <span class="p">});</span>
+                <span class="k">delete</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">cb</span><span class="p">;</span>
+                <span class="nx">stage</span><span class="p">.</span><span class="nx">steps</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">id</span> <span class="p">];</span>
             <span class="p">}</span>
             <span class="nx">that</span><span class="p">.</span><span class="nx">addStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
         <span class="p">}</span>
