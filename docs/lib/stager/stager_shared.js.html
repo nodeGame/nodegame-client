@@ -73,6 +73,9 @@
         <a href="#makedefaultstep">makeDefaultStep</a>
       </div>
       <div class="heading h4">
+        <a href="#unmakedefaultstep">unmakeDefaultStep</a>
+      </div>
+      <div class="heading h4">
         <a href="#isdefaultstep">isDefaultStep</a>
       </div>
     </div>
@@ -303,6 +306,7 @@ MIT Licensed</p>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">isDefaultCb</span> <span class="o">=</span> <span class="nx">isDefaultCb</span><span class="p">;</span>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">isDefaultStep</span> <span class="o">=</span> <span class="nx">isDefaultStep</span><span class="p">;</span>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">makeDefaultStep</span> <span class="o">=</span> <span class="nx">makeDefaultStep</span><span class="p">;</span>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">unmakeDefaultStep</span> <span class="o">=</span> <span class="nx">unmakeDefaultStep</span><span class="p">;</span>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">addStepToBlock</span> <span class="o">=</span> <span class="nx">addStepToBlock</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">BLOCK_DEFAULT</span>     <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_DEFAULT</span><span class="p">;</span>
@@ -903,11 +907,15 @@ different things.</p>
       <span>The step object to mark. If a string
   is passed, a new step object with default cb is created.</span>
     </div>
+    <div class="dox_tag_title"></div>
+    <div class="dox_tag_detail">
+      <span>param {function} cb Optional A function to create the step cb</span>
+    </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
-      <span class="dox_type">function</span>
-      <span>A function flagged as <code>default</code></span>
+      <span class="dox_type">object</span>
+      <span>step the step flagged as <code>default</code></span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -930,6 +938,54 @@ different things.</p>
             <span class="p">};</span>
         <span class="p">}</span>
         <span class="nx">step</span><span class="p">.</span><span class="nx">_defaultStep</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">step</span><span class="p">;</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="unmakedefaultstep">
+  <h4>
+    <a href="#unmakedefaultstep" name="unmakedefaultstep" class="pilcrow">&#182;</a>
+    unmakeDefaultStep
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Removes the flag from a step marked as <code>default</code></p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">step</span>
+      <span class="dox_type">object</span>
+      <span>The step object to unmark.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>step the step without the <code>default</code> flag</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">makeDefaultDefaultStep</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">isDefaultStep
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">unmakeDefaultStep</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">step</span><span class="p">.</span><span class="nx">_defaultStep</span><span class="p">)</span> <span class="nx">step</span><span class="p">.</span><span class="nx">_defaultStep</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">step</span><span class="p">;</span>
     <span class="p">}</span>
 
