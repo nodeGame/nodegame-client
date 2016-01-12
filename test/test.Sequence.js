@@ -10,6 +10,10 @@ var J = ngc.JSUS;
 
 var result, tmp;
 var stager = new Stager();
+var loopCb, flag;
+
+// For loops, because the loop function might be evaluated multiple times.
+var testNext = false;
 
 describe('Moving through the sequence', function() {
 
@@ -550,6 +554,42 @@ describe('Moving through the sequence', function() {
 
     });
 
+    describe('loop and doLoop', function() {
+        before(function() {
+
+            stager = ngc.getStager();
+
+            tmp = { loops: [], counter: 1 };
+
+            loopCb = function() {
+                var res;
+                res = !!!flag;
+                // Not an actual update, just checking via test infrastructure.
+                if (!testNext) {
+                    tmp.loops.push([ this.getCurrentStepObj().id, res ]);
+                }
+                return res;
+            };
+
+            stager
+                .next('1')
+                .loop({
+                    id: '2',
+                    cb: function() {
+                        if (tmp.counter++ >= 3) flag = true;
+                    }
+                }, loopCb)
+                .loop('skipped', loopCb)
+                .next('3')
+                .doLoop('4', loopCb)
+                .next('5');
+
+            result = testPositions(stager, 1);
+        });
+
+        testLoop();
+    });
+
 
     describe('#next: stage and steps blocks', function() {
         before(function() {
@@ -726,7 +766,7 @@ function test3fixed() {
         result['stage 3'].length.should.eql(100);
     });
 
-    it('should have called the three in the right order', function() {
+    it('should have called the three steps in the right order', function() {
         var sum = 0;
         result['stage 1'].forEach(function(i) { sum = sum + i; });
         sum.should.eql(0);
@@ -751,7 +791,7 @@ function test2variable1fixed() {
         result['stage 3'].length.should.eql(100);
     });
 
-    it('should have called the three in the right order', function() {
+    it('should have called the three steps in the right order', function() {
         var sum = 0;
         result['stage 1'].forEach(function(i) {
             if (i !== 0 && i !== 2) should.fail();
@@ -773,6 +813,36 @@ function test2variable1fixed() {
     });
 }
 
+
+function testLoop() {
+    it('should have called the five steps', function() {
+        J.isArray(result['1']).should.eql(true);
+        J.isArray(result['2']).should.eql(true);
+        J.isArray(result['3']).should.eql(true);
+        J.isArray(result['4']).should.eql(true);
+        J.isArray(result['5']).should.eql(true);
+    });
+    it('should have called the first loop three times', function() {
+        result['2'].length.should.eql(3);
+    });
+    it('should have called the doLoop once', function() {
+        result['4'].length.should.eql(1);
+    });
+    it('should have executed loop cb before entering the stage', function() {
+        tmp.loops[0].should.eql(['1', true]);
+    });
+    it('should have executed the loop callbacks with game context', function() {
+        tmp.loops[1].should.eql(['2', true]);
+        tmp.loops[2].should.eql(['2', true]);
+        tmp.loops[3].should.eql(['2', false]);
+    });
+    it('should have executed loop cb of skipped stage', function() {
+        tmp.loops[4].should.eql(['2', false]); // skipped
+    });
+    it('should have executed the loop callbacks with game context', function() {
+        tmp.loops[5].should.eql(['4', false]);
+    });
+}
 
 function testStageAndStepBlocks() {
 
@@ -919,7 +989,9 @@ function goThroughSteps(game, result) {
 function hasNextStep(game) {
     var curStep, nextStep;
     curStep = game.getCurrentGameStage();
+    testNext = true;
     nextStep = game.plot.next(curStep);
+    testNext = false;
     return nextStep !== GamePlot.GAMEOVER && nextStep !== GamePlot.END_SEQ;
 }
 

@@ -15,28 +15,29 @@ node.verbosity = -1000;
 var stager, plot, stagerState;
 var stepRule, globals, properties, init, gameover, done, stage;
 
-stager = ngc.getStager();
-
-stage = {
-    id: '3',
-    steps: ['step3-1', 'step3-2', 'step3-3']
-};
-
-stager.addStage(stage);
-
-stager
-    .next('1')
-    .next('2')
-    .repeat('3', 3)
-    .next('4')
-    .repeat('5', 5)
-    .finalize();
-
 module.exports = node;
 module.parent.exports = node;
 
 describe('GamePlot', function() {
+    before(function() {
 
+        stager = ngc.getStager();
+
+        stage = {
+            id: '3',
+            steps: ['step3-1', 'step3-2', 'step3-3']
+        };
+
+        stager.addStage(stage);
+
+        stager
+            .next('1')
+            .next('2')
+            .repeat('3', 3)
+            .next('4')
+            .repeat('5', 5)
+            .finalize();
+    });
 
     describe('#constructor', function() {
         before(function(){
@@ -157,21 +158,6 @@ describe('GamePlot', function() {
         });
 
     });
-
-//     describe('#get()', function() {
-//         it('should return 2.1.1', function() {
-//             stager.get('2.1.1').should.be.eql(stages[1]);
-//         });
-//     });
-//
-//     describe('#getProperty()', function() {
-//         it('should return 2.1.1', function() {
-//             stager.getProperty('2.1.1.', 'timer')
-//                 .should.be.eql(stages[1].timer);
-//         });
-//     });
-
-
 
 });
 
