@@ -568,7 +568,11 @@ this case it must be emitted last.</p>
 <p>If a <code>done</code> callback returns false, exit.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">doneCb</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">doneCb</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">doneCb</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">doneCb</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">))</span> <span class="p">{</span>
+
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Done callback failed!!!&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
 
 
 </pre></div>
