@@ -15,6 +15,53 @@ var loopCb, flag;
 // For loops, because the loop function might be evaluated multiple times.
 var testNext = false;
 
+// stager = ngc.getStager();
+//
+// tmp = { loops: [], counter: 1 };
+//
+// loopCb = function() {
+//     var res;
+//     res = !!!flag;
+//     // Not an actual update, just checking via test infrastructure.
+//     if (!testNext) {
+//         debugger
+//         tmp.loops.push([ this.getCurrentStepObj().id, res ]);
+//     }
+//     return res;
+// };
+//
+// stager
+//     .next('1')
+//     .loop({
+//         id: '2',
+//         cb: function() {
+//             if (tmp.counter++ >= 3) flag = true;
+//         }
+//     }, loopCb)
+//     .loop('skipped', loopCb)
+//     .next('3')
+//     .doLoop('4', loopCb)
+//     .next('5');
+//
+// stager.extendStage('2', {
+//     steps: [ '2', '2b', '2c' ]
+// });
+//
+// stager.extendStage('4', {
+//     steps: [ '4', '4b' ]
+// });
+// debugger
+//
+// stager.finalize();
+//
+// debugger
+//
+// result = testPositions(stager, 1);
+//
+// console.log(result);
+//
+//  return;
+
 describe('Moving through the sequence', function() {
 
     describe('#next: 3 fixed positions. Mode (A).', function() {
@@ -556,7 +603,7 @@ describe('Moving through the sequence', function() {
 
     describe('loop and doLoop', function() {
         before(function() {
-
+            result = {};
             stager = ngc.getStager();
 
             tmp = { loops: [], counter: 1 };
@@ -590,6 +637,50 @@ describe('Moving through the sequence', function() {
         testLoop();
     });
 
+    describe('loop and doLoop with nested steps', function() {
+        before(function() {
+            result = {};
+            stager = ngc.getStager();
+            flag = false;
+            tmp = { loops: [], counter: 1 };
+
+            loopCb = function() {
+                var res;
+                res = !!!flag;
+                // Not an actual update, just checking via test infrastructure.
+                if (!testNext) {
+                    tmp.loops.push([ this.getCurrentStepObj().id, res ]);
+                }
+                return res;
+            };
+
+            stager
+                .next('1')
+                .loop({
+                    id: '2',
+                    cb: function() {
+                        if (tmp.counter++ >= 3) flag = true;
+                    }
+                }, loopCb)
+                .loop('skipped', loopCb)
+                .next('3')
+                .doLoop('4', loopCb)
+                .next('5');
+
+            stager.extendStage('2', {
+                steps: [ '2', '2b', '2c' ]
+            });
+
+            stager.extendStage('4', {
+                steps: [ '4', '4b' ]
+            });
+
+            result = testPositions(stager, 1);
+
+        });
+
+        testLoop(true);
+    });
 
     describe('#next: stage and steps blocks', function() {
         before(function() {
@@ -813,35 +904,57 @@ function test2variable1fixed() {
     });
 }
 
-
-function testLoop() {
-    it('should have called the five steps', function() {
+function testLoop(nested) {
+    var nSteps;
+    nSteps = nested ? '8' : '5';
+    it('should have called the ' + nSteps + ' steps', function() {
         J.isArray(result['1']).should.eql(true);
         J.isArray(result['2']).should.eql(true);
         J.isArray(result['3']).should.eql(true);
         J.isArray(result['4']).should.eql(true);
         J.isArray(result['5']).should.eql(true);
+
+        if (!nested) return;
+
+        J.isArray(result['2b']).should.eql(true);
+        J.isArray(result['2c']).should.eql(true);
+        J.isArray(result['4b']).should.eql(true);
+
     });
-    it('should have called the first loop three times', function() {
-        result['2'].length.should.eql(3);
-    });
-    it('should have called the doLoop once', function() {
-        result['4'].length.should.eql(1);
-    });
-    it('should have executed loop cb before entering the stage', function() {
-        tmp.loops[0].should.eql(['1', true]);
-    });
-    it('should have executed the loop callbacks with game context', function() {
-        tmp.loops[1].should.eql(['2', true]);
-        tmp.loops[2].should.eql(['2', true]);
-        tmp.loops[3].should.eql(['2', false]);
-    });
-    it('should have executed loop cb of skipped stage', function() {
-        tmp.loops[4].should.eql(['2', false]); // skipped
-    });
-    it('should have executed the loop callbacks with game context', function() {
-        tmp.loops[5].should.eql(['4', false]);
-    });
+     it('should have called the first loop three times', function() {
+         result['2'].length.should.eql(3);
+         if (!nested) return;
+         result['2b'].length.should.eql(3);
+         result['2c'].length.should.eql(3);
+
+     });
+     it('should have called the doLoop once', function() {
+         result['4'].length.should.eql(1);
+         if (!nested) return;
+         result['4b'].length.should.eql(1);
+     });
+     it('should have executed loop cb before entering the stage', function() {
+         tmp.loops[0].should.eql(['1', true]);
+     });
+     it('should have executed the loop callbacks with game context',
+        function() {
+            var ctx;
+            ctx = nested ? '2c' : '2';
+            tmp.loops[1].should.eql([ctx, true]);
+            tmp.loops[2].should.eql([ctx, true]);
+            tmp.loops[3].should.eql([ctx, false]);
+     });
+     it('should have executed loop cb of skipped stage', function() {
+         var ctx;
+         ctx = nested ? '2c' : '2';
+         tmp.loops[4].should.eql([ctx, false]); // skipped
+     });
+     it('should have executed the doLoop callbacks with game context',
+        function() {
+            var ctx;
+            ctx = nested ? '4b' : '4';
+            tmp.loops[5].should.eql([ctx, false]);
+        });
 }
 
 function testStageAndStepBlocks() {
