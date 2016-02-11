@@ -69,7 +69,7 @@
     exports.Game = require('./lib/core/Game').Game;
 
     // Extra (to be tested)
-    exports.GroupManager = require('./lib/core/GroupManager').GroupManager;
+    // exports.GroupManager = require('./lib/core/GroupManager').GroupManager;
     exports.RoleMapper = require('./lib/core/RoleMapper').RoleMapper;
     exports.GameSession = require('./lib/core/Session').GameSession;
 

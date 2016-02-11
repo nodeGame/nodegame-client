@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Matcher.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../", thisFile = "lib/matcher/Matcher.js", defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#bot%20type%20implementation%20of%20the%20game%20stages">Bot type implementation of the game stages</a>
+      </div>
+      <div class="heading h2">
+        <a href="#http%3A%2F%2Fwww.nodegame.org">http://www.nodegame.org</a>
+      </div>
+      <div class="heading h2">
+        <a href="#helper%20methods.">Helper methods.</a>
+      </div>
+      <div class="heading h2">
+        <a href="#closure">Closure</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="bot%20type%20implementation%20of%20the%20game%20stages">
+  <h1>
+    <a href="#bot%20type%20implementation%20of%20the%20game%20stages" name="bot%20type%20implementation%20of%20the%20game%20stages" class="pilcrow">&#182;</a>
+    Bot type implementation of the game stages
+  </h1>
+</div>
+
+
+<p>Copyright(c) 2015 Stefano Balietti <a href="&#109;&#97;&#105;&#108;&#116;&#x6F;:&#115;&#98;&#x61;&#x6C;&#x69;&#x65;&#x74;&#116;&#105;&#x40;&#x65;&#x74;&#x68;z&#x2E;&#99;&#104;">&#115;&#98;&#x61;&#x6C;&#x69;&#x65;&#x74;&#116;&#105;&#x40;&#x65;&#x74;&#x68;z&#x2E;&#99;&#104;</a>
+MIT Licensed</p>
+  </div>
+  <div class="body">
+<div class="pilwrap" id="http%3A%2F%2Fwww.nodegame.org">
+  <h2>
+    <a href="#http%3A%2F%2Fwww.nodegame.org" name="http%3A%2F%2Fwww.nodegame.org" class="pilcrow">&#182;</a>
+    <a href='http://www.nodegame.org'>http://www.nodegame.org</a>
+  </h2>
+</div>
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Matcher</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">;</span>
+
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">randomAssigner</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="nx">ids</span><span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">linearAssigner</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">ids</span><span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="kd">function</span> <span class="nx">Matcher</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">matches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesById</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">ids</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">assignerCb</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">.</span><span class="nx">randomAssigner</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span> <span class="o">=</span> <span class="s1">&#39;bot&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">assignerCb</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">setAssignerCb</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">assignerCb</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">ids</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">ids</span><span class="p">);</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">assignIds</span><span class="p">();</span>
+    <span class="p">};</span>
+
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setMatches</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">matches</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">matches</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.setMatches: matches must be array.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matches</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setIds</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">ids</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.setIds: ids must be array.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">ids</span> <span class="o">=</span> <span class="nx">ids</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">assignIds</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">assignerCb</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ids</span><span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setAssignerCb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.setAssignerCb: cb must be function.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">assignerCb</span> <span class="o">=</span> <span class="nx">cb</span>
+    <span class="p">};</span>
+
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">match</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">lenI</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">,</span> <span class="nx">pair</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">matched</span><span class="p">,</span> <span class="nx">matchedId</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">m1</span><span class="p">,</span> <span class="nx">m2</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>Re-structure data in a more convenient structure,
+substituting absolute position of the matching with player ids.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenI</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="nx">matched</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenI</span><span class="p">);</span>
+        <span class="nx">matchedId</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenI</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lenI</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
+            <span class="nx">matched</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="nx">matchedId</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">id1</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">id2</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="nx">pair</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">];</span>
+                <span class="nx">id1</span> <span class="o">=</span> <span class="nx">importMatchItem</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span><span class="p">);</span>
+                <span class="nx">id2</span> <span class="o">=</span> <span class="nx">importMatchItem</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span><span class="p">)</span> <span class="nx">m1</span> <span class="o">=</span> <span class="nx">id2</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">id2</span><span class="p">)</span> <span class="nx">m2</span> <span class="o">=</span> <span class="nx">id1</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span><span class="p">;</span>
+                <span class="nx">matchedId</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">id1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">m1</span><span class="p">;</span>
+                <span class="nx">matchedId</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">id2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">m2</span><span class="p">;</span>
+                <span class="nx">matched</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">push</span><span class="p">([</span><span class="nx">m1</span><span class="p">,</span> <span class="nx">m2</span><span class="p">]);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>Substitute matching-structure.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span> <span class="o">=</span> <span class="nx">matched</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesById</span> <span class="o">=</span> <span class="nx">matchedId</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMatch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">nRows</span><span class="p">,</span> <span class="nx">nCols</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>Check both x and y.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: cannot specify y without x.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>Check x.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">x</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: x must be number &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: x cannot be negative&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">nRows</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">nRows</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+
+        <span class="nx">nCols</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">[</span><span class="nx">x</span><span class="p">].</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">y</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">y</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&lt;</span> <span class="nx">nCols</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">y</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="o">++</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">nRows</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: x must be number &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: y cannot be negative&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&gt;</span> <span class="nx">nCols</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">];</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="helper%20methods.">
+  <h2>
+    <a href="#helper%20methods." name="helper%20methods." class="pilcrow">&#182;</a>
+    Helper methods.
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="kd">function</span> <span class="nx">importMatchItem</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">map</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">map</span><span class="p">[</span><span class="nx">item</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">item</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.match: items can be only string or &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;number. Found: &#39;</span> <span class="o">+</span> <span class="nx">item</span> <span class="o">+</span> <span class="s1">&#39; at position &#39;</span> <span class="o">+</span>
+                            <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span> <span class="o">+</span> <span class="nx">j</span><span class="p">);</span>
+    <span class="p">}</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code><span class="kd">var</span> <span class="nx">matcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Matcher</span><span class="p">();</span>
+
+<span class="nx">matcher</span><span class="p">.</span><span class="nx">setIds</span><span class="p">([</span><span class="s1">&#39;1&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">,</span><span class="s1">&#39;3&#39;</span><span class="p">]);</span>
+<span class="nx">matcher</span><span class="p">.</span><span class="nx">assignIds</span><span class="p">();</span>
+
+<span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1">// Round 1.</span>
+    <span class="p">[</span>
+        <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="p">],</span> <span class="p">[</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;bot&#39;</span> <span class="p">],</span>
+    <span class="p">],</span>
+    <span class="c1">// Round 2.</span>
+    <span class="p">[</span>
+        <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;bot&#39;</span> <span class="p">],</span>
+    <span class="p">],</span>
+    <span class="c1">// Round 3.</span>
+    <span class="p">[</span>
+        <span class="p">[</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;bot&#39;</span> <span class="p">]</span>
+    <span class="p">]</span>
+<span class="p">];</span>
+
+<span class="nx">matcher</span><span class="p">.</span><span class="nx">setMatches</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
+
+<span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">();</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">resolvedMatchesById</span><span class="p">);</span>
+
+<span class="kr">debugger</span>
+<span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">();</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="closure">
+  <h2>
+    <a href="#closure" name="closure" class="pilcrow">&#182;</a>
+    Closure
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>
