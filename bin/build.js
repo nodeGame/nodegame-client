@@ -84,6 +84,10 @@ var ng_client = [
 
     rootDir + "lib/core/Timer.js",
 
+    // Matcher.
+
+    rootDir + "lib/matcher/Matcher.js",
+
     // NodeGameClient.
 
     rootDir + "lib/core/NodeGameClient.js",
