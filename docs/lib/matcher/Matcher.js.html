@@ -25,7 +25,46 @@
         <a href="#http%3A%2F%2Fwww.nodegame.org">http://www.nodegame.org</a>
       </div>
       <div class="heading h2">
+        <a href="#matcher.randomassigner">Matcher.randomAssigner</a>
+      </div>
+      <div class="heading h2">
+        <a href="#matcher.linearassigner">Matcher.linearAssigner</a>
+      </div>
+      <div class="heading h2">
+        <a href="#matcher.roundrobin">Matcher.roundRobin</a>
+      </div>
+      <div class="heading h2">
+        <a href="#matcher%20constructor">Matcher constructor</a>
+      </div>
+      <div class="heading h3">
+        <a href="#matcher.init">Matcher.init</a>
+      </div>
+      <div class="heading h3">
+        <a href="#matcher.generatematches">Matcher.generateMatches</a>
+      </div>
+      <div class="heading h3">
+        <a href="#matcher.setmatches">Matcher.setMatches</a>
+      </div>
+      <div class="heading h2">
+        <a href="#matcher.setids">Matcher.setIds</a>
+      </div>
+      <div class="heading h2">
+        <a href="#matcher.assignids">Matcher.assignIds</a>
+      </div>
+      <div class="heading h2">
+        <a href="#matcher.setassignercb">Matcher.setAssignerCb</a>
+      </div>
+      <div class="heading h2">
+        <a href="#matcher.match">Matcher.match</a>
+      </div>
+      <div class="heading h2">
+        <a href="#matcher.getmatch">Matcher.getMatch</a>
+      </div>
+      <div class="heading h2">
         <a href="#helper%20methods.">Helper methods.</a>
+      </div>
+      <div class="heading h3">
+        <a href="#importmatchitem">importMatchItem</a>
       </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
@@ -47,7 +86,7 @@
 </div>
 
 
-<p>Copyright(c) 2015 Stefano Balietti <a href="&#109;&#97;&#105;&#108;&#116;&#x6F;:&#115;&#98;&#x61;&#x6C;&#x69;&#x65;&#x74;&#116;&#105;&#x40;&#x65;&#x74;&#x68;z&#x2E;&#99;&#104;">&#115;&#98;&#x61;&#x6C;&#x69;&#x65;&#x74;&#116;&#105;&#x40;&#x65;&#x74;&#x68;z&#x2E;&#99;&#104;</a>
+<p>Copyright(c) 2015 Stefano Balietti <a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6F;:&#x73;&#98;&#97;&#x6C;&#105;&#x65;&#x74;&#x74;&#x69;&#x40;&#101;&#116;&#x68;&#x7A;&#x2E;&#x63;h">&#x73;&#98;&#97;&#x6C;&#105;&#x65;&#x74;&#x74;&#x69;&#x40;&#101;&#116;&#x68;&#x7A;&#x2E;&#x63;h</a>
 MIT Licensed</p>
   </div>
   <div class="body">
@@ -67,14 +106,236 @@ MIT Licensed</p>
 
     <span class="nx">exports</span><span class="p">.</span><span class="nx">Matcher</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">;</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.randomassigner">
+  <h2>
+    <a href="#matcher.randomassigner" name="matcher.randomassigner" class="pilcrow">&#182;</a>
+    Matcher.randomAssigner
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Assigns ids to positions randomly.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">ids</span>
+      <span class="dox_type">array</span>
+      <span>The ids to assign</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span>The sorted array</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">JSUS.shuffle
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">randomAssigner</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="nx">ids</span><span class="p">);</span>
     <span class="p">};</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.linearassigner">
+  <h2>
+    <a href="#matcher.linearassigner" name="matcher.linearassigner" class="pilcrow">&#182;</a>
+    Matcher.linearAssigner
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Assigns ids to positions linearly.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">ids</span>
+      <span class="dox_type">array</span>
+      <span>The ids to assign</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span>The sorted array</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">linearAssigner</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">ids</span><span class="p">);</span>
     <span class="p">};</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.roundrobin">
+  <h2>
+    <a href="#matcher.roundrobin" name="matcher.roundrobin" class="pilcrow">&#182;</a>
+    Matcher.roundRobin
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates round robin tournament schedules</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">n</span>
+      <span class="dox_type">number</span>
+      <span class="dox_type">array</span>
+      <span>The number of participants (>1) or
+  an array containing the ids of the participants</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Configuration object
+  contains the following options:
+
+<ul>
+<li>bye: identifier for dummy competitor. Default: -1.</li>
+<li>skypeBye: flag whether players matched with the dummy
+   competitor should be added or not. Default: true.</li>
+</ul></span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span>The round robin matches</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">roundRobin</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">rs</span><span class="p">,</span> <span class="nx">bye</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">lenI</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ps</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ps</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
+            <span class="nx">n</span> <span class="o">=</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.roundRobin: n must be number &gt; 1 &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or non-empty array.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">rs</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+        <span class="nx">bye</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bye</span> <span class="o">?</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bye</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="nx">skipBye</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">skipBye</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>So we can match algorithm for even numbers.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">ps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">bye</span><span class="p">);</span>
+            <span class="nx">n</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenI</span> <span class="o">=</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lenI</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>Create inner match array for round i.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">rs</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="nx">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">skipBye</span> <span class="o">||</span> <span class="p">(</span><span class="nx">ps</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">bye</span> <span class="o">&amp;&amp;</span> <span class="nx">ps</span><span class="p">[</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nx">j</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">bye</span><span class="p">))</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>Insert pair as a match.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="nx">rs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">push</span><span class="p">([</span><span class="nx">ps</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">ps</span><span class="p">[</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nx">j</span><span class="p">]]);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>Permutate for next round.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">ps</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">pop</span><span class="p">());</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">rs</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher%20constructor">
+  <h2>
+    <a href="#matcher%20constructor" name="matcher%20constructor" class="pilcrow">&#182;</a>
+    Matcher constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a new Matcher object</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">Matcher</span><span class="p">()</span> <span class="p">{</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -93,6 +354,34 @@ MIT Licensed</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span> <span class="o">=</span> <span class="s1">&#39;bot&#39;</span><span class="p">;</span>
     <span class="p">}</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.init">
+  <h3>
+    <a href="#matcher.init" name="matcher.init" class="pilcrow">&#182;</a>
+    Matcher.init
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Inits the Matcher instance</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options
+</span>
+      <span class="dox_type">object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
@@ -102,6 +391,110 @@ MIT Licensed</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">assignIds</span><span class="p">();</span>
     <span class="p">};</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.generatematches">
+  <h3>
+    <a href="#matcher.generatematches" name="matcher.generatematches" class="pilcrow">&#182;</a>
+    Matcher.generateMatches
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a matches array according to the chosen scheduling algorithm</p>
+
+<p>Throws an error if the selected algorithm is not found.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">alg</span>
+      <span class="dox_type">string</span>
+      <span>The chosen algorithm. Available: 'roundrobin'.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span>The array of matches</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">generateMatches</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">alg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">matches</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">alg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.generateMatches: alg must be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;roundrobin&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+            <span class="nx">matches</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">.</span><span class="nx">roundrobin</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setMatches</span><span class="p">(</span><span class="nx">matches</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.generateMatches: unknown algorithm: &#39;</span> <span class="o">+</span>
+                        <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.setmatches">
+  <h3>
+    <a href="#matcher.setmatches" name="matcher.setmatches" class="pilcrow">&#182;</a>
+    Matcher.setMatches
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets the matches for current instance</p>
+
+<p>Matches are a nested array containing a new array for each
+new round, and a match. For example:</p>
+
+
+<div class="highlight"><pre><code><span class="c1">// Matching array.</span>
+<span class="p">[</span>
+
+<span class="c1">// First round.</span>
+  <span class="p">[</span> <span class="p">[</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span> <span class="p">],</span> <span class="p">[</span> <span class="nx">p3</span><span class="p">,</span> <span class="nx">p4</span> <span class="p">],</span> <span class="p">...</span> <span class="p">],</span>
+
+<span class="c1">// Second round.</span>
+  <span class="p">[</span> <span class="p">[</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span> <span class="p">],</span> <span class="p">[</span> <span class="nx">p4</span><span class="p">,</span> <span class="nx">p1</span> <span class="p">],</span> <span class="p">...</span> <span class="p">],</span>
+
+<span class="c1">// Further rounds.</span>
+<span class="p">];</span>
+</code></pre></div>
+
+
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">The</span>
+      <span class="dox_type">array</span>
+      <span>array of matches</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">this.matches
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setMatches</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">matches</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">matches</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.setMatches: matches must be array.&#39;</span><span class="p">);</span>
@@ -109,6 +502,39 @@ MIT Licensed</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">matches</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">;</span>
     <span class="p">};</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.setids">
+  <h2>
+    <a href="#matcher.setids" name="matcher.setids" class="pilcrow">&#182;</a>
+    Matcher.setIds
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Sets the ids to be used for the matches</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">ids</span>
+      <span class="dox_type">array</span>
+      <span>Array containing the id of the matches</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.ids
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setIds</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">ids</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.setIds: ids must be array.&#39;</span><span class="p">);</span>
@@ -116,10 +542,92 @@ MIT Licensed</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">ids</span> <span class="o">=</span> <span class="nx">ids</span><span class="p">;</span>
     <span class="p">};</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.assignids">
+  <h2>
+    <a href="#matcher.assignids" name="matcher.assignids" class="pilcrow">&#182;</a>
+    Matcher.assignIds
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Calls the assigner callback to assign existing ids to positions</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">ids</span>
+      <span class="dox_type">array</span>
+      <span>Array containing the id of the matches</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.ids
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">assignIds</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ids</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">ids</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.assignIds: ids not found.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">assignerCb</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ids</span><span class="p">);</span>
     <span class="p">};</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.setassignercb">
+  <h2>
+    <a href="#matcher.setassignercb" name="matcher.setassignercb" class="pilcrow">&#182;</a>
+    Matcher.setAssignerCb
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Specify a callback to be used to assign existing ids to positions</p>
+
+<p>An assigner callback must take as input an array of ids,
+reorder them according to some criteria, and return it.
+The order of the items in the returned array will be used to
+match the numbers in the <code>matches</code> array.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">cb</span>
+      <span class="dox_type">function</span>
+      <span>The assigner cb</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.ids</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.matches</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.assignerCb
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setAssignerCb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.setAssignerCb: cb must be function.&#39;</span><span class="p">);</span>
@@ -127,6 +635,37 @@ MIT Licensed</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">assignerCb</span> <span class="o">=</span> <span class="nx">cb</span>
     <span class="p">};</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.match">
+  <h2>
+    <a href="#matcher.match" name="matcher.match" class="pilcrow">&#182;</a>
+    Matcher.match
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Substitutes the ids to the matches</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.resolvedMatchesById</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.resolvedMatches
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">match</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">lenI</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">,</span> <span class="nx">pair</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">matched</span><span class="p">,</span> <span class="nx">matchedId</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">m1</span><span class="p">,</span> <span class="nx">m2</span><span class="p">;</span>
@@ -137,7 +676,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>Re-structure data in a more convenient structure,
 substituting absolute position of the matching with player ids.</p>
@@ -159,6 +698,7 @@ substituting absolute position of the matching with player ids.</p>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">id2</span><span class="p">)</span> <span class="nx">m2</span> <span class="o">=</span> <span class="nx">id1</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span><span class="p">;</span>
                 <span class="nx">matchedId</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">id1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">m1</span><span class="p">;</span>
                 <span class="nx">matchedId</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">id2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">m2</span><span class="p">;</span>
+
                 <span class="nx">matched</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">push</span><span class="p">([</span><span class="nx">m1</span><span class="p">,</span> <span class="nx">m2</span><span class="p">]);</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -169,7 +709,7 @@ substituting absolute position of the matching with player ids.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Substitute matching-structure.</p>
         </td>
@@ -178,6 +718,62 @@ substituting absolute position of the matching with player ids.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesById</span> <span class="o">=</span> <span class="nx">matchedId</span><span class="p">;</span>
     <span class="p">};</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.getmatch">
+  <h2>
+    <a href="#matcher.getmatch" name="matcher.getmatch" class="pilcrow">&#182;</a>
+    Matcher.getMatch
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the next match, or the specified match</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">x</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The x-th round. Default: the round</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">y</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The y-th match within the x-th round</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span>The next or requested match, or null if not found</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.x</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.y</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.resolvedMatchesById</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.resolvedMatches
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMatch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">nRows</span><span class="p">,</span> <span class="nx">nCols</span><span class="p">;</span>
 
@@ -187,13 +783,28 @@ substituting absolute position of the matching with player ids.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>Check both x and y.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: cannot specify y without x.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>Check if there is any match yet.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: no resolved matches found.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
 
@@ -203,7 +814,7 @@ substituting absolute position of the matching with player ids.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>Check x.</p>
         </td>
@@ -264,6 +875,62 @@ substituting absolute position of the matching with player ids.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="importmatchitem">
+  <h3>
+    <a href="#importmatchitem" name="importmatchitem" class="pilcrow">&#182;</a>
+    importMatchItem
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Handles importing items from the matches array</p>
+
+<p>Items in matches array must be numbers or strings. If numbers
+they are translated into an id using the supplied map, otherwise
+they are considered as already an id.</p>
+
+<p>Items that are not numbers neither strings will throw an error.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">i</span>
+      <span class="dox_type">number</span>
+      <span>The row-id of the item</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">j</span>
+      <span class="dox_type">number</span>
+      <span>The position in the row of the item</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">item</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">number</span>
+      <span>The item to check</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">map</span>
+      <span class="dox_type">array</span>
+      <span>The map of positions to ids</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span>The resolved id of the item</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">importMatchItem</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">map</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">map</span><span class="p">[</span><span class="nx">item</span><span class="p">];</span>
@@ -275,52 +942,6 @@ substituting absolute position of the matching with player ids.</p>
                             <span class="s1">&#39;number. Found: &#39;</span> <span class="o">+</span> <span class="nx">item</span> <span class="o">+</span> <span class="s1">&#39; at position &#39;</span> <span class="o">+</span>
                             <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span> <span class="o">+</span> <span class="nx">j</span><span class="p">);</span>
     <span class="p">}</span>
-
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
-</div>
-
-<div class="highlight"><pre><code><span class="kd">var</span> <span class="nx">matcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Matcher</span><span class="p">();</span>
-
-<span class="nx">matcher</span><span class="p">.</span><span class="nx">setIds</span><span class="p">([</span><span class="s1">&#39;1&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">,</span><span class="s1">&#39;3&#39;</span><span class="p">]);</span>
-<span class="nx">matcher</span><span class="p">.</span><span class="nx">assignIds</span><span class="p">();</span>
-
-<span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="c1">// Round 1.</span>
-    <span class="p">[</span>
-        <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="p">],</span> <span class="p">[</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;bot&#39;</span> <span class="p">],</span>
-    <span class="p">],</span>
-    <span class="c1">// Round 2.</span>
-    <span class="p">[</span>
-        <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;bot&#39;</span> <span class="p">],</span>
-    <span class="p">],</span>
-    <span class="c1">// Round 3.</span>
-    <span class="p">[</span>
-        <span class="p">[</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;bot&#39;</span> <span class="p">]</span>
-    <span class="p">]</span>
-<span class="p">];</span>
-
-<span class="nx">matcher</span><span class="p">.</span><span class="nx">setMatches</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
-
-<span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">();</span>
-
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">);</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">resolvedMatchesById</span><span class="p">);</span>
-
-<span class="kr">debugger</span>
-<span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">();</span>
-</code></pre></div>
-
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
 
 
 </pre></div>
