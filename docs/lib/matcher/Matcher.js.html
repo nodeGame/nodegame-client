@@ -99,6 +99,9 @@
       <div class="heading h3">
         <a href="#matcher.getmatch">Matcher.getMatch</a>
       </div>
+      <div class="heading h3">
+        <a href="#matcher.getmatchobject">Matcher.getMatchObject</a>
+      </div>
       <div class="heading h2">
         <a href="#helper%20methods.">Helper methods.</a>
       </div>
@@ -128,7 +131,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti <a href="&#x6D;&#x61;&#x69;&#x6C;&#x74;&#111;:&#x73;&#x2E;&#98;&#97;&#x6C;&#x69;&#x65;&#x74;&#116;&#x69;&#64;&#110;&#101;&#117;&#x2E;&#101;&#100;&#x75;">&#x73;&#x2E;&#98;&#97;&#x6C;&#x69;&#x65;&#x74;&#116;&#x69;&#64;&#110;&#101;&#117;&#x2E;&#101;&#100;&#x75;</a>
+<p>Copyright(c) 2016 Stefano Balietti <a href="&#109;&#x61;&#105;&#x6C;&#116;&#x6F;:&#115;&#x2E;&#x62;&#97;&#108;&#x69;&#101;&#x74;&#116;&#105;&#64;&#110;&#x65;&#117;&#46;&#101;&#x64;&#117;">&#115;&#x2E;&#x62;&#97;&#108;&#x69;&#101;&#x74;&#116;&#105;&#64;&#110;&#x65;&#117;&#46;&#101;&#x64;&#117;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Class handling the creation of tournament schedules.</p>
@@ -1312,10 +1315,6 @@ where the absolute position becomes the player id.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Matcher.resolvedMatchesById</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
       <span class="dox_type">Matcher.resolvedMatches
 </span>
     </div>
@@ -1432,6 +1431,98 @@ where the absolute position becomes the player id.</p>
             <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">];</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.getmatchobject">
+  <h3>
+    <a href="#matcher.getmatchobject" name="matcher.getmatchobject" class="pilcrow">&#182;</a>
+    Matcher.getMatchObject
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns all the matches of the next or requested round as key-value pairs</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">x</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The x-th round. Default: the round</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>The next or requested match, or null if not found</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.x</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.resolvedMatchesById
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMatchObject</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">nRows</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+</div>
+<p>Check if there is any match yet.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: no resolved matches found.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+</div>
+<p>Check x.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">x</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: x must be number &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: x cannot be negative&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">nRows</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">nRows</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesById</span><span class="p">[</span><span class="nx">x</span><span class="p">];</span>
     <span class="p">};</span>
 
 

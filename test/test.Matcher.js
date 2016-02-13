@@ -310,6 +310,50 @@ describe('Matcher', function() {
             (null === matcher.getMatch(3)).should.be.true
         });
 
+        it('should not change x and y', function() {
+            matcher.x.should.eql(3);
+            matcher.y.should.eql(0);
+        });
+    });
+
+    describe('#getMatchObject(x)', function() {
+        it('should return entire row', function() {
+            matcher.getMatchObject(0).should.eql({
+                c: 'bot', bot: 'c', a: 'b', b: 'a' });
+            matcher.getMatchObject(1).should.eql({
+                c: 'b', b: 'c', bot: 'a', a: 'bot' });
+            matcher.getMatchObject(2).should.eql({
+                c: 'a', a: 'c', b: 'bot', bot: 'b' });
+        });
+
+        it('should return null if out of bounds', function() {
+            (null === matcher.getMatchObject(3)).should.be.true
+        });
+
+        it('should not change x and y', function() {
+            matcher.x.should.eql(3);
+            matcher.y.should.eql(0);
+        });
+    });
+
+
+    describe('#getMatchObject()', function() {
+        before(function() {
+            matcher.init({x: 0, y: 0});
+        });
+        it('should return entire row', function() {
+            matcher.getMatchObject().should.eql({
+                c: 'bot', bot: 'c', a: 'b', b: 'a' });
+            matcher.getMatchObject().should.eql({
+                c: 'b', b: 'c', bot: 'a', a: 'bot' });
+            matcher.getMatchObject().should.eql({
+                c: 'a', a: 'c', b: 'bot', bot: 'b' });
+        });
+
+        it('should return null if out of bounds', function() {
+            (null === matcher.getMatchObject(3)).should.be.true
+        });
+
         it('should change x and y', function() {
             matcher.x.should.eql(3);
             matcher.y.should.eql(0);
