@@ -60,6 +60,9 @@
       <div class="heading h2">
         <a href="#nodegame_gamecommand%3A%20erase_buffer">NODEGAME_GAMECOMMAND: erase_buffer</a>
       </div>
+      <div class="heading h2">
+        <a href="#nodegame_gamecommand%3A%20push">NODEGAME_GAMECOMMAND: push</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -407,7 +410,9 @@ In case the handler returns FALSE, the process is stopped.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
-<p>DONE was previously emitted, we just execute done handler.</p>
+<p>DONE was previously emitted, we just execute done handler.
+Check: is it ok to call done, if other handlers on PLAYING
+are following?</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">willBeDone</span><span class="p">)</span> <span class="p">{</span>
@@ -671,6 +676,76 @@ In case the handler returns FALSE, the process is stopped.</p>
             <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;BEFORE_GAMECOMMAND&#39;</span><span class="p">,</span> <span class="nx">gcommands</span><span class="p">.</span><span class="nx">clear_buffer</span><span class="p">);</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">eraseBuffer</span><span class="p">();</span>
         <span class="p">});</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nodegame_gamecommand%3A%20push">
+  <h2>
+    <a href="#nodegame_gamecommand%3A%20push" name="nodegame_gamecommand%3A%20push" class="pilcrow">&#182;</a>
+    NODEGAME_GAMECOMMAND: push
+  </h2>
+</div>
+
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">CMD</span> <span class="o">+</span> <span class="nx">gcommands</span><span class="p">.</span><span class="nx">push_step</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">res</span><span class="p">;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;BEING PUSHED!&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+</div>
+<p>At the moment, we do not have a default timer object, 
+nor a default done/timeup cb.
+We try to see if they exist, and as last resort we emit DONE.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+</div>
+<p>TODO: check this:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">doTimeUp</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">doTimeUp</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">visualTimer</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">visualTimer</span><span class="p">.</span><span class="nx">doTimeUp</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">visualTimer</span><span class="p">.</span><span class="nx">doTimeUp</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">done</span><span class="p">();</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">res</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="s1">&#39;ok!&#39;</span><span class="p">;</span>
+        <span class="p">});</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">incomingAdded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node: incoming listeners added.&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">internalAdded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node: internal listeners added.&#39;</span><span class="p">);</span>
