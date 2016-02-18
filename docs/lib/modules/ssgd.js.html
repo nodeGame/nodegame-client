@@ -267,6 +267,7 @@ admins to players should be used only if necessary.</p>
  <span class="o">-</span> <span class="p">{</span><span class="kr">boolean</span><span class="p">}</span> <span class="nx">executeOnce</span> <span class="nx">TRUE</span> <span class="k">if</span> <span class="nx">listener</span> <span class="nx">should</span> <span class="nx">be</span> <span class="nx">removed</span> <span class="nx">after</span>
        <span class="nx">one</span> <span class="nx">execution</span><span class="p">.</span> <span class="nx">It</span> <span class="nx">will</span> <span class="nx">also</span> <span class="nx">terminate</span> <span class="nx">the</span> <span class="nx">timeout</span><span class="p">,</span> <span class="k">if</span> <span class="nx">set</span>
  <span class="o">-</span> <span class="p">{</span><span class="nx">mixed</span><span class="p">}</span> <span class="nx">data</span> <span class="nx">Data</span> <span class="nx">field</span> <span class="nx">of</span> <span class="nx">the</span> <span class="nx">GET</span> <span class="nx">msg</span>
+ <span class="o">-</span> <span class="p">{</span><span class="nx">string</span><span class="p">}</span> <span class="nx">target</span> <span class="nx">Set</span> <span class="nx">to</span> <span class="nx">override</span> <span class="nx">the</span> <span class="k">default</span> <span class="nx">DATA</span> <span class="nx">target</span> <span class="nx">of</span> <span class="nx">msg</span>
 </code></pre></div>
 
 </span>
@@ -322,6 +323,7 @@ admins to players should be used only if necessary.</p>
             <span class="nx">timeoutCb</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">timeoutCb</span><span class="p">;</span>
             <span class="nx">data</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
             <span class="nx">executeOnce</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">executeOnce</span><span class="p">;</span>
+            <span class="nx">target</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
@@ -339,11 +341,18 @@ admins to players should be used only if necessary.</p>
                                     <span class="s1">&#39;function or undefined.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
 
+            <span class="k">if</span> <span class="p">(</span><span class="nx">target</span> <span class="o">&amp;&amp;</span>
+                <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">target</span> <span class="o">||</span> <span class="nx">target</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="p">{</span>
+
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.get: options.target must be &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;a non-empty string or undefined.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+
         <span class="p">}</span>
 
         <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
             <span class="nx">action</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">GET</span><span class="p">,</span>
-            <span class="nx">target</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="nx">target</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">DATA</span><span class="p">,</span>
             <span class="nx">to</span><span class="o">:</span> <span class="nx">to</span><span class="p">,</span>
             <span class="nx">reliable</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nx">text</span><span class="o">:</span> <span class="nx">key</span><span class="p">,</span>

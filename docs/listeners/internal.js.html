@@ -61,7 +61,7 @@
         <a href="#nodegame_gamecommand%3A%20erase_buffer">NODEGAME_GAMECOMMAND: erase_buffer</a>
       </div>
       <div class="heading h2">
-        <a href="#nodegame_gamecommand%3A%20push">NODEGAME_GAMECOMMAND: push</a>
+        <a href="#nodegame_gamecommand%3A%20push_step">NODEGAME_GAMECOMMAND: push_step</a>
       </div>
     </div>
   </div>
@@ -684,10 +684,10 @@ are following?</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nodegame_gamecommand%3A%20push">
+<div class="pilwrap" id="nodegame_gamecommand%3A%20push_step">
   <h2>
-    <a href="#nodegame_gamecommand%3A%20push" name="nodegame_gamecommand%3A%20push" class="pilcrow">&#182;</a>
-    NODEGAME_GAMECOMMAND: push
+    <a href="#nodegame_gamecommand%3A%20push_step" name="nodegame_gamecommand%3A%20push_step" class="pilcrow">&#182;</a>
+    NODEGAME_GAMECOMMAND: push_step
   </h2>
 </div>
 
@@ -710,24 +710,13 @@ are following?</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
-<p>At the moment, we do not have a default timer object, 
+<p>TODO: check this:
+At the moment, we do not have a default timer object,
 nor a default done/timeup cb.
 We try to see if they exist, and as last resort we emit DONE.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            
 
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
-</div>
-<p>TODO: check this:</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
             <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">doTimeUp</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">doTimeUp</span><span class="p">();</span>
             <span class="p">}</span>
@@ -739,13 +728,20 @@ We try to see if they exist, and as last resort we emit DONE.</p>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">res</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">);</span>
             <span class="p">}</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+</div>
+<p>Important for GET msgs.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
             <span class="k">return</span> <span class="s1">&#39;ok!&#39;</span><span class="p">;</span>
         <span class="p">});</span>
-
-        <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">incomingAdded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node: incoming listeners added.&#39;</span><span class="p">);</span>
-        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">internalAdded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node: internal listeners added.&#39;</span><span class="p">);</span>

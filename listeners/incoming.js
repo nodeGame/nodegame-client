@@ -34,6 +34,7 @@
      * If executed once, it requires a force flag to re-add the listeners
      *
      * @param {boolean} force Whether to force re-adding the listeners
+     *
      * @return {boolean} TRUE on success
      */
     NGC.prototype.addDefaultIncomingListeners = function(force) {
@@ -271,23 +272,26 @@
         /**
          * ## in.say.GAMECOMMAND
          *
-         * Setups a features of nodegame
-         *
-         * @see node.setup
+         * Executes a game command (pause, resume, etc.)
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
-            // console.log('GM', msg);
-            if ('string' !== typeof msg.text) {
-                node.err('"in.say.GAMECOMMAND": msg.text must be string: ' +
-                         msg.text);
-                return;
-            }
-            if (!parent.constants.gamecommands[msg.text]) {
-                node.err('"in.say.GAMECOMMAND": unknown game command ' +
-                         'received: ' + msg.text);
-                return;
-            }
+            if (!checkGameCommand(msg), 'say') return;
             node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
+        });
+
+        /**
+         * ## in.get.GAMECOMMAND
+         *
+         * Executes a game command (pause, resume, etc.) and gives confirmation
+         */
+        node.events.ng.on( IN + get + 'GAMECOMMAND', function(msg) {
+            var res;
+            if (!checkGameCommand(msg), 'get') return;
+            res = node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
+            // res = node.emit(get + msg.text, msg);
+            if (!J.isEmpty(res)) {
+                node.say(msg.text + '_' + msg.id, msg.from, res);
+            }
         });
 
         /**
@@ -407,11 +411,26 @@
             return 'pong';
         });
 
-
         node.conf.incomingAdded = true;
         node.silly('node: incoming listeners added.');
         return true;
     };
+
+    // ## Helper functions.
+
+    function checkGameCommand(msg, action) {
+        if ('string' !== typeof msg.text || msg.tex.trim() === '') {
+            node.err('"in.' + action + '.GAMECOMMAND": msg.text must be ' +
+                     'a non-empty string: ' + msg.text);
+            return false;
+        }
+        if (!parent.constants.gamecommands[msg.text]) {
+            node.err('"in.' + action + '.GAMECOMMAND": unknown game command ' +
+                     'received: ' + msg.text);
+            return false;
+        }
+        return true;
+    }
 
 })(
     'undefined' != typeof node ? node : module.exports,

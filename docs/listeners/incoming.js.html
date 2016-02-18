@@ -724,7 +724,19 @@ of the incoming set.DATA message.</p>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;GAMECOMMAND&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">res</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">checkGameCommand</span><span class="p">(</span><span class="nx">msg</span><span class="p">),</span> <span class="s1">&#39;get&#39;</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-            <span class="nx">res</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">get</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
+            <span class="nx">res</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_GAMECOMMAND_&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>res = node.emit(get + msg.text, msg);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">res</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">say</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">res</span><span class="p">);</span>
             <span class="p">}</span>
@@ -1010,6 +1022,11 @@ of the incoming set.DATA message.</p>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;PING&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">return</span> <span class="s1">&#39;pong&#39;</span><span class="p">;</span>
         <span class="p">});</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">incomingAdded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node: incoming listeners added.&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
 
 
 </pre></div>

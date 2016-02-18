@@ -142,6 +142,8 @@
             node.timer.setTimestamp('step', currentTime);
 
             // DONE was previously emitted, we just execute done handler.
+            // Check: is it ok to call done, if other handlers on PLAYING
+            // are following?
             if (node.game.willBeDone) {
                 done();
             }
@@ -255,6 +257,33 @@
         this.events.ng.on(CMD + gcommands.erase_buffer, function() {
             node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
             node.socket.eraseBuffer();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: push_step
+         */
+        node.events.ng.on(CMD + gcommands.push_step, function() {
+            var res;
+            console.log('BEING PUSHED!');
+
+            // TODO: check this:
+            // At the moment, we do not have a default timer object,
+            // nor a default done/timeup cb.
+            // We try to see if they exist, and as last resort we emit DONE.
+
+            if (node.game.timer && node.game.timer.doTimeUp) {
+                node.game.timer.doTimeUp();
+            }
+            else if (node.game.visualTimer && node.game.visualTimer.doTimeUp) {
+                node.game.visualTimer.doTimeUp();
+            }
+            else {
+                res = node.game.done();
+                if (!res) node.emit('DONE');
+            }
+
+            // Important for GET msgs.
+            return 'ok!';
         });
 
         this.conf.internalAdded = true;
