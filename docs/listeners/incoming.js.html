@@ -697,7 +697,7 @@ of the incoming set.DATA message.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;GAMECOMMAND&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">checkGameCommand</span><span class="p">(</span><span class="nx">msg</span><span class="p">),</span> <span class="s1">&#39;say&#39;</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">checkGameCommand</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;say&#39;</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_GAMECOMMAND_&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
         <span class="p">});</span>
 
@@ -723,8 +723,9 @@ of the incoming set.DATA message.</p>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;GAMECOMMAND&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">res</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">checkGameCommand</span><span class="p">(</span><span class="nx">msg</span><span class="p">),</span> <span class="s1">&#39;get&#39;</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">checkGameCommand</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;get&#39;</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
             <span class="nx">res</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_GAMECOMMAND_&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">res</span><span class="p">))</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -734,10 +735,9 @@ of the incoming set.DATA message.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
-<p>res = node.emit(get + msg.text, msg);</p>
+<p>New key must contain msg.id.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">res</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">say</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">res</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">});</span>
@@ -1045,7 +1045,7 @@ of the incoming set.DATA message.</p>
         <td class="code highlight"><div class="highlight"><pre>
 
     <span class="kd">function</span> <span class="nx">checkGameCommand</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">||</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">tex</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">||</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;&quot;in.&#39;</span> <span class="o">+</span> <span class="nx">action</span> <span class="o">+</span> <span class="s1">&#39;.GAMECOMMAND&quot;: msg.text must be &#39;</span> <span class="o">+</span>
                      <span class="s1">&#39;a non-empty string: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
