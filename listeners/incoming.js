@@ -275,7 +275,7 @@
          * Executes a game command (pause, resume, etc.)
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
-            if (!checkGameCommand(msg), 'say') return;
+            if (!checkGameCommand(msg, 'say')) return;
             node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
         });
 
@@ -286,10 +286,10 @@
          */
         node.events.ng.on( IN + get + 'GAMECOMMAND', function(msg) {
             var res;
-            if (!checkGameCommand(msg), 'get') return;
+            if (!checkGameCommand(msg, 'get')) return;
             res = node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
-            // res = node.emit(get + msg.text, msg);
             if (!J.isEmpty(res)) {
+                // New key must contain msg.id.
                 node.say(msg.text + '_' + msg.id, msg.from, res);
             }
         });
@@ -419,7 +419,7 @@
     // ## Helper functions.
 
     function checkGameCommand(msg, action) {
-        if ('string' !== typeof msg.text || msg.tex.trim() === '') {
+        if ('string' !== typeof msg.text || msg.text.trim() === '') {
             node.err('"in.' + action + '.GAMECOMMAND": msg.text must be ' +
                      'a non-empty string: ' + msg.text);
             return false;

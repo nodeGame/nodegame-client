@@ -97,18 +97,18 @@
             }
         });
 
-//         /**
-//          * ## WINDOW_LOADED
-//          *
-//          * @emit LOADED
-//          */
-//         this.events.ng.on('WINDOW_LOADED', function() {
-//             var stageLevel;
-//             stageLevel = node.game.getStageLevel();
-//             if (stageLevel === stageLevels.CALLBACK_EXECUTED) {
-//                 node.emit('LOADED');
-//             }
-//         });
+        //         /**
+        //          * ## WINDOW_LOADED
+        //          *
+        //          * @emit LOADED
+        //          */
+        //         this.events.ng.on('WINDOW_LOADED', function() {
+        //             var stageLevel;
+        //             stageLevel = node.game.getStageLevel();
+        //             if (stageLevel === stageLevels.CALLBACK_EXECUTED) {
+        //                 node.emit('LOADED');
+        //             }
+        //         });
 
         /**
          * ## LOADED
@@ -264,7 +264,10 @@
          */
         node.events.ng.on(CMD + gcommands.push_step, function() {
             var res;
-            console.log('BEING PUSHED!');
+            console.log('BEING PUSHED! ', node.player.stage);
+
+
+
 
             // TODO: check this:
             // At the moment, we do not have a default timer object,
@@ -272,18 +275,37 @@
             // We try to see if they exist, and as last resort we emit DONE.
 
             if (node.game.timer && node.game.timer.doTimeUp) {
+                console.log('TIMEEEEUuuuuuuuuuup');
                 node.game.timer.doTimeUp();
             }
             else if (node.game.visualTimer && node.game.visualTimer.doTimeUp) {
+                console.log('TIMEEEEUuuuuuuuuuup 2');
                 node.game.visualTimer.doTimeUp();
             }
-            else {
-                res = node.game.done();
-                if (!res) node.emit('DONE');
+
+
+            // TODO: CHECK OTHER LEVELS (e.g. getting_done).
+            if (!node.game.willBeDone &&
+                node.game.getStageLevel() !== stageLevels.DONE) {
+
+                console.log('NODE.DDDDDDDDDDOOONE');
+
+                res = node.done();
+                if (!res) {
+                    node.emit('DONE');
+                    console.log('EMIT DONEOOOOOOOOOOOOO');
+                }
             }
 
-            // Important for GET msgs.
+            // Check this.
+            // node.game.setStageLevel(stageLevels.DONE);
+
             return 'ok!';
+
+
+            // Important for GET msgs.
+            return node.game.getStageLevel() === stageLevels.DONE  ?
+                'ok!' : 'stuck!';
         });
 
         this.conf.internalAdded = true;
