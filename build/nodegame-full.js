@@ -13842,7 +13842,7 @@ if (!Array.prototype.indexOf) {
 
     PushManager.replyWaitTime = 2000;
     PushManager.checkPushWaitTime = 2000;
-    PushManager.offsetWaitTime = 4000;
+    PushManager.offsetWaitTime = 5000;
 
     /**
      * ## PushManager constructor
@@ -14046,7 +14046,7 @@ if (!Array.prototype.indexOf) {
                 //console.log(pp.stage, stage);
                 if (GameStage.compare(pp.stage, stage) === 0) {
                     console.log('PUSH did NOT work for ', p.id, stage);
-                    //node.log('node.pushManager: push did not work for ', p.id);
+               //node.log('node.pushManager: push did not work for ', p.id);
                     forceDisconnect(node, pp);
                 }
                 else {
@@ -19375,8 +19375,6 @@ if (!Array.prototype.indexOf) {
         // Pushes clients to finish current step in line with the time
         // expected by logic, or otherwise disconnects them.
         if (this.plot.getProperty(nextStep, 'pushClients')) {
-            // TODO: check if should be called after PLAYING
-            // node.events.ee.step.on('PLAYING', ...);
             this.pushManager.startTimeout();
         }
 
@@ -24104,18 +24102,18 @@ if (!Array.prototype.indexOf) {
             }
         });
 
-//         /**
-//          * ## WINDOW_LOADED
-//          *
-//          * @emit LOADED
-//          */
-//         this.events.ng.on('WINDOW_LOADED', function() {
-//             var stageLevel;
-//             stageLevel = node.game.getStageLevel();
-//             if (stageLevel === stageLevels.CALLBACK_EXECUTED) {
-//                 node.emit('LOADED');
-//             }
-//         });
+        //         /**
+        //          * ## WINDOW_LOADED
+        //          *
+        //          * @emit LOADED
+        //          */
+        //         this.events.ng.on('WINDOW_LOADED', function() {
+        //             var stageLevel;
+        //             stageLevel = node.game.getStageLevel();
+        //             if (stageLevel === stageLevels.CALLBACK_EXECUTED) {
+        //                 node.emit('LOADED');
+        //             }
+        //         });
 
         /**
          * ## LOADED
@@ -24281,21 +24279,19 @@ if (!Array.prototype.indexOf) {
             // nor a default done/timeup cb.
             // We try to see if they exist, and as last resort we emit DONE.
 
-            // if (node.game.getCurrentStep().id === 'quiz') debugger;
-
-             if (node.game.timer && node.game.timer.doTimeUp) {
-                 console.log('TIMEEEEUuuuuuuuuuup');
-                 node.game.timer.doTimeUp();
-             }
-             else if (node.game.visualTimer && node.game.visualTimer.doTimeUp) {
-                 console.log('TIMEEEEUuuuuuuuuuup 2');
-                 node.game.visualTimer.doTimeUp();
-             }
+            if (node.game.timer && node.game.timer.doTimeUp) {
+                console.log('TIMEEEEUuuuuuuuuuup');
+                node.game.timer.doTimeUp();
+            }
+            else if (node.game.visualTimer && node.game.visualTimer.doTimeUp) {
+                console.log('TIMEEEEUuuuuuuuuuup 2');
+                node.game.visualTimer.doTimeUp();
+            }
 
 
             // TODO: CHECK OTHER LEVELS (e.g. getting_done).
             if (!node.game.willBeDone &&
-                     node.game.getStageLevel() !== stageLevels.DONE) {
+                node.game.getStageLevel() !== stageLevels.DONE) {
 
                 console.log('NODE.DDDDDDDDDDOOONE');
 
