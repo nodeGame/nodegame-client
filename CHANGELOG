@@ -1,5 +1,10 @@
 # nodegame-client change log
 
+## 1.0.1 (current)
+
+ - Query parameters are automatically passed to the connect method (node.connect) when node is executed in the browser. They can still be overridden by passing a configuration object.
+
+
 ## 1.0.0
 
  - Enhanced stager, builds blocks and randomize blocks, stages, and steps.
