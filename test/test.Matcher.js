@@ -10,20 +10,20 @@ var J = ngc.JSUS;
 var result, tmp;
 var matcher;
 
-//   matcher = new Matcher();
+// matcher = new Matcher();
 // debugger
-//              matcher.generateMatches('roundrobin', 3);
-//              tmp = function(ids) {
-//                  return ['c', 'a', 'b'];
-//              };
-//              matcher.setAssignerCb(tmp);
-//              matcher.setIds(['a', 'b', 'c']);
-//              matcher.assignIds();
+// matcher.generateMatches('random', 3);
+// tmp = function(ids) {
+//     return ['c', 'a', 'b'];
+// };
+// matcher.setAssignerCb(tmp);
+// matcher.setIds(['a', 'b', 'c']);
+// matcher.assignIds();
 //
-//              matcher.match();
-//
-//  return;
-
+// matcher.match();
+// console.log(matcher.resolvedMatches);
+// debugger
+// return;
 
 describe('Matcher', function() {
 
@@ -64,6 +64,7 @@ describe('Matcher', function() {
             ]);
         });
     });
+
     describe('#generateMatches("roundrobin", 3)', function() {
         before(function() {
             matcher = new Matcher();
@@ -82,6 +83,7 @@ describe('Matcher', function() {
             ]);
         });
     });
+
     describe('#generateMatches("roundrobin", 3, {bye: 100})', function() {
         before(function() {
             matcher = new Matcher();
@@ -143,6 +145,27 @@ describe('Matcher', function() {
                  });
              });
 
+    describe('#generateMatches("random", 4) - light-validation', function() {
+        before(function() {
+            matcher = new Matcher();
+            matcher.generateMatches('random', 4);
+        });
+
+        it('should create the matches array', function() {
+            J.isArray(matcher.matches).should.be.true;
+        });
+    });
+
+    describe('#generateMatches("random", 3) - light-validation', function() {
+        before(function() {
+            matcher = new Matcher();
+            matcher.generateMatches('random', 3);
+        });
+
+        it('should create the matches array', function() {
+            J.isArray(matcher.matches).should.be.true;
+        });
+    });
 
     describe('#setIds', function() {
         before(function() {
