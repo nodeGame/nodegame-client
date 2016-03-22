@@ -456,6 +456,9 @@ describe('Moving through the sequence', function() {
 
     describe('#next: step blocks', function() {
         before(function() {
+            // Increase timeout.
+            this.timeout(5000);
+
             stager = ngc.getStager();
 
             stager.next('stage 1');
@@ -523,6 +526,8 @@ describe('Moving through the sequence', function() {
 
     describe('#next: stage blocks', function() {
         before(function() {
+            // Increase timeout.
+            this.timeout(3000);
             stager = ngc.getStager();
 
             stager.stageBlock('2');
@@ -684,6 +689,8 @@ describe('Moving through the sequence', function() {
 
     describe('#next: stage and steps blocks', function() {
         before(function() {
+            // Increase timeout.
+            this.timeout(4000);
             stager = ngc.getStager();
 
             stager.stageBlock('>0');
@@ -717,6 +724,8 @@ describe('Moving through the sequence', function() {
 
     describe('#next: stage and steps blocks with names', function() {
         before(function() {
+            // Increase timeout.
+            this.timeout(4000);
             stager = ngc.getStager();
 
             stager.stageBlock('--->First Block', '>0');

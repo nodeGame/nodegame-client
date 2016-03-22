@@ -10,18 +10,19 @@ var J = ngc.JSUS;
 var result, tmp;
 var matcher;
 
-//  matcher = new Matcher();
-//             matcher.generateMatches('roundrobin', 3);
-//             tmp = function(ids) {
-//                 return ['c', 'a', 'b'];
-//             };
-//             matcher.setAssignerCb(tmp);
-//             matcher.setIds(['a', 'b', 'c']);
-//             matcher.assignIds();
+//   matcher = new Matcher();
+// debugger
+//              matcher.generateMatches('roundrobin', 3);
+//              tmp = function(ids) {
+//                  return ['c', 'a', 'b'];
+//              };
+//              matcher.setAssignerCb(tmp);
+//              matcher.setIds(['a', 'b', 'c']);
+//              matcher.assignIds();
 //
-//             matcher.match();
+//              matcher.match();
 //
-// return;
+//  return;
 
 
 describe('Matcher', function() {
