@@ -131,7 +131,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti <a href="&#x6D;&#x61;&#105;&#108;&#x74;&#111;:&#115;&#x2E;&#98;&#97;&#108;&#105;&#x65;&#116;&#116;&#105;&#x40;&#x6E;&#101;&#x75;&#46;&#101;&#x64;&#117;">&#115;&#x2E;&#98;&#97;&#108;&#105;&#x65;&#116;&#116;&#105;&#x40;&#x6E;&#101;&#x75;&#46;&#101;&#x64;&#117;</a>
+<p>Copyright(c) 2016 Stefano Balietti <a href="&#x6D;&#97;&#105;&#108;&#x74;&#x6F;:&#115;&#46;&#98;&#x61;&#x6C;&#105;&#x65;&#116;&#116;&#105;&#x40;&#110;e&#117;.&#101;&#x64;&#x75;">&#115;&#46;&#98;&#x61;&#x6C;&#105;&#x65;&#116;&#116;&#105;&#x40;&#110;e&#117;.&#101;&#x64;&#x75;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Class handling the creation of tournament schedules.</p>
@@ -924,9 +924,8 @@ match the numbers in the <code>matches</code> array.</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">alg</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.generateMatches: alg must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;roundrobin&#39;</span> <span class="o">||</span>
-            <span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;roundRobin&#39;</span> <span class="o">||</span>
-            <span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;RoundRobin&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">alg</span> <span class="o">=</span> <span class="nx">alg</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;roundrobin&#39;</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="nx">matches</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">.</span><span class="nx">roundRobin</span><span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setMatches</span><span class="p">(</span><span class="nx">matches</span><span class="p">);</span>
