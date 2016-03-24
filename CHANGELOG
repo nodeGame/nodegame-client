@@ -2,7 +2,8 @@
 
 ## 1.0.1 (current)
 
- - Query parameters are automatically passed to the connect method (node.connect) when node is executed in the browser. They can still be overridden by passing a configuration object.
+ - The endpoint of the channel in `#node.connect()` is automatically taken from the name of the game (window.location.pathname), if none is specified (only in the browser). This is consistent with the change in nodegame-server that sets the default value of the endpoint to the game name.
+ - Query parameters are automatically passed to `#node.connect()` when node is executed in the browser. They can still be overridden by passing a configuration object.
 
 
 ## 1.0.0
