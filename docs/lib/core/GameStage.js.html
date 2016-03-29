@@ -657,12 +657,18 @@ according to the input string.</p>
 
 <ul>
 <li>0 if they represent the same game stage</li>
-<li>a positive number if gs1 is ahead of gs2</li>
-<li>a negative number if gs2 is ahead of gs1</li>
+<li>-1 if gs1 is ahead of gs2</li>
+<li>+1 if gs2 is ahead of gs1</li>
 </ul>
 
-<p>The accepted hash string format is the following: 'S.s.r'.
-Refer to <code>GameStage.toHash</code> for the semantic of the characters.</p>
+<p>The accepted hash string format is the following:</p>
+
+<ul>
+<li>'S.s.r' (stage.step.round)</li>
+</ul>
+
+<p>When comparison contains a missing value or a string (e.g. a step id),
+the object is placed ahead.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
