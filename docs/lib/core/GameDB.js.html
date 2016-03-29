@@ -87,7 +87,8 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">var</span> <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">,</span>
-    <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">;</span>
+    <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">,</span>
+    <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
 
 </pre></div>
@@ -157,6 +158,8 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">GameDB</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
         <span class="nx">options</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;gamedb&#39;</span><span class="p">;</span>
 
@@ -179,6 +182,13 @@ MIT Licensed</p>
         <span class="nx">NDDB</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">comparator</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">_o2</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o2</span><span class="p">.</span><span class="nx">stage</span> <span class="o">&amp;&amp;</span> <span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">J</span><span class="p">.</span><span class="nx">isInt</span><span class="p">(</span><span class="nx">o2</span><span class="p">.</span><span class="nx">stage</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">_o2</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">normalizeGameStage</span><span class="p">(</span><span class="nx">o2</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">_o2</span><span class="p">)</span> <span class="nx">o2</span> <span class="o">=</span> <span class="nx">_o2</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
             <span class="k">return</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">o1</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">o2</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
         <span class="p">});</span>
 
@@ -197,11 +207,13 @@ MIT Licensed</p>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;insert&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameDB.insert: player field &#39;</span> <span class="o">+</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameDB.insert: player field &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;missing or invalid: &#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameDB.insert: stage field &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;missing or invalid: &#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
             <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameDB.insert: stage field &#39;</span> <span class="o">+</span>
-                                          <span class="s1">&#39;missing or invalid: &#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">timestamp</span><span class="p">)</span> <span class="nx">o</span><span class="p">.</span><span class="nx">timestamp</span> <span class="o">=</span> <span class="nb">Date</span> <span class="o">?</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">});</span>
 
