@@ -1,113 +1,258 @@
-// var util = require('util'),
-// should = require('should');
-//
-// var ngc = module.exports.node = require('./../index.js');
-//
-// var PlayerList = ngc.PlayerList,
-// Player = ngc.Player,
-// GameDB = ngc.GameDB,
-// GameStage = ngc.GameStage;
-//
-// var test_gs = null,
-// gs_321 = new GameStage({
-//     stage: 3,
-//     step: 2,
-//     round: 1,
-// }),
-// gs_331 = new GameStage({
-//     stage: 3,
-//     step: 3,
-//     round: 1,
-// }),
-// gs_311 = new GameStage({
-//     stage: 3,
-//     step: 1,
-//     round: 1,
-// }),
-// gs_111 = new GameStage({
-//     stage: 1,
-//     step: 1,
-//     round: 1,
-// });
-//
-// var test_player = null,
-// player = new Player ({
-//     id: 1,
-//     sid: 1,
-//     count: 1,
-//     name: 'Ste',
-//     stage: {round: 1},
-//     ip:      '1.2.3.4',
-// }),
-// player2 = new Player ({
-//     id: 2,
-//     sid: 2,
-//     count: 2,
-//     name: 'Ste2',
-//     stage: {round: 1},
-//     ip:      '1.2.3.5',
-// }),
-// player3 = new Player ({
-//     id: 3,
-//     sid: 3,
-//     count: 3,
-//     name: 'Ste3',
-//     stage: {round: 1},
-//     ip:      '1.2.3.6',
-// }),
-// player4 = new Player ({
-//     id: 4,
-//     sid: 4,
-//     count: 4,
-//     name: 'Ste4',
-//     stage: {round: 1},
-//     ip:      '1.2.3.7',
-// });
-//
-//
-// var db = new GameDB();
-//
-// var test_db;
-//
-// // Check if pl2 == pl1
-// function samePlayer(pl1, pl2) {
-//     pl2.should.exist;
-//     pl2.name.should.equal(pl1.name);
-//     pl2.id.should.equal(pl1.id);
-// };
-//
-// describe('GameDB', function() {
-//
-//     describe('#add(key, value, player, state)', function() {
-//      before(function(){
-//          db.add('foo', 'bar', player, gs_321);
-//      });
-//      it('should result in a player list of length 1', function() {
-//          db.length.should.equal(1);
-//      });
-//      it('adding other three items should result in length = 4', function() {
-//          db.add('foo2', 'bar2', player2, gs_321);
-//          db.add('foo3', 'bar3', player3, gs_321);
-//          db.add('foo4', 'bar4', player4, gs_321);
-//          db.length.should.equal(4);
-//      });
-//
+var util = require('util'),
+should = require('should');
+
+var log = console.log;
+
+var ngc = module.exports.node = require('../index.js');
+var GameStage = ngc.GameStage;
+var J = ngc.JSUS;
+
+var PlayerList = ngc.PlayerList;
+var Player = ngc.Player;
+var GameDB = ngc.GameDB;
+
+
+var gs321 = new GameStage({
+    stage: 3,
+    step: 2,
+    round: 1,
+});
+var gs331 = new GameStage({
+    stage: 3,
+    step: 3,
+    round: 1,
+});
+var gs311 = new GameStage({
+    stage: 3,
+    step: 1,
+    round: 1,
+});
+var gs111 = new GameStage({
+    stage: 1,
+    step: 1,
+    round: 1,
+});
+
+var db, tmp, node;
+
+
+
+
+// var stager = ngc.getStager();
+// node = ngc.getClient();
+// stager
+//     .next('first')
+//     .next('second')
+//     .next({
+//         id: 'third',
+//         steps: ['a', 'b', 'c']
 //     });
-//
-// //    describe('#select()', function() {
-// //   before(function(){
-// //       test_db = null;
-// //   });
-// //   it("db.select('stage', '=', '3.2.1') should consist of 4 items",
-        // function() {
-// //       db.select('stage', '=', '3.2.1').length.should.equal(4);
-// //   });
-// //   it("db.select('player', '=', player4) should consist of 1 item",
-        //  function() {
-// //       db.select('player', '=', player4).length.should.equal(1);
-// //   });
-// //
-// //   // TODO: try different combinations
-// //    });
-//
+// node.setup('plot', stager.getState());
+// db = new GameDB({
+//     log: node.log,
+//     logCtx: node,
+//     shared: { node: node }
 // });
+//
+// var res;
+// db.insert({
+//     player: '1',
+//     data: 1,
+//     stage: gs331
+// });
+// res = db.select('stage', '=', 'third.c').first();
+// console.log(res);
+//
+//
+//
+//
+// return
+
+
+
+
+
+
+// Check if pl2 == pl1
+function samePlayer(pl1, pl2) {
+    pl2.should.exist;
+    pl2.name.should.equal(pl1.name);
+    pl2.id.should.equal(pl1.id);
+};
+
+describe('GameDB', function() {
+
+    describe('#constructor', function() {
+        before(function(){
+            db = new GameDB();
+        });
+        it('should be of size 0', function() {
+            db.size().should.equal(0);
+        });
+        it('should have default hash player', function() {
+            db.player.should.exist;
+        });
+        it('should have default hash stage', function() {
+            db.stage.should.exist;
+        });
+    });
+
+    describe('#insert()', function() {
+        before(function(){
+            tmp = Date.now();
+            db.insert({
+                player: '1',
+                stage: J.clone(gs111),
+                data: 1
+            });
+        });
+        it('should add one item into db', function() {
+            db.size().should.equal(1);
+        });
+        it('should add automatically timestamp', function() {
+            var item = db.db[0];
+            item.timestamp.should.be.within(tmp, Date.now());
+            tmp = null;
+        });
+        it('should add another item into db', function() {
+            var dateNow = Date.now();
+            db.insert({
+                player: '2',
+                stage: J.clone(gs111),
+                data: 2
+            });
+            db.size().should.equal(2);
+        });
+
+
+        it('should update player hash', function() {
+            db.player['1'].size().should.eql(1);
+            db.player['2'].size().should.eql(1);
+        });
+
+        it('should update stage hash', function() {
+            db.stage['1.1.1'].size().should.eql(2);
+        });
+    });
+
+    describe('#insert() should fail if', function() {
+
+        it('argument is missing', function() {
+            (function() {
+                db.insert();
+            }).should.throw();
+        });
+
+        it('object has no stage property', function() {
+            (function() {
+                db.insert({
+                    player: '1',
+                    data: 1
+                });
+            }).should.throw();
+        });
+
+        it('object has non-object stage property', function() {
+            (function() {
+                db.insert({
+                    player: '1',
+                    data: 1,
+                    stage: 1
+                });
+            }).should.throw();
+        });
+
+        it('object has no player property', function() {
+            (function() {
+                db.insert({
+                    data: 1,
+                    stage: '1'
+                });
+            }).should.throw();
+        });
+
+        it('object has non-string player property', function() {
+            (function() {
+                db.insert({
+                    player: 1,
+                    data: 1,
+                    stage: '1'
+                });
+            }).should.throw();
+        });
+    });
+
+
+    describe('#constructor (as in Game.js)', function() {
+        before(function() {
+            var stager = ngc.getStager();
+            node = ngc.getClient();
+            stager
+                .next('first')
+                .next('second')
+                .next({
+                    id: 'third',
+                    steps: ['a', 'b', 'c']
+                });
+            node.setup('plot', stager.getState());
+            db = new GameDB({
+                log: node.log,
+                logCtx: node,
+                shared: { node: node }
+            });
+        });
+
+        it('should keep reference of node', function() {
+            db.node.should.eql(node);
+        });
+
+        it('should allow to search stage hash by stage name', function() {
+            var res, clone;
+            db.insert({
+                player: '1',
+                data: 1,
+                stage: gs111
+            });
+            clone = J.clone(db.db[0]);
+            res = db.select('stage', '=', 'first').first();
+            res.stage.should.eql(new GameStage('1.1.1'));
+            res.should.eql(clone);
+        });
+
+        it('should allow to search stage hash by stage.step name', function() {
+            var res, clone;
+            db.insert({
+                player: '1',
+                data: 1,
+                stage: gs331
+            });
+            clone = J.clone(db.db[1]);
+            res = db.select('stage', '=', 'third.c').first();
+            res.stage.should.eql(new GameStage('3.3.1'));
+            res.should.eql(clone);
+        });
+
+        it('should allow to search stage hash by stage.step.round', function() {
+            var res, clone;
+            clone = J.clone(db.db[1]);
+            res = db.select('stage', '=', 'third.c.1').first();
+            res.stage.should.eql(new GameStage('3.3.1'));
+            res.should.eql(clone);
+        });
+
+        it('should not find anything when it should not 1', function() {
+            var res, clone;
+            clone = J.clone(db.db[1]);
+            res = db.select('stage', '=', 'third.c.3').fetch();
+            res.should.eql([]);
+        });
+
+        it('should not find anything when it should not 2', function() {
+            var res, clone;
+            clone = J.clone(db.db[1]);
+            res = db.select('stage', '=', 'third.a').fetch();
+            res.should.eql([]);
+        });
+    });
+
+});
