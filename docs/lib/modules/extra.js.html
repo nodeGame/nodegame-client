@@ -143,7 +143,7 @@ the execution of the callback, that could modify it.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="nx">func</span> <span class="o">&amp;&amp;</span> <span class="nx">envValue</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">ctx</span> <span class="o">||</span> <span class="nx">node</span><span class="p">;</span>
+            <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">ctx</span> <span class="o">||</span> <span class="k">this</span><span class="p">;</span>
             <span class="nx">params</span> <span class="o">=</span> <span class="nx">params</span> <span class="o">||</span> <span class="p">[];</span>
             <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">params</span><span class="p">);</span>
         <span class="p">}</span>
