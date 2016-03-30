@@ -11421,7 +11421,7 @@ if (!Array.prototype.indexOf) {
      * @see GameStage.defaults.hash
      */
     function GameStage(gameStage) {
-        var tokens, stageNum, stepNum, roundNum;
+        var tokens, stageNum, stepNum, roundNum, err;
 
         // ## Public properties
 
@@ -11448,21 +11448,37 @@ if (!Array.prototype.indexOf) {
 
         // String.
         if ('string' === typeof gameStage) {
-            tokens = gameStage.split('.');
-            stageNum = parseInt(tokens[0], 10);
-            stepNum  = parseInt(tokens[1], 10);
-            roundNum = parseInt(tokens[2], 10);
-
-            if (tokens[0]) {
-                this.stage = !isNaN(stageNum) ? stageNum : tokens[0];
+            if (gameStage === '') {
+                throw new Error('GameStage constructor: gameStage name ' +
+                                'cannot be an empty string.');
             }
-            if ('undefined' !== typeof tokens[1]) {
-                this.step  = !isNaN(stepNum) ? stepNum : tokens[1];
+            if (gameStage.charAt(0) === '.') {
+                throw new Error('GameStage constructor: gameStage name ' +
+                                'cannot start with a dot.');
+            }
+
+            tokens = gameStage.split('.');
+
+            stageNum = parseInt(tokens[0], 10);
+            this.stage = !isNaN(stageNum) ? stageNum : tokens[0];
+
+            if ('string' === typeof tokens[1]) {
+                if (!tokens[1].length) {
+                    throw new Error('GameStage constructor: gameStage ' +
+                                    'contains empty step: ' + gameStage);
+                }
+                stepNum = parseInt(tokens[1], 10);
+                this.step = !isNaN(stepNum) ? stepNum : tokens[1];
             }
             else if (this.stage !== 0) {
                 this.step = 1;
             }
-            if ('undefined' !== typeof tokens[2]) {
+            if ('string' === typeof tokens[2]) {
+                if (!tokens[2].length) {
+                    throw new Error('GameStage constructor: gameStage ' +
+                                    'contains empty round: ' + gameStage);
+                }
+                roundNum = parseInt(tokens[2], 10);
                 this.round = roundNum;
             }
             else if (this.stage !== 0) {
@@ -11473,9 +11489,9 @@ if (!Array.prototype.indexOf) {
         else if (gameStage && 'object' === typeof gameStage) {
             this.stage = gameStage.stage;
             this.step = 'undefined' !== typeof gameStage.step ?
-                gameStage.step : 1;
+                gameStage.step : this.stage === 0 ? 0 : 1;
             this.round = 'undefined' !== typeof gameStage.round ?
-                gameStage.round : 1;
+                gameStage.round : this.stage === 0 ? 0 : 1;
         }
         // Number.
         else if ('number' === typeof gameStage) {
@@ -11484,37 +11500,50 @@ if (!Array.prototype.indexOf) {
                                    'cannot be a non-integer number.');
             }
             this.stage = gameStage;
-            this.step = 1;
-            this.round = 1;
+            if (this.stage === 0) {
+                this.step = 0;
+                this.round = 0;
+            }
+            else {
+                this.step = 1;
+                this.round = 1;
+            }
         }
         // Defaults or error.
         else if (gameStage !== null && 'undefined' !== typeof gameStage) {
             throw new TypeError('GameStage constructor: gameStage must be ' +
-                                'string, object, a positive number, or ' +
-                                'undefined.');
+                                'string, object, number, undefined, or null.');
         }
 
-        // Final sanity checks.
-
-        if ('undefined' === typeof this.stage) {
-            throw new Error('GameStage constructor: stage cannot be ' +
-                            'undefined.');
+        // At this point we must have positive numbers, or strings for step
+        // and stage, round can be only a positive number, or 0.0.0.
+        if ('number' === typeof this.stage) {
+            if (this.stage < 0) err = 'stage';
         }
-        if ('undefined' === typeof this.step) {
-            throw new Error('GameStage constructor: step cannot be ' +
-                            'undefined.');
-        }
-        if ('undefined' === typeof this.round) {
-            throw new Error('GameStage constructor: round cannot be ' +
-                            'undefined.');
+        else if ('string' !== typeof this.stage) {
+            throw new Error('GameStage constructor: gameStage.stage must be ' +
+                            'number or string: ' + typeof this.stage);
         }
 
-        if (('number' === typeof this.stage && this.stage < 0) ||
-            ('number' === typeof this.step  && this.step < 0) ||
-            ('number' === typeof this.round && this.round < 0)) {
+        if ('number' === typeof this.step) {
+            if (this.step < 0) err = err ? err + ', step' : 'step';
+        }
+        else if ('string' !== typeof this.step) {
+            throw new Error('GameStage constructor: gameStage.step must be ' +
+                            'number or string: ' + typeof this.step);
+        }
 
-            throw new TypeError('GameStage constructor: no field can be ' +
-                                'a negative number.');
+        if ('number' === typeof this.round) {
+            if (this.round < 0) err = err ? err + ', round' : 'round';
+        }
+        else {
+            throw new Error('GameStage constructor: gameStage.round must ' +
+                            'be number.');
+        }
+
+        if (err) {
+            throw new TypeError('GameStage constructor: ' + err + ' field/s ' +
+                                'contain/s negative numbers.');
         }
 
         // Either 0.0.0 or no 0 is allowed.
@@ -11603,43 +11632,82 @@ if (!Array.prototype.indexOf) {
     /**
      * ### GameStage.compare (static)
      *
-     * Compares two GameStage objects|hash strings and returns:
+     * Converts inputs to GameStage objects and sort them by sequence order
+     *
+     * Returns value is:
      *
      * - 0 if they represent the same game stage
-     * - a positive number if gs1 is ahead of gs2
-     * - a negative number if gs2 is ahead of gs1
+     * - -1 if gs1 is ahead of gs2
+     * - +1 if gs2 is ahead of gs1
      *
-     * The accepted hash string format is the following: 'S.s.r'.
-     * Refer to `GameStage.toHash` for the semantic of the characters.
+     * The accepted hash string format is the following:
      *
-     * @param {GameStage|string} gs1 The first game stage to compare
-     * @param {GameStage|string} gs2 The second game stage to compare
+     *   - 'S.s.r' (stage.step.round)
      *
-     * @return {Number} result The result of the comparison
+     * When comparison contains a missing value or a string (e.g. a step id),
+     * the object is placed ahead.
      *
+     * @param {mixed} gs1 The first game stage to compare
+     * @param {mixed} gs2 The second game stage to compare
+     *
+     * @return {number} result The result of the comparison
+     *
+     * @see GameStage constructor
      * @see GameStage.toHash (static)
      */
     GameStage.compare = function(gs1, gs2) {
         var result;
-        if ('undefined' === typeof gs1 && 'undefined' === typeof gs2) return 0;
-        if ('undefined' === typeof gs2) return 1;
-        if ('undefined' === typeof gs1) return -1;
+        // null, undefined, 0.
+        if (!gs1 && !gs2) return 0;
+        if (!gs2) return 1;
+        if (!gs1) return -1;
 
-        // Convert the parameters to objects, if an hash string was passed.
-        if ('string' === typeof gs1) gs1 = new GameStage(gs1);
-        if ('string' === typeof gs2) gs2 = new GameStage(gs2);
+        gs1 = new GameStage(gs1);
+        gs2 = new GameStage(gs2);
 
-        result = gs1.stage - gs2.stage;
+        if ('number' === typeof gs1.stage) {
+            if ('number' === typeof gs2.stage) {
+                result = gs1.stage - gs2.stage;
+            }
+            else {
+                result = -1;
+            }
+        }
+        else if ('number' === typeof gs2.stage) {
+            result = 1;
+        }
 
-        if (result === 0 && 'undefined' !== typeof gs1.round) {
-            result = gs1.round - gs2.round;
+        if (result === 0) {
+            if ('number' === typeof gs1.step) {
+                if ('number' === typeof gs2.step) {
+                    result = gs1.step - gs2.step;
+                }
+                else {
+                    result = -1;
+                }
 
-            if (result === 0 && 'undefined' !== typeof gs1.step) {
-                result = gs1.step - gs2.step;
+            }
+            else if ('number' === typeof gs2.step) {
+                result = 1;
             }
         }
 
-        return result;
+        if (result === 0) {
+            if ('number' === typeof gs1.round) {
+                if ('number' === typeof gs2.round) {
+                    result = gs1.round - gs2.round;
+                }
+                else {
+                    result = -1;
+                }
+
+            }
+            else if ('number' === typeof gs2.round) {
+                result = 1;
+            }
+        }
+
+        return result > 0 ? 1 : result < 0 ? -1 : 0;
     };
 
     /**
@@ -12739,7 +12807,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GamePlot
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` container of game stages functions
@@ -12807,7 +12875,8 @@ if (!Array.prototype.indexOf) {
     GamePlot.prototype.init = function(stager) {
         if (stager) {
             if ('object' !== typeof stager) {
-                throw new Error('GamePlot.init: called with invalid stager.');
+                throw new TypeError('GamePlot.init: called ' +
+                                    'with invalid stager.');
             }
             this.stager = stager;
         }
@@ -13036,17 +13105,17 @@ if (!Array.prototype.indexOf) {
 
         curStage = new GameStage(curStage);
 
-        // Get normalized GameStage:
+        // Get normalized GameStage.
         normStage = this.normalizeGameStage(curStage);
         if (normStage === null) {
-            this.node.warn('previous received invalid stage: ' + curStage);
+            this.node.warn('GamePlot.previous: invalid stage: ' + curStage);
             return null;
         }
         stageNo  = normStage.stage;
         stepNo   = normStage.step;
         seqObj   = this.stager.sequence[stageNo - 1];
 
-        // Handle stepping:
+        // Handle stepping.
         if (stepNo > 1) {
             return new GameStage({
                 stage: stageNo,
@@ -13066,7 +13135,7 @@ if (!Array.prototype.indexOf) {
                 });
             }
 
-            // Handle looping blocks:
+            // Handle looping blocks.
             if ((seqObj.type === 'doLoop' || seqObj.type === 'loop') &&
                 seqObj.cb()) {
 
@@ -13591,51 +13660,48 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### GamePlot.getName
-     *
-     * TODO: To remove once transition is complete
-     * @deprecated
-     */
-    GamePlot.prototype.getName = function(gameStage) {
-        var s = this.getStep(gameStage);
-        return s ? s.name : s;
-    };
-
-    /**
      * ### GamePlot.normalizeGameStage
      *
      * Converts the GameStage fields to numbers
      *
      * Works only in simple mode.
      *
-     * @param {GameStage} gameStage The GameStage object
+     * @param {GameStage|string} gameStage The GameStage object
      *
      * @return {GameStage|null} The normalized GameStage object; NULL on error
      */
     GamePlot.prototype.normalizeGameStage = function(gameStage) {
-        var stageNo, stageObj, stepNo, seqIdx, seqObj;
+        var stageNo, stageObj, stepNo, seqIdx, seqObj, tokens, round;
+        var gs;
 
-        if (!gameStage || 'object' !== typeof gameStage) return null;
+        gs = new GameStage(gameStage);
 
-        // Find stage number:
-        if ('number' === typeof gameStage.stage) {
-            stageNo = gameStage.stage;
+        // Find stage number.
+        if ('number' === typeof gs.stage) {
+            if (gs.stage === 0) return new GameStage();
+            stageNo = gs.stage;
         }
-        else {
+        else if ('string' === typeof gs.stage) {
             for (seqIdx = 0; seqIdx < this.stager.sequence.length; seqIdx++) {
-                if (this.stager.sequence[seqIdx].id === gameStage.stage) {
+                if (this.stager.sequence[seqIdx].id === gs.stage) {
                     break;
                 }
             }
             stageNo = seqIdx + 1;
         }
+        else {
+            throw new Error('GamePlot.normalizeGameStage: gameStage.stage ' +
+                            'must be number or string: ' +
+                            (typeof gs.stage));
+        }
+
         if (stageNo < 1 || stageNo > this.stager.sequence.length) {
-            this.node.warn('normalizeGameStage received nonexistent stage: ' +
-                      gameStage.stage);
+            this.node.warn('GamePlot.normalizeGameStage: nonexistent stage: ' +
+                           gs.stage);
             return null;
         }
 
-        // Get sequence object:
+        // Get sequence object.
         seqObj = this.stager.sequence[stageNo - 1];
         if (!seqObj) return null;
 
@@ -13643,34 +13709,39 @@ if (!Array.prototype.indexOf) {
             return new GameStage({
                 stage: stageNo,
                 step:  1,
-                round: gameStage.round
+                round: gs.round
             });
         }
 
-        // Get stage object:
+        // Get stage object.
         stageObj = this.stager.stages[seqObj.id];
         if (!stageObj) return null;
 
-        // Find step number:
-        if ('number' === typeof gameStage.step) {
-            stepNo = gameStage.step;
+        // Find step number.
+        if ('number' === typeof gs.step) {
+            stepNo = gs.step;
+        }
+        else if ('string' === typeof gs.step) {
+            stepNo = seqObj.steps.indexOf(gs.step) + 1;
         }
         else {
-            stepNo = seqObj.steps.indexOf(gameStage.step) + 1;
+            throw new Error('GamePlot.normalizeGameStage: gameStage.step ' +
+                            'must be number or string: ' +
+                            (typeof gs.step));
         }
         if (stepNo < 1) {
             this.node.warn('normalizeGameStage received nonexistent step: ' +
-                      stageObj.id + '.' + gameStage.step);
+                      stageObj.id + '.' + gs.step);
             return null;
         }
 
-        // Check round property:
-        if ('number' !== typeof gameStage.round) return null;
+        // Check round property.
+        if ('number' !== typeof gs.round) return null;
 
         return new GameStage({
             stage: stageNo,
             step:  stepNo,
-            round: gameStage.round
+            round: gs.round
         });
     };
 
@@ -18149,7 +18220,8 @@ if (!Array.prototype.indexOf) {
 
     // ## Global scope.
     var NDDB = parent.NDDB,
-    GameStage = parent.GameStage;
+    GameStage = parent.GameStage,
+    J = parent.JSUS;
 
     // Inheriting from NDDB.
     GameDB.prototype = new NDDB();
@@ -18169,6 +18241,8 @@ if (!Array.prototype.indexOf) {
      * @see NDDB constructor
      */
     function GameDB(options, db) {
+        var that;
+        that = this;
         options = options || {};
         options.name = options.name || 'gamedb';
 
@@ -18180,6 +18254,14 @@ if (!Array.prototype.indexOf) {
         NDDB.call(this, options, db);
 
         this.comparator('stage', function(o1, o2) {
+            var _o2;
+            if ('string' === typeof o2.stage && that.node) {
+                debugger
+                if (false === J.isInt(o2.stage)) {
+                    _o2 = that.node.game.plot.normalizeGameStage(o2.stage);
+                    if (_o2) o2.stage = _o2;
+                }
+            }
             return GameStage.compare(o1.stage, o2.stage);
         });
 
@@ -18198,11 +18280,13 @@ if (!Array.prototype.indexOf) {
 
         this.on('insert', function(o) {
             if ('string' !== typeof o.player) {
-                throw new Error('GameDB.insert: player field ' +
+                throw new TypeError('GameDB.insert: player field ' +
+                                    'missing or invalid: ', o);
+            }
+            if ('object' !== typeof o.stage) {
+                throw new Error('GameDB.insert: stage field ' +
                                 'missing or invalid: ', o);
             }
-            if (!o.stage) throw new Error('GameDB.insert: stage field ' +
-                                          'missing or invalid: ', o);
             if (!o.timestamp) o.timestamp = Date ? Date.now() : null;
         });
 
@@ -21407,8 +21491,8 @@ if (!Array.prototype.indexOf) {
         this.resolvedMatches = matched;
         this.resolvedMatchesById = matchedId;
         // Set getMatch indexes to 0.
-        this.x.should.eql(0);
-        this.y.should.eql(0);
+        this.x = 0;
+        this.y = 0;
     };
 
     /**
@@ -23098,7 +23182,7 @@ if (!Array.prototype.indexOf) {
         envValue = this.env[env];
         // Executes the function conditionally to _envValue_.
         if (func && envValue) {
-            ctx = ctx || node;
+            ctx = ctx || this;
             params = params || [];
             func.apply(ctx, params);
         }
@@ -30402,10 +30486,10 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ChernoffFaces
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
- * Displays multidimensional data in the shape of a Chernoff Face
+ * Displays multidimensional data in the shape of a Chernoff Face.
  *
  * www.nodegame.org
  */
@@ -30524,7 +30608,7 @@ if (!Array.prototype.indexOf) {
                 node.on(options.change, this.changeFunc);
             }
             else {
-                node.removeListener(this.change, this.changeFunc);
+                node.off(this.change, this.changeFunc);
             }
             this.change = options.change;
         }
@@ -30625,12 +30709,12 @@ if (!Array.prototype.indexOf) {
 
     // TODO: Improve. It eats a bit of the margins
     FacePainter.prototype.fit2Canvas = function(face) {
+        var ratio;
         if (!this.canvas) {
             console.log('No canvas found');
             return;
         }
 
-        var ratio;
         if (this.canvas.width > this.canvas.height) {
             ratio = this.canvas.width / face.head_radius * face.head_scale_x;
         }
