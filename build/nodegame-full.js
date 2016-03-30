@@ -11549,7 +11549,7 @@ if (!Array.prototype.indexOf) {
         // Either 0.0.0 or no 0 is allowed.
         if (!(this.stage === 0 && this.step === 0 && this.round === 0)) {
             if (this.stage === 0 || this.step === 0 || this.round === 0) {
-                throw new Error('GameStage constructor: non-sensical game ' +
+                throw new Error('GameStage constructor: malformed game ' +
                                 'stage: ' + this.toString());
             }
         }
@@ -22700,16 +22700,19 @@ if (!Array.prototype.indexOf) {
      * Stores an object in the server's memory
      *
      * @param {object|string} The value to set
-     * @param {string} to The recipient. Default `SERVER`
+     * @param {string} to Optional. The recipient. Default `SERVER`
+     * @param {string} text Optional. The text property of the message.
+     *   If set, it allows one to define on.data listeners on receiver.
+     *   Default: undefined
      *
      * @return {boolean} TRUE, if SET message is sent
      */
-    NGC.prototype.set = function(o, to) {
+    NGC.prototype.set = function(o, to, text) {
         var msg, tmp;
         if ('string' === typeof o) {
             tmp = o, o = {}, o[tmp] = true;
         }
-        if ('object' !== typeof o) {
+        else if ('object' !== typeof o) {
             throw new TypeError('node.set: o must be object or string.');
         }
         msg = this.msg.create({
@@ -22719,6 +22722,7 @@ if (!Array.prototype.indexOf) {
             reliable: 1,
             data: o
         });
+        if (text) msg.text = text;
         return this.socket.send(msg);
     };
 
@@ -22927,8 +22931,8 @@ if (!Array.prototype.indexOf) {
      * @emits DONE
      */
     NGC.prototype.done = function() {
-        var that, game, doneCb, len, args, i;
-        var arg1, arg2;
+        var that, game, doneCb, len, i;
+        var arg1, arg2, args, args2;
         var stepTime, timeup;
         var autoSet;
 
@@ -22944,8 +22948,38 @@ if (!Array.prototype.indexOf) {
         // Evaluating `done` callback if any.
         doneCb = game.plot.getProperty(game.getCurrentGameStage(), 'done');
 
-        // If a `done` callback returns false, exit.
-        if (doneCb && !doneCb.apply(game, arguments)) return;
+        // A done callback can manipulate arguments, add new values to
+        // send to server, or even halt the procedure if returning false.
+        if (doneCb) {
+            args = doneCb.apply(game, arguments);
+
+            // If a `done` callback returns false, exit.
+            if ('boolean' === typeof args) {
+                if (args === false) {
+                    this.silly('node.done: done callback returned false.');
+                    return;
+                }
+                else {
+                    console.log('***');
+                    console.log('node.done: done callback returned true. ' +
+                                'For retro-compatibility the value is not ' +
+                                'processed and sent to server. If you wanted ' +
+                                'to return "true" return an array: [true]. ' +
+                                'In future releases any value ' +
+                                'different from false and undefined will be ' +
+                                'treated as a done argument and processed.');
+                    console.log('***');
+
+                    args = null;
+                }
+            }
+            // If a value was provided make it an array, it is it not one.
+            else if ('undefined' !== typeof args &&
+                Object.prototype.toString.call(args) !== '[object Array]') {
+
+                args = [args];
+            }
+        }
 
         // Build set object (will be sent to server).
         // Back-compatible checks.
@@ -22959,7 +22993,10 @@ if (!Array.prototype.indexOf) {
         // to avoid calling `node.done` multiple times in the same stage.
         game.willBeDone = true;
 
-        len = arguments.length;
+        // Args can be the original arguments array, or
+        // the one returned by the done callback.
+        if (!args) args = arguments;
+        len = args.length;
         that = this;
         // The arguments object must not be passed or leaked anywhere.
         // Therefore, we recreate an args array here. We have a different
@@ -22967,32 +23004,39 @@ if (!Array.prototype.indexOf) {
         switch(len) {
 
         case 0:
-            if (autoSet) this.set(getSetObj(stepTime, timeup));
+            if (autoSet) {
+                this.set(getSetObj(stepTime, timeup), 'SERVER', 'done');
+            }
             setTimeout(function() { that.events.emit('DONE'); }, 0);
             break;
         case 1:
-            arg1 = arguments[0];
-            if (autoSet) this.set(getSetObj(stepTime, timeup, arg1));
+            arg1 = args[0];
+            if (autoSet) {
+                this.set(getSetObj(stepTime, timeup, arg1), 'SERVER', 'done');
+            }
             setTimeout(function() { that.events.emit('DONE', arg1); }, 0);
             break;
         case 2:
-            arg1 = arguments[0], arg2 = arguments[1];
+            arg1 = args[0], arg2 = args[1];
             // Send two setObjs.
             if (autoSet) {
-                this.set(getSetObj(stepTime, timeup, arg1));
-                this.set(getSetObj(stepTime, timeup, arg2));
+                this.set(getSetObj(stepTime, timeup, arg1), 'SERVER', 'done');
+                this.set(getSetObj(stepTime, timeup, arg2), 'SERVER', 'done');
             }
             setTimeout(function() { that.events.emit('DONE', arg1, arg2); }, 0);
             break;
         default:
-            args = new Array(len+1);
-            args[0] = 'DONE';
-            for (i = 1; i < len; i++) {
-                args[i+1] = arguments[i];
-                if (autoSet) this.set(getSetObj(stepTime, timeup, args[i+1]));
+            args2 = new Array(len+1);
+            args2[0] = 'DONE';
+            for (i = 0; i < len; i++) {
+                args2[i+1] = args[i];
+                if (autoSet) {
+                    this.set(getSetObj(stepTime, timeup, args2[i+1]),
+                             'SERVER', 'done');
+                }
             }
             setTimeout(function() {
-                that.events.emit.apply(that.events, args);
+                that.events.emit.apply(that.events, args2);
             }, 0);
         }
 

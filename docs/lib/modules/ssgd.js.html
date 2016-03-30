@@ -158,7 +158,14 @@ MIT Licensed</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">to</span>
       <span class="dox_type">string</span>
-      <span>The recipient. Default <code>SERVER</code></span>
+      <span>Optional. The recipient. Default <code>SERVER</code></span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">text</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The text property of the message.
+  If set, it allows one to define on.data listeners on receiver.
+  Default: undefined</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -170,12 +177,12 @@ MIT Licensed</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">set</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">set</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">tmp</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">tmp</span> <span class="o">=</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">o</span><span class="p">[</span><span class="nx">tmp</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.set: o must be object or string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">msg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
@@ -185,6 +192,7 @@ MIT Licensed</p>
             <span class="nx">reliable</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nx">data</span><span class="o">:</span> <span class="nx">o</span>
         <span class="p">});</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">=</span> <span class="nx">text</span><span class="p">;</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
     <span class="p">};</span>
 
@@ -517,8 +525,8 @@ this case it must be emitted last.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">done</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">game</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">game</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">args2</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">autoSet</span><span class="p">;</span>
 
@@ -565,10 +573,12 @@ this case it must be emitted last.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
-<p>If a <code>done</code> callback returns false, exit.</p>
+<p>A done callback can manipulate arguments, add new values to
+send to server, or even halt the procedure if returning false.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">doneCb</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">doneCb</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">doneCb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">doneCb</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 
 
 </pre></div>
@@ -578,6 +588,56 @@ this case it must be emitted last.</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>If a <code>done</code> callback returns false, exit.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;boolean&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">args</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node.done: done callback returned false.&#39;</span><span class="p">);</span>
+                    <span class="k">return</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;***&#39;</span><span class="p">);</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;node.done: done callback returned true. &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;For retro-compatibility the value is not &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;processed and sent to server. If you wanted &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;to return &quot;true&quot; return an array: [true]. &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;In future releases any value &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;different from false and undefined will be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;treated as a done argument and processed.&#39;</span><span class="p">);</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;***&#39;</span><span class="p">);</span>
+
+                    <span class="nx">args</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>If a value was provided make it an array, it is it not one.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">args</span> <span class="o">&amp;&amp;</span>
+                <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;[object Array]&#39;</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="nx">args</span> <span class="o">=</span> <span class="p">[</span><span class="nx">args</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <p>Build set object (will be sent to server).
 Back-compatible checks.</p>
@@ -596,7 +656,7 @@ Back-compatible checks.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>Keep track that the game will be done (done is asynchronous)
 to avoid calling <code>node.done</code> multiple times in the same stage.</p>
@@ -604,7 +664,21 @@ to avoid calling <code>node.done</code> multiple times in the same stage.</p>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">game</span><span class="p">.</span><span class="nx">willBeDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
-        <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>Args can be the original arguments array, or
+the one returned by the done callback.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">args</span><span class="p">)</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
 
 </pre></div>
@@ -613,7 +687,7 @@ to avoid calling <code>node.done</code> multiple times in the same stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>The arguments object must not be passed or leaked anywhere.
 Therefore, we recreate an args array here. We have a different
@@ -623,16 +697,20 @@ timeout in a different branch for optimization.</p>
         <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">autoSet</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">));</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">autoSet</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">),</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span> <span class="s1">&#39;done&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
             <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">);</span> <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
-            <span class="nx">arg1</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">autoSet</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">));</span>
+            <span class="nx">arg1</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">autoSet</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">),</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span> <span class="s1">&#39;done&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
             <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">);</span> <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
-            <span class="nx">arg1</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">arg2</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+            <span class="nx">arg1</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">arg2</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
 
 </pre></div>
         </td>
@@ -640,26 +718,29 @@ timeout in a different branch for optimization.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>Send two setObjs.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="k">if</span> <span class="p">(</span><span class="nx">autoSet</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">));</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">));</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">),</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span> <span class="s1">&#39;done&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">),</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span> <span class="s1">&#39;done&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">);</span> <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">default</span><span class="o">:</span>
-            <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
-            <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;DONE&#39;</span><span class="p">;</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">autoSet</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]));</span>
+            <span class="nx">args2</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+            <span class="nx">args2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;DONE&#39;</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">args2</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">autoSet</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">getSetObj</span><span class="p">(</span><span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">,</span> <span class="nx">args2</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]),</span>
+                             <span class="s1">&#39;SERVER&#39;</span><span class="p">,</span> <span class="s1">&#39;done&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
             <span class="p">}</span>
             <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="nx">args2</span><span class="p">);</span>
             <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
         <span class="p">}</span>
 
