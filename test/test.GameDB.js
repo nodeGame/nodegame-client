@@ -34,44 +34,7 @@ var gs111 = new GameStage({
 });
 
 var db, tmp, node;
-
-
-
-
-// var stager = ngc.getStager();
-// node = ngc.getClient();
-// stager
-//     .next('first')
-//     .next('second')
-//     .next({
-//         id: 'third',
-//         steps: ['a', 'b', 'c']
-//     });
-// node.setup('plot', stager.getState());
-// db = new GameDB({
-//     log: node.log,
-//     logCtx: node,
-//     shared: { node: node }
-// });
-//
-// var res;
-// db.insert({
-//     player: '1',
-//     data: 1,
-//     stage: gs331
-// });
-// res = db.select('stage', '=', 'third.c').first();
-// console.log(res);
-//
-//
-//
-//
-// return
-
-
-
-
-
+var out;
 
 // Check if pl2 == pl1
 function samePlayer(pl1, pl2) {
@@ -97,10 +60,10 @@ describe('GameDB', function() {
         });
     });
 
-    describe('#insert()', function() {
+    describe('#add()', function() {
         before(function(){
             tmp = Date.now();
-            db.insert({
+            db.add({
                 player: '1',
                 stage: J.clone(gs111),
                 data: 1
@@ -109,14 +72,14 @@ describe('GameDB', function() {
         it('should add one item into db', function() {
             db.size().should.equal(1);
         });
-        it('should add automatically timestamp', function() {
+        it('should add timestamp automatically', function() {
             var item = db.db[0];
             item.timestamp.should.be.within(tmp, Date.now());
             tmp = null;
         });
         it('should add another item into db', function() {
             var dateNow = Date.now();
-            db.insert({
+            db.add({
                 player: '2',
                 stage: J.clone(gs111),
                 data: 2
@@ -135,17 +98,17 @@ describe('GameDB', function() {
         });
     });
 
-    describe('#insert() should fail if', function() {
+    describe('#add() should fail if', function() {
 
         it('argument is missing', function() {
             (function() {
-                db.insert();
+                db.add();
             }).should.throw();
         });
 
         it('object has no stage property', function() {
             (function() {
-                db.insert({
+                db.add({
                     player: '1',
                     data: 1
                 });
@@ -154,7 +117,7 @@ describe('GameDB', function() {
 
         it('object has non-object stage property', function() {
             (function() {
-                db.insert({
+                db.add({
                     player: '1',
                     data: 1,
                     stage: 1
@@ -164,7 +127,7 @@ describe('GameDB', function() {
 
         it('object has no player property', function() {
             (function() {
-                db.insert({
+                db.add({
                     data: 1,
                     stage: '1'
                 });
@@ -173,7 +136,7 @@ describe('GameDB', function() {
 
         it('object has non-string player property', function() {
             (function() {
-                db.insert({
+                db.add({
                     player: 1,
                     data: 1,
                     stage: '1'
@@ -208,7 +171,7 @@ describe('GameDB', function() {
 
         it('should allow to search stage hash by stage name', function() {
             var res, clone;
-            db.insert({
+            db.add({
                 player: '1',
                 data: 1,
                 stage: gs111
@@ -221,7 +184,7 @@ describe('GameDB', function() {
 
         it('should allow to search stage hash by stage.step name', function() {
             var res, clone;
-            db.insert({
+            db.add({
                 player: '1',
                 data: 1,
                 stage: gs331
@@ -253,6 +216,25 @@ describe('GameDB', function() {
             res = db.select('stage', '=', 'third.a').fetch();
             res.should.eql([]);
         });
+    });
+
+    describe('#on("insert")', function() {
+        before(function() {
+            db = new GameDB();
+            out = [];
+            db.on('insert', function(o) {
+                out.push(o);
+            });
+            db.add({
+                player: '1',
+                data: 'mydata',
+                stage: gs111
+            });
+        });
+        it('should call listener only once per insert, i.e. not on hashes',
+           function() {
+               out.length.should.eql(1);
+           });
     });
 
 });

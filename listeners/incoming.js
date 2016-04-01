@@ -184,13 +184,15 @@
          *
          * Adds an entry to the memory object
          *
-         * Uses the fields `text`, `data`, `stage` and `from`
-         * of the incoming set.DATA message.
+         * Decorates incoming msg.data object with the following properties:
+         *
+         *   - player: msg.from
+         *   - stage: msg.stage
          */
         node.events.ng.on( IN + set + 'DATA', function(msg) {
             var o = msg.data;
             o.player = msg.from, o.stage = msg.stage;
-            node.game.memory.insert(o);
+            node.game.memory.add(o);
         });
 
         /**

@@ -407,7 +407,7 @@ the window object in the browser enviroment.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;nodename&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">newName</span> <span class="o">=</span> <span class="nx">newName</span> <span class="o">||</span> <span class="s1">&#39;ng&#39;</span><span class="p">;</span>
+            <span class="nx">newName</span> <span class="o">=</span> <span class="nx">newName</span> <span class="o">||</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">nodename</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.nodename must be of type string.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
