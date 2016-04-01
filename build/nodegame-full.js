@@ -22995,6 +22995,7 @@ if (!Array.prototype.indexOf) {
 
         // Args can be the original arguments array, or
         // the one returned by the done callback.
+        // TODO: check if it safe to copy arguments by reference.
         if (!args) args = arguments;
         len = args.length;
         that = this;
@@ -29971,10 +29972,15 @@ if (!Array.prototype.indexOf) {
         // Re-inject defaults.
         widget.defaults = options;
 
-        widget.title = WidgetPrototype.title;
-        widget.footer = WidgetPrototype.footer;
-        widget.className = WidgetPrototype.className;
-        widget.context = WidgetPrototype.context;
+        // Set prototype values or options values.
+        widget.title = 'undefined' === typeof options.title ?
+            WidgetPrototype.title : options.title;
+        widget.footer = 'undefined' === typeof options.footer ?
+            WidgetPrototype.footer : options.footer;
+        widget.className = 'undefined' === typeof options.className ?
+            WidgetPrototype.className : options.className;
+        widget.context = 'undefined' === typeof options.context ?
+            WidgetPrototype.context : options.context;
 
         // Add random unique widget id.
         widget.wid = '' + J.randomInt(0,10000000000000000000);
@@ -30036,9 +30042,6 @@ if (!Array.prototype.indexOf) {
                 }
             }
         };
-
-        // User listeners.
-        attachListeners(options, widget);
 
         return widget;
     };
@@ -30118,6 +30121,9 @@ if (!Array.prototype.indexOf) {
         if (w.context) {
             w.setContext(w.context);
         }
+
+        // User listeners.
+        attachListeners(w);
 
         w.append();
 
@@ -30204,22 +30210,19 @@ if (!Array.prototype.indexOf) {
 
     function createListenerFunction(w, e, l) {
         if (!w || !e || !l) return;
-        w.panelDiv[e] = function() {
-            l.call(w);
-        };
+        w.panelDiv[e] = function() { l.call(w); };
     }
 
-    function attachListeners(options, w) {
+    function attachListeners(w) {
         var events, isEvent, i;
-        if (!options || !w) return;
         isEvent = false;
         events = ['onclick', 'onfocus', 'onblur', 'onchange',
                   'onsubmit', 'onload', 'onunload', 'onmouseover'];
-        for (i in options) {
-            if (options.hasOwnProperty(i)) {
+        for (i in w.options) {
+            if (w.options.hasOwnProperty(i)) {
                 isEvent = J.inArray(i, events);
-                if (isEvent && 'function' === typeof options[i]) {
-                    createListenerFunction(w, i, options[i]);
+                if (isEvent && 'function' === typeof w.options[i]) {
+                    createListenerFunction(w, i, w.options[i]);
                 }
             }
         }
@@ -30546,10 +30549,9 @@ if (!Array.prototype.indexOf) {
 
     node.widgets.register('ChernoffFaces', ChernoffFaces);
 
-
     // ## Meta-data
 
-    ChernoffFaces.version = '0.3.1';
+    ChernoffFaces.version = '0.5.1';
     ChernoffFaces.description =
         'Display parametric data in the form of a Chernoff Face.';
 
@@ -30568,9 +30570,11 @@ if (!Array.prototype.indexOf) {
     ChernoffFaces.FacePainter = FacePainter;
     ChernoffFaces.width = 100;
     ChernoffFaces.height = 100;
+    ChernoffFaces.onChange = 'CF_CHANGE';
 
-    function ChernoffFaces (options) {
+    function ChernoffFaces(options) {
         var that = this;
+        var tblOptions;
 
         // ## Public Properties
 
@@ -30578,91 +30582,115 @@ if (!Array.prototype.indexOf) {
         // Configuration options
         this.options = options;
 
+        // Building table options.
+        tblOptions = {};
+        if ('string' === typeof options.id) tblOptions.id = options.id;
+        else if (options.id !== false) tblOptions.id = 'cf_table';
+        if ('string' === typeof options.className) {
+            tblOptions.id = options.className;
+        }
+        else if (options.className !== false) {
+            tblOptions.className = 'cf_table';
+        }
+
         // ### ChernoffFaces.table
         // The table containing everything
-        this.table = new Table({id: 'cf_table'});
+        this.table = new Table(tblOptions);
 
         // ### ChernoffFaces.sc
         // The slider controls of the interface
-        this.sc = node.widgets.get('SliderControls');
+        // Can be set manually via options.controls.
+        // @see SliderControls
+        this.sc = null;
 
         // ### ChernoffFaces.fp
         // The object generating the Chernoff faces
+        // @see FacePainter
         this.fp = null;
 
         // ### ChernoffFaces.canvas
         // The HTMLElement canvas where the faces are created
         this.canvas = null;
 
-        // ### ChernoffFaces.change
-        // The name of the event emitted when a slider is moved
-        this.change = 'CF_CHANGE';
+        // ### ChernoffFaces.onChange
+        // Name of the event to emit to update the canvas (falsy disabled)
+        this.onChange = null;
 
-        // ### ChernoffFaces.changeFunc
-        // The callback executed when a slider is moved.
-        this.changeFunc = function() {
-            that.draw(that.sc.getAllValues());
+        // ### ChernoffFaces.onChangeCb
+        // Updates the canvas when the onChange event is emitted
+        this.onChangeCb = function(f) {
+            // Draw what passed as parameter,
+            // or what is the current value of sliders,
+            // or a random face.
+            if (!f && that.sc) f = that.sc.getAllValues();
+            if (!f) f = FaceVector.random();
+            that.draw(f);
         };
 
         // ### ChernoffFaces.features
         // The object containing all the features to draw Chernoff faces
         this.features = null;
 
-        // ### ChernoffFaces.controls
-        // Flag to determine whether the slider controls should be shown.
-        this.controls = null;
-
         // Init.
         this.init(this.options);
     }
 
     ChernoffFaces.prototype.init = function(options) {
-        var controlsOptions;
+        var controlsOptions, f;
 
-        this.features = options.features || this.features ||
-                        FaceVector.random();
-
-        this.controls = 'undefined' !== typeof options.controls ?
-            options.controls : true;
-
+        // Canvas.
+        if (!options.canvas) {
+            options.canvas = {};
+            if ('undefined' !== typeof options.height) {
+                options.canvas.height = options.height;
+            }
+            if ('undefined' !== typeof options.width) {
+                options.canvas.width = options.width;
+            }
+        }
         this.canvas = W.getCanvas('ChernoffFaces_canvas', options.canvas);
 
+        // Face Painter.
+        this.features = options.features || this.features ||
+            FaceVector.random();
         this.fp = new FacePainter(this.canvas);
         this.fp.draw(new FaceVector(this.features));
 
-        controlsOptions = {
-            id: 'cf_controls',
-            features: J.mergeOnKey(FaceVector.defaults, this.features, 'value'),
-            change: this.change,
-            submit: 'Send'
-        };
-
-        this.sc = node.widgets.get('SliderControls', controlsOptions);
-
-        // Controls are always there, but may not be visible
-        if (this.controls) this.table.add(this.sc);
-
-        // TODO: need to check what to remove first.
-        // Dealing with the onchange event
-        if ('undefined' === typeof options.change) {
-            node.on(this.change, this.changeFunc);
+        // onChange event.
+        if (options.onChange === false || options.onChange === null) {
+            if (this.onChange) {
+                node.off(this.onChange, this.onChangeCb);
+                this.onChange = null;
+            }
         }
         else {
-            if (options.change) {
-                node.on(options.change, this.changeFunc);
-            }
-            else {
-                node.off(this.change, this.changeFunc);
-            }
-            this.change = options.change;
+            this.onChange = 'undefined' === typeof options.onChange ?
+                ChernoffFaces.onChange : options.onChange;
+            node.on(this.onChange, this.onChangeCb);
         }
 
+        // Controls.
+        if ('undefined' === typeof options.controls || options.controls) {
+            // Sc options.
+            f = J.mergeOnKey(FaceVector.defaults, this.features, 'value');
+            controlsOptions = {
+                id: 'cf_controls',
+                features: f,
+                change: this.onChange,
+                submit: 'Send'
+            };
+            // Create them.
+            if ('object' === typeof options.controls) {
+                this.sc = options.controls;
+            }
+            else {
+                this.sc = node.widgets.get('SliderControls', controlsOptions);
+            }
+        }
 
-        this.someDiv = document.createElement('div');
-        this.someDiv.appendChild(this.table.table);
-
-
-        this.table.add(this.canvas);
+        // Table.
+        if (this.sc) this.table.addRow([this.sc, this.canvas]);
+        else this.table.add(this.canvas);
         this.table.parse();
     };
 
@@ -30671,44 +30699,45 @@ if (!Array.prototype.indexOf) {
     };
 
     ChernoffFaces.prototype.append = function() {
-        this.bodyDiv.appendChild(this.someDiv);
         this.table.parse();
+        this.bodyDiv.appendChild(this.table.table);
     };
 
     ChernoffFaces.prototype.draw = function(features) {
         if (!features) return;
         var fv = new FaceVector(features);
         this.fp.redraw(fv);
-        // Without merging wrong values are passed as attributes
-        this.sc.init({
-            features: J.mergeOnKey(FaceVector.defaults, features, 'value')
-        });
-        this.sc.refresh();
+        if (this.sc) {
+            // Without merging wrong values are passed as attributes.
+            this.sc.init({
+                features: J.mergeOnKey(FaceVector.defaults, features, 'value')
+            });
+            this.sc.refresh();
+        }
     };
 
     ChernoffFaces.prototype.getAllValues = function() {
-        //if (this.sc) return this.sc.getAllValues();
         return this.fp.face;
     };
 
     ChernoffFaces.prototype.randomize = function() {
         var fv = FaceVector.random();
         this.fp.redraw(fv);
-
-        var sc_options = {
-            features: J.mergeOnValue(FaceVector.defaults, fv),
-            change: this.change
-        };
-        this.sc.init(sc_options);
-        this.sc.refresh();
-
+        // If controls are visible, updates them.
+        if (this.sc) {
+            this.sc.init({
+                features: J.mergeOnValue(FaceVector.defaults, fv),
+                change: this.onChange
+            });
+            this.sc.refresh();
+        }
         return true;
     };
 
 
     // # FacePainter
     // The class that actually draws the faces on the Canvas.
-    function FacePainter (canvas, settings) {
+    function FacePainter(canvas, settings) {
 
         this.canvas = new W.Canvas(canvas);
 
@@ -31145,7 +31174,7 @@ if (!Array.prototype.indexOf) {
         for (var key in FaceVector.defaults) {
             if (FaceVector.defaults.hasOwnProperty(key)) {
                 if (!J.in_array(key,
-                            ['color', 'lineWidth', 'scaleX', 'scaleY'])) {
+                                ['color', 'lineWidth', 'scaleX', 'scaleY'])) {
 
                     out[key] = FaceVector.defaults[key].min +
                         Math.random() * FaceVector.defaults[key].max;
@@ -35439,6 +35468,15 @@ if (!Array.prototype.indexOf) {
         this.stageOffset = null;
 
         /**
+         * ### VisualRound.totStageOffset
+         *
+         * Total number of stages displayed minus totStageOffset
+         *
+         * If not set, and it is set equal to stageOffset
+         */
+        this.totStageOffset = null;
+
+        /**
          * ### VisualRound.oldStageId
          *
          * Stage id of the previous stage
@@ -35471,6 +35509,9 @@ if (!Array.prototype.indexOf) {
         this.options = options;
 
         this.stageOffset = this.options.stageOffset || 0;
+        this.totStageOffset =
+            'undefined' === typeof this.options.totStageOffset ?
+            this.stageOffset : this.options.totStageOffset;
 
         if (this.options.flexibleMode) {
             this.curStage = this.options.curStage || 1;
@@ -35698,12 +35739,10 @@ if (!Array.prototype.indexOf) {
             idseq = J.map(this.stager.sequence, function(obj){return obj.id;});
 
             // Every round has an identifier.
-            this.totStage = idseq.filter(function(obj){return obj;}).length;
+            this.totStage = this.stager.sequence.length;
             this.curRound = node.player.stage.round;
 
             if (stage) {
-                // TODO: Check the change. It was:
-                // this.curStage = idseq.indexOf(stage.id)+1;
                 this.curStage = node.player.stage.stage;
                 this.totRound = this.stager.sequence[this.curStage -1].num || 1;
             }
@@ -35711,8 +35750,8 @@ if (!Array.prototype.indexOf) {
                 this.curStage = 1;
                 this.totRound = 1;
             }
-            this.totStage -= this.stageOffset;
             this.curStage -= this.stageOffset;
+            this.totStage -= this.totStageOffset;
         }
         this.updateDisplay();
     };

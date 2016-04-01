@@ -674,7 +674,8 @@ to avoid calling <code>node.done</code> multiple times in the same stage.</p>
   <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Args can be the original arguments array, or
-the one returned by the done callback.</p>
+the one returned by the done callback.
+TODO: check if it safe to copy arguments by reference.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">args</span><span class="p">)</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
