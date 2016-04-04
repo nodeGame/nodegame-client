@@ -779,7 +779,7 @@ stage are deleted.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_steppedSteps</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_steppedSteps</span> <span class="o">=</span> <span class="p">[</span><span class="k">new</span> <span class="nx">GameStage</span><span class="p">()];</span>
     <span class="p">}</span>
 
 
@@ -3441,7 +3441,7 @@ method call.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.getPreviousStep: delta must be a &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;positive number or undefined: &#39;</span><span class="p">,</span> <span class="nx">delta</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_steppedSteps</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">delta</span><span class="p">;</span>
+        <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_steppedSteps</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">delta</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_steppedSteps</span><span class="p">[</span><span class="nx">len</span><span class="p">];</span>
     <span class="p">};</span>
@@ -3489,8 +3489,7 @@ method call.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.getNextStep: delta must be a &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;positive number or undefined: &#39;</span><span class="p">,</span> <span class="nx">delta</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="nx">nextStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">jump</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span> <span class="nx">delta</span><span class="p">);</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_steppedSteps</span><span class="p">[</span><span class="nx">len</span><span class="p">];</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">jump</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span> <span class="nx">delta</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
     <span class="p">};</span>
 
 
