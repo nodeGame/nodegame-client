@@ -18,19 +18,19 @@ var loopCb, flag, tmp;
 
 
 
-//  stager = ngc.getStager();
-//  node = ngc.getClient();
+//   stager = ngc.getStager();
+//   node = ngc.getClient();
 //
-// tmp = { loops: [], counter: 1 };
+//  tmp = { loops: [], counter: 1 };
 //
-// loopCb = function() {
-//     var res;
-//     res = !!!flag;
-//     tmp.loops.push(res);
-//     tmp.counter++;
-//     if (tmp.counter > 3) flag = true;
-//     return res;
-// };
+//  loopCb = function() {
+//      var res;
+//      res = !!!flag;
+//      tmp.loops.push(res);
+//      tmp.counter++;
+//      if (tmp.counter > 3) flag = true;
+//      return res;
+//  };
 //
 // stager
 //     .next('1')
@@ -44,21 +44,25 @@ var loopCb, flag, tmp;
 //     .next('4')
 //     .doLoop('5', loopCb)
 //     .next('6')
+//     .repeat('7', 2)
+//     .next({
+//         id: '8',
+//         steps: [ '8.1', '8.2', '8.3' ]
+//     })
+//     .repeat({
+//         id: '9',
+//         steps: [ '9.1', '9.2', '9.3' ]
+//     }, 3)
 //     .finalize();
 //
-// plot = new GamePlot(node, stager);
+//  plot = new GamePlot(node, stager);
 //
-// debugger
+//  debugger
 //
-//var a= plot.jump('1.1.1',1);
-//
-//while(a) {
-//    a= plot.jump(a,1);
-//    console.log(a);
-//    debugger
-//}
-//return;
-
+// var a = plot.stepsToNextStage('1');
+// console.log(a);
+// var a = plot.stepsToNextStage('2');
+// console.log(a);
 
 describe('GamePlot', function() {
     before(function() {
@@ -210,7 +214,6 @@ describe('GamePlot', function() {
         });
     });
     //
-
 
     describe('#next() with loops', function() {
         before(function() {
@@ -464,24 +467,24 @@ describe('GamePlot', function() {
             plot = new GamePlot(node, stager);
         });
 
-         it('should return 1.1.1 (delta=-1)', function() {
-             GameStage.compare(plot.jump('2.1.1', -1), '1.1.1')
-                 .should.be.equal(0);
-         });
-         it('should return 3.1.1 (delta=-1)', function() {
-             GameStage.compare(plot.jump('4.1.1', -1), '3.1.1')
-                 .should.be.equal(0);
-         });
-         it('should return null (delta=-2, execLoops=false)', function() {
-             (plot.jump('4.1.1', -2, false) === null).should.eql(true);
-         });
-         it('should return 3.1.1 (delta=-2)', function() {
-             (plot.jump('3.3.1', -2) === null).should.eql(true);
-         });
-         it('should return 0.0.0 at beginning of the stages', function() {
-             GameStage.compare(plot.jump('1.1.1', -1), '0')
-                 .should.be.eql(0);
-         });
+        it('should return 1.1.1 (delta=-1)', function() {
+            GameStage.compare(plot.jump('2.1.1', -1), '1.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 3.1.1 (delta=-1)', function() {
+            GameStage.compare(plot.jump('4.1.1', -1), '3.1.1')
+                .should.be.equal(0);
+        });
+        it('should return null (delta=-2, execLoops=false)', function() {
+            (plot.jump('4.1.1', -2, false) === null).should.eql(true);
+        });
+        it('should return 3.1.1 (delta=-2)', function() {
+            (plot.jump('3.3.1', -2) === null).should.eql(true);
+        });
+        it('should return 0.0.0 at beginning of the stages', function() {
+            GameStage.compare(plot.jump('1.1.1', -1), '0')
+                .should.be.eql(0);
+        });
 
     });
 
@@ -562,10 +565,83 @@ describe('GamePlot', function() {
             });
         });
 
-        // TODO. How to normalize loops?
-        // TODO. How to do previous/next of loops?
     });
 
+    describe('#stepsToNextStage()', function() {
+        before(function() {
+
+            stager = ngc.getStager();
+            node = ngc.getClient();
+            node.verbosity = -1000;
+
+            stage = {
+                id: '3',
+                steps: ['step3-1', 'step3-2', 'step3-3']
+            };
+
+            stager.addStage(stage);
+
+            stager
+                .next('1')
+                .next('2')
+                .repeat('3', 3)
+                .next('4')
+                .repeat('5', 5)
+                .finalize();
+
+            plot = new GamePlot(node, stager);
+        });
+
+        it('should return 1 for stage 1', function() {
+            plot.stepsToNextStage('1.1.1').should.eql(1);
+        });
+
+        it('should return 3 for stage 3.1', function() {
+            plot.stepsToNextStage('3.1.1').should.eql(3);
+        });
+
+        it('should return 2 for stage 3.2', function() {
+            plot.stepsToNextStage('3.2.1').should.eql(2);
+        });
+
+        it('should return 1 for stage 3.3', function() {
+            plot.stepsToNextStage('3.3.1').should.eql(1);
+        });
+
+        it('should return 1 for stage 5.1', function() {
+            plot.stepsToNextStage('5.1.1').should.eql(1);
+        });
+
+        it('should return null for non-existing stage', function() {
+            (plot.stepsToNextStage('5.5.1') === null).should.eql(true);
+        });
+    });
+
+    describe('#stepsFromPreviousStage()', function() {
+        it('should return 1 for stage 1', function() {
+            plot.stepsFromPreviousStage('1.1.1').should.eql(1);
+        });
+
+        it('should return 1 for stage 3.1', function() {
+            plot.stepsFromPreviousStage('3.1.1').should.eql(1);
+        });
+
+        it('should return 2 for stage 3.2', function() {
+            plot.stepsFromPreviousStage('3.2.1').should.eql(2);
+        });
+
+        it('should return 3 for stage 3.3', function() {
+            plot.stepsFromPreviousStage('3.3.1').should.eql(3);
+        });
+
+        it('should return 1 for stage 5.1', function() {
+            plot.stepsFromPreviousStage('5.1.1').should.eql(1);
+        });
+
+        it('should return null for non-existing stage', function() {
+            (plot.stepsFromPreviousStage('5.5.1') === null).should.eql(true);
+        });
+    });
 });
 
 // var node = require('../index.js');
