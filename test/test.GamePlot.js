@@ -14,7 +14,51 @@ node.verbosity = -1000;
 
 var stager, plot, stagerState;
 var stepRule, globals, properties, init, gameover, done, stage;
-var loopCb, flag;
+var loopCb, flag, tmp;
+
+
+
+//  stager = ngc.getStager();
+//  node = ngc.getClient();
+//
+// tmp = { loops: [], counter: 1 };
+//
+// loopCb = function() {
+//     var res;
+//     res = !!!flag;
+//     tmp.loops.push(res);
+//     tmp.counter++;
+//     if (tmp.counter > 3) flag = true;
+//     return res;
+// };
+//
+// stager
+//     .next('1')
+//     .loop({
+//         id: '2',
+//         cb: function() {
+//             if (tmp.counter++ >= 3) flag = true;
+//         }
+//     }, loopCb)
+//     .loop('skipped', loopCb)
+//     .next('4')
+//     .doLoop('5', loopCb)
+//     .next('6')
+//     .finalize();
+//
+// plot = new GamePlot(node, stager);
+//
+// debugger
+//
+//var a= plot.jump('1.1.1',1);
+//
+//while(a) {
+//    a= plot.jump(a,1);
+//    console.log(a);
+//    debugger
+//}
+//return;
+
 
 describe('GamePlot', function() {
     before(function() {
@@ -72,8 +116,8 @@ describe('GamePlot', function() {
                 .should.be.equal(0);
         });
 
-        it('should return false when reached end of the stages', function() {
-            plot.next('5.1.1').should.be.false;
+        it('should return END_SEQ when reached end of the stages', function() {
+            plot.next('5.1.5').should.be.eql(GamePlot.END_SEQ);
         });
     });
     //
@@ -98,9 +142,11 @@ describe('GamePlot', function() {
             GameStage.compare(plot.previous('3.1.2'),'3.3.1')
                 .should.be.equal(0);
         });
-
-        it('should return false at beginning of the stages', function() {
-            plot.previous('1.1.1').should.be.false;
+        it('should return 0.0.0 at beginning of the stages', function() {
+            GameStage.compare(plot.previous('1.1.1'), new GameStage());
+        });
+        it('should return 0.0.0 before 0.0.0', function() {
+            GameStage.compare(plot.previous('0.0.0'), new GameStage());
         });
     });
 
@@ -125,8 +171,11 @@ describe('GamePlot', function() {
             GameStage.compare(plot.jump('3.1.1', 5), '3.3.2')
                 .should.be.equal(0);
         });
-        it('should return false at beginning of the stages', function() {
-            plot.jump('5.1.1',1).should.be.false;
+        it('should return END_SEQ at the end of the stages', function() {
+            plot.jump('5.1.5', 1).should.be.eql(GamePlot.END_SEQ);
+        });
+        it('should return END_SEQ when exceeding the last stage', function() {
+            plot.jump('5.1.4', 5).should.be.eql(GamePlot.END_SEQ);
         });
     });
 
@@ -151,39 +200,292 @@ describe('GamePlot', function() {
             GameStage.compare(plot.jump('3.3.2', -5), '3.1.1')
                 .should.be.equal(0);
         });
-        it('should return false at beginning of the stages', function() {
-            plot.jump('1.1.1',-1).should.be.false;
+        it('should return 0.0.0 at beginning of the stages', function() {
+            GameStage.compare(plot.jump('1.1.1', -1),
+                              new GameStage()).should.be.eql(0);
+        });
+        it('should return 0.0.0 when going before 0.0.0', function() {
+            GameStage.compare(plot.jump('1.1.1', -3),
+                              new GameStage()).should.be.eql(0);
+        });
+    });
+    //
+
+
+    describe('#next() with loops', function() {
+        before(function() {
+
+            stager = ngc.getStager();
+            node = ngc.getClient();
+            node.verbosity = -1000;
+
+            flag = false;
+            tmp = { loops: [], counter: 1 };
+
+            loopCb = function() {
+                var res;
+                res = !flag;
+                tmp.loops.push(res);
+                tmp.counter++;
+                if (tmp.counter > 3) flag = true;
+                return res;
+            };
+
+            stager
+                .next('1')
+                .loop('2', loopCb)
+                .loop('skipped', loopCb)
+                .next('4')
+                .doLoop('5', loopCb)
+                .next('6')
+                .finalize();
+
+            plot = new GamePlot(node, stager);
         });
 
+        it('should return 1.1.1', function() {
+            GameStage.compare(plot.next('0.0.0'),'1.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 2.1.1', function() {
+            GameStage.compare(plot.next('1.1.1'),'2.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 2.1.2', function() {
+            GameStage.compare(plot.next('2.1.1'),'2.1.2')
+                .should.be.equal(0);
+        });
+        it('should return 2.1.3', function() {
+            GameStage.compare(plot.next('2.1.2'),'2.1.3')
+                .should.be.equal(0);
+        });
+        it('should return 4.1.1 (stage 3 skipped)', function() {
+            GameStage.compare(plot.next('2.1.3'),'4.1.1')
+                .should.be.equal(0);
+        });
+        it('should return null (2.1.3, execLoops=false)', function() {
+            (plot.next('2.1.3', false) === null).should.eql(true);
+        });
+        it('should return 5.1.1', function() {
+            GameStage.compare(plot.next('4.1.1'),'5.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 6.1.1', function() {
+            GameStage.compare(plot.next('5.1.1'),'6.1.1')
+                .should.be.equal(0);
+        });
+
+        it('should return END_SEQ when reached end of the stages', function() {
+            plot.next('6.1.1').should.be.eql(GamePlot.END_SEQ);
+        });
+
+        it('should return null when stage is not existing', function() {
+            (plot.next('10.1.1') === null).should.be.equal(true);
+        });
+    });
+
+    //
+    describe('#previous() with loops', function() {
+        before(function() {
+
+            stager = ngc.getStager();
+            node = ngc.getClient();
+            node.verbosity = -1000;
+
+            flag = false;
+            tmp = { loops: [], counter: 1 };
+
+            loopCb = function() {
+                var res;
+                res = !flag;
+                tmp.loops.push(res);
+                tmp.counter++;
+                if (tmp.counter > 1) flag = true;
+                return res;
+            };
+
+            stager
+                .next('1')
+                .loop('2', loopCb)
+                .loop('skipped', loopCb)
+                .next('4')
+                .doLoop('5', loopCb)
+                .next('6')
+                .finalize();
+
+            plot = new GamePlot(node, stager);
+        });
+
+
+        it('should return null when stage is not existing', function() {
+            (plot.previous('10.1.1') === null).should.be.equal(true);
+        });
+
+        it('should return 5.1.1', function() {
+            GameStage.compare(plot.previous('6.1.1'),'5.1.1')
+                .should.be.equal(0);
+        });
+
+        it('should return 5.1.2', function() {
+            GameStage.compare(plot.previous('5.1.3'),'5.1.2')
+                .should.be.equal(0);
+        });
+
+        it('should return 5.1.1 (decreasing round)', function() {
+            GameStage.compare(plot.previous('5.1.2'),'5.1.1')
+                .should.be.equal(0);
+        });
+
+        it('should return 4.1.1', function() {
+            GameStage.compare(plot.previous('5.1.1'),'4.1.1')
+                .should.be.equal(0);
+        });
+
+        it('should return 3.1.1', function() {
+            GameStage.compare(plot.previous('4.1.1'),'3.1.1')
+                .should.be.equal(0);
+        });
+
+        it('should return 1.1.1 (skip one stage)', function() {
+            GameStage.compare(plot.previous('3.1.1'),'1.1.1')
+                .should.be.equal(0);
+        });
+
+        it('should return null (2.1.1, execLoops=false)', function() {
+            (plot.previous('3.1.1', false) === null).should.eql(true);
+        });
+
+        it('should return 1.1.1', function() {
+            GameStage.compare(plot.previous('2.1.1'),'1.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 0.0.0', function() {
+            GameStage.compare(plot.previous('1.1.1'),'0.0.0')
+                .should.be.equal(0);
+        });
+        it('should return 0.0.0 before 0.0.0', function() {
+            GameStage.compare(plot.previous('0.0.0'),'0.0.0')
+                .should.be.equal(0);
+        });
+    });
+
+    describe('#jump() forward with loops', function() {
+        before(function() {
+
+            stager = ngc.getStager();
+            node = ngc.getClient();
+            node.verbosity = -1000;
+
+            flag = false;
+            tmp = { loops: [], counter: 1 };
+
+            loopCb = function() {
+                var res;
+                res = !flag;
+                tmp.loops.push(res);
+                tmp.counter++;
+                if (tmp.counter > 3) flag = true;
+                return res;
+            };
+
+            stager
+                .next('1')
+                .loop('2', loopCb)
+                .loop('skipped', loopCb)
+                .next('4')
+                .doLoop('5', loopCb)
+                .next('6')
+                .finalize();
+
+            plot = new GamePlot(node, stager);
+        });
+
+        it('should return 1.1.1', function() {
+            GameStage.compare(plot.jump('0', 1), '1')
+                .should.be.equal(0);
+        });
+        it('should return 2.1.1', function() {
+            GameStage.compare(plot.jump('1.1.1', 1), '2.1.1')
+                .should.be.equal(0);
+        });
+        it('should return 2.1.2', function() {
+            GameStage.compare(plot.jump('2.1.1', 1), '2.1.2')
+                .should.be.equal(0);
+        });
+        it('should return 3.1.1 (delta=2)', function() {
+            GameStage.compare(plot.jump('2.1.2', 2), '4.1.1')
+                .should.be.equal(0);
+        });
+        it('should return null (3.1.1, delta=2, execLoops=false)', function() {
+            (plot.jump('2.1.2', 2, false) === null).should.eql(true);
+        });
+
+        it('should return 5.1.1', function() {
+            GameStage.compare(plot.jump('4.1.1', 1), '5.1.1')
+                .should.be.equal(0);
+        });
+        it('should return END_SEQ at the end of the stages', function() {
+            plot.jump('6.1.1', 1).should.be.eql(GamePlot.END_SEQ);
+        });
+
+        it('should return null (2.1.2, delta=10)', function() {
+            (plot.jump('2.1.2', 10, false) === null).should.eql(true);
+        });
     });
 
     describe('#jump() backward', function() {
-        it('should return 1.1.1 (jump -1)', function() {
-            GameStage.compare(plot.jump('2.1.1', -1), '1.1.1')
-                .should.be.equal(0);
+        before(function() {
+
+            stager = ngc.getStager();
+            node = ngc.getClient();
+            node.verbosity = -1000;
+
+            flag = false;
+            tmp = { loops: [], counter: 1 };
+
+            loopCb = function() {
+                var res;
+                res = !flag;
+                tmp.loops.push(res);
+                tmp.counter++;
+                if (tmp.counter > 3) flag = true;
+                return res;
+            };
+
+            stager
+                .next('1')
+                .loop('2', loopCb)
+                .loop('skipped', loopCb)
+                .next('4')
+                .doLoop('5', loopCb)
+                .next('6')
+                .finalize();
+
+            plot = new GamePlot(node, stager);
         });
-        it('should return 3.1.1 (jump -1)', function() {
-            GameStage.compare(plot.jump('3.2.1', -1), '3.1.1')
-                .should.be.equal(0);
-        });
-        it('should return 3.3.1 (jump -1)', function() {
-            GameStage.compare(plot.jump('3.1.2', -1), '3.3.1')
-                .should.be.equal(0);
-        });
-        it('should return 3.1.1 (jump -2)', function() {
-            GameStage.compare(plot.jump('3.3.1', -2), '3.1.1')
-                .should.be.equal(0);
-        });
-        it('should return 3.1.1 (jump -5)', function() {
-            GameStage.compare(plot.jump('3.3.2', -5), '3.1.1')
-                .should.be.equal(0);
-        });
-        it('should return false at beginning of the stages', function() {
-            plot.jump('1.1.1',-1).should.be.false;
-        });
+
+         it('should return 1.1.1 (delta=-1)', function() {
+             GameStage.compare(plot.jump('2.1.1', -1), '1.1.1')
+                 .should.be.equal(0);
+         });
+         it('should return 3.1.1 (delta=-1)', function() {
+             GameStage.compare(plot.jump('4.1.1', -1), '3.1.1')
+                 .should.be.equal(0);
+         });
+         it('should return null (delta=-2, execLoops=false)', function() {
+             (plot.jump('4.1.1', -2, false) === null).should.eql(true);
+         });
+         it('should return 3.1.1 (delta=-2)', function() {
+             (plot.jump('3.3.1', -2) === null).should.eql(true);
+         });
+         it('should return 0.0.0 at beginning of the stages', function() {
+             GameStage.compare(plot.jump('1.1.1', -1), '0')
+                 .should.be.eql(0);
+         });
 
     });
 
+    //
     describe('#normalizeGameStage()', function() {
         before(function() {
             var stager = ngc.getStager();
@@ -264,71 +566,6 @@ describe('GamePlot', function() {
         // TODO. How to do previous/next of loops?
     });
 
-});
-
-return
-
-describe('GamePlot with loops', function() {
-    before(function() {
-
-        stager = ngc.getStager();
-
-        stage = {
-            id: '3',
-            steps: ['step3-1', 'step3-2', 'step3-3']
-        };
-
-        stager.addStage(stage);
-
-        loopCb = function() {
-            var res;
-            res = !!!flag;
-            // Not an actual update, just checking via test infrastructure.
-            if (!testNext) {
-                tmp.loops.push([ this.getCurrentStepObj().id, res ]);
-            }
-            return res;
-        };
-
-        stager
-            .next('1')
-            .loop({
-                id: '2',
-                cb: function() {
-                    if (tmp.counter++ >= 3) flag = true;
-                }
-            }, loopCb)
-            .next('3')
-            .doLoop('4', loopCb)
-            .finalize();
-    });
-
-    describe('#previous() with loops', function() {
-        it('should return 1.1.1', function() {
-            GameStage.compare(plot.previous('2.1.1'),'1.1.1')
-                .should.be.equal(0);
-        });
-        it('should return 2.1.1', function() {
-            GameStage.compare(plot.previous('3.1.1'),'2.1.1')
-                .should.be.equal(0);
-        });
-        it('should return 3.1.1', function() {
-            GameStage.compare(plot.previous('3.2.1'),'3.1.1')
-                .should.be.equal(0);
-        });
-        it('should return 3.2.1', function() {
-            GameStage.compare(plot.previous('3.3.1'),'3.2.1')
-                .should.be.equal(0);
-        });
-        it('should return 3.3.1', function() {
-            GameStage.compare(plot.previous('3.1.2'),'3.3.1')
-                .should.be.equal(0);
-        });
-
-        it('should return false at beginning of the stages', function() {
-            plot.previous('1.1.1').should.be.false;
-        });
-    });
 });
 
 // var node = require('../index.js');

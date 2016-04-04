@@ -767,7 +767,7 @@ makes sures stage is with numbers and not strings.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
                     <span class="nx">seqObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">stageNo</span><span class="p">];</span>
-                <span class="p">}</span>                
+                <span class="p">}</span>
 
 
 </pre></div>
@@ -1059,7 +1059,7 @@ makes sures stage is with numbers and not strings.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="k">if</span> <span class="p">(</span><span class="nx">stageNo</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">();</span>
-            
+
 
 </pre></div>
         </td>
@@ -1074,7 +1074,7 @@ makes sures stage is with numbers and not strings.</p>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="nx">prevSeqObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">stageNo</span> <span class="o">-</span> <span class="mi">2</span><span class="p">];</span>
         <span class="p">}</span>
-        
+
 
 </pre></div>
         </td>
@@ -1175,7 +1175,7 @@ makes sures stage is with numbers and not strings.</p>
       <span class="dox_type">GameStage</span>
       <span class="dox_type">string</span>
       <span class="dox_type">null</span>
-      <span>The GameStage describing the distant stage</span>
+      <span>The distant game stage</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -1204,7 +1204,7 @@ makes sures stage is with numbers and not strings.</p>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">curStage</span> <span class="k">instanceof</span> <span class="nx">GameStage</span><span class="p">)</span> <span class="o">||</span> <span class="nx">curStage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">return</span> <span class="nx">curStage</span><span class="p">;</span>
                 <span class="p">}</span>
-                <span class="nx">delta</span><span class="o">++</span><span class="p">;</span>                
+                <span class="nx">delta</span><span class="o">++</span><span class="p">;</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">execLoops</span><span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
@@ -1241,11 +1241,11 @@ makes sures stage is with numbers and not strings.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
-<p>If we find a loop return null.                </p>
+<p>If we find a loop return null.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">curStage</span> <span class="k">instanceof</span> <span class="nx">GameStage</span><span class="p">))</span> <span class="k">return</span> <span class="nx">curStage</span><span class="p">;</span>
-                
+
                 <span class="nx">delta</span><span class="o">--</span><span class="p">;</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">execLoops</span><span class="p">)</span> <span class="p">{</span>
 
@@ -2318,7 +2318,7 @@ game stage.</p>
                             <span class="p">(</span><span class="k">typeof</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">stage</span><span class="p">));</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">stageNo</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">||</span> <span class="nx">stageNo</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>         
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stageNo</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">||</span> <span class="nx">stageNo</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;GamePlot.normalizeGameStage: nonexistent stage: &#39;</span> <span class="o">+</span>
                            <span class="nx">gs</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
