@@ -3,7 +3,9 @@
 ## 1.0.1 (current)
 
  - `#node.set()` accepts a third optional parameter specifying the text of the message. This way it is possible to define on.data listeners on receiver.
- - The return value of the done callback function became more important. If it is FALSE, it stops the procedures, and any other value different from undefined is replacing the arguments of node.done to be sent to server. For retro-compatibility TRUE is not sent to server (for the moment).
+ - The return value of the done callback function changed meaning. If it is strictly equal to FALSE, it stops the procedure. If it is equal to any other value different from undefined, then the return value replacesthe arguments of node.done to be sent to server. For retro-compatibility TRUE is not sent to server (for the moment).
+ - `#Game.getNextStep() returns the next game stage (if no loops are involved).
+ - `#Game.getPreviousStep() returns the past game stage (if no loops are involved).
  - GameDB select queries can now select stages by name/id and not only hash-string (e.g. 3.1.1).
  - The endpoint of the channel in `#node.connect()` is automatically taken from the name of the game (window.location.pathname), if none is specified (only in the browser). This is consistent with the change in nodegame-server that sets the default value of the endpoint to the game name.
  - Query parameters are automatically passed to `#node.connect()` when node is executed in the browser. They can still be overridden by passing a configuration object.

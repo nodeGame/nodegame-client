@@ -1261,11 +1261,8 @@ makes sures stage is with numbers and not strings.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
                     <span class="nx">stageType</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">curStage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="nx">type</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">stageType</span> <span class="o">===</span> <span class="s1">&#39;loop&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">stageType</span> <span class="o">===</span> <span class="s1">&#39;loop&#39;</span> <span class="o">||</span> <span class="nx">stageType</span> <span class="o">===</span> <span class="s1">&#39;doLoop&#39;</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">delta</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-                    <span class="p">}</span>
-                    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">stageType</span> <span class="o">===</span> <span class="s1">&#39;doLoop&#39;</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">delta</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
                         <span class="k">else</span> <span class="k">return</span> <span class="nx">curStage</span><span class="p">;</span>
                     <span class="p">}</span>
                 <span class="p">}</span>

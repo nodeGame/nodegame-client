@@ -189,15 +189,31 @@ describe('Game', function() {
             var s = game.getPreviousStep();
             GameStage.compare(s, '1').should.eql(0);
         });
+        it('2.1.1 (delta=2)', function() {
+            var s = game.getPreviousStep(2);
+            GameStage.compare(s, '0').should.eql(0);
+        });
         it('2.1.2', function() {
             game.step();
             var s = game.getPreviousStep();
             GameStage.compare(s, '2.1.1').should.eql(0);
         });
+        it('2.1.2 (delta=2)', function() {
+            var s = game.getPreviousStep(2);
+            GameStage.compare(s, '1.1.1').should.eql(0);
+        });
         it('4.1.1 (one skipped)', function() {
             game.step();
             var s = game.getPreviousStep();
             GameStage.compare(s, '2.1.2').should.eql(0);
+        });
+        it('4.1.1 (one skipped) (delta=2)', function() {
+            var s = game.getPreviousStep(2);
+            GameStage.compare(s, '2.1.1').should.eql(0);
+        });
+        it('4.1.1 (one skipped) (delta=3)', function() {
+            var s = game.getPreviousStep(3);
+            GameStage.compare(s, '1.1.1').should.eql(0);
         });
         it('5.1.1', function() {
             game.step();
@@ -264,6 +280,10 @@ describe('Game', function() {
             var s = game.getPreviousStep();
             GameStage.compare(s, '9.2.2').should.eql(0);
         });
+        it('9.3.2 (delta=3)', function() {
+            var s = game.getPreviousStep(3);
+            GameStage.compare(s, '9.3.1').should.eql(0);
+        });
         it('END_SEQ (no game-over)', function() {
             game.step();
             var s = game.getPreviousStep();
@@ -328,6 +348,10 @@ describe('Game', function() {
             var s = game.getNextStep();
             (s === null).should.eql(true);
         });
+        it('1.1.1 (next loop) (delta=2)', function() {
+            var s = game.getNextStep(2);
+            (s === null).should.eql(true);
+        });
         it('2.1.1', function() {
             game.step();
             var s = game.getNextStep();
@@ -343,6 +367,10 @@ describe('Game', function() {
             var s = game.getNextStep();
             GameStage.compare(s, '5.1.1').should.eql(0);
         });
+       it('4.1.1 (one skipped) (delta=2)', function() {
+            var s = game.getNextStep(2);
+            (s === null).should.eql(true);
+       });
         it('5.1.1', function() {
             game.step();
             var s = game.getNextStep();
@@ -357,6 +385,10 @@ describe('Game', function() {
             game.step();
             var s = game.getNextStep();
             GameStage.compare(s, '7.1.2').should.eql(0);
+        });
+        it('7.1.1 (delta=6)', function() {
+            var s = game.getNextStep(6);
+            GameStage.compare(s, '9.2.1').should.eql(0);
         });
         it('7.1.2', function() {
             game.step();
