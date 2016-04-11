@@ -478,23 +478,28 @@ if (!Array.prototype.indexOf) {
  * GPL licenses.
  *
  * Persistent Client-Side Storage
- *
  * ---
  */
-(function(exports){
+(function(exports) {
 
-    var version = '0.5';
+    var version = '5.1';
+    var store, mainStorageType;
 
-    var store = exports.store = function(key, value, options, type) {
-	options = options || {};
-	type = (options.type && options.type in store.types) ? options.type : store.type;
-	if (!type || !store.types[type]) {
-	    store.log("Cannot save/load value. Invalid storage type selected: " + type, 'ERR');
-	    return;
-	}
-	store.log('Accessing ' + type + ' storage');
+    mainStorageType = "volatile";
 
-	return store.types[type](key, value, options);
+    store = exports.store = function(key, value, options, type) {
+        options = options || {};
+        type = (options.type && options.type in store.types) ?
+            options.type : store.type;
+
+        if (!type || !store.types[type]) {
+            store.log('Cannot save/load value. Invalid storage type ' +
+                      'selected: ' + type, 'ERR');
+            return;
+        }
+        store.log('Accessing ' + type + ' storage');
+
+        return store.types[type](key, value, options);
     };
 
     // Adding functions and properties to store
@@ -505,164 +510,171 @@ if (!Array.prototype.indexOf) {
     store.types = {};
 
 
-    var mainStorageType = "volatile";
+
 
     //if Object.defineProperty works...
     try {
 
-	Object.defineProperty(store, 'type', {
-	    set: function(type){
-		if ('undefined' === typeof store.types[type]) {
-		    store.log('Cannot set store.type to an invalid type: ' + type);
-		    return false;
-		}
-		mainStorageType = type;
-		return type;
-	    },
-	    get: function(){
-		return mainStorageType;
-	    },
-	    configurable: false,
-	    enumerable: true
-	});
+        Object.defineProperty(store, 'type', {
+            set: function(type) {
+                if ('undefined' === typeof store.types[type]) {
+                    store.log('Cannot set store.type to an invalid type: ' +
+                              type);
+                    return false;
+                }
+                mainStorageType = type;
+                return type;
+            },
+            get: function(){
+                return mainStorageType;
+            },
+            configurable: false,
+            enumerable: true
+        });
     }
     catch(e) {
-	store.type = mainStorageType; // default: memory
+        store.type = mainStorageType; // default: memory
     }
 
     store.addType = function(type, storage) {
-	store.types[type] = storage;
-	store[type] = function(key, value, options) {
-	    options = options || {};
-	    options.type = type;
-	    return store(key, value, options);
-	};
+        store.types[type] = storage;
+        store[type] = function(key, value, options) {
+            options = options || {};
+            options.type = type;
+            return store(key, value, options);
+        };
 
-	if (!store.type || store.type === "volatile") {
-	    store.type = type;
-	}
+        if (!store.type || store.type === "volatile") {
+            store.type = type;
+        }
     };
 
     // TODO: create unit test
     store.onquotaerror = undefined;
     store.error = function() {
-	console.log("shelf quota exceeded");
-	if ('function' === typeof store.onquotaerror) {
-	    store.onquotaerror(null);
-	}
+        console.log("shelf quota exceeded");
+        if ('function' === typeof store.onquotaerror) {
+            store.onquotaerror(null);
+        }
     };
 
     store.log = function(text) {
-	if (store.verbosity > 0) {
-	    console.log('Shelf v.' + version + ': ' + text);
-	}
+        if (store.verbosity > 0) {
+            console.log('Shelf v.' + version + ': ' + text);
+        }
 
     };
 
     store.isPersistent = function() {
-	if (!store.types) return false;
-	if (store.type === "volatile") return false;
-	return true;
+        if (!store.types) return false;
+        if (store.type === "volatile") return false;
+        return true;
     };
 
     //if Object.defineProperty works...
     try {
-	Object.defineProperty(store, 'persistent', {
-	    set: function(){},
-	    get: store.isPersistent,
-	    configurable: false
-	});
+        Object.defineProperty(store, 'persistent', {
+            set: function(){},
+            get: store.isPersistent,
+            configurable: false
+        });
     }
     catch(e) {
-	// safe case
-	store.persistent = false;
+        // safe case
+        store.persistent = false;
     }
 
     store.decycle = function(o) {
-	if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
-	    o = JSON.decycle(o);
-	}
-	return o;
+        if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
+            o = JSON.decycle(o);
+        }
+        return o;
     };
 
     store.retrocycle = function(o) {
-	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
-	    o = JSON.retrocycle(o);
-	}
-	return o;
+        if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
+            o = JSON.retrocycle(o);
+        }
+        return o;
     };
 
     store.stringify = function(o) {
-	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
-	    throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
-	}
+        if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
+            throw new Error('JSON.stringify not found. Received non-string' +
+                            'value and could not serialize.');
+        }
 
-	o = store.decycle(o);
-	return JSON.stringify(o);
+        o = store.decycle(o);
+        return JSON.stringify(o);
     };
 
     store.parse = function(o) {
-	if ('undefined' === typeof o) return undefined;
-	if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
-	    try {
-		o = JSON.parse(o);
-	    }
-	    catch (e) {
-		store.log('Error while parsing a value: ' + e, 'ERR');
-		store.log(o);
-	    }
-	}
+        if ('undefined' === typeof o) return undefined;
+        if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
+            try {
+                o = JSON.parse(o);
+            }
+            catch (e) {
+                store.log('Error while parsing a value: ' + e, 'ERR');
+                store.log(o);
+            }
+        }
 
-	o = store.retrocycle(o);
-	return o;
+        o = store.retrocycle(o);
+        return o;
     };
 
     // ## In-memory storage
-    // ### fallback for all browsers to enable the API even if we can't persist data
+    // ### fallback to enable the API even if we can't persist data
     (function() {
 
-	var memory = {},
-	timeout = {};
+        var memory = {},
+        timeout = {};
 
-	function copy(obj) {
-	    return store.parse(store.stringify(obj));
-	}
+        function copy(obj) {
+            return store.parse(store.stringify(obj));
+        }
 
-	store.addType("volatile", function(key, value, options) {
+        store.addType("volatile", function(key, value, options) {
 
-	    if (!key) {
-		return copy(memory);
-	    }
+            if (!key) {
+                return copy(memory);
+            }
 
-	    if (value === undefined) {
-		return copy(memory[key]);
-	    }
+            if (value === undefined) {
+                return copy(memory[key]);
+            }
 
-	    if (timeout[key]) {
-		clearTimeout(timeout[key]);
-		delete timeout[key];
-	    }
+            if (timeout[key]) {
+                clearTimeout(timeout[key]);
+                delete timeout[key];
+            }
 
-	    if (value === null) {
-		delete memory[key];
-		return null;
-	    }
+            if (value === null) {
+                delete memory[key];
+                return null;
+            }
 
-	    memory[key] = value;
-	    if (options.expires) {
-		timeout[key] = setTimeout(function() {
-		    delete memory[key];
-		    delete timeout[key];
-		}, options.expires);
-	    }
+            memory[key] = value;
+            if (options.expires) {
+                timeout[key] = setTimeout(function() {
+                    delete memory[key];
+                    delete timeout[key];
+                }, options.expires);
+            }
 
-	    return value;
-	});
+            return value;
+        });
     }());
 
-}('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
+}(
+    'undefined' !== typeof module && 'undefined' !== typeof module.exports ?
+        module.exports : this
+));
+
 /**
  * ## Amplify storage for Shelf.js
+ * Copyright 2014 Stefano Balietti
  *
  * v. 1.1.0 22.05.2013 a275f32ee7603fbae6607c4e4f37c4d6ada6c3d5
  *
@@ -672,7 +684,7 @@ if (!Array.prototype.indexOf) {
  * - JSON.parse -> store.parse (cyclic objects)
  * - store.name -> store.prefix (check)
  * - rprefix -> regex
- * -  "__amplify__" -> store.prefix
+ * - "__amplify__" -> store.prefix
  *
  * ---
  */
@@ -908,9 +920,10 @@ if (!Array.prototype.indexOf) {
     }());
 
 }(this));
+
 /**
  * ## Cookie storage for Shelf.js
- * Copyright 2015 Stefano Balietti
+ * Copyright 2014 Stefano Balietti
  *
  * Original library from:
  * See http://code.google.com/p/cookies/
@@ -3324,6 +3337,95 @@ if (!Array.prototype.indexOf) {
         else return element.removeEventListener(event, func, capture);
     };
 
+    /**
+     * ### DOM.playSound
+     *
+     * Plays a sound
+     *
+     * @param {various} sound Audio tag or path to audio file to be played
+     */
+    DOM.playSound = function(sound) {
+        var audio;
+        if ("string" === typeof(sound)) {
+            audio = new Audio(sound);
+        }
+        else if ("object" === typeof(sound)
+            && "function" === typeof(sound.play)) {
+            audio = sound;
+        }
+        else {
+            throw new TypeError("JSUS.playSound: sound must be string" +
+               " or audio element.");
+        }
+        audio.play();
+    };
+
+    /**
+     * ### DOM.changeTitle
+     *
+     * Changes title of page
+     *
+     * @param {string} title New title of the page
+     */
+    DOM.changeTitle = function(title) {
+        if ("string" === typeof(title)) {
+            document.title = title;
+        }
+        else {
+            throw new TypeError("JSUS.changeTitle: title must be string.");
+        }
+    };
+
+    /**
+     * ### DOM.blinkTitle
+     *
+     * Alternates between two titles
+     *
+     * Calling the function a second time clears the current
+     * blinking. If called without arguments the current title
+     * blinking is cleared.
+     *
+     * @param {string} title New title to blink
+     * @param {string} alternateTitle Title to alternate
+     */
+    DOM.blinkTitle = function(id) {
+        return function(title, alternateTitle, options) {
+            var frequency;
+
+            options = options || {};
+            frequency = options.frequency || 2000;
+
+            if (options.stopOnFocus) {
+                window.onfocus = function() {
+                    JSUS.blinkTitle()
+                };
+            }
+            if (options.startOnBlur) {
+                options.startOnBlur = null;
+                window.onblur = function() {
+                    JSUS.blinkTitle(title, alternateTitle, options);
+                }
+                return;
+            }
+            if (!alternateTitle) {
+                alternateTitle = '!!!';
+            }
+            if (null !== id) {
+                clearInterval(id);
+                id = null;
+            }
+            if ('undefined' !== typeof title) {
+                JSUS.changeTitle(title);
+                id = setInterval(function() {
+                    JSUS.changeTitle(alternateTitle);
+                    setTimeout(function() {
+                        JSUS.changeTitle(title);
+                    },frequency/2);
+                },frequency);
+            }
+        };
+    }(null);
+
     JSUS.extend(DOM);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
@@ -5735,7 +5837,7 @@ if (!Array.prototype.indexOf) {
         // ## Public properties.
 
         // ### nddbid
-        // A global index of all objects
+        // A global index of all objects.
         this.nddbid = new NDDBIndex('nddbid', this);
 
         // ### db
@@ -7116,8 +7218,8 @@ if (!Array.prototype.indexOf) {
                     // Create a copy of the current settings,
                     // without the views functions, otherwise
                     // we establish an infinite loop in the
-                    // constructor.
-                    settings = this.cloneSettings({V: ''});
+                    // constructor, and the hooks.
+                    settings = this.cloneSettings({ V: true, hooks: true });
                     this[key] = new NDDB(settings);
                 }
                 this[key].insert(o);
@@ -7156,8 +7258,9 @@ if (!Array.prototype.indexOf) {
                 if (!this[key][hash]) {
                     // Create a copy of the current settings,
                     // without the hashing functions, otherwise
-                    // we crate an infinite loop at first insert.
-                    settings = this.cloneSettings({H: ''});
+                    // we create an infinite loop at first insert,
+                    // and the hooks (should be called only on main db).
+                    settings = this.cloneSettings({ H: true, hooks: true });
                     this[key][hash] = new NDDB(settings);
                 }
                 this[key][hash].insert(o);
@@ -12739,7 +12842,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GamePlot
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` container of game stages functions
@@ -12807,7 +12910,8 @@ if (!Array.prototype.indexOf) {
     GamePlot.prototype.init = function(stager) {
         if (stager) {
             if ('object' !== typeof stager) {
-                throw new Error('GamePlot.init: called with invalid stager.');
+                throw new TypeError('GamePlot.init: called ' +
+                                    'with invalid stager.');
             }
             this.stager = stager;
         }
@@ -13588,17 +13692,6 @@ if (!Array.prototype.indexOf) {
             (this.stager.sequence.length > 0 ||
              this.stager.generalNextFunction !== null ||
              !J.isEmpty(this.stager.nextFunctions));
-    };
-
-    /**
-     * ### GamePlot.getName
-     *
-     * TODO: To remove once transition is complete
-     * @deprecated
-     */
-    GamePlot.prototype.getName = function(gameStage) {
-        var s = this.getStep(gameStage);
-        return s ? s.name : s;
     };
 
     /**
@@ -21407,8 +21500,8 @@ if (!Array.prototype.indexOf) {
         this.resolvedMatches = matched;
         this.resolvedMatchesById = matchedId;
         // Set getMatch indexes to 0.
-        this.x.should.eql(0);
-        this.y.should.eql(0);
+        this.x = 0;
+        this.y = 0;
     };
 
     /**
@@ -22771,6 +22864,27 @@ if (!Array.prototype.indexOf) {
             that = this;
             ee = this.getCurrentEventEmitter();
 
+            // Listener function. If a timeout is not set, the listener
+            // will be removed immediately after its execution.
+            g = function(msg) {
+                if (msg.text === key) {
+                    success = true;
+                    if (executeOnce) {
+                        ee.remove('in.say.DATA', g);
+                        if ('undefined' !== typeof timer) {
+                            that.timer.destroyTimer(timer);
+                        }
+                    }
+                    cb.call(that.game, msg.data);
+                }
+            };
+
+            if (executeOnce) {
+                ee.on('in.say.DATA', g);
+            }
+            else {
+                ee.on('in.say.DATA', g);
+            }
             // If a timeout is set the listener is removed independently,
             // of its execution after the timeout is fired.
             // If timeout === -1, the listener is never removed.
@@ -22778,34 +22892,18 @@ if (!Array.prototype.indexOf) {
                 timer = this.timer.createTimer({
                     milliseconds: timeout,
                     timeup: function() {
-                        ee.remove('in.say.DATA', g);
-                        that.timer.destroyTimer(timer);
+                        // `ee.once` already removes the listener on execution.
+                        if (!executeOnce) {
+                            ee.remove('in.say.DATA', g);
+                        }
+                        if ('undefined' !== typeof timer) {
+                            that.timer.destroyTimer(timer);
+                        }
                         // success === true we have received a reply.
                         if (timeoutCb && !success) timeoutCb.call(that.game);
                     }
                 });
                 timer.start();
-            }
-
-            // Listener function. If a timeout is not set, the listener
-            // will be removed immediately after its execution.
-            g = function(msg) {
-                if (msg.text === key) {
-                    success = true;
-                    cb.call(that.game, msg.data);
-                    if (executeOnce) {
-                        if ('undefined' !== typeof timer) {
-                            that.timer.destroyTimer(timer);
-                        }
-                    }
-                }
-            };
-
-            if (executeOnce) {
-                ee.once('in.say.DATA', g);
-            }
-            else {
-                ee.on('in.say.DATA', g);
             }
         }
         return res;
@@ -37181,11 +37279,18 @@ if (!Array.prototype.indexOf) {
         this.groupSize = 0;
 
         /**
-         * ### WaitingRoom.maxWaitTime
+         * ### WaitingRoom.waitTime
          *
          * The time in milliseconds for the timeout to expire
          */
-        this.maxWaitTime = null;
+        this.waitTime = null;
+
+        /**
+         * ### WaitingRoom.startDate
+         *
+         * The exact date and time when the game starts
+         */
+        this.startDate = null;
 
         /**
          * ### WaitingRoom.timeoutId
@@ -37209,6 +37314,13 @@ if (!Array.prototype.indexOf) {
          * Span displaying the number of connected players
          */
         this.playerCount = null;
+
+        /**
+         * ### WaitingRoom.startDateDiv
+         *
+         * Div containing the start date
+         */
+        this.startDateDiv = null;
 
         /**
          * ### WaitingRoom.timerDiv
@@ -37236,19 +37348,27 @@ if (!Array.prototype.indexOf) {
         this.dots = null;
 
         /**
-         * ### WaitingRoom.ontTimeout
+         * ### WaitingRoom.onTimeout
          *
          * Callback to be executed if the timer expires
          */
-        this.ontTimeout = null;
+        this.onTimeout = null;
+
 
         /**
-         * ### WaitingRoom.onTimeout
+         * ### WaitingRoom.disconnectMessage
          *
-         * TRUE if the timer expired
+         * String to be put into `this.bodyDiv.innerHTML` when player
+         * is disconnected.
          */
-        this.alreadyTimeUp = null;
+        this.disconnectMessage = null;
 
+        /**
+         * ### WaitingRoom.disconnectIfNotSelected
+         *
+         * Flag that indicates whether to disconnect an not selected player
+         */
+        this.disconnectIfNotSelected = null;
     }
 
     // ## WaitingRoom methods
@@ -37261,9 +37381,9 @@ if (!Array.prototype.indexOf) {
      * Available options:
      *
      *   - onComplete: function executed with either failure or success
-     *   - onTimeout: function executed when at least one test fails
+     *   - onTimeout: function executed when timer runs out
      *   - onSuccess: function executed when all tests succeed
-     *   - maxWaitTime: max waiting time to execute all tests (in milliseconds)
+     *   - waitTime: max waiting time to execute all tests (in milliseconds)
      *
      * @param {object} conf Configuration object.
      */
@@ -37271,24 +37391,26 @@ if (!Array.prototype.indexOf) {
         if ('object' !== typeof conf) {
             throw new TypeError('WaitingRoom.init: conf must be object.');
         }
-        if ('undefined' !== typeof conf.onTimeout) {
-            if (null !== conf.onTimeout &&
-                'function' !== typeof conf.onTimeout) {
-
+        if (conf.onTimeout) {
+            if ('function' !== typeof conf.onTimeout) {
                 throw new TypeError('WaitingRoom.init: conf.onTimeout must ' +
                                     'be function, null or undefined.');
             }
             this.onTimeout = conf.onTimeout;
         }
-        if (conf.maxWaitTime) {
-            if (null !== conf.maxWaitTime &&
-                'number' !== typeof conf.maxWaitTime) {
+        if (conf.waitTime) {
+            if (null !== conf.waitTime &&
+                'number' !== typeof conf.waitTime) {
 
                 throw new TypeError('WaitingRoom.init: conf.onMaxExecTime ' +
                                     'must be number, null or undefined.');
             }
-            this.maxWaitTime = conf.maxWaitTime;
+            this.waitTime = conf.waitTime;
             this.startTimer();
+        }
+        // TODO: check conditions?
+        if (conf.startDate) {
+            this.setStartDate(conf.startDate);
         }
 
         if (conf.poolSize) {
@@ -37314,6 +37436,32 @@ if (!Array.prototype.indexOf) {
             }
             this.connected = conf.connected;
         }
+
+        if (conf.disconnectMessage) {
+            if ('string' !== typeof conf.disconnectMessage) {
+                throw new TypeError('WaitingRoom.init: ' +
+                        'conf.disconnectMessage must be string or undefined.');
+            }
+            this.disconnectMessage = conf.disconnectMessage;
+        }
+        else {
+            this.disconnectMessage = '<span style="color: red">You have been ' +
+                '<strong>disconnected</strong>. Please try again later.' +
+                '</span><br><br>';
+        }
+
+        if (conf.disconnectIfNotSelected) {
+            if ('boolean' !== typeof conf.disconnectIfNotSelected) {
+                throw new TypeError('WaitingRoom.init: ' +
+                    'conf.disconnectIfNotSelected must be boolean or ' +
+                    'undefined.');
+            }
+            this.disconnectIfNotSelected = conf.disconnectIfNotSelected;
+        }
+        else {
+            this.disconnectIfNotSelected = false;
+        }
+
     };
 
     /**
@@ -37323,8 +37471,9 @@ if (!Array.prototype.indexOf) {
      *
      */
     WaitingRoom.prototype.startTimer = function() {
+        var that = this;
         if (this.timer) return;
-        if (!this.maxWaitTime) return;
+        if (!this.waitTime) return;
         if (!this.timerDiv) {
             this.timerDiv = document.createElement('div');
             this.timerDiv.id = 'timer-div';
@@ -37333,8 +37482,13 @@ if (!Array.prototype.indexOf) {
             'Maximum Waiting Time: '
         ));
         this.timer = node.widgets.append('VisualTimer', this.timerDiv, {
-            milliseconds: this.maxWaitTime,
-            timeup: this.onTimeup,
+            milliseconds: this.waitTime,
+            timeup: function() {
+                that.bodyDiv.innerHTML = 
+                    "Waiting for too long. Please look for a HIT called " +
+                    "<strong>ETH Descil Trouble Ticket</strong> and file" +
+                    " a new trouble ticket reporting your experience.";
+            },
             update: 1000
         });
         // Style up: delete title and border;
@@ -37362,7 +37516,7 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### WaitingRoom.updateDisplay
+     * ### WaitingRoom.updateState
      *
      * Displays the state of the waiting room on screen
      *
@@ -37389,7 +37543,19 @@ if (!Array.prototype.indexOf) {
      * @see WaitingRoom.updateState
      */
     WaitingRoom.prototype.updateDisplay = function() {
-        this.playerCount.innerHTML = this.connected + ' / ' + this.poolSize;
+        if (this.connected > this.poolSize) {
+            this.playerCount.innerHTML = '<span style="color:red">' +
+                this.connected + '</span>' + ' / ' + this.poolSize;
+            this.playerCountTooHigh.style.display = '';
+            this.playerCountTooHigh.innerHTML = 'There are more players in ' +
+                'this waiting room than there are playslots in the game. ' +
+                'Only ' + this.poolSize + ' players will be selected to ' +
+                'play the game.';
+        }
+        else {
+            this.playerCount.innerHTML = this.connected + ' / ' + this.poolSize;
+            this.playerCountTooHigh.style.display = 'none';
+        }
     };
 
     WaitingRoom.prototype.append = function() {
@@ -37403,12 +37569,23 @@ if (!Array.prototype.indexOf) {
         this.playerCount.id = 'player-count';
         this.playerCountDiv.appendChild(this.playerCount);
 
+        this.playerCountTooHigh = document.createElement('div');
+        this.playerCountTooHigh.style.display = 'none';
+        this.playerCountDiv.appendChild(this.playerCountTooHigh);
+
         this.dots = W.getLoadingDots();
         this.playerCountDiv.appendChild(this.dots.span);
 
         this.bodyDiv.appendChild(this.playerCountDiv);
 
-        if (this.maxWaitTime) {
+        this.startDateDiv = document.createElement('div');
+        this.bodyDiv.appendChild(this.startDateDiv);
+        this.startDateDiv.style.display= 'none';
+
+        if (this.startDate) {
+            this.setStartDate(this.startDate);
+        }
+        if (this.waitTime) {
             this.startTimer();
         }
 
@@ -37437,8 +37614,50 @@ if (!Array.prototype.indexOf) {
             that.updateDisplay();
         });
 
+        node.on.data('DISPATCH', function(msg) {
+            var data, reportExitCode;
+            msg = msg || {};
+            data = msg.data || {}; 
+
+            reportExitCode = '<br>You have been disconnected. ' + 
+                'Please report this exit code: ' + 
+                data.exit + '<br></h3>';
+
+            if (data.action === 'AllPlayersConnected') {
+                that.alertPlayer();
+            }
+
+            else if (data.action === 'NotEnoughPlayers') {
+                that.bodyDiv.innerHTML = "<h3 align='center'>" +
+                    "Thank you for your patience.<br>" +
+                    "Unfortunately, there are not enough participants in " +
+                    "your group to start the experiment.<br>"; 
+
+                that.disconnect(that.bodyDiv.innerHTML + reportExitCode);
+            }
+
+            else if (data.action === 'NotSelected') {
+                that.bodyDiv.innerHTML = '<h3 align="center">' +
+                    '<span style="color: red"> You were ' +
+                    '<strong>not selected</strong> to start the game.' +
+                    'Thank you for your participation.' +
+                    '</span><br><br>';
+                if (false === data.isDispatchable 
+                    || that.disconnectIfNotSelected) {
+                    that.disconnect(that.bodyDiv.innerHTML + reportExitCode);
+                }
+            }
+
+            else if (data.action === 'Disconnect') {
+                that.disconnect(that.bodyDiv.innerHTML + reportExitCode);
+            }
+        });
+
         node.on.data('TIME', function(msg) {
-            timeIsUp.call(that, msg.data);
+            msg = msg || {};
+            console.log('TIME IS UP!');
+            that.stopTimer();
+            if (this.onTimeout) this.onTimeout(msg.data);
         });
 
 
@@ -37454,24 +37673,49 @@ if (!Array.prototype.indexOf) {
         });
 
         node.on('SOCKET_DISCONNECT', function() {
-            if (that.alreadyTimeUp) return;
 
             // Terminate countdown.
-            if (that.timer) {
-                that.timer.stop();
-                that.timer.destroy();
-            }
+            that.stopTimer();
 
             // Write about disconnection in page.
-            that.bodyDiv.innerHTML = '<span style="color: red">You have been ' +
-                '<strong>disconnected</strong>. Please try again later.' +
-                '</span><br><br>';
+            that.bodyDiv.innerHTML = that.disconnectMessage;
 
 //             // Enough to not display it in case of page refresh.
 //             setTimeout(function() {
 //                 alert('Disconnection from server detected!');
 //             }, 200);
         });
+
+        node.on.data('ROOM_CLOSED', function() {
+            that.disconnect('<span style="color: red"> The waiting ' +
+                'room is <strong>CLOSED</strong>. You have been disconnected.' +
+                ' Please try again later.' +
+                '</span><br><br>');
+        });
+    };
+
+    WaitingRoom.prototype.setStartDate = function(startDate) {
+        this.startDate = new Date(startDate).toString();
+        this.startDateDiv.innerHTML = "Game starts at: <br>" + this.startDate;
+        this.startDateDiv.style.display = '';
+    };
+    
+    WaitingRoom.prototype.stopTimer = function() {
+        if (this.timer) {
+            console.log('STOPPING TIMER');
+            this.timer.stop();
+            this.timer.destroy();
+        }
+    };
+
+    WaitingRoom.prototype.disconnect = function(msg) {
+        if (msg) this.disconnectMessage = msg;
+        node.socket.disconnect();
+    };
+
+    WaitingRoom.prototype.alertPlayer = function() {
+        JSUS.playSound('doorbell.ogg');
+        JSUS.blinkTitle(document.title, 'GAME STARTS!', {stopOnFocus: true});
     };
 
     WaitingRoom.prototype.destroy = function() {
@@ -37481,21 +37725,6 @@ if (!Array.prototype.indexOf) {
     // ## Helper methods
 
     function timeIsUp(data) {
-        console.log('TIME IS UP!');
-
-        if (this.alreadyTimeUp) return;
-        this.alreadyTimeUp = true;
-        if (this.timer) this.timer.stop();
-
-        data = data || {};
-
-        // All players have connected. Game starts.
-        if (data.over === 'AllPlayersConnected') return;
-
-        node.socket.disconnect();
-
-
-        if (this.onTimeout) this.onTimeout(data);
     }
 
 })(node);
