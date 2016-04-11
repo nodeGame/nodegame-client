@@ -510,7 +510,7 @@ this case it must be emitted last.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, if the method is authorized</span>
+      <span>TRUE, if the method is authorized, FALSE otherwise</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -595,7 +595,7 @@ send to server, or even halt the procedure if returning false.</p>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;boolean&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">args</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node.done: done callback returned false.&#39;</span><span class="p">);</span>
-                    <span class="k">return</span><span class="p">;</span>
+                    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="p">{</span>
                     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;***&#39;</span><span class="p">);</span>
