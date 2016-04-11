@@ -393,17 +393,29 @@ that only those who received it can reply.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
 </div>
-<p>If a timeout is set the listener is removed independently,
-of its execution after the timeout is fired.
-If timeout === -1, the listener is never removed.</p>
+<p>Listener function. If a timeout is not set, the listener
+will be removed immediately after its execution.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">timeout</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span>
-                    <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">timeout</span><span class="p">,</span>
-                    <span class="nx">timeup</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">g</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">success</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">executeOnce</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
-                        <span class="nx">that</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">that</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">executeOnce</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+            <span class="p">}</span>
 
 </pre></div>
         </td>
@@ -413,15 +425,15 @@ If timeout === -1, the listener is never removed.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
 </div>
-<p>success === true we have received a reply.</p>
+<p>If a timeout is set the listener is removed independently,
+of its execution after the timeout is fired.
+If timeout === -1, the listener is never removed.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">timeoutCb</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">success</span><span class="p">)</span> <span class="nx">timeoutCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-                    <span class="p">}</span>
-                <span class="p">});</span>
-                <span class="nx">timer</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
-            <span class="p">}</span>
-
+            <span class="k">if</span> <span class="p">(</span><span class="nx">timeout</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span>
+                    <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">timeout</span><span class="p">,</span>
+                    <span class="nx">timeup</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -431,27 +443,31 @@ If timeout === -1, the listener is never removed.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
-<p>Listener function. If a timeout is not set, the listener
-will be removed immediately after its execution.</p>
+<p><code>ee.once</code> already removes the listener on execution.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">g</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">success</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">executeOnce</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">executeOnce</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+                        <span class="p">}</span>
                         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">that</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
                         <span class="p">}</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">};</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">executeOnce</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">ee</span><span class="p">.</span><span class="nx">once</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>success === true we have received a reply.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">timeoutCb</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">success</span><span class="p">)</span> <span class="nx">timeoutCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">});</span>
+                <span class="nx">timer</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
@@ -529,7 +545,7 @@ this case it must be emitted last.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
 <p>Get step execution time.</p>
         </td>
@@ -549,7 +565,7 @@ this case it must be emitted last.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>Evaluating <code>done</code> callback if any.</p>
         </td>
@@ -563,7 +579,7 @@ this case it must be emitted last.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>If a <code>done</code> callback returns false, exit.</p>
         </td>
@@ -577,7 +593,7 @@ this case it must be emitted last.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
 <p>Build set object (will be sent to server).
 Back-compatible checks.</p>
@@ -596,7 +612,7 @@ Back-compatible checks.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <p>Keep track that the game will be done (done is asynchronous)
 to avoid calling <code>node.done</code> multiple times in the same stage.</p>
@@ -613,7 +629,7 @@ to avoid calling <code>node.done</code> multiple times in the same stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>The arguments object must not be passed or leaked anywhere.
 Therefore, we recreate an args array here. We have a different
@@ -640,7 +656,7 @@ timeout in a different branch for optimization.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Send two setObjs.</p>
         </td>
