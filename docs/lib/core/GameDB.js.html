@@ -27,6 +27,9 @@
       <div class="heading h2">
         <a href="#gamedb%20constructor">GameDB constructor</a>
       </div>
+      <div class="heading h3">
+        <a href="#gamedb.add">GameDB.add</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -206,20 +209,74 @@ MIT Licensed</p>
             <span class="p">});</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;insert&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameDB.insert: player field &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;missing or invalid: &#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameDB.insert: stage field &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;missing or invalid: &#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">timestamp</span><span class="p">)</span> <span class="nx">o</span><span class="p">.</span><span class="nx">timestamp</span> <span class="o">=</span> <span class="nb">Date</span> <span class="o">?</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="p">});</span>
-
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__shared</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
     <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamedb.add">
+  <h3>
+    <a href="#gamedb.add" name="gamedb.add" class="pilcrow">&#182;</a>
+    GameDB.add
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Wrapper around NDDB.insert</p>
+
+<p>Checks that the object contains a player and stage
+property and also adds a timestamp and session field.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">o</span>
+      <span class="dox_type">object</span>
+      <span>The object to add</span>
+    </div>
+    <div class="dox_tag_title">NDDB.insert
+</div>
+
+
+<div class="highlight"><pre><code><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_detail&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="err">/div&gt;</span>
+</code></pre></div>
+
+
+
+<p></div>
+</div></p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">.</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameDB.add: player field &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;missing or invalid: &#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameDB.add: stage field &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;missing or invalid: &#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+        <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>if (node.nodename !== nodename) o.session = node.nodename;</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">timestamp</span><span class="p">)</span> <span class="nx">o</span><span class="p">.</span><span class="nx">timestamp</span> <span class="o">=</span> <span class="nb">Date</span> <span class="o">?</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+    <span class="p">};</span>
 
 <span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>

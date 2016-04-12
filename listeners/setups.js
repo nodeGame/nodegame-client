@@ -147,7 +147,7 @@
          * Sets the name for nodegame
          */
         this.registerSetup('nodename', function(newName) {
-            newName = newName || 'ng';
+            newName = newName || constants.nodename;
             if ('string' !== typeof newName) {
                 throw new TypeError('node.nodename must be of type string.');
             }

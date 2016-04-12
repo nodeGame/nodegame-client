@@ -687,6 +687,48 @@ describe('Moving through the sequence', function() {
         testLoop(true);
     });
 
+    describe('loop vs doLoop with false cb', function() {
+        before(function() {
+
+            stager = ngc.getStager();
+
+            loopCb = function() {
+                return false;
+            };
+
+            tmp = 0;
+            flag = 0;
+
+            stager
+                .next('1')
+                .loop({
+                    id: '2',
+                    cb: function() {
+                        flag = flag + 1;
+                    }
+                }, loopCb)
+                .doLoop({
+                    id: '4',
+                    cb: function() {
+                        tmp = tmp + 1;
+                    }
+                }, loopCb)
+                .finalize();
+
+
+            result = testPositions(stager, 1);
+        });
+
+
+        it('loop should not be executed at all', function() {
+            flag.should.eql(0);
+        });
+        it('doLoop should be executed once', function() {
+            tmp.should.eql(1);
+        });
+
+    });
+
     describe('#next: stage and steps blocks', function() {
         before(function() {
             // Increase timeout.

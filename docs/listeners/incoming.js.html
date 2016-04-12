@@ -517,8 +517,12 @@ Sending data, do something before disconnect.</p>
   </div>
   <div class="body"><p>Adds an entry to the memory object</p>
 
-<p>Uses the fields <code>text</code>, <code>data</code>, <code>stage</code> and <code>from</code>
-of the incoming set.DATA message.</p>
+<p>Decorates incoming msg.data object with the following properties:</p>
+
+<ul>
+<li>player: msg.from
+<ul><li>stage: msg.stage</li></ul></li>
+</ul>
   </div>
 </div>
         </td>
@@ -526,7 +530,7 @@ of the incoming set.DATA message.</p>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">set</span> <span class="o">+</span> <span class="s1">&#39;DATA&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
             <span class="nx">o</span><span class="p">.</span><span class="nx">player</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">stage</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
         <span class="p">});</span>
 
 
