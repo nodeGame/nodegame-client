@@ -93,7 +93,7 @@
          */
         this.events.ng.on('STEP_CALLBACK_EXECUTED', function() {
             if (!node.window || node.window.isReady()) {
-                node.emitAsync('LOADED');
+                node.emit('LOADED');
             }
         });
 
@@ -108,7 +108,7 @@
                 node.socket.clearBuffer();
             }
             if (node.game.shouldEmitPlaying()) {
-                node.emitAsync('PLAYING');
+                node.emit('PLAYING');
             }
         });
 
