@@ -97,19 +97,6 @@
             }
         });
 
-//         /**
-//          * ## WINDOW_LOADED
-//          *
-//          * @emit LOADED
-//          */
-//         this.events.ng.on('WINDOW_LOADED', function() {
-//             var stageLevel;
-//             stageLevel = node.game.getStageLevel();
-//             if (stageLevel === stageLevels.CALLBACK_EXECUTED) {
-//                 node.emit('LOADED');
-//             }
-//         });
-
         /**
          * ## LOADED
          *

@@ -19445,7 +19445,8 @@ if (!Array.prototype.indexOf) {
      */
     Game.prototype.execStep = function(step) {
         var cb;
-        var frame, frameOptions, frameLoadMode, frameStoreMode;
+        var frame, uri, frameOptions;
+        var frameLoadMode, frameStoreMode;
         var frameAutoParse, frameAutoParsePrefix;
 
         if ('object' !== typeof step) {
@@ -19455,65 +19456,49 @@ if (!Array.prototype.indexOf) {
         cb = this.plot.getProperty(step, 'cb');
         frame = this.plot.getProperty(step, 'frame');
 
+        // Handle frame loading natively, if required.
         if (frame) {
             if (!this.node.window) {
                 throw new Error('Game.execStep: frame option in step ' +
                                 step + ', but nodegame-window is not loaded.');
             }
             frameOptions = {};
-            if ('string' !== typeof frame) {
-                if ('object' === typeof frame) {
-                    frame = frame.uri;
-                    if ('string' !== typeof frame) {
-                        throw new TypeError('Game.execStep: frame.uri must ' +
-                                            'be string: ' + frame + '. ' +
-                                            'Step: ' + step);
+            if ('string' === typeof frame) {
+                uri = frame;
+            }
+            else if ('object' === typeof frame) {
+                uri = frame.uri;
+                if ('string' !== typeof uri) {
+                    throw new TypeError('Game.execStep: frame.uri must ' +
+                                        'be string: ' + uri + '. ' +
+                                        'Step: ' + step);
+                }
+                frameOptions.frameLoadMode = frame.loadMode;
+                frameOptions.storeMode = frame.storeMode;
+                frameAutoParse = frame.autoParse;
+                if (frameAutoParse) {
+                    // Replacing TRUE with node.game.settings.
+                    if (frameAutoParse === true) {
+                        frameAutoParse = this.settings;
                     }
-                    frameOptions.frameLoadMode = frame.loadMode;
-                    frameOptions.storeMode = frame.storeMode;
 
-                    frameAutoParse = frame.autoParse;
+                    frameOptions.autoParse = frameAutoParse;
+                    frameOptions.autoParsePrefix = frame.autoParsePrefix;
                 }
             }
+            else {
+                throw new TypeError('Game.execStep: frame must be string or ' +
+                                    'object: ' + frame + '. ' +
+                                    'Step: ' + step);
 
-            if (!frameAutoParse) {
-                frameAutoParse = this.plot.getProperty(step, 'frameAutoParse');
             }
 
-            if (frameAutoParse) {
-                // Replacing TRUE with node.game.settings.
-                if (frameAutoParse === true) {
-                    frameAutoParse = this.settings;
-                }
-
-                if (!frame.autoParsePrefix) {
-                    frame.autoParsePrefix =
-                        this.plot.getProperty(step, 'frameAutoParsePrefix');
-                }
-
-                frameOptions.autoParse = frameAutoParse;
-                frameOptions.autoParsePrefix = frame.autoParsePrefix;
-            }
-
-            this.node.window.loadFrame(frame, function() {
+            this.node.window.loadFrame(uri, function() {
                 this.execCallback(cb);
             }, frameOptions);
         }
         else {
             this.execCallback(cb);
-            frameAutoParse = this.plot.getProperty(step, 'frameAutoParse');
-            if (frameAutoParse) {
-                // Replacing TRUE with node.game.settings.
-                if (frameAutoParse === true) {
-                    frameAutoParse = this.settings;
-                }
-
-                frameAutoParsePrefix =
-                    this.plot.getProperty(step, 'frameAutoParsePrefix');
-
-                this.node.window.setInnerHTML(frameAutoParse,
-                                              frameAutoParsePrefix);
-            }
         }
     };
 
@@ -24277,19 +24262,6 @@ if (!Array.prototype.indexOf) {
             }
         });
 
-//         /**
-//          * ## WINDOW_LOADED
-//          *
-//          * @emit LOADED
-//          */
-//         this.events.ng.on('WINDOW_LOADED', function() {
-//             var stageLevel;
-//             stageLevel = node.game.getStageLevel();
-//             if (stageLevel === stageLevels.CALLBACK_EXECUTED) {
-//                 node.emit('LOADED');
-//             }
-//         });
-
         /**
          * ## LOADED
          *
@@ -26810,7 +26782,7 @@ if (!Array.prototype.indexOf) {
                 handleFrameLoad(that, uri, iframe, iframeName, loadCache,
                                 storeCacheNow, function() {
 
-                                    // Executes callback
+                                    // Executes callback, autoParses,
                                     // and updates GameWindow state.
                                     that.updateLoadFrameState(func,
                                                               autoParse,
@@ -26872,8 +26844,9 @@ if (!Array.prototype.indexOf) {
      *
      * The method performs the following operations:
      *
-     * - executes a given callback function
      * - decrements the counter of loading iframes
+     * - executes a given callback function
+     * - auto parses the elements specified (if any)
      * - set the window state as loaded (eventually)
      *
      * @param {function} func Optional. A callback function
@@ -28714,54 +28687,6 @@ if (!Array.prototype.indexOf) {
         return root.appendChild(eb);
     };
 
-// TODO: To remove.
-//     GameWindow.prototype.setInnerHTML2 = function(elements, values) {
-//         var el, i, len, res, lenValues;
-//         res = true;
-//         if ('string' === typeof elements) {
-//             if ('string' !== typeof values) {
-//                 throw new TypeError('GameWindow.setInnerHTML: values must be ' +
-//                                     'string, if elements is string.');
-//             }
-//             el = W.getElementById(elements);
-//             if (el) el.innerHTML = values;
-//             else res = false;
-//         }
-//         else if (J.isArray(elements)) {
-//             if ('string' === typeof values) values = [values];
-//             else if (!J.isArray(values) || !values.length) {
-//                 throw new TypeError('GameWindow.setInnerHTML: values must be ' +
-//                                     'string or non-empty array, if elements ' +
-//                                     'is string.');
-//             }
-//             i = -1, len = elements.length, lenValues = values.length;
-//             for ( ; ++i < len ; ) {
-//                 el = W.getElementById(elements[i]);
-//                 if (el) el.innerHTML = values[i % lenValues];
-//                 else res = false;
-//             }
-//         }
-//         else if ('object' === typeof elements) {
-//             if ('undefined' !== typeof values) {
-//                 node.warn('GameWindow.setInnerHTML: elements is ' +
-//                           'object, therefore values will be ignored.');
-//             }
-//             for (i in elements) {
-//                 if (elements.hasOwnProperty(i)) {
-//                     el = W.getElementById(i);
-//                     if (el) el.innerHTML = elements[i];
-//                     else res = false;
-//                 }
-//             }
-//         }
-//         else {
-//             throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
-//                                 'string, array, or object.');
-//         }
-//         return res;
-//     };
-
-
     /**
      * ### GameWindow.setInnerHTML
      *
@@ -28856,6 +28781,53 @@ if (!Array.prototype.indexOf) {
     ('undefined' !== typeof window) ? window : module.parent.exports.window,
     ('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
+
+
+// GameWindow.prototype.setInnerHTML2 = function(elements, values) {
+//     var el, i, len, res, lenValues;
+//     res = true;
+//     if ('string' === typeof elements) {
+//         if ('string' !== typeof values) {
+//             throw new TypeError('GameWindow.setInnerHTML: values must be ' +
+//                                 'string, if elements is string.');
+//         }
+//         el = W.getElementById(elements);
+//         if (el) el.innerHTML = values;
+//         else res = false;
+//     }
+//     else if (J.isArray(elements)) {
+//         if ('string' === typeof values) values = [values];
+//         else if (!J.isArray(values) || !values.length) {
+//             throw new TypeError('GameWindow.setInnerHTML: values must be ' +
+//                                 'string or non-empty array, if elements ' +
+//                                 'is string.');
+//         }
+//         i = -1, len = elements.length, lenValues = values.length;
+//         for ( ; ++i < len ; ) {
+//             el = W.getElementById(elements[i]);
+//             if (el) el.innerHTML = values[i % lenValues];
+//             else res = false;
+//         }
+//     }
+//     else if ('object' === typeof elements) {
+//         if ('undefined' !== typeof values) {
+//             node.warn('GameWindow.setInnerHTML: elements is ' +
+//                       'object, therefore values will be ignored.');
+//         }
+//         for (i in elements) {
+//             if (elements.hasOwnProperty(i)) {
+//                 el = W.getElementById(i);
+//                 if (el) el.innerHTML = elements[i];
+//                 else res = false;
+//             }
+//         }
+//     }
+//     else {
+//         throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
+//                             'string, array, or object.');
+//     }
+//     return res;
+// };
 
 // Creates a new GameWindow instance in the global scope.
 (function() {

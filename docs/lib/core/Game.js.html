@@ -2194,7 +2194,8 @@ handle it here.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">execStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">cb</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">frame</span><span class="p">,</span> <span class="nx">frameOptions</span><span class="p">,</span> <span class="nx">frameLoadMode</span><span class="p">,</span> <span class="nx">frameStoreMode</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">frame</span><span class="p">,</span> <span class="nx">uri</span><span class="p">,</span> <span class="nx">frameOptions</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">frameLoadMode</span><span class="p">,</span> <span class="nx">frameStoreMode</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">frameAutoParse</span><span class="p">,</span> <span class="nx">frameAutoParsePrefix</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
@@ -2204,32 +2205,6 @@ handle it here.</p>
         <span class="nx">cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;cb&#39;</span><span class="p">);</span>
         <span class="nx">frame</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">);</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.execStep: frame option in step &#39;</span> <span class="o">+</span>
-                                <span class="nx">step</span> <span class="o">+</span> <span class="s1">&#39;, but nodegame-window is not loaded.&#39;</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="nx">frameOptions</span> <span class="o">=</span> <span class="p">{};</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">frame</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">uri</span><span class="p">;</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.execStep: frame.uri must &#39;</span> <span class="o">+</span>
-                                            <span class="s1">&#39;be string: &#39;</span> <span class="o">+</span> <span class="nx">frame</span> <span class="o">+</span> <span class="s1">&#39;. &#39;</span> <span class="o">+</span>
-                                            <span class="s1">&#39;Step: &#39;</span> <span class="o">+</span> <span class="nx">step</span><span class="p">);</span>
-                    <span class="p">}</span>
-                    <span class="nx">frameOptions</span><span class="p">.</span><span class="nx">frameLoadMode</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">loadMode</span><span class="p">;</span>
-                    <span class="nx">frameOptions</span><span class="p">.</span><span class="nx">storeMode</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">storeMode</span><span class="p">;</span>
-
-                    <span class="nx">frameAutoParse</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">autoParse</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">frameAutoParse</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">frameAutoParse</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;frameAutoParse&#39;</span><span class="p">);</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">frameAutoParse</span><span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -2239,30 +2214,29 @@ handle it here.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
 </div>
-<p>Replacing TRUE with node.game.settings.</p>
+<p>Handle frame loading natively, if required.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">frameAutoParse</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">frameAutoParse</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">settings</span><span class="p">;</span>
-                <span class="p">}</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">frame</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">frame</span><span class="p">.</span><span class="nx">autoParsePrefix</span> <span class="o">=</span>
-                        <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;frameAutoParsePrefix&#39;</span><span class="p">);</span>
-                <span class="p">}</span>
-
-                <span class="nx">frameOptions</span><span class="p">.</span><span class="nx">autoParse</span> <span class="o">=</span> <span class="nx">frameAutoParse</span><span class="p">;</span>
-                <span class="nx">frameOptions</span><span class="p">.</span><span class="nx">autoParsePrefix</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.execStep: frame option in step &#39;</span> <span class="o">+</span>
+                                <span class="nx">step</span> <span class="o">+</span> <span class="s1">&#39;, but nodegame-window is not loaded.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">loadFrame</span><span class="p">(</span><span class="nx">frame</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">execCallback</span><span class="p">(</span><span class="nx">cb</span><span class="p">);</span>
-            <span class="p">},</span> <span class="nx">frameOptions</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">execCallback</span><span class="p">(</span><span class="nx">cb</span><span class="p">);</span>
-            <span class="nx">frameAutoParse</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;frameAutoParse&#39;</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">frameAutoParse</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">frameOptions</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">uri</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">uri</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">uri</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">uri</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.execStep: frame.uri must &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;be string: &#39;</span> <span class="o">+</span> <span class="nx">uri</span> <span class="o">+</span> <span class="s1">&#39;. &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;Step: &#39;</span> <span class="o">+</span> <span class="nx">step</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="nx">frameOptions</span><span class="p">.</span><span class="nx">frameLoadMode</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">loadMode</span><span class="p">;</span>
+                <span class="nx">frameOptions</span><span class="p">.</span><span class="nx">storeMode</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">storeMode</span><span class="p">;</span>
+                <span class="nx">frameAutoParse</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">autoParse</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">frameAutoParse</span><span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -2275,16 +2249,27 @@ handle it here.</p>
 <p>Replacing TRUE with node.game.settings.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">frameAutoParse</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">frameAutoParse</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">settings</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">frameAutoParse</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">frameAutoParse</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">settings</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="nx">frameOptions</span><span class="p">.</span><span class="nx">autoParse</span> <span class="o">=</span> <span class="nx">frameAutoParse</span><span class="p">;</span>
+                    <span class="nx">frameOptions</span><span class="p">.</span><span class="nx">autoParsePrefix</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">;</span>
                 <span class="p">}</span>
-
-                <span class="nx">frameAutoParsePrefix</span> <span class="o">=</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;frameAutoParsePrefix&#39;</span><span class="p">);</span>
-
-                <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">setInnerHTML</span><span class="p">(</span><span class="nx">frameAutoParse</span><span class="p">,</span>
-                                              <span class="nx">frameAutoParsePrefix</span><span class="p">);</span>
             <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.execStep: frame must be string or &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;object: &#39;</span> <span class="o">+</span> <span class="nx">frame</span> <span class="o">+</span> <span class="s1">&#39;. &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;Step: &#39;</span> <span class="o">+</span> <span class="nx">step</span><span class="p">);</span>
+
+            <span class="p">}</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">loadFrame</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">execCallback</span><span class="p">(</span><span class="nx">cb</span><span class="p">);</span>
+            <span class="p">},</span> <span class="nx">frameOptions</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">execCallback</span><span class="p">(</span><span class="nx">cb</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">};</span>
 
