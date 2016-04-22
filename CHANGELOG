@@ -1,4 +1,4 @@
-# nodegame-client change log
+:qwq# nodegame-client change log
 
 ## 1.0.1 (current)
 
@@ -10,6 +10,7 @@
  - The endpoint of the channel in `#node.connect()` is automatically taken from the name of the game (window.location.pathname), if none is specified (only in the browser). This is consistent with the change in nodegame-server that sets the default value of the endpoint to the game name.
  - Query parameters are automatically passed to `#node.connect()` when node is executed in the browser. They can still be overridden by passing a configuration object.
  - `#GameDB.add() replaces the checkings done by on('insert').
+ - Stager: `frame.autoParse` option will parse the DOM of loaded frames to substitute .innerHTML elements properties of elements matching ids or class names.
  - Fixed bug for default context of `#node.env()` in Node.js.
  - Fixed bug with node.done with more than 2 parameters.
 
