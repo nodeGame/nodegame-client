@@ -20631,7 +20631,7 @@ if (!Array.prototype.indexOf) {
     };
 
     // Common handler for randomEmit and randomExec
-    function randomFire(hook, maxWait, emit) {
+    function randomFire(hook, maxWait, emit, ctx) {
         var that = this;
         var waitTime;
         var callback;
@@ -20652,7 +20652,7 @@ if (!Array.prototype.indexOf) {
         else {
             callback = function() {
                 that.destroyTimer(timerObj);
-                hook.call();
+                hook.call(ctx);
             };
         }
 
@@ -20839,6 +20839,13 @@ if (!Array.prototype.indexOf) {
      *   to wait before emitting the event. Default: 6000
      */
     Timer.prototype.randomEmit = function(event, maxWait) {
+        if ('string' !== typeof event) {
+            throw new TypeError('Timer.randomEmit: event must be string.');
+        }
+        if ('undefined' !== typeof maxWait && 'number' !== typeof maxWait) {
+            throw new TypeError('Timer.randomEmit: maxWait must be number ' +
+                                'or undefined.');
+        }
         randomFire.call(this, event, maxWait, true);
     };
 
@@ -20852,9 +20859,44 @@ if (!Array.prototype.indexOf) {
      * @param {function} func The callback function to execute
      * @param {number} maxWait Optional. The maximum time (in milliseconds)
      *   to wait before executing the callback. Default: 6000
+     * @param {object|function} ctx Optional. The context of execution of
+     *   of the callback function. Default node.game
      */
-    Timer.prototype.randomExec = function(func, maxWait) {
-        randomFire.call(this, func, maxWait, false);
+    Timer.prototype.randomExec = function(func, maxWait, ctx) {
+        if ('function' !== typeof func) {
+            throw new TypeError('Timer.randomExec: func must be function.');
+        }
+        if ('undefined' !== typeof maxWait && 'number' !== typeof maxWait) {
+            throw new TypeError('Timer.randomExec: maxWait must be number ' +
+                                'or undefined.');
+        }
+        if ('undefined' === typeof ctx) {
+            ctx = this.node.game;
+        }
+        else if ('object' !== typeof ctx && 'function' !== typeof ctx) {
+            throw new TypeError('Timer.randomExec: ctx must be object, ' +
+                                'function or undefined.');
+        }
+        randomFire.call(this, func, maxWait, false, ctx);
+    };
+
+    /**
+     * ### Timer.randomDone
+     *
+     * Executes node.done after a random time interval
+     *
+     * Respects pausing / resuming.
+     *
+     * @param {function} func The callback function to execute
+     * @param {number} maxWait Optional. The maximum time (in milliseconds)
+     *   to wait before executing the callback. Default: 6000
+     */
+    Timer.prototype.randomDone = function(maxWait) {
+        if ('undefined' !== typeof maxWait && 'number' !== typeof maxWait) {
+            throw new TypeError('Timer.randomDone: maxWait must be number ' +
+                                'or undefined.');
+        }
+        randomFire.call(this, this.node.done, maxWait, false, this.node);
     };
 
     /**
@@ -24258,7 +24300,7 @@ if (!Array.prototype.indexOf) {
          */
         this.events.ng.on('STEP_CALLBACK_EXECUTED', function() {
             if (!node.window || node.window.isReady()) {
-                node.emitAsync('LOADED');
+                node.emit('LOADED');
             }
         });
 
@@ -24273,7 +24315,7 @@ if (!Array.prototype.indexOf) {
                 node.socket.clearBuffer();
             }
             if (node.game.shouldEmitPlaying()) {
-                node.emitAsync('PLAYING');
+                node.emit('PLAYING');
             }
         });
 
@@ -24294,10 +24336,7 @@ if (!Array.prototype.indexOf) {
             node.timer.setTimestamp('step', currentTime);
 
             // DONE was previously emitted, we just execute done handler.
-            if (node.game.willBeDone) {
-                done();
-            }
-
+            if (node.game.willBeDone) done();
         });
 
         /**
@@ -33744,14 +33783,23 @@ if (!Array.prototype.indexOf) {
     DoneButton.prototype.listeners = function() {
         var that = this;
 
+        // This is normally executed after the PLAYING listener of
+        // GameWindow where lockUnlockedInputs takes place.
+        // In case of a timeup, the donebutton will be locked and
+        // then unlocked by GameWindow, but otherwise it must be
+        // done here.
         node.on('PLAYING', function() {
             var prop, step;
             step = node.game.getCurrentGameStage();
             prop = node.game.plot.getProperty(step, 'donebutton');
-            if (prop === false || prop && prop.enableOnPlaying === false) {
-                return;
+            if (prop === false || (prop && prop.enableOnPlaying === false)) {
+                // It might be disabled already, but we do it again.
+                that.disable();
             }
-            that.enable();
+            else {
+                // It might be enabled already, but we do it again.
+                that.enable();
+            }
         });
     };
 

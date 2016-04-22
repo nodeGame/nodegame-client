@@ -129,10 +129,7 @@
             node.timer.setTimestamp('step', currentTime);
 
             // DONE was previously emitted, we just execute done handler.
-            if (node.game.willBeDone) {
-                done();
-            }
-
+            if (node.game.willBeDone) done();
         });
 
         /**
