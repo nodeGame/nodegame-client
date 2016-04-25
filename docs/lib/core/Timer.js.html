@@ -1268,6 +1268,11 @@ the given GameTimer object are removed.</p>
       <span>Optional. The maximum time (in milliseconds)
   to wait before emitting the event. Default: 6000</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">randomFire
+</span>
+    </div>
   </div>
 </div>
         </td>
@@ -1275,10 +1280,6 @@ the given GameTimer object are removed.</p>
     <span class="nx">Timer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">randomEmit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.randomEmit: event must be string.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.randomEmit: maxWait must be number &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="s1">&#39;randomEmit&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
     <span class="p">};</span>
@@ -1322,6 +1323,11 @@ the given GameTimer object are removed.</p>
       <span>Optional. The context of execution of
   of the callback function. Default node.game</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">randomFire
+</span>
+    </div>
   </div>
 </div>
         </td>
@@ -1362,15 +1368,15 @@ the given GameTimer object are removed.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">func</span>
-      <span class="dox_type">function</span>
-      <span>The callback function to execute</span>
-    </div>
-    <div class="dox_tag_detail">
       <span class="dox_tag_name">maxWait</span>
       <span class="dox_type">number</span>
       <span>Optional. The maximum time (in milliseconds)
   to wait before executing the callback. Default: 6000</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">randomFire
+</span>
     </div>
   </div>
 </div>
