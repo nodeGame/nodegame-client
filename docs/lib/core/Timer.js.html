@@ -45,6 +45,12 @@
       <div class="heading h3">
         <a href="#timer.destroyalltimers">Timer.destroyAllTimers</a>
       </div>
+      <div class="heading h2">
+        <a href="#helper%20methods.">Helper Methods.</a>
+      </div>
+      <div class="heading h3">
+        <a href="#randomfire">randomFire</a>
+      </div>
       <div class="heading h3">
         <a href="#timer.settimestamp">Timer.setTimestamp</a>
       </div>
@@ -683,14 +689,11 @@ the given GameTimer object are removed.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Timer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">destroyAllTimers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">confirm</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">confirm</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Timer.destroyAllTimers: confirm must be true to &#39;</span> <span class="o">+</span>
-                      <span class="s1">&#39;proceed. No timer destroyed.&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="p">}</span>
+    <span class="nx">Timer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">destroyAllTimers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">timers</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timers</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timers</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timers</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">};</span>
 
@@ -700,32 +703,82 @@ the given GameTimer object are removed.</p>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+<div class="pilwrap" id="helper%20methods.">
+  <h2>
+    <a href="#helper%20methods." name="helper%20methods." class="pilcrow">&#182;</a>
+    Helper Methods.
+  </h2>
 </div>
-<p>Common handler for randomEmit and randomExec</p>
+
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">randomFire</span><span class="p">(</span><span class="nx">hook</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="nx">emit</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">waitTime</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">callback</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">timerObj</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">tentativeName</span><span class="p">;</span>
 
 
 </pre></div>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="randomfire">
+  <h3>
+    <a href="#randomfire" name="randomfire" class="pilcrow">&#182;</a>
+    randomFire
+  </h3>
 </div>
-<p>Get time to wait:</p>
+
+  </div>
+  <div class="body"><p>Common handler for randomEmit and randomExec</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">method</span>
+      <span class="dox_type">string</span>
+      <span>The name of the method invoking randomFire</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">hook</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">function</span>
+      <span>The function to call or the event to emit</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">maxWait</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The max number of milliseconds
+  to wait before firing</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">emit</span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if it is an event to emit</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">ctx</span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">function</span>
+      <span>Optional. The context of execution for
+  the function</span>
+    </div>
+  </div>
+</div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">maxWait</span> <span class="o">=</span> <span class="nx">maxWait</span> <span class="o">||</span> <span class="mi">6000</span><span class="p">;</span>
+    <span class="kd">function</span> <span class="nx">randomFire</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">hook</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="nx">emit</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">waitTime</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">callback</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">timerObj</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">tentativeName</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: maxWait must &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;be number or undefined.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">maxWait</span> <span class="o">=</span> <span class="mi">6000</span><span class="p">;</span>
+        <span class="p">}</span>
         <span class="nx">waitTime</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="nx">maxWait</span><span class="p">;</span>
 
 
@@ -1212,6 +1265,11 @@ the given GameTimer object are removed.</p>
       <span>Optional. The maximum time (in milliseconds)
   to wait before emitting the event. Default: 6000</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">randomFire
+</span>
+    </div>
   </div>
 </div>
         </td>
@@ -1220,11 +1278,7 @@ the given GameTimer object are removed.</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.randomEmit: event must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.randomEmit: maxWait must be number &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="s1">&#39;randomEmit&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1266,6 +1320,11 @@ the given GameTimer object are removed.</p>
       <span>Optional. The context of execution of
   of the callback function. Default node.game</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">randomFire
+</span>
+    </div>
   </div>
 </div>
         </td>
@@ -1274,10 +1333,6 @@ the given GameTimer object are removed.</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.randomExec: func must be function.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.randomExec: maxWait must be number &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">ctx</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">ctx</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
         <span class="p">}</span>
@@ -1285,7 +1340,7 @@ the given GameTimer object are removed.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.randomExec: ctx must be object, &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;function or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">);</span>
+        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="s1">&#39;randomExec&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1310,26 +1365,23 @@ the given GameTimer object are removed.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">func</span>
-      <span class="dox_type">function</span>
-      <span>The callback function to execute</span>
-    </div>
-    <div class="dox_tag_detail">
       <span class="dox_tag_name">maxWait</span>
       <span class="dox_type">number</span>
       <span>Optional. The maximum time (in milliseconds)
   to wait before executing the callback. Default: 6000</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">randomFire
+</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Timer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">randomDone</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.randomDone: maxWait must be number &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">done</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">);</span>
+        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="s1">&#39;randomDone&#39;</span><span class="p">,</span>
+                        <span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">done</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">);</span>
     <span class="p">};</span>
 
 
