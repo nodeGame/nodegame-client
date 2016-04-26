@@ -772,13 +772,14 @@ the given GameTimer object are removed.</p>
         <span class="kd">var</span> <span class="nx">timerObj</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">tentativeName</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: maxWait must &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;be number or undefined.&#39;</span><span class="p">);</span>
-            <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">maxWait</span> <span class="o">=</span> <span class="mi">6000</span><span class="p">;</span>
         <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: maxWait must &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;be number or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
         <span class="nx">waitTime</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="nx">maxWait</span><span class="p">;</span>
 
 
