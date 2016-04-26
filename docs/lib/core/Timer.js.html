@@ -1278,7 +1278,7 @@ the given GameTimer object are removed.</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.randomEmit: event must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="s1">&#39;randomEmit&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;randomEmit&#39;</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1340,7 +1340,7 @@ the given GameTimer object are removed.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.randomExec: ctx must be object, &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;function or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="s1">&#39;randomExec&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">);</span>
+        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;randomExec&#39;</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1380,8 +1380,8 @@ the given GameTimer object are removed.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Timer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">randomDone</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="s1">&#39;randomDone&#39;</span><span class="p">,</span>
-                        <span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">done</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">);</span>
+        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;randomDone&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">done</span><span class="p">,</span>
+                        <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">);</span>
     <span class="p">};</span>
 
 
