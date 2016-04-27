@@ -36384,7 +36384,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    VisualRound.version = '0.5.1';
+    VisualRound.version = '0.5.2';
     VisualRound.description = 'Display number of current round and/or stage.' +
         'Can also display countdown and total number of rounds and/or stages.';
 
@@ -36552,13 +36552,9 @@ if (!Array.prototype.indexOf) {
             this.oldStageId = this.options.oldStageId;
         }
 
-        if (!this.gamePlot) {
-            this.gamePlot = node.game.plot;
-        }
-
-        if (!this.stager) {
-            this.stager = this.gamePlot.stager;
-        }
+        // Save references to gamePlot and stager for convenience.
+        if (!this.gamePlot) this.gamePlot = node.game.plot;
+        if (!this.stager) this.stager = this.gamePlot.stager;
 
         this.updateInformation();
 
@@ -36746,12 +36742,22 @@ if (!Array.prototype.indexOf) {
      * @see VisualRound.updateDisplay
      */
     VisualRound.prototype.updateInformation = function() {
-        var idseq, stage;
-        stage = this.gamePlot.getStage(node.player.stage);
+        var stage;
 
+        // TODO CHECK: was:
+        // stage = this.gamePlot.getStage(node.player.stage);
+        stage = node.player.stage;
+
+        // Game not started.
+        if (stage.stage === 0) {
+            this.curStage = 0;
+            this.totStage = 0;
+            this.totRound = 0;
+        }
         // Flexible mode.
-        if (this.options.flexibleMode) {
-            if (stage) {
+        else if (this.options.flexibleMode) {
+            // Was:
+            // if (stage) {
                 if (stage.id === this.oldStageId) {
                     this.curRound += 1;
                 }
@@ -36760,29 +36766,23 @@ if (!Array.prototype.indexOf) {
                     this.curStage += 1;
                 }
                 this.oldStageId = stage.id;
-            }
+            // }
         }
-
         // Normal mode.
         else {
-            // Extracts only id attribute from array of objects.
-            idseq = J.map(this.stager.sequence, function(obj){return obj.id;});
 
-            // Every round has an identifier.
-            this.totStage = this.stager.sequence.length;
-            this.curRound = node.player.stage.round;
-
-            if (stage) {
-                this.curStage = node.player.stage.stage;
-                this.totRound = this.stager.sequence[this.curStage -1].num || 1;
+            this.curStage = stage.stage;
+            // Stage can be indexed by id or number in the sequence.
+            if ('string' === typeof this.curStage) {
+                this.curStage =
+                    this.gamePlot.normalizeGameStage(stage).stage;
             }
-            else {
-                this.curStage = 1;
-                this.totRound = 1;
-            }
+            this.curRound = stage.round;
+            this.totRound = this.stager.sequence[this.curStage -1].num || 1;
             this.curStage -= this.stageOffset;
-            this.totStage -= this.totStageOffset;
+            this.totStage = this.stager.sequence.length - this.totStageOffset;
         }
+        // Update display.
         this.updateDisplay();
     };
 
