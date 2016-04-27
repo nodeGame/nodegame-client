@@ -19517,9 +19517,10 @@ if (!Array.prototype.indexOf) {
 
             }
 
-            this.node.window.loadFrame(uri, function() {
-                this.execCallback(cb);
-            }, frameOptions);
+            // Auto load frame and wrap cb.
+            this.execCallback(function() {
+                this.node.window.loadFrame(uri, cb, frameOptions);
+            });
         }
         else {
             this.execCallback(cb);
