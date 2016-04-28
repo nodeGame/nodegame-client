@@ -18880,10 +18880,11 @@ if (!Array.prototype.indexOf) {
         // This options is useful when a player reconnets.
         startStage = options.startStage || new GameStage();
 
-        // INIT the game.
+        // Update GLOBALS.
+        this.updateGlobals(startStage);
 
+        // INIT the game.
         onInit = this.plot.stager.getOnInit();
-        this.globals = this.plot.getGlobals(startStage);
         if (onInit) {
             this.setStateLevel(constants.stateLevels.INITIALIZING);
             node.emit('INIT');
@@ -18960,7 +18961,7 @@ if (!Array.prototype.indexOf) {
         this.setCurrentGameStage(new GameStage());
 
         // Temporary change:
-        delete node.game;
+        node.game = null;
         node.game = new Game(node);
         node.game.pl = this.pl;
         node.game.ml = this.ml;
@@ -19316,11 +19317,13 @@ if (!Array.prototype.indexOf) {
             this.setStageLevel(constants.stageLevels.INITIALIZED);
 
             // Updating the globals object.
-            this.globals = this.plot.getGlobals(nextStep);
+            this.updateGlobals(nextStep);
 
             // Add min/max/exactPlayers listeners for the step.
-            // The fields must be of the form
-            //   [ min/max/exactNum, callbackFn ]
+            // The fields must be an array with at least two elements:
+            //   - min/max/exactNum,
+            //   - callbackFn,
+            //   - [recoverCb]
             property = this.plot.getProperty(nextStep, 'minPlayers');
             if (property) {
                 if (property.length < 2) {
@@ -20088,6 +20091,48 @@ if (!Array.prototype.indexOf) {
         }
         return this.plot.jump(this.getCurrentGameStage(), delta, false);
     };
+
+    /**
+     * ### Game.updateGlobals
+     *
+     * Updates node.globals and adds properties to window in the browser
+     *
+     * @param {GameStage} stage Optional. The reference game stage.
+     *   Default: Game.currentGameStage()
+     *
+     * @return Game.globals
+     */
+    Game.prototype.updateGlobals = function(stage) {
+        var newGlobals, g;
+        stage = stage || this.getCurrentGameStage();
+        newGlobals = this.plot.getGlobals(stage);
+        if ('undefined' !== typeof window && this.node.window) {
+            // Adding new globals.
+            for (g in newGlobals) {
+                if (newGlobals.hasOwnProperty(g)) {
+                    if (g === 'node' || g === 'W') {
+                        node.warn('Game.updateGlobals: invalid name: ' + g);
+                    }
+                    else {
+                        window[g] = newGlobals[g];
+                    }
+                }
+            }
+            // Removing old ones.
+            for (g in this.globals) {
+                if (this.globals.hasOwnProperty(g) &&
+                    !newGlobals.hasOwnProperty(g)) {
+                    if (g !== 'node' || g !== 'W') {
+                        delete window[g];
+                    }
+                }
+            }
+        }
+        // Updating globals reference.
+        this.globals = newGlobals;
+        return this.globals;
+    };
+
 
     // ## Helper Methods
 
