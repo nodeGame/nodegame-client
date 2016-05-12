@@ -1,12 +1,12 @@
 /**
- * # nodeGame
- * Copyright(c) 2015 Stefano Balietti
+ * # nodegame-client build file
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
- * Social Experiments in the Browser
+ * Builds the different components together in one file for the browser
  *
- * nodeGame is a free, open source, event-driven javascript framework
- * for on line, multiplayer games in the browser.
+ * nodegame.org
+ * ---
  */
 (function(exports) {
 
