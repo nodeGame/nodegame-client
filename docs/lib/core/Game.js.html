@@ -2024,7 +2024,7 @@ The fields must be an array with at least two elements:
                         <span class="p">}</span>
                     <span class="p">}</span>
                     <span class="k">else</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span> <span class="o">&amp;&amp;</span> <span class="nx">minRecoverCb</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">minRecoverCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
                         <span class="p">}</span>
                         <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
@@ -2037,7 +2037,7 @@ The fields must be an array with at least two elements:
                         <span class="p">}</span>
                     <span class="p">}</span>
                     <span class="k">else</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">maxPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">maxPlayerCbCalled</span> <span class="o">&amp;&amp;</span> <span class="nx">maxRecoverCb</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">maxRecoverCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
                         <span class="p">}</span>
                         <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">maxPlayerCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
@@ -2050,7 +2050,7 @@ The fields must be an array with at least two elements:
                         <span class="p">}</span>
                     <span class="p">}</span>
                     <span class="k">else</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span> <span class="o">&amp;&amp;</span> <span class="nx">exactRecoverCb</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">exactRecoverCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
                         <span class="p">}</span>
                         <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
