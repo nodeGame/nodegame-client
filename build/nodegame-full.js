@@ -19580,6 +19580,7 @@ if (!Array.prototype.indexOf) {
                     }
 
                     frameOptions.autoParse = frameAutoParse;
+                    frameOptions.autoParseMod = frame.autoParseMod;
                     frameOptions.autoParsePrefix = frame.autoParsePrefix;
                 }
             }
@@ -23366,10 +23367,11 @@ if (!Array.prototype.indexOf) {
      *      - {number} timeout The number of milliseconds after which
      *            the listener will be removed.
      *      - {function} timeoutCb A callback function to call if
-     *            the timeout is fired (no reply recevied)
+     *            the timeout is fired (no reply received)
      *      - {boolean} executeOnce TRUE if listener should be removed after
      *            one execution. It will also terminate the timeout, if set
      *      - {mixed} data Data field of the GET msg
+     *      - {string} target Set to override the default DATA target of msg
      *
      * @return {boolean} TRUE, if GET message is sent and listener registered
      */
@@ -23377,7 +23379,7 @@ if (!Array.prototype.indexOf) {
         var msg, g, ee;
         var that, res;
         var timer, success;
-        var data, timeout, timeoutCb, executeOnce;
+        var data, timeout, timeoutCb, executeOnce, target;
 
         if ('string' !== typeof key) {
             throw new TypeError('node.get: key must be string.');
@@ -23414,6 +23416,7 @@ if (!Array.prototype.indexOf) {
             timeoutCb = options.timeoutCb;
             data = options.data;
             executeOnce = options.executeOnce;
+            target = options.target;
 
             if ('undefined' !== typeof timeout) {
                 if ('number' !== typeof timeout) {
@@ -23431,11 +23434,18 @@ if (!Array.prototype.indexOf) {
                                     'function or undefined.');
             }
 
+            if (target &&
+                ('string' !== typeof target || target.trim() === '')) {
+
+                throw new TypeError('node.get: options.target must be ' +
+                                    'a non-empty string or undefined.');
+            }
+
         }
 
         msg = this.msg.create({
             action: this.constants.action.GET,
-            target: this.constants.target.DATA,
+            target: target || this.constants.target.DATA,
             to: to,
             reliable: 1,
             text: key,
@@ -23454,6 +23464,24 @@ if (!Array.prototype.indexOf) {
             that = this;
             ee = this.getCurrentEventEmitter();
 
+
+            // Listener function. If a timeout is not set, the listener
+            // will be removed immediately after its execution.
+            g = function(msg) {
+                if (msg.text === key) {
+                    success = true;
+                    if (executeOnce) {
+                        ee.remove('in.say.DATA', g);
+                        if ('undefined' !== typeof timer) {
+                            that.timer.destroyTimer(timer);
+                        }
+                    }
+                    cb.call(that.game, msg.data);
+                }
+            };
+
+            ee.on('in.say.DATA', g);
+
             // If a timeout is set the listener is removed independently,
             // of its execution after the timeout is fired.
             // If timeout === -1, the listener is never removed.
@@ -23461,34 +23489,18 @@ if (!Array.prototype.indexOf) {
                 timer = this.timer.createTimer({
                     milliseconds: timeout,
                     timeup: function() {
-                        ee.remove('in.say.DATA', g);
-                        that.timer.destroyTimer(timer);
+                        // `ee.once` already removes the listener on execution.
+                        if (!executeOnce) {
+                            ee.remove('in.say.DATA', g);
+                        }
+                        if ('undefined' !== typeof timer) {
+                            that.timer.destroyTimer(timer);
+                        }
                         // success === true we have received a reply.
                         if (timeoutCb && !success) timeoutCb.call(that.game);
                     }
                 });
                 timer.start();
-            }
-
-            // Listener function. If a timeout is not set, the listener
-            // will be removed immediately after its execution.
-            g = function(msg) {
-                if (msg.text === key) {
-                    success = true;
-                    cb.call(that.game, msg.data);
-                    if (executeOnce) {
-                        if ('undefined' !== typeof timer) {
-                            that.timer.destroyTimer(timer);
-                        }
-                    }
-                }
-            };
-
-            if (executeOnce) {
-                ee.once('in.say.DATA', g);
-            }
-            else {
-                ee.on('in.say.DATA', g);
             }
         }
         return res;
@@ -32033,7 +32045,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChernoffFaces.version = '0.5.1';
+    ChernoffFaces.version = '0.6.1';
     ChernoffFaces.description =
         'Display parametric data in the form of a Chernoff Face.';
 
@@ -32059,57 +32071,20 @@ if (!Array.prototype.indexOf) {
      *
      * Creates a new instance of ChernoffFaces
      *
-     * @param {object} options Configuration options. Accepted options:
-     *
-     * - canvas {object} containing all options for canvas
-     *
-     * - width {number} width of the canvas (read only if canvas is not set)
-     *
-     * - height {number} height of the canvas (read only if canvas is not set)
-     *
-     * - features {FaceVector} vector of face-features. Default: random
-     *
-     * - onChange {string|boolean} The name of the event that will trigger
-     *      redrawing the canvas, or null/false to disable event listener
-     *
-     * - controls {object|false} the controls (usually a set of sliders)
-     *      offering the user the ability to manipulate the canvas. If equal
-     *      to false no controls will be created. Default: SlidersControls.
-     *      Any custom implementation must provide the following methods:
-     *
-     *          - getAllValues: returns the current features vector
-     *          - refresh: redraws the current feature vector
-     *          - init: accepts a configuration object containing a
-     *               features and onChange as specified above.
-     *
-     *
-     * @see ChernoffFaces.init
      * @see Canvas constructor
      */
     function ChernoffFaces(options) {
         var that = this;
-        var tblOptions;
 
         // ## Public Properties
 
         // ### ChernoffFaces.options
         // Configuration options
-        this.options = options;
-
-        // Building table options.
-        tblOptions = {};
-        if ('string' === typeof options.id) tblOptions.id = options.id;
-        else if (options.id !== false) tblOptions.id = 'cf_table';
-        if ('string' === typeof options.className) {
-            tblOptions.id = options.className;
-        }
-        else if (options.className !== false) {
-            tblOptions.className = 'cf_table';
-        }
+        this.options = null;
 
         // ### ChernoffFaces.table
         // The table containing everything
-        this.table = new Table(tblOptions);
+        this.table = null;
 
         // ### ChernoffFaces.sc
         // The slider controls of the interface
@@ -32133,7 +32108,6 @@ if (!Array.prototype.indexOf) {
         // ### ChernoffFaces.onChangeCb
         // Updates the canvas when the onChange event is emitted
         this.onChangeCb = function(f, updateControls) {
-            var updateControls;
             // Draw what passed as parameter,
             // or what is the current value of sliders,
             // or a random face.
@@ -32152,13 +32126,116 @@ if (!Array.prototype.indexOf) {
         // ### ChernoffFaces.features
         // The object containing all the features to draw Chernoff faces
         this.features = null;
-
-        // Init.
-        this.init(this.options);
     }
 
+    /**
+     * ### ChernoffFaces.init
+     *
+     * Inits the widget
+     *
+     * Stores the reference to options, most of the operations are done
+     * by the `append` method.
+     *
+     * @param {object} options Configuration options. Accepted options:
+     *
+     * - canvas {object} containing all options for canvas
+     *
+     * - width {number} width of the canvas (read only if canvas is not set)
+     *
+     * - height {number} height of the canvas (read only if canvas is not set)
+     *
+     * - features {FaceVector} vector of face-features. Default: random
+     *
+     * - onChange {string|boolean} The name of the event that will trigger
+     *      redrawing the canvas, or null/false to disable event listener
+     *
+     * - controls {object|false} the controls (usually a set of sliders)
+     *      offering the user the ability to manipulate the canvas. If equal
+     *      to false no controls will be created. Default: SlidersControls.
+     *      Any custom implementation must provide the following methods:
+     *
+     *          - getAllValues: returns the current features vector
+     *          - refresh: redraws the current feature vector
+     *          - init: accepts a configuration object containing a
+     *               features and onChange as specified above.
+     *
+     */
     ChernoffFaces.prototype.init = function(options) {
+
+        this.options = options;
+
+        // Face Painter.
+        this.features = options.features || this.features ||
+            FaceVector.random();
+
+        // Draw features, if facepainter was already created.
+        if (this.fp) this.fp.draw(new FaceVector(this.features));
+
+        // onChange event.
+        if (options.onChange === false || options.onChange === null) {
+            if (this.onChange) {
+                node.off(this.onChange, this.onChangeCb);
+                this.onChange = null;
+            }
+        }
+        else {
+            this.onChange = 'undefined' === typeof options.onChange ?
+                ChernoffFaces.onChange : options.onChange;
+            node.on(this.onChange, this.onChangeCb);
+        }
+    };
+
+    /**
+     * ## ChernoffFaces.getCanvas
+     *
+     * Returns the reference to current wrapper Canvas object
+     *
+     * To get to the HTML Canvas element use `canvas.canvas`.
+     *
+     * @return {Canvas} Canvas object
+     *
+     * @see Canvas
+     */
+    ChernoffFaces.prototype.getCanvas = function() {
+        return this.canvas;
+    };
+
+    /**
+     * ## ChernoffFaces.append
+     *
+     * Appends the widget
+     *
+     * Creates table, canvas, face painter (fp) and controls (sc), according
+     * to current options.
+     *
+     * @see ChernoffFaces.fp
+     * @see ChernoffFaces.sc
+     * @see ChernoffFaces.table
+     * @see Table
+     * @see Canvas
+     * @see SliderControls
+     * @see FacePainter
+     * @see FaceVector
+     */
+    ChernoffFaces.prototype.append = function() {
         var controlsOptions, f;
+        var tblOptions, options;
+
+        options = this.options;
+
+        // Table.
+        tblOptions = {};
+        if (this.id) tblOptions.id = this.id;
+        else if (this.id !== false) tblOptions.id = 'cf_table';
+
+        if ('string' === typeof options.className) {
+            tblOptions.id = options.className;
+        }
+        else if (options.className !== false) {
+            tblOptions.className = 'cf_table';
+        }
+
+        this.table = new Table(tblOptions);
 
         // Canvas.
         if (!options.canvas) {
@@ -32173,23 +32250,8 @@ if (!Array.prototype.indexOf) {
         this.canvas = W.getCanvas('ChernoffFaces_canvas', options.canvas);
 
         // Face Painter.
-        this.features = options.features || this.features ||
-            FaceVector.random();
         this.fp = new FacePainter(this.canvas);
         this.fp.draw(new FaceVector(this.features));
-
-        // onChange event.
-        if (options.onChange === false || options.onChange === null) {
-            if (this.onChange) {
-                node.off(this.onChange, this.onChangeCb);
-                this.onChange = null;
-            }
-        }
-        else {
-            this.onChange = 'undefined' === typeof options.onChange ?
-                ChernoffFaces.onChange : options.onChange;
-            node.on(this.onChange, this.onChangeCb);
-        }
 
         // Controls.
         if ('undefined' === typeof options.controls || options.controls) {
@@ -32213,14 +32275,8 @@ if (!Array.prototype.indexOf) {
         // Table.
         if (this.sc) this.table.addRow([this.sc, this.canvas]);
         else this.table.add(this.canvas);
-        this.table.parse();
-    };
 
-    ChernoffFaces.prototype.getCanvas = function() {
-        return this.canvas;
-    };
-
-    ChernoffFaces.prototype.append = function() {
+        // Create and append table.
         this.table.parse();
         this.bodyDiv.appendChild(this.table.table);
     };
@@ -32234,7 +32290,7 @@ if (!Array.prototype.indexOf) {
      * @param {boolean} updateControls Optional. If equal to false,
      *    controls are not updated. Default: true
      *
-     * @see this.sc
+     * @see ChernoffFaces.sc
      */
     ChernoffFaces.prototype.draw = function(features, updateControls) {
         var fv;
@@ -32256,8 +32312,16 @@ if (!Array.prototype.indexOf) {
         return this.fp.face;
     };
 
+     /**
+     * ### ChernoffFaces.randomize
+     *
+     * Draws a random image and updates controls accordingly (if found)
+     *
+     * @see ChernoffFaces.sc
+     */
     ChernoffFaces.prototype.randomize = function() {
-        var fv = FaceVector.random();
+        var fv;
+        fv = FaceVector.random();
         this.fp.redraw(fv);
         // If controls are visible, updates them.
         if (this.sc) {
@@ -32271,20 +32335,68 @@ if (!Array.prototype.indexOf) {
     };
 
 
-    // # FacePainter
-    // The class that actually draws the faces on the Canvas.
+    /**
+     * # FacePainter
+     *
+     * Draws faces on a Canvas
+     *
+     * @param {HTMLCanvas} canvas The canvas
+     * @param {object} settings Optional. Settings (not used).
+     */
     function FacePainter(canvas, settings) {
 
+        /**
+         * ### FacePainter.canvas
+         *
+         * The wrapper element for the HTML canvas
+         *
+         * @see Canvas
+         */
         this.canvas = new W.Canvas(canvas);
 
+        /**
+         * ### FacePainter.scaleX
+         *
+         * Scales images along the X-axis of this proportion
+         */
         this.scaleX = canvas.width / ChernoffFaces.width;
+
+        /**
+         * ### FacePainter.scaleX
+         *
+         * Scales images along the X-axis of this proportion
+         */
         this.scaleY = canvas.height / ChernoffFaces.heigth;
+
+        /**
+         * ### FacePainter.face
+         *
+         * The last drawn face
+         */
+        this.face = null;
     }
 
-    //Draws a Chernoff face.
+    // ## Methods
+
+    /**
+     * ### FacePainter.draw
+     *
+     * Draws a face into the canvas and stores it as reference
+     *
+     * @param {object} face Multidimensional vector of features
+     * @param {number} x Optional. The x-coordinate to center the image.
+     *   Default: the center of the canvas
+     * @param {number} y Optional. The y-coordinate to center the image.
+     *   Default: the center of the canvas
+     *
+     * @see Canvas
+     * @see Canvas.centerX
+     * @see Canvas.centerY
+     */
     FacePainter.prototype.draw = function(face, x, y) {
         if (!face) return;
         this.face = face;
+
         this.fit2Canvas(face);
         this.canvas.scale(face.scaleX, face.scaleY);
 
@@ -32304,7 +32416,6 @@ if (!Array.prototype.indexOf) {
         this.drawNose(face, x, y);
 
         this.drawMouth(face, x, y);
-
     };
 
     FacePainter.prototype.redraw = function(face, x, y) {
@@ -36647,80 +36758,6 @@ if (!Array.prototype.indexOf) {
 })(node);
 
 /**
- * # DataBar
- * Copyright(c) 2015 Stefano Balietti
- * MIT Licensed
- *
- * Creates a form to send DATA packages to other clients / SERVER
- *
- * www.nodegame.org
- */
-(function(node) {
-
-    "use strict";
-
-    node.widgets.register('DataBar', DataBar);
-
-    // ## Meta-data
-
-    DataBar.version = '0.4.1';
-    DataBar.description =
-        'Adds a input field to send DATA messages to the players';
-
-    DataBar.title = 'DataBar';
-    DataBar.className = 'databar';
-
-
-    /**
-     * ## DataBar constructor
-     *
-     * Instantiates a new DataBar object
-     */
-    function DataBar() {
-        this.bar = null;
-        this.recipient = null;
-    }
-
-    // ## DataBar methods
-
-     /**
-     * ## DataBar.append
-     *
-     * Appends widget to `this.bodyDiv`
-     */
-    DataBar.prototype.append = function() {
-
-        var sendButton, textInput, dataInput;
-        var that = this;
-
-        sendButton = W.addButton(this.bodyDiv);
-        textInput = W.addTextInput(this.bodyDiv, 'data-bar-text');
-        W.addLabel(this.bodyDiv, textInput, undefined, 'Text');
-        W.writeln('Data');
-        dataInput = W.addTextInput(this.bodyDiv, 'data-bar-data');
-
-        this.recipient = W.addRecipientSelector(this.bodyDiv);
-
-        sendButton.onclick = function() {
-            var to, data, text;
-
-            to = that.recipient.value;
-            text = textInput.value;
-            data = dataInput.value;
-
-            node.log('Parsed Data: ' + JSON.stringify(data));
-
-            node.say(text, to, data);
-        };
-
-        node.on('UPDATED_PLIST', function() {
-            node.window.populateRecipientSelector(that.recipient, node.game.pl);
-        });
-    };
-
-})(node);
-
-/**
  * # DebugInfo
  * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
@@ -37592,84 +37629,6 @@ if (!Array.prototype.indexOf) {
     function printSeparator() {
         return W.getElement('hr', null, {style: 'color: #CCC;'});
     }
-
-})(node);
-
-/**
- * # GameSummary
- * Copyright(c) 2015 Stefano Balietti
- * MIT Licensed
- *
- * Shows the configuration options of a game in a box
- *
- * www.nodegame.org
- */
-(function(node) {
-
-    "use strict";
-
-    node.widgets.register('GameSummary', GameSummary);
-
-    // ## Meta-data
-
-    GameSummary.version = '0.3.1';
-    GameSummary.description =
-        'Show the general configuration options of the game.';
-
-    GameSummary.title = 'Game Summary';
-    GameSummary.className = 'gamesummary';
-
-
-    /**
-     * ## GameSummary constructor
-     *
-     * `GameSummary` shows the configuration options of the game in a box
-     */
-    function GameSummary() {
-        /**
-         * ### GameSummary.summaryDiv
-         *
-         * The DIV in which to display the information
-         */
-        this.summaryDiv = null;
-    }
-
-    // ## GameSummary methods
-
-    /**
-     * ### GameSummary.append
-     *
-     * Appends the widget to `this.bodyDiv` and calls `this.writeSummary`
-     *
-     * @see GameSummary.writeSummary
-     */
-    GameSummary.prototype.append = function() {
-        this.summaryDiv = node.window.addDiv(this.bodyDiv);
-        this.writeSummary();
-    };
-
-    /**
-     * ### GameSummary.writeSummary
-     *
-     * Writes a summary of the game configuration into `this.summaryDiv`
-     */
-    GameSummary.prototype.writeSummary = function(idState, idSummary) {
-        var gName = document.createTextNode('Name: ' + node.game.metadata.name),
-        gDescr = document.createTextNode(
-                'Descr: ' + node.game.metadata.description),
-        gMinP = document.createTextNode('Min Pl.: ' + node.game.minPlayers),
-        gMaxP = document.createTextNode('Max Pl.: ' + node.game.maxPlayers);
-
-        this.summaryDiv.appendChild(gName);
-        this.summaryDiv.appendChild(document.createElement('br'));
-        this.summaryDiv.appendChild(gDescr);
-        this.summaryDiv.appendChild(document.createElement('br'));
-        this.summaryDiv.appendChild(gMinP);
-        this.summaryDiv.appendChild(document.createElement('br'));
-        this.summaryDiv.appendChild(gMaxP);
-
-        node.window.addDiv(this.bodyDiv, this.summaryDiv, idSummary);
-    };
 
 })(node);
 
@@ -38585,7 +38544,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # MsgBar
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Creates a tool for sending messages to other connected clients
@@ -38603,31 +38562,35 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    MsgBar.version = '0.6';
+    MsgBar.version = '0.7.0';
     MsgBar.description = 'Send a nodeGame message to players';
 
     MsgBar.title = 'Send MSG';
     MsgBar.className = 'msgbar';
 
-    function MsgBar(options) {
-        this.id = options.id || MsgBar.className;
-
+    function MsgBar() {
         this.recipient = null;
         this.actionSel = null;
         this.targetSel = null;
 
-        this.table = new Table();
-        this.tableAdvanced = new Table();
-
-        this.init();
+        this.table = null;
+        this.tableAdvanced = null;
     }
 
     MsgBar.prototype.init = function() {
-        var that;
+        this.id = this.id || MsgBar.className;
+    };
+
+    MsgBar.prototype.append = function() {
+        var advButton, sendButton;
         var fields, i, field;
         var table;
+        var that;
 
         that = this;
+
+        this.table = new Table();
+        this.tableAdvanced = new Table();
 
         // Create fields.
         fields = ['to', 'action', 'target', 'text', 'data', 'from', 'priority',
@@ -38678,17 +38641,6 @@ if (!Array.prototype.indexOf) {
             }
         }
 
-        this.table.parse();
-        this.tableAdvanced.parse();
-    };
-
-    MsgBar.prototype.append = function() {
-        var advButton;
-        var sendButton;
-        var that;
-
-        that = this;
-
         // Show table of basic fields.
         this.bodyDiv.appendChild(this.table.table);
 
@@ -38698,11 +38650,9 @@ if (!Array.prototype.indexOf) {
         // Show 'Send' button.
         sendButton = W.addButton(this.bodyDiv);
         sendButton.onclick = function() {
-            var msg = that.parse();
-
-            if (msg) {
-                node.socket.send(msg);
-            }
+            var msg;
+            msg = that.parse();
+            if (msg) node.socket.send(msg);
         };
 
         // Show a button that expands the table of advanced fields.
@@ -38712,9 +38662,9 @@ if (!Array.prototype.indexOf) {
             that.tableAdvanced.table.style.display =
                 that.tableAdvanced.table.style.display === '' ? 'none' : '';
         };
-    };
 
-    MsgBar.prototype.listeners = function() {
+        this.table.parse();
+        this.tableAdvanced.parse();
     };
 
     MsgBar.prototype.parse = function() {
@@ -38829,7 +38779,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    NDDBBrowser.version = '0.1.2';
+    NDDBBrowser.version = '0.2.0';
     NDDBBrowser.description =
         'Provides a very simple interface to control a NDDB istance.';
 
@@ -38845,17 +38795,23 @@ if (!Array.prototype.indexOf) {
         this.options = options;
         this.nddb = null;
 
-        this.commandsDiv = document.createElement('div');
-        this.id = options.id;
-        if ('undefined' !== typeof this.id) {
-            this.commandsDiv.id = this.id;
-        }
+        this.commandsDiv = null;
+
 
         this.info = null;
-        this.init(this.options);
     }
 
     NDDBBrowser.prototype.init = function(options) {
+        this.tm = new TriggerManager();
+        this.tm.init(options.triggers);
+        this.nddb = options.nddb || new NDDB({
+            update: { pointer: true }
+        });
+    };
+
+    NDDBBrowser.prototype.append = function() {
+        this.commandsDiv = document.createElement('div');
+        if (this.id) this.commandsDiv.id = this.id;
 
         function addButtons() {
             var id = this.id;
@@ -38875,19 +38831,10 @@ if (!Array.prototype.indexOf) {
             return span;
         }
 
-
         addButtons.call(this);
         this.info = addInfoBar.call(this);
 
-        this.tm = new TriggerManager();
-        this.tm.init(options.triggers);
-        this.nddb = options.nddb || new NDDB({auto_update_pointer: true});
-    };
-
-    NDDBBrowser.prototype.append = function(root) {
-        this.root = root;
-        root.appendChild(this.commandsDiv);
-        return root;
+        this.bodyDiv.appendChild(this.commandsDiv);
     };
 
     NDDBBrowser.prototype.getRoot = function(root) {
@@ -38952,9 +38899,10 @@ if (!Array.prototype.indexOf) {
     };
 
     NDDBBrowser.prototype.writeInfo = function(text) {
+        var that;
+        that = this;
         if (this.infoTimeout) clearTimeout(this.infoTimeout);
         this.info.innerHTML = text;
-        var that = this;
         this.infoTimeout = setTimeout(function(){
             that.info.innerHTML = '';
         }, 2000);
@@ -38963,8 +38911,8 @@ if (!Array.prototype.indexOf) {
 })(node);
 
 /**
- * # NextPreviousState
- * Copyright(c) 2015 Stefano Balietti
+ * # NextPreviousStep
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Simple widget to step through the stages of the game
@@ -38975,67 +38923,116 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    // TODO: Introduce rules for update: other vs self
-
-    node.widgets.register('NextPreviousState', NextPreviousState);
-
-    // ## Defaults
-
-    NextPreviousState.defaults = {};
-    NextPreviousState.defaults.id = 'nextprevious';
-    NextPreviousState.defaults.fieldset = { legend: 'Rew-Fwd' };
+    node.widgets.register('NextPreviousStep', NextPreviousStep);
 
     // ## Meta-data
 
-    NextPreviousState.version = '0.3.2';
-    NextPreviousState.description = 'Adds two buttons to push forward or ' +
+    NextPreviousStep.className = 'nextprevious';
+    NextPreviousStep.title = 'Next/Previous Step';
+
+    NextPreviousStep.version = '1.0.0';
+    NextPreviousStep.description = 'Adds two buttons to push forward or ' +
         'rewind the state of the game by one step.';
 
-    function NextPreviousState(options) {
-        this.id = options.id;
+    /**
+     * ## NextPreviousStep constructor
+     */
+    function NextPreviousStep() {
+
+        /**
+         * ### NextPreviousStep.rew
+         *
+         * The button to go one step back
+         */
+        this.rew = null;
+
+        /**
+         * ### NextPreviousStep.fwd
+         *
+         * The button to go one step forward
+         */
+        this.fwd = null;
+
+        /**
+         * ### NextPreviousStep.checkbox
+         *
+         * The checkbox to call `node.done` on forward
+         */
+        this.checkbox = null;
     }
 
-    NextPreviousState.prototype.getRoot = function() {
-        return this.root;
-    };
+    /**
+     * ### NextPreviousStep.append
+     *
+     * Appends the widget
+     *
+     * Creates two buttons and a checkbox
+     */
+    NextPreviousStep.prototype.append = function() {
+        var that, spanDone;
+        that = this;
 
-    NextPreviousState.prototype.append = function(root) {
-        var idRew = this.id + '_button';
-        var idFwd = this.id + '_button';
+        this.rew = document.createElement('button');
+        this.rew.innerHTML = '<<';
 
-        var rew = node.window.addButton(root, idRew, '<<');
-        var fwd = node.window.addButton(root, idFwd, '>>');
+        this.fwd = document.createElement('button');
+        this.fwd.innerHTML = '>>';
 
+        this.checkbox = document.createElement('input');
+        this.checkbox.type = 'checkbox';
 
-        var that = this;
-
-        var updateState = function(state) {
-            if (state) {
-                var stateEvent = node.IN + node.action.SAY + '.STATE';
-                var stateMsg = node.msg.createSTATE(stateEvent, state);
-                // Self Update
-                node.emit(stateEvent, stateMsg);
-
-                // Update Others
-                stateEvent = node.OUT + node.action.SAY + '.STATE';
-                node.emit(stateEvent, state, 'ROOM');
-            }
-            else {
-                node.err('No next/previous state. Not sent');
+        this.fwd.onclick = function() {
+            if (that.checkbox.checked) node.done();
+            else node.game.step();
+            if (!hasNextStep()) {
+                that.fwd.disabled = 'disabled';
             }
         };
 
-        fwd.onclick = function() {
-            updateState(node.game.next());
+        this.rew.onclick = function() {
+            var prevStep;
+            prevStep = node.game.getPreviousStep();
+            node.game.gotoStep(prevStep);
+            if (!hasPreviousStep()) {
+                that.rew.disabled = 'disabled';
+            }
         };
 
-        rew.onclick = function() {
-            updateState(node.game.previous());
-        };
+        if (!hasPreviousStep()) this.rew.disabled = 'disabled';
+        if (!hasNextStep()) this.fwd.disabled = 'disabled';
 
-        this.root = root;
-        return root;
+        // Buttons.
+        this.bodyDiv.appendChild(this.rew);
+        this.bodyDiv.appendChild(this.fwd);
+
+        // Checkbox.
+        spanDone = document.createElement('span');
+        spanDone.appendChild(document.createTextNode('node.done'));
+        spanDone.appendChild(this.checkbox);
+        this.bodyDiv.appendChild(spanDone);
     };
+
+    function hasNextStep() {
+        var nextStep;
+        nextStep = node.game.getNextStep();
+        if (!nextStep ||
+            nextStep === node.GamePlot.GAMEOVER ||
+            nextStep === node.GamePlot.END_SEQ ||
+            nextStep === node.GamePlot.NO_SEQ) {
+
+            return false;
+        }
+        return true;
+    }
+
+    function hasPreviousStep() {
+        var prevStep;
+        prevStep = node.game.getPreviousStep();
+        if (!prevStep) {
+            return false;
+        }
+        return true;
+    }
 
 })(node);
 
@@ -40003,208 +40000,6 @@ if (!Array.prototype.indexOf) {
 
         return gauge;
     }
-
-})(node);
-
-/**
- * # ServerInfoDisplay
- * Copyright(c) 2015 Stefano Balietti
- * MIT Licensed
- *
- * Displays information about the server
- *
- * www.nodegame.org
- */
-(function(node) {
-
-    "use strict";
-
-    node.widgets.register('ServerInfoDisplay', ServerInfoDisplay);
-
-    // ## Meta-data
-
-    ServerInfoDisplay.version = '0.4.1';
-    ServerInfoDisplay.description = 'Displays information about the server.';
-
-    ServerInfoDisplay.title = 'Server Info';
-    ServerInfoDisplay.className = 'serverinfodisplay';
-
-    /**
-     * ## ServerInfoDisplay constructor
-     *
-     * `ServerInfoDisplay` shows information about the server
-     */
-    function ServerInfoDisplay() {
-        /**
-         * ### ServerInfoDisplay.div
-         *
-         * The DIV wherein to display the information
-         */
-        this.div = document.createElement('div');
-
-        /**
-         * ### ServerInfoDisplay.table
-         *
-         * The table holding the information
-         */
-        this.table = null; //new node.window.Table();
-
-        /**
-         * ### ServerInfoDisplay.button
-         *
-         * The button TODO
-         */
-        this.button = null;
-
-    }
-
-    // ## ServerInfoDisplay methods
-
-    /**
-     * ### ServerInfoDisplay.init
-     *
-     * Initializes the widget
-     */
-    ServerInfoDisplay.prototype.init = function() {
-        var that = this;
-        if (!this.div) {
-            this.div = document.createElement('div');
-        }
-        this.div.innerHTML = 'Waiting for the reply from Server...';
-        if (!this.table) {
-            this.table = new node.window.Table();
-        }
-        this.table.clear(true);
-        this.button = document.createElement('button');
-        this.button.value = 'Refresh';
-        this.button.appendChild(document.createTextNode('Refresh'));
-        this.button.onclick = function(){
-            that.getInfo();
-        };
-        this.bodyDiv.appendChild(this.button);
-        this.getInfo();
-    };
-
-    ServerInfoDisplay.prototype.append = function() {
-        this.bodyDiv.appendChild(this.div);
-    };
-
-    /**
-     * ### ServerInfoDisplay.getInfo
-     *
-     * Updates current info
-     *
-     * @see ServerInfoDisplay.processInfo
-     */
-    ServerInfoDisplay.prototype.getInfo = function() {
-        var that = this;
-        node.get('INFO', function(info) {
-            node.window.removeChildrenFromNode(that.div);
-            that.div.appendChild(that.processInfo(info));
-        });
-    };
-
-    /**
-     * ### ServerInfoDisplay.processInfo
-     *
-     * Processes incoming server info and displays it in `this.table`
-     */
-    ServerInfoDisplay.prototype.processInfo = function(info) {
-        this.table.clear(true);
-        for (var key in info) {
-            if (info.hasOwnProperty(key)){
-                this.table.addRow([key,info[key]]);
-            }
-        }
-        return this.table.parse();
-    };
-
-    ServerInfoDisplay.prototype.listeners = function() {
-        var that = this;
-        node.on('PLAYER_CREATED', function(){
-            that.init();
-        });
-    };
-
-})(node);
-
-/**
- * # StateBar
- * Copyright(c) 2015 Stefano Balietti
- * MIT Licensed
- *
- * Provides a simple interface to change the game stages
- *
- * www.nodegame.org
- */
-(function(node) {
-
-    "use strict";
-
-    node.widgets.register('StateBar', StateBar);
-
-    // ## Meta-data
-
-    StateBar.version = '0.4.0';
-    StateBar.description =
-        'Provides a simple interface to change the stage of a game.';
-
-    StateBar.title = 'Change GameStage';
-    StateBar.className = 'statebar';
-
-
-    /**
-     * ## StateBar constructor
-     *
-     * `StateBar` provides a simple interface to change game stages
-     */
-    function StateBar() {
-        //this.recipient = null;
-    }
-
-    /**
-     * ### StateBar.append
-     *
-     * Appends widget to `this.bodyDiv`
-     */
-    StateBar.prototype.append = function() {
-        var prefix;
-        var idButton, idStageField, idRecipientField;
-        var sendButton, stageField, recipientField;
-
-        prefix = StateBar.className + '_';
-
-        idButton = prefix + 'sendButton';
-        idStageField = prefix + 'stageField';
-        idRecipientField = prefix + 'recipient';
-
-        this.bodyDiv.appendChild(document.createTextNode('Stage:'));
-        stageField = W.getTextInput(idStageField);
-        this.bodyDiv.appendChild(stageField);
-
-        this.bodyDiv.appendChild(document.createTextNode(' To:'));
-        recipientField = W.getTextInput(idRecipientField);
-        this.bodyDiv.appendChild(recipientField);
-
-        sendButton = node.window.addButton(this.bodyDiv, idButton);
-
-        sendButton.onclick = function() {
-            var to;
-            var stage;
-
-            // Should be within the range of valid values
-            // but we should add a check
-            to = recipientField.value;
-
-            try {
-                stage = new node.GameStage(stageField.value);
-                node.remoteCommand('goto_step', to, stage);
-            }
-            catch (e) {
-                node.err('Invalid stage, not sent: ' + e);
-            }
-        };
-    };
 
 })(node);
 
