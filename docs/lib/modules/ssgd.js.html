@@ -478,11 +478,28 @@ If timeout === -1, the listener is never removed.</p>
 <p>success === true we have received a reply.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+<<<<<<< HEAD
                         <span class="k">if</span> <span class="p">(</span><span class="nx">timeoutCb</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">success</span><span class="p">)</span> <span class="nx">timeoutCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">});</span>
                 <span class="nx">timer</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
             <span class="p">}</span>
+=======
+            <span class="nx">g</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">===</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">success</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">game</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">executeOnce</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">that</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+                        <span class="p">}</span>
+                        <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
+
+            <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+>>>>>>> pushPlayers
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
     <span class="p">};</span>
@@ -547,8 +564,13 @@ this case it must be emitted last.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">done</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<<<<<<< HEAD
         <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">game</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">args2</span><span class="p">;</span>
+=======
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">game</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
+>>>>>>> pushPlayers
         <span class="kd">var</span> <span class="nx">stepTime</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">autoSet</span><span class="p">;</span>
 
@@ -571,6 +593,8 @@ this case it must be emitted last.</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.done: done already called in this step.&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
+
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
 
 </pre></div>
@@ -614,6 +638,7 @@ send to server, or even halt the procedure if returning false.</p>
 <p>If a <code>done</code> callback returns false, exit.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+<<<<<<< HEAD
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;boolean&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">args</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node.done: done callback returned false.&#39;</span><span class="p">);</span>
@@ -629,6 +654,29 @@ send to server, or even halt the procedure if returning false.</p>
                                 <span class="s1">&#39;different from false and undefined will be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;treated as a done argument and processed.&#39;</span><span class="p">);</span>
                     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;***&#39;</span><span class="p">);</span>
+=======
+        <span class="k">if</span> <span class="p">(</span><span class="nx">doneCb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">){</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">doneCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">game</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">doneCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">doneCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">default</span><span class="o">:</span>
+                <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="p">}</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">doneCb</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="p">};</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">res</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+>>>>>>> pushPlayers
 
                     <span class="nx">args</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                 <span class="p">}</span>
@@ -686,6 +734,7 @@ to avoid calling <code>node.done</code> multiple times in the same stage.</p>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">game</span><span class="p">.</span><span class="nx">willBeDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
+<<<<<<< HEAD
 
 </pre></div>
         </td>
@@ -702,6 +751,8 @@ TODO: check if it safe to copy arguments by reference.</p>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">args</span><span class="p">)</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
         <span class="nx">len</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+=======
+>>>>>>> pushPlayers
         <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
 
 </pre></div>

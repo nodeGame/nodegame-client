@@ -1,6 +1,6 @@
 /**
  * # internal
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Listeners for internal messages.
@@ -239,6 +239,55 @@
         this.events.ng.on(CMD + gcommands.erase_buffer, function() {
             node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
             node.socket.eraseBuffer();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: push_step
+         */
+        node.events.ng.on(CMD + gcommands.push_step, function() {
+            var res;
+            console.log('BEING PUSHED! ', node.player.stage);
+
+
+
+
+            // TODO: check this:
+            // At the moment, we do not have a default timer object,
+            // nor a default done/timeup cb.
+            // We try to see if they exist, and as last resort we emit DONE.
+
+            if (node.game.timer && node.game.timer.doTimeUp) {
+                console.log('TIMEEEEUuuuuuuuuuup');
+                node.game.timer.doTimeUp();
+            }
+            else if (node.game.visualTimer && node.game.visualTimer.doTimeUp) {
+                console.log('TIMEEEEUuuuuuuuuuup 2');
+                node.game.visualTimer.doTimeUp();
+            }
+
+
+            // TODO: CHECK OTHER LEVELS (e.g. getting_done).
+            if (!node.game.willBeDone &&
+                node.game.getStageLevel() !== stageLevels.DONE) {
+
+                console.log('NODE.DDDDDDDDDDOOONE');
+
+                res = node.done();
+                if (!res) {
+                    node.emit('DONE');
+                    console.log('EMIT DONEOOOOOOOOOOOOO');
+                }
+            }
+
+            // Check this.
+            // node.game.setStageLevel(stageLevels.DONE);
+
+            return 'ok!';
+
+
+            // Important for GET msgs.
+            return node.game.getStageLevel() === stageLevels.DONE  ?
+                'ok!' : 'stuck!';
         });
 
         this.conf.internalAdded = true;

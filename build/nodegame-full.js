@@ -5962,6 +5962,8 @@ if (!Array.prototype.indexOf) {
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
+ *
+ * See README.md for documentation and help.
  * ---
  */
 (function(exports, J, store) {
@@ -5974,7 +5976,7 @@ if (!Array.prototype.indexOf) {
     if (!J) throw new Error('NDDB: missing dependency: JSUS.');
 
     /**
-     * ### df
+     * ## df
      *
      * Flag indicating support for method Object.defineProperty
      *
@@ -6541,7 +6543,7 @@ if (!Array.prototype.indexOf) {
     // ## METHODS
 
     /**
-     * ### NDDB.throwErr
+     * ## NDDB.throwErr
      *
      * Throws an error with a predefined format
      *
@@ -6782,6 +6784,61 @@ if (!Array.prototype.indexOf) {
         }
     };
 
+
+    /**
+     * ## nddb_insert
+     *
+     * Insert an item into db and performs update operations
+     *
+     * A new property `.nddbid` is created in the object, and it will be
+     * used to add the element into the global index: `NDDB.nddbid`.
+     *
+     * Emits the 'insert' event, and updates indexes, hashes and views
+     * accordingly.
+     *
+     * @param {object|function} o The item to add to database
+     * @param {boolean} update Optional. If TRUE, updates indexes, hashes,
+     *    and views. Default, FALSE
+     *
+     * @see NDDB.nddbid
+     * @see NDDB.emit
+     *
+     * @api private
+     */
+    function nddb_insert(o, update) {
+        var nddbid;
+        if (('object' !== typeof o) && ('function' !== typeof o)) {
+            this.throwErr('TypeError', 'insert', 'object or function ' +
+                          'expected, ' + typeof o + ' received.');
+        }
+
+        // Check / create a global index.
+        if ('undefined' === typeof o._nddbid) {
+            // Create internal idx.
+            nddbid = J.uniqueKey(this.nddbid.resolve);
+            if (!nddbid) {
+                this.throwErr('Error', 'insert',
+                              'failed to create index: ' + o);
+            }
+            if (df) {
+                Object.defineProperty(o, '_nddbid', { value: nddbid });
+            }
+            else {
+                o._nddbid = nddbid;
+            }
+        }
+        // Add to index directly (bypass api).
+        this.nddbid.resolve[o._nddbid] = this.db.length;
+        // End create index.
+        this.db.push(o);
+        this.emit('insert', o);
+        if (update) {
+            this._indexIt(o, (this.db.length-1));
+            this._hashIt(o);
+            this._viewIt(o);
+        }
+    }
+
     /**
      * ### NDDB.importDB
      *
@@ -7014,6 +7071,10 @@ if (!Array.prototype.indexOf) {
         this.__C[d] = comparator;
     };
 
+    // ### NDDB.c
+    // @deprecated
+    NDDB.prototype.c = NDDB.prototype.comparator;
+
     /**
      * ### NDDB.getComparator
      *
@@ -7169,6 +7230,11 @@ if (!Array.prototype.indexOf) {
         this.__I[idx] = func, this[idx] = new NDDBIndex(idx, this);
     };
 
+
+    // ### NDDB.i
+    // @deprecated
+    NDDB.prototype.i = NDDB.prototype.index;
+
     /**
      * ### NDDB.view
      *
@@ -7238,6 +7304,11 @@ if (!Array.prototype.indexOf) {
         }
         this.__H[idx] = func, this[idx] = {};
     };
+
+    //### NDDB.h
+    //@deprecated
+    NDDB.prototype.h = NDDB.prototype.hash;
+
 
     /**
      * ### NDDB.resetIndexes
@@ -9539,61 +9610,6 @@ if (!Array.prototype.indexOf) {
 
     // ## Helper Methods
 
-
-    /**
-     * ### nddb_insert
-     *
-     * Insert an item into db and performs update operations
-     *
-     * A new property `.nddbid` is created in the object, and it will be
-     * used to add the element into the global index: `NDDB.nddbid`.
-     *
-     * Emits the 'insert' event, and updates indexes, hashes and views
-     * accordingly.
-     *
-     * @param {object|function} o The item to add to database
-     * @param {boolean} update Optional. If TRUE, updates indexes, hashes,
-     *    and views. Default, FALSE
-     *
-     * @see NDDB.nddbid
-     * @see NDDB.emit
-     *
-     * @api private
-     */
-    function nddb_insert(o, update) {
-        var nddbid;
-        if (('object' !== typeof o) && ('function' !== typeof o)) {
-            this.throwErr('TypeError', 'insert', 'object or function ' +
-                          'expected, ' + typeof o + ' received.');
-        }
-
-        // Check / create a global index.
-        if ('undefined' === typeof o._nddbid) {
-            // Create internal idx.
-            nddbid = J.uniqueKey(this.nddbid.resolve);
-            if (!nddbid) {
-                this.throwErr('Error', 'insert',
-                              'failed to create index: ' + o);
-            }
-            if (df) {
-                Object.defineProperty(o, '_nddbid', { value: nddbid });
-            }
-            else {
-                o._nddbid = nddbid;
-            }
-        }
-        // Add to index directly (bypass api).
-        this.nddbid.resolve[o._nddbid] = this.db.length;
-        // End create index.
-        this.db.push(o);
-        this.emit('insert', o);
-        if (update) {
-            this._indexIt(o, (this.db.length-1));
-            this._hashIt(o);
-            this._viewIt(o);
-        }
-    }
-
     /**
      * ### validateSaveLoadParameters
      *
@@ -10146,6 +10162,7 @@ if (!Array.prototype.indexOf) {
         return out;
     };
 
+    // ## Closure
 })(
     ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
         module.exports : window ,
@@ -10362,6 +10379,7 @@ if (!Array.prototype.indexOf) {
         stop: 'stop',
         restart: 'restart',
         step: 'step',
+        push_step: 'push_step',
         goto_step: 'goto_step',
         clear_buffer: 'clear_buffer',
         erase_buffer: 'erase_buffer'
@@ -11703,8 +11721,8 @@ if (!Array.prototype.indexOf) {
     // ## Closure
 
 })(
-    'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+    'undefined' !== typeof node ? node : module.exports
+  , 'undefined' !== typeof node ? node : module.parent.exports
 );
 
 /**
@@ -13352,6 +13370,13 @@ if (!Array.prototype.indexOf) {
             stepNo = normStage.step;
             seqObj = this.stager.sequence[stageNo - 1];
 
+<<<<<<< HEAD
+=======
+            stageNo  = normStage.stage;
+            stepNo   = normStage.step;
+            seqObj   = this.stager.sequence[stageNo - 1];
+
+>>>>>>> pushPlayers
             if (seqObj.type === 'gameover') return GamePlot.GAMEOVER;
 
             execLoops = 'undefined' === typeof execLoops ? true : execLoops;
@@ -13399,9 +13424,12 @@ if (!Array.prototype.indexOf) {
             if (stageNo < this.stager.sequence.length) {
                 seqObj = this.stager.sequence[stageNo];
 
+<<<<<<< HEAD
                 // Return null if a loop is found and can't be executed.
                 if (!execLoops && seqObj.type === 'loop') return null;
 
+=======
+>>>>>>> pushPlayers
                 // Skip over loops if their callbacks return false:
                 while (seqObj.type === 'loop' &&
                        !seqObj.cb.call(this.node.game)) {
@@ -13410,8 +13438,13 @@ if (!Array.prototype.indexOf) {
                     if (stageNo >= this.stager.sequence.length) {
                         return GamePlot.END_SEQ;
                     }
+<<<<<<< HEAD
                     // Update seq object.
                     seqObj = this.stager.sequence[stageNo];
+=======
+                    seqObj = this.stager.sequence[stageNo];
+
+>>>>>>> pushPlayers
                 }
 
                 // Handle gameover:
@@ -14207,6 +14240,7 @@ if (!Array.prototype.indexOf) {
                  msg.target === constants.target.PCONNECT ||
                  msg.target === constants.target.PDISCONNECT ||
                  msg.target === constants.target.PRECONNECT ||
+                 msg.target === constants.target.SERVERCOMMAND ||
                  msg.target === constants.target.SETUP) {
 
             priority = 1;
@@ -14235,6 +14269,314 @@ if (!Array.prototype.indexOf) {
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
+ * # PushManager
+ *
+ * Push players to advance to next step, otherwise disconnects them.
+ *
+ * Copyright(c) 2016 Stefano Balietti
+ * MIT Licensed
+ */
+(function(exports, parent) {
+
+    "use strict";
+
+    // ## Global scope
+    exports.PushManager = PushManager;
+
+    var GameStage = parent.GameStage;
+    var J = parent.JSUS;
+
+    var DONE = parent.constants.stageLevels.DONE;
+    var PUSH_STEP = parent.constants.gamecommands.push_step;
+    var GAMECOMMAND = parent.constants.target.GAMECOMMAND;
+
+    PushManager.replyWaitTime = 2000;
+    PushManager.checkPushWaitTime = 2000;
+    PushManager.offsetWaitTime = 5000;
+
+    /**
+     * ## PushManager constructor
+     *
+     * Creates a new instance of PushManager
+     *
+     * @param {NodeGameClient} node A nodegame-client instance
+     * @param {object} options Optional. Configuration options
+     */
+    function PushManager(node, options) {
+
+        /**
+         * ### PushManager.node
+         *
+         * Reference to a nodegame-client instance
+         */
+        this.node = node;
+
+        /**
+         * ### PushManager.timeout
+         *
+         * The timeout object that will fire the checking of clients
+         *
+         * @see PushManager.startTimeout
+         */
+        this.timeout = null;
+
+        /**
+         * ### PushManager.offsetWaitTime
+         *
+         * Time that is always added to the timer value of
+         *
+         * @see PushManager.startTimeout
+         */
+        this.offsetWaitTime = PushManager.offsetWaitTime;
+
+        /**
+         * ### PushManager.replyWaitTime
+         *
+         * Time to wait to get a reply from a pushed client
+         *
+         * @see PushManager.pushGame
+         */
+        this.replyWaitTime = PushManager.replyWaitTime;
+
+        /**
+         * ### PushManager.checkPushWaitTime
+         *
+         * Time to wait to check if a pushed client updated its state
+         *
+         * @see PushManager.pushGame
+         */
+        this.checkPushWaitTime = PushManager.checkPushWaitTime;
+
+        this.init(options);
+    }
+
+    /**
+     * ### PushManager.init
+     *
+     * Inits the configuration for the instance
+     *
+     * @param {object} Optional. Configuration object
+     */
+    PushManager.prototype.init = function(options) {
+        options = options || {};
+        checkAndAssignWaitTime(options, 'offsetWaitTime', this);
+        checkAndAssignWaitTime(options, 'replyWaitTime', this);
+        checkAndAssignWaitTime(options, 'checkPushWaitTime', this);
+    };
+
+<<<<<<< HEAD
+    // Add private functions to Stager.
+    Stager.blockTypes = blockTypes;
+    Stager.checkPositionsParameter = checkPositionsParameter;
+    Stager.addStageBlock = addStageBlock;
+    Stager.addBlock = addBlock;
+    Stager.checkFinalized = checkFinalized;
+    Stager.handleStepsArray = handleStepsArray;
+    Stager.makeDefaultCb = makeDefaultCb;
+    Stager.isDefaultCb = isDefaultCb;
+    Stager.isDefaultStep = isDefaultStep;
+    Stager.makeDefaultStep = makeDefaultStep;
+    Stager.unmakeDefaultStep = unmakeDefaultStep;
+    Stager.addStepToBlock = addStepToBlock;
+=======
+    /**
+     * ## PushManager.startTimeout
+     *
+     * Sets a timeout for checking if all clients have finished current step
+     *
+     * The length of the timeout is equal to timer + offset.
+     *
+     * By default, it looks up the `timer` property in the current
+     * step object. If no `timer` property is found, timer is set to 0.
+     *
+     * If timeout expires `PushManager.pushGame` will be called.
+     *
+     * @param {number} timer Optional. If set, overwrite the default behavior
+     *   and this number will be used instead of the `timer` property from
+     *   current step object.
+     *
+     * @see PushManager.offsetWaitTime
+     * @see PushManager.pushGame
+     */
+    PushManager.prototype.startTimeout = function(timer) {
+        var node, gameStage, that;
+>>>>>>> pushPlayers
+
+        node = this.node;
+
+        if (this.timeout) this.clearTimeout();
+
+        // Determine the value for timer. Total timeout = timer + offset.
+        if ('undefined' === typeof timer) {
+            gameStage = node.game.getCurrentGameStage();
+            timer = node.game.plot.getProperty(gameStage, 'timer');
+            if ('function' === typeof timer) timer = timer.call(node.game);
+        }
+        else if ('number' !== typeof timer) {
+            throw new TypeError('PushManager.startTimeout: timer must be ' +
+                                'number or undefined.');
+        }
+        timer = timer || 0;
+
+        console.log('TIMER: ', timer, this.offsetWaitTime, node.player.stage);
+
+        that = this;
+        this.timeout = setTimeout(function() {
+            that.pushGame.call(that);
+        }, (timer + this.offsetWaitTime));
+    };
+
+    /**
+     * ## PushManager.clearTimeout
+     *
+     * Clears timeout for checking if all clients have finished current step
+     *
+     * @see PushManager.startTimeout
+     */
+    PushManager.prototype.clearTimeout = function() {
+        console.log('Clearing old push players timeout.');
+        clearTimeout(this.timeout);
+    };
+
+    /**
+     * ### PushManager.pushGame
+     *
+     * Pushes any client that is connected, but not DONE, to step forward
+     *
+     * It sends a GET message to all clients whose stage level is not
+     * marked as DONE (100), and waits for the reply. If the reply does
+     * not arrive it will disconnect them. If the reply arrives, it will
+     * later check if they manage to step, and if not disconnects them.
+     *
+     * @see checkIfPushWorked
+     */
+    PushManager.prototype.pushGame = function() {
+        var that, node;
+        that = this;
+        node = this.node;
+        // console.log('PUSHGAME', node.player.stage);
+        node.game.pl.each(function(p) {
+            var stage;
+            if (p.stageLevel !== DONE) {
+                console.log('Push needed ', p.id, node.player.stage);
+                stage = p.stage;
+                // Send push.
+                node.get(PUSH_STEP,
+                         function(value) {
+                             checkIfPushWorked(node, p, that.checkPushWaitTime);
+                         },
+                         p.id,
+                         {
+                             timeout: that.replyWaitTime,
+                             executeOnce: true,
+                             target: GAMECOMMAND,
+                             timeoutCb: function() {
+                                 // No reply to GET, disconnect client.
+                                 console.log('NO REPLY ', p.id, stage);
+                                 //node.log('node.pushManager: no reply from ' +
+                                 //         p.id);
+                                 forceDisconnect(node, p);
+                             }
+                         });
+            }
+        });
+    };
+
+    // ## Helper methods
+
+    /**
+     * ### checkIfPushWorked
+     *
+     * Checks whether the stage of a client has changed after
+     *
+     * @param {NodeGameClient} node The node instance used to send msg
+     * @param {object} p The player object containing info about id and sid
+     * @param {number} milliseconds Optional The number of milliseconds to
+     *   wait before checking again the stage of a client. Default 0.
+     */
+    function checkIfPushWorked(node, p, milliseconds) {
+        var stage;
+        stage = {
+            stage: p.stage.stage, step: p.stage.step, round: p.stage.round
+        };
+        console.log('received reply from ', p.id, stage);
+
+        setTimeout(function() {
+            var pp;
+
+            if (node.game.pl.exist(p.id)) {
+                pp = node.game.pl.get(p.id);
+
+        //console.log('CONSOLE checking if push worked for ', p.id);
+        //node.log('node.pushManager: checking if push worked for ', p.id);
+                //console.log(pp.stage, stage);
+                if (GameStage.compare(pp.stage, stage) === 0) {
+                    console.log('PUSH did NOT work for ', p.id, stage);
+               //node.log('node.pushManager: push did not work for ', p.id);
+                    forceDisconnect(node, pp);
+                }
+                else {
+                    console.log('PUSH worked for ', p.id, stage);
+                    //node.log('node.pushManager: push worked for ', p.id);
+                }
+            }
+        }, milliseconds || 0);
+    }
+
+    /**
+     * ### forceDisconnect
+     *
+     * Disconnects one player by sending a DISCONNECT msg to server
+     *
+     * @param {NodeGameClient} node The node instance used to send msg
+     * @param {object} p The player object containing info about id and sid
+     */
+    function forceDisconnect(node, p) {
+        var msg;
+        msg = node.msg.create({
+            target: 'SERVERCOMMAND',
+            text: 'DISCONNECT',
+            data: {
+                id: p.id,
+                sid: p.sid
+            }
+        });
+        node.socket.send(msg);
+    }
+
+    /**
+     * ### checkAndAssignWaitTime
+     *
+     * Checks if a valid wait time is found in options object, if so assigns it
+     *
+     * It is used by `PushManager.init` and will throw an error if value
+     * is not valid.
+     *
+     * @param {object} options Configuration options
+     * @param {string} name The name of the option to check and assign
+     * @param {PushManage} that The instance to which assign the value
+     *
+     * @see PushManager.init
+     */
+    function checkAndAssignWaitTime(options, name, that) {
+        var n;
+        n = options[name];
+        if ('undefined' !== typeof n) {
+            if ('number' !== typeof n || n < 0) {
+                throw new TypeError('PushManager.init: options.' + name +
+                                    'must be a positive number, found: ' + n);
+            }
+            that[name] = n;
+        }
+    }
+
+
+})(
+    'undefined' !== typeof node ? node : module.exports,
+    'undefined' !== typeof node ? node : module.parent.exports
 );
 
 /**
@@ -18696,7 +19038,8 @@ if (!Array.prototype.indexOf) {
     GameDB = parent.GameDB,
     GamePlot = parent.GamePlot,
     PlayerList = parent.PlayerList,
-    Stager = parent.Stager;
+    Stager = parent.Stager,
+    PushManager = parent.PushManager;
 
     var constants = parent.constants;
 
@@ -18898,6 +19241,7 @@ if (!Array.prototype.indexOf) {
         this.globals = {};
 
         /**
+<<<<<<< HEAD
          * ### Game._steppedSteps
          *
          * Array of steps previously played
@@ -18905,6 +19249,15 @@ if (!Array.prototype.indexOf) {
          * @see Game.step
          */
         this._steppedSteps = [new GameStage()];
+=======
+         * ### Game.pushManager
+         *
+         * Handles pushing client to advance to next step
+         *
+         * @see PushManager
+         */
+        this.pushManager = new PushManager(this.node);
+>>>>>>> pushPlayers
     }
 
     // ## Game methods
@@ -19525,8 +19878,18 @@ if (!Array.prototype.indexOf) {
             }
 
         }
+<<<<<<< HEAD
         // Update list of stepped steps.
         this._steppedSteps.push(nextStep);
+=======
+
+        // Pushes clients to finish current step in line with the time
+        // expected by logic, or otherwise disconnects them.
+        if (this.plot.getProperty(nextStep, 'pushClients')) {
+            this.pushManager.startTimeout();
+        }
+
+>>>>>>> pushPlayers
         this.execStep(this.getCurrentGameStage());
         return true;
     };
@@ -20661,6 +21024,7 @@ if (!Array.prototype.indexOf) {
      * ### Timer.createTimer
      *
      * Returns a new GameTimer
+<<<<<<< HEAD
      *
      * The GameTimer instance is automatically paused and resumed on
      * the respective events.
@@ -20678,11 +21042,31 @@ if (!Array.prototype.indexOf) {
      *
      * @return {GameTimer} timer The requested timer
      *
+=======
+     *
+     * The GameTimer instance is automatically paused and resumed on
+     * the respective events.
+     *
+     * Timer creation is flexible, and input parameter can be a full
+     * configuration object, the number of millieconds or nothing. In the
+     * latter case, the new timer will need to be configured manually. If
+     * only the number of milliseconds is passed the timer will fire a 'TIMEUP'
+     * event once the time expires.
+     *
+     * @param {mixed} options The configuration object passed to the GameTimer
+     *   constructor. Alternatively, it is possble to pass directly the number
+     *   of milliseconds and the remaining settings will be added, or to leave
+     *   it undefined.
+     *
+     * @return {GameTimer} timer The requested timer
+     *
+>>>>>>> pushPlayers
      * @see GameTimer
      */
     Timer.prototype.createTimer = function(options) {
         var gameTimer, pausedCb, resumedCb;
         var ee;
+<<<<<<< HEAD
 
         if (options &&
             ('object' !== typeof options && 'number' !== typeof options)) {
@@ -20717,6 +21101,42 @@ if (!Array.prototype.indexOf) {
         // Create the GameTimer:
         gameTimer = new GameTimer(this.node, options);
 
+=======
+
+        if (options &&
+            ('object' !== typeof options && 'number' !== typeof options)) {
+
+            throw new TypeError('Timer.createTimer: options must be ' +
+                                'undefined, object or number.');
+        }
+
+        if ('number' === typeof options) options = { milliseconds: options };
+        options = options || {};
+
+        options.name = options.name ||
+            J.uniqueKey(this.timers, 'timer_' + J.randomInt(0, 10000000));
+
+        if (this.timers[options.name]) {
+            throw new Error('Timer.createTimer: timer ' + options.name +
+                            ' already existing.');
+        }
+
+        // If game is paused add options startPaused, unless user
+        // specified a value in the options object.
+        if (this.node.game.paused) {
+            if ('undefined' === typeof options.startPaused) {
+                options.startPaused = true;
+            }
+        }
+
+        ee = this.node.getCurrentEventEmitter();
+
+        options.eventEmitterName = ee.name;
+
+        // Create the GameTimer:
+        gameTimer = new GameTimer(this.node, options);
+
+>>>>>>> pushPlayers
         // Attach pause / resume listeners:
         pausedCb = function() {
             if (!gameTimer.isPaused()) {
@@ -20795,6 +21215,7 @@ if (!Array.prototype.indexOf) {
 
     /**
      * ### Timer.destroyAllTimers
+<<<<<<< HEAD
      *
      * Stops and removes all registered GameTimers
      */
@@ -20834,8 +21255,35 @@ if (!Array.prototype.indexOf) {
         else if ('number' !== typeof maxWait) {
             throw new TypeError('Timer.' + method + ': maxWait must ' +
                                     'be number or undefined.');
+=======
+     *
+     * Stops and removes all registered GameTimers
+     */
+    Timer.prototype.destroyAllTimers = function(confirm) {
+        if (!confirm) {
+            node.warn('Timer.destroyAllTimers: confirm must be true to ' +
+                      'proceed. No timer destroyed.');
+            return false;
         }
+        for (var i in this.timers) {
+            this.destroyTimer(this.timers[i]);
+>>>>>>> pushPlayers
+        }
+    };
 
+<<<<<<< HEAD
+=======
+    // Common handler for randomEmit and randomExec
+    function randomFire(hook, maxWait, emit) {
+        var that = this;
+        var waitTime;
+        var callback;
+        var timerObj;
+        var tentativeName;
+
+        // Get time to wait:
+        maxWait = maxWait || 6000;
+>>>>>>> pushPlayers
         waitTime = Math.random() * maxWait;
 
         // Define timeup callback:
@@ -20848,7 +21296,11 @@ if (!Array.prototype.indexOf) {
         else {
             callback = function() {
                 that.destroyTimer(timerObj);
+<<<<<<< HEAD
                 hook.call(ctx);
+=======
+                hook.call();
+>>>>>>> pushPlayers
             };
         }
 
@@ -20925,6 +21377,7 @@ if (!Array.prototype.indexOf) {
 
     /**
      * ### Timer.getAllTimestamps
+<<<<<<< HEAD
      *
      * Returns the map with all timestamps
      *
@@ -21087,6 +21540,134 @@ if (!Array.prototype.indexOf) {
     Timer.prototype.randomDone = function(maxWait) {
         randomFire.call(this, 'randomDone', this.node.done,
                         maxWait, false, this.node);
+=======
+     *
+     * Returns the map with all timestamps
+     *
+     * Do not change the returned object.
+     *
+     * @return {object} The timestamp map
+     */
+    Timer.prototype.getAllTimestamps = function() {
+        return this.timestamps;
+    };
+
+    /**
+     * ### Timer.getTimeSince
+     *
+     * Gets the time in ms since a timestamp
+     *
+     * @param {string} name The name of the timestamp
+     *
+     * @return {number|null} The time since the timestamp in ms,
+     *   NULL if it doesn't exist
+     *
+     * @see Timer.getTimeDiff
+     */
+    Timer.prototype.getTimeSince = function(name) {
+        var currentTime;
+
+        // Get current time:
+        currentTime = (new Date()).getTime();
+
+        // Check input:
+        if ('string' !== typeof name) {
+            throw new TypeError('Timer.getTimeSince: name must be string.');
+        }
+
+        if (this.timestamps.hasOwnProperty(name)) {
+            return currentTime - this.timestamps[name];
+        }
+        else {
+            return null;
+        }
+    };
+
+    /**
+     * ### Timer.getTimeDiff
+     *
+     * Returns the time difference between two registered timestamps
+     *
+     * @param {string} nameFrom The name of the first timestamp
+     * @param {string} nameTo The name of the second timestamp
+     *
+     * @return {number} The time difference between the timestamps
+     */
+    Timer.prototype.getTimeDiff = function(nameFrom, nameTo) {
+        var timeFrom, timeTo;
+
+        // Check input:
+        if ('string' !== typeof nameFrom) {
+            throw new TypeError('Timer.getTimeDiff: nameFrom must be string.');
+        }
+        if ('string' !== typeof nameTo) {
+            throw new TypeError('Timer.getTimeDiff: nameTo must be string.');
+        }
+
+        timeFrom = this.timestamps[nameFrom];
+
+        if ('undefined' === typeof timeFrom || timeFrom === null) {
+            throw new Error('Timer.getTimeDiff: nameFrom does not resolve to ' +
+                            'a valid timestamp.');
+        }
+
+        timeTo = this.timestamps[nameTo];
+
+        if ('undefined' === typeof timeTo || timeTo === null) {
+            throw new Error('Timer.getTimeDiff: nameTo does not resolve to ' +
+                            'a valid timestamp.');
+        }
+
+        return timeTo - timeFrom;
+    };
+
+
+    /**
+     * ### Timer.getTimer
+     *
+     * Returns a reference to a previosly registered game timer.
+     *
+     * @param {string} name The name of the timer
+     *
+     * @return {GameTimer|null} The game timer with the given name, or
+     *   null if none is found
+     */
+    Timer.prototype.getTimer = function(name) {
+        if ('string' !== typeof name) {
+            throw new TypeError('Timer.getTimer: name must be string.');
+        }
+        return this.timers[name] || null;
+    };
+
+    /**
+     * ### Timer.randomEmit
+     *
+     * Emits an event after a random time interval between 0 and maxWait
+     *
+     * Respects pausing / resuming.
+     *
+     * @param {string} event The name of the event
+     * @param {number} maxWait Optional. The maximum time (in milliseconds)
+     *   to wait before emitting the event. Default: 6000
+     */
+    Timer.prototype.randomEmit = function(event, maxWait) {
+        randomFire.call(this, event, maxWait, true);
+    };
+
+    /**
+     * ### Timer.randomExec
+     *
+     * Executes a callback function after a random time interval
+     *
+     * Respects pausing / resuming.
+     *
+     * @param {function} func The callback function to execute
+     * @param {number} maxWait Optional. The maximum time (in milliseconds)
+     *   to wait before executing the callback. Default: 6000
+     */
+    Timer.prototype.randomExec = function(func, maxWait) {
+        randomFire.call(this, func, maxWait, false);
+>>>>>>> pushPlayers
     };
 
     /**
@@ -21212,11 +21793,19 @@ if (!Array.prototype.indexOf) {
 
         /**
          * ### GameTimer.hooks
+<<<<<<< HEAD
          *
          * Array of hook functions to fire at every update
          *
          * The array works as a LIFO queue
          *
+=======
+         *
+         * Array of hook functions to fire at every update
+         *
+         * The array works as a LIFO queue
+         *
+>>>>>>> pushPlayers
          * @see GameTimer.fire
          */
         this.hooks = [];
@@ -21247,6 +21836,7 @@ if (!Array.prototype.indexOf) {
 
     /**
      * ### GameTimer.init
+<<<<<<< HEAD
      *
      * Inits the GameTimer
      *
@@ -21341,9 +21931,81 @@ if (!Array.prototype.indexOf) {
         else {
             this.node.emit(hook);
         }
+=======
+     *
+     * Inits the GameTimer
+     *
+     * Takes the configuration as an input parameter or
+     * recycles the settings in `this.options`.
+     *
+     * The configuration object is of the type
+     *
+     *  var options = {
+     *      // The length of the interval.
+     *      milliseconds: 4000,
+     *      // How often to update the time counter. Default: milliseconds
+     *      update: 1000,
+     *      // An event or function to fire when the timer expires.
+     *      timeup: 'MY_EVENT',
+     *      hooks: [
+     *              // Array of functions or events to fire at every update.
+     *              myFunc,
+     *              'MY_EVENT_UPDATE',
+     *              { hook: myFunc2,
+     *                ctx: that, },
+     *              ],
+     *  }
+     *  // Units are in milliseconds.
+     *
+     * Note: if `milliseconds` is a negative number the timer fire
+     * immediately.
+     *
+     * @param {object} options Optional. Configuration object
+     *
+     * @see GameTimer.addHook
+     */
+    GameTimer.prototype.init = function(options) {
+        var i, len;
+        options = options || this.options;
+
+        this.status = GameTimer.UNINITIALIZED;
+        if (this.timerId) {
+            clearInterval(this.timerId);
+            this.timerId = null;
+        }
+        this.milliseconds = options.milliseconds;
+        this.update = options.update || this.update || this.milliseconds;
+        this.timeLeft = this.milliseconds;
+        this.timePassed = 0;
+        this.updateStart = 0;
+        this.updateRemaining = 0;
+        // Event to be fired when timer expires.
+        this.timeup = options.timeup || 'TIMEUP';
+        // TODO: update and milliseconds must be multiple now
+        if (options.hooks) {
+            len = options.hooks.length;
+            for (i = 0; i < len; i++) {
+                this.addHook(options.hooks[i]);
+            }
+        }
+
+        // Set startPaused option. if specified. Default: FALSE
+        this.startPaused = 'undefined' !== options.startPaused ?
+            options.startPaused : false;
+
+        // Only set status to INITIALIZED if all of the state is valid and
+        // ready to be used by this.start etc.
+        if (checkInitialized(this) === null) {
+            this.status = GameTimer.INITIALIZED;
+        }
+
+        this.eventEmitterName = options.eventEmitterName;
+>>>>>>> pushPlayers
     };
 
+
     /**
+<<<<<<< HEAD
      * ### GameTimer.start
      *
      * Starts the timer
@@ -21493,6 +22155,155 @@ if (!Array.prototype.indexOf) {
                 timestamp = (new Date()).getTime();
                 this.updateRemaining =
                     this.update - (timestamp - this.updateStart);
+=======
+     * ### GameTimer.fire
+     *
+     * Fires a registered hook
+     *
+     * If hook is a string it is emitted as an event,
+     * otherwise it is called as a function.
+     *
+     * @param {mixed} h The hook to fire (object, function, or string)
+     */
+    GameTimer.prototype.fire = function(h) {
+        var hook, ctx;
+
+        if ('object' === typeof h) {
+            hook = h.hook;
+            ctx = h.ctx;
+            h = hook;
+        }
+
+        if ('function' === typeof h) {
+            h.call(ctx || this.node.game);
+        }
+        else if ('string' === typeof h) {
+            this.node.emit(h);
+        }
+        else {
+            throw new TypeError('GameTimer.fire: h must be function, string ' +
+                                'or object.');
+        }
+    };
+
+    /**
+     * ### GameTimer.start
+     *
+     * Starts the timer
+     *
+     * Updates the status of the timer and calls `setInterval`
+     * At every update all the registered hooks are fired, and
+     * time left is checked.
+     *
+     * When the timer expires the timeup event is fired, and the
+     * timer is stopped
+     *
+     * @see GameTimer.status
+     * @see GameTimer.timeup
+     * @see GameTimer.fire
+     */
+    GameTimer.prototype.start = function() {
+        var error, that;
+
+        // Check validity of state
+        error = checkInitialized(this);
+        if (error !== null) {
+            throw new Error('GameTimer.start: ' + error);
+        }
+
+        if (this.isRunning()) {
+            throw new Error('GameTimer.start: timer is already running.');
+        }
+
+        this.status = GameTimer.LOADING;
+
+        if (this.startPaused) {
+            this.pause();
+            return;
+        }
+
+        // Remember time of start (used by this.pause to compute remaining time)
+        this.updateStart = (new Date()).getTime();
+
+        // Fires the event immediately if time is zero.
+        // Double check necessary in strict mode.
+        if ('undefined' !== typeof this.options.milliseconds &&
+                this.options.milliseconds === 0) {
+            this.stop();
+            this.fire(this.timeup);
+            return;
+        }
+
+        this.updateRemaining = this.update;
+
+        that = this;
+        // It is not possible to pass extra parameters to updateCallback,
+        // by adding them after _this.update_. In IE does not work.
+        this.timerId = setInterval(function() {
+            updateCallback(that);
+        }, this.update);
+    };
+
+    /**
+     * ### GameTimer.addHook
+     *
+     * Add an hook to the hook list after performing conformity checks.
+     * The first parameter hook can be a string, a function, or an object
+     * containing an hook property.
+     *
+     * @params {mixed} hook Either the hook to be called or an object containing
+     *  at least the hook to be called and possibly even ctx and name
+     * @params {object} ctx A reference to the context wherein the hook is
+     *  called.
+     * @params {string} name The name of the hook. If not provided, this method
+     *  provides an uniqueKey for the hook
+     *
+     * @returns {mixed} The name of the hook, if it was added; false otherwise.
+     */
+    GameTimer.prototype.addHook = function(hook, ctx, name) {
+        var i;
+
+        if (!hook) {
+            throw new Error('GameTimer.addHook: missing argument');
+        }
+        ctx = ctx || this.node.game;
+        if (hook.hook) {
+            ctx = hook.ctx || ctx;
+            if(hook.name) {
+                name = hook.name;
+            }
+            hook = hook.hook;
+        }
+        if (!name) {
+            name = J.uniqueKey(this.hookNames, 'timerHook');
+        }
+        for (i = 0; i < this.hooks.length; i++) {
+            if (this.hooks[i].name === name) {
+                return false;
+            }
+        }
+        this.hookNames[name] = true;
+        this.hooks.push({hook: hook, ctx: ctx, name: name});
+        return name;
+    };
+
+    /*
+     * ### GameTimer.removeHook
+     *
+     * Removes a hook given its' name
+     *
+     * @param {string} name Name of the hook to be removed
+     * @return {mixed} the hook if it was removed; false otherwise.
+     */
+    GameTimer.prototype.removeHook = function(name) {
+        var i;
+        if (this.hookNames[name]) {
+            for (i = 0; i < this.hooks.length; i++) {
+                if (this.hooks[i].name === name) {
+                    delete this.hookNames[name];
+                    return this.hooks.splice(i,1);
+                }
+>>>>>>> pushPlayers
             }
         }
         else if (this.status === GameTimer.STOPPED) {
@@ -21509,6 +22320,7 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+<<<<<<< HEAD
      * ### GameTimer.resume
      *
      * Resumes a paused timer
@@ -21562,8 +22374,185 @@ if (!Array.prototype.indexOf) {
     GameTimer.prototype.stop = function() {
         if (this.isStopped()) {
             throw new Error('GameTimer.stop: timer was not running');
+=======
+     * ### GameTimer.pause
+     *
+     * Pauses the timer
+     *
+     * If the timer was running, clear the interval and sets the
+     * status property to `GameTimer.PAUSED`.
+     */
+    GameTimer.prototype.pause = function() {
+        var timestamp;
+
+        if (this.isRunning()) {
+            clearInterval(this.timerId);
+            clearTimeout(this.timerId);
+            this.timerId = null;
+
+            this.status = GameTimer.PAUSED;
+
+            // Save time of pausing.
+            // If start was never called, or called with startPaused on.
+            if (this.updateStart === 0) {
+                this.updateRemaining = this.update;
+            }
+            else {
+                // Save the difference of time left.
+                timestamp = (new Date()).getTime();
+                this.updateRemaining =
+                    this.update - (timestamp - this.updateStart);
+            }
+        }
+        else if (this.status === GameTimer.STOPPED) {
+            // If the timer was explicitly stopped, we ignore the pause:
+            return;
+        }
+        else if (!this.isPaused()) {
+            // pause() was called before start(); remember it:
+            this.startPaused = true;
+        }
+        else {
+            throw new Error('GameTimer.pause: timer was already paused');
+>>>>>>> pushPlayers
         }
 
+        this.status = GameTimer.STOPPED;
+        clearInterval(this.timerId);
+        clearTimeout(this.timerId);
+        this.timerId = null;
+        this.timePassed = 0;
+        this.timeLeft = null;
+    };
+
+    /**
+<<<<<<< HEAD
+     * ### GameTimer.restart
+     *
+     * Restarts the timer
+     *
+     * Uses the input parameter as configuration object,
+     * or the current settings, if undefined
+     *
+     * @param {object} options Optional. A configuration object
+     *
+     * @see GameTimer.init
+     */
+    GameTimer.prototype.restart = function(options) {
+        if (!this.isStopped()) {
+            this.stop();
+        }
+        this.init(options);
+        this.start();
+    };
+
+    /**
+     * ### GameTimer.isRunning
+     *
+     * Returns whether timer is running
+     *
+     * Running means either LOADING or RUNNING.
+     */
+    GameTimer.prototype.isRunning = function() {
+        return (this.status > 0);
+    };
+
+    /**
+     * ### GameTimer.isStopped
+     *
+     * Returns whether timer is stopped
+     *
+     * Stopped means either UNINITIALIZED, INITIALIZED or STOPPED.
+     *
+     * @see GameTimer.isPaused
+     */
+    GameTimer.prototype.isStopped = function() {
+        if (this.status === GameTimer.UNINITIALIZED ||
+            this.status === GameTimer.INITIALIZED ||
+            this.status === GameTimer.STOPPED) {
+
+            return true;
+        }
+        else {
+            return false;
+=======
+     * ### GameTimer.resume
+     *
+     * Resumes a paused timer
+     *
+     * If the timer was paused, restarts it with the current configuration
+     *
+     * @see GameTimer.restart
+     */
+    GameTimer.prototype.resume = function() {
+        var that = this;
+
+        // Don't start if the initialization is incomplete (invalid state):
+        if (this.status === GameTimer.UNINITIALIZED) {
+            this.startPaused = false;
+            return;
+        }
+
+        if (!this.isPaused() && !this.startPaused) {
+            throw new Error('GameTimer.resume: timer was not paused');
+        }
+
+        this.status = GameTimer.LOADING;
+
+        this.startPaused = false;
+
+        this.updateStart = (new Date()).getTime();
+
+        // Run rest of this "update" interval:
+        this.timerId = setTimeout(function() {
+            if (updateCallback(that)) {
+                // start() needs the timer to not be running.
+                that.status = GameTimer.INITIALIZED;
+
+                that.start();
+
+                // start() sets status to LOADING, so change it back to RUNNING.
+                that.status = GameTimer.RUNNING;
+            }
+        }, this.updateRemaining);
+    };
+
+    /**
+     * ### GameTimer.stop
+     *
+     * Stops the timer
+     *
+     * If the timer was paused or running, clear the interval, sets the
+     * status property to `GameTimer.STOPPED`, and reset the time passed
+     * and time left properties
+     */
+    GameTimer.prototype.stop = function() {
+        if (this.isStopped()) {
+            throw new Error('GameTimer.stop: timer was not running');
+>>>>>>> pushPlayers
+        }
+
+<<<<<<< HEAD
+    /**
+     * ### GameTimer.isPaused
+     *
+     * Returns whether timer is paused
+     */
+    GameTimer.prototype.isPaused = function() {
+        return this.status === GameTimer.PAUSED;
+    };
+
+    /**
+     * ### GameTimer.isPaused
+     *
+     * Return TRUE if the time expired
+     */
+    GameTimer.prototype.isTimeup = function() {
+        // return this.timeLeft !== null && this.timeLeft <= 0;
+        return this.timeLeft <= 0;
+    };
+
+=======
         this.status = GameTimer.STOPPED;
         clearInterval(this.timerId);
         clearTimeout(this.timerId);
@@ -21643,6 +22632,7 @@ if (!Array.prototype.indexOf) {
         return this.timeLeft <= 0;
     };
 
+>>>>>>> pushPlayers
     // Do a timer update.
     // Return false if timer ran out, true otherwise.
     function updateCallback(that) {
@@ -21697,6 +22687,7 @@ if (!Array.prototype.indexOf) {
  * ---
  */
 (function(exports, node) {
+<<<<<<< HEAD
 
     var J = node.JSUS;
 
@@ -22766,8 +23757,315 @@ if (!Array.prototype.indexOf) {
         if (frozen) {
             throw new Error('node.setup: nodeGame configuration is frozen. ' +
                             'Calling setup is not allowed.');
-        }
+=======
 
+    var J = node.JSUS;
+
+    exports.Matcher = Matcher;
+
+    // ## Static methods.
+
+    /**
+     * ### Matcher.bye
+     *
+     * Symbol used to complete matching when partner is missing
+     *
+     * @see Matcher.matches
+     */
+    Matcher.bye = -1;
+
+    /**
+     * ### Matcher.missingId
+     *
+     * Symbol assigned to matching number without valid id
+     *
+     * @see Matcher.resolvedMatches
+     */
+    Matcher.missingId = 'bot';
+
+    /**
+     * ## Matcher.randomAssigner
+     *
+     * Assigns ids to positions randomly.
+     *
+     * @param {array} ids The ids to assign
+     *
+     * @return The sorted array
+     *
+     * @see JSUS.shuffle
+     */
+    Matcher.randomAssigner = function(ids) {
+        return J.shuffle(ids);
+    };
+
+    /**
+     * ### Matcher.linearAssigner
+     *
+     * Assigns ids to positions linearly.
+     *
+     * @param {array} ids The ids to assign
+     *
+     * @return The sorted array
+     */
+    Matcher.linearAssigner = function(ids) {
+        return J.clone(ids);
+    };
+
+    /**
+     * ### Matcher.roundRobin
+     *
+     * Creates round robin tournament schedules
+     *
+     * @param {number|array} n The number of participants (>1) or
+     *   an array containing the ids of the participants
+     * @param {object} options Optional. Configuration object
+     *   contains the following options:
+     *
+     *   - bye: identifier for dummy competitor. Default: -1.
+     *   - skypeBye: flag whether players matched with the dummy
+     *        competitor should be added or not. Default: true.
+     *
+     * @return The round robin matches
+     */
+    Matcher.roundRobin = function(n, options) {
+        var ps, rs, bye;
+        var i, lenI, j, lenJ;
+        var skipBye;
+
+        if ('number' === typeof n && n > 1) {
+            ps = J.seq(0, (n-1));
+        }
+        else if (J.isArray(n) && n.length) {
+            ps = n.slice();
+            n = ps.length;
+        }
+        else {
+            throw new TypeError('Matcher.roundRobin: n must be number > 1 ' +
+                                'or non-empty array.');
+        }
+        options = options || {};
+        rs = new Array(n-1);
+        bye = 'undefined' !== typeof options.bye ? options.bye : -1;
+        skipBye = options.skipBye || false;
+        if (n % 2 === 1) {
+            // Make sure we have even numbers.
+            ps.push(bye);
+            n += 1;
+        }
+        i = -1, lenI = n-1;
+        for ( ; ++i < lenI ; ) {
+            // Create a new array for round i.
+            rs[i] = [];
+            j = -1, lenJ = n / 2;
+            for ( ; ++j < lenJ ; ) {
+                if (!skipBye || (ps[j] !== bye && ps[n - 1 - j] !== bye)) {
+                    // Insert match.
+                    rs[i].push([ps[j], ps[n - 1 - j]]);
+                }
+            }
+            // Permutate for next round.
+            ps.splice(1, 0, ps.pop());
+        }
+        return rs;
+    };
+
+    /**
+     * ## Matcher constructor
+     *
+     * Creates a new Matcher object
+     *
+     * @param {object} options Optional. Configuration options
+     */
+    function Matcher(options) {
+
+        /**
+         * ### Matcher.x
+         *
+         * The current round returned by Matcher.getMatch
+         *
+         * @see Matcher.getMatch
+         */
+        this.x = 0;
+
+        /**
+         * ### Matcher.y
+         *
+         * The next match in current round returned by Matcher.getMatch
+         *
+         * @see Matcher.getMatch
+         */
+        this.y = 0;
+
+        /**
+         * ### Matcher.matches
+         *
+         * Nested array of matches (with position-numbers)
+         *
+         * Nestes a new array for each round, and within each round
+         * individual matches are also array. For example:
+         *
+         * ```javascript
+         *
+         * // Matching array.
+         * [
+         *
+         *   // First round.
+         *   [ [ p1, p2 ], [ p3, p4 ], ... ],
+         *
+         *   // Second round.
+         *   [ [ p2, p3 ], [ p4, p1 ], ... ],
+         *
+         *   // Further rounds.
+         * ];
+         * ```
+         *
+         * @see Matcher.setMatches
+         */
+        this.matches = null;
+
+        /**
+         * ### Matcher.resolvedMatches
+         *
+         * Nested array of matches (with id-strings)
+         *
+         * Exactly Matcher.matches, but with with ids instead of numbers
+         *
+         * @see Matcher.matches
+         * @see Matcher.setIds
+         * @see Matcher.setAssignerCb
+         * @see Matcher.match
+         */
+        this.resolvedMatches = null;
+
+        /**
+         * ### Matcher.resolvedMatchesById
+         *
+         * Array of maps id to partner, one map per round
+         *
+         * ```javascript
+         *
+         * // Matching array.
+         * [
+         *
+         *   // First round.
+         *   { p1: 'p2', p2: 'p1', p3: 'p4', p4: 'p3',  ... },
+         *
+         *   // Second round.
+         *   { p2: 'p3', p3: 'p2', p4: 'p1', p1: 'p4',  ... },
+         *
+         *   // Further rounds.
+         * ];
+         * ```
+         *
+         * @see Matcher.resolvedMatches
+         * @see Matcher.setIds
+         * @see Matcher.match
+         */
+        this.resolvedMatchesById = null;
+
+        /**
+         * ### Matcher.ids
+         *
+         * Array ids to match
+         *
+         * @see Matcher.setIds
+         */
+        this.ids = null;
+
+        /**
+         * ### Matcher.ids
+         *
+         * Array mapping each ordinal position to an id
+         *
+         * @see Matcher.ids
+         * @see Matcher.assignerCb
+         */
+        this.assignedIds = null;
+
+        /**
+         * ### Matcher.assignerCb
+         *
+         * Callback that assigns ids to positions
+         *
+         * An assigner callback must take as input an array of ids,
+         * reorder them according to some criteria, and return it.
+         * The order of the items in the returned array will be used to
+         * match the numbers in the `matches` array.
+         *
+         * @see Matcher.ids
+         * @see Matcher.matches
+         * @see Matcher.assignedIds
+         */
+        this.assignerCb = Matcher.randomAssigner;
+
+        /**
+         * ## Matcher.missingId
+         *
+         * An id used to replace missing players ids
+         */
+        this.missingId = Matcher.missingId;
+
+        /**
+         * ## Matcher.missingId
+         *
+         * An id used by matching algorithms to complete unfinished matches
+         */
+        this.bye = Matcher.bye;
+
+        // Init.
+        this.init(options);
+    }
+
+    /**
+     * ### Matcher.init
+     *
+     * Inits the Matcher instance
+     *
+     * @param {object} options
+     */
+    Matcher.prototype.init = function(options) {
+        options = options || {};
+
+        if (options.assignerCb) this.setAssignerCb(options.assignerCb);
+        if (options.ids) this.setIds(options.ids);
+        if (options.bye) this.bye = options.bye;
+        if (options.missingId) this.missingId = options.missingId;
+        if ('number' === typeof options.x) {
+            if (options.x < 0) {
+                throw new Error('Matcher.init: options.x cannot be negative.');
+            }
+            this.x = options.x;
+        }
+        if ('number' === typeof options.y) {
+            if (options.y < 0) {
+                throw new Error('Matcher.init: options.y cannot be negative.');
+            }
+            this.y = options.y;
+        }
+    };
+
+    /**
+     * ### Matcher.generateMatches
+     *
+     * Creates a matches array according to the chosen scheduling algorithm
+     *
+     * Throws an error if the selected algorithm is not found.
+     *
+     * @param {string} alg The chosen algorithm. Available: 'roundrobin'.
+     *
+     * @return {array} The array of matches
+     */
+    Matcher.prototype.generateMatches = function(alg) {
+        var matches;
+        if ('string' !== typeof alg) {
+            throw new TypeError('Matcher.generateMatches: alg must be string.');
+>>>>>>> pushPlayers
+        }
+        if (alg === 'roundrobin' ||
+            alg === 'roundRobin' ||
+            alg === 'RoundRobin') {
+
+<<<<<<< HEAD
         if (property === 'register') {
             throw new Error('node.setup: cannot setup property "register".');
         }
@@ -22888,10 +24186,317 @@ if (!Array.prototype.indexOf) {
             text: feature,
             data: payload
         });
+=======
+            matches = Matcher.roundRobin(arguments[1], arguments[2]);
+            this.setMatches(matches);
+            return matches;
+        }
+
+        throw new Error('Matcher.generateMatches: unknown algorithm: ' +
+                        alg + '.');
+    };
+
+    /**
+     * ### Matcher.setMatches
+     *
+     * Sets the matches for current instance
+     *
+     * Resets resolvedMatches and resolvedMatchesById to null.
+     *
+     * @param {array} The array of matches
+     *
+     * @see this.matches
+     */
+    Matcher.prototype.setMatches = function(matches) {
+        if (!J.isArray(matches) || !matches.length) {
+            throw new TypeError('Matcher.setMatches: matches must be array.');
+        }
+        this.matches = matches;
+        resetResolvedData(this);
+    };
+
+    /**
+     * ### Matcher.setIds
+     *
+     * Sets the ids to be used for the matches
+     *
+     * @param {array} ids Array containing the id of the matches
+     *
+     * @see Matcher.ids
+     */
+    Matcher.prototype.setIds = function(ids) {
+        if (!J.isArray(ids) || !ids.length) {
+            throw new TypeError('Matcher.setIds: ids must be array.');
+        }
+        this.ids = ids;
+        resetResolvedData(this);
+    };
+
+    /**
+     * ### Matcher.assignIds
+     *
+     * Calls the assigner callback to assign existing ids to positions
+     *
+     * @param {array} ids Array containing the id of the matches
+     *
+     * @see Matcher.ids
+     */
+    Matcher.prototype.assignIds = function() {
+        if (!J.isArray(this.ids) || !this.ids.length) {
+            throw new Error('Matcher.assignIds: no id found.');
+        }
+        this.assignedIds = this.assignerCb(this.ids);
+    };
+
+    /**
+     * ### Matcher.setAssignerCb
+     *
+     * Specify a callback to be used to assign existing ids to positions
+     *
+     * @param {function} cb The assigner cb
+     *
+     * @see Matcher.ids
+     * @see Matcher.matches
+     * @see Matcher.assignerCb
+     */
+    Matcher.prototype.setAssignerCb = function(cb) {
+        if ('function' !== typeof cb) {
+            throw new TypeError('Matcher.setAssignerCb: cb must be function.');
+        }
+        this.assignerCb = cb;
+    };
+
+    /**
+     * ### Matcher.match
+     *
+     * Substitutes the ids to the matches
+     *
+     * Populates the objects `resolvedMatchesById` and `resolvedMatches`.
+     *
+     * It requires to have the matches array already set, or an error
+     * will be thrown.
+     *
+     * If the ids have not been assigned, it will do it automatically.
+     *
+     * @see Matcher.assignIds
+     * @see Matcher.resolvedMatchesById
+     * @see Matcher.resolvedMatches
+     */
+    Matcher.prototype.match = function() {
+        var i, lenI, j, lenJ, pair;
+        var matched, matchedId, id1, id2;
+
+        if (!J.isArray(this.matches) || !this.matches.length) {
+            throw new Error('Matcher.match: no matches found.');
+        }
+
+        // Assign/generate ids if not done before.
+        if (!this.assignedIds) {
+            if (!J.isArray(this.ids) || !this.ids.length) {
+                this.ids = J.seq(0, this.matches.length -1, 1, function(i) {
+                    return '' + i;
+                });
+            }
+            this.assignIds();
+        }
+
+        // Parse the matches array and creates two data structures
+        // where the absolute position becomes the player id.
+        i = -1, lenI = this.matches.length;
+        matched = new Array(lenI);
+        matchedId = new Array(lenI);
+        for ( ; ++i < lenI ; ) {
+            j = -1, lenJ = this.matches[i].length;
+            matched[i] = [];
+            matchedId[i] = {};
+            for ( ; ++j < lenJ ; ) {
+                id1 = null, id2 = null;
+                pair = this.matches[i][j];
+                // Resolve matches.
+                id1 = importMatchItem(i, j,
+                                      pair[0],
+                                      this.assignedIds,
+                                      this.missingId);
+                id2 = importMatchItem(i, j,
+                                      pair[1],
+                                      this.assignedIds,
+                                      this.missingId);
+                // Create resolved matches.
+                matched[i].push([id1, id2]);
+                matchedId[i][id1] = id2;
+                matchedId[i][id2] = id1;
+            }
+        }
+        // Substitute matching-structure.
+        this.resolvedMatches = matched;
+        this.resolvedMatchesById = matchedId;
+        // Set getMatch indexes to 0.
+        this.x.should.eql(0);
+        this.y.should.eql(0);
+    };
+
+    /**
+     * ### Matcher.getMatch
+     *
+     * Returns the next match, or the specified match
+     *
+     * @param {number} x Optional. The x-th round. Default: the round
+     * @param {number} y Optional. The y-th match within the x-th round
+     *
+     * @return {array} The next or requested match, or null if not found
+     *
+     * @see Matcher.x
+     * @see Matcher.y
+     * @see Matcher.resolvedMatches
+     */
+    Matcher.prototype.getMatch = function(x, y) {
+        var nRows, nCols;
+        // Check both x and y.
+        if ('undefined' === typeof x && 'undefined' !== typeof y) {
+            throw new Error('Matcher.getMatch: cannot specify y without x.');
+        }
+        // Check if there is any match yet.
+        if (!J.isArray(this.resolvedMatches) || !this.resolvedMatches.length) {
+            throw new Error('Matcher.getMatch: no resolved matches found.');
+        }
+
+        // Check x.
+        if ('undefined' === typeof x) {
+            x = this.x;
+        }
+        else if ('number' !== typeof x) {
+            throw new TypeError('Matcher.getMatch: x must be number ' +
+                                'or undefined.');
+        }
+        else if (x < 0) {
+            throw new Error('Matcher.getMatch: x cannot be negative');
+        }
+        else if ('undefined' === typeof y) {
+            // Return the whole row.
+            return this.resolvedMatches[x];
+        }
+
+        nRows = this.matches.length - 1;
+        if (x > nRows) return null;
+
+        nCols = this.matches[x].length - 1;
+
+        // Check y.
+        if ('undefined' === typeof y) {
+            y = this.y;
+            if (y < nCols) {
+                this.y++;
+            }
+            else {
+                this.x++;
+                this.y = 0;
+            }
+        }
+        else if ('number' !== typeof y) {
+            throw new TypeError('Matcher.getMatch: y must be number ' +
+                                'or undefined.');
+        }
+        else if (y < 0) {
+            throw new Error('Matcher.getMatch: y cannot be negative');
+        }
+        else if (y > nCols) {
+            return null;
+        }
+        return this.resolvedMatches[x][y];
+    };
+
+    /**
+     * ### Matcher.getMatchObject
+     *
+     * Returns all the matches of the next or requested round as key-value pairs
+     *
+     * @param {number} x Optional. The x-th round. Default: the round
+     *
+     * @return {object} The next or requested match, or null if not found
+     *
+     * @see Matcher.x
+     * @see Matcher.resolvedMatchesById
+     */
+    Matcher.prototype.getMatchObject = function(x) {
+        var nRows;
+
+        // Check if there is any match yet.
+        if (!J.isArray(this.resolvedMatches) || !this.resolvedMatches.length) {
+            throw new Error('Matcher.getMatch: no resolved matches found.');
+        }
+
+        // Check x.
+        if ('undefined' === typeof x) {
+            x = this.x;
+            this.x++;
+        }
+        else if ('number' !== typeof x) {
+            throw new TypeError('Matcher.getMatch: x must be number ' +
+                                'or undefined.');
+        }
+        else if (x < 0) {
+            throw new Error('Matcher.getMatch: x cannot be negative');
+        }
+
+        nRows = this.matches.length - 1;
+        if (x > nRows) return null;
+
+        return this.resolvedMatchesById[x];
+    };
+
+    // ## Helper methods.
+
+    /**
+     * ### importMatchItem
+     *
+     * Handles importing items from the matches array
+     *
+     * Items in matches array must be numbers or strings. If numbers
+     * they are translated into an id using the supplied map, otherwise
+     * they are considered as already an id.
+     *
+     * Items that are not numbers neither strings will throw an error.
+     *
+     * @param {number} i The row-id of the item
+     * @param {number} j The position in the row of the item
+     * @param {string|number} item The item to check
+     * @param {array} map The map of positions to ids
+     * @param {string} miss The id of number that cannot be resolved in map
+     *
+     * @return {string} The resolved id of the item
+     */
+    function importMatchItem(i, j, item, map, miss) {
+        if ('number' === typeof item) {
+            return 'undefined' !== typeof map[item] ? map[item] : miss;
+        }
+        else if ('string' === typeof item) {
+            return item;
+        }
+        throw new TypeError('Matcher.match: items can be only string or ' +
+                            'number. Found: ' + item + ' at position ' +
+                            i + ',' + j);
+    }
+>>>>>>> pushPlayers
 
         return this.socket.send(msg);
     };
 
+<<<<<<< HEAD
+=======
+
+    /**
+     * ### resetResolvedData
+     *
+     * Resets resolved data of a matcher object
+     *
+     * @param {Matcher} matcher The matcher to reset
+     */
+    function resetResolvedData(matcher) {
+        matcher.resolvedMatches = null;
+        matcher.resolvedMatchesById = null;
+    }
+    // ## Closure
+>>>>>>> pushPlayers
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
@@ -23475,12 +25080,14 @@ if (!Array.prototype.indexOf) {
                         if ('undefined' !== typeof timer) {
                             that.timer.destroyTimer(timer);
                         }
+                        ee.remove('in.say.DATA', g);
                     }
                     cb.call(that.game, msg.data);
                 }
             };
 
             ee.on('in.say.DATA', g);
+<<<<<<< HEAD
 
             // If a timeout is set the listener is removed independently,
             // of its execution after the timeout is fired.
@@ -23502,6 +25109,8 @@ if (!Array.prototype.indexOf) {
                 });
                 timer.start();
             }
+=======
+>>>>>>> pushPlayers
         }
         return res;
     };
@@ -23538,8 +25147,13 @@ if (!Array.prototype.indexOf) {
      * @emits DONE
      */
     NGC.prototype.done = function() {
+<<<<<<< HEAD
         var that, game, doneCb, len, i;
         var arg1, arg2, args, args2;
+=======
+        var that, game, doneCb, len, args, i;
+        var arg1, arg2, res;
+>>>>>>> pushPlayers
         var stepTime, timeup;
         var autoSet;
 
@@ -23552,9 +25166,12 @@ if (!Array.prototype.indexOf) {
             return false;
         }
 
+        len = arguments.length;
+
         // Evaluating `done` callback if any.
         doneCb = game.plot.getProperty(game.getCurrentGameStage(), 'done');
 
+<<<<<<< HEAD
         // A done callback can manipulate arguments, add new values to
         // send to server, or even halt the procedure if returning false.
         if (doneCb) {
@@ -23586,6 +25203,29 @@ if (!Array.prototype.indexOf) {
 
                 args = [args];
             }
+=======
+        // If a `done` callback returns false, exit.
+        if (doneCb) {
+            switch(len){
+            case 0:
+                res = doneCb.call(game);
+                break;
+            case 1:
+                res = doneCb.call(game, arguments[0]);
+                break;
+            case 2:
+                res = doneCb.call(game, arguments[0], arguments[1]);
+                break;
+            default:
+                args = new Array(len);
+                for (i = -1 ; ++i < len ; ) {
+                    args[i] = arguments[i];
+                }
+                res = doneCb.apply(game, args);
+            };
+
+            if (!res) return;
+>>>>>>> pushPlayers
         }
 
         // Build set object (will be sent to server).
@@ -23600,11 +25240,14 @@ if (!Array.prototype.indexOf) {
         // to avoid calling `node.done` multiple times in the same stage.
         game.willBeDone = true;
 
+<<<<<<< HEAD
         // Args can be the original arguments array, or
         // the one returned by the done callback.
         // TODO: check if it safe to copy arguments by reference.
         if (!args) args = arguments;
         len = args.length;
+=======
+>>>>>>> pushPlayers
         that = this;
         // The arguments object must not be passed or leaked anywhere.
         // Therefore, we recreate an args array here. We have a different
@@ -24020,6 +25663,7 @@ if (!Array.prototype.indexOf) {
      * If executed once, it requires a force flag to re-add the listeners
      *
      * @param {boolean} force Whether to force re-adding the listeners
+     *
      * @return {boolean} TRUE on success
      */
     NGC.prototype.addDefaultIncomingListeners = function(force) {
@@ -24259,23 +25903,26 @@ if (!Array.prototype.indexOf) {
         /**
          * ## in.say.GAMECOMMAND
          *
-         * Setups a features of nodegame
-         *
-         * @see node.setup
+         * Executes a game command (pause, resume, etc.)
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
-            // console.log('GM', msg);
-            if ('string' !== typeof msg.text) {
-                node.err('"in.say.GAMECOMMAND": msg.text must be string: ' +
-                         msg.text);
-                return;
-            }
-            if (!parent.constants.gamecommands[msg.text]) {
-                node.err('"in.say.GAMECOMMAND": unknown game command ' +
-                         'received: ' + msg.text);
-                return;
-            }
+            if (!checkGameCommand(msg, 'say')) return;
             node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
+        });
+
+        /**
+         * ## in.get.GAMECOMMAND
+         *
+         * Executes a game command (pause, resume, etc.) and gives confirmation
+         */
+        node.events.ng.on( IN + get + 'GAMECOMMAND', function(msg) {
+            var res;
+            if (!checkGameCommand(msg, 'get')) return;
+            res = node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
+            if (!J.isEmpty(res)) {
+                // New key must contain msg.id.
+                node.say(msg.text + '_' + msg.id, msg.from, res);
+            }
         });
 
         /**
@@ -24395,11 +26042,26 @@ if (!Array.prototype.indexOf) {
             return 'pong';
         });
 
-
         node.conf.incomingAdded = true;
         node.silly('node: incoming listeners added.');
         return true;
     };
+
+    // ## Helper functions.
+
+    function checkGameCommand(msg, action) {
+        if ('string' !== typeof msg.text || msg.text.trim() === '') {
+            node.err('"in.' + action + '.GAMECOMMAND": msg.text must be ' +
+                     'a non-empty string: ' + msg.text);
+            return false;
+        }
+        if (!parent.constants.gamecommands[msg.text]) {
+            node.err('"in.' + action + '.GAMECOMMAND": unknown game command ' +
+                     'received: ' + msg.text);
+            return false;
+        }
+        return true;
+    }
 
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -24505,6 +26167,22 @@ if (!Array.prototype.indexOf) {
             }
         });
 
+<<<<<<< HEAD
+=======
+        //         /**
+        //          * ## WINDOW_LOADED
+        //          *
+        //          * @emit LOADED
+        //          */
+        //         this.events.ng.on('WINDOW_LOADED', function() {
+        //             var stageLevel;
+        //             stageLevel = node.game.getStageLevel();
+        //             if (stageLevel === stageLevels.CALLBACK_EXECUTED) {
+        //                 node.emit('LOADED');
+        //             }
+        //         });
+
+>>>>>>> pushPlayers
         /**
          * ## LOADED
          *
@@ -24537,7 +26215,16 @@ if (!Array.prototype.indexOf) {
             node.timer.setTimestamp('step', currentTime);
 
             // DONE was previously emitted, we just execute done handler.
+<<<<<<< HEAD
             if (node.game.willBeDone) done();
+=======
+            // Check: is it ok to call done, if other handlers on PLAYING
+            // are following?
+            if (node.game.willBeDone) {
+                done();
+            }
+
+>>>>>>> pushPlayers
         });
 
         /**
@@ -24647,6 +26334,55 @@ if (!Array.prototype.indexOf) {
         this.events.ng.on(CMD + gcommands.erase_buffer, function() {
             node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
             node.socket.eraseBuffer();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: push_step
+         */
+        node.events.ng.on(CMD + gcommands.push_step, function() {
+            var res;
+            console.log('BEING PUSHED! ', node.player.stage);
+
+
+
+
+            // TODO: check this:
+            // At the moment, we do not have a default timer object,
+            // nor a default done/timeup cb.
+            // We try to see if they exist, and as last resort we emit DONE.
+
+            if (node.game.timer && node.game.timer.doTimeUp) {
+                console.log('TIMEEEEUuuuuuuuuuup');
+                node.game.timer.doTimeUp();
+            }
+            else if (node.game.visualTimer && node.game.visualTimer.doTimeUp) {
+                console.log('TIMEEEEUuuuuuuuuuup 2');
+                node.game.visualTimer.doTimeUp();
+            }
+
+
+            // TODO: CHECK OTHER LEVELS (e.g. getting_done).
+            if (!node.game.willBeDone &&
+                node.game.getStageLevel() !== stageLevels.DONE) {
+
+                console.log('NODE.DDDDDDDDDDOOONE');
+
+                res = node.done();
+                if (!res) {
+                    node.emit('DONE');
+                    console.log('EMIT DONEOOOOOOOOOOOOO');
+                }
+            }
+
+            // Check this.
+            // node.game.setStageLevel(stageLevels.DONE);
+
+            return 'ok!';
+
+
+            // Important for GET msgs.
+            return node.game.getStageLevel() === stageLevels.DONE  ?
+                'ok!' : 'stuck!';
         });
 
         this.conf.internalAdded = true;
@@ -36920,6 +38656,31 @@ if (!Array.prototype.indexOf) {
 
     };
 
+<<<<<<< HEAD
+=======
+    DebugInfo.prototype.listeners = function() {
+        var that, ee;
+
+        that = this;
+        ee = node.events.game;
+
+        ee.on('STEP_CALLBACK_EXECUTED', function() {
+            that.updateAll();
+        });
+
+        ee.on('SOCKET_CONNECT', function() {
+            that.updateAll();
+        });
+
+        ee.on('SOCKET_DISCONNECT', function() {
+            that.updateAll();
+        });
+
+        // TODO Write more listeners. Separate functions. Get event emitter.
+
+    };
+
+>>>>>>> pushPlayers
     DebugInfo.prototype.destroy = function() {
         clearInterval(this.interval);
         this.interval = null;

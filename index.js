@@ -52,6 +52,7 @@
     exports.GamePlot = require('./lib/core/GamePlot').GamePlot;
     exports.GameMsgGenerator =
         require('./lib/core/GameMsgGenerator').GameMsgGenerator;
+    exports.PushManager = require('./lib/core/PushManager').PushManager;
 
     // Sockets.
     exports.SocketFactory = require('./lib/core/SocketFactory').SocketFactory;

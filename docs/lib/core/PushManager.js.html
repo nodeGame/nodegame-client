@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PushManager.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../", thisFile = "lib/core/PushManager.js", defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#pushmanager">PushManager</a>
+      </div>
+      <div class="heading h2">
+        <a href="#global%20scope">Global scope</a>
+      </div>
+      <div class="heading h2">
+        <a href="#pushmanager%20constructor">PushManager constructor</a>
+      </div>
+      <div class="heading h3">
+        <a href="#pushmanager.node">PushManager.node</a>
+      </div>
+      <div class="heading h3">
+        <a href="#pushmanager.timeout">PushManager.timeout</a>
+      </div>
+      <div class="heading h3">
+        <a href="#pushmanager.offsetwaittime">PushManager.offsetWaitTime</a>
+      </div>
+      <div class="heading h3">
+        <a href="#pushmanager.replywaittime">PushManager.replyWaitTime</a>
+      </div>
+      <div class="heading h3">
+        <a href="#pushmanager.checkpushwaittime">PushManager.checkPushWaitTime</a>
+      </div>
+      <div class="heading h3">
+        <a href="#pushmanager.init">PushManager.init</a>
+      </div>
+      <div class="heading h2">
+        <a href="#pushmanager.starttimeout">PushManager.startTimeout</a>
+      </div>
+      <div class="heading h2">
+        <a href="#pushmanager.cleartimeout">PushManager.clearTimeout</a>
+      </div>
+      <div class="heading h3">
+        <a href="#pushmanager.pushgame">PushManager.pushGame</a>
+      </div>
+      <div class="heading h2">
+        <a href="#helper%20methods">Helper methods</a>
+      </div>
+      <div class="heading h3">
+        <a href="#checkifpushworked">checkIfPushWorked</a>
+      </div>
+      <div class="heading h3">
+        <a href="#forcedisconnect">forceDisconnect</a>
+      </div>
+      <div class="heading h3">
+        <a href="#checkandassignwaittime">checkAndAssignWaitTime</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="pushmanager">
+  <h1>
+    <a href="#pushmanager" name="pushmanager" class="pilcrow">&#182;</a>
+    PushManager
+  </h1>
+</div>
+
+  </div>
+  <div class="body"><p>Push players to advance to next step, otherwise disconnects them.</p>
+
+<p>Copyright(c) 2016 Stefano Balietti
+MIT Licensed</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="global%20scope">
+  <h2>
+    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
+    Global scope
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">PushManager</span> <span class="o">=</span> <span class="nx">PushManager</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">GameStage</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GameStage</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">DONE</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">PUSH_STEP</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">gamecommands</span><span class="p">.</span><span class="nx">push_step</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">GAMECOMMAND</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">GAMECOMMAND</span><span class="p">;</span>
+
+    <span class="nx">PushManager</span><span class="p">.</span><span class="nx">replyWaitTime</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">;</span>
+    <span class="nx">PushManager</span><span class="p">.</span><span class="nx">checkPushWaitTime</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">;</span>
+    <span class="nx">PushManager</span><span class="p">.</span><span class="nx">offsetWaitTime</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="pushmanager%20constructor">
+  <h2>
+    <a href="#pushmanager%20constructor" name="pushmanager%20constructor" class="pilcrow">&#182;</a>
+    PushManager constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a new instance of PushManager</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">node</span>
+      <span class="dox_type">NodeGameClient</span>
+      <span>A nodegame-client instance</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Configuration options</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">PushManager</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="pushmanager.node">
+  <h3>
+    <a href="#pushmanager.node" name="pushmanager.node" class="pilcrow">&#182;</a>
+    PushManager.node
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reference to a nodegame-client instance</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="pushmanager.timeout">
+  <h3>
+    <a href="#pushmanager.timeout" name="pushmanager.timeout" class="pilcrow">&#182;</a>
+    PushManager.timeout
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The timeout object that will fire the checking of clients</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">PushManager.startTimeout
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">timeout</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="pushmanager.offsetwaittime">
+  <h3>
+    <a href="#pushmanager.offsetwaittime" name="pushmanager.offsetwaittime" class="pilcrow">&#182;</a>
+    PushManager.offsetWaitTime
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Time that is always added to the timer value of</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">PushManager.startTimeout
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">offsetWaitTime</span> <span class="o">=</span> <span class="nx">PushManager</span><span class="p">.</span><span class="nx">offsetWaitTime</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="pushmanager.replywaittime">
+  <h3>
+    <a href="#pushmanager.replywaittime" name="pushmanager.replywaittime" class="pilcrow">&#182;</a>
+    PushManager.replyWaitTime
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Time to wait to get a reply from a pushed client</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">PushManager.pushGame
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">replyWaitTime</span> <span class="o">=</span> <span class="nx">PushManager</span><span class="p">.</span><span class="nx">replyWaitTime</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="pushmanager.checkpushwaittime">
+  <h3>
+    <a href="#pushmanager.checkpushwaittime" name="pushmanager.checkpushwaittime" class="pilcrow">&#182;</a>
+    PushManager.checkPushWaitTime
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Time to wait to check if a pushed client updated its state</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">PushManager.pushGame
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">checkPushWaitTime</span> <span class="o">=</span> <span class="nx">PushManager</span><span class="p">.</span><span class="nx">checkPushWaitTime</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="pushmanager.init">
+  <h3>
+    <a href="#pushmanager.init" name="pushmanager.init" class="pilcrow">&#182;</a>
+    PushManager.init
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Inits the configuration for the instance</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">Optional.</span>
+      <span class="dox_type">object</span>
+      <span>Configuration object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="nx">checkAndAssignWaitTime</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="s1">&#39;offsetWaitTime&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+        <span class="nx">checkAndAssignWaitTime</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="s1">&#39;replyWaitTime&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+        <span class="nx">checkAndAssignWaitTime</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="s1">&#39;checkPushWaitTime&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="pushmanager.starttimeout">
+  <h2>
+    <a href="#pushmanager.starttimeout" name="pushmanager.starttimeout" class="pilcrow">&#182;</a>
+    PushManager.startTimeout
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Sets a timeout for checking if all clients have finished current step</p>
+
+<p>The length of the timeout is equal to timer + offset.</p>
+
+<p>By default, it looks up the <code>timer</code> property in the current
+step object. If no <code>timer</code> property is found, timer is set to 0.</p>
+
+<p>If timeout expires <code>PushManager.pushGame</code> will be called.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">timer</span>
+      <span class="dox_type">number</span>
+      <span>Optional. If set, overwrite the default behavior
+  and this number will be used instead of the <code>timer</code> property from
+  current step object.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">PushManager.offsetWaitTime</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">PushManager.pushGame
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">startTimeout</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">gameStage</span><span class="p">,</span> <span class="nx">that</span><span class="p">;</span>
+
+        <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timeout</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">clearTimeout</span><span class="p">();</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>Determine the value for timer. Total timeout = timer + offset.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
+            <span class="nx">timer</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="s1">&#39;timer&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="nx">timer</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;PushManager.startTimeout: timer must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;number or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">timer</span> <span class="o">=</span> <span class="nx">timer</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;TIMER: &#39;</span><span class="p">,</span> <span class="nx">timer</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">offsetWaitTime</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
+
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">timeout</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">pushGame</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">);</span>
+        <span class="p">},</span> <span class="p">(</span><span class="nx">timer</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">offsetWaitTime</span><span class="p">));</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="pushmanager.cleartimeout">
+  <h2>
+    <a href="#pushmanager.cleartimeout" name="pushmanager.cleartimeout" class="pilcrow">&#182;</a>
+    PushManager.clearTimeout
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Clears timeout for checking if all clients have finished current step</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">PushManager.startTimeout
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearTimeout</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Clearing old push players timeout.&#39;</span><span class="p">);</span>
+        <span class="nx">clearTimeout</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timeout</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="pushmanager.pushgame">
+  <h3>
+    <a href="#pushmanager.pushgame" name="pushmanager.pushgame" class="pilcrow">&#182;</a>
+    PushManager.pushGame
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Pushes any client that is connected, but not DONE, to step forward</p>
+
+<p>It sends a GET message to all clients whose stage level is not
+marked as DONE (100), and waits for the reply. If the reply does
+not arrive it will disconnect them. If the reply arrives, it will
+later check if they manage to step, and if not disconnects them.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">checkIfPushWorked
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pushGame</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>console.log('PUSHGAME', node.player.stage);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Push needed &#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
+                <span class="nx">stage</span> <span class="o">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>Send push.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PUSH_STEP</span><span class="p">,</span>
+                         <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+                             <span class="nx">checkIfPushWorked</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">checkPushWaitTime</span><span class="p">);</span>
+                         <span class="p">},</span>
+                         <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+                         <span class="p">{</span>
+                             <span class="nx">timeout</span><span class="o">:</span> <span class="nx">that</span><span class="p">.</span><span class="nx">replyWaitTime</span><span class="p">,</span>
+                             <span class="nx">executeOnce</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                             <span class="nx">target</span><span class="o">:</span> <span class="nx">GAMECOMMAND</span><span class="p">,</span>
+                             <span class="nx">timeoutCb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+</div>
+<p>No reply to GET, disconnect client.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                                 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;NO REPLY &#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">stage</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>node.log('node.pushManager: no reply from ' +
+        p.id);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                                 <span class="nx">forceDisconnect</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">p</span><span class="p">);</span>
+                             <span class="p">}</span>
+                         <span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="helper%20methods">
+  <h2>
+    <a href="#helper%20methods" name="helper%20methods" class="pilcrow">&#182;</a>
+    Helper methods
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="checkifpushworked">
+  <h3>
+    <a href="#checkifpushworked" name="checkifpushworked" class="pilcrow">&#182;</a>
+    checkIfPushWorked
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Checks whether the stage of a client has changed after</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">node</span>
+      <span class="dox_type">NodeGameClient</span>
+      <span>The node instance used to send msg</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">p</span>
+      <span class="dox_type">object</span>
+      <span>The player object containing info about id and sid</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">milliseconds</span>
+      <span class="dox_type">number</span>
+      <span>Optional The number of milliseconds to
+  wait before checking again the stage of a client. Default 0.</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">checkIfPushWorked</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">milliseconds</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
+        <span class="nx">stage</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">stage</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">step</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">step</span><span class="p">,</span> <span class="nx">round</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">round</span>
+        <span class="p">};</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;received reply from &#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">stage</span><span class="p">);</span>
+
+        <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">pp</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">pp</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>console.log('CONSOLE checking if push worked for ', p.id);
+node.log('node.pushManager: checking if push worked for ', p.id);
+console.log(pp.stage, stage);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">pp</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">stage</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PUSH did NOT work for &#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">stage</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>node.log('node.pushManager: push did not work for ', p.id);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="nx">forceDisconnect</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">pp</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PUSH worked for &#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">stage</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<p>node.log('node.pushManager: push worked for ', p.id);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span> <span class="nx">milliseconds</span> <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="forcedisconnect">
+  <h3>
+    <a href="#forcedisconnect" name="forcedisconnect" class="pilcrow">&#182;</a>
+    forceDisconnect
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Disconnects one player by sending a DISCONNECT msg to server</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">node</span>
+      <span class="dox_type">NodeGameClient</span>
+      <span>The node instance used to send msg</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">p</span>
+      <span class="dox_type">object</span>
+      <span>The player object containing info about id and sid</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">forceDisconnect</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">msg</span><span class="p">;</span>
+        <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+            <span class="nx">target</span><span class="o">:</span> <span class="s1">&#39;SERVERCOMMAND&#39;</span><span class="p">,</span>
+            <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;DISCONNECT&#39;</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">id</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+                <span class="nx">sid</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">sid</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="checkandassignwaittime">
+  <h3>
+    <a href="#checkandassignwaittime" name="checkandassignwaittime" class="pilcrow">&#182;</a>
+    checkAndAssignWaitTime
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Checks if a valid wait time is found in options object, if so assigns it</p>
+
+<p>It is used by <code>PushManager.init</code> and will throw an error if value
+is not valid.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>Configuration options</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">name</span>
+      <span class="dox_type">string</span>
+      <span>The name of the option to check and assign</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">that</span>
+      <span class="dox_type">PushManage</span>
+      <span>The instance to which assign the value</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">PushManager.init
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">checkAndAssignWaitTime</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">that</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">n</span><span class="p">;</span>
+        <span class="nx">n</span> <span class="o">=</span> <span class="nx">options</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">n</span> <span class="o">||</span> <span class="nx">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;PushManager.init: options.&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span>
+                                    <span class="s1">&#39;must be a positive number, found: &#39;</span> <span class="o">+</span> <span class="nx">n</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">that</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">n</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+
+<span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

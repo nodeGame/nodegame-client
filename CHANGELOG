@@ -17,6 +17,14 @@
  - Fixed bug with node.done with more than 2 parameters.
 
 
+
+## 1.4.0
+
+- Push Manager: Unresponsive clients are checked and tried to be pushed to the next stage. If no answer is received within a specified timeout, they are diconnected.
+- Matcher: matching algorithms available: roundrobin
+- `#node.get()` has now an option to specify a different target than DATA.
+- SERVERCOMMAND disconnect
+
 ## 1.0.0
 
  - Enhanced stager, builds blocks and randomize blocks, stages, and steps.
