@@ -285,9 +285,9 @@ describe('EventEmitterManager', function() {
             var o = eem.getAll();
             o.should.be.Object();
             o.ng.D.should.be.Object();
-            o.game.should.eql({ D: tmp.Dgame});
-            o.stage.should.eql({ D: tmp.Dstage});
-            o.step.should.eql({ D: tmp.Dstep});
+            o.game.should.eql({ A: null, D: tmp.Dgame});
+            o.stage.should.eql({ A: null, D: tmp.Dstage});
+            o.step.should.eql({ A: null, D: tmp.Dstep});
         });
     });
 });
