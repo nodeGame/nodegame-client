@@ -21199,7 +21199,7 @@ if (!Array.prototype.indexOf) {
     /**
      * ### randomFire
      *
-     * Common handler for randomEmit and randomExec
+     * Common handler for randomEmit, randomExec, randomDone
      *
      * @param {string} method The name of the method invoking randomFire
      * @param {string|function} hook The function to call or the event to emit
@@ -21210,11 +21210,13 @@ if (!Array.prototype.indexOf) {
      *   the function
      */
     function randomFire(method, hook, maxWait, emit, ctx, args) {
-        var that = this;
+        var that;
         var waitTime;
         var callback;
         var timerObj;
         var tentativeName;
+
+        that = this;
 
         if ('undefined' === typeof maxWait) {
             maxWait = 6000;
@@ -21245,8 +21247,8 @@ if (!Array.prototype.indexOf) {
             };
         }
 
-        tentativeName = emit ? 'rndEmit_' + hook + '_' + J.randomInt(0, 1000000)
-            : 'rndExec_' + J.randomInt(0, 1000000);
+        tentativeName = method + '_' + hook + '_' + J.randomInt(0, 1000000);
+
 
         // Create and run timer:
         timerObj = this.createTimer({
@@ -21442,14 +21444,14 @@ if (!Array.prototype.indexOf) {
         else if (len === 4) {
             args = [arguments[2], arguments[3]];
         }
-        else {
+        else if (len > 4) {
             i = -1, len = (len-2);
             args = new Array(len);
             for ( ; ++i < len ; ) {
                 args[i] = arguments[i+2];
             }
         }
-        randomFire.call(this, 'randomEmit', event, maxWait, true, args);
+        randomFire.call(this, 'randomEmit', event, maxWait, true, null, args);
     };
 
     /**
@@ -21486,7 +21488,7 @@ if (!Array.prototype.indexOf) {
         else if (len === 5) {
             args = [arguments[3], arguments[4]];
         }
-        else {
+        else if (len > 5) {
             i = -1, len = (len-3);
             args = new Array(len);
             for ( ; ++i < len ; ) {
@@ -21509,7 +21511,7 @@ if (!Array.prototype.indexOf) {
      * @see randomFire
      */
     Timer.prototype.randomDone = function(maxWait) {
-        var i, len;
+        var args, i, len;
         len = arguments.length;
         if (len == 2) {
             args = [arguments[1]];
@@ -21517,7 +21519,7 @@ if (!Array.prototype.indexOf) {
         else if (len === 3) {
             args = [arguments[1], arguments[2]];
         }
-        else {
+        else if (len > 3) {
             i = -1, len--;
             args = new Array(len);
             for ( ; ++i < len ; ) {
@@ -22238,7 +22240,7 @@ if (!Array.prototype.indexOf) {
      *   if no timer info is found for current step
      */
     function processStepOptions(node, step, prop) {
-        var timer, options, typeofOptions, timeup
+        var timer, options, typeofOptions, timeup;
         timer = node.game.plot.getProperty(step, prop);
         if (!timer) return null;
 
@@ -22284,7 +22286,7 @@ if (!Array.prototype.indexOf) {
         }
 
         return options;
-    };
+    }
 
     // Do a timer update.
     // Return false if timer ran out, true otherwise.
@@ -40751,7 +40753,7 @@ if (!Array.prototype.indexOf) {
     VisualRound.description = 'Display number of current round and/or stage.' +
         'Can also display countdown and total number of rounds and/or stages.';
 
-    VisualRound.title = 'Round and Stage info';
+    VisualRound.title = 'Round info';
     VisualRound.className = 'visualround';
 
     // ## Dependencies
