@@ -46,36 +46,6 @@
         <a href="#node.events">node.events</a>
       </div>
       <div class="heading h3">
-        <a href="#node.msg">node.msg</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.socket">node.socket</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.session">node.session</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.player">node.player</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.game">node.game</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.timer">node.timer</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.store">node.store</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.conf">node.conf</a>
-      </div>
-      <div class="heading h3">
-        <a href="#node.support">node.support</a>
-      </div>
-      <div class="heading h2">
-        <a href="#configuration%20functions.">Configuration functions.</a>
-      </div>
-      <div class="heading h3">
         <a href="#nodegameclient.emit">NodeGameClient.emit</a>
       </div>
       <div class="heading h3">
@@ -89,6 +59,45 @@
       </div>
       <div class="heading h3">
         <a href="#nodegameclient.off">NodeGameClient.off</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.msg">node.msg</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.socket">node.socket</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.session">node.session</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.player">node.player</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.timer">node.timer</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.game">node.game</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.store">node.store</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.conf">node.conf</a>
+      </div>
+      <div class="heading h3">
+        <a href="#node.support">node.support</a>
+      </div>
+      <div class="heading h2">
+        <a href="#configuration.">Configuration.</a>
+      </div>
+      <div class="heading h3">
+        <a href="#setup%20functions.">Setup functions.</a>
+      </div>
+      <div class="heading h3">
+        <a href="#aliases.">Aliases.</a>
+      </div>
+      <div class="heading h3">
+        <a href="#listeners.">Listeners.</a>
       </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
@@ -333,289 +342,6 @@ proper listener functions</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.msg">
-  <h3>
-    <a href="#node.msg" name="node.msg" class="pilcrow">&#182;</a>
-    node.msg
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Factory of game messages</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">GameMsgGenerator
-</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameMsgGenerator</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.socket">
-  <h3>
-    <a href="#node.socket" name="node.socket" class="pilcrow">&#182;</a>
-    node.socket
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Instantiates the connection to a nodeGame server</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">GameSocketClient
-</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Socket</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.session">
-  <h3>
-    <a href="#node.session" name="node.session" class="pilcrow">&#182;</a>
-    node.session
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Contains a reference to all session variables</p>
-
-<p>Session variables can be saved and restored at a later stage</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">experimental
-</div>
-
-
-<div class="highlight"><pre><code><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_detail&quot;</span><span class="o">&gt;</span>
-<span class="o">&lt;</span><span class="err">/div&gt;</span>
-</code></pre></div>
-
-
-
-<p></div>
-</div></p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameSession</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.player">
-  <h3>
-    <a href="#node.player" name="node.player" class="pilcrow">&#182;</a>
-    node.player
-  </h3>
-</div>
-
-
-<p>Instance of node.Player</p>
-  </div>
-  <div class="body"><p>Contains information about the player</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">PlayerList.Player
-</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">player</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">placeholder</span><span class="o">:</span> <span class="kc">true</span> <span class="p">};</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.game">
-  <h3>
-    <a href="#node.game" name="node.game" class="pilcrow">&#182;</a>
-    node.game
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Instance of node.Game</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">Game
-</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">game</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Game</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.timer">
-  <h3>
-    <a href="#node.timer" name="node.timer" class="pilcrow">&#182;</a>
-    node.timer
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Instance of node.Timer</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">Timer
-</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Timer</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.store">
-  <h3>
-    <a href="#node.store" name="node.store" class="pilcrow">&#182;</a>
-    node.store
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Makes the nodeGame session persistent, saving it
-to the browser local database or to a cookie</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">shelf.js
-</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">store</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.conf">
-  <h3>
-    <a href="#node.conf" name="node.conf" class="pilcrow">&#182;</a>
-    node.conf
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>A reference to the current nodegame configuration</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">NodeGameClient.setup
-</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span> <span class="o">=</span> <span class="p">{};</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="node.support">
-  <h3>
-    <a href="#node.support" name="node.support" class="pilcrow">&#182;</a>
-    node.support
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>A collection of features that are supported by the current browser</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">support</span> <span class="o">=</span> <span class="p">{};</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="configuration%20functions.">
-  <h2>
-    <a href="#configuration%20functions." name="configuration%20functions." class="pilcrow">&#182;</a>
-    Configuration functions.
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;node: adding emit/on functions.&#39;</span><span class="p">);</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
 <div class="pilwrap" id="nodegameclient.emit">
   <h3>
     <a href="#nodegameclient.emit" name="nodegameclient.emit" class="pilcrow">&#182;</a>
@@ -832,11 +558,278 @@ has advanced to its next stage or step.</p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.msg">
+  <h3>
+    <a href="#node.msg" name="node.msg" class="pilcrow">&#182;</a>
+    node.msg
+  </h3>
 </div>
-<p>Configuration.</p>
+
+  </div>
+  <div class="body"><p>Factory of game messages</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameMsgGenerator
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameMsgGenerator</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.socket">
+  <h3>
+    <a href="#node.socket" name="node.socket" class="pilcrow">&#182;</a>
+    node.socket
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Instantiates the connection to a nodeGame server</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameSocketClient
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Socket</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.session">
+  <h3>
+    <a href="#node.session" name="node.session" class="pilcrow">&#182;</a>
+    node.session
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Contains a reference to all session variables</p>
+
+<p>Session variables can be saved and restored at a later stage</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">experimental
+</div>
+
+
+<div class="highlight"><pre><code><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_detail&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="err">/div&gt;</span>
+</code></pre></div>
+
+
+
+<p></div>
+</div></p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameSession</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.player">
+  <h3>
+    <a href="#node.player" name="node.player" class="pilcrow">&#182;</a>
+    node.player
+  </h3>
+</div>
+
+
+<p>Instance of node.Player</p>
+  </div>
+  <div class="body"><p>Contains information about the player</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">PlayerList.Player
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">player</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">placeholder</span><span class="o">:</span> <span class="kc">true</span> <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.timer">
+  <h3>
+    <a href="#node.timer" name="node.timer" class="pilcrow">&#182;</a>
+    node.timer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Instance of node.Timer</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Timer
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Timer</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.game">
+  <h3>
+    <a href="#node.game" name="node.game" class="pilcrow">&#182;</a>
+    node.game
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Instance of node.Game</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">game</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Game</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.store">
+  <h3>
+    <a href="#node.store" name="node.store" class="pilcrow">&#182;</a>
+    node.store
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Makes the nodeGame session persistent, saving it
+to the browser local database or to a cookie</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">shelf.js
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">store</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.conf">
+  <h3>
+    <a href="#node.conf" name="node.conf" class="pilcrow">&#182;</a>
+    node.conf
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>A reference to the current nodegame configuration</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NodeGameClient.setup
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.support">
+  <h3>
+    <a href="#node.support" name="node.support" class="pilcrow">&#182;</a>
+    node.support
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>A collection of features that are supported by the current browser</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">support</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="configuration.">
+  <h2>
+    <a href="#configuration." name="configuration." class="pilcrow">&#182;</a>
+    Configuration.
+  </h2>
+</div>
+
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
@@ -846,10 +839,13 @@ has advanced to its next stage or step.</p>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+<div class="pilwrap" id="setup%20functions.">
+  <h3>
+    <a href="#setup%20functions." name="setup%20functions." class="pilcrow">&#182;</a>
+    Setup functions.
+  </h3>
 </div>
-<p>Setup functions.</p>
+
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultSetupFunctions</span><span class="p">();</span>
@@ -859,10 +855,13 @@ has advanced to its next stage or step.</p>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+<div class="pilwrap" id="aliases.">
+  <h3>
+    <a href="#aliases." name="aliases." class="pilcrow">&#182;</a>
+    Aliases.
+  </h3>
 </div>
-<p>Aliases.</p>
+
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultAliases</span><span class="p">();</span>
@@ -872,10 +871,13 @@ has advanced to its next stage or step.</p>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+<div class="pilwrap" id="listeners.">
+  <h3>
+    <a href="#listeners." name="listeners." class="pilcrow">&#182;</a>
+    Listeners.
+  </h3>
 </div>
-<p>Listeners.</p>
+
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultIncomingListeners</span><span class="p">();</span>

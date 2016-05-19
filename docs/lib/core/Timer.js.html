@@ -466,7 +466,7 @@ event once the time expires.</p>
 specified a value in the options object.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">paused</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">paused</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">startPaused</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">options</span><span class="p">.</span><span class="nx">startPaused</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
@@ -858,7 +858,7 @@ the given GameTimer object are removed.</p>
 <p>TODO: check if this condition is ok.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
             <span class="nx">timerObj</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
