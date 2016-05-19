@@ -412,6 +412,22 @@ describe('EventEmitter', function() {
         });
     });
 
+    describe('#on with label', function() {
+        it('should add L event listener with a label', function() {
+            tmp.funcL =  function() { result.L = [1]; return 1; };
+            ee.on('L', tmp.funcL, 'Label');
+            ee.events['L'].should.eql(tmp.funcL);
+            ee.events['L'].__ngid.should.eql('Label');
+        });
+    });
+
+    describe('#off by label', function() {
+        it('should remove event listener labeled with Label', function() {
+            ee.off('L', 'Label');
+            (null === ee.events['L']).should.eql(true);
+            (null === ee.labels['Label']).should.eql(true);
+        });
+    });
 
 });
 

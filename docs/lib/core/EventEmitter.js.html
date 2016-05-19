@@ -39,6 +39,9 @@
       <div class="heading h2">
         <a href="#eventemitter.changes">EventEmitter.changes</a>
       </div>
+      <div class="heading h2">
+        <a href="#eventemitter.labels">EventEmitter.labels</a>
+      </div>
       <div class="heading h3">
         <a href="#eventemitter.history">EventEmitter.history</a>
       </div>
@@ -311,6 +314,35 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="eventemitter.labels">
+  <h2>
+    <a href="#eventemitter.labels" name="eventemitter.labels" class="pilcrow">&#182;</a>
+    EventEmitter.labels
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>List of labels associated to an event listener</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitter.on
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">labels</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="eventemitter.history">
   <h3>
     <a href="#eventemitter.history" name="eventemitter.history" class="pilcrow">&#182;</a>
@@ -400,6 +432,7 @@ MIT Licensed</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">label</span>
       <span class="dox_type">string</span>
+      <span class="dox_type">number</span>
       <span>Optional. If set, it flags the listener with
    the property .__ngid = label. It will be then possible to remove
    the listener using the label</span>
@@ -420,9 +453,20 @@ MIT Licensed</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.on: listener must be function.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">label</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">label</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.on: label must be string or &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">label</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">label</span> <span class="o">||</span> <span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">label</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="o">+</span> <span class="nx">label</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">labels</span><span class="p">[</span><span class="nx">label</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;EventEmitter.on: label is not unique: &#39;</span> <span class="o">+</span>
+                                    <span class="nx">label</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">labels</span><span class="p">[</span><span class="nx">label</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">listener</span><span class="p">.</span><span class="nx">__ngid</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="o">+</span> <span class="nx">label</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.on: label must be &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;string or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">label</span><span class="p">);</span>
+            <span class="p">}</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
@@ -433,7 +477,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
 <p>Optimize the case of one listener.
 Don't need the extra array object.</p>
@@ -449,7 +493,7 @@ Don't need the extra array object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>If we've already got an array, just append.</p>
         </td>
@@ -464,7 +508,7 @@ Don't need the extra array object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>Adding the second element, need to change to array.</p>
         </td>
@@ -479,7 +523,7 @@ Don't need the extra array object.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
 <p>Storing changes if necessary.</p>
         </td>
@@ -602,7 +646,7 @@ element or <em>undefined</em> is returned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Useful for debugging.</p>
         </td>
@@ -621,7 +665,7 @@ element or <em>undefined</em> is returned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>fast cases</p>
         </td>
@@ -664,7 +708,7 @@ element or <em>undefined</em> is returned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>If more than one event listener is registered,
 we will return an array.</p>
@@ -683,7 +727,7 @@ we will return an array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>If less than 2 listeners returned a value, compact the result.</p>
         </td>
@@ -699,7 +743,7 @@ we will return an array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>Log the event into node.history object, if present.</p>
         </td>
@@ -770,7 +814,7 @@ we will return an array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>The arguments object must not be passed or leaked anywhere.
 Therefore, we recreate an args array here. We have a different
@@ -888,7 +932,7 @@ with either the name or the label equal to listener will be removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Null instead of delete for optimization.</p>
         </td>
@@ -904,7 +948,7 @@ with either the name or the label equal to listener will be removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Handling multiple cases:
 this.events[type] can be array or function,
@@ -925,13 +969,16 @@ and listener can be function or string.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>String.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">listener</span> <span class="o">===</span> <span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">__ngid</span> <span class="o">||</span>
-                            <span class="nx">listener</span> <span class="o">===</span> <span class="nx">J</span><span class="p">.</span><span class="nx">funcName</span><span class="p">(</span><span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">listener</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">__ngid</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">this</span><span class="p">.</span><span class="nx">labels</span><span class="p">[</span><span class="nx">listener</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                            <span class="nx">oneFound</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="p">}</span>
+                        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">listener</span> <span class="o">===</span> <span class="nx">J</span><span class="p">.</span><span class="nx">funcName</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]))</span> <span class="p">{</span>
                             <span class="nx">oneFound</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
@@ -945,7 +992,7 @@ and listener can be function or string.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Null instead of delete for optimization.</p>
         </td>
@@ -960,7 +1007,7 @@ and listener can be function or string.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>this.events[type] is an array.</p>
         </td>
@@ -981,13 +1028,16 @@ and listener can be function or string.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>String.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                            <span class="k">if</span> <span class="p">(</span><span class="nx">listener</span> <span class="o">===</span> <span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">__ngid</span> <span class="o">||</span>
-                                <span class="nx">listener</span> <span class="o">===</span> <span class="nx">J</span><span class="p">.</span><span class="nx">funcName</span><span class="p">(</span><span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">listener</span> <span class="o">===</span> <span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">__ngid</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="k">this</span><span class="p">.</span><span class="nx">labels</span><span class="p">[</span><span class="nx">listener</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                                <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                            <span class="p">}</span>
+                            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">listener</span> <span class="o">===</span> <span class="nx">J</span><span class="p">.</span><span class="nx">funcName</span><span class="p">(</span><span class="nx">listeners</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
                                 <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                             <span class="p">}</span>
                         <span class="p">}</span>
@@ -1003,7 +1053,7 @@ and listener can be function or string.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Null instead of delete for optimization.</p>
         </td>
@@ -1019,7 +1069,7 @@ and listener can be function or string.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Update indexes,
 because array size has changed.</p>
@@ -1042,7 +1092,7 @@ because array size has changed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Storing changes if necessary.</p>
         </td>
@@ -1082,6 +1132,19 @@ because array size has changed.</p>
 
   </div>
   <div class="body"><p>Removes all registered event listeners</p>
+
+<p>Clears the labels and store changes, if requested</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitter.labels</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">EventEmitter.setRecordChanges
+</span>
+    </div>
   </div>
 </div>
         </td>
@@ -1108,6 +1171,7 @@ because array size has changed.</p>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">labels</span> <span class="o">=</span> <span class="p">{};</span>
     <span class="p">};</span>
 
 
@@ -1550,7 +1614,7 @@ because array size has changed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>The scope might <code>node</code> if this method is invoked from <code>node.emit</code>.</p>
         </td>
@@ -1564,7 +1628,7 @@ because array size has changed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>The arguments object must not be passed or leaked anywhere.</p>
         </td>
@@ -1623,7 +1687,7 @@ because array size has changed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>If there are less than 2 elements, unpack the array.
 res[0] is either undefined or some value.</p>
@@ -1684,7 +1748,7 @@ res[0] is either undefined or some value.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>The scope might <code>node</code> if this method is invoked from <code>node.emit</code>.</p>
         </td>
@@ -1698,7 +1762,7 @@ res[0] is either undefined or some value.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>The arguments object must not be passed or leaked anywhere.</p>
         </td>
@@ -2168,7 +2232,7 @@ res[0] is either undefined or some value.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
 </div>
 <p>cleaning up the events to remit
 TODO NDDB commands have changed, update</p>
@@ -2196,7 +2260,7 @@ TODO NDDB commands have changed, update</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>We have events that were fired at the stage when
 disconnection happened. Let's fire them again</p>
