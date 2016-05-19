@@ -801,11 +801,13 @@ the given GameTimer object are removed.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">randomFire</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">hook</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="nx">emit</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">waitTime</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">callback</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">timerObj</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">tentativeName</span><span class="p">;</span>
+
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">maxWait</span> <span class="o">=</span> <span class="mi">6000</span><span class="p">;</span>
@@ -1452,7 +1454,7 @@ the given GameTimer object are removed.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Timer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">randomDone</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]];</span>
@@ -3227,7 +3229,7 @@ or the current settings, if undefined</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">processStepOptions</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">timer</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">typeofOptions</span><span class="p">,</span> <span class="nx">timeup</span>
+        <span class="kd">var</span> <span class="nx">timer</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">typeofOptions</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">;</span>
         <span class="nx">timer</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">prop</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timer</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
 
@@ -3284,7 +3286,7 @@ or the current settings, if undefined</p>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">options</span><span class="p">;</span>
-    <span class="p">};</span>
+    <span class="p">}</span>
 
 
 </pre></div>
