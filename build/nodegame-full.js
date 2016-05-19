@@ -21209,7 +21209,7 @@ if (!Array.prototype.indexOf) {
      * @param {object|function} ctx Optional. The context of execution for
      *   the function
      */
-    function randomFire(method, hook, maxWait, emit, ctx) {
+    function randomFire(method, hook, maxWait, emit, ctx, args) {
         var that = this;
         var waitTime;
         var callback;
@@ -21230,13 +21230,18 @@ if (!Array.prototype.indexOf) {
         if (emit) {
             callback = function() {
                 that.destroyTimer(timerObj);
-                that.node.emit(hook);
+                if (args) {
+                    that.node.emit.apply(that.node.events, [hook].concat(args));
+                }
+                else {
+                    that.node.emit(hook);
+                }
             };
         }
         else {
             callback = function() {
                 that.destroyTimer(timerObj);
-                hook.call(ctx);
+                hook.apply(ctx, args);
             };
         }
 
@@ -21417,6 +21422,8 @@ if (!Array.prototype.indexOf) {
      *
      * Respects pausing / resuming.
      *
+     * Additional parameters are passed to the
+     *
      * @param {string} event The name of the event
      * @param {number} maxWait Optional. The maximum time (in milliseconds)
      *   to wait before emitting the event. Default: 6000
@@ -21424,10 +21431,25 @@ if (!Array.prototype.indexOf) {
      * @see randomFire
      */
     Timer.prototype.randomEmit = function(event, maxWait) {
+        var args, i, len;
         if ('string' !== typeof event) {
             throw new TypeError('Timer.randomEmit: event must be string.');
         }
-        randomFire.call(this, 'randomEmit', event, maxWait, true);
+        len = arguments.length;
+        if (len == 3) {
+            args = [arguments[2]];
+        }
+        else if (len === 4) {
+            args = [arguments[2], arguments[3]];
+        }
+        else {
+            i = -1, len = (len-2);
+            args = new Array(len);
+            for ( ; ++i < len ; ) {
+                args[i] = arguments[i+2];
+            }
+        }
+        randomFire.call(this, 'randomEmit', event, maxWait, true, args);
     };
 
     /**
@@ -21446,6 +21468,7 @@ if (!Array.prototype.indexOf) {
      * @see randomFire
      */
     Timer.prototype.randomExec = function(func, maxWait, ctx) {
+        var args, i, len;
         if ('function' !== typeof func) {
             throw new TypeError('Timer.randomExec: func must be function.');
         }
@@ -21456,7 +21479,21 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('Timer.randomExec: ctx must be object, ' +
                                 'function or undefined.');
         }
-        randomFire.call(this, 'randomExec', func, maxWait, false, ctx);
+        len = arguments.length;
+        if (len == 4) {
+            args = [arguments[3]];
+        }
+        else if (len === 5) {
+            args = [arguments[3], arguments[4]];
+        }
+        else {
+            i = -1, len = (len-3);
+            args = new Array(len);
+            for ( ; ++i < len ; ) {
+                args[i] = arguments[i+3];
+            }
+        }
+        randomFire.call(this, 'randomExec', func, maxWait, false, ctx, args);
     };
 
     /**
@@ -21472,8 +21509,23 @@ if (!Array.prototype.indexOf) {
      * @see randomFire
      */
     Timer.prototype.randomDone = function(maxWait) {
+        var i, len;
+        len = arguments.length;
+        if (len == 2) {
+            args = [arguments[1]];
+        }
+        else if (len === 3) {
+            args = [arguments[1], arguments[2]];
+        }
+        else {
+            i = -1, len--;
+            args = new Array(len);
+            for ( ; ++i < len ; ) {
+                args[i] = arguments[i+1];
+            }
+        }
         randomFire.call(this, 'randomDone', this.node.done,
-                        maxWait, false, this.node);
+                        maxWait, false, this.node, args);
     };
 
     /**

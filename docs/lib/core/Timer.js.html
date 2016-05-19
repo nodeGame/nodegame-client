@@ -800,7 +800,7 @@ the given GameTimer object are removed.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">randomFire</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">hook</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="nx">emit</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">randomFire</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">hook</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="nx">emit</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">waitTime</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">callback</span><span class="p">;</span>
@@ -832,13 +832,18 @@ the given GameTimer object are removed.</p>
         <span class="k">if</span> <span class="p">(</span><span class="nx">emit</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">callback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="nx">that</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timerObj</span><span class="p">);</span>
-                <span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">hook</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="p">[</span><span class="nx">hook</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">args</span><span class="p">));</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">hook</span><span class="p">);</span>
+                <span class="p">}</span>
             <span class="p">};</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">callback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="nx">that</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timerObj</span><span class="p">);</span>
-                <span class="nx">hook</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">ctx</span><span class="p">);</span>
+                <span class="nx">hook</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
             <span class="p">};</span>
         <span class="p">}</span>
 
@@ -1286,6 +1291,8 @@ the given GameTimer object are removed.</p>
   <div class="body"><p>Emits an event after a random time interval between 0 and maxWait</p>
 
 <p>Respects pausing / resuming.</p>
+
+<p>Additional parameters are passed to the</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1310,10 +1317,25 @@ the given GameTimer object are removed.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Timer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">randomEmit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.randomEmit: event must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;randomEmit&#39;</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]];</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">===</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">3</span><span class="p">]];</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="p">(</span><span class="nx">len</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">2</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;randomEmit&#39;</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1365,6 +1387,7 @@ the given GameTimer object are removed.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Timer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">randomExec</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.randomExec: func must be function.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
@@ -1375,7 +1398,21 @@ the given GameTimer object are removed.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.randomExec: ctx must be object, &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;function or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;randomExec&#39;</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">);</span>
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">3</span><span class="p">]];</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">===</span> <span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">4</span><span class="p">]];</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="p">(</span><span class="nx">len</span><span class="o">-</span><span class="mi">3</span><span class="p">);</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">3</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;randomExec&#39;</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1415,8 +1452,23 @@ the given GameTimer object are removed.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Timer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">randomDone</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]];</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]];</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span><span class="o">--</span><span class="p">;</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
         <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;randomDone&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">done</span><span class="p">,</span>
-                        <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">);</span>
+                        <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
     <span class="p">};</span>
 
 
